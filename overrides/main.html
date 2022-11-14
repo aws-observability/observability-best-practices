@@ -2,19 +2,18 @@
 
 {% block extrahead %}
 
-<!-- this is the dev snippet only -->
 <script>
   (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
     'cwr',
-    'ddca5773-7179-4d5b-92f2-c5de9545a4ac',
+    'f8caa971-67c8-4cdf-8fc3-ebf4f4efcb51',
     '1.0.0',
-    'us-east-1',
-    'https://client.rum.us-east-1.amazonaws.com/1.5.x/cwr.js',
+    'us-west-2',
+    'https://client.rum.us-east-1.amazonaws.com/1.10.0/cwr.js',
     {
       sessionSampleRate: 1,
-      guestRoleArn: "arn:aws:iam::246341051302:role/RUM-Monitor-us-east-1-246341051302-3667403287561-Unauth",
-      identityPoolId: "us-east-1:a384458f-469d-4be3-9ee8-0df5181e81bd",
-      endpoint: "https://dataplane.rum.us-east-1.amazonaws.com",
+      guestRoleArn: "arn:aws:iam::913180151358:role/RUM-Monitor-us-west-2-913180151358-8942296448661-Unauth",
+      identityPoolId: "us-west-2:04333e6f-a1c6-49a4-88e6-93f652142cc0",
+      endpoint: "https://dataplane.rum.us-west-2.amazonaws.com",
       telemetries: ["performance","errors","http"],
       allowCookies: false,
       enableXRay: false

@@ -1,0 +1,1535 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../images/aws-logo.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.2">
+    
+    
+      
+        <title>Introducing Amazon EKS Observability Accelerator - AWS Observability Best Practices</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.69437709.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ffa724">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=ember:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"ember";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+
+<!-- this is the dev snippet only -->
+<script>
+  (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
+    'cwr',
+    'ddca5773-7179-4d5b-92f2-c5de9545a4ac',
+    '1.0.0',
+    'us-east-1',
+    'https://client.rum.us-east-1.amazonaws.com/1.5.x/cwr.js',
+    {
+      sessionSampleRate: 1,
+      guestRoleArn: "arn:aws:iam::246341051302:role/RUM-Monitor-us-east-1-246341051302-3667403287561-Unauth",
+      identityPoolId: "us-east-1:a384458f-469d-4be3-9ee8-0df5181e81bd",
+      endpoint: "https://dataplane.rum.us-east-1.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    }
+  );
+</script>
+
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="orange" data-md-color-accent="deep-orange">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#introducing-amazon-eks-observability-accelerator" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AWS Observability Best Practices" class="md-header__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AWS Observability Best Practices
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Introducing Amazon EKS Observability Accelerator
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../guides/" class="md-tabs__link">
+        Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../signals/logs/" class="md-tabs__link">
+        Data types
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/cloudwatch_agent/" class="md-tabs__link">
+        Tools
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        Curated recipes
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../faq/" class="md-tabs__link">
+      FAQ
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../contributors/" class="md-tabs__link">
+      Contributors
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AWS Observability Best Practices" class="md-nav__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    AWS Observability Best Practices
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/" class="md-nav__link">
+        Best practices overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/choosing-a-tracing-agent/" class="md-nav__link">
+        Choosing a tracing agent
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Data types
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data types" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/logs/" class="md-nav__link">
+        Logs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/traces/" class="md-nav__link">
+        Traces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/alarms/" class="md-nav__link">
+        Alarms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/events/" class="md-nav__link">
+        Events
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/cloudwatch_agent/" class="md-nav__link">
+        CloudWatch Agent
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/alarms/" class="md-nav__link">
+        Alarms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/dashboards/" class="md-nav__link">
+        Dashboards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/logs/" class="md-nav__link">
+        Logs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/rum/" class="md-nav__link">
+        Real User Monitoring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/synthetics/" class="md-nav__link">
+        Synthetic Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xray/" class="md-nav__link">
+        Tracing with AWS X-Ray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Curated recipes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Curated recipes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Curated recipes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Welcome!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_2">
+          By Compute
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Compute" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          By Compute
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apprunner/" class="md-nav__link">
+        AWS App Runner
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/" class="md-nav__link">
+        Amazon Elastic Kubernetes Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecs/" class="md-nav__link">
+        Amazon Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lambda/" class="md-nav__link">
+        AWS Lambda
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          By Infra & Databases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Infra & Databases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          By Infra & Databases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infra/" class="md-nav__link">
+        Infra
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3_2" type="checkbox" id="__nav_5_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3_2">
+          Databases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Databases" data-md-level="3">
+        <label class="md-nav__title" for="__nav_5_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Databases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rds/" class="md-nav__link">
+        Amazon Relational Database Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dynamodb/" class="md-nav__link">
+        Amazon DynamoDB
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../msk/" class="md-nav__link">
+        Amazon Managed Streaming for Apache Kafka
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_4">
+          By Language
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Language" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          By Language
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/" class="md-nav__link">
+        Java
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodejs/" class="md-nav__link">
+        Node.js
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_5" type="checkbox" id="__nav_5_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_5">
+          By Destination
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Destination" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_5">
+          <span class="md-nav__icon md-icon"></span>
+          By Destination
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cw/" class="md-nav__link">
+        Amazon CloudWatch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../amp/" class="md-nav__link">
+        Amazon Managed Service for Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../amg/" class="md-nav__link">
+        Amazon Managed Grafana
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aes/" class="md-nav__link">
+        Amazon OpenSearch Service
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_6" type="checkbox" id="__nav_5_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_6">
+          Tasks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tasks" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_6">
+          <span class="md-nav__icon md-icon"></span>
+          Tasks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../anomaly-detection/" class="md-nav__link">
+        Anomaly Detection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alerting/" class="md-nav__link">
+        Alerting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workshops/" class="md-nav__link">
+        Workshops
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        FAQ
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributors/" class="md-nav__link">
+        Contributors
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#deployment-steps" class="md-nav__link">
+    Deployment steps
+  </a>
+  
+    <nav class="md-nav" aria-label="Deployment steps">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#step-1-cloning-the-repository" class="md-nav__link">
+    Step 1: Cloning the repository
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-2-generate-a-grafana-api-key" class="md-nav__link">
+    Step 2: Generate a Grafana API Key
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-3-configuring-the-environment" class="md-nav__link">
+    Step 3: Configuring the environment
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-4-deploying-the-terraform-modules" class="md-nav__link">
+    Step 4: Deploying the Terraform modules
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-5-deploying-sample-javajmx-application" class="md-nav__link">
+    Step 5: Deploying sample Java/JMX application
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#step-6-visualize-the-jmx-metrics-on-amazon-managed-grafana" class="md-nav__link">
+    Step 6: Visualize the JMX metrics on Amazon Managed Grafana
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#clean-up" class="md-nav__link">
+    Clean up
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    Conclusion
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="introducing-amazon-eks-observability-accelerator">Introducing Amazon EKS Observability Accelerator<a class="headerlink" href="#introducing-amazon-eks-observability-accelerator" title="Permanent link">&para;</a></h1>
+<p>Observability is critical for any application and understanding system behavior and performance. It takes time and effort to detect and remediate performance slowdowns or disruptions. Customers often spend much time writing configuration files and work quite to achieve end-to-end monitoring for applications. Infrastructure as Code (IaC) tools, such as AWS <a href="https://docs.aws.amazon.com/cloudformation/index.html">CloudFormation</a>, <a href="https://www.terraform.io/">Terraform</a>, and <a href="https://www.ansible.com/">Ansible</a>, reduce manual efforts by helping administrators and developers instantiate infrastructure using configuration files.</p>
+<p><a href="https://docs.aws.amazon.com/eks/index.html">Amazon Elastic Kubernetes Service (Amazon EKS)</a> is a powerful and  extensible container orchestration technology that lets you deploy and manage containerized applications at scale. Building a tailored <a href="https://docs.aws.amazon.com/eks/index.html">Amazon EKS</a> cluster amidst the wide range of tooling and design choices available and making sure that it meets your application’s specific needs can take a significant amount of time. This situation becomes even more cumbersome when you implement observability, which is critical for analyzing any application’s performance.</p>
+<p>Customers have been asking us for examples demonstrating the integration of various open-source tools on Amazon EKS and the configuration of observability solutions incorporating best practices for specific application requirements. On May 17, 2022, AWS announced EKS Observability Accelerator, which is used to configure and deploy purpose-built observability solutions on Amazon EKS clusters for specific workloads using Terraform modules. Customers can use this solution to get started with <a href="https://docs.aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a>, <a href="https://aws.amazon.com/otel/?otel-blogs.sort-by=item.additionalFields.createdDate&amp;otel-blogs.sort-order=desc">AWS Distro for OpenTelemetry</a>, and <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> by running a single command and beginning to monitor applications.</p>
+<p>We built the Terraform modules to enable observability on Amazon EKS clusters for the following workloads:</p>
+<ul>
+<li>Java/JMX</li>
+<li>NGINX</li>
+<li>Memcached</li>
+<li>HAProxy</li>
+</ul>
+<p>AWS will continue to add examples for more workloads in the future.</p>
+<p>In this post, you will walk through the steps for using <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/observability">EKS Observability Accelerator</a> to build the Amazon EKS cluster and configure opinionated observability components to monitor specific workloads, which is a Java/JMX application.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
+<p>Make sure you complete the prerequisites before proceeding with this solution</p>
+<ul>
+<li><a href="https://learn.hashicorp.com/tutorials/terraform/install-cli">Install Terraform</a></li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html">Install Kubectl</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/create-container-image.html#:~:text=the%20Docker%20CLI.-,Installing%20Docker%20on%20Amazon%20Linux%202,-Create%20a%20Docker">Install docker</a></li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2.html">AWS Command Line Interface (AWS CLI) version 2</a></li>
+<li><a href="https://stedolan.github.io/jq/download/">jq</a></li>
+<li><a href="https://aws.amazon.com/">An AWS Account</a></li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html#:~:text=refreshes%20the%20credentials.-,Set%20and%20view%20configuration%20settings,-There%20are%20several">Configure the credentials in AWS CLI</a></li>
+<li><a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">An existing Amazon Managed Grafana Workspace</a></li>
+</ul>
+<h2 id="deployment-steps">Deployment steps<a class="headerlink" href="#deployment-steps" title="Permanent link">&para;</a></h2>
+<p>Imagine that you’re a Kubernetes operator and in charge of provisioning the Kubernetes environment for your organization. The requirements you get from teams can be diverse and require spending a significant amount of time provisioning the Kubernetes environment and incorporating those configurations. The clock resets every time a new request comes, so re-inventing the wheel continues.</p>
+<p>To simplify this and reduce the work hours, we came up with <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints">EKS Blueprints</a>. EKS Blueprints is a collection of Terraform modules that aim to make it easier and faster for customers to adopt Amazon EKS and start deploying typical workloads. It’s open -source and can be used by anyone to configure and manage complete Amazon EKS clusters that are fully bootstrapped with the operational software needed to deploy and operate workloads.</p>
+<p>The EKS Blueprints repository contains The Amazon EKS Observability Accelerator module. You’ll use it to configure observability for the Java/JMX application deployed on the Amazon EKS cluster.</p>
+<h3 id="step-1-cloning-the-repository">Step 1: Cloning the repository<a class="headerlink" href="#step-1-cloning-the-repository" title="Permanent link">&para;</a></h3>
+<p>First, you’ll clone the repository that contains the EKS blueprints:</p>
+<div class="codehilite"><pre><span></span><code>git clone https://github.com/aws-ia/terraform-aws-eks-blueprints.git
+</code></pre></div>
+
+<h3 id="step-2-generate-a-grafana-api-key">Step 2: Generate a Grafana API Key<a class="headerlink" href="#step-2-generate-a-grafana-api-key" title="Permanent link">&para;</a></h3>
+<p>Before we deploy the Terraform module, we’ll create a Grafana API key and configure the Terraform variable file to use the keys to deploy the dashboard. We’ll use an existing Amazon Managed Grafana workspace and must log in to the workspace URL to configure the API keys.</p>
+<p>Follow these steps to create the key</p>
+<ul>
+<li>Use your SAML/SSO credential to log in to the Amazon Managed Grafana workspace.</li>
+<li>Hover to the left side control panel, and select the API keys tab under the gear icon.</li>
+</ul>
+<p><img alt="WelcomeGrafana" src="../../images/eks-observability-accelerator-images/Welcom_Amazon_Grafana.png" /></p>
+<ul>
+<li>Click Add API key, fill in the Name field and select the Role as Admin.</li>
+<li>Fill in the Time to live field. It’s the API key life duration. For example, 1d to expire the key after one day. Supported units are: s,m,h,d,w,M,y</li>
+</ul>
+<p><img alt="GrafanaAPIkey1" src="../../images/eks-observability-accelerator-images/grafanaAPIKey1.png" /></p>
+<ul>
+<li>Click Add</li>
+<li>Copy and keep the API key safe, we will use this Key in our next step</li>
+</ul>
+<p><img alt="GrafanaAPIkey2" src="../../images/eks-observability-accelerator-images/APIKeycreated2.png" /></p>
+<p><img alt="GrafanaAPIkey3" src="../../images/eks-observability-accelerator-images/addAPIKey3.png" /></p>
+<h3 id="step-3-configuring-the-environment">Step 3: Configuring the environment<a class="headerlink" href="#step-3-configuring-the-environment" title="Permanent link">&para;</a></h3>
+<p>Next, you’ll configure the environment to deploy the Terraform module to provision the EKS cluster, AWS OTEL Operator, and Amazon Managed Service for Prometheus.</p>
+<p>Deploying the Terraform module involves the below steps:</p>
+<ul>
+<li><strong>Plan</strong>: Terraform plan creates an execution plan and previews the infrastructure changes.</li>
+<li><strong>Apply</strong>: Terraform executes the plan’s action and modifies the environment.</li>
+</ul>
+<p>Next, configure the environment either by creating the variables file or setting up the environment variables.</p>
+<p>A “.tfvars” file is an alternative to using the “-var” flag or environment variables. The file defines the variable values used by the script.</p>
+<p>For this blog post, we will create a new file named “dev.tfvars” under ~/terraform-aws-eks-blueprints/examples/observability/adot-amp-grafana-for-java</p>
+<p>Make sure you edit the dev.tfvars file with corresponding Grafana workspace endpoint and Grafana API key. Also, if you want to customize the configuration, add the necessary variables to dev.tfvars file.</p>
+<div class="codehilite"><pre><span></span><code><span class="nv">cd</span><span class="w"> </span><span class="o">~/</span><span class="nv">terraform</span><span class="o">-</span><span class="nv">aws</span><span class="o">-</span><span class="nv">eks</span><span class="o">-</span><span class="nv">blueprints</span><span class="o">/</span><span class="nv">examples</span><span class="o">/</span><span class="nv">observability</span><span class="o">/</span><span class="nv">adot</span><span class="o">-</span><span class="nv">amp</span><span class="o">-</span><span class="nv">grafana</span><span class="o">-</span><span class="k">for</span><span class="o">-</span><span class="nv">java</span><span class="w"></span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code><span class="n">vi</span><span class="w"> </span><span class="n">dev</span><span class="o">.</span><span class="n">tfvars</span><span class="w"></span>
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>grafana_endpoint=”&lt;Your Grafana workspace endpoint&gt;&quot;
+grafana_api_key=”Your Grafana API Key&gt;&quot;
+</code></pre></div>
+
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+</div>
+<p>API_KEY – is the key that you have created
+Grafana_Endpoint – Grafana workspace URL. </p>
+<p>Make sure to include with “https://” otherwise, terraform module will fail.</p>
+<h3 id="step-4-deploying-the-terraform-modules">Step 4: Deploying the Terraform modules<a class="headerlink" href="#step-4-deploying-the-terraform-modules" title="Permanent link">&para;</a></h3>
+<p>The first step is to initialize the working directory using terraform init command, which initializes a working directory containing Terraform configuration files. This command runs after writing a new Terraform configuration or cloning an existing one from version control.</p>
+<div class="codehilite"><pre><span></span><code>terraform init
+</code></pre></div>
+
+<p>This command performs  initialization steps to prepare the current working directory for use with Terraform. Once the initialization completes, you should receive the following notification.</p>
+<p><img alt="TerraformModule" src="../../images/eks-observability-accelerator-images/TerraformModules1.png" /></p>
+<p>Additionally, we can execute the terraform validate command to evaluate the configuration files in a directory. Validate runs checks that verify whether or not a configuration is syntactically valid and internally consistent, regardless of any provided variables or existing state.</p>
+<div class="codehilite"><pre><span></span><code>terraform validate
+</code></pre></div>
+
+<p><img alt="TerraformModule" src="../../images/eks-observability-accelerator-images/TerraformModules2.png" /></p>
+<p>The next step is to run the terraform plan command to create an execution plan, which lets you preview the Terraform infrastructure changes. By default, when terraform creates a plan it:</p>
+<ul>
+<li>Reads the current state of any already-existing remote objects to ensure that the Terraform state is up-to-date.</li>
+<li>It compares the current configuration to the initial state and reports any differences.</li>
+<li>Proposes a set of change actions that should, if applied, make the remote objects match the configuration.</li>
+</ul>
+<p>The plan command alone will not carry out the proposed changes. So you can use this command to check whether the proposed changes match what you expected before applying the changes or share your changes with your team for broader review.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">terraform</span><span class="w"> </span><span class="n">plan</span><span class="w"> </span><span class="o">-</span><span class="k">var</span><span class="o">-</span><span class="n">file</span><span class="o">=./</span><span class="n">dev</span><span class="o">.</span><span class="n">tfvars</span><span class="w"></span>
+</code></pre></div>
+
+<p><img alt="Terraform" src="../../images/eks-observability-accelerator-images/Terraform3.png" /></p>
+<p><img alt="Terraform" src="../../images/eks-observability-accelerator-images/Terraform4.png" /></p>
+<p>Finally, you’ll run the <code>terraform apply</code> command to provision the resources, and it takes about 20 minutes to complete. This command deploys the following resources:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">terraform</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="o">-</span><span class="k">var</span><span class="o">-</span><span class="n">file</span><span class="o">=./</span><span class="n">dev</span><span class="o">.</span><span class="n">tfvars</span><span class="w"> </span><span class="o">-</span><span class="n">auto</span><span class="o">-</span><span class="n">approve</span><span class="w"></span>
+</code></pre></div>
+
+<ol>
+<li>Creates an Amazon EKS cluster named <code>aws001-preprod-dev-eks</code></li>
+<li>Creates an Amazon Managed Service for Prometheus workspace named <code>amp-ws-aws001-preprod-dev-eks</code></li>
+<li>Creates a Kubernetes namespace named <code>opentelemetry-operator-system, adot-collector-java</code></li>
+<li>Deploys the AWS ADOT collector into the namespace with the configuration to collect metrics for Java/JMX workloads</li>
+<li>Builds a dashboard to visualize Java/JMX metrics in an existing Amazon Managed Grafana workspace specified in the earlier step and configures the Amazon Managed Service for Prometheus workspace as a data source</li>
+</ol>
+<p>After provisioning the EKS cluster, you’ll add the Amazon EKS Cluster endpoint to the kubeconfig and verify if the resources provision successfully.</p>
+<div class="codehilite"><pre><span></span><code><span class="n">aws</span><span class="w"> </span><span class="n">eks</span><span class="w"> </span><span class="o">--</span><span class="n">region</span><span class="w"> </span><span class="n">$AWS_REGION</span><span class="w"> </span><span class="n">update</span><span class="o">-</span><span class="n">kubeconfig</span><span class="w"> </span><span class="o">--</span><span class="n">name</span><span class="w"> </span><span class="n">aws001</span><span class="o">-</span><span class="n">preprod</span><span class="o">-</span><span class="n">dev</span><span class="o">-</span><span class="n">eks</span><span class="w"></span>
+</code></pre></div>
+
+<p>Verify the creation of Amazon Managed Service for Prometheus workspace and ADOT collector by running the following command:</p>
+<div class="codehilite"><pre><span></span><code>aws amp list-workspaces | jq -r &#39;.workspaces[] | select(.alias==&quot;amp-ws-aws001-preprod-dev-eks&quot;).workspaceId&#39;
+</code></pre></div>
+
+<p>Listing all the pods from the cluster</p>
+<div class="codehilite"><pre><span></span><code>kubectl get pods -A
+</code></pre></div>
+
+<p><img alt="Terraform" src="../../images/eks-observability-accelerator-images/Terraform5.png" /></p>
+<p>We should be able to verify the connection between Amazon Managed Grafana and Amazon Managed Prometheus by heading to the configuration page and looking at the default data source.</p>
+<p><img alt="ConnectionVerify" src="../../images/eks-observability-accelerator-images/GrafanaConnectionVerify1.png" /></p>
+<p><img alt="ConnectionVerify" src="../../images/eks-observability-accelerator-images/GrafanaConnectionVerify2.png" /></p>
+<ul>
+<li>Select the Data source named <code>amp</code></li>
+<li>Scroll down and select <code>Save &amp; test</code></li>
+</ul>
+<p><img alt="ConnectionVerify" src="../../images/eks-observability-accelerator-images/GrafanaConnectionVerify3.png" /></p>
+<p>It should display a success message like below</p>
+<p><img alt="ConnectionVerify" src="../../images/eks-observability-accelerator-images/GrafanaConnectionVerify4.png" /></p>
+<h3 id="step-5-deploying-sample-javajmx-application">Step 5: Deploying sample Java/JMX application<a class="headerlink" href="#step-5-deploying-sample-javajmx-application" title="Permanent link">&para;</a></h3>
+<p>You’ll deploy a sample Java/JMX application and start[nn1]  scraping the JMX metrics. The sample application generates JMX metrics, such as the JVM memory pool, JVM memory usage, and thread, and exports it in the Prometheus format. You’ll deploy a load generator and a bad load generator to get a wide range of metrics to visualize eventually.</p>
+<p>The EKS Observability accelerator collects the metrics for the AWS OTEL operator deployment. ADOT exporter will ingest these metrics into the Amazon Managed Service for Prometheus workspace.</p>
+<p>We’ll reuse an example from the AWS OpenTelemetry collector <a href="https://github.com/aws-observability/aws-otel-collector/blob/main/docs/developers/container-insights-eks-jmx.md">repository</a>:</p>
+<div class="codehilite"><pre><span></span><code><span class="c1"># Switch to home directory</span><span class="w"></span>
+
+<span class="n">cd</span><span class="w"> </span><span class="o">~/</span><span class="w"></span>
+
+<span class="c1">#Clone the git repository</span><span class="w"></span>
+
+<span class="n">git</span><span class="w"> </span><span class="n">clone</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">aws</span><span class="o">-</span><span class="n">observability</span><span class="o">/</span><span class="n">aws</span><span class="o">-</span><span class="n">otel</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="n">framework</span><span class="o">.</span><span class="n">git</span><span class="w"></span>
+
+<span class="c1">#Setup environment variables</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="n">AWS_ACCOUNT_ID</span><span class="o">=</span><span class="err">`</span><span class="n">aws</span><span class="w"> </span><span class="n">sts</span><span class="w"> </span><span class="n">get</span><span class="o">-</span><span class="n">caller</span><span class="o">-</span><span class="n">identity</span><span class="w"> </span><span class="o">--</span><span class="n">query</span><span class="w"> </span><span class="n">Account</span><span class="w"> </span><span class="o">--</span><span class="n">output</span><span class="w"> </span><span class="n">text</span><span class="err">`</span><span class="w"></span>
+
+<span class="c1">#Login to registry</span><span class="w"></span>
+<span class="n">aws</span><span class="w"> </span><span class="n">ecr</span><span class="w"> </span><span class="n">get</span><span class="o">-</span><span class="n">login</span><span class="o">-</span><span class="n">password</span><span class="w"> </span><span class="o">--</span><span class="n">region</span><span class="w"> </span><span class="o">$</span><span class="n">AWS_REGION</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">docker</span><span class="w"> </span><span class="n">login</span><span class="w"> </span><span class="o">--</span><span class="n">username</span><span class="w"> </span><span class="n">AWS</span><span class="w"> </span><span class="o">--</span><span class="n">password</span><span class="o">-</span><span class="n">stdin</span><span class="w"> </span><span class="o">$</span><span class="n">AWS_ACCOUNT_ID</span><span class="o">.</span><span class="n">dkr</span><span class="o">.</span><span class="n">ecr</span><span class="o">.$</span><span class="n">AWS_REGION</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="w"></span>
+
+<span class="c1">#Create ECR Repository</span><span class="w"></span>
+<span class="n">aws</span><span class="w"> </span><span class="n">ecr</span><span class="w"> </span><span class="n">create</span><span class="o">-</span><span class="n">repository</span><span class="w"> </span><span class="o">--</span><span class="n">repository</span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">prometheus</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">tomcat</span><span class="o">-</span><span class="n">jmx</span><span class="w"> </span>\<span class="w"></span>
+<span class="o">--</span><span class="n">image</span><span class="o">-</span><span class="n">scanning</span><span class="o">-</span><span class="n">configuration</span><span class="w"> </span><span class="n">scanOnPush</span><span class="o">=</span><span class="bp">true</span><span class="w"> </span>\<span class="w"></span>
+<span class="o">--</span><span class="n">region</span><span class="w"> </span><span class="o">$</span><span class="n">AWS_REGION</span><span class="w"></span>
+
+<span class="c1">#Build Docker image and push to ECR</span><span class="w"></span>
+
+<span class="n">cd</span><span class="w"> </span><span class="o">~/</span><span class="n">aws</span><span class="o">-</span><span class="n">otel</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="n">framework</span><span class="o">/</span><span class="n">sample</span><span class="o">-</span><span class="n">apps</span><span class="o">/</span><span class="n">jmx</span><span class="w"></span>
+
+<span class="n">docker</span><span class="w"> </span><span class="n">build</span><span class="w"> </span><span class="o">-</span><span class="n">t</span><span class="w"> </span><span class="o">$</span><span class="n">AWS_ACCOUNT_ID</span><span class="o">.</span><span class="n">dkr</span><span class="o">.</span><span class="n">ecr</span><span class="o">.$</span><span class="n">AWS_REGION</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">prometheus</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">tomcat</span><span class="o">-</span><span class="n">jmx</span><span class="p">:</span><span class="n">latest</span><span class="w"> </span><span class="o">.</span><span class="w"></span>
+
+<span class="n">docker</span><span class="w"> </span><span class="n">push</span><span class="w"> </span><span class="o">$</span><span class="n">AWS_ACCOUNT_ID</span><span class="o">.</span><span class="n">dkr</span><span class="o">.</span><span class="n">ecr</span><span class="o">.$</span><span class="n">AWS_REGION</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">prometheus</span><span class="o">-</span><span class="n">sample</span><span class="o">-</span><span class="n">tomcat</span><span class="o">-</span><span class="n">jmx</span><span class="p">:</span><span class="n">latest</span><span class="w"></span>
+
+<span class="c1">#Deploy the sample application</span><span class="w"></span>
+
+<span class="k">export</span><span class="w"> </span><span class="n">SAMPLE_TRAFFIC_NAMESPACE</span><span class="o">=</span><span class="n">javajmx</span><span class="o">-</span><span class="n">sample</span><span class="w"></span>
+
+<span class="n">curl</span><span class="w"> </span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">raw</span><span class="o">.</span><span class="n">githubusercontent</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">aws</span><span class="o">-</span><span class="n">observability</span><span class="o">/</span><span class="n">aws</span><span class="o">-</span><span class="n">otel</span><span class="o">-</span><span class="n">test</span><span class="o">-</span><span class="n">framework</span><span class="o">/</span><span class="n">terraform</span><span class="o">/</span><span class="n">sample</span><span class="o">-</span><span class="n">apps</span><span class="o">/</span><span class="n">jmx</span><span class="o">/</span><span class="n">examples</span><span class="o">/</span><span class="n">prometheus</span><span class="o">-</span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"></span>
+
+<span class="n">sed</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="s2">&quot;s/{{aws_account_id}}/$AWS_ACCOUNT_ID/g&quot;</span><span class="w"> </span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"></span>
+<span class="n">sed</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="s2">&quot;s/{{region}}/$AWS_REGION/g&quot;</span><span class="w"> </span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"></span>
+<span class="n">sed</span><span class="w"> </span><span class="o">-</span><span class="n">e</span><span class="w"> </span><span class="s2">&quot;s/{{namespace}}/$SAMPLE_TRAFFIC_NAMESPACE/g&quot;</span><span class="w"> </span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"> </span><span class="o">-</span><span class="n">i</span><span class="w"></span>
+
+<span class="n">kubectl</span><span class="w"> </span><span class="n">apply</span><span class="w"> </span><span class="o">-</span><span class="n">f</span><span class="w"> </span><span class="n">metrics</span><span class="o">-</span><span class="n">sample</span><span class="o">.</span><span class="n">yaml</span><span class="w"></span>
+
+<span class="c1">#Verify the application</span><span class="w"></span>
+
+<span class="n">kubectl</span><span class="w"> </span><span class="n">get</span><span class="w"> </span><span class="n">pods</span><span class="w"> </span><span class="o">-</span><span class="n">n</span><span class="w"> </span><span class="o">$</span><span class="n">SAMPLE_TRAFFIC_NAMESPACE</span><span class="w"></span>
+</code></pre></div>
+
+<p><img alt="JMXJavaApplication" src="../../images/eks-observability-accelerator-images/JavaJMXImage1.png" /></p>
+<h3 id="step-6-visualize-the-jmx-metrics-on-amazon-managed-grafana">Step 6: Visualize the JMX metrics on Amazon Managed Grafana<a class="headerlink" href="#step-6-visualize-the-jmx-metrics-on-amazon-managed-grafana" title="Permanent link">&para;</a></h3>
+<p>To visualize the JMX metrics collected by the AWS ADOT operator, log in to the Grafana workspace.</p>
+<ul>
+<li>Select Dashboards and choose Manage</li>
+</ul>
+<p><img alt="JMXMetrix1" src="../../images/eks-observability-accelerator-images/JMXMetrics1.png" /></p>
+<ul>
+<li>Select the Observability folder and choose the dashboard named EKS Accelerator – Observability – Java/JMX</li>
+</ul>
+<p><img alt="JMXMetrix2" src="../../images/eks-observability-accelerator-images/JMXMetrics2.png" /></p>
+<p>The Terraform module added the Amazon Managed Service for Prometheus workspace as the default data source, and created a custom dashboard to visualize the metrics.</p>
+<p><img alt="JMXMetrix3" src="../../images/eks-observability-accelerator-images/JMXMetrics3.png" /></p>
+<p>You can also deploy sample applications for NGINX, HAProxy, and Memcached.</p>
+<h2 id="clean-up">Clean up<a class="headerlink" href="#clean-up" title="Permanent link">&para;</a></h2>
+<p>Run the following command to tear down the resources provisioned by the Terraform module:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">terraform</span><span class="w"> </span><span class="n">destroy</span><span class="w"> </span><span class="o">-</span><span class="k">var</span><span class="o">-</span><span class="n">file</span><span class="o">=./</span><span class="n">dev</span><span class="o">.</span><span class="n">tfvars</span><span class="w"> </span><span class="o">-</span><span class="n">auto</span><span class="o">-</span><span class="n">approve</span><span class="w"></span>
+</code></pre></div>
+
+<h2 id="conclusion">Conclusion<a class="headerlink" href="#conclusion" title="Permanent link">&para;</a></h2>
+<p>Customers can now leverage EKS Observability Accelerator  to deploy the opinionated EKS clusters and configure observability for specific workloads without spending much time manually deploying the resources and configuring the agent to scrape the metrics. Furthermore, the solution provides the extensibility to connect the Amazon Managed Prometheus workspace with Amazon Managed Grafana and configure alerts and notifications.</p>
+
+
+
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Amazon 2022
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky"], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.9c69f0bc.min.js"></script>
+      
+    
+  </body>
+</html>

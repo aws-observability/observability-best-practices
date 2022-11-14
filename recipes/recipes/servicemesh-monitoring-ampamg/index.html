@@ -1,0 +1,1635 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="icon" href="../../../images/aws-logo.png">
+      <meta name="generator" content="mkdocs-1.3.1, mkdocs-material-8.4.2">
+    
+    
+      
+        <title>Using Amazon Managed Service for Prometheus to monitor App Mesh environment configured on EKS - AWS Observability Best Practices</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.69437709.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.cbb835fc.min.css">
+        
+          
+          
+          <meta name="theme-color" content="#ffa724">
+        
+      
+      
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=ember:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"ember";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+
+<!-- this is the dev snippet only -->
+<script>
+  (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
+    'cwr',
+    'ddca5773-7179-4d5b-92f2-c5de9545a4ac',
+    '1.0.0',
+    'us-east-1',
+    'https://client.rum.us-east-1.amazonaws.com/1.5.x/cwr.js',
+    {
+      sessionSampleRate: 1,
+      guestRoleArn: "arn:aws:iam::246341051302:role/RUM-Monitor-us-east-1-246341051302-3667403287561-Unauth",
+      identityPoolId: "us-east-1:a384458f-469d-4be3-9ee8-0df5181e81bd",
+      endpoint: "https://dataplane.rum.us-east-1.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    }
+  );
+</script>
+
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="orange" data-md-color-accent="deep-orange">
+  
+    
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#using-amazon-managed-service-for-prometheus-to-monitor-app-mesh-environment-configured-on-eks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../.." title="AWS Observability Best Practices" class="md-header__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AWS Observability Best Practices
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Using Amazon Managed Service for Prometheus to monitor App Mesh environment configured on EKS
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+    
+      
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-tabs__inner md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../.." class="md-tabs__link">
+      Home
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../guides/" class="md-tabs__link">
+        Guides
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../signals/logs/" class="md-tabs__link">
+        Data types
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../../tools/cloudwatch_agent/" class="md-tabs__link">
+        Tools
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../../" class="md-tabs__link">
+        Curated recipes
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../faq/" class="md-tabs__link">
+      FAQ
+    </a>
+  </li>
+
+      
+        
+  
+  
+
+
+  <li class="md-tabs__item">
+    <a href="../../../contributors/" class="md-tabs__link">
+      Contributors
+    </a>
+  </li>
+
+      
+    </ul>
+  </div>
+</nav>
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../.." title="AWS Observability Best Practices" class="md-nav__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    AWS Observability Best Practices
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2">
+          Guides
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Guides" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Guides
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/" class="md-nav__link">
+        Best practices overview
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../guides/choosing-a-tracing-agent/" class="md-nav__link">
+        Choosing a tracing agent
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          Data types
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Data types" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Data types
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/logs/" class="md-nav__link">
+        Logs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/traces/" class="md-nav__link">
+        Traces
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/alarms/" class="md-nav__link">
+        Alarms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signals/events/" class="md-nav__link">
+        Events
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_4">
+          Tools
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tools" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Tools
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/cloudwatch_agent/" class="md-nav__link">
+        CloudWatch Agent
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/alarms/" class="md-nav__link">
+        Alarms
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/dashboards/" class="md-nav__link">
+        Dashboards
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/logs/" class="md-nav__link">
+        Logs
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/metrics/" class="md-nav__link">
+        Metrics
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/rum/" class="md-nav__link">
+        Real User Monitoring
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/synthetics/" class="md-nav__link">
+        Synthetic Testing
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../tools/xray/" class="md-nav__link">
+        Tracing with AWS X-Ray
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5" type="checkbox" id="__nav_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5">
+          Curated recipes
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Curated recipes" data-md-level="1">
+        <label class="md-nav__title" for="__nav_5">
+          <span class="md-nav__icon md-icon"></span>
+          Curated recipes
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../" class="md-nav__link">
+        Welcome!
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_2" type="checkbox" id="__nav_5_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_2">
+          By Compute
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Compute" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_2">
+          <span class="md-nav__icon md-icon"></span>
+          By Compute
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apprunner/" class="md-nav__link">
+        AWS App Runner
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../eks/" class="md-nav__link">
+        Amazon Elastic Kubernetes Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../ecs/" class="md-nav__link">
+        Amazon Elastic Container Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../lambda/" class="md-nav__link">
+        AWS Lambda
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3" type="checkbox" id="__nav_5_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3">
+          By Infra & Databases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Infra & Databases" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_3">
+          <span class="md-nav__icon md-icon"></span>
+          By Infra & Databases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../infra/" class="md-nav__link">
+        Infra
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_3_2" type="checkbox" id="__nav_5_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_3_2">
+          Databases
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Databases" data-md-level="3">
+        <label class="md-nav__title" for="__nav_5_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Databases
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../rds/" class="md-nav__link">
+        Amazon Relational Database Service
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dynamodb/" class="md-nav__link">
+        Amazon DynamoDB
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../msk/" class="md-nav__link">
+        Amazon Managed Streaming for Apache Kafka
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_4" type="checkbox" id="__nav_5_4" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_4">
+          By Language
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Language" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_4">
+          <span class="md-nav__icon md-icon"></span>
+          By Language
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/" class="md-nav__link">
+        Java
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../nodejs/" class="md-nav__link">
+        Node.js
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_5" type="checkbox" id="__nav_5_5" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_5">
+          By Destination
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="By Destination" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_5">
+          <span class="md-nav__icon md-icon"></span>
+          By Destination
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../cw/" class="md-nav__link">
+        Amazon CloudWatch
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../amp/" class="md-nav__link">
+        Amazon Managed Service for Prometheus
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../amg/" class="md-nav__link">
+        Amazon Managed Grafana
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aes/" class="md-nav__link">
+        Amazon OpenSearch Service
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_5_6" type="checkbox" id="__nav_5_6" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_5_6">
+          Tasks
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Tasks" data-md-level="2">
+        <label class="md-nav__title" for="__nav_5_6">
+          <span class="md-nav__icon md-icon"></span>
+          Tasks
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../anomaly-detection/" class="md-nav__link">
+        Anomaly Detection
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alerting/" class="md-nav__link">
+        Alerting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        Troubleshooting
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../workshops/" class="md-nav__link">
+        Workshops
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        FAQ
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../contributors/" class="md-nav__link">
+        Contributors
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#infrastructure" class="md-nav__link">
+    Infrastructure
+  </a>
+  
+    <nav class="md-nav" aria-label="Infrastructure">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#architecture" class="md-nav__link">
+    Architecture
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#setup-an-eks-cluster" class="md-nav__link">
+    Setup an EKS cluster
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#install-app-mesh-controller" class="md-nav__link">
+    Install App Mesh Controller
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set-up-amp" class="md-nav__link">
+    Set up AMP
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#scraping-ingesting-metrics" class="md-nav__link">
+    Scraping &amp; ingesting metrics
+  </a>
+  
+    <nav class="md-nav" aria-label="Scraping &amp; ingesting metrics">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configure-grafana-agent" class="md-nav__link">
+    Configure Grafana Agent
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-permissions" class="md-nav__link">
+    Configure permissions
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#sample-application" class="md-nav__link">
+    Sample application
+  </a>
+  
+    <nav class="md-nav" aria-label="Sample application">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#create-an-amg-workspace" class="md-nav__link">
+    Create an AMG workspace
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-amg-datasource" class="md-nav__link">
+    Configure AMG datasource
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-amg-dashboard" class="md-nav__link">
+    Configure AMG dashboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configure-alerts-on-amg" class="md-nav__link">
+    Configure alerts on AMG
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cleanup" class="md-nav__link">
+    Cleanup
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+
+
+<h1 id="using-amazon-managed-service-for-prometheus-to-monitor-app-mesh-environment-configured-on-eks">Using Amazon Managed Service for Prometheus to monitor App Mesh environment configured on EKS<a class="headerlink" href="#using-amazon-managed-service-for-prometheus-to-monitor-app-mesh-environment-configured-on-eks" title="Permanent link">&para;</a></h1>
+<p>In this recipe we show you how to ingest <a href="https://docs.aws.amazon.com/app-mesh/">App Mesh</a> Envoy 
+metrics in an <a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service</a> (EKS) cluster 
+to <a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a> (AMP)
+and create a custom dashboard on <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> 
+(AMG) to monitor the health and performance of microservices.</p>
+<p>As part of the implementation, we will create an AMP workspace, install the App Mesh 
+Controller for Kubernetes and inject the Envoy container into the pods. We will be 
+collecting the Envoy metrics using <a href="https://github.com/grafana/agent">Grafana Agent</a> 
+configured in the EKS cluster and write them to AMP. Finally, we will be creating
+an AMG workspace and configure the AMP as the datasource and create a custom dashboard.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This guide will take approximately 45 minutes to complete.</p>
+</div>
+<h2 id="infrastructure">Infrastructure<a class="headerlink" href="#infrastructure" title="Permanent link">&para;</a></h2>
+<p>In the following section we will be setting up the infrastructure for this recipe. </p>
+<h3 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h3>
+<p><img alt="Architecture" src="../../images/monitoring-appmesh-environment.png" /></p>
+<p>The Grafana agent is configured to scrape the Envoy metrics and ingest them to AMP through the AMP remote write endpoint </p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>For more information on Prometheus Remote Write Exporter check out
+<a href="https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter">Getting Started with Prometheus Remote Write Exporter for AMP</a>.</p>
+</div>
+<h3 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The AWS CLI is <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html">installed</a> and <a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html">configured</a> in your environment.</li>
+<li>You need to install the <a href="https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html">eksctl</a> command in your environment.</li>
+<li>You need to install <a href="https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html">kubectl</a> in your environment. </li>
+<li>You have <a href="https://docs.docker.com/get-docker/">Docker</a> installed into your environment.</li>
+<li>You need AMP workspace configured in your AWS account.</li>
+<li>You need to install <a href="https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html">Helm</a>.</li>
+<li>You need to enable <a href="https://docs.aws.amazon.com/singlesignon/latest/userguide/step1.html">AWS-SSO</a>.</li>
+</ul>
+<h3 id="setup-an-eks-cluster">Setup an EKS cluster<a class="headerlink" href="#setup-an-eks-cluster" title="Permanent link">&para;</a></h3>
+<p>First, create an EKS cluster that will be enabled with App Mesh for running the sample application. 
+The <code>eksctl</code> CLI will be used to deploy the cluster using the <a href="eks-cluster-config.yaml">eks-cluster-config.yaml</a>.
+This template will create a new cluster with EKS.</p>
+<p>Edit the template file and set your region to one of the available regions for AMP:</p>
+<ul>
+<li><code>us-east-1</code></li>
+<li><code>us-east-2</code></li>
+<li><code>us-west-2</code></li>
+<li><code>eu-central-1</code></li>
+<li><code>eu-west-1</code></li>
+</ul>
+<p>Make sure to overwrite this region in your session, for example, in the Bash
+shell:</p>
+<div class="codehilite"><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="n">AWS_REGION</span><span class="o">=</span><span class="n">eu</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mi">1</span><span class="w"></span>
+</code></pre></div>
+
+<p>Create your cluster using the following command:</p>
+<div class="codehilite"><pre><span></span><code>eksctl create cluster -f eks-cluster-config.yaml
+</code></pre></div>
+
+<p>This creates an EKS cluster named <code>AMP-EKS-CLUSTER</code> and a service account 
+named <code>appmesh-controller</code> that will be used by the App Mesh controller for EKS.</p>
+<h3 id="install-app-mesh-controller">Install App Mesh Controller<a class="headerlink" href="#install-app-mesh-controller" title="Permanent link">&para;</a></h3>
+<p>Next, we will run the below commands to install the <a href="https://docs.aws.amazon.com/app-mesh/latest/userguide/getting-started-kubernetes.html">App Mesh Controller</a> 
+and configure the Custom Resource Definitions (CRDs): </p>
+<div class="codehilite"><pre><span></span><code>helm repo add eks https://aws.github.io/eks-charts
+</code></pre></div>
+
+<div class="codehilite"><pre><span></span><code>helm upgrade -i appmesh-controller eks/appmesh-controller \
+     --namespace appmesh-system \
+     --set region=<span class="cp">${</span><span class="n">AWS_REGION</span><span class="cp">}</span> \
+     --set serviceAccount.create=false \
+     --set serviceAccount.name=appmesh-controller
+</code></pre></div>
+
+<h3 id="set-up-amp">Set up AMP<a class="headerlink" href="#set-up-amp" title="Permanent link">&para;</a></h3>
+<p>The AMP workspace is used to ingest the Prometheus metrics collected from Envoy. 
+A workspace is a logical Cortex server dedicated to a tenant. A workspace supports
+fine-grained access control for authorizing its management such as update, list, 
+describe, and delete, and the ingestion and querying of metrics.</p>
+<p>Create a workspace using the AWS CLI:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">aws</span><span class="w"> </span><span class="n">amp</span><span class="w"> </span><span class="n">create</span><span class="o">-</span><span class="n">workspace</span><span class="w"> </span><span class="o">--</span><span class="n">alias</span><span class="w"> </span><span class="n">AMP</span><span class="o">-</span><span class="n">APPMESH</span><span class="w"> </span><span class="o">--</span><span class="n">region</span><span class="w"> </span><span class="n">$AWS_REGION</span><span class="w"></span>
+</code></pre></div>
+
+<p>Add the necessary Helm repositories:</p>
+<div class="codehilite"><pre><span></span><code>helm repo add prometheus-community https://prometheus-community.github.io/helm-charts &amp;&amp; \
+helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics 
+</code></pre></div>
+
+<p>For more details on AMP check out the <a href="https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html">AMP Getting started</a> guide.</p>
+<h3 id="scraping-ingesting-metrics">Scraping &amp; ingesting metrics<a class="headerlink" href="#scraping-ingesting-metrics" title="Permanent link">&para;</a></h3>
+<p>AMP does not directly scrape operational metrics from containerized workloads in a Kubernetes cluster. 
+You must deploy and manage a Prometheus server or an OpenTelemetry agent such as the
+<a href="https://github.com/aws-observability/aws-otel-collector">AWS Distro for OpenTelemetry Collector</a>
+or the Grafana Agent to perform this task. In this receipe, we walk you through the 
+process of configuring the Grafana Agent to scrape the Envoy metrics and analyze them using AMP and AMG.</p>
+<h4 id="configure-grafana-agent">Configure Grafana Agent<a class="headerlink" href="#configure-grafana-agent" title="Permanent link">&para;</a></h4>
+<p>The Grafana Agent is a lightweight alternative to running a full Prometheus server. 
+It keeps the necessary parts for discovering and scraping Prometheus exporters and 
+sending metrics to a Prometheus-compatible backend. The Grafana Agent also includes 
+native support for AWS Signature Version 4 (Sigv4) for AWS Identity and Access Management (IAM) 
+authentication.</p>
+<p>We now walk you through the steps to configure an IAM role to send Prometheus metrics to AMP. 
+We install the Grafana Agent on the EKS cluster and forward metrics to AMP.</p>
+<h4 id="configure-permissions">Configure permissions<a class="headerlink" href="#configure-permissions" title="Permanent link">&para;</a></h4>
+<p>The Grafana Agent scrapes operational metrics from containerized workloads running in the 
+EKS cluster and sends them to AMP. Data sent to AMP must be signed with valid AWS credentials
+using Sigv4 to authenticate and authorize each client request for the managed service.</p>
+<p>The Grafana Agent can be deployed to an EKS cluster to run under the identity of a Kubernetes service account. 
+With IAM roles for service accounts (IRSA), you can associate an IAM role with a Kubernetes service account
+and thus provide IAM permissions to any pod that uses the service account. </p>
+<p>Prepare the IRSA setup as follows:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">kubectl</span><span class="w"> </span><span class="n">create</span><span class="w"> </span><span class="n">namespace</span><span class="w"> </span><span class="n">grafana</span><span class="o">-</span><span class="n">agent</span><span class="w"></span>
+
+<span class="k">export</span><span class="w"> </span><span class="n">WORKSPACE</span><span class="o">=$</span><span class="p">(</span><span class="n">aws</span><span class="w"> </span><span class="n">amp</span><span class="w"> </span><span class="n">list</span><span class="o">-</span><span class="n">workspaces</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">jq</span><span class="w"> </span><span class="o">-</span><span class="n">r</span><span class="w"> </span><span class="s1">&#39;.workspaces[] | select(.alias==&quot;AMP-APPMESH&quot;).workspaceId&#39;</span><span class="p">)</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="n">ROLE_ARN</span><span class="o">=$</span><span class="p">(</span><span class="n">aws</span><span class="w"> </span><span class="n">iam</span><span class="w"> </span><span class="n">get</span><span class="o">-</span><span class="n">role</span><span class="w"> </span><span class="o">--</span><span class="n">role</span><span class="o">-</span><span class="n">name</span><span class="w"> </span><span class="n">EKS</span><span class="o">-</span><span class="n">GrafanaAgent</span><span class="o">-</span><span class="n">AMP</span><span class="o">-</span><span class="n">ServiceAccount</span><span class="o">-</span><span class="n">Role</span><span class="w"> </span><span class="o">--</span><span class="n">query</span><span class="w"> </span><span class="n">Role</span><span class="o">.</span><span class="n">Arn</span><span class="w"> </span><span class="o">--</span><span class="n">output</span><span class="w"> </span><span class="n">text</span><span class="p">)</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="n">NAMESPACE</span><span class="o">=</span><span class="s2">&quot;grafana-agent&quot;</span><span class="w"></span>
+<span class="k">export</span><span class="w"> </span><span class="n">REMOTE_WRITE_URL</span><span class="o">=</span><span class="s2">&quot;https://aps-workspaces.$AWS_REGION.amazonaws.com/workspaces/$WORKSPACE/api/v1/remote_write&quot;</span><span class="w"></span>
+</code></pre></div>
+
+<p>You can use the <a href="gca-permissions.sh">gca-permissions.sh</a> 
+shell script to automate the following steps (note to replace the placeholder variable 
+<code>YOUR_EKS_CLUSTER_NAME</code> with the name of your EKS cluster):</p>
+<ul>
+<li>Creates an IAM role named <code>EKS-GrafanaAgent-AMP-ServiceAccount-Rol</code>e with an IAM policy that has permissions to remote-write into an AMP workspace.</li>
+<li>Creates a Kubernetes service account named <code>grafana-agent</code> under the <code>grafana-agent</code> namespace that is associated with the IAM role.</li>
+<li>Creates a trust relationship between the IAM role and the OIDC provider hosted in your Amazon EKS cluster.</li>
+</ul>
+<p>You need <code>kubectl</code> and <code>eksctl</code> CLI tools to run the <code>gca-permissions.sh</code> script. 
+They must be configured to access your Amazon EKS cluster.</p>
+<p>Now create a manifest file, <a href="grafana-agent.yaml">grafana-agent.yaml</a>, 
+with the scrape configuration to extract Envoy metrics and deploy the Grafana Agent. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At time of writing, this solution will not work for EKS on Fargate
+due to the lack of support for daemon sets there.</p>
+</div>
+<p>The example deploys a daemon set named <code>grafana-agent</code> and a deployment named 
+<code>grafana-agent-deployment</code>. The <code>grafana-agent</code> daemon set collects metrics 
+from pods on the cluster and the <code>grafana-agent-deployment</code> deployment collects
+metrics from services that do not live on the cluster, such as the EKS control plane.</p>
+<div class="codehilite"><pre><span></span><code>kubectl apply -f grafana-agent.yaml
+</code></pre></div>
+
+<p>After the <code>grafana-agent</code> is deployed, it will collect the metrics and ingest 
+them into the specified AMP workspace. Now deploy a sample application on the 
+EKS cluster and start analyzing the metrics.</p>
+<h2 id="sample-application">Sample application<a class="headerlink" href="#sample-application" title="Permanent link">&para;</a></h2>
+<p>To install an application and inject an Envoy container, we use the AppMesh controller for Kubernetes.</p>
+<p>First, install the base application by cloning the examples repo:</p>
+<div class="codehilite"><pre><span></span><code>git clone https://github.com/aws/aws-app-mesh-examples.git
+</code></pre></div>
+
+<p>And now apply the resources to your cluster:</p>
+<div class="codehilite"><pre><span></span><code>kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/1_base_application
+</code></pre></div>
+
+<p>Check the pod status and make sure it is running:</p>
+<div class="codehilite"><pre><span></span><code>$ kubectl -n prod get all
+
+NAME                            READY   STATUS    RESTARTS   AGE
+pod/dj-cb77484d7-gx9vk          <span class="m">1</span>/1     Running   <span class="m">0</span>          6m8s
+pod/jazz-v1-6b6b6dd4fc-xxj9s    <span class="m">1</span>/1     Running   <span class="m">0</span>          6m8s
+pod/metal-v1-584b9ccd88-kj7kf   <span class="m">1</span>/1     Running   <span class="m">0</span>          6m8s
+</code></pre></div>
+
+<p>Next, install the App Mesh controller and meshify the deployment:</p>
+<div class="codehilite"><pre><span></span><code>kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/2_meshed_application/
+kubectl rollout restart deployment -n prod dj jazz-v1 metal-v1
+</code></pre></div>
+
+<p>Now we should see two containers running in each pod:</p>
+<div class="codehilite"><pre><span></span><code>$ kubectl -n prod get all
+NAME                        READY   STATUS    RESTARTS   AGE
+dj-7948b69dff-z6djf         <span class="m">2</span>/2     Running   <span class="m">0</span>          57s
+jazz-v1-7cdc4fc4fc-wzc5d    <span class="m">2</span>/2     Running   <span class="m">0</span>          57s
+metal-v1-7f499bb988-qtx7k   <span class="m">2</span>/2     Running   <span class="m">0</span>          57s
+</code></pre></div>
+
+<p>Generate the traffic for 5 mins and we will visualize it AMG later:</p>
+<div class="codehilite"><pre><span></span><code><span class="nt">dj_pod</span><span class="o">=</span><span class="err">`</span><span class="nt">kubectl</span><span class="w"> </span><span class="nt">get</span><span class="w"> </span><span class="nt">pod</span><span class="w"> </span><span class="nt">-n</span><span class="w"> </span><span class="nt">prod</span><span class="w"> </span><span class="nt">--no-headers</span><span class="w"> </span><span class="nt">-l</span><span class="w"> </span><span class="nt">app</span><span class="o">=</span><span class="nt">dj</span><span class="w"> </span><span class="nt">-o</span><span class="w"> </span><span class="nt">jsonpath</span><span class="o">=</span><span class="s1">&#39;{.items</span><span class="cp">[</span><span class="o">*</span><span class="cp">]</span><span class="s1">.metadata.name}&#39;</span><span class="err">`</span><span class="w"></span>
+
+<span class="nt">loop_counter</span><span class="o">=</span><span class="nt">0</span><span class="w"></span>
+<span class="nt">while</span><span class="w"> </span><span class="cp">[</span><span class="w"> </span><span class="nv">$loop_counter</span><span class="w"> </span><span class="na">-le</span><span class="w"> </span><span class="mi">300</span><span class="w"> </span><span class="cp">]</span><span class="w"> </span><span class="o">;</span><span class="w"> </span><span class="nt">do</span><span class="w"> </span><span class="err">\</span><span class="w"></span>
+<span class="nt">kubectl</span><span class="w"> </span><span class="nt">exec</span><span class="w"> </span><span class="nt">-n</span><span class="w"> </span><span class="nt">prod</span><span class="w"> </span><span class="nt">-it</span><span class="w"> </span><span class="o">$</span><span class="nt">dj_pod</span><span class="w">  </span><span class="nt">-c</span><span class="w"> </span><span class="nt">dj</span><span class="w"> </span><span class="err">\</span><span class="w"></span>
+<span class="nt">--</span><span class="w"> </span><span class="nt">curl</span><span class="w"> </span><span class="nt">jazz</span><span class="p">.</span><span class="nc">prod</span><span class="p">.</span><span class="nc">svc</span><span class="p">.</span><span class="nc">cluster</span><span class="p">.</span><span class="nc">local</span><span class="p">:</span><span class="nd">9080</span><span class="w"> </span><span class="o">;</span><span class="w"> </span><span class="nt">echo</span><span class="w"> </span><span class="o">;</span><span class="w"> </span><span class="nt">loop_counter</span><span class="o">=$</span><span class="cp">[</span><span class="nv">$loop_counter</span><span class="o">+</span><span class="mi">1</span><span class="cp">]</span><span class="w"> </span><span class="o">;</span><span class="w"> </span><span class="err">\</span><span class="w"></span>
+<span class="nt">done</span><span class="w"></span>
+</code></pre></div>
+
+<h3 id="create-an-amg-workspace">Create an AMG workspace<a class="headerlink" href="#create-an-amg-workspace" title="Permanent link">&para;</a></h3>
+<p>To create an AMG workspace follow the steps in the <a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">Getting Started with AMG</a> blog post. 
+To grant users access to the dashboard, you must enable AWS SSO. After you create the workspace, you can assign access to the Grafana workspace to an individual user or a user group. 
+By default, the user has a user type of viewer. Change the user type based on the user role. Add the AMP workspace as the data source and then start creating the dashboard.</p>
+<p>In this example, the user name is <code>grafana-admin</code> and the user type is <code>Admin</code>.
+Select the required data source. Review the configuration, and then choose <code>Create workspace</code>.</p>
+<p><img alt="Creating AMP Workspace" src="../../images/workspace-creation.png" /></p>
+<h3 id="configure-amg-datasource">Configure AMG datasource<a class="headerlink" href="#configure-amg-datasource" title="Permanent link">&para;</a></h3>
+<p>To configure AMP as a data source in AMG, in the <code>Data sources</code> section, choose 
+<code>Configure in Grafana</code>, which will launch a Grafana workspace in the browser. 
+You can also manually launch the Grafana workspace URL in the browser.</p>
+<p><img alt="Configuring Datasource" src="../../images/configuring-amp-datasource.png" /></p>
+<p>As you can see from the screenshots, you can view Envoy metrics like downstream 
+latency, connections, response code, and more. You can use the filters shown to 
+drill down to the envoy metrics of a particular application.</p>
+<h3 id="configure-amg-dashboard">Configure AMG dashboard<a class="headerlink" href="#configure-amg-dashboard" title="Permanent link">&para;</a></h3>
+<p>After the data source is configured, import a custom dashboard to analyze the Envoy metrics. 
+For this we use a pre-defined dashboard, so choose <code>Import</code> (shown below), and 
+then enter the ID <code>11022</code>. This will import the Envoy Global dashboard so you can 
+start analyzing the Envoy metrics.</p>
+<p><img alt="Custom Dashboard" src="../../images/import-dashboard.png" /></p>
+<h3 id="configure-alerts-on-amg">Configure alerts on AMG<a class="headerlink" href="#configure-alerts-on-amg" title="Permanent link">&para;</a></h3>
+<p>You can configure Grafana alerts when the metric increases beyond the intended threshold. 
+With AMG, you can configure how often the alert must be evaluated in the dashboard and send the notification. 
+Before you create alert rules, you must create a notification channel.</p>
+<p>In this example, configure Amazon SNS as a notification channel. The SNS topic must be 
+prefixed with <code>grafana</code> for notifications to be successfully published to the topic
+if you use the defaults, that is, the <a href="https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account">service-managed permissions</a>.</p>
+<p>Use the following command to create an SNS topic named <code>grafana-notification</code>:</p>
+<div class="codehilite"><pre><span></span><code>aws sns create-topic --name grafana-notification
+</code></pre></div>
+
+<p>And subscribe to it via an email address. Make sure you specify the region and Account ID in the 
+below command:</p>
+<div class="codehilite"><pre><span></span><code><span class="n">aws</span><span class="w"> </span><span class="n">sns</span><span class="w"> </span><span class="n">subscribe</span><span class="w"> </span><span class="se">\</span><span class="w"></span>
+<span class="w">    </span><span class="o">--</span><span class="n">topic</span><span class="o">-</span><span class="n">arn</span><span class="w"> </span><span class="nl">arn:aws:sns:</span><span class="o">&lt;</span><span class="n">region</span><span class="o">&gt;:&lt;</span><span class="n">account</span><span class="o">-</span><span class="n">id</span><span class="o">&gt;:</span><span class="n">grafana</span><span class="o">-</span><span class="n">notification</span><span class="w"> </span><span class="se">\</span><span class="w"></span>
+<span class="w">    </span><span class="o">--</span><span class="n">protocol</span><span class="w"> </span><span class="n">email</span><span class="w"> </span><span class="se">\</span><span class="w"></span>
+<span class="w">    </span><span class="o">--</span><span class="n">notification</span><span class="o">-</span><span class="n">endpoint</span><span class="w"> </span><span class="o">&lt;</span><span class="n">email</span><span class="o">-</span><span class="n">id</span><span class="o">&gt;</span><span class="w"></span>
+</code></pre></div>
+
+<p>Now, add a new notification channel from the Grafana dashboard.
+Configure the new notification channel named grafana-notification. For Type, 
+use AWS SNS from the drop down. For Topic, use the ARN of the SNS topic you just created. 
+For Auth provider, choose AWS SDK Default.</p>
+<p><img alt="Creating Notification Channel" src="../../images/alert-configuration.png" /></p>
+<p>Now configure an alert if downstream latency exceeds five milliseconds in a one-minute period.
+In the dashboard, choose Downstream latency from the dropdown, and then choose Edit. 
+On the Alert tab of the graph panel, configure how often the alert rule should be evaluated 
+and the conditions that must be met for the alert to change state and initiate its notifications.</p>
+<p>In the following configuration, an alert is created if the downstream latency exceeds the 
+threshold and notification will be sent through the configured grafana-alert-notification channel to the SNS topic.</p>
+<p><img alt="Alert Configuration" src="../../images/downstream-latency.png" /></p>
+<h2 id="cleanup">Cleanup<a class="headerlink" href="#cleanup" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Remove the resources and cluster:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>kubectl delete all --all
+eksctl delete cluster --name AMP-EKS-CLUSTER
+</code></pre></div>
+
+<ol>
+<li>Remove the AMP workspace:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>aws amp delete-workspace --workspace-id `aws amp list-workspaces --alias prometheus-sample-app --query &#39;workspaces[0].workspaceId&#39; --output text`
+</code></pre></div>
+
+<ol>
+<li>Remove the amp-iamproxy-ingest-role IAM role:</li>
+</ol>
+<div class="codehilite"><pre><span></span><code>aws delete-role --role-name amp-iamproxy-ingest-role
+</code></pre></div>
+
+<ol>
+<li>Remove the AMG workspace by removing it from the console. </li>
+</ol>
+
+
+
+
+              
+            </article>
+            
+          </div>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Amazon 2022
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs", "navigation.tabs.sticky"], "search": "../../../assets/javascripts/workers/search.ecf98df9.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version.title": "Select version"}}</script>
+    
+    
+      <script src="../../../assets/javascripts/bundle.9c69f0bc.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,31 +1,34 @@
-# Welcome!
+# Recipes
 
-We are covering recipes for observability (o11y) solutions at AWS on this site.
-This includes managed services such as [Amazon Managed Service for Prometheus][amp]
+In here you will find curated guidance, how-to's, and links to other resources that help with the application of observability (o11y) to various use cases. This includes managed services such as [Amazon Managed Service for Prometheus][amp]
 and [Amazon Managed Grafana][amg] as well as agents, for example [OpenTelemetry][otel]
-and [Fluent Bit][fluentbit]. We want to address the needs of both developers and
-infrastructure folks.
+and [Fluent Bit][fluentbit]. Content here is not resitricted to AWS tools alone though, and many open source projects are referenced here. 
+
+We want to address the needs of both developers and infrastructure folks equally, so many of the recipes "cast a wide net". We encourge you to explore and find the solutions that work best for what you are seeking to accomplish.
+
+!!! info
+    The content here is derived from actual customer engagement by our Solutions Architects, Professional Services, and feedback from other customers. Everything you will find here has been implemented by our actual customers in their own environments.
 
 The way we think about the o11y space is as follows: we decompose it into
 [six dimensions][dimensions] you can then combine to arrive at a specific solution:
 
 | dimension | examples |
 |---------------|--------------|
-| destinations  | [Prometheus][amp] &middot; [Grafana][amg] &middot; [OpenSearch][aes] &middot; [CloudWatch][cw] &middot; [Jaeger][jaeger] |
-| agents        | [ADOT][adot] &middot; [Fluent Bit][fluentbit] &middot; CW agent &middot; X-Ray agent |
-| languages     | [Java][java] &middot; Python &middot; .NET &middot; [JavaScript][nodejs] &middot; Go &middot; Rust |
-| infra & databases  |  [RDS][rds] &middot; [DynamoDB][dynamodb] &middot; [MSK][msk] |
-| compute unit | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
-| compute engine | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
+| Destinations  | [Prometheus][amp] &middot; [Grafana][amg] &middot; [OpenSearch][aes] &middot; [CloudWatch][cw] &middot; [Jaeger][jaeger] |
+| Agents        | [ADOT][adot] &middot; [Fluent Bit][fluentbit] &middot; CW agent &middot; X-Ray agent |
+| Languages     | [Java][java] &middot; Python &middot; .NET &middot; [JavaScript][nodejs] &middot; Go &middot; Rust |
+| Infra & databases  |  [RDS][rds] &middot; [DynamoDB][dynamodb] &middot; [MSK][msk] |
+| Compute unit | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
+| Compute engine | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
 
-For example, you might be looking for a solution to:
-
-!!! question "Exemplary solution specification"
+!!! question "Example solution requirement"
     I need a logging solution for a Python app I'm running on EKS on Fargate
     with the goal to store the logs in an S3 bucket for further consumption
 
-1. *Destination*: S3 bucket for further consumption
-1. *Agent*: FluentBit
+One stack that would fit this need is the following:
+
+1. *Destination*: An S3 bucket for further consumption of data
+1. *Agent*: FluentBit to emit log data from EKS
 1. *Language*: Python
 1. *Infra & DB*: N/A
 1. *Compute unit*: Kubernetes (EKS)
@@ -103,6 +106,6 @@ check out:
 [rds]: rds.md "Amazon Relational Database Service"
 [msk]: msk.md "Amazon Managed Streaming for Apache Kafka"
 [mit0]: https://github.com/aws/mit-0 "MIT-0"
-[discussion]: https://github.com/aws-observability/aws-o11y-recipes/discussions "Discussions"
+[discussion]: https://github.com/aws-observability/observability-best-practices/discussions "Discussions"
 [o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube playlist"
 [o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS Observability home"

@@ -53,9 +53,10 @@ nav:
     # - Tracing with ADOT: tools/adot-traces.md
     - Tracing with AWS X-Ray: tools/xray.md
 
-  # Recipes are currently not all mapped - this is a WIP
   - Curated recipes:
-    - recipes/index.md
+    - Recipes: recipes/index.md
+    - Dimensions: recipes/dimensions.md
+    - Telemetry: recipes/telemetry.md
     - By Compute:
       - recipes/apprunner.md
       - recipes/eks.md

@@ -20,7 +20,7 @@ Check out the following recipes:
 
 ## Metrics
 
-- [Viewing App Runner service metrics reported to CloudWatch](apprunner-cwm)
+- [Viewing App Runner service metrics reported to CloudWatch][apprunner-cwm]
 
 
 ## Traces

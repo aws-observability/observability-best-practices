@@ -20,7 +20,7 @@ There are many event signals which are not directly from your application, but m
 
 Consider a timechart of application performance, such as time to place an order on your web front end. The time chart lets you see there has been a step change in the response time a few days ago. It might be useful to know if there have been any recent deployments. Consider being able to see a timechart of recent deployments alongside, or superimposed on the same chart?
 
-![Visualizing events](../images/visualizing_events.png)
+![Visualizing events](images/visualizing_events.png)
 
 !!! tip
 	Consider which events might be useful to you to understand the wider context. The events that are important to you might be code deployments, infrastructure change events, adding new data (such as publishing new items for sale, or bulk adding new users), or modifying or adding functionality (such as changing the way people add items to their cart).
@@ -61,4 +61,4 @@ Your platform may have a specific way to capture events, or you may have to brin
 
 Explore how your system will let you visualize these. Can you identify events which are related to your application? Can you combine data onto a single chart? Even if there is nothing specific, you should at least be able to create a timechart alongside your other data to visually correlate. Keep the time axis the same, and consider stacking these vertically for easy comparison.
 
-![Visualizing events as stacked charts](../images/visualizing_events_stacked.png)
+![Visualizing events as stacked charts](images/visualizing_events_stacked.png)

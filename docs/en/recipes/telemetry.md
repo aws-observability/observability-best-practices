@@ -6,12 +6,14 @@ they are consumed:
 
 ![telemetry concept](images/telemetry.png)
 
+!!! success
+    See the [Data types](/signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
+
 Let's further dive into the concepts introduced in above figure.
 
 ## Sources
 
-We consider sources as something where signals come from. There are two
-types of sources:
+We consider sources as something where signals come from. There are two types of sources:
 
 1. Things under your control, that is, the application source code, via instrumentation.
 1. Everything else you may use, such as managed services, not under your (direct) control.

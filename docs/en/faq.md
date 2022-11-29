@@ -46,9 +46,9 @@ Taken from [Wikipedia](https://en.wikipedia.org/wiki/Technical_debt):
 
 > In software development, technical debt (also known as design debt or code debt) is the implied cost of additional rework caused by choosing an easy (limited) solution now instead of using a better approach that would take longer.
 
-> Analogous with monetary debt, if technical debt is not repaid, it can accumulate "interest", making it harder to implement changes. Unaddressed technical debt increases software entropy and cost of further rework. Similarly to monetary debt, technical debt is not necessarily a bad thing, and sometimes (e.g. as a proof-of-concept) is required to move projects forward. On the other hand, some experts claim that the "technical debt" metaphor tends to minimize the ramifications, which results in insufficient prioritization of the necessary work to correct it.
+Basically, you accumulate debt over time as you add more to your workload without removing legacy code, applications, or human processes. Technical debt detracts from your absolute productivity. 
 
-> As a change is started on a codebase, there is often the need to make other coordinated changes in other parts of the codebase or documentation. Changes required that are not completed are considered debt, and until paid, will incur interest on top of interest, making it cumbersome to build a project. Although the term is primarily used in software development, it can also be applied to other professions. 
+For example, if you have to spend 10% of your time performing maintenance on a legacy system that provides little or no direct value to your business, then that 10% is a *cost* that you pay. Reduction of technical debt equals increasing effective time to create new products that add value. 
 
 ## What is the separation of concerns
 

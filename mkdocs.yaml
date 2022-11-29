@@ -1,6 +1,10 @@
 site_name: AWS Observability Best Practices
 docs_dir: 'docs/en'
 copyright: 'Copyright &copy; Amazon 2022'
+site_author: 'AWS'
+site_url: 'https://aws-observability.github.io/observability-best-practices/'
+repo_name: 'aws-observability/observability-best-practices'
+repo_url: 'https://github.com/aws-observability/observability-best-practices'
 
 theme:
   logo: ../images/aws-logo.png

@@ -1,9 +1,7 @@
 # Contributors
 
 The content on this site is maintained by AWS open source observability 
-service team members. Our goal is to improve the discovery of relevant
-good practices on how to set up and use AWS managed services and 
-open source projects in the observability space.
+service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
 
 Recipes and content contributions in general so far are from the following
 people:
@@ -25,7 +23,7 @@ people:
 * Rodrigue Koffi
 * Sheetal Joshi
 * Tomasz Wrzonski
-*  Tyler Lynch
+* Tyler Lynch
 * Vijayan Sarathy
 * Vikram Venkataraman
 * Yiming Peng

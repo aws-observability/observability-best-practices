@@ -1,5 +1,9 @@
 # observability-best-practices
 
+## Welcome
+
+This is the source for the AWS Observability Best Practices site. Everyone is welcome to contribute here, not just AWS employees!
+
 ## How to run/develop this site
 
 This site is developed with `mkdocs` which is similar to Hugo with an auto-reload feature. Just save your progress and watch it refresh your browser.

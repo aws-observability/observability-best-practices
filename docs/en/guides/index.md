@@ -32,7 +32,7 @@ Regardless of your metric data's original location or format, it must be maintai
 
 Tool selection is important and has a profound difference in how you operate and remediate problems. But worse than choosing a sub-optimal tool is tooling for all basic signal types. For example, collecting basic [logs](../signals/logs) from a workload, but missing transaction traces, leaves you with a gap. The result is an incohesive view of your entire application experiece. All modern approaches to observability depend on "connecting the dots" with application traces.
 
-A complete picture of your health and operations requires tools that collect [logs](../signals/logs), [metrics](../signals/metrics), and [traces](../signals/traces), and then performs correlation, analysis, [anomaly detection](../signals/anomalies),  [dashboarding](../tools/dashboards), [alarms](../tools/alarms) and more.
+A complete picture of your health and operations requires tools that collect [logs](../signals/logs), [metrics](../signals/metrics), and [traces](../signals/traces), and then performs correlation, analysis, [anomaly detection](../signals/anomalies), [dashboarding](../tools/dashboards), [alarms](../tools/alarms) and more.
 
 !!! info
 	Some observability solutions may not contain all of the above but are intended to augment, extend, or give added value to existing systems. In all cases, tool interoperability and extensibility is an important consideration when beginning an observability project.

@@ -21,7 +21,7 @@ Having identified your important top-level KPIs, your next job is to have an aut
 * Tracking user registrations in this same system
 * Measure how long customers stay on web pages, and (again) push this data to a time series
 
-Most customers have this data already, though not necessarily in the right places from an observability perspective. Sales data can typically be found in relational databases or business intelligence reporting systems, along with user registrations. And data from visit duration can be extracted from logs or from [Real User Monitoring](../../tools/rum).
+Most customers have this data already, though not necessarily in the right places from an observability perspective. Sales data can typically be found in relational databases or business intelligence reporting systems, along with user registrations. And data from visit duration can be extracted from logs or from [Real User Monitoring](../tools/rum).
 
 Regardless of your metric data's original location or format, it must be maintained as a [*time series*](https://en.wikipedia.org/wiki/Time_series). Every key metric that matters most to you, whether it is business, personal, academic, or for any other purpose, must be in a time series format for you to correlate it with other observability data (sometimes known as *signals* or *telemetry*).
 
@@ -30,9 +30,9 @@ Regardless of your metric data's original location or format, it must be maintai
 
 ## Context propagation and tool selection
 
-Tool selection is important and has a profound difference in how you operate and remediate problems. But worse than choosing a sub-optimal tool is tooling for all basic signal types. For example, collecting basic [logs](../../signals/logs) from a workload, but missing transaction traces, leaves you with a gap. The result is an incohesive view of your entire application experiece. All modern approaches to observability depend on "connecting the dots" with application traces.
+Tool selection is important and has a profound difference in how you operate and remediate problems. But worse than choosing a sub-optimal tool is tooling for all basic signal types. For example, collecting basic [logs](../signals/logs) from a workload, but missing transaction traces, leaves you with a gap. The result is an incohesive view of your entire application experiece. All modern approaches to observability depend on "connecting the dots" with application traces.
 
-A complete picture of your health and operations requires tools that collect [logs](../../signals/logs), [metrics](../../signals/metrics), and [traces](../../signals/traces), and then performs correlation, analysis, [anomaly detection](../../signals/anomalies), [dashboarding](../../tools/dashboards), [alarms](../../tools/alarms) and more.
+A complete picture of your health and operations requires tools that collect [logs](../signals/logs), [metrics](../signals/metrics), and [traces](../signals/traces), and then performs correlation, analysis, [anomaly detection](../signals/anomalies), [dashboarding](../tools/dashboards), [alarms](../tools/alarms) and more.
 
 !!! info
 	Some observability solutions may not contain all of the above but are intended to augment, extend, or give added value to existing systems. In all cases, tool interoperability and extensibility is an important consideration when beginning an observability project.
@@ -71,13 +71,13 @@ If you have to pick one area to instrument, it will undoubtedly be your integrat
 1. The duration of the request and response
 1. The status of the response
 
-And to create the cohesive, holistic view that observability requires, a [single unique identier](../../signals/traces) for the entire request chain must be included in the signals collected.
+And to create the cohesive, holistic view that observability requires, a [single unique identier](../signals/traces) for the entire request chain must be included in the signals collected.
 
 #### Don't forget about the end-user experience
 
 Having a complete view of your workload means understanding it at all tiers, including how your end users experience it. Measuring, quantifying, and understanding when your objectives are at risk from a poor user experience is just as important as watching for free disk space or CPU utilization - if not more important!
 
-If your workloads are ones that interact directly with the end user (such as any application served as a web site or mobile app) then [Real User Monitoring](../../tools/rum) monitors not just the "last mile" of delivery to the user, but how they actually have experienced your application. Ultimately, none of the observability journey matters if your users are unable to actually use your services.
+If your workloads are ones that interact directly with the end user (such as any application served as a web site or mobile app) then [Real User Monitoring](../tools/rum) monitors not just the "last mile" of delivery to the user, but how they actually have experienced your application. Ultimately, none of the observability journey matters if your users are unable to actually use your services.
 
 ## Data is power, but don't sweat the small stuff
 
@@ -87,6 +87,6 @@ Depending on the size of your application, you may have a very large number of c
 
 Like security, observability should not be an afterthought to your development or operations. The best practice is to put observability early in your planning, just like security, which creates a model for people to work with and reduces opaque corners of your application. Adding transaction tracing after major development work is done takes time, even with [auto-instrumentation](../../tools/traces). The effort returns far greater returns! But doing so late in your development cycle may create some rework.
 
-Rather than bolting observability in your workload later one, use it to help *accelerate* your work. Proper [logging](../../signals/logs), [metric](../../signals/metrics), and [trace](../../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward.
+Rather than bolting observability in your workload later one, use it to help *accelerate* your work. Proper [logging](../signals/logs), [metric](../signals/metrics), and [trace](../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward.
 
 [^1]: Amazon uses the *working backwards* process extensively as a way to obsession over our customers and their outcomes, and we highly recommend that anyone working on observability solutions work backwards from their own objectives in the same way. You can read more about *working backwards* on [Werner Vogels's blog](https://www.allthingsdistributed.com/2006/11/working_backwards.html).

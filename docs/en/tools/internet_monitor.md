@@ -3,7 +3,7 @@
 !!! warning
 	As of this writing, [Internet Monitor](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) is available in **preview** in the CloudWatch console. The scope of features for general availability may change from what you experience today.
 
-[Collecting telemetry from all tiers of your workload](../../guides/#collect-telemetry-from-all-tiers-of-your-workload) is a best practice, and one that can be a challenge. But what are the tiers of your workload? For some it may be web, application, and database servers. Other people might view their workload as front-end and backend. And those operating web applications can use [Real User Monitoring](../../tools/rum)(RUM) to observe the health of these apps as experienced by end users. 
+[Collecting telemetry from all tiers of your workload](../../guides/#collect-telemetry-from-all-tiers-of-your-workload) is a best practice, and one that can be a challenge. But what are the tiers of your workload? For some it may be web, application, and database servers. Other people might view their workload as front end and back end. And those operating web applications can use [Real User Monitoring](../../tools/rum)(RUM) to observe the health of these apps as experienced by end users. 
 
 But what about the traffic between the client and the datacenter or cloud services provider? And for applications that are not served as web pages and therefore cannot use RUM?
 
@@ -24,7 +24,7 @@ The way that Internet Monitor operates is by watching for traffic that comes eit
 	Only create monitors that watch traffic which traverses the Internet. Private traffic, such as between two hosts in a private network ([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/)) cannot be monitored using Internet Monitor.
 
 !!! success
-	Priotitize traffic from mobile applications where applicable. Customers roaming between providers, or in remote geographical locations, may have different or unexpected experiences that you should be aware of.
+	Prioritize traffic from mobile applications where applicable. Customers roaming between providers, or in remote geographical locations, may have different or unexpected experiences that you should be aware of.
 
 ## Enable actions through EventBridge and CloudWatch
 
@@ -51,7 +51,7 @@ Likewise, extensive details of traffic are available in [CloudWatch Logs](../../
         "city": "",
         "countryCode": "US",
         "subdivisionCode": "",
-        "asn": 14061,
+        "asn": 00000,
         "networkName": "MY-AWESOME-ASN"
     },
     "serviceLocation": "us-east-1",

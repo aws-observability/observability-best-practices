@@ -1,0 +1,39 @@
+name: Go
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  Build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Set up Go 1.x
+      uses: actions/setup-go@v2
+      with:
+        go-version: ^1.17
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get dependencies
+      run: cd lambda && go mod download
+
+    - name: Go Build
+      run: make go_build
+
+    - name: Go Test
+      run: make go_test
+
+    - name: NPM Build
+      run: make npm_build
+
+    - name: NPM Lint
+      run: make npm_lint
+      
+    - name: NPM Test
+      run: make npm_test

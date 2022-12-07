@@ -1,0 +1,5 @@
+searchTags:
+    key: env
+    value: production
+AMP:
+    remote_write: https://www.amazon.com

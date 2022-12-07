@@ -1,0 +1,10 @@
+searchTags:
+    key: env
+    value: production
+    metrics:
+      - name: FreeStorageSpace
+        statistics:
+        - Sum
+      - name: ClusterStatus.green
+        statistics:
+        - Minimum

@@ -1,0 +1,295 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot passes 1`] = `
+Object {
+  "Mappings": Object {
+    "awscdkawskinesisfirehoseCidrBlocks": Object {
+      "af-south-1": Object {
+        "FirehoseCidrBlock": "13.244.121.224/27",
+      },
+      "ap-east-1": Object {
+        "FirehoseCidrBlock": "18.162.221.32/27",
+      },
+      "ap-northeast-1": Object {
+        "FirehoseCidrBlock": "13.113.196.224/27",
+      },
+      "ap-northeast-2": Object {
+        "FirehoseCidrBlock": "13.209.1.64/27",
+      },
+      "ap-northeast-3": Object {
+        "FirehoseCidrBlock": "13.208.177.192/27",
+      },
+      "ap-south-1": Object {
+        "FirehoseCidrBlock": "13.232.67.32/27",
+      },
+      "ap-southeast-1": Object {
+        "FirehoseCidrBlock": "13.228.64.192/27",
+      },
+      "ap-southeast-2": Object {
+        "FirehoseCidrBlock": "13.210.67.224/27",
+      },
+      "ca-central-1": Object {
+        "FirehoseCidrBlock": "35.183.92.128/27",
+      },
+      "cn-north-1": Object {
+        "FirehoseCidrBlock": "52.81.151.32/27",
+      },
+      "cn-northwest-1": Object {
+        "FirehoseCidrBlock": "161.189.23.64/27",
+      },
+      "eu-central-1": Object {
+        "FirehoseCidrBlock": "35.158.127.160/27",
+      },
+      "eu-north-1": Object {
+        "FirehoseCidrBlock": "13.53.63.224/27",
+      },
+      "eu-south-1": Object {
+        "FirehoseCidrBlock": "15.161.135.128/27",
+      },
+      "eu-west-1": Object {
+        "FirehoseCidrBlock": "52.19.239.192/27",
+      },
+      "eu-west-2": Object {
+        "FirehoseCidrBlock": "18.130.1.96/27",
+      },
+      "eu-west-3": Object {
+        "FirehoseCidrBlock": "35.180.1.96/27",
+      },
+      "me-south-1": Object {
+        "FirehoseCidrBlock": "15.185.91.0/27",
+      },
+      "sa-east-1": Object {
+        "FirehoseCidrBlock": "18.228.1.128/27",
+      },
+      "us-east-1": Object {
+        "FirehoseCidrBlock": "52.70.63.192/27",
+      },
+      "us-east-2": Object {
+        "FirehoseCidrBlock": "13.58.135.96/27",
+      },
+      "us-gov-east-1": Object {
+        "FirehoseCidrBlock": "18.253.138.96/27",
+      },
+      "us-gov-west-1": Object {
+        "FirehoseCidrBlock": "52.61.204.160/27",
+      },
+      "us-west-1": Object {
+        "FirehoseCidrBlock": "13.57.135.192/27",
+      },
+      "us-west-2": Object {
+        "FirehoseCidrBlock": "52.89.255.224/27",
+      },
+    },
+  },
+  "Parameters": Anything,
+  "Resources": Object {
+    "KinesisFirehoseStream145246AA": Object {
+      "DependsOn": Array [
+        "KinesisFirehoseStreamS3DestinationRoleDefaultPolicyA2153F26",
+      ],
+      "Properties": Anything,
+      "Type": "AWS::KinesisFirehose::DeliveryStream",
+    },
+    "KinesisFirehoseStreamLogGroup011DAC23": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "RetentionInDays": 731,
+      },
+      "Type": "AWS::Logs::LogGroup",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "KinesisFirehoseStreamLogGroupS3Backup54A39488": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Ref": "KinesisFirehoseStreamLogGroup011DAC23",
+        },
+      },
+      "Type": "AWS::Logs::LogStream",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "KinesisFirehoseStreamLogGroupS3Destination1A07EF66": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Ref": "KinesisFirehoseStreamLogGroup011DAC23",
+        },
+      },
+      "Type": "AWS::Logs::LogStream",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "KinesisFirehoseStreamS3DestinationRoleA03C84C3": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "firehose.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "KinesisFirehoseStreamS3DestinationRoleDefaultPolicyA2153F26": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "S3BucketName6C245ECE",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "S3BucketName6C245ECE",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "logs:CreateLogStream",
+                "logs:PutLogEvents",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "KinesisFirehoseStreamLogGroup011DAC23",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "KinesisStreamFunctionBDADDE8E",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "KinesisFirehoseStreamS3DestinationRoleDefaultPolicyA2153F26",
+        "Roles": Array [
+          Object {
+            "Ref": "KinesisFirehoseStreamS3DestinationRoleA03C84C3",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "KinesisFirehoseStreamServiceRole3FE13945": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "firehose.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "KinesisStreamFunctionBDADDE8E": Object {
+      "DependsOn": Array [
+        "KinesisStreamFunctionServiceRoleCB94B1BB",
+      ],
+      "Properties": Anything,
+      "Type": "AWS::Lambda::Function",
+    },
+    "KinesisStreamFunctionServiceRoleCB94B1BB": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/AmazonPrometheusRemoteWriteAccess",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "S3BucketName6C245ECE": Object {
+      "DeletionPolicy": "Retain",
+      "Properties": Object {
+        "BucketEncryption": Object {
+          "ServerSideEncryptionConfiguration": Array [
+            Object {
+              "ServerSideEncryptionByDefault": Object {
+                "SSEAlgorithm": "aws:kms",
+              },
+            },
+          ],
+        },
+      },
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+  },
+}
+`;

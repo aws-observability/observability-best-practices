@@ -50,6 +50,7 @@ nav:
     # - Alerting and Incident Management: tools/alerting_and_incident_management.md
     - Dashboards: tools/dashboards.md
     # - Embedded Metric Format: tools/emf.md
+    - Internet Monitor: tools/internet_monitor.md
     - Logs: tools/logs.md
     - Metrics: tools/metrics.md
     - Real User Monitoring: tools/rum.md

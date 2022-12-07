@@ -1,0 +1,9 @@
+AMP:
+    remote_write_url: "https://aps-workspaces.us-east-2.amazonaws.com/workspaces/{workspace}/api/v1/remote_write"
+    region: REGION
+
+Kinesis_Firehose:
+    delivery_stream_name: Kinesis Firehose Stream
+
+S3:
+    s3_bucket_name: S3 Bucket Name 

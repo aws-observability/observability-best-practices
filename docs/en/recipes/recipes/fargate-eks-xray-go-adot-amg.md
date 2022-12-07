@@ -88,7 +88,7 @@ and add [X-Ray as a data source](https://docs.aws.amazon.com/grafana/latest/user
 ## Signal generator
 
 We will be using `ho11y`, a synthetic signal generator available
-via the [sandbox](https://github.com/aws-observability/aws-o11y-recipes/tree/main/sandbox/ho11y)
+via the [sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y)
 of the recipes repository. So, if you haven't cloned the repo into your local
 environment, do now:
 

@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Lambda application that calls the Lambda API for Performance Insights
+  metrics in Amazon Aurora.
+Parameters:
+  TargetMetricNamespace:
+    Type: String
+    Default: /AuroraMonitoringGrafana/PerformanceInsightMetrics
+    Description: Target Amazon CloudWatch namespace where you want to public custom
+      metrics
+Resources:
+  function:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.8
+      CodeUri: s3://aurora-monitoring-grafana-pi-494d34597b3a4e8c/280c1b143b842055b23932598b88bee4
+      Description: Publish Custom Cloudwatch Metrics for Performance Insights
+      Timeout: 900
+      Environment:
+        Variables:
+          TargetMetricNamespace:
+            Ref: TargetMetricNamespace
+      Policies:
+      - AWSLambdaBasicExecutionRole
+      - AWSLambda_ReadOnlyAccess
+      - AmazonRDSPerformanceInsightsReadOnly
+      - CloudWatchAgentServerPolicy
+      Tracing: Active
+      Events:
+        Schedule:
+          Type: ScheduleV2
+          Properties:
+            ScheduleExpression: rate(15 minutes)
+            Name: TestScheduleV2Function
+            Description: Test schedule event
+            State: ENABLED

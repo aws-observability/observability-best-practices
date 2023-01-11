@@ -4,8 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -263,6 +266,17 @@ func encodeWriteRequestIntoProtoAndSnappy(writeRequest *prompb.WriteRequest) *by
 	return body
 }
 
+func roleSessionName() string {
+	suffix, err := os.Hostname()
+
+	if err != nil {
+		now := time.Now().Unix()
+		suffix = strconv.FormatInt(now, 10)
+	}
+
+	return "aws-sigv4-proxy-" + suffix
+}
+
 func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	// Create an HTTP request from the body content and set necessary parameters.
 	req, err := http.NewRequest("POST", os.Getenv("PROMETHEUS_REMOTE_WRITE_URL"), body)
@@ -274,7 +288,18 @@ func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 		Region: aws.String(os.Getenv("AWS_REGION")),
 	})
 
-	signer := v4.NewSigner(sess.Config.Credentials)
+	roleArn := os.Getenv("AWS_AMP_ROLE_ARN")
+
+	var awsCredentials *credentials.Credentials
+	if roleArn != "" {
+		awsCredentials = stscreds.NewCredentials(sess, roleArn, func(p *stscreds.AssumeRoleProvider) {
+			p.RoleSessionName = roleSessionName()
+		})
+	} else {
+		awsCredentials = sess.Config.Credentials
+	}
+
+	signer := v4.NewSigner(awsCredentials)
 
 	req.Header.Set("Content-Type", "application/x-protobuf")
 	req.Header.Set("Content-Encoding", "snappy")

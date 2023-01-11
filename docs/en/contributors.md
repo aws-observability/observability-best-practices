@@ -18,6 +18,7 @@ people:
 * Kevin Lewin
 * Mahesh Biradar
 * Michael Hausenblas
+* Munish Dabra
 * Rich McDonough
 * Rob Sable
 * Rodrigue Koffi

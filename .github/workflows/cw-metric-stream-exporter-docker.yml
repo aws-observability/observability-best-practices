@@ -21,8 +21,8 @@ jobs:
       with:
         path: sandbox/CWMetricStreamExporter
 
-    - name: list files
-      run: ls
+    - name: Go to the right dir
+      run: cd sandbox/CWMetricStreamExporter
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1

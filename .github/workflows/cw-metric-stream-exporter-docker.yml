@@ -1,4 +1,4 @@
-name: CWMetricStreamExporter Docker Buildx & Publish Image
+name: CWMetricStreamExporter - Docker
 
 on:
   push:
@@ -18,6 +18,10 @@ jobs:
     steps:    
     - name: Checkout the code
       uses: actions/checkout@v2
+      with:
+        path: sandbox/CWMetricStreamExporter
+
+    - run: ls
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1

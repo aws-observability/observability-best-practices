@@ -1,4 +1,4 @@
-name: Go
+name: CWMetricStreamExporter - Go
 
 on:
   push:
@@ -19,6 +19,8 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+      with:
+        path: sandbox/CWMetricStreamExporter
 
     - name: Get dependencies
       run: cd lambda && go mod download

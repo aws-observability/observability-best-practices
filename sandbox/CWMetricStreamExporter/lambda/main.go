@@ -103,6 +103,7 @@ func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (event
 
 	_, err := createWriteRequestAndSendToAPS(timeSeries)
 	if err != nil {
+		logError(err)
 		panic(err)
 	}
 	return response, nil
@@ -261,6 +262,7 @@ func encodeWriteRequestIntoProtoAndSnappy(writeRequest *prompb.WriteRequest) *by
 	data, err := proto.Marshal(writeRequest)
 
 	if err != nil {
+		logError(err)
 		panic(err)
 	}
 
@@ -295,6 +297,7 @@ func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	// Create an HTTP request from the body content and set necessary parameters.
 	req, err := http.NewRequest("POST", os.Getenv("PROMETHEUS_REMOTE_WRITE_URL"), body)
 	if err != nil {
+		logError(err)
 		panic(err)
 	}
 

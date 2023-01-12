@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -19,7 +17,6 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
-	"github.com/aws/smithy-go"
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/snappy"
 	"github.com/prometheus/prometheus/prompb"
@@ -61,7 +58,7 @@ const (
 func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (events.KinesisFirehoseResponse, error) {
 
 	var response events.KinesisFirehoseResponse
-	var timeSeries []*prompb.TimeSeries
+	var timeSeries []prompb.TimeSeries
 	// These are the 4 value types from Cloudwatch, each of which map to a Prometheus Gauge
 	values := []Values{Count, Max, Min, Sum}
 
@@ -84,7 +81,7 @@ func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (event
 				currentSamples := handleAddSamples(value, metricStreamData.Value, metricStreamData.Timestamp)
 				samples = append(samples, currentSamples)
 
-				singleTimeSeries := &prompb.TimeSeries{
+				singleTimeSeries := prompb.TimeSeries{
 					Labels:  currentLabels,
 					Samples: samples,
 				}
@@ -96,14 +93,13 @@ func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (event
 		var transformedRecord events.KinesisFirehoseResponseRecord
 		transformedRecord.RecordID = record.RecordID
 		transformedRecord.Result = events.KinesisFirehoseTransformedStateOk
-		transformedRecord.Data = []byte(string(record.Data))
+		transformedRecord.Data = record.Data
 
 		response.Records = append(response.Records, transformedRecord)
 	}
 
 	_, err := createWriteRequestAndSendToAPS(timeSeries)
 	if err != nil {
-		logError(err)
 		panic(err)
 	}
 	return response, nil
@@ -134,15 +130,15 @@ func sanitize(text string) string {
 	return replacer.Replace(text)
 }
 
-func handleAddLabels(valueType Values, metricName string, namespace string, dimensions Dimensions) []*prompb.Label {
+func handleAddLabels(valueType Values, metricName string, namespace string, dimensions Dimensions) []prompb.Label {
 
-	var labels []*prompb.Label
+	var labels []prompb.Label
 
 	metricNameLabel := createMetricNameLabel(metricName, valueType)
 	namespaceLabel := createNamespaceLabel(namespace)
 	dimensionLabels := createDimensionLabels(dimensions)
 	labels = append(labels, dimensionLabels...)
-	labels = append(labels, &metricNameLabel, &namespaceLabel)
+	labels = append(labels, metricNameLabel, namespaceLabel)
 	return labels
 }
 
@@ -162,27 +158,27 @@ func handleAddSamples(valueType Values, value Value, timestamp int64) prompb.Sam
 }
 
 func createMetricNameLabel(metricName string, valueType Values) prompb.Label {
-	metricNameLabel := &prompb.Label{
+	metricNameLabel := prompb.Label{
 		Name:  "__name__",
 		Value: sanitize(metricName) + "_" + string(valueType),
 	}
-	return *metricNameLabel
+	return metricNameLabel
 }
 
 func createNamespaceLabel(namespace string) prompb.Label {
-	namespaceLabel := &prompb.Label{
+	namespaceLabel := prompb.Label{
 		Name:  "namespace",
 		Value: sanitize(namespace),
 	}
-	return *namespaceLabel
+	return namespaceLabel
 }
 
-func createDimensionLabels(dimensions Dimensions) []*prompb.Label {
-	var labels []*prompb.Label
+func createDimensionLabels(dimensions Dimensions) []prompb.Label {
+	var labels []prompb.Label
 
 	// Checks to see if the class / resource / service / type exists, if so creates a label for the dimension.
 	if dimensions.Class != "" {
-		classLabel := &prompb.Label{
+		classLabel := prompb.Label{
 			Name:  "class",
 			Value: sanitize(dimensions.Class),
 		}
@@ -190,7 +186,7 @@ func createDimensionLabels(dimensions Dimensions) []*prompb.Label {
 	}
 
 	if dimensions.Resource != "" {
-		resourceLabel := &prompb.Label{
+		resourceLabel := prompb.Label{
 			Name:  "resource",
 			Value: sanitize(dimensions.Resource),
 		}
@@ -198,7 +194,7 @@ func createDimensionLabels(dimensions Dimensions) []*prompb.Label {
 	}
 
 	if dimensions.Service != "" {
-		serviceLabel := &prompb.Label{
+		serviceLabel := prompb.Label{
 			Name:  "service",
 			Value: sanitize(dimensions.Service),
 		}
@@ -206,7 +202,7 @@ func createDimensionLabels(dimensions Dimensions) []*prompb.Label {
 	}
 
 	if dimensions.Type != "" {
-		typeLabel := &prompb.Label{
+		typeLabel := prompb.Label{
 			Name:  "type",
 			Value: sanitize(dimensions.Type),
 		}
@@ -248,7 +244,7 @@ func createMinSample(value Value, timestamp int64) prompb.Sample {
 	return minSample
 }
 
-func createWriteRequestAndSendToAPS(timeseries []*prompb.TimeSeries) (*http.Response, error) {
+func createWriteRequestAndSendToAPS(timeseries []prompb.TimeSeries) (*http.Response, error) {
 	writeRequest := &prompb.WriteRequest{
 		Timeseries: timeseries,
 	}
@@ -262,7 +258,6 @@ func encodeWriteRequestIntoProtoAndSnappy(writeRequest *prompb.WriteRequest) *by
 	data, err := proto.Marshal(writeRequest)
 
 	if err != nil {
-		logError(err)
 		panic(err)
 	}
 
@@ -282,22 +277,10 @@ func roleSessionName() string {
 	return "aws-sigv4-proxy-" + suffix
 }
 
-func logError(err error) {
-	if err != nil {
-		var oe *smithy.OperationError
-		if errors.As(err, &oe) {
-			log.Printf("failed to call service: %s, operation: %s, error: %v", oe.Service(), oe.Operation(), oe.Unwrap())
-		} else {
-			log.Println(err.Error())
-		}
-	}
-}
-
 func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	// Create an HTTP request from the body content and set necessary parameters.
 	req, err := http.NewRequest("POST", os.Getenv("PROMETHEUS_REMOTE_WRITE_URL"), body)
 	if err != nil {
-		logError(err)
 		panic(err)
 	}
 
@@ -321,11 +304,16 @@ func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	req.Header.Set("Content-Type", "application/x-protobuf")
 	req.Header.Set("Content-Encoding", "snappy")
 	req.Header.Set("X-Prometheus-Remote-Write-Version", "0.1.0")
-	signer.Sign(req, body, "aps", os.Getenv("PROMETHEUS_REGION"), time.Now())
+
+	_, err = signer.Sign(req, body, "aps", os.Getenv("PROMETHEUS_REGION"), time.Now())
+
+	if err != nil {
+		panic(err)
+	}
 
 	resp, err := http.DefaultClient.Do(req)
+
 	if err != nil {
-		logError(err)
 		panic(err)
 	}
 	return resp, err

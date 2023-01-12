@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -17,6 +19,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
+	"github.com/aws/smithy-go"
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/snappy"
 	"github.com/prometheus/prometheus/prompb"
@@ -277,6 +280,17 @@ func roleSessionName() string {
 	return "aws-sigv4-proxy-" + suffix
 }
 
+func logError(err error) {
+	if err != nil {
+		var oe *smithy.OperationError
+		if errors.As(err, &oe) {
+			log.Printf("failed to call service: %s, operation: %s, error: %v", oe.Service(), oe.Operation(), oe.Unwrap())
+		} else {
+			log.Println(err.Error())
+		}
+	}
+}
+
 func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	// Create an HTTP request from the body content and set necessary parameters.
 	req, err := http.NewRequest("POST", os.Getenv("PROMETHEUS_REMOTE_WRITE_URL"), body)
@@ -308,6 +322,7 @@ func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		logError(err)
 		panic(err)
 	}
 	return resp, err

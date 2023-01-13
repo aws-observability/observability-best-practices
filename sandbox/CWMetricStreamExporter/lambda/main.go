@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
@@ -312,6 +313,10 @@ func sendRequestToAPS(body *bytes.Reader) (*http.Response, error) {
 	}
 
 	resp, err := http.DefaultClient.Do(req)
+
+	if resp.StatusCode != http.StatusOK {
+		log.Println("Request to AMP failed with status: ", resp.StatusCode)
+	}
 
 	if err != nil {
 		panic(err)

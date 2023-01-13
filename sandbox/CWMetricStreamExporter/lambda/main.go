@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
+	"github.com/prometheus/prometheus/prompb"
 	"log"
 	"net/http"
 	"os"
@@ -20,7 +21,6 @@ import (
 	v4 "github.com/aws/aws-sdk-go/aws/signer/v4"
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/snappy"
-	"github.com/prometheus/prometheus/prompb"
 )
 
 type MetricStreamData struct {
@@ -34,12 +34,15 @@ type MetricStreamData struct {
 	Value            Value      `json:"value"`
 	Unit             string     `json:"unit"`
 }
-type Dimensions struct {
-	Class    string `json:"Class"`
-	Resource string `json:"Resource"`
-	Service  string `json:"Service"`
-	Type     string `json:"Type"`
-}
+
+type Dimensions = map[string]interface{}
+
+//	type Dimensions struct {
+//		Class    string `json:"Class"`
+//		Resource string `json:"Resource"`
+//		Service  string `json:"Service"`
+//		Type     string `json:"Type"`
+//	}
 type Value struct {
 	Count float64 `json:"count"`
 	Sum   float64 `json:"sum"`
@@ -56,14 +59,14 @@ const (
 	Min          = "min"
 )
 
-func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (events.KinesisFirehoseResponse, error) {
+func HandleRequest(ctx context.Context, firehoseEvent events.KinesisFirehoseEvent) (events.KinesisFirehoseResponse, error) {
 
 	var response events.KinesisFirehoseResponse
 	var timeSeries []prompb.TimeSeries
 	// These are the 4 value types from Cloudwatch, each of which map to a Prometheus Gauge
 	values := []Values{Count, Max, Min, Sum}
 
-	for _, record := range evnt.Records {
+	for _, record := range firehoseEvent.Records {
 
 		splitRecord := strings.Split(string(record.Data), string('\n'))
 		for _, x := range splitRecord {
@@ -73,7 +76,10 @@ func HandleRequest(ctx context.Context, evnt events.KinesisFirehoseEvent) (event
 				continue
 			}
 			var metricStreamData MetricStreamData
-			json.Unmarshal([]byte(x), &metricStreamData)
+			err := json.Unmarshal([]byte(x), &metricStreamData)
+			if err != nil {
+				panic(err)
+			}
 
 			// For each metric, the labels + valuetype is the __name__ of the sample, and the corresponding single sample value is used to create the timeseries.
 			for _, value := range values {
@@ -177,37 +183,13 @@ func createNamespaceLabel(namespace string) prompb.Label {
 func createDimensionLabels(dimensions Dimensions) []prompb.Label {
 	var labels []prompb.Label
 
-	// Checks to see if the class / resource / service / type exists, if so creates a label for the dimension.
-	if dimensions.Class != "" {
-		classLabel := prompb.Label{
-			Name:  "class",
-			Value: sanitize(dimensions.Class),
+	// create one label for each dimension
+	for key, value := range dimensions {
+		dimLabel := prompb.Label{
+			Name:  sanitize(key),
+			Value: sanitize(value.(string)),
 		}
-		labels = append(labels, classLabel)
-	}
-
-	if dimensions.Resource != "" {
-		resourceLabel := prompb.Label{
-			Name:  "resource",
-			Value: sanitize(dimensions.Resource),
-		}
-		labels = append(labels, resourceLabel)
-	}
-
-	if dimensions.Service != "" {
-		serviceLabel := prompb.Label{
-			Name:  "service",
-			Value: sanitize(dimensions.Service),
-		}
-		labels = append(labels, serviceLabel)
-	}
-
-	if dimensions.Type != "" {
-		typeLabel := prompb.Label{
-			Name:  "type",
-			Value: sanitize(dimensions.Type),
-		}
-		labels = append(labels, typeLabel)
+		labels = append(labels, dimLabel)
 	}
 
 	return labels

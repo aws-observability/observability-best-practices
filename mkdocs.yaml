@@ -36,7 +36,9 @@ nav:
     # - Creating an observability strategy: guides/strategy.md
 
   - Data types:
-    - Logs: signals/logs.md
+    - Logs: 
+      - Logs: signals/logs/index.md
+      - CloudWatch Logs Insights Example Queries: signals/logs/logs-insights-examples.md
     - Metrics: signals/metrics.md
     - Traces: signals/traces.md
     - Alarms: signals/alarms.md

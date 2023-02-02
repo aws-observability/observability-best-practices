@@ -108,7 +108,7 @@ With data delivered into CloudWatch Logs, you can now search through it as requi
 !!! tip
 	You can see how much data each query actually scans directly from the CloudWatch console. This approach can help you create queries that are efficient.
 
-	![Preview of the CloudWatch Logs console](/images/cwl1.png)
+	![Preview of the CloudWatch Logs console](../../images/cwl1.png)
 
 ### Share successful queries with others
 
@@ -117,7 +117,7 @@ While the [CloudWatch Logs query syntax](https://docs.aws.amazon.com/AmazonCloud
 !!! success
 	Save queries that are often repeated into CloudWatch Logs so they can be prepopulated for your users.
 
-	![The CloudWatch Logs query editor page](/images/cwl2.png)
+	![The CloudWatch Logs query editor page](../../images/cwl2.png)
 
 
 [^1]: See [How to search through your AWS Systems Manager Session Manager console logs – Part 1](https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/) for a practical example of CloudWatch Logs log group encryption with access privileges.

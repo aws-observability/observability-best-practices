@@ -51,7 +51,9 @@ nav:
     - Dashboards: tools/dashboards.md
     # - Embedded Metric Format: tools/emf.md
     - Internet Monitor: tools/internet_monitor.md
-    - Logs: tools/logs.md
+    - Logs: 
+      - Logs: tools/logs/index.md
+      - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
     - Metrics: tools/metrics.md
     - Real User Monitoring: tools/rum.md
     - Synthetic Testing: tools/synthetics.md

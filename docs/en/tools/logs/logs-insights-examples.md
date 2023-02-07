@@ -59,3 +59,25 @@ fields @timestamp, @message
 | sort ip asc
 | limit 20
 ```
+
+## VPC Flow Logs
+
+### Filtering flow logs for selected source IP address with action as REJECT.
+
+```
+fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP' and action = 'REJECT'
+| sort @timestamp desc
+| limit 20
+```
+
+This query will return the last 20 log messages containing a 'REJECT' from the $SOURCEIP. This can be used to detect if traffic is explicitly rejected, or if the issue is some type of client side network configuration problem.
+
+!!! tip
+    Ensure that you substitute the value of the IP address you are interested in for '$SOURCEIP'
+
+```
+fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' and action = 'REJECT'
+| sort @timestamp desc
+| limit 20
+```
+

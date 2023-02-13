@@ -60,6 +60,22 @@ fields @timestamp, @message
 | limit 20
 ```
 
+## CloudTrail Logs
+
+### API throttling errors grouped by error category
+
+```
+stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userAgent, errorCode
+| filter errorCode = 'ThrottlingException' 
+| sort eventCount desc
+```
+
+This query allows you to see API throttling errors grouped by category and displayed in descending order.
+
+!!! tip
+    
+    In order to use this query you would first need to ensure you are [sending CloudTrail logs to CloudWatch.](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)
+
 ## VPC Flow Logs
 
 ### Filtering flow logs for selected source IP address with action as REJECT.

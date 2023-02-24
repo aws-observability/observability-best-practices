@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -51,6 +52,8 @@ type Value struct {
 }
 
 type Values string
+
+var rex = regexp.MustCompile("(\\w+)=(\\w+)")
 
 const (
 	Count Values = "count"
@@ -144,8 +147,11 @@ func handleAddLabels(valueType Values, metricName string, namespace string, dime
 	metricNameLabel := createMetricNameLabel(metricName, valueType)
 	namespaceLabel := createNamespaceLabel(namespace)
 	dimensionLabels := createDimensionLabels(dimensions)
+	awsAccountLabels := createExtraLabels(os.Getenv("EXTRA_LABELS"))
 	labels = append(labels, dimensionLabels...)
+	labels = append(labels, awsAccountLabels...)
 	labels = append(labels, metricNameLabel, namespaceLabel)
+
 	return labels
 }
 
@@ -178,6 +184,23 @@ func createNamespaceLabel(namespace string) prompb.Label {
 		Value: sanitize(namespace),
 	}
 	return namespaceLabel
+}
+
+func createExtraLabels(labelsFromEnv string) []prompb.Label {
+	var labels []prompb.Label
+
+	data := rex.FindAllStringSubmatch(labelsFromEnv, -1)
+
+	// create one label for each kev-value
+	for _, kv := range data {
+		dimLabel := prompb.Label{
+			Name:  sanitize(kv[1]),
+			Value: sanitize(kv[2]),
+		}
+		labels = append(labels, dimLabel)
+	}
+
+	return labels
 }
 
 func createDimensionLabels(dimensions Dimensions) []prompb.Label {

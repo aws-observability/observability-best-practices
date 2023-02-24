@@ -53,7 +53,7 @@ type Value struct {
 
 type Values string
 
-var rex = regexp.MustCompile("(\\w+)=(\\w+)")
+var rex = regexp.MustCompile("(\\w+):(\\w+)")
 
 const (
 	Count Values = "count"

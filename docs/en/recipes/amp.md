@@ -22,6 +22,7 @@ Check out the following recipes:
 - [Monitor Istio on EKS using Amazon Managed Prometheus and Amazon Managed Grafana][amp-istio-monitoring]
 - [Monitoring Amazon EKS Anywhere using Amazon Managed Service for Prometheus and Amazon Managed Grafana][amp-anywhere-monitoring]
 - [Introducing Amazon EKS Observability Accelerator][eks-accelerator]
+- [Installing the Prometheus mixin dashboards with AMP and Amazon Managed Grafana](recipes/amp-mixin-dashboards.md)
 [amp-main]: https://aws.amazon.com/prometheus/
 [amp-gettingstarted]: https://aws.amazon.com/blogs/mt/getting-started-amazon-managed-service-for-prometheus/
 [amp-xaccount]: https://aws.amazon.com/blogs/opensource/setting-up-cross-account-ingestion-into-amazon-managed-service-for-prometheus/

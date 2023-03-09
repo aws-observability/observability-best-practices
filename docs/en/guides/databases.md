@@ -1,6 +1,4 @@
-# Database monitoring prescriptive guidance
-
-## Best Practices to monitor RDS and Aurora databases
+# Best Practices to monitor RDS and Aurora databases
 
 ### CloudWatch Metrics
 

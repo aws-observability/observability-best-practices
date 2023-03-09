@@ -2,7 +2,9 @@
 
 ### CloudWatch Metrics
 
-CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Here are some best practices for using CloudWatch Metrics:
+CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS sends metrics to CloudWatch for each active database instance every minute. Monitoring is enabled by default. For example, Amazon RDS sends CPU utilization, the number of database connections in use, freeable memory, network throughput, read and write IOPS information, and more.
+
+Here are some best practices for using CloudWatch Metrics:
 
 * Configure CloudWatch Metrics to monitor all critical metrics for your databases, such as CPU utilization, disk space, and database connections.
 * Set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible.
@@ -43,12 +45,20 @@ Database Audit Logs provide a detailed record of all actions taken on your RDS a
 * Use a centralized log management solution, such as Amazon CloudWatch Logs or Amazon Kinesis Data Streams, to collect and analyze your Database Audit Logs.
 * Monitor your Database Audit Logs regularly for suspicious activity, and take action to investigate and resolve any issues as quickly
 
+### Database Slow Query and Error Logs
+
+Slow query logs help you find slow-performing queries in the database so you can investigate the reasons behind the slowness and tune the queries if needed. Error logs help you to find the query errors, which further helps you find the changes in the application due to those errors. 
+
+Monitoring the slow query log and error log by creating a CloudWatch dashboard using Amazon CloudWatch Logs Insights (which enables you to interactively search and analyze your log data in Amazon CloudWatch Logs). 
+
 ### Amazon Managed Grafana
 Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. Here are some best practices for using Amazon Managed Grafana:
 
 * Use Amazon Managed Grafana to create dashboards that provide insights into your database performance and health.
 * Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
 * Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
+
+![image.png](./image.png)
 
 ## Reference material / Call to action
 

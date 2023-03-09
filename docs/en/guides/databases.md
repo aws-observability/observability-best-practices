@@ -58,7 +58,7 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 * Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
 * Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
 
-![image.png](./image.png)
+![image.png](../images/amg-rds-aurora.png)
 
 ## Reference material / Call to action
 

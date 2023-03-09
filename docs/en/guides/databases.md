@@ -28,15 +28,6 @@ Performance Insights is a tool that helps you analyze database performance data 
 * Enable Performance Insights for all of your RDS and Aurora instances.
 * Use Performance Insights to identify performance bottlenecks and troubleshoot issues with your databases.
 * Use the query profiling feature of Performance Insights to identify slow-running queries and optimize database performance.
-Amazon Managed Grafana
-
-### Amazon Managed Grafana
-Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. Here are some best practices for using Amazon Managed Grafana:
-
-* Use Amazon Managed Grafana to create dashboards that provide insights into your database performance and health.
-* Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
-* Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
-
 
 ### DevOps Guru for RDS
 
@@ -53,6 +44,13 @@ Database Audit Logs provide a detailed record of all actions taken on your RDS a
 * Enable Database Audit Logs for all of your RDS and Aurora instances, and configure them to capture all relevant data.
 * Use a centralized log management solution, such as Amazon CloudWatch Logs or Amazon Kinesis Data Streams, to collect and analyze your Database Audit Logs.
 * Monitor your Database Audit Logs regularly for suspicious activity, and take action to investigate and resolve any issues as quickly
+
+### Amazon Managed Grafana
+Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. Here are some best practices for using Amazon Managed Grafana:
+
+* Use Amazon Managed Grafana to create dashboards that provide insights into your database performance and health.
+* Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
+* Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
 
 ## Reference material / Call to action
 

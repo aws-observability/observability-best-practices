@@ -7,7 +7,9 @@ Monitoring is critical part of maintaining the reliability, availability, and pe
 
 ## Performance guidelines
 
-In general, acceptable values for performance metrics depend on what your application is doing relative to your baseline. Investigate consistent or trending variances from your baseline. The following metrics are often the source of performance issues:
+As a best practice, you want to start with establishing a baseline for your workloads. Acceptable values for performance metrics depend on how your application is doing relative to your baseline. Then, you can investigate consistent or trending variances from your baseline. 
+
+In general, the following metrics are often the source of performance issues:
 
 **High CPU or RAM consumption** – High values for CPU or RAM consumption might be appropriate, if they're in keeping with your goals for your application (like throughput or concurrency) and are expected.
 
@@ -15,7 +17,7 @@ In general, acceptable values for performance metrics depend on what your applic
 
 **Network traffic** – For network traffic, talk with your system administrator to understand what expected throughput is for your domain network and internet connection. Investigate network traffic if throughput is consistently lower than expected.
 
-**Database connections** – If you see high numbers of user connections and also decreases in instance performance and response time, consider constraining database connections. The best number of user connections for your DB instance varies based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group where the User Connections parameter is set to a value other than 0 (unlimited). You can either use an existing parameter group or create a new one. For more information, see Working with parameter groups.
+**Database connections** – If you see high numbers of user connections and also decreases in instance performance and response time, consider constraining database connections. The best number of user connections for your DB instance varies based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group where the User Connections parameter is set to a value other than 0 (unlimited). You can either use an existing parameter group or create a new one. 
 
 **IOPS metrics** – The expected values for IOPS metrics depend on disk specification and server configuration, so use your baseline to know what is typical. Investigate if values are consistently different than your baseline. For best IOPS performance, make sure that your typical working set fits into memory to minimize read and write operations.
 
@@ -26,21 +28,24 @@ When performance falls outside your established baseline, you might need to make
 
 ### Amazon CloudWatch metrics
 
-CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS sends metrics to CloudWatch for each active database instance every minute. Monitoring is enabled by default. For example, Amazon RDS sends CPU utilization, the number of database connections in use, freeable memory, network throughput, read and write IOPS information, and more.
+CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default. It is available for 15 days. Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the AWS/RDS namespace.
 
-By default, Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the AWS/RDS 
+Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are few of the key metrics which you want to monitor :
 
-https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html
+* CPU Utilization
+* DB Connections
+* Free Storage
+* Free Memory
+* Write IOPS
+* Read IOPS
 
-Here are some best practices for using CloudWatch Metrics:
+Then, you can set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
 
-* Configure CloudWatch Metrics to monitor all critical metrics for your databases, such as CPU utilization, disk space, and database connections.
-* Set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible.
-* Use CloudWatch Metrics to identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance.
-* Use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
+For more information on CloudWatch metrics, go to https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html .
 
-> TODO: Add dashboard image
 #### CloudWatch Log Insights
+
+You can use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
 
 > TODO: add more details
 
@@ -81,9 +86,13 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 
 ####  Enhanced Monitoring
 
-Enhanced Monitoring is a feature of RDS and Aurora that enables you to get metrics in real time for the operating system (OS) that your DB instance runs on. When you want to see how different processes or threads use the CPU on your database instance, Enhanced Monitoring metrics are useful. By default, RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. You can create metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
+Enhanced Monitoring enables you to get finer grain metrics in real time for the operating system (OS) that your DB instance runs on. 
 
-Enhanced Monitoring is available for the following database engines:
+RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in RDSOSMetrics Log group in Amazon CloudWatch. You have to option to choose granularity in between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
+
+Enhanced monitoring also include the OS level process list. 
+
+ Enhanced Monitoring is available currently for the following database engines:
 *MariaDB
 *Microsoft SQL Server
 *MySQL
@@ -114,7 +123,9 @@ Performance Insights is a tool that helps you analyze database performance data 
 * Use Performance Insights to identify performance bottlenecks and troubleshoot issues with your databases.
 * Use the query profiling feature of Performance Insights to identify slow-running queries and optimize database performance.
 
-> TODO: Add dashboard image
+Allow you to pin point on the root cause but rather than chasing symptoms.
+
+![database_performance_symptoms.png](../images/database_performance_symptoms.png)
 
 ## ML Based Performance Bottlenecks detection
 
@@ -136,15 +147,24 @@ CloudTrail provides a record of actions taken by a user, role, or an AWS service
 
 ## MySQL Specific Options
 
-• General Logs
-• Slow query logs
-• Processlist
-• InnoDB Monitor
-• Global Status
-• Performance Schema
-• Sys Schema
-• Information_schema.Innodb_metrics
+* General Logs
+* Slow query logs
+* Processlist
+* InnoDB Monitor
+* Global Status
+* Performance Schema
+* Sys Schema
+* Information_schema.Innodb_metrics
 
+## PostgreSQL Specific Options
+* Publish your database logs (Postgresql.log and Upgrade.log) to Amazon CloudWatch.
+* Enable Query Logs. Query information will be included in the Postgresql.log file.
+   - log_min_duration_statements
+   - log_statement
+
+   Query information will be included in the Postgresql.log file.
+
+> TODO: Add CLI commands to do that
 
 ## References for more information
 

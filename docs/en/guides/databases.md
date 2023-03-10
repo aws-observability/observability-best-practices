@@ -39,9 +39,7 @@ For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for
 
 You can use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
 
-> TODO: add more details
-
-> TODO: Add dashboard image
+Refer [Monitoring Amazon RDS log file](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html) for more information on monitoring RDS and Aurora logs with CloudWatch.
 
 #### CloudWatch Alarms
 

@@ -34,10 +34,10 @@ Using CloudWatch Metrics, you can identify trends or patterns in your database p
 
 * CPU Utilization
 * DB Connections
-* Free Storage
 * Free Memory
-* Write IOPS
-* Read IOPS
+* Network throughput
+* Read/Write Latency
+* Read/Write IOPS
 
 Then, you can set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
 
@@ -115,7 +115,7 @@ Here are some best practices for using Enhanced Monitoring:
 * Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
 * Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
 
-![database-enhanced-monitoring.png](../images/database-enhanced-monitoring.png)
+![db-enhanced-monitoring.png](../images/db-enhanced-monitoring.png)
 
 #### Performance Insights 
 

@@ -1,8 +1,20 @@
 # Best Practices to monitor RDS and Aurora databases
 
+### Summary 
+
+>> Talk about RDS, Aurora, Monitoring in general, Metrics, Logging and Performance monitoring for debugging. 
+
+Monitoring is critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring your Amazon RDS resources and responding to potential incidents:
+
+Logs, Metrics, Alarms, DevOps Guru etc
+
 ### CloudWatch Metrics
 
 CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS sends metrics to CloudWatch for each active database instance every minute. Monitoring is enabled by default. For example, Amazon RDS sends CPU utilization, the number of database connections in use, freeable memory, network throughput, read and write IOPS information, and more.
+
+By default, Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the AWS/RDS 
+
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html
 
 Here are some best practices for using CloudWatch Metrics:
 
@@ -12,14 +24,39 @@ Here are some best practices for using CloudWatch Metrics:
 * Use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
 Enhanced Monitoring
 
+### CloudWatch Alarms
+Using Amazon CloudWatch alarms, you watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
+
+
 ###  Enhanced Monitoring
 
-Enhanced Monitoring is a feature of RDS and Aurora that provides a more detailed view of database performance metrics. It enables you to monitor metrics at a higher frequency and provides additional metrics that are not available through CloudWatch Metrics. Here are some best practices for using Enhanced Monitoring:
+Enhanced Monitoring is a feature of RDS and Aurora that enables you to get metrics in real time for the operating system (OS) that your DB instance runs on. When you want to see how different processes or threads use the CPU on your database instance, Enhanced Monitoring metrics are useful. By default, RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. You can create metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
 
-Enable Enhanced Monitoring for all of your RDS and Aurora instances, and configure it to monitor all relevant metrics.
-Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
-Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
-Performance Insights
+Enhanced Monitoring is available for the following database engines:
+*MariaDB
+*Microsoft SQL Server
+*MySQL
+*Oracle
+*PostgreSQL
+
+**Different between CloudWatch and Enhanced Monitoring?**
+CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance. In contrast, Enhanced Monitoring gathers its metrics from an agent on the DB instance. A hypervisor creates and runs virtual machines (VMs). Using a hypervisor, an instance can support multiple guest VMs by virtually sharing memory and CPU. You might find differences between the CloudWatch and Enhanced Monitoring measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes. In this scenario, more virtual machines (VMs) are probably managed by the hypervisor layer on a single physical instance.
+
+
+To learn about all the OS metrics available using CloudWatch Logs, please refer below:
+
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html
+
+
+
+Here are some best practices for using Enhanced Monitoring:
+
+* Enable Enhanced Monitoring for all of your RDS and Aurora instances, and configure it to monitor all relevant metrics.
+* Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
+* Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
+* Performance Insights
+
+https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html
 
 ### Performance Insights 
 
@@ -59,6 +96,11 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 * Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
 
 ![image.png](../images/amg-rds-aurora.png)
+
+
+###  AWS CloudTrail Logs
+
+CloudTrail provides a record of actions taken by a user, role, or an AWS service in Amazon RDS. CloudTrail captures all API calls for Amazon RDS as events, including calls from the console and from code calls to Amazon RDS API operations. Using the information collected by CloudTrail, you can determine the request that was made to Amazon RDS, the IP address from which the request was made, who made the request, when it was made, and additional details. For more information, see Monitoring Amazon RDS API calls in AWS CloudTrail.
 
 ## Reference material / Call to action
 

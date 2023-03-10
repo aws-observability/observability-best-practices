@@ -2,6 +2,9 @@
 
 Monitoring is critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring health of your Amazon RDS and Aurora databases resources, detect issues before they become critical and optimize performance for consistent user experiance.  This guide provides the observability best practices to ensure your databases are running smoothly. 
 
+My important paragraph.
+{: .alert .alert-info}
+
 ## Performance guidelines
 
 As a best practice, you want to start with establishing a baseline performance for your workloads. When you set up a DB instance and run it with a typical workload, capture the average, maximum, and minimum values of all performance metrics. Do so at a number of different intervals (for example, one hour, 24 hours, one week, two weeks). This can give you an idea of what is normal. It helps to get comparisons for both peak and off-peak hours of operation. You can then use this information to identify when performance is dropping below standard levels.
@@ -119,29 +122,20 @@ CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB in
 
 To learn about all the metrics available with Enhanced Monitoring, please refer [OS metrics in Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html)
 
-Here are some best practices for using Enhanced Monitoring:
-
-* Enable Enhanced Monitoring for all of your RDS and Aurora instances, and configure it to monitor all relevant metrics.
-* Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
-* Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
 
 ![db-enhanced-monitoring.png](../images/db_enhanced_monitoring.png)
 
 #### Performance Insights 
 
-Performance Insights is a tool that helps you analyze database performance data and identify performance issues. It provides a visual representation of database performance metrics and helps you troubleshoot issues quickly. 
+Amazon RDS Performance Insights is a database performance tuning and monitoring feature that helps you quickly assess the load on your database, and determine when and where to take action. With the Performance Insights dashboard, you can visualize the database load on your db cluster and filter the load by waits, SQL statements, hosts, or users. It allows you to pin point on the root cause but rather than chasing symptoms. Performance Insights uses lightweight data collection methods that don’t impact the performance of your applications, and makes it easy to see which SQL statements are causing the load, and why. It requires no configuration or maintenance, and is currently available for Amazon Aurora (PostgreSQL- and MySQL-compatible editions), Amazon RDS for PostgreSQL, MySQL, MariaDB, SQL Server and Oracle.
 
-::: tips
-Currently, Performance Insights is available only for Aurora MySQL and PostgreSQL.
-:::
+Performance Insights provide seven days of free performance history retention and allow you to pay to extend up to 2-year long retention. You can enable Performance Insights from RDS management console or AWS CLI. Performance Insights also exposes a publicly available API to enable customers and third parties to integrate Performance Insights with their own custom tooling.
 
-Here are some best practices for using Performance Insights:
+**DBLoad** is the key metric which represents the average number of database active sessions. In Performance Insights, this data is queried as **db.load.avg** metric.
 
-* Enable Performance Insights for all of your RDS and Aurora instances.
-* Use Performance Insights to identify performance bottlenecks and troubleshoot issues with your databases.
-* Use the query profiling feature of Performance Insights to identify slow-running queries and optimize database performance.
+**Note** Currently, Performance Insights is available only for Aurora MySQL and PostgreSQL. 
 
-Allow you to pin point on the root cause but rather than chasing symptoms.
+For more information on using Performance Insights with Aurora, refer: [Monitoring DB load with Performance Insights on Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.html). For RDS, refer: 
 
 ![db_perf_insights.png](../images/db_perf_insights.png)
 

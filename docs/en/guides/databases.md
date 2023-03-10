@@ -135,14 +135,6 @@ Allow you to pin point on the root cause but rather than chasing symptoms.
 
 With DevOps Guru for RDS, you can monitor your databases for performance bottlenecks and operational issues. It uses Performance Insights metrics, analyzes them using Machine Learning (ML) to provide database-specific analyses of performance issues, and recommends corrective actions. When DevOps Guru for RDS detects a performance bottleneck or operational issue, it displays its findings in the DevOps Guru Console and sends notifications via AWS services, such as Amazon EventBridge and Amazon Simple Notification Service (SNS). This enables the developers to automatically manage and take real-time action on performance and operational issues before they become customer-impacting outages.
 
-Here are some best practices for using DevOps Guru for RDS:
-
-* Configure DevOps Guru to monitor all of your RDS and Aurora instances, and set up alerts to notify you of any anomalies or issues.
-* Use the DevOps Guru dashboard to monitor your database performance, and look for patterns or trends that may indicate issues or opportunities for optimization.
-* Use the recommendations provided by DevOps Guru to improve your database performance and optimize your configurations.
-
-#### DevOps Guru for RDS - Performance 
-
 ## Security Observability
 
 ####  AWS CloudTrail Logs

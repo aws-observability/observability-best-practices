@@ -67,6 +67,8 @@ In the CloudWatch alarms section, choose Create alarm.
 
 The alarm appears in the CloudWatch alarms section.
 
+Take a look at this [example](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-cluster-cloudwatch-alarm.html) to create an Amaon CloudWatch alarm for Multi-AZ DB cluster replica lag. 
+
 #### Database Audit Logs
 
 Database Audit Logs provide a detailed record of all actions taken on your RDS and Aurora databases, enabling you to monitor for unauthorized access, data changes, and other potentially harmful activities. Here are some best practices for using Database Audit Logs:

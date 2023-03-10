@@ -115,7 +115,7 @@ Here are some best practices for using Enhanced Monitoring:
 * Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
 * Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
 
-![db-enhanced-monitoring.png](../images/db-enhanced-monitoring.png)
+![db-enhanced-monitoring.png](../images/db_enhanced_monitoring.png)
 
 #### Performance Insights 
 
@@ -127,7 +127,7 @@ Performance Insights is a tool that helps you analyze database performance data 
 
 Allow you to pin point on the root cause but rather than chasing symptoms.
 
-![database_performance_symptoms.png](../images/database_performance_symptoms.png)
+![db_perf_insights.png](../images/db_perf_insights.png)
 
 ## ML Based Performance Bottlenecks detection
 

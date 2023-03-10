@@ -41,6 +41,8 @@ Using CloudWatch Metrics, you can identify trends or patterns in your database p
 
 Then, you can set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
 
+![db_cw_metrics.png](../images/db_cw_metrics.png)
+
 For more information on CloudWatch metrics, go to https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html .
 
 #### CloudWatch Log Insights

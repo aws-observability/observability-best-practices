@@ -30,7 +30,7 @@ Then, you can set up alarms to alert you when these metrics reach critical thres
 
 ![db_cw_metrics.png](../images/db_cw_metrics.png)
 
-For more information on CloudWatch metrics, go to https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html .
+For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html).
 
 #### CloudWatch Log Insights
 
@@ -96,7 +96,7 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 
 Enhanced Monitoring enables you to get finer grain metrics in real time for the operating system (OS) that your DB instance runs on. 
 
-RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in RDSOSMetrics Log group in Amazon CloudWatch. You have to option to choose granularity in between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
+RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in **RDSOSMetrics** Log group in Amazon CloudWatch. You have to option to choose granularity in between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
 
 Enhanced monitoring also include the OS level process list. 
 
@@ -111,9 +111,7 @@ Enhanced monitoring also include the OS level process list.
 CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance. In contrast, Enhanced Monitoring gathers its metrics from an agent on the DB instance. A hypervisor creates and runs virtual machines (VMs). Using a hypervisor, an instance can support multiple guest VMs by virtually sharing memory and CPU. You might find differences between the CloudWatch and Enhanced Monitoring measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes. In this scenario, more virtual machines (VMs) are probably managed by the hypervisor layer on a single physical instance.
 
 
-To learn about all the OS metrics available using CloudWatch Logs, please refer below:
-
-https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html
+To learn about all the metrics available with Enhanced Monitoring, please refer [OS metrics in Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html)
 
 Here are some best practices for using Enhanced Monitoring:
 
@@ -142,6 +140,8 @@ Allow you to pin point on the root cause but rather than chasing symptoms.
 With DevOps Guru for RDS, you can monitor your databases for performance bottlenecks and operational issues. It uses Performance Insights metrics, analyzes them using Machine Learning (ML) to provide database-specific analyses of performance issues, and recommends corrective actions. DevOps Guru for RDS can identify and analyze various performance-related database issues, such as over-utilization of host resources, database bottlenecks, or misbehavior of SQL queries, among others. When an issue or anomalous behavior is detected, Amazon DevOps Guru for RDS displays the finding on the DevOps Guru console and sends notifications using Amazon EventBridge or Amazon Simple Notification Service (SNS), allowing DevOps or SRE teams to take real-time action on performance and operational issues before they become customer-impacting outages.
 
 Amazon DevOps Guru for RDS establishes a baseline for the database metrics. Baselining involves analyzing the database performance metrics over a period of time to establish a normal behavior. Amazon DevOps Guru for RDS then uses ML to detect anomalies against the established baseline. If your workload pattern changes, then Amazon DevOps Guru for RDS establishes a new baseline that it uses to detect anomalies against the new normal. For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
+
+For more information on how to get started, please visit [Amazon DevOps Guru for RDS to Detect, Diagnose, and Resolve Amazon Aurora-Related Issues using ML](https://aws.amazon.com/blogs/aws/new-amazon-devops-guru-for-rds-to-detect-diagnose-and-resolve-amazon-aurora-related-issues-using-ml/)
 
 ## Security Observability
 

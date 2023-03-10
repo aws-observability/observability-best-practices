@@ -4,23 +4,8 @@ Monitoring is critical part of maintaining the reliability, availability, and pe
 
 ## Performance guidelines
 
-As a best practice, you want to start with establishing a baseline for your workloads. Acceptable values for performance metrics depend on how your application is doing relative to your baseline. Then, you can investigate consistent or trending variances from your baseline. 
-
-In general, the following metrics are often the source of performance issues:
-
-**High CPU or RAM consumption** – High values for CPU or RAM consumption might be appropriate, if they're in keeping with your goals for your application (like throughput or concurrency) and are expected.
-
-**Disk space consumption** – Investigate disk space consumption if space used is consistently at or above 85 percent of the total disk space. See if it is possible to delete data from the instance or archive data to a different system to free up space.
-
-**Network traffic** – For network traffic, talk with your system administrator to understand what expected throughput is for your domain network and internet connection. Investigate network traffic if throughput is consistently lower than expected.
-
-**Database connections** – If you see high numbers of user connections and also decreases in instance performance and response time, consider constraining database connections. The best number of user connections for your DB instance varies based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group where the User Connections parameter is set to a value other than 0 (unlimited). You can either use an existing parameter group or create a new one. 
-
-**IOPS metrics** – The expected values for IOPS metrics depend on disk specification and server configuration, so use your baseline to know what is typical. Investigate if values are consistently different than your baseline. For best IOPS performance, make sure that your typical working set fits into memory to minimize read and write operations.
-
-When performance falls outside your established baseline, you might need to make changes to optimize your database availability for your workload. For example, you might need to change the instance class of your DB instance. Or you might need to change the number of DB instances and read replicas that are available for clients.
-
-
+As a best practice, you want to start with establishing a baseline performance for your workloads. When you set up a DB instance and run it with a typical workload, capture the average, maximum, and minimum values of all performance metrics. Do so at a number of different intervals (for example, one hour, 24 hours, one week, two weeks). This can give you an idea of what is normal. It helps to get comparisons for both peak and off-peak hours of operation. You can then use this information to identify when performance is dropping below standard levels.
+ 
 ## Monitoring Options
 
 ### Amazon CloudWatch metrics
@@ -29,12 +14,17 @@ CloudWatch Metrics is a critical tool for monitoring and managing your RDS and A
 
 Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are few of the key metrics which you want to monitor :
 
-* CPU Utilization
-* DB Connections
-* Free Memory
-* Network throughput
-* Read/Write Latency
-* Read/Write IOPS
+* **CPU Utilization** - Percentage of computer processing capacity used.
+* **DB Connections** - The number of client sessions that are connected to the DB instance. Consider constraining database connections if you see high numbers of user connections in conjunction with decreases in instance performance and response time. The best number of user connections for your DB instance will vary based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group.
+* **Freeable Memory** - How much RAM is available on the DB instance, in megabytes. The red line in the Monitoring tab metrics is marked at 75% for CPU, Memory and Storage Metrics. If instance memory consumption frequently crosses that line, then this indicates that you should check your workload or upgrade your instance.
+* **Network throughput** - The rate of network traffic to and from the DB instance in bytes per second.
+* **Read/Write Latency** - The average time for a read or write operation in milliseconds.
+* **Read/Write IOPS** - The average number of disk read or write operations per second.
+* **Free Storage Space** - How much disk space is not currently being used by the DB instance, in megabytes. Investigate disk space consumption if space used is consistently at or above 85 percent of the total disk space. See if it is possible to delete data from the instance or archive data to a different system to free up space.
+
+For issues with performance metrics, a first step to improve performance is to tune the most used and most expensive queries. Tune them to see if doing so lowers the pressure on system resources. For more information, see [Tuning queries](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries).
+
+If your queries are tuned and an issue persists, consider upgrading your Amazon RDS DB instance classes. You might upgrade it to one with more of the resource (CPU, RAM, disk space, network bandwidth, I/O capacity) that is related to the issue.
 
 Then, you can set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
 
@@ -51,9 +41,28 @@ You can use CloudWatch Logs to capture log data from your RDS and Aurora instanc
 > TODO: Add dashboard image
 
 #### CloudWatch Alarms
-Using Amazon CloudWatch alarms, you watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
 
-> TODO: Add dashboard image
+You should monitor performance metrics on a regular basis to see the average, maximum, and minimum values for a variety of time ranges. If you do so, you can identify when performance is degraded. Using Amazon CloudWatch alarms, you watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
+
+To set a CloudWatch alarm
+
+* Sign in to the AWS Management Console and open the Amazon RDS console at https://console.aws.amazon.com/rds/.
+* In the navigation pane, choose Databases, and then choose a DB instance.
+* Choose Logs & events.
+
+In the CloudWatch alarms section, choose Create alarm.
+
+![db_cw_alarm.png](../images/db_cw_alarm.png)
+
+* For Send notifications, choose Yes, and for Send notifications to, choose New email or SMS topic.
+* For Topic name, enter a name for the notification, and for With these recipients, enter a comma-separated list of email addresses and phone numbers.
+* For Metric, choose the alarm statistic and metric to set.
+* For Threshold, specify whether the metric must be greater than, less than, or equal to the threshold, and specify the threshold value.
+* For Evaluation period, choose the evaluation period for the alarm. For consecutive period(s) of, choose the period during which the threshold must have been reached in order to trigger the alarm.
+* For Name of alarm, enter a name for the alarm.
+* Choose Create Alarm.
+
+The alarm appears in the CloudWatch alarms section.
 
 #### Database Audit Logs
 
@@ -78,7 +87,7 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 * Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
 * Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
 
-![image.png](../images/amg-rds-aurora.png)
+![amg-rds-aurora.png](../images/amg-rds-aurora.png)
 
 
 ## Performance Insights and operating-system metrics

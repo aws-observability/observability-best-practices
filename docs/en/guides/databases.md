@@ -129,8 +129,6 @@ Allow you to pin point on the root cause but rather than chasing symptoms.
 
 ![db_perf_insights.png](../images/db_perf_insights.png)
 
-![image.png](./image.png)
-
 ## ML Based Performance Bottlenecks detection
 
 #### DevOps Guru for RDS

@@ -149,7 +149,7 @@ Amazon DevOps Guru for RDS establishes a baseline for the database metrics. Base
 	For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
 
 
-![db_dgr_anomaly.png.png](../images/db_dgr_anomaly.png.png)
+![db_dgr_anomaly.png.png](../images/db_dgr_anomaly.png)
 
 ![db_dgr_recommendation.png](../images/db_dgr_recommendation.png)
 

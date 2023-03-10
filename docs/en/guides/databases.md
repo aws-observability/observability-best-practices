@@ -10,7 +10,7 @@ As a best practice, you want to start with establishing a baseline performance f
 
 ### Amazon CloudWatch metrics
 
-CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default. It is available for 15 days. Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the AWS/RDS namespace.
+CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS/Aurora sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
 
 Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are few of the key metrics which you want to monitor :
 
@@ -83,11 +83,17 @@ Monitoring the slow query log and error log by creating a CloudWatch dashboard u
 #### Amazon Managed Grafana
 Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. Here are some best practices for using Amazon Managed Grafana:
 
+![amg-rds-aurora.png](../images/amg-rds-aurora.png)
+
 * Use Amazon Managed Grafana to create dashboards that provide insights into your database performance and health.
 * Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
 * Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
 
-![amg-rds-aurora.png](../images/amg-rds-aurora.png)
+<!-- blank line -->
+<figure class="video_container">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/Uj9UJ1mXwEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</figure>
+<!-- blank line -->
 
 
 ## Performance Insights and operating-system metrics
@@ -98,9 +104,9 @@ Enhanced Monitoring enables you to get finer grain metrics in real time for the 
 
 RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in **RDSOSMetrics** Log group in Amazon CloudWatch. You have to option to choose granularity in between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
 
-Enhanced monitoring also include the OS level process list. 
+![db_enhanced_monitoring_loggroup.png](../images/db_enhanced_monitoring_loggroup.png)
 
- Enhanced Monitoring is available currently for the following database engines:
+Enhanced monitoring also include the OS level process list. Currently, Enhanced Monitoring is available for the following database engines:
 *MariaDB
 *Microsoft SQL Server
 *MySQL
@@ -123,7 +129,13 @@ Here are some best practices for using Enhanced Monitoring:
 
 #### Performance Insights 
 
-Performance Insights is a tool that helps you analyze database performance data and identify performance issues. It provides a visual representation of database performance metrics and helps you troubleshoot issues quickly. Here are some best practices for using Performance Insights:
+Performance Insights is a tool that helps you analyze database performance data and identify performance issues. It provides a visual representation of database performance metrics and helps you troubleshoot issues quickly. 
+
+::: tips
+Currently, Performance Insights is available only for Aurora MySQL and PostgreSQL.
+:::
+
+Here are some best practices for using Performance Insights:
 
 * Enable Performance Insights for all of your RDS and Aurora instances.
 * Use Performance Insights to identify performance bottlenecks and troubleshoot issues with your databases.

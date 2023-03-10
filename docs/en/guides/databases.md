@@ -39,8 +39,17 @@ Here are some best practices for using CloudWatch Metrics:
 * Use CloudWatch Metrics to identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance.
 * Use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
 
+> TODO: Add dashboard image
+#### CloudWatch Log Insights
+
+> TODO: add more details
+
+> TODO: Add dashboard image
+
 #### CloudWatch Alarms
 Using Amazon CloudWatch alarms, you watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
+
+> TODO: Add dashboard image
 
 #### Database Audit Logs
 
@@ -94,9 +103,8 @@ Here are some best practices for using Enhanced Monitoring:
 * Enable Enhanced Monitoring for all of your RDS and Aurora instances, and configure it to monitor all relevant metrics.
 * Use Enhanced Monitoring to identify performance bottlenecks and troubleshoot issues with your databases.
 * Monitor your databases at a high frequency using Enhanced Monitoring to get real-time insights into database performance.
-* Performance Insights
 
-https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html
+![database-enhanced-monitoring.png](../images/database-enhanced-monitoring.png)
 
 #### Performance Insights 
 
@@ -105,6 +113,8 @@ Performance Insights is a tool that helps you analyze database performance data 
 * Enable Performance Insights for all of your RDS and Aurora instances.
 * Use Performance Insights to identify performance bottlenecks and troubleshoot issues with your databases.
 * Use the query profiling feature of Performance Insights to identify slow-running queries and optimize database performance.
+
+> TODO: Add dashboard image
 
 ## ML Based Performance Bottlenecks detection
 
@@ -123,6 +133,18 @@ DevOps Guru for RDS is a powerful tool that can help you proactively identify an
 ####  AWS CloudTrail Logs
 
 CloudTrail provides a record of actions taken by a user, role, or an AWS service in Amazon RDS. CloudTrail captures all API calls for Amazon RDS as events, including calls from the console and from code calls to Amazon RDS API operations. Using the information collected by CloudTrail, you can determine the request that was made to Amazon RDS, the IP address from which the request was made, who made the request, when it was made, and additional details. For more information, see Monitoring Amazon RDS API calls in AWS CloudTrail.
+
+## MySQL Specific Options
+
+• General Logs
+• Slow query logs
+• Processlist
+• InnoDB Monitor
+• Global Status
+• Performance Schema
+• Sys Schema
+• Information_schema.Innodb_metrics
+
 
 ## References for more information
 

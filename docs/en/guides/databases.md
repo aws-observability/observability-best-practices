@@ -33,7 +33,7 @@ Then, you can set up alarms to alert you when these metrics reach critical thres
 
 ![db_cw_metrics.png](../images/db_cw_metrics.png)
 
-For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html).
+For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html) and [Viewing DB instance metrics in the CloudWatch console and AWS CLI](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/metrics_dimensions.html).
 
 #### CloudWatch Log Insights
 

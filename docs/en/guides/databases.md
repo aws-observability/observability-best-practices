@@ -2,7 +2,7 @@
 
 > TODO: Talk about RDS, Aurora, Monitoring in general, Metrics, Logging and Performance monitoring for debugging. 
 
-Monitoring is critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring your Amazon RDS resources and responding to potential incidents:
+Monitoring is critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring health of your Amazon RDS and Aurora databases resources, detect issues before they become critical and optimize performance for consistent user experiance.  This guide provides the observability best practices to ensure your databases are running smoothly. 
 
 
 ## Performance guidelines

@@ -1,6 +1,6 @@
 # Collecting system metrics with Container Insights
 System metrics pertain to low-level resources that include physical components on a server such as CPU, memory, disks and network interfaces. 
-Use CloudWatch Container Insights to collect, aggregate, and summarize system metrics from containerized applications deployed to Amazon ECS. Container Insights also provides diagnostic information, such as container restart failures, to help isolate issues and resolve them quickly. It is available for Amazon ECS clusters deployed on EC2 and Fargate. 
+Use [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) to collect, aggregate, and summarize system metrics from containerized applications deployed to Amazon ECS. Container Insights also provides diagnostic information, such as container restart failures, to help isolate issues and resolve them quickly. It is available for Amazon ECS clusters deployed on EC2 and Fargate. 
 
 Container Insights collects data as performance log events using [embedded metric format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html). These performance log events are entries that use a structured JSON schema that enables high-cardinality data to be ingested and stored at scale. From this data, CloudWatch creates aggregated metrics at the cluster, node, service and task level as CloudWatch metrics. 
 
@@ -18,7 +18,7 @@ Container Insights collects data as performance log events using [embedded metri
     ```
 
 ## Collecting cluster-level and service-level metrics
-By default, Container Insights collects metrics at the task, service and cluster level. It does not require you to deploy any agents to the cluster. The performance log events from which the metrics are extracted are collected under the CloudWatch log group named */aws/ecs/containerinsights/$CLUSTER_NAME/performance*. The complete list of metrics extracted from these events are [documented here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html). The metrics that Container Insights collects are readily viewable in pre-built dashboards available in the CloudWatch console by selcting *Container Insights* from the navigation page and then selecting *performance monitoring* from the dropdown list. They are also viewable in the *Metrics* section of the CloudWatch console.
+By default, CloudWatch Container Insights collects metrics at the task, service and cluster level. The Amazon ECS agent collects these metrics for each task on an EC2 container instance (for both ECS on EC2 and ECS on Fargate) and sends them to CloudWatch as performance log events. You don't need to deploy any agents to the cluster. These log events from which the metrics are extracted are collected under the CloudWatch log group named */aws/ecs/containerinsights/$CLUSTER_NAME/performance*. The complete list of metrics extracted from these events are [documented here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html). The metrics that Container Insights collects are readily viewable in pre-built dashboards available in the CloudWatch console by selcting *Container Insights* from the navigation page and then selecting *performance monitoring* from the dropdown list. They are also viewable in the *Metrics* section of the CloudWatch console.
 
 ![Container Insights metrics dashboard](../../../../images/ContainerInsightsMetrics.png)
 
@@ -30,10 +30,10 @@ By default, Container Insights collects metrics at the task, service and cluster
 
 
 ## Collecting instance-level metrics
-Deploying the CloudWatch agent to an Amazon ECS cluster hosted on EC2, allows you to collect instance-level metrics from the cluster. The agent is deployed as a daemonset and sends instance-level metrics as performance log events from each EC2 container instance in the cluster. The complete list of instance-level extracted from these events are [documented here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)
+Deploying the CloudWatch agent to an Amazon ECS cluster hosted on EC2, allows you to collect instance-level metrics from the cluster. The agent is deployed as a daemon service and sends instance-level metrics as performance log events from each EC2 container instance in the cluster. The complete list of instance-level extracted from these events are [documented here](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)
 
 !!! info
-    Steps to deploy the CloudWatch agent to an Amazon ECS cluster to collect instance-level metrics are documented in the [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-instancelevel.html)
+    Steps to deploy the CloudWatch agent to an Amazon ECS cluster to collect instance-level metrics are documented in the [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-instancelevel.html). Note that this option is not availavble for Amazon ECS clusters that are hosted on Fargate.
 
     
 ## Analyzing performance log events with Logs Insights

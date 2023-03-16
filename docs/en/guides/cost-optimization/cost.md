@@ -1,11 +1,14 @@
 # AWS Observability services and Cost
 
-From mid-market to global enterprises, cloud environments are growing rapidly in size, scope, complexity, and security. The divide between business and IT bedevils enterprises in many ways. One persistent and growing gap relates to observability - the monitoring and optimization of IT systems. Observability allows you to;
-•	Monitor systems more effectively
-•	Correlate events and trace them back to their cause
-•	Enable visibility into the entire architecture
+From mid-market to global enterprises, cloud environments are growing rapidly in size, scope, complexity, and security. The divide between business and IT bedevils enterprises in many ways. One persistent and growing gap relates to **observability** - *the monitoring and optimization of IT systems*.  
 
-As you invest in your observability stack, it’s important that you monitor the cost of your observability products on a regular basis. This allows you to ensure that you are only incurring the costs you need and that you are not overspending on resources you don't need.
+Observability allows you to
+
+- Monitor systems more effectively
+- Correlate events and trace them back to their cause
+- Enable visibility into the entire architecture
+
+As you invest in your observability stack, it’s important that you monitor the **cost** of your observability products on a regular basis. This allows you to ensure that you are only incurring the costs you need and that you are not overspending on resources you don't need.
 
 ## AWS Tools for Cost Optimization
 

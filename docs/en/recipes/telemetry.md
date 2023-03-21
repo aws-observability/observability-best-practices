@@ -7,7 +7,7 @@ they are consumed:
 ![telemetry concept](images/telemetry.png)
 
 !!! success
-    See the [Data types](/signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
+    See the [Data types](../signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
 
 Let's further dive into the concepts introduced in above figure.
 

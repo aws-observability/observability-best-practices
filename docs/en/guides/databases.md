@@ -22,13 +22,13 @@ Using CloudWatch Metrics, you can identify trends or patterns in your database p
 * **Read/Write IOPS** - The average number of disk read or write operations per second.
 * **Free Storage Space** - How much disk space is not currently being used by the DB instance, in megabytes. Investigate disk space consumption if space used is consistently at or above 85 percent of the total disk space. See if it is possible to delete data from the instance or archive data to a different system to free up space.
 
+![db_cw_metrics.png](../images/db_cw_metrics.png)
+
 For issues with performance metrics, a first step to improve performance is to tune the most used and most expensive queries. Tune them to see if doing so lowers the pressure on system resources. For more information, see [Tuning queries](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries).
 
 If your queries are tuned and an issue persists, consider upgrading your Amazon RDS DB instance classes. You might upgrade it to one with more of the resource (CPU, RAM, disk space, network bandwidth, I/O capacity) that is related to the issue.
 
 Then, you can set up alarms to alert you when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
-
-![db_cw_metrics.png](../images/db_cw_metrics.png)
 
 For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html) and [Viewing DB instance metrics in the CloudWatch console and AWS CLI](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/metrics_dimensions.html).
 
@@ -40,7 +40,7 @@ Refer [Monitoring Amazon RDS log file](https://docs.aws.amazon.com/AmazonRDS/lat
 
 #### CloudWatch Alarms
 
-You should monitor performance metrics on a regular basis to see the average, maximum, and minimum values for a variety of time ranges. If you do so, you can identify when performance is degraded. Using Amazon CloudWatch alarms, you watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
+To identify when performance is degraded for your database clusters, you should monitor and alerted on key performance metrics on a regular basis for a variety of time ranges.Using Amazon CloudWatch alarms, you can watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods.
 
 To set a CloudWatch alarm
 
@@ -77,24 +77,6 @@ Database Audit Logs provide a detailed record of all actions taken on your RDS a
 Slow query logs help you find slow-performing queries in the database so you can investigate the reasons behind the slowness and tune the queries if needed. Error logs help you to find the query errors, which further helps you find the changes in the application due to those errors. 
 
 Monitoring the slow query log and error log by creating a CloudWatch dashboard using Amazon CloudWatch Logs Insights (which enables you to interactively search and analyze your log data in Amazon CloudWatch Logs). 
-
-## Open-source Observability Tools
-
-#### Amazon Managed Grafana
-Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. Here are some best practices for using Amazon Managed Grafana:
-
-![amg-rds-aurora.png](../images/amg-rds-aurora.png)
-
-* Use Amazon Managed Grafana to create dashboards that provide insights into your database performance and health.
-* Use Amazon Managed Grafana to visualize data from CloudWatch Metrics, Enhanced Monitoring, and Performance Insights.
-* Use Amazon Managed Grafana to create alerts based on specific metrics, so you can be notified when performance issues arise.
-
-<!-- blank line -->
-<figure class="video_container">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/Uj9UJ1mXwEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-</figure>
-<!-- blank line -->
-
 
 ## Performance Insights and operating-system metrics
 
@@ -136,6 +118,42 @@ Performance Insights provide seven days of free performance history retention an
 ![db_perf_insights.png](../images/db_perf_insights.png)
 
 For more information on using Performance Insights with Aurora, refer: [Monitoring DB load with Performance Insights on Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.html). 
+
+
+## Open-source Observability Tools
+
+#### Amazon Managed Grafana
+Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. 
+
+The **AWS/RDS namespace** in Amazon CloudWatch includes the key metrics that apply to database entities running on Amazon RDS and Amazon Aurora.To visualize and track the health and potential performance issues of our RDS/Aurora databases in Amazon Managed Grafana, we can leverage CloudWatch data source. 
+
+![amg-rds-aurora.png](../images/amg-rds-aurora.png)
+
+As of now, only basic RDS Performance Insights metrics are available in CloudWatch which is not sufficient to analyze database performance and identify bottlenecks in your database. To visualize RDS Performance Insight metrics in Amazon Managed Grafana and have a single pane of glass, customers can use a custom lambda function to collect all the RDS Performance insights metrics and publish them in a custom CloudWatch metrics namespace. Once you have these metrics available in Amazon CloudWatch, you can visualize them in Amazon Managed Grafana.
+
+To deploy the custom lambda function to gather RDS Performance Insights metrics, clone the following GitHub repository and run the install.sh script.
+
+```
+$ git clone https://github.com/aws-observability/observability-best-practices.git
+$ cd sandbox/monitor-aurora-with-grafana
+
+$ chmod +x install.sh
+$ ./install.sh
+```
+
+Above script uses AWS CloudFormation to deploy a custom lambda function and an IAM role. Lambda function auto triggers every 10 mins to invoke RDS Performance Insights API and publish custom metrics to /AuroraMonitoringGrafana/PerformanceInsights custom namespace in Amazon CloudWatch.
+
+![db_performanceinsights_amg.png](../images/db_performanceinsights_amg.png)
+
+For detailed step-by-step information on custom lambda function deployment and grafana dashboards, refer [Performance Insights in Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/).
+
+By quickly identifying unintended changes in your database and notifying using alerts, you can take actions to minimize disruptions. Amazon Managed Grafana supports multiple notification channels such as SNS, Slack, PagerDuty etc. to which you can send alerts notifications. [Grafana Alerting](https://docs.aws.amazon.com/grafana/latest/userguide/alerts-overview.html) will show you more information on how to set up alerts in Amazon Managed Grafana.
+
+<!-- blank line -->
+<figure class="video_container">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/Uj9UJ1mXwEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</figure>
+<!-- blank line -->
 
 ## AIOps - Machine learning based performance bottlenecks detection
 
@@ -186,8 +204,6 @@ For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](
    - log_statement
 
    Query information will be included in the Postgresql.log file.
-
-> TODO: Add CLI commands to do that
 
 ## References for more information
 

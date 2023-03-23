@@ -22,6 +22,8 @@ This option essentially skips the collector from the equation completely. If you
 
 We strongly encourage you to take a look at the [section](https://opentelemetry.io/docs/collector/deployment/no-collector/) in the upstream documentation for more specifics as there isn't any AWS specific aspect that changes the guidance for this approach.
 
+![No Collector option](../../../../images/adot-collector-deployment-no-collector.png)
+
 ### Decentralized
 In this approach, you will run the collector in a distributed manner and collect signals into the destinations. Unlike the `No Collector` option, here we separate the concerns and decouple the application from having to use its resources to make remote API calls and instead communicate to a locally accessible agent.
 
@@ -69,6 +71,20 @@ scrape_configs:
 
 The same architecture can also be used for collecting traces. In this case, instead of the Collector reaching out to the endpoints to scrape Prometheus metrics, the trace spans will be sent to the Collector by the application pods.
 
+##### Pros and Cons
+**Advantages**
+
+* Minimal scaling concerns
+* Configuring High-Availability is a challenge
+* Too many copies of Collector in use
+* Can be easy for Logs support
+
+**Disadvantages**
+
+* Not the most optimal in terms of resource utilization
+* Disproportionate resource allocation
+
+
 #### Running the collector on Amazon EC2
 As there is no side car approach in running the collector on EC2, you would be running the collector as an agent on the EC2 instance. You can set a static scrape configuration such as the one below to discover targets in the instance to scrape metrics from. 
 
@@ -86,8 +102,7 @@ scrape_configs:
   - targets: ['localhost:9090', 'localhost:8081']
 ```
 
-##### Pros and Cons
-* [TBD]
+### Centralized
 
 #### Running the collector as Deployment on Amazon EKS
 
@@ -305,11 +320,18 @@ go.opentelemetry.io/collector/exporter/exporterhelper/internal.(*boundedMemoryQu
 
 You can solve the out of order sample error in this particular setup in a couple of ways:
 
-Use a sticky load balancer to direct requests from a particular source to go to the same target based on IP address.
+* Use a sticky load balancer to direct requests from a particular source to go to the same target based on IP address.
 
 Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/) for additional details:
 
-As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
+* As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
 
 !!! warning
     Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html) 
+
+
+#### Open Agent Management Protocol (OpAMP)
+
+OpAMP is a client/server protocol that supports communication over HTTP and over WebSockets. OpAMP is implemented in the OTel Collector and hence the OTel Collector can be used as a server as part of the control plane to manage other agents that support OpAMP, like the OTel Collector itself. The "manage" portion here involves being able to update configurations for collectors, monitoring health or even upgrading the Collectors.
+
+The details of this protocol is well [documented in the upstream OpenTelemetry website.](https://opentelemetry.io/docs/collector/management/)

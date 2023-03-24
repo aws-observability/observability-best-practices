@@ -30,5 +30,116 @@ Check out the following recipe:
 
 ## Open Source Software
 
+Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (AMG) workspace should be provisioned, with the AMP datasource configured in AMG
 
+- [Create AMP workspace]()
+- [Create AMG workspace]()
+- [Configure AMP datasource]()
 
+Enable native Spark support for Prometheus. Note that it is available only from Spark 3.0. To do that, you need to add the following configuration to Spark via Databricks cluster Advanced Configurations:
+
+```
+spark.ui.prometheus.enabled true
+```
+
+Create an S3 bucket to store the init script that will install AWS Distro for OpenTelemetry (ADOT) Collector and it's dependencies.
+
+Create an IAM Role granting permission for Databricks cluster instances to remote write metrics into AMP, and read access to the init script's S3 bucket. Configure this role's instance profile first in Databricks workspace, then into the Databricks cluster.
+
+- [Create IAM role]()
+- [Grant read access into S3 bucket]()
+- ![Add instance profile into Databricks workspace]()
+- ![Add instance profile into Databricks cluster]()
+
+Create a configuration for ADOT and upload it to the S3 bucket. Here follows an example:
+
+```yaml
+receivers:
+  prometheus:
+    config:
+      global:
+        scrape_interval: 1m
+        scrape_timeout: 10s
+
+      scrape_configs:
+      - job_name: databricks_prometheus_executors
+        metrics_path: /metrics/executors/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - ${env:SPARK_LOCAL_IP:40001}
+      - job_name: databricks_prometheus_applications
+        metrics_path: /metrics/applications/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - ${env:SPARK_LOCAL_IP:40000}
+      - job_name: databricks_prometheus_master
+        metrics_path: /metrics/master/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - ${env:SPARK_LOCAL_IP:40000}
+      - job_name: databricks_prometheus
+        metrics_path: /metrics/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - ${env:SPARK_LOCAL_IP:40000}
+          - ${env:SPARK_LOCAL_IP:40001}
+      - job_name: databricks_node
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - ${env:SPARK_LOCAL_IP:9100}
+
+extensions:
+  sigv4auth:
+    service: "aps"
+    region: "${env:AMP_REGION}"
+
+exporters:
+  prometheusremotewrite:
+    endpoint: "${env:AMP_REMOTE_WRITE_ENDPOINT}"
+    auth:
+      authenticator: sigv4auth
+
+processors:
+  metricstransform/databricks:
+    transforms:
+      - include: .*
+        match_type: regexp
+        action: update
+        operations:
+        - action: add_label
+          new_label: databricks_cluster_id
+          new_value: "${env:DB_CLUSTER_ID}"
+        - action: add_label
+          new_label: databricks_cluster_name
+          new_value: "${env:DB_CLUSTER_NAME}"
+        - action: add_label
+          new_label: databricks_driver
+          new_value: "${env:DB_IS_DRIVER}"
+  metricstransform/databricksdriver:
+    transforms:
+      - include: ^metrics_app_([0-9]+_[0-9]+)_driver_(.*)$$
+        match_type: regexp
+        action: update
+        new_name: $${2}
+      - include: ^metrics_local_([0-9]+)_driver_(.*)$$
+        match_type: regexp
+        action: update
+        new_name: $${2}
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [metricstransform/databricks, metricstransform/databricksdriver]
+      exporters: [prometheusremotewrite]
+
+  extensions: [sigv4auth]
+
+```
+
+Create an init script to install ADOT and it's dependencies, and add some additional configurations to Spark monitoring.

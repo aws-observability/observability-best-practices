@@ -36,13 +36,8 @@ Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP
 - [Create AMG workspace]()
 - [Configure AMP datasource]()
 
-Enable native Spark support for Prometheus. Note that it is available only from Spark 3.0. To do that, you need to add the following configuration to Spark via Databricks cluster Advanced Configurations:
 
-```
-spark.ui.prometheus.enabled true
-```
-
-Create an S3 bucket to store the init script that will install AWS Distro for OpenTelemetry (ADOT) Collector and it's dependencies.
+Create an S3 bucket to store the init script that will install ADOT Collector and it's dependencies.
 
 Create an IAM Role granting permission for Databricks cluster instances to remote write metrics into AMP, and read access to the init script's S3 bucket. Configure this role's instance profile first in Databricks workspace, then into the Databricks cluster.
 
@@ -58,35 +53,16 @@ receivers:
   prometheus:
     config:
       global:
-        scrape_interval: 1m
-        scrape_timeout: 10s
 
       scrape_configs:
-      - job_name: databricks_prometheus_executors
-        metrics_path: /metrics/executors/prometheus/
-        sample_limit: 10000
-        static_configs:
-        - targets:
-          - ${env:SPARK_LOCAL_IP:40001}
-      - job_name: databricks_prometheus_applications
-        metrics_path: /metrics/applications/prometheus/
-        sample_limit: 10000
-        static_configs:
-        - targets:
-          - ${env:SPARK_LOCAL_IP:40000}
-      - job_name: databricks_prometheus_master
-        metrics_path: /metrics/master/prometheus/
-        sample_limit: 10000
-        static_configs:
-        - targets:
-          - ${env:SPARK_LOCAL_IP:40000}
+      
       - job_name: databricks_prometheus
         metrics_path: /metrics/prometheus/
         sample_limit: 10000
         static_configs:
         - targets:
           - ${env:SPARK_LOCAL_IP:40000}
-          - ${env:SPARK_LOCAL_IP:40001}
+
       - job_name: databricks_node
         sample_limit: 10000
         static_configs:
@@ -104,42 +80,57 @@ exporters:
     auth:
       authenticator: sigv4auth
 
-processors:
-  metricstransform/databricks:
-    transforms:
-      - include: .*
-        match_type: regexp
-        action: update
-        operations:
-        - action: add_label
-          new_label: databricks_cluster_id
-          new_value: "${env:DB_CLUSTER_ID}"
-        - action: add_label
-          new_label: databricks_cluster_name
-          new_value: "${env:DB_CLUSTER_NAME}"
-        - action: add_label
-          new_label: databricks_driver
-          new_value: "${env:DB_IS_DRIVER}"
-  metricstransform/databricksdriver:
-    transforms:
-      - include: ^metrics_app_([0-9]+_[0-9]+)_driver_(.*)$$
-        match_type: regexp
-        action: update
-        new_name: $${2}
-      - include: ^metrics_local_([0-9]+)_driver_(.*)$$
-        match_type: regexp
-        action: update
-        new_name: $${2}
-
 service:
   pipelines:
     metrics:
       receivers: [prometheus]
-      processors: [metricstransform/databricks, metricstransform/databricksdriver]
       exporters: [prometheusremotewrite]
 
   extensions: [sigv4auth]
 
 ```
 
-Create an init script to install ADOT and it's dependencies, and add some additional configurations to Spark monitoring.
+Create an init script to install ADOT and it's dependencies, and add some additional configurations to Spark monitoring. Upload the script to the S3 bucket, and configure this init script into the Databricks cluster. Here follows an example:
+
+```bash
+#!/bin/bash
+set -e
+
+cat << EOF > /databricks/spark/conf/metrics.properties
+*.sink.prometheusServlet.class=org.apache.spark.metrics.sink.PrometheusServlet
+*.sink.prometheusServlet.path=/metrics/prometheus
+master.sink.prometheusServlet.path=/metrics/master/prometheus
+applications.sink.prometheusServlet.path=/metrics/applications/prometheus
+EOF
+
+cp /databricks/spark/conf/metrics.properties \
+  /databricks/spark/dbconf/log4j/master-worker/metrics.properties
+sudo pip3 install awscli
+aws s3 cp s3://$ADOT_INIT_SCRIPT_BUCKET/$ADOT_CONFIG adot_config.yaml
+wget https://aws-otel-collector.s3.amazonaws.com/ubuntu/amd64/v0.25.0/aws-otel-collector.deb
+sudo dpkg -i aws-otel-collector.deb
+wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+tar zxvf node_exporter-1.5.0.linux-amd64.tar.gz
+nohup ./node_exporter-1.5.0.linux-amd64/node_exporter &
+disown -h
+export SPARK_LOCAL_IP=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
+sudo /opt/aws/aws-otel-collector/bin/aws-otel-collector-ctl -c adot_config.yaml -a start
+```
+
+Enable native Spark support for Prometheus. Note that it is available only from Spark 3.0. To do that, you need to add the following configuration to Spark via Databricks cluster Advanced Configurations:
+
+```
+spark.ui.prometheus.enabled true
+```
+
+Add the following environment variables into Databricks cluster configuration, as it will be needed for AWS Distro for OpenTelemetry (ADOT) Collector later:
+
+```bash
+AMP_REMOTE_WRITE_ENDPOINT="<AMP_ENDPOINT>/api/v1/remote_write"
+AMP_REGION="<AMP_REGION>"
+ADOT_INIT_SCRIPT_BUCKET="<S3_BUCKET>"
+ADOT_CONFIG="adot_config.yaml"
+```
+
+If the cluster is running, it will be restarted. The next time it runs, it will send Spark and instance metrics to AMP.
+

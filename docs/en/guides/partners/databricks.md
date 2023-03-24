@@ -32,19 +32,23 @@ Check out the following recipe:
 
 Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (AMG) workspace should be provisioned, with the AMP datasource configured in AMG
 
-- [Create AMP workspace]()
-- [Create AMG workspace]()
-- [Configure AMP datasource]()
+- [Create AMP workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
+- [Create AMG workspace](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html)
+- [Configure AMP datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)
 
 
 Create an S3 bucket to store the init script that will install ADOT Collector and it's dependencies.
 
-Create an IAM Role granting permission for Databricks cluster instances to remote write metrics into AMP, and read access to the init script's S3 bucket. Configure this role's instance profile first in Databricks workspace, then into the Databricks cluster.
+Create an IAM Role granting permission for Databricks cluster instances to remote write metrics into AMP, and read access to the init script's S3 bucket. For AMP permissions, you can attach the AmazonPrometheusRemoteWriteAccess managed policy. Configure this role's instance profile first in Databricks workspace, then into the Databricks cluster.
 
-- [Create IAM role]()
-- [Grant read access into S3 bucket]()
-- ![Add instance profile into Databricks workspace]()
-- ![Add instance profile into Databricks cluster]()
+- [Create IAM role](https://repost.aws/knowledge-center/ec2-instance-access-s3-bucket)
+- [Attach a managed policy to an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-attach-detach.html#add-policies-console)
+
+![Add instance profile into Databricks workspace](../../images/databricks_iam_workspace_config.png)
+*Figure 2: example of Instance Profile configuration in Databricks workspace*
+
+![Add instance profile into Databricks cluster](../../images/databricks_iam_cluster_config.png)
+*Figure 3: example of Instance Profile configuration in Databricks cluster*
 
 Create a configuration for ADOT and upload it to the S3 bucket. Here follows an example:
 
@@ -133,4 +137,3 @@ ADOT_CONFIG="adot_config.yaml"
 ```
 
 If the cluster is running, it will be restarted. The next time it runs, it will send Spark and instance metrics to AMP.
-

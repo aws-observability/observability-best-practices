@@ -14,7 +14,7 @@ The following is already [well documented in the Open Telemetry documentation](h
 
 * No Collector
 * Decentralized
-* Centralized
+* Gateway
 
 
 ### No Collector
@@ -102,8 +102,6 @@ scrape_configs:
   - targets: ['localhost:9090', 'localhost:8081']
 ```
 
-### Centralized
-
 #### Running the collector as Deployment on Amazon EKS
 
 Running the collector as a Deployment is particularly useful when you want to also provide High Availability for your collectors. Depending on the number of targets, metrics available to scrape etc the resources for the Collector should be adjusted to ensure the collector isn't starving and hence causing issues in signal collection.
@@ -149,7 +147,7 @@ extensions:
 * An advantage in this model is that there are fewer collectors and configurations to manage yourself.
 * When the cluster is rather large and there are thousands of targets to scrape, you will have to carefully design the architecture in such a way that the load is balanced across the collectors. Adding this to having to run near-clones of the same collectors for HA reasons should be done carefully in order to avoid operational issues.
 
-### Collector as a Gateway
+### Gateway
 
 ![ADOT Collector Gateway](../../../../images/adot-collector-deployment-gateway.png)
 
@@ -335,3 +333,14 @@ Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/
 OpAMP is a client/server protocol that supports communication over HTTP and over WebSockets. OpAMP is implemented in the OTel Collector and hence the OTel Collector can be used as a server as part of the control plane to manage other agents that support OpAMP, like the OTel Collector itself. The "manage" portion here involves being able to update configurations for collectors, monitoring health or even upgrading the Collectors.
 
 The details of this protocol is well [documented in the upstream OpenTelemetry website.](https://opentelemetry.io/docs/collector/management/)
+
+### References
+
+* [https://opentelemetry.io/docs/collector/deployment/]()
+* [https://opentelemetry.io/docs/collector/management/]()
+* [https://github.com/aws-observability/aws-otel-collector]()
+* [https://aws-observability.github.io/terraform-aws-observability-accelerator/]()
+* [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot]()
+* [https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/]()
+* [https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/]()
+

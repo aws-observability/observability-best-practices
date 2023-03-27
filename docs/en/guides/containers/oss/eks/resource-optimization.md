@@ -1,5 +1,5 @@
 # Resource Optimization best practices for Kubernetes workloads
-Kubernetes adoption continues to accelerate, as many move to microservice based architectures. A lot of the initial focus was on designing and building new cloud native architectures to support the applications. As environments grow, we are starting to see the focus to optimize resource allocation from customers. Resource optimization is the second most important  question ops team ask for after security.
+Kubernetes adoption continues to accelerate, as many move to microservice based architectures. A lot of the initial focus was on designing and building new cloud native architectures to support the applications. As environments grow, we are starting to see the focus to optimize resource allocation from customers. Resource optimization is the second most important  question operations team ask for after security.
 Let's talk about guidance on how to optimize resource allocation and right-size applications on Kubernetes environments. This includes applications running on Amazon EKS deployed with managed node groups, self-managed node groups, and AWS Fargate.
 
 ## Reasons for Right-sizing applications on Kubernetes

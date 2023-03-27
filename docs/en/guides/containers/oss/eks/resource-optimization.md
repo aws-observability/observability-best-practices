@@ -1,6 +1,6 @@
 # Resource Optimization best practices for Kubernetes workloads
-Kubernetes adoption continues to accelerate, as many move to microservice based architectures. A lot of the initial focus was on designing and building new cloud native architectures to support the applications. As environments grow, we are starting to see the focus to optimiza resource allocation from customers. Resource optimization is the second most important  question ops team ask for after security.
-Let's talk about guidance on how to optimize resource allocation and right-size applications on Kubernetes environments. This includes application running on Amazon EKS deployed with managed node groups, self-managed node groups, and AWS Fargate.
+Kubernetes adoption continues to accelerate, as many move to microservice based architectures. A lot of the initial focus was on designing and building new cloud native architectures to support the applications. As environments grow, we are starting to see the focus to optimize resource allocation from customers. Resource optimization is the second most important  question ops team ask for after security.
+Let's talk about guidance on how to optimize resource allocation and right-size applications on Kubernetes environments. This includes applications running on Amazon EKS deployed with managed node groups, self-managed node groups, and AWS Fargate.
 
 ## Reasons for Right-sizing applications on Kubernetes
 In Kubernetes, resource right-sizing is done through setting resource specifications on applications. These settings directly impact:
@@ -80,6 +80,5 @@ topk(3, max by (pod, container)(rate(container_cpu_usage_seconds_total{image!=""
 
 PromQL gives us a per second throttling, with 10 periods in a second. To get the per period throttling, we divide by 10. If we want to know how much to increase the limits setting, then we can multiple by 10 (e.g., 400 ms * 10 = 4000 m).
 
-### Observation based optimization using Optimize Live
-[StormForge Optimize Live](https://www.stormforge.io/how-stormforge-optimize-live-works/) works by applying machine learning to analyze the observability data you’re already collecting using tools like Prometheus or Datadog. Optimize Live automatically right-sizes your pod CPU and memory (vertical autoscaling) while also setting the optimal target utilization for the horizontal pod autoscaler. This allows you to scale efficiently, minimizing waste without sacrificing performance or reliability. 
+While the above tools provide ways to identify opportunities for resource optimization, applications team should spend time in identifying whether a given application is CPU / Memory intensive and allocate resources to prevent throttling / over-provisioning. 
 

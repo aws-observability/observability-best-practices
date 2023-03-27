@@ -20,7 +20,7 @@ Request and limits each serve different functions in Kubernetes and impact sched
 ## Recommendations
 An application owner needs to choose the "right" values  for their CPU and memory resource requests. An ideal way  is to load test the application in a development environment and measure resource usage using observability tooling. While that might make sense for your organization’s most critical applications, it’s likely not feasible for every containerized application deployed in your cluster. Let's talk about the tools that can help us optimize and right-size the workloads:
 
-### Vertical Pod Autoscaler
+### Vertical Pod Autoscaler (VPA)
 [VPA](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) is Kubernetes sub-project owned by the Autoscaling special interest group (SIG). It’s designed to automatically set Pod requests based on observed application performance. VPA collects resource usage using the [Kubernetes Metric Server](https://github.com/kubernetes-sigs/metrics-server) by default but can be optionally configured to use Prometheus as a data source.
 VPA has a recommendation engine  that measures application performance and makes sizing recommendations. The VPA recommendation engine can be deployed stand-alone so VPA will not perform any autoscaling actions. It’s configured by creating a VerticalPodAutoscaler custom resource for each application and VPA updates the object’s status field with resource sizing recommendations.
 Creating VerticalPodAutoscaler objects for every application in your cluster and trying to read and interpret the JSON results is challenging at scale. [Goldilocks](https://github.com/FairwindsOps/goldilocks) is an open source project that makes this easy.

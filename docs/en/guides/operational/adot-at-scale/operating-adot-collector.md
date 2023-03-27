@@ -13,7 +13,7 @@ Depending on the your requirements, there are a few deployment options that you 
 The following is already [well documented in the Open Telemetry documentation](https://opentelemetry.io/docs/collector/deployment/). Please feel free to take a look at that as well. In this guide, we will cover this guidance from an AWS point of view, but the overall idea remains the same.
 
 * No Collector
-* Decentralized
+* Agent
 * Gateway
 
 
@@ -24,7 +24,7 @@ We strongly encourage you to take a look at the [section](https://opentelemetry.
 
 ![No Collector option](../../../../images/adot-collector-deployment-no-collector.png)
 
-### Decentralized
+### Agent
 In this approach, you will run the collector in a distributed manner and collect signals into the destinations. Unlike the `No Collector` option, here we separate the concerns and decouple the application from having to use its resources to make remote API calls and instead communicate to a locally accessible agent.
 
 Essentially it will look like this below in an Amazon EKS environment **running the collector as a Kubernetes sidecar:**

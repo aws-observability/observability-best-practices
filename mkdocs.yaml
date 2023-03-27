@@ -16,19 +16,20 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
-    - navigation.tabs
     - navigation.tabs.sticky
 
   palette:
-    primary: orange
-    accent: deep orange
+    primary: red
+    accent: red
 
 nav:
   - Home: index.md
   - Guides:
     - Best practices overview: guides/index.md
     - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
-    - EC2 Monitoring and Observability: guides/ec2/ec2-monitoring.md  
+    - Operational:
+      - ADOT Collector:
+        - guides/operational/adot-at-scale/operating-adot-collector.md
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md
@@ -87,7 +88,13 @@ nav:
       - Alerting: recipes/alerting.md
       - Troubleshooting: recipes/troubleshooting.md
       - Workshops: recipes/workshops.md
-  - FAQ: faq.md
+  - FAQ:
+    - General: faq/faq.md
+    - AWS X-Ray: faq/x-ray.md
+    - Amazon Managed Service for Prometheus: faq/amp.md
+    - Amazon Managed Grafana: faq/amg.md
+    - AWS Distro for OpenTelemetry: faq/adot.md
+    
   - Contributors: contributors.md
 
 # extra:

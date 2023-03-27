@@ -1,4 +1,4 @@
-# Frequently asked questions
+# General - FAQ
 
 ## How are logs different from traces?
 

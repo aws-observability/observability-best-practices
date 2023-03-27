@@ -88,7 +88,13 @@ nav:
       - Alerting: recipes/alerting.md
       - Troubleshooting: recipes/troubleshooting.md
       - Workshops: recipes/workshops.md
-  - FAQ: faq.md
+  - FAQ:
+    - General: faq/faq.md
+    - AWS X-Ray: faq/x-ray.md
+    - Amazon Managed Service for Prometheus: faq/amp.md
+    - Amazon Managed Grafana: faq/amg.md
+    - AWS Distro for OpenTelemetry: faq/adot.md
+    
   - Contributors: contributors.md
 
 # extra:

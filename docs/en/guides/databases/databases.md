@@ -1,6 +1,6 @@
 # Monitor Amazon RDS and Aurora databases
 
-Monitoring is a critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring health of your Amazon RDS and Aurora databases resources, detect issues before they become critical and optimize performance for consistent user experiance.  This guide provides the observability best practices to ensure your databases are running smoothly. 
+Monitoring is a critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring health of your Amazon RDS and Aurora databases resources, detect issues before they become critical and optimize performance for consistent user experience.  This guide provides the observability best practices to ensure your databases are running smoothly. 
 
 ## Performance guidelines
 
@@ -22,7 +22,7 @@ Using CloudWatch Metrics, you can identify trends or patterns in your database p
 * **Read/Write IOPS** - The average number of disk read or write operations per second.
 * **Free Storage Space** - How much disk space is not currently being used by the DB instance, in megabytes. Investigate disk space consumption if space used is consistently at or above 85 percent of the total disk space. See if it is possible to delete data from the instance or archive data to a different system to free up space.
 
-![db_cw_metrics.png](../images/db_cw_metrics.png)
+![db_cw_metrics.png](../../images/db_cw_metrics.png)
 
 For troubleshooting performance related issues, first step is to tune the most used and expensive queries. Tune them to see if doing so lowers the pressure on system resources. For more information, see [Tuning queries](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries).
 
@@ -44,13 +44,13 @@ To identify when performance is degraded for your database clusters, you should 
 
 To set a CloudWatch alarm
 
-* Sign in to the AWS Management Console and open the Amazon RDS console at https://console.aws.amazon.com/rds/.
+* Sign in to the AWS Management Console and open the Amazon RDS console at [https://console.aws.amazon.com/rds/]().
 * In the navigation pane, choose Databases, and then choose a DB instance.
 * Choose Logs & events.
 
 In the CloudWatch alarms section, choose Create alarm.
 
-![db_cw_alarm.png](../images/db_cw_alarm.png)
+![db_cw_alarm.png](../../images/db_cw_alarm.png)
 
 * For Send notifications, choose Yes, and for Send notifications to, choose New email or SMS topic.
 * For Topic name, enter a name for the notification, and for With these recipients, enter a comma-separated list of email addresses and phone numbers.
@@ -62,7 +62,7 @@ In the CloudWatch alarms section, choose Create alarm.
 
 The alarm appears in the CloudWatch alarms section.
 
-Take a look at this [example](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-cluster-cloudwatch-alarm.html) to create an Amaon CloudWatch alarm for Multi-AZ DB cluster replica lag. 
+Take a look at this [example](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-cluster-cloudwatch-alarm.html) to create an Amazon CloudWatch alarm for Multi-AZ DB cluster replica lag. 
 
 #### Database Audit Logs
 
@@ -86,7 +86,7 @@ Enhanced Monitoring enables you to get fine-grain metrics in real time for the o
 
 RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in **RDSOSMetrics** Log group in Amazon CloudWatch. You have the option to choose a granularity between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
 
-![db_enhanced_monitoring_loggroup.png](../images/db_enhanced_monitoring_loggroup.png)
+![db_enhanced_monitoring_loggroup.png](../../images/db_enhanced_monitoring_loggroup.png)
 
 Enhanced monitoring also include the OS level process list. Currently, Enhanced Monitoring is available for the following database engines:
 *MariaDB
@@ -102,7 +102,7 @@ CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB in
 To learn about all the metrics available with Enhanced Monitoring, please refer [OS metrics in Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html)
 
 
-![db-enhanced-monitoring.png](../images/db_enhanced_monitoring.png)
+![db-enhanced-monitoring.png](../../images/db_enhanced_monitoring.png)
 
 #### Performance Insights 
 
@@ -115,7 +115,7 @@ Performance Insights provides seven days of free performance history retention a
 
 **DBLoad** is the key metric which represents the average number of database active sessions. In Performance Insights, this data is queried as **db.load.avg** metric.
 
-![db_perf_insights.png](../images/db_perf_insights.png)
+![db_perf_insights.png](../../images/db_perf_insights.png)
 
 For more information on using Performance Insights with Aurora, refer: [Monitoring DB load with Performance Insights on Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.html). 
 
@@ -127,7 +127,7 @@ Amazon Managed Grafana is a fully managed service that makes it easy to visualiz
 
 The **AWS/RDS namespace** in Amazon CloudWatch includes the key metrics that apply to database entities running on Amazon RDS and Amazon Aurora.To visualize and track the health and potential performance issues of our RDS/Aurora databases in Amazon Managed Grafana, we can leverage CloudWatch data source. 
 
-![amg-rds-aurora.png](../images/amg-rds-aurora.png)
+![amg-rds-aurora.png](../../images/amg-rds-aurora.png)
 
 As of now, only basic RDS Performance Insights metrics are available in CloudWatch which is not sufficient to analyze database performance and identify bottlenecks in your database. To visualize RDS Performance Insight metrics in Amazon Managed Grafana and have a single pane of glass visibility, customers can use a custom lambda function to collect all the RDS Performance insights metrics and publish them in a custom CloudWatch metrics namespace. Once you have these metrics available in Amazon CloudWatch, you can visualize them in Amazon Managed Grafana.
 
@@ -143,7 +143,7 @@ $ ./install.sh
 
 Above script uses AWS CloudFormation to deploy a custom lambda function and an IAM role. Lambda function auto triggers every 10 mins to invoke RDS Performance Insights API and publish custom metrics to /AuroraMonitoringGrafana/PerformanceInsights custom namespace in Amazon CloudWatch.
 
-![db_performanceinsights_amg.png](../images/db_performanceinsights_amg.png)
+![db_performanceinsights_amg.png](../../images/db_performanceinsights_amg.png)
 
 For detailed step-by-step information on custom lambda function deployment and grafana dashboards, refer [Performance Insights in Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/).
 
@@ -167,9 +167,9 @@ Amazon DevOps Guru for RDS establishes a baseline for the database metrics. Base
 	For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
 
 
-![db_dgr_anomaly.png.png](../images/db_dgr_anomaly.png)
+![db_dgr_anomaly.png.png](../../images/db_dgr_anomaly.png)
 
-![db_dgr_recommendation.png](../images/db_dgr_recommendation.png)
+![db_dgr_recommendation.png](../../images/db_dgr_recommendation.png)
 
 For more information on how to get started, please visit [Amazon DevOps Guru for RDS to Detect, Diagnose, and Resolve Amazon Aurora-Related Issues using ML](https://aws.amazon.com/blogs/aws/new-amazon-devops-guru-for-rds-to-detect-diagnose-and-resolve-amazon-aurora-related-issues-using-ml/)
 
@@ -217,6 +217,6 @@ For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](
 
 [Official Doc - Amazon Aurora Monitoring Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/MonitoringOverview.html)
 
-[Hands-on Workshop - Observe and Identify SQL Perfomrance Issues in Amazon Aurora](https://awsauroralabsmy.com/provisioned/perf-observability/)
+[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://awsauroralabsmy.com/provisioned/perf-observability/)
 
 

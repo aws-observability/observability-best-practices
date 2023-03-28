@@ -42,7 +42,8 @@ nav:
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md
     # - Full-stack: guides/full-stack.md
-    # - Databases: guides/databases.md
+    - Databases:
+      - Aurora and RDS: guides/databases/databases.md
     # - Creating an observability strategy: guides/strategy.md
 
   - Data types:

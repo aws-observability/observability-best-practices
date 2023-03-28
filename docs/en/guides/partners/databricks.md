@@ -50,6 +50,21 @@ Create an IAM Role granting permission for Databricks cluster instances to remot
 ![Add instance profile into Databricks cluster](../../images/databricks_iam_cluster_config.png)
 *Figure 3: example of Instance Profile configuration in Databricks cluster*
 
+Finally, grant Databricks the right to assume the IAM Role you just created. You need to attach a policy similar to the one below to the IAM Role used to deploy the workspace. Mind that this is a different IAM Role from the one created for Databricks instances; it was either created at the time the workspace was created, or already existed prior to that.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "iam:PassRole",
+      "Resource": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/DatabricksAMPRole"
+    }
+  ]
+}
+```
+
 Create a configuration for ADOT and upload it to the S3 bucket. Here follows an example:
 
 ```yaml

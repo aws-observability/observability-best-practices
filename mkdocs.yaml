@@ -45,6 +45,8 @@ nav:
     - Databases:
       - Aurora and RDS: guides/databases/databases.md
     # - Creating an observability strategy: guides/strategy.md
+    - Cost optimization:
+      - Using Kubecost: guides/cost-optimization/kubecost.md
 
   - Data types:
     - Logs: signals/logs.md

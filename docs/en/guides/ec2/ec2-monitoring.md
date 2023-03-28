@@ -6,7 +6,7 @@ Continuous Monitoring & Observability increases agility, improves customer exper
 
 The difference between Monitoring and Observability is that Monitoring tells you whether a system is working or not, while Observability tells you why the system isn’t working. Monitoring is usually a reactive measure whereas the goal of Observability is to be able to improve your Key Performance Indicators in a proactive manner. A system cannot be controlled or optimized unless it is observed. Instrumenting workloads through collection of metrics, logs, or traces and gaining meaningful insights & detailed context using the right monitoring and observability tools help customers control and optimize the environment.
 
-![three-pillars](three-pillars.png)
+![three-pillars](../../../images/three-pillars.png)
 
 AWS enables customers to transform from monitoring to observability so that they can have full end-to-end service visibility. In this article we focus on Amazon Elastic Compute Cloud (Amazon EC2) and the best practices for improving the monitoring and observability of the service in AWS Cloud environment through AWS native and open-source tools.
 
@@ -20,13 +20,13 @@ AWS enables customers to transform from monitoring to observability so that they
 
 [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) is a monitoring and management service that provides data and actionable insights for AWS, hybrid, and on-premises applications and infrastructure resources. CloudWatch collects monitoring and operational data in the form of logs, metrics, and events. It also provides a unified view of AWS resources, applications, and services that run on AWS and on-premises servers. CloudWatch helps you gain system-wide visibility into resource utilization, application performance, and operational health.
 
-![CloudWatch Overview](cloudwatch-intro.png)
+![CloudWatch Overview](../../../images/cloudwatch-intro.png)
 
 ### Unified CloudWatch Agent
 
 The Unified CloudWatch Agent is an open-source software under the MIT license which supports most  operating systems utilizing x86-64 and ARM64 architectures. The CloudWatch Agent helps collect system-level metrics from Amazon EC2 Instances & on-premise servers in a hybrid environment across operating systems, retrieve custom metrics from applications or services and collect logs from Amazon EC2 instances and on-premises servers.
 
-![CloudWatch Agent](cw-agent.png)
+![CloudWatch Agent](../../../images/cw-agent.png)
 
 ### Installing CloudWatch Agent on Amazon EC2 Instances
 
@@ -84,13 +84,13 @@ AWS provides two types of tools, automated and manual that help customers monito
 
 Metrics are the fundamental concept in CloudWatch. A metric represents a time-ordered set of data points that are published to CloudWatch. Think of a metric as a variable to monitor, and the data points as representing the values of that variable over time. For example, the CPU usage of a particular EC2 instance is one metric provided by Amazon EC2.
 
-![cw-metrics](cw-metrics.png)
+![cw-metrics](../../../images/cw-metrics.png)
 
 #### Default Metrics using CloudWatch Agent
 
 Amazon CloudWatch collects metrics from Amazon EC2 instance which can be viewed through AWS Management Console, AWS CLI, or an API. The available metrics are data points which are covered for 5 minute interval through Basic Monitoring or at a 1 minute interval for detailed monitoring (if turned on).
 
-![default-metrics](default-metrics.png)
+![default-metrics](../../../images/default-metrics.png)
 
 #### Custom Metrics using CloudWatch Agent
 
@@ -112,11 +112,11 @@ The CloudWatch agent supports collecting custom metrics from your EC2 instances.
 
 Amazon CloudWatch Logs helps customers monitor and troubleshoot systems and applications in near real time using existing system, application and custom log files. To collect logs from Amazon EC2 Instances and on-premise servers to CloudWatch, the unified CloudWatch Agent needs to be installed. The latest unified CloudWatch Agent is recommended, since it can collect both logs and advanced metrics. It also supports a variety of operating systems. If the instance uses Instance Metadata Service Version 2 (IMDSv2) then the unified agent is required.
 
-![cw-logs](cw-logs.png)
+![cw-logs](../../../images/cw-logs.png)
 
 The logs collected by the unified CloudWatch agent are processed and stored in Amazon CloudWatch Logs. Logs can be collected from Windows or Linux Servers and from both Amazon EC2 and on-premise servers. The CloudWatch agent configuration wizard can be used to setup the config JSON file which defines the setup of the CloudWatch agent.
 
-![logs-view](logs-view.png)
+![logs-view](../../../images/logs-view.png)
 
 !!! note "Reference"
 
@@ -141,11 +141,11 @@ Actions can be, Invoke an AWS Lambda function, Invoke Amazon EC2 Run Command, Re
 
 Amazon [CloudWatch alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) can watch a metric over a time period you specify, and perform one or more actions based on the value of the metric relative to a given threshold over a number of time periods. An alarm invokes actions only when the alarmchanges state. The action can be a notification sent to an Amazon Simple Notification Service (Amazon SNS) topic or Amazon EC2 Auto Scaling or take other appropriate actions like [stop, terminate, reboot, or recover an EC2 instance.](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/UsingAlarmActions.html)
 
-![CloudWatch Alarm](cw-alarm.png)
+![CloudWatch Alarm](../../../images/cw-alarm.png)
 
 Once the alarm is triggered an Email notification is sent to an SNS Topic as an action.
 
-![sns-alert](sns-alert.png)
+![sns-alert](../../../images/sns-alert.png)
 
 #### Monitoring for Auto Scaling Instances
 
@@ -159,19 +159,19 @@ Getting to know the inventory details of resources in AWS accounts, the resource
 
 Automatic Dashboards are available in all AWS public regions which provides an aggregated view of the health and performance of all AWS resources including Amazon EC2 instances under CloudWatch. This helps customers quickly get started with monitoring, resource-based view of metrics and alarms, and easily drill-down to understand the root cause of performance issues. Automatic Dashboards are pre-built with AWS service recommended [best practices](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html), remain resource aware, and dynamically update to reflect the latest state of important performance metrics.
 
-![ec2 dashboard](ec2-auto-dashboard.png)
+![ec2 dashboard](../../../images/ec2-auto-dashboard.png)
 
 #### Custom Dashboards in CloudWatch
 
 With [Custom Dashboards](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create_dashboard.html) Customers can create as many additional dashboards as they want with different widgets and customize it accordingly . Dashboards can be configured for cross-region and cross account view and can be added to a favorites list.
 
-![ec2 custom dashboard](ec2-custom-dashboard.png)
+![ec2 custom dashboard](../../../images/ec2-custom-dashboard.png)
 
 #### Resource Health Dashboards in CloudWatch
 
 Resource Health in CloudWatch ServiceLens is a fully managed solution that customers can use to automatically discover, manage, and visualize the [health and performance of Amazon EC2 hosts](https://aws.amazon.com/blogs/mt/introducing-cloudwatch-resource-health-monitor-ec2-hosts/) across their applications. Customers can visualize the health of their hosts by performance dimension such as CPU or memory, and slice and dice hundreds of hosts in a single view using filters such as instance type, instance state, or security groups. It enables a side-by-side comparison of a group of EC2 hosts and provides granular insights into an individual host.
 
-![ec2 resource health](ec2-resource-health.png)
+![ec2 resource health](../../../images/ec2-resource-health.png)
 
 ## Monitoring And Observability using Open Source Tools
 
@@ -179,7 +179,7 @@ Resource Health in CloudWatch ServiceLens is a fully managed solution that custo
 
 [AWS Distro for OpenTelemetry (ADOT)](https://aws.amazon.com/otel) is a secure, production-ready, AWS-supported distribution of the OpenTelemetry project. Part of the Cloud Native Computing Foundation, OpenTelemetry provides open source APIs, libraries, and agents to collect distributed traces and metrics for application monitoring. With AWS Distro for OpenTelemetry, customers can instrument applications just once to send correlated metrics and traces to multiple AWS and Partner monitoring solutions.
 
-![AWS Distro for Open Telemetry Overview](adot.png)
+![AWS Distro for Open Telemetry Overview](../../../images/adot.png)
 
 AWS Distro for OpenTelemetry (ADOT) provides a distributed monitoring framework that enables correlating data for monitoring application performance and health in an easy way which is critical for greater service visibility and maintenance.
 
@@ -191,7 +191,7 @@ The key components of ADOT are SDKs, auto-instrumentation agents, collectors and
 
 [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector): The collector in the distribution is built using the upstream OpenTelemetry collector. Added AWS-specific exporters to the upstream collector to send data to AWS services including AWS X-Ray, Amazon CloudWatch and Amazon Managed Service for Prometheus. 
 
-![adot architecture](adot-arch.png)
+![adot architecture](../../../images/adot-arch.png)
 
 #### Metrics & Traces through ADOT Collector & Amazon CloudWatch
 
@@ -199,7 +199,7 @@ AWS Distro for OpenTelemetry (ADOT) Collector along with the CloudWatch agent ca
 
 To support OpenTelemetry metrics in Amazon CloudWatch, [AWS EMF Exporter for OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) converts OpenTelemetry format metrics to CloudWatch Embedded Metric Format(EMF) which enables applications integrated in  OpenTelemetry metrics to be able to send high-cardinality application metrics to CloudWatch. [The X-Ray exporter](https://aws-otel.github.io/docs/getting-started/x-ray#configuring-the-aws-x-ray-exporter) allows traces collected in an OTLP format to be exported to [AWS X-ray](https://aws.amazon.com/xray/).
 
-![adot emf architecture](adot-emf.png)
+![adot emf architecture](../../../images/adot-emf.png)
 
 ADOT Collector on Amazon EC2 can be installed through AWS CloudFormation or using [AWS Systems Manager Distributor](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/ec2-monitoring/configure-adot-collector) to collect application metrics.
 
@@ -207,9 +207,9 @@ ADOT Collector on Amazon EC2 can be installed through AWS CloudFormation or usin
 
 [Prometheus](https://prometheus.io/) is a standalone open-source project and maintained independently for systems monitoring and alerting. Prometheus collects and stores metrics as time series data, i.e. metrics information is stored with the timestamp at which it was recorded, alongside optional key-value pairs called labels.
 
-![Prometheus Architecture](Prometheus.png)
+![Prometheus Architecture](../../../images/Prometheus.png)
 
-Prometheus is configured via command line flags and all the configuration details are maintained in the prometheus.yaml file. The 'scrape_config' section within the configuration file specifies the targets and parameters specifying how to scrape them. [Prometheus Service Discovery](https://github.com/prometheus/prometheus/tree/main/discovery) (SD) is a methodology of finding endpoints to scrape for metrics. Amazon EC2 service discovery configurations allow retrieving scrape targets from AWS EC2 instances are configured in the 'ec2_sd_config'.
+Prometheus is configured via command line flags and all the configuration details are maintained in the prometheus.yaml file. The 'scrape_config' section within the configuration file specifies the targets and parameters specifying how to scrape them. [Prometheus Service Discovery](https://github.com/prometheus/prometheus/tree/main/discovery) (SD) is a methodology of finding endpoints to scrape for metrics. Amazon EC2 service discovery configurations allow retrieving scrape targets from AWS EC2 instances are configured in the `ec2_sd_config`.
 
 
 #### Metrics through Prometheus & Amazon CloudWatch
@@ -220,23 +220,23 @@ The CloudWatch agent on EC2 instances can be installed & configured with Prometh
 
 Customers can choose to have an all open-source setup for their observability needs. For which, AWS Distro for OpenTelemetry (ADOT) Collector can be configured to scrape from a Prometheus-instrumented application and send the metrics to Prometheus Server. There are three OpenTelemetry components involved in this flow, that are the Prometheus Receiver, the Prometheus Remote Write Exporter, and the Sigv4 Authentication Extension. Prometheus Receiver receives metric data in Prometheus format. Prometheus Exporter exports data in Prometheus format. Sigv4 Authenticator extension provides Sigv4 authentication for making requests to AWS services.
 
-![adot prometheus architecture](adot-prom-arch.png)
+![adot prometheus architecture](../../../images/adot-prom-arch.png)
 
 #### Prometheus Node Exporter
 
 [Prometheus Node Exporter](https://github.com/prometheus/node_exporter) is an open-source time series monitoring and alerting system for cloud environments. Amazon EC2 Instances can be instrumented with Node Exporter to collect and store node-level metrics as time-series data, recording information with a timestamp. Node exporter is a Prometheus exporter which can expose variety of host metrics via URL http://localhost:9100/metrics.
 
-![prometheus metrics screenshot](prom-metrics.png)
+![prometheus metrics screenshot](../../../images/prom-metrics.png)
 
  Once the metrics are created, they can be sent to [Amazon Managed Prometheus](https://aws.amazon.com/prometheus/).
 
-![amp overview](amp-overview.png)
+![amp overview](../../../images/amp-overview.png)
 
 ### Streaming Logs from Amazon EC2 Instances using Fluent Bit Plugin
 
 [Fluent Bit](https://fluentbit.io/) is an open source and multi-platform log processor tool for handling data collection at scale, collecting & aggregating diverse data that deal with various sources of information, variety of data formats, data reliability, security, flexible routing and multiple destinations.
 
-![fluent architecture](fluent-arch.png)
+![fluent architecture](../../../images/fluent-arch.png)
 
 Fluent Bit helps create an easy extension point for streaming logs from Amazon EC2 to AWS services including Amazon CloudWatch for log retention and analytics. The newly-launched [Fluent Bit plugin](https://github.com/aws/amazon-cloudwatch-logs-for-fluent-bit#new-higher-performance-core-fluent-bit-plugin) can route logs to Amazon CloudWatch.
 
@@ -244,13 +244,13 @@ Fluent Bit helps create an easy extension point for streaming logs from Amazon E
 
 [Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a fully managed service based on the open source Grafana project, with rich, interactive & secure data visualizations to help customers instantly query, correlate, analyze, monitor, and alarm on metrics, logs, and traces across multiple data sources. Customers can create interactive dashboards and share them with anyone in their organization with an automatically scaled, highly available, and enterprise-secure service. With Amazon Managed Grafana, customers can manage user and team access to dashboards across AWS accounts, AWS regions, and data sources.
 
-![grafana overview](grafana-overview.png)
+![grafana overview](../../../images/grafana-overview.png)
 
 Amazon Managed Grafana can be added with Amazon CloudWatch as a data source by using the AWS data source configuration option in the Grafana workspace console. This feature simplifies adding CloudWatch as a data source by discovering existing CloudWatch accounts and manage the configuration of the authentication credentials that are required to access CloudWatch. Amazon Managed Grafana also supports [Prometheus data sources](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html), i.e. both self-managed Prometheus servers and Amazon Managed Service for Prometheus workspaces as data sources.
 
 Amazon Managed Grafana comes with a variety of panels, makes it easy to construct the right queries and customize the display properties allowing customers to create the dashboards they need.
 
-![grafana dashboard](grafana-dashboard.png)
+![grafana dashboard](../../../images/grafana-dashboard.png)
 
 ## Conclusion
 

@@ -1,10 +1,6 @@
 # AWS X-Ray - FAQ
 
-1. **Why are my traces/segments not appearing on my service map?**
-    There are many reasons this could be happening, see the knowledge center article for help troubleshooting this issue. [TODO: Link knowledge center article once it is published, [SIM to track](https://sim.amazon.com/issues/D73619508)]
-1. **How do I resolve the “trace quota exceeded” error in my X-Ray traces?**
-    There are a couple techniques to work around this error, see the knowledge center article for help resolving this error. [TODO: Link knowledge center article once it is published, [SIM to track](https://issues.amazon.com/D68338925)]
-1. **Does ADOT support trace propagation across AWS services such as Event Bridge or SQS?
+1. **Does AWS Distro for Open Telemetry (ADOT) support trace propagation across AWS services such as Event Bridge or SQS?
     **Technically, that’s not ADOT but AWS X-Ray. We are working on expanding the number and types of AWS services that propagate and/or generate spans. If you have a use case depending on this, please reach out to us.
 1. **Will I be able to use the W3C trace header to ingest spans into AWS X-Ray using ADOT?**
     Yes, later in 2023. We’re working on supporting W3C trace context propagation. 

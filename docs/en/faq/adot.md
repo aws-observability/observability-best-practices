@@ -10,10 +10,6 @@
     We’re working on it, please subscribe to the public roadmap entries [here](https://github.com/aws-observability/aws-otel-collector/issues/1755) and  [here](https://github.com/aws-observability/aws-otel-collector/issues/1756) to keep up to date.
 1. **Can I do advanced sampling in the ADOT collector?**
     We’re working on it, please subscribe to the public [roadmap entry](https://github.com/aws-observability/aws-otel-collector/issues/1135) to keep up to date.
-1. **Does ADOT support trace propagation across AWS services such as Event Bridge or SQS?
-    **Technically, that’s not ADOT but AWS X-Ray. We are working on expanding the number and types of AWS services that propagate and/or generate spans. If you have a use case depending on this, please reach out to us.
-1. **Will I be able to use the W3C trace header to ingest spans into AWS X-Ray using ADOT?**
-    Yes, later in 2023. We’re working on supporting W3C trace context propagation.
 1. **Any tips how to scale the ADOT collector?**
     Yes! See the upstream OpenTelemetry docs on [Scaling the Collector](https://opentelemetry.io/docs/collector/scaling/).
 1. **I have a fleet of ADOT collectors, how can I manage them?**

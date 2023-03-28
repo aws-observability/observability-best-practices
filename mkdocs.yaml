@@ -30,14 +30,14 @@ nav:
     - EC2 Monitoring: guides/ec2/ec2-monitoring.md 
     - ECS best practices: 
       - AWS Native:
-        - guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
-        - guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
-      - OSS:
-        - guides/containers/oss/ecs/best-practices-metrics-collection-1.md
-        - guides/containers/oss/ecs/best-practices-metrics-collection-2.md
+        - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
+      - Open Source:
+        - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
     - Operational:
       - ADOT Collector:
-        - guides/operational/adot-at-scale/operating-adot-collector.md
+        - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md

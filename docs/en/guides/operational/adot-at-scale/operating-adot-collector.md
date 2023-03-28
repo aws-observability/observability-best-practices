@@ -1,4 +1,4 @@
-# Operating the AWS Distro for Open Telemetry(ADOT) Collector
+# Operating the AWS Distro for Open Telemetry (ADOT) Collector
 
 The [ADOT collector](https://aws-otel.github.io/) is a downstream distribution of the open-source [Open Telemetry Collector](https://opentelemetry.io/docs/collector/) by [CNCF](https://www.cncf.io/). 
 

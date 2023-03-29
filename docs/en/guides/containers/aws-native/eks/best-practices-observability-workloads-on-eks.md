@@ -14,5 +14,5 @@ The AWS native best practices for observability of metrics based containerized w
 
 * [Amazon CloudWatch Container Insights](./eks-aws-native/amazon-cloudwatch-container-insights.md)
 * [Amazon EKS API Server Monitoring](./eks-aws-native/eks-api-server-monitoring.md)
-* Log Aggregation
+* [Log Aggregation](./eks-aws-native/log-aggregation.md)
 * Container Tracing with AWS X-Ray

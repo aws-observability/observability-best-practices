@@ -13,6 +13,6 @@ Observability is a measure  of how well internal states of a system can be infer
 The AWS native best practices for observability of metrics based containerized workloads on EKS have been grouped under the following topics:
 
 * [Amazon CloudWatch Container Insights](./eks-aws-native/amazon-cloudwatch-container-insights.md)
-* Amazon EKS API Server Monitoring
+* [Amazon EKS API Server Monitoring](./eks-aws-native/eks-api-server-monitoring.md)
 * Log Aggregation
 * Container Tracing with AWS X-Ray

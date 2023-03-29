@@ -8,7 +8,6 @@ people:
 
 * Alolita Sharma
 * Aly Shah Imtiaz
-* Arun Chandapillai
 * Dieter Adant
 * Dinesh Boddula
 * Elamaran Shanmugam

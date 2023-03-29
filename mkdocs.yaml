@@ -35,9 +35,17 @@ nav:
       - Open Source:
         - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
         - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
+    - EKS best practices:
+      - AWS Native:
+        - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
+        - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
+        - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
+        - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
+
     - Operational:
       - ADOT Collector:
         - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
+    
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md

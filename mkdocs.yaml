@@ -35,6 +35,17 @@ nav:
     # - Databases: guides/databases.md
     # - Creating an observability strategy: guides/strategy.md
 
+  - Observability and cost:
+    - Find your Observability cost: guides/cost-optimization/cost.md
+    - Cost and usage:
+      - Amazon CloudWatch: guides/cost-optimization/AmazonCloudWatch.md
+      - Amazon Managed Service for Prometheus: guides/cost-optimization/AmazonManagedServiceforPrometheus.md
+      - Amazon Managed Grafana: guides/cost-optimization/AmazonManagedGrafana.md
+      - AWS X-Ray: guides/cost-optimization/AWSXRay.md
+    - Reducing cost:
+      - Amazon CloudWatch: guides/cost-optimization/ReducingCloudWatchCosts.md
+
+
   - Data types:
     - Logs: signals/logs.md
     - Metrics: signals/metrics.md

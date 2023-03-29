@@ -123,7 +123,9 @@ Further, Please learn about [Container Insights Prometheus support for ADOT](htt
 Due to its lightweight nature, using Fluent Bit as the default log forwarder in Container Insights on EKS worker nodes will allow you to stream application logs into CloudWatch logs efficiently and reliably. With Fluent Bit, Container Insights is able to deliver thousands of business critical logs at scale in a resource efficient manner, especially in terms of CPU and memory utilization at the pod level. In other words, compared to FluentD, which was the log forwarder used prior, Fluent Bit has a smaller resource footprint and, as a result, is more resource efficient for memory and CPU. On the other hand, [AWS for Fluent Bit image](https://github.com/aws/aws-for-fluent-bit), which includes Fluent Bit and related plugins, gives Fluent Bit an additional flexibility of adopting new AWS features faster as the image aims to provide a unified experience within AWS ecosystem.
 
 The architecture below shows individual components used by CloudWatch Container Insights for EKS:
-[Image: Image.jpg]
+
+![CW-COMPONENTS](../../../../../images/Containers/aws-native/eks/cw-components.jpg)
+
 *Figure: Individual components used by CloudWatch Container Insights for EKS.*
 
 While working with containers, it is recommended to push all the logs, including application logs, through the standard output (stdout) and standard error output (stderr) methods whenever possible using the Docker JSON logging driver. For this reason, in EKS, the logging driver is configured by default and everything that a containerized application writes to `stdout` or `stderr` is streamed into a JSON file under `“/var/log/containers"` on the worker node. Container Insights classifies those logs into three different categories by default and creates dedicated input streams for each category within Fluent Bit and independent log groups within CloudWatch Logs. Those categories are:
@@ -211,7 +213,9 @@ With this configuration, you will only send the metrics that you are interested 
 
 The two approaches demonstrated discussed above are not mutually exclusive with each other. In fact, they both can be combined for a high degree of flexibility in customizing metrics that we want ingested into our monitoring system. We use this approach to decrease costs associated with metric storage and processing, as show in following graph.
 
-[Image: Image.jpg]*Figure: AWS Cost Explorer*
+![CW-COST-EXPLORER](../../../../../images/Containers/aws-native/eks/cw-cost-explorer.jpg)
+
+*Figure: AWS Cost Explorer*
 
 In the preceding AWS Cost Explorer graph, we can see daily cost associated with CloudWatch using different configurations on the ADOT Collector in a small EKS cluster (20 Worker nodes, 220 pods). *Aug 15th* shows CloudWatch bill using ADOT Collector with the default configuration. On *Aug 16th*, we have used the [Customize EMF exporter](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#customize-emf-exporter) approach and can see about 30% cost savings. On *Aug 17th*, we used the [Processors](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#processors) approach, which achieves about 45% costs saving.
 You must consider the trade-offs of customizing metrics sent by Container Insights as you will be able to decrease monitoring costs by sacrificing visibility of the monitored cluster. But also, the built-in dashboard provided by Container Insights within the AWS Console can be impacted by customized metrics as you can select not sending metrics and dimensions used by the dashboard. For further learning please check on [Cost savings by customizing metrics sent by Container Insights in Amazon EKS](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/).

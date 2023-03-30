@@ -23,12 +23,51 @@ Finally, it's a best practice to configure metrics namespace in Databricks clust
 ![Databricks Spark Config](../../images/databricks_spark_config.png)
 *Figure 1: example of metrics namespace Spark configuration*
 
-## AWS Native
+## Key parto of a good Observability soluton for DataBricks
 
-Check out the following recipe:
-- [How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
+**1) Metrics:**: Metrics are numbers that describe activity or a particular process measured over a period of time. Here are different types of metrics on Databricks:
 
-## Open Source Software
+System resource-level metrics, such as CPU, memory, disk, and network.
+Application Metrics using Custom Metrics Source, StreamingQueryListener, and QueryExecutionListener,
+Spark Metrics exposed by MetricsSystem.
+
+**2) Logs:** Logs are a representation of serial events that have happened, and they tell a linear story about them. Here are different types of logs on Databricks:
+
+- Event logs
+- Audit logs
+- Driver logs: stdout, stderr, log4j custom logs (enable structured logging)
+- Executor logs: stdout, stderr, log4j custom logs (enable structured logging)
+
+**3) Traces:** Stack traces provide end-to-end visibility, and they show the entire flow through stages. This is useful when you must debug to identify which stages/codes cause errors/performance issues.
+
+**4) Dashboards:** Dashboards provide a great summary view of an application/service’s golden metrics.
+
+**5) Alerts:** Alerts notify engineers about conditions that require attention.
+
+## AWS Native Observability options
+
+Native solutions, such as Ganglia UI and Log Delivery, are great solutions for collecting system metrics and querying Apache Spark™ metrics. However, some areas can be improved:
+
+- Ganglia doesn’t support alerts.
+- Ganglia doesn’t support creating metrics derived from logs (e.g., ERROR log growth rate).
+- You can’t use custom dashboards to track SLO (Service Level Objectives) and SLI (Service Level Indicators) related to data-correctness, data-freshness, or end-to-end latency, and then visualize them with ganglia.
+
+[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) is a critical tool for monitoring and managing your Databricks clusters on AWS. It provides valuable insights into cluster performance and helps you identify and resolve issues quickly. Integrating Databricks with CloudWatch and enabling structured logging can help improve those areas. CloudWatch Application Insights can help you automatically discover the fields contained in the logs, and CloudWatch Logs Insights provides a purpose-built query language for faster debugging and analysis.
+
+![Databricks With CloudWatch](../../images/databricks_cw_arch.png)
+
+For more informaton on how to use CloudWatch to monitor Databricks, see:
+[How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
+
+## Open-source software observability options
+
+###TODO:###
+- Add service url for AMP,AMG and ADOT services
+- Provide a business case and use case for customers to leverage Opensource observability options compared to AWS native
+- AMG is not official name for Amazon Managed Grafana
+- Add an architecture diagram
+- Provide a high level brief overview of the solution
+- Best practices or Do's or Don'ts 
 
 Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (AMG) workspace should be provisioned, with the AMP datasource configured in AMG
 

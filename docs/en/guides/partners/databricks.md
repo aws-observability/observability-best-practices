@@ -61,10 +61,6 @@ For more informaton on how to use CloudWatch to monitor Databricks, see:
 
 ## Open-source software observability options
 
-###TODO:###
-- Add an architecture diagram
-- Provide a high level brief overview of the solution
-
 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) is a Prometheus-compatible monitoring managed, serverless service, that will be responsible for storing metrics, and managing alerts created on top of these metrics. Prometheus is a popular open source monitoring technology, being the second project belonging to the Cloud Native Computing Foundation, right after Kubernetes.
 
 [Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a managed service for Grafana. Grafana is an open source technology for time-series data visualization, commonly used for observability. We can use Grafana to visualize data from several sources, such as Amazon Managed Service for Prometheus, Amazon CloudWatch, and many others. It will be used to visualize Databricks metrics and alerts.
@@ -81,6 +77,12 @@ Finally, Amazon Managed Grafana supports many different Data Sources, including 
 ### Architecture Overview
 
 ![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
+
+- ADOT Collector is installed, configured and started in each host through init script, along with node_exporter.
+- Init script also configure Spark for Prometheus metrics exposition.
+- Periodically, ADOT Collector scrape and enrich metrics from Spark and node_exporter, and send these metrics to Amazon Managed Service for Prometheus workspace.
+- Amazon Managed Service for Prometheus is configured as a data source in Amazon Managed Grafana workspace.
+- Through Amazon Managed Grafana, operations teams monitor Spark and node metrics.
 
 ### Procedure
 

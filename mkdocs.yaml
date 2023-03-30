@@ -45,6 +45,8 @@ nav:
     - Operational:
       - ADOT Collector:
         - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
+      - Monitoring for business outcomes:
+        - Operating at scale: guides/operational/business/monitoring-for-business-outcomes.md
     
     # - APM: guides/apm.md
     # - Containers: guides/containers.md

@@ -10,9 +10,9 @@ As a best practice, you want to start with establishing a baseline performance f
 
 ### Amazon CloudWatch metrics
 
-CloudWatch Metrics is a critical tool for monitoring and managing your RDS and Aurora databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Amazon RDS/Aurora sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. Amazon RDS publishes instance-level metrics metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
+[Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html) is a critical tool for monitoring and managing your [RDS](https://aws.amazon.com/rds/) and [Aurora](https://aws.amazon.com/rds/aurora/) databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Both Amazon RDS and Aurora database sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. RDS and Aurora publish instance-level metrics metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
 
-Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are few of the key metrics which you want to monitor :
+Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are key metricsto monitor :
 
 * **CPU Utilization** - Percentage of computer processing capacity used.
 * **DB Connections** - The number of client sessions that are connected to the DB instance. Consider constraining database connections if you see high numbers of user connections in conjunction with decreases in instance performance and response time. The best number of user connections for your DB instance will vary based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group.
@@ -26,25 +26,27 @@ Using CloudWatch Metrics, you can identify trends or patterns in your database p
 
 For troubleshooting performance related issues, first step is to tune the most used and expensive queries. Tune them to see if doing so lowers the pressure on system resources. For more information, see [Tuning queries](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries).
 
-If your queries are tuned and the issue still persists, consider upgrading your Amazon RDS DB instance classes. You might upgrade it to an instance with more resources (CPU, RAM, disk space, network bandwidth, I/O capacity).
+If your queries are tuned and the issue still persists, consider upgrading your database instance classes. You can upgrade it to an instance with more resources (CPU, RAM, disk space, network bandwidth, I/O capacity).
 
 Then, you can set up alarms to alert when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
 
 For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html) and [Viewing DB instance metrics in the CloudWatch console and AWS CLI](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/metrics_dimensions.html).
 
-#### CloudWatch Log Insights
+#### CloudWatch Logs Insights
 
-You can use CloudWatch Logs to capture log data from your RDS and Aurora instances and analyze it for insights into your application's behavior and performance.
+[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) enables you to interactively search and analyze your log data in Amazon CloudWatch Logs. You can perform queries to help you more efficiently and effectively respond to operational issues. If an issue occurs, you can use CloudWatch Logs Insights to identify potential causes and validate deployed fixes.
 
-Refer [Monitoring Amazon RDS log file](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html) for more information on monitoring RDS and Aurora logs with CloudWatch.
+To publish logs from RDS or Aurora database cluster to CloudWatch, see [Publish logs for Amazon RDS or Aurora for MySQL instances to CloudWatch](https://repost.aws/knowledge-center/rds-aurora-mysql-logs-cloudwatch)
+
+For more information on monitoring RDS or Aurora logs with CloudWatch, see [Monitoring Amazon RDS log file](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html).
 
 #### CloudWatch Alarms
 
-To identify when performance is degraded for your database clusters, you should monitor and alert on key performance metrics on a regular basis. Using Amazon CloudWatch alarms, you can watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions simply because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods. Alarms invoke actions only when alarm change state occurs. Being in alarm state is not enough.
+To identify when performance is degraded for your database clusters, you should monitor and alert on key performance metrics on a regular basis. Using [Amazon CloudWatch alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html), you can watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions simply because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods. Alarms invoke actions only when alarm change state occurs. Being in alarm state is not enough.
 
-To set a CloudWatch alarm
+To set a CloudWatch alarm -
 
-* Sign in to the AWS Management Console and open the Amazon RDS console at [https://console.aws.amazon.com/rds/]().
+* Navigate to AWS Management Console and open the Amazon RDS console at [https://console.aws.amazon.com/rds/]().
 * In the navigation pane, choose Databases, and then choose a DB instance.
 * Choose Logs & events.
 
@@ -72,17 +74,21 @@ Database Audit Logs provide a detailed record of all actions taken on your RDS a
 * Use a centralized log management solution, such as Amazon CloudWatch Logs or Amazon Kinesis Data Streams, to collect and analyze your Database Audit Logs.
 * Monitor your Database Audit Logs regularly for suspicious activity, and take action to investigate and resolve any issues as quickly
 
+For more information on how to configure database audit logs, see [Configuring an Audit Log to Capture database activities for Amazon RDS and Aurora](https://aws.amazon.com/blogs/database/configuring-an-audit-log-to-capture-database-activities-for-amazon-rds-for-mysql-and-amazon-aurora-with-mysql-compatibility/).
+
 #### Database Slow Query and Error Logs
 
 Slow query logs help you find slow-performing queries in the database so you can investigate the reasons behind the slowness and tune the queries if needed. Error logs help you to find the query errors, which further helps you find the changes in the application due to those errors. 
 
 You can monitor the slow query log and error log by creating a CloudWatch dashboard using Amazon CloudWatch Logs Insights (which enables you to interactively search and analyze your log data in Amazon CloudWatch Logs). 
 
+To activate and monitor the error log, the slow query log, and the general log for an Amazon RDS, see [Manage slow query logs and general logs for RDS MySQL](https://repost.aws/knowledge-center/rds-mysql-logs). To activate slow query log for Aurora PostgreSQL, see [Enable slow query logs for PostgreSQL](https://catalog.us-east-1.prod.workshops.aws/workshops/31babd91-aa9a-4415-8ebf-ce0a6556a216/en-US/postgresql-logs/enable-slow-query-log).
+
 ## Performance Insights and operating-system metrics
 
 ####  Enhanced Monitoring
 
-Enhanced Monitoring enables you to get fine-grain metrics in real time for the operating system (OS) that your DB instance runs on. 
+[Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html) enables you to get fine-grain metrics in real time for the operating system (OS) that your DB instance runs on. 
 
 RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in **RDSOSMetrics** Log group in Amazon CloudWatch. You have the option to choose a granularity between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
 
@@ -95,7 +101,7 @@ Enhanced monitoring also include the OS level process list. Currently, Enhanced 
 *Oracle
 *PostgreSQL
 
-**Different between CloudWatch and Enhanced Monitoring?**
+**Different between CloudWatch and Enhanced Monitoring**
 CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance. In contrast, Enhanced Monitoring gathers its metrics from an agent on the DB instance. A hypervisor creates and runs virtual machines (VMs). Using a hypervisor, an instance can support multiple guest VMs by virtually sharing memory and CPU. You might find differences between the CloudWatch and Enhanced Monitoring measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes. In this scenario, more virtual machines (VMs) are probably managed by the hypervisor layer on a single physical instance.
 
 
@@ -106,7 +112,7 @@ To learn about all the metrics available with Enhanced Monitoring, please refer 
 
 #### Performance Insights 
 
-Amazon RDS Performance Insights is a database performance tuning and monitoring feature that helps you quickly assess the load on your database, and determine when and where to take action. With the Performance Insights dashboard, you can visualize the database load on your db cluster and filter the load by waits, SQL statements, hosts, or users. It allows you to pin point on the root cause rather than chasing symptoms. Performance Insights uses lightweight data collection methods that do not impact the performance of your applications and makes it easy to see which SQL statements are causing the load and why.
+[Amazon RDS Performance Insights](https://aws.amazon.com/rds/performance-insights/) is a database performance tuning and monitoring feature that helps you quickly assess the load on your database, and determine when and where to take action. With the Performance Insights dashboard, you can visualize the database load on your db cluster and filter the load by waits, SQL statements, hosts, or users. It allows you to pin point on the root cause rather than chasing symptoms. Performance Insights uses lightweight data collection methods that do not impact the performance of your applications and makes it easy to see which SQL statements are causing the load and why.
 
 Performance Insights provides seven days of free performance history retention and you can extend that up to 2 years with a fees. You can enable Performance Insights from RDS management console or AWS CLI. Performance Insights also exposes a publicly available API to enable customers and third parties to integrate Performance Insights with their own custom tooling.
 
@@ -123,13 +129,13 @@ For more information on using Performance Insights with Aurora, refer: [Monitori
 ## Open-source Observability Tools
 
 #### Amazon Managed Grafana
-Amazon Managed Grafana is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. 
+[Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. 
 
 The **AWS/RDS namespace** in Amazon CloudWatch includes the key metrics that apply to database entities running on Amazon RDS and Amazon Aurora.To visualize and track the health and potential performance issues of our RDS/Aurora databases in Amazon Managed Grafana, we can leverage CloudWatch data source. 
 
 ![amg-rds-aurora.png](../../images/amg-rds-aurora.png)
 
-As of now, only basic RDS Performance Insights metrics are available in CloudWatch which is not sufficient to analyze database performance and identify bottlenecks in your database. To visualize RDS Performance Insight metrics in Amazon Managed Grafana and have a single pane of glass visibility, customers can use a custom lambda function to collect all the RDS Performance insights metrics and publish them in a custom CloudWatch metrics namespace. Once you have these metrics available in Amazon CloudWatch, you can visualize them in Amazon Managed Grafana.
+As of now, only basic Performance Insights metrics are available in CloudWatch which is not sufficient to analyze database performance and identify bottlenecks in your database. To visualize RDS Performance Insight metrics in Amazon Managed Grafana and have a single pane of glass visibility, customers can use a custom lambda function to collect all the RDS Performance insights metrics and publish them in a custom CloudWatch metrics namespace. Once you have these metrics available in Amazon CloudWatch, you can visualize them in Amazon Managed Grafana.
 
 To deploy the custom lambda function to gather RDS Performance Insights metrics, clone the following GitHub repository and run the install.sh script.
 
@@ -157,11 +163,11 @@ By quickly identifying unintended changes in your database and notifying using a
 
 ## AIOps - Machine learning based performance bottlenecks detection
 
-#### DevOps Guru for RDS
+#### Amazon DevOps Guru for RDS
 
-With DevOps Guru for RDS, you can monitor your databases for performance bottlenecks and operational issues. It uses Performance Insights metrics, analyzes them using Machine Learning (ML) to provide database-specific analyses of performance issues, and recommends corrective actions. DevOps Guru for RDS can identify and analyze various performance-related database issues, such as over-utilization of host resources, database bottlenecks, or misbehavior of SQL queries, among others. When an issue or anomalous behavior is detected, Amazon DevOps Guru for RDS displays the finding on the DevOps Guru console and sends notifications using Amazon EventBridge or Amazon Simple Notification Service (SNS), allowing DevOps or SRE teams to take real-time action on performance and operational issues before they become customer-impacting outages.
+With [Amazon DevOps Guru for RDS](https://aws.amazon.com/devops-guru/features/devops-guru-for-rds/), you can monitor your databases for performance bottlenecks and operational issues. It uses Performance Insights metrics, analyzes them using Machine Learning (ML) to provide database-specific analyses of performance issues, and recommends corrective actions. DevOps Guru for RDS can identify and analyze various performance-related database issues, such as over-utilization of host resources, database bottlenecks, or misbehavior of SQL queries, among others. When an issue or anomalous behavior is detected, DevOps Guru for RDS displays the finding on the DevOps Guru console and sends notifications using [Amazon EventBridge](https://aws.amazon.com/pm/eventbridge) or [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/pm/sns), allowing DevOps or SRE teams to take real-time action on performance and operational issues before they become customer-impacting outages.
 
-Amazon DevOps Guru for RDS establishes a baseline for the database metrics. Baselining involves analyzing the database performance metrics over a period of time to establish a normal behavior. Amazon DevOps Guru for RDS then uses ML to detect anomalies against the established baseline. If your workload pattern changes, then Amazon DevOps Guru for RDS establishes a new baseline that it uses to detect anomalies against the new normal. 
+DevOps Guru for RDS establishes a baseline for the database metrics. Baselining involves analyzing the database performance metrics over a period of time to establish a normal behavior. Amazon DevOps Guru for RDS then uses ML to detect anomalies against the established baseline. If your workload pattern changes, then DevOps Guru for RDS establishes a new baseline that it uses to detect anomalies against the new normal. 
 
 !!! Note
 	For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
@@ -179,31 +185,13 @@ For more information on how to get started, please visit [Amazon DevOps Guru for
 </figure>
 <!-- blank line -->
 
-## Security Observability
+## Auditing and Governance
 
 ####  AWS CloudTrail Logs
 
-CloudTrail provides a record of actions taken by a user, role, or an AWS service in Amazon RDS. CloudTrail captures all API calls for Amazon RDS as events, including calls from the console and from code calls to Amazon RDS API operations. Using the information collected by CloudTrail, you can determine the request that was made to Amazon RDS, the IP address from which the request was made, who made the request, when it was made, and additional details. For more information, see Monitoring Amazon RDS API calls in AWS CloudTrail.
+[AWS CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) provides a record of actions taken by a user, role, or an AWS service in RDS. CloudTrail captures all API calls for RDS as events, including calls from the console and from code calls to RDS API operations. Using the information collected by CloudTrail, you can determine the request that was made to RDS, the IP address from which the request was made, who made the request, when it was made, and additional details. For more information, see [Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html).
 
 For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html).
-## MySQL Specific Options
-
-* General Logs
-* Slow query logs
-* Processlist
-* InnoDB Monitor
-* Global Status
-* Performance Schema
-* Sys Schema
-* Information_schema.Innodb_metrics
-
-## PostgreSQL Specific Options
-* Publish your database logs (Postgresql.log and Upgrade.log) to Amazon CloudWatch.
-* Enable Query Logs. Query information will be included in the Postgresql.log file.
-   - log_min_duration_statements
-   - log_statement
-
-   Query information will be included in the Postgresql.log file.
 
 ## References for more information
 

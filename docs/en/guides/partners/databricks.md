@@ -23,7 +23,7 @@ Finally, it's a best practice to configure metrics namespace in Databricks clust
 ![Databricks Spark Config](../../images/databricks_spark_config.png)
 *Figure 1: example of metrics namespace Spark configuration*
 
-## Key parto of a good Observability soluton for DataBricks
+## Key parts of a good Observability solution for DataBricks
 
 **1) Metrics:**: Metrics are numbers that describe activity or a particular process measured over a period of time. Here are different types of metrics on Databricks:
 
@@ -62,17 +62,32 @@ For more informaton on how to use CloudWatch to monitor Databricks, see:
 ## Open-source software observability options
 
 ###TODO:###
-- Add service url for AMP,AMG and ADOT services
-- Provide a business case and use case for customers to leverage Opensource observability options compared to AWS native
-- AMG is not official name for Amazon Managed Grafana
 - Add an architecture diagram
 - Provide a high level brief overview of the solution
-- Best practices or Do's or Don'ts 
 
-Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (AMG) workspace should be provisioned, with the AMP datasource configured in AMG
+[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) is a Prometheus-compatible monitoring managed, serverless service, that will be responsible for storing metrics, and managing alerts created on top of these metrics. Prometheus is a popular open source monitoring technology, being the second project belonging to the Cloud Native Computing Foundation, right after Kubernetes.
+
+[Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a managed service for Grafana. Grafana is an open source technology for time-series data visualization, commonly used for observability. We can use Grafana to visualize data from several sources, such as Amazon Managed Service for Prometheus, Amazon CloudWatch, and many others. It will be used to visualize Databricks metrics and alerts.
+
+[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) is the AWS-supported distribution of OpenTelemetry project, which provides open source standards, libraries, and services for collecting traces and metrics. Through OpenTelemetry, we can collect several different observability data formats, such as Prometheus or StatsD, enrich this data, and send it to several destinations, such as CloudWatch or Amazon Managed Service for Prometheus.
+
+### Use cases
+
+While AWS Native services will deliver the observability needed to manage Databricks clusters, there are some scenarios where using Open Source managed services is the best choice.
+Both Prometheus and Grafana are very popular technologies, and are already being used in many companies. AWS Open Source services for observability will allow operations teams to use the same existing infrastructure, the same query language, and existing dashboards and alerts to monitor Databricks workloads, without the heavy lifting of managing these services infrastructure, scalability, and performance.
+ADOT is the best alternative for teams that need to send metrics and traces to different destinations, such as CloudWatch and Prometheus, or work with different types of data sources, such as OTLP and StatsD.
+Finally, Amazon Managed Grafana supports many different Data Sources, including CloudWatch and Prometheus, and help correlate data for teams that decide on using more than one tool, allowing for the creation of templates that will enable observability for all Databricks Clusters, and a powerful API that allow its provisioning and configuration through Infrastructure as Code.
+
+### Architecture Overview
+
+![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
+
+### Procedure
+
+Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (Amazon Managed Grafana) workspace should be provisioned, with the AMP datasource configured in Amazon Managed Grafana.
 
 - [Create AMP workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
-- [Create AMG workspace](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-create-workspace.html)
+- [Create Amazon Managed Grafana workspace](https://docs.aws.amazon.com/grafana/latest/userguide/Amazon Managed Grafana-create-workspace.html)
 - [Configure AMP datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)
 
 
@@ -191,3 +206,17 @@ ADOT_CONFIG="adot_config.yaml"
 ```
 
 If the cluster is running, it will be restarted. The next time it runs, it will send Spark and instance metrics to AMP.
+
+## Do's and dont's
+
+### Prioritize valuable metrics
+
+Spark and node_exporter both expose several metrics, and several formats for the same metrics. Without filtering which metrics are useful for monitoring and incident response, the mean time to detect problems increase, costs with storing samples increase, valuable information will be harder to be found and understood. Using OpenTelemetry processors, it is possible to filter and keep only valuable metrics, or filter out metrics that doesn't make sense; aggregate and calculate metrics before sending them to AMP.
+
+### Avoid alerting fatigue
+
+Once valuable metrics are being ingested into AMP, it's essential to configure alerts. However, alerting on every resource usage burst may cause alerting fatigue, that is when too much noise will decrease the confidence in alerts severity, and leave important events undetected. AMP alerting rules group feature should be use to avoid ambiqguity, i.e., several connected alerts generating separated notifications. Also, alerts should receive the proper severity, and it should reflect business priorities.
+
+### Reuse Amazon Managed Grafana dashboards
+
+Amazon Managed Grafana leverages Grafana native templating feature, which allow the creation for dashboards for all existing and new Databricks clusters. It removes the need of manually creating and keeping visualizations for each cluster. To use this feature, its important to have the correct labels in the metrics to group these metrics per cluster. Once again, it's possible with OpenTelemetry processors.

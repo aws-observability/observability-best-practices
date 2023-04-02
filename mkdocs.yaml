@@ -19,7 +19,7 @@ theme:
     - navigation.tabs.sticky
 
   palette:
-    primary: red
+    primary: grey
     accent: red
 
 nav:
@@ -45,8 +45,8 @@ nav:
     - Operational:
       - ADOT Collector:
         - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
-      - Monitoring for business outcomes:
-        - Operating at scale: guides/operational/business/monitoring-for-business-outcomes.md
+      - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
+      - Percentiles: guides/operational/business/sla-percentile.md
     
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
@@ -55,8 +55,14 @@ nav:
     - Databases:
       - Aurora and RDS: guides/databases/rds-and-aurora.md
     # - Creating an observability strategy: guides/strategy.md
-    - Cost optimization:
-      - Using Kubecost: guides/cost-optimization/kubecost.md
+    - Cost:
+      - Using Kubecost: guides/cost/kubecost.md
+      - Visualizing costs:
+        - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+        - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+        - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+        - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+      #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
 
   - Data types:
     - Logs: signals/logs.md

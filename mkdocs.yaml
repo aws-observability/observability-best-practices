@@ -16,35 +16,47 @@ theme:
   icon:
     repo: fontawesome/brands/github
   features:
-    - navigation.tabs
     - navigation.tabs.sticky
 
   palette:
-    primary: orange
-    accent: deep orange
+    primary: red
+    accent: red
 
 nav:
   - Home: index.md
   - Guides:
     - Best practices overview: guides/index.md
     - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
+    - EC2 Monitoring: guides/ec2/ec2-monitoring.md 
+    - ECS best practices: 
+      - AWS Native:
+        - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
+      - Open Source:
+        - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
+    - EKS best practices:
+      - AWS Native:
+        - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
+        - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
+        - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
+        - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
+
+    - Operational:
+      - ADOT Collector:
+        - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
+      - Monitoring for business outcomes:
+        - Operating at scale: guides/operational/business/monitoring-for-business-outcomes.md
+    
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md
     # - Full-stack: guides/full-stack.md
-    # - Databases: guides/databases.md
+    - Databases:
+      - Aurora and RDS: guides/databases/databases.md
     # - Creating an observability strategy: guides/strategy.md
-
-  - Observability and cost:
-    - Find your Observability cost: guides/cost-optimization/cost.md
-    - Cost and usage:
-      - Amazon CloudWatch: guides/cost-optimization/AmazonCloudWatch.md
-      - Amazon Managed Service for Prometheus: guides/cost-optimization/AmazonManagedServiceforPrometheus.md
-      - Amazon Managed Grafana: guides/cost-optimization/AmazonManagedGrafana.md
-      - AWS X-Ray: guides/cost-optimization/AWSXRay.md
-    - Reducing cost:
-      - Amazon CloudWatch: guides/cost-optimization/ReducingCloudWatchCosts.md
-
+    - Cost optimization:
+      - Using Kubecost: guides/cost-optimization/kubecost.md
 
   - Data types:
     - Logs: signals/logs.md
@@ -97,7 +109,13 @@ nav:
       - Alerting: recipes/alerting.md
       - Troubleshooting: recipes/troubleshooting.md
       - Workshops: recipes/workshops.md
-  - FAQ: faq.md
+  - FAQ:
+    - General: faq/faq.md
+    - AWS X-Ray: faq/x-ray.md
+    - Amazon Managed Service for Prometheus: faq/amp.md
+    - Amazon Managed Grafana: faq/amg.md
+    - AWS Distro for OpenTelemetry: faq/adot.md
+    
   - Contributors: contributors.md
 
 # extra:

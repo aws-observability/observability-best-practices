@@ -1,4 +1,4 @@
-name: Go
+name: CWMetricStreamExporter - Go
 
 on:
   push:
@@ -6,8 +6,14 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  PROJECT_DIR: ./sandbox/CWMetricStreamExporter
+
 jobs:
   Build:
+    defaults:
+      run:
+        working-directory: ${{ env.PROJECT_DIR }}
     name: Build
     runs-on: ubuntu-latest
     steps:
@@ -19,6 +25,8 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+
+    - run: ls
 
     - name: Get dependencies
       run: cd lambda && go mod download
@@ -34,6 +42,7 @@ jobs:
 
     - name: NPM Lint
       run: make npm_lint
-      
+
     - name: NPM Test
       run: make npm_test
+

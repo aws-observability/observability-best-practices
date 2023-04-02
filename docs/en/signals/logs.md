@@ -73,7 +73,7 @@ Log levels are crucial for informing your monitoring and observability solution 
 !!! tip
 	Logging too much data at `WARN` will fill your monitoring system with data that is of limited value, and then you may lose important data in the sheer volume of messages.  
 
-![Logs flowchart](images/logs1.png)
+![Logs flowchart](./images/logs1.png)
 
 !!! success
 	Using a standardized log level strategy makes automation easier, and helps developers get to the root cause of issues quickly.
@@ -100,7 +100,7 @@ Wherever possible, reduce the volume of logs as close to the source as possible.
 
 A common pattern that administrators pursue is copying all of their logging data into a single system with the goal querying all of their logs all from a single location. There are some manual workflow advantages to doing so, however this pattern introduces additional cost, complexity, points of failure, and operational overhead.
 
-![Double log ingestion](images/logs2.png)
+![Double log ingestion](./images/logs2.png)
 
 !!! success
 	Where possible, use a combination of [log levels](#use-log-levels-appropriately) and [log filtering](#filter-logs-close-to-the-source) to avoid a wholesale propagation of log data from your environments.

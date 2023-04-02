@@ -53,7 +53,7 @@ nav:
     # - Dashboards: guides/dashboards.md
     # - Full-stack: guides/full-stack.md
     - Databases:
-      - Aurora and RDS: guides/databases/databases.md
+      - Aurora and RDS: guides/databases/rds-and-aurora.md
     # - Creating an observability strategy: guides/strategy.md
     - Cost optimization:
       - Using Kubecost: guides/cost-optimization/kubecost.md

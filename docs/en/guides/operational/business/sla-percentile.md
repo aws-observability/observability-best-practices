@@ -16,19 +16,19 @@ fields @timestamp, event_details.duration
 
 The histogram plots the page load time in milliseconds. With this view, it's possible to clearly see the outliers. This data is hidden if average is used.
 
-![Histogram](/docs/en/images/percentiles-histogram.png)
+![Histogram](../../../../images/percentiles-histogram.png)
 
 The same data shown in CloudWatch using the average value indicates that pages are taking under two seconds to load. You can see from the histogram above, that most pages are actually taking less than a second and we have outliers.
 
-![Histogram](/docs/en/images/percentiles-average.png)
+![Histogram](../../../../images/percentiles-average.png)
 
 Using the same data again with a percentile (p99) indicates that there is an issue, the CloudWatch graph now shows that 99 percent of page loads are taking less than 23 seconds.
 
-![Histogram](/docs/en/images/percentiles-p99.png)
+![Histogram](../../../../images/percentiles-p99.png)
 
 To make this easier to visualize, the graphs below compare the average value to the 99th percentile. In this case, the target page load time is two seconds, it is possible to use alternative [CloudWatch statistics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean) and [metric math](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html) to make other calculations. In this case Percentile rank (PR) is used with the statistic **PR(:2000)** to show that 92.7% of page loads are happening within the target of 2000ms.
 
-![Histogram](/docs/en/images/percentiles-comparison.png)
+![Histogram](../../../../images/percentiles-comparison.png)
 
 Using percentiles in CloudWatch can help you gain deeper insights into your system's performance, detect issues early, and improve your customer's experience by identifying outliers that would otherwise be hidden.
 

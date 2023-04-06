@@ -1,8 +1,8 @@
-# Operating the AWS Distro for Open Telemetry (ADOT) Collector
+# Operating the AWS Distro for OpenTelemetry (ADOT) Collector
 
-The [ADOT collector](https://aws-otel.github.io/) is a downstream distribution of the open-source [Open Telemetry Collector](https://opentelemetry.io/docs/collector/) by [CNCF](https://www.cncf.io/). 
+The [ADOT collector](https://aws-otel.github.io/) is a downstream distribution of the open-source [OpenTelemetry Collector](https://opentelemetry.io/docs/collector/) by [CNCF](https://www.cncf.io/).
 
-Customers can use the ADOT Collector to collect signals such as Metrics and Traces from different environments including on-prem, AWS and from other cloud providers. 
+Customers can use the ADOT Collector to collect signals such as metrics and traces from different environments including on-prem, AWS and from other cloud providers.
 
 In order to operate the ADOT Collector in a real world environment and at scale, operators should monitor the collector health, and scale as needed. In this guide, you will learn about the actions one can take to operate the ADOT Collector in a production environment.
 
@@ -10,11 +10,14 @@ In order to operate the ADOT Collector in a real world environment and at scale,
 
 Depending on the your requirements, there are a few deployment options that you might want to consider.
 
-The following is already [well documented in the Open Telemetry documentation](https://opentelemetry.io/docs/collector/deployment/). Please feel free to take a look at that as well. In this guide, we will cover this guidance from an AWS point of view, but the overall idea remains the same.
-
 * No Collector
 * Agent
 * Gateway
+
+
+!!! tip
+    Check out the [OpenTelemetry documentation](https://opentelemetry.io/docs/collector/deployment/)
+    for additional information on these concepts.
 
 
 ### No Collector
@@ -38,18 +41,18 @@ The same architecture applies to collecting traces as well. You will simply have
 ##### Pros and Cons
 * One argument advocating for this design is that you don't have to allocate extra-ordinary amount of resources (CPU, Memory) for the Collector to do its job since the targets are limited to localhost sources.
 
-* The disadvantage of using this approach could be that, the number of varied configurations for the collector pod configuration is directly proportional to the number of applications you are running on the cluster. 
+* The disadvantage of using this approach could be that, the number of varied configurations for the collector pod configuration is directly proportional to the number of applications you are running on the cluster.
 This means, you will have to manage CPU, Memory and other resource allocation individually for each Pod depending on the workload that is expected for the Pod. By not being careful with this, you might over or under-allocate resources for the Collector Pod that will result in either under-performing or locking up CPU cycles and Memory which could otherwise be used by other Pods in the Node.
 
 You could also deploy the collector in other models such as Deployments, Daemonset, Statefulset etc based on your needs.
 
 #### Running the collector as a Daemonset on Amazon EKS
 
-You can choose to run the collector as a [Daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) in case you want to evenly distribute the load (scraping and sending the metrics to Amazon Managed Service for Prometheus workspace) of the collectors across the EKS Nodes. 
+You can choose to run the collector as a [Daemonset](https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/) in case you want to evenly distribute the load (scraping and sending the metrics to Amazon Managed Service for Prometheus workspace) of the collectors across the EKS Nodes.
 
 ![ADOT Collector Daemonset](../../../../images/adot-collector-eks-daemonset.png)
 
-Ensure you have the `keep` action that makes the collector only scrape targets from its own host/Node. 
+Ensure you have the `keep` action that makes the collector only scrape targets from its own host/Node.
 
 See sample below for reference. Find more such configuration details [here.](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced#daemonset-collector-configuration)
 
@@ -86,7 +89,7 @@ The same architecture can also be used for collecting traces. In this case, inst
 
 
 #### Running the collector on Amazon EC2
-As there is no side car approach in running the collector on EC2, you would be running the collector as an agent on the EC2 instance. You can set a static scrape configuration such as the one below to discover targets in the instance to scrape metrics from. 
+As there is no side car approach in running the collector on EC2, you would be running the collector as an agent on the EC2 instance. You can set a static scrape configuration such as the one below to discover targets in the instance to scrape metrics from.
 
 The config below scrapes endpoints at ports `9090` and `8081` on localhost.
 
@@ -116,7 +119,7 @@ To setup High-Availability for metric collection, [read our docs that provide de
 
 #### Running the collector as a central task on Amazon ECS for metrics collection
 
-You can use the [ECS Observer extension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver) to collect Prometheus metrics across different tasks in an ECS cluster or across clusters. 
+You can use the [ECS Observer extension](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver) to collect Prometheus metrics across different tasks in an ECS cluster or across clusters.
 
 ![ADOT Collector Deployment ECS](../../../../images/adot-collector-deployment-ecs.png)
 
@@ -163,7 +166,7 @@ The OTEL Collector exposes several signals for us to keep tab of its health and 
 
 The OTEL Collector can be configured to expose metrics in Prometheus Exposition Format by simply adding the `telemetry` section to the `service` pipeline. The collector also can expose its own logs to stdout.
 
-More details on telemetry configuration can be found in the [Open Telemetry documentation here.](https://opentelemetry.io/docs/collector/configuration/#service) 
+More details on telemetry configuration can be found in the [OpenTelemetry documentation here.](https://opentelemetry.io/docs/collector/configuration/#service)
 
 Sample telemetry configuration for the collector.
 
@@ -176,7 +179,7 @@ service:
       level: detailed
       address: 0.0.0.0:8888
 ```
-Once configured, the collector will start exporting metrics such as this below at `http://localhost:8888/metrics`. 
+Once configured, the collector will start exporting metrics such as this below at `http://localhost:8888/metrics`.
 
 ```bash
 # HELP otelcol_exporter_enqueue_failed_spans Number of spans failed to be added to the sending queue.
@@ -234,10 +237,10 @@ For the complete configuration options, refer to [the GitHub repo here.](https:/
 ```
 
 #### Setting limits to prevent catastrophic failures
-Given that resources (CPU, Memory) are finite in any environment, you should set limits to the collector components in-order to avoid failures due to unforeseen situations. 
+Given that resources (CPU, Memory) are finite in any environment, you should set limits to the collector components in-order to avoid failures due to unforeseen situations.
 
 It is particularly important when you are operating the ADOT Collector to collect Prometheus metrics.
-Take this scenario - You are in the DevOps team and are responsible for deploying and operating the ADOT Collector in an Amazon EKS cluster. Your application teams can simply drop their application Pods at will anytime of the day, and they expect the metrics exposed from their pods to be collected into an Amazon Managed Service for Prometheus workspace. 
+Take this scenario - You are in the DevOps team and are responsible for deploying and operating the ADOT Collector in an Amazon EKS cluster. Your application teams can simply drop their application Pods at will anytime of the day, and they expect the metrics exposed from their pods to be collected into an Amazon Managed Service for Prometheus workspace.
 
 Now it is your responsibility to ensure that this pipeline works without any hiccups. There are two ways to solve this problem at a high level:
 
@@ -260,9 +263,9 @@ In Prometheus [scrape_config,](https://prometheus.io/docs/prometheus/latest/conf
 You can see all available options in the [Prometheus documentation.](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
 
 ##### Limiting Memory usage
-The Collector pipeline can be configured to use [`memorylimiterprocessor`](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) to limit the amount of memory the processor component will use. It is common to see customers wanting the Collector to do complex operations that require intense Memory and CPU requirements. 
+The Collector pipeline can be configured to use [`memorylimiterprocessor`](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) to limit the amount of memory the processor component will use. It is common to see customers wanting the Collector to do complex operations that require intense Memory and CPU requirements.
 
-While using processors such as [`redactionprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor)[`filterprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor)[`spanprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor) are exciting and very useful, you should also remember that processors in general deal with data transformation tasks and it requires them to keep data in-memory in-order to complete the tasks. This can lead to a specific processor breaking the Collector entirely and also the Collector not having enough memory to expose its own health metrics. 
+While using processors such as [`redactionprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor)[`filterprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor)[`spanprocessor,`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor) are exciting and very useful, you should also remember that processors in general deal with data transformation tasks and it requires them to keep data in-memory in-order to complete the tasks. This can lead to a specific processor breaking the Collector entirely and also the Collector not having enough memory to expose its own health metrics.
 
 You can avoid this by limiting the amount of memory the Collector can use by making use of the  [`memorylimiterprocessor.`](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor). The recommendation for this is to provide buffer memory for the Collector to make use of for exposing health metrics and perform other tasks so the processors do not take all the allocated memory.
 
@@ -276,7 +279,7 @@ Some architecture patterns (Gateway pattern) such as the one shown below can be 
 
 However, it is possible to overwhelm the Gateway Collector with too many such _processing_ tasks that can cause issues. The recommended approach would be is to distribute the process/memory intense tasks between the individual collectors and the gateway so the workload is shared.
 
-For example, you could use the [`resourceprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor) to process resource attributes and use the [`transformprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor) to transform the signal data from within the individual Collectors as soon as the signal collection happens. 
+For example, you could use the [`resourceprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor) to process resource attributes and use the [`transformprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor) to transform the signal data from within the individual Collectors as soon as the signal collection happens.
 
 Then you could use the [`filterprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) to filter out certain parts of the signal data and use the [`redactionprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor) to redact sensitive information such as Credit Card numbers etc.
 
@@ -325,7 +328,7 @@ Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/
 * As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
 
 !!! warning
-    Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html) 
+    Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
 
 
 #### Open Agent Management Protocol (OpAMP)

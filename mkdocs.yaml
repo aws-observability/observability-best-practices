@@ -41,6 +41,8 @@ nav:
         - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
         - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
+      - Open Source:
+        - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
 
     - Operational:
       - ADOT Collector:

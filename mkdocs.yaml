@@ -119,11 +119,12 @@ nav:
       - Workshops: recipes/workshops.md
   - FAQ:
     - General: faq/faq.md
+    - Amazon CloudWatch: faq/cloudwatch.md
     - AWS X-Ray: faq/x-ray.md
     - Amazon Managed Service for Prometheus: faq/amp.md
     - Amazon Managed Grafana: faq/amg.md
     - AWS Distro for OpenTelemetry: faq/adot.md
-    
+
   - Contributors: contributors.md
 
 # extra:

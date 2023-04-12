@@ -78,138 +78,21 @@ Finally, Amazon Managed Grafana supports many different Data Sources, including 
 
 ![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
 
-- ADOT Collector is installed, configured and started in each host through init script, along with node_exporter.
-- Init script also configure Spark for Prometheus metrics exposition.
-- Periodically, ADOT Collector scrape and enrich metrics from Spark and node_exporter, and send these metrics to Amazon Managed Service for Prometheus workspace.
-- Amazon Managed Service for Prometheus is configured as a data source in Amazon Managed Grafana workspace.
-- Through Amazon Managed Grafana, operations teams monitor Spark and node metrics.
+To observe metrics from a Databricks cluster using AWS Managed Open Source Services for Observability, you will need an Amazon Managed Grafana workspace for visualizing both metrics and alerts, and an Amazon Managed Service for Prometheus workspace, configured as a datasource in the Amazon Managed Grafana workspace.
 
-### Procedure
+There are two important kind of metrics that must be collected: Spark and node metrics.
 
-Before start configuring Databricks, Amazon Managed Services for Prometheus (AMP) workspace and Amazon Managed Grafana (Amazon Managed Grafana) workspace should be provisioned, with the AMP datasource configured in Amazon Managed Grafana.
+Spark metrics will bring information such as current number of workers in the cluster, or executors; shuffles, that happen when nodes exchenge data during processing; or spills, when data go from RAM to disk and from disk to RAM. To expose these metrics, Spark native Prometheus - available since version 3.0 - must be enabled through Databricks management console, and configured through a `init script`.
 
-- [Create AMP workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
-- [Create Amazon Managed Grafana workspace](https://docs.aws.amazon.com/grafana/latest/userguide/Amazon Managed Grafana-create-workspace.html)
-- [Configure AMP datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)
+To keep track of node metrics, such as disk usage, CPU time, memory, storage performance, we use the `node_exporter`, that can be used without any further configuration, but should only expose important metrics.
 
+An ADOT Collector must be installed in each node of the cluster, scraping the metrics exposed by both Spark and the `node_exporter`, filtering these metrics, injecting metadata such as `cluster_name`, and sending these metrics to the Prometheus workspace.
 
-Create an S3 bucket to store the init script that will install ADOT Collector and it's dependencies.
+Both the ADOT Collector and the `node _exporter` must be installed and configured through a `init_script`.
 
-Create an IAM Role granting permission for Databricks cluster instances to remote write metrics into AMP, and read access to the init script's S3 bucket. For AMP permissions, you can attach the AmazonPrometheusRemoteWriteAccess managed policy. Configure this role's instance profile first in Databricks workspace, then into the Databricks cluster.
+The Databricks cluster must be configured with an IAM Role with permission to write metrics in the Prometheus workspace.
 
-- [Create IAM role](https://repost.aws/knowledge-center/ec2-instance-access-s3-bucket)
-- [Attach a managed policy to an IAM role](https://docs.aws.amazon.com/IAM/latest/UserGuide/access_policies_manage-attach-detach.html#add-policies-console)
-
-![Add instance profile into Databricks workspace](../../images/databricks_iam_workspace_config.png)
-*Figure 2: example of Instance Profile configuration in Databricks workspace*
-
-![Add instance profile into Databricks cluster](../../images/databricks_iam_cluster_config.png)
-*Figure 3: example of Instance Profile configuration in Databricks cluster*
-
-Finally, grant Databricks the right to assume the IAM Role you just created. You need to attach a policy similar to the one below to the IAM Role used to deploy the workspace. Mind that this is a different IAM Role from the one created for Databricks instances; it was either created at the time the workspace was created, or already existed prior to that.
-
-```json
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "iam:PassRole",
-      "Resource": "arn:aws:iam::<AWS_ACCOUNT_ID>:role/DatabricksAMPRole"
-    }
-  ]
-}
-```
-
-Create a configuration for ADOT and upload it to the S3 bucket. Here follows an example:
-
-```yaml
-receivers:
-  prometheus:
-    config:
-      global:
-
-      scrape_configs:
-      
-      - job_name: databricks_prometheus
-        metrics_path: /metrics/prometheus/
-        sample_limit: 10000
-        static_configs:
-        - targets:
-          - ${env:SPARK_LOCAL_IP:40000}
-
-      - job_name: databricks_node
-        sample_limit: 10000
-        static_configs:
-        - targets:
-          - ${env:SPARK_LOCAL_IP:9100}
-
-extensions:
-  sigv4auth:
-    service: "aps"
-    region: "${env:AMP_REGION}"
-
-exporters:
-  prometheusremotewrite:
-    endpoint: "${env:AMP_REMOTE_WRITE_ENDPOINT}"
-    auth:
-      authenticator: sigv4auth
-
-service:
-  pipelines:
-    metrics:
-      receivers: [prometheus]
-      exporters: [prometheusremotewrite]
-
-  extensions: [sigv4auth]
-
-```
-
-Create an init script to install ADOT and it's dependencies, and add some additional configurations to Spark monitoring. Upload the script to the S3 bucket, and configure this init script into the Databricks cluster. Here follows an example:
-
-```bash
-#!/bin/bash
-set -e
-
-cat << EOF > /databricks/spark/conf/metrics.properties
-*.sink.prometheusServlet.class=org.apache.spark.metrics.sink.PrometheusServlet
-*.sink.prometheusServlet.path=/metrics/prometheus
-master.sink.prometheusServlet.path=/metrics/master/prometheus
-applications.sink.prometheusServlet.path=/metrics/applications/prometheus
-EOF
-
-cp /databricks/spark/conf/metrics.properties \
-  /databricks/spark/dbconf/log4j/master-worker/metrics.properties
-sudo pip3 install awscli
-aws s3 cp s3://$ADOT_INIT_SCRIPT_BUCKET/$ADOT_CONFIG adot_config.yaml
-wget https://aws-otel-collector.s3.amazonaws.com/ubuntu/amd64/v0.25.0/aws-otel-collector.deb
-sudo dpkg -i aws-otel-collector.deb
-wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
-tar zxvf node_exporter-1.5.0.linux-amd64.tar.gz
-nohup ./node_exporter-1.5.0.linux-amd64/node_exporter &
-disown -h
-export SPARK_LOCAL_IP=`/sbin/ip -o -4 addr list eth0 | awk '{print $4}' | cut -d/ -f1`
-sudo /opt/aws/aws-otel-collector/bin/aws-otel-collector-ctl -c adot_config.yaml -a start
-```
-
-Enable native Spark support for Prometheus. Note that it is available only from Spark 3.0. To do that, you need to add the following configuration to Spark via Databricks cluster Advanced Configurations:
-
-```
-spark.ui.prometheus.enabled true
-```
-
-Add the following environment variables into Databricks cluster configuration, as it will be needed for AWS Distro for OpenTelemetry (ADOT) Collector later:
-
-```bash
-AMP_REMOTE_WRITE_ENDPOINT="<AMP_ENDPOINT>/api/v1/remote_write"
-AMP_REGION="<AMP_REGION>"
-ADOT_INIT_SCRIPT_BUCKET="<S3_BUCKET>"
-ADOT_CONFIG="adot_config.yaml"
-```
-
-If the cluster is running, it will be restarted. The next time it runs, it will send Spark and instance metrics to AMP.
-
-## Do's and dont's
+## Best Practices
 
 ### Prioritize valuable metrics
 
@@ -222,3 +105,9 @@ Once valuable metrics are being ingested into AMP, it's essential to configure a
 ### Reuse Amazon Managed Grafana dashboards
 
 Amazon Managed Grafana leverages Grafana native templating feature, which allow the creation for dashboards for all existing and new Databricks clusters. It removes the need of manually creating and keeping visualizations for each cluster. To use this feature, its important to have the correct labels in the metrics to group these metrics per cluster. Once again, it's possible with OpenTelemetry processors.
+
+## References and More Information
+
+- [Create Amazon Managed Service for Prometheus workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
+- [Create Amazon Managed Grafana workspace](https://docs.aws.amazon.com/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)
+- [Configure Amazon Managed Service for Prometheus datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)

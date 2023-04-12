@@ -7,7 +7,9 @@
 1. **Where can I find resource usage and performance details on the ADOT collector?**
     We have a [Performance Report](https://aws-observability.github.io/aws-otel-collector/benchmark/report) online that we keep up to date as we release collectors.
 1. **Is it possible to use ADOT with Apache Kafka?**
-    We’re working on it, please subscribe to the public roadmap entries [here](https://github.com/aws-observability/aws-otel-collector/issues/1755) and  [here](https://github.com/aws-observability/aws-otel-collector/issues/1756) to keep up to date.
+    Yes, support to Kafka exporter and receiver was added in the ADOT collector v0.28.0. For more details, please check the [ADOT collector documentation](https://aws-otel.github.io/docs/components/kafka-receiver-exporter).
+1. **How can I can configure the ADOT collector?**
+    The default mechanism to configure the ADOT collector is through configuration files. There are additional mechanisms, like storing configurations in S3 buckets, that are described in detail in the [ADOT collector documentation](https://aws-otel.github.io/docs/components/confmap-providers).
 1. **Can I do advanced sampling in the ADOT collector?**
     We’re working on it, please subscribe to the public [roadmap entry](https://github.com/aws-observability/aws-otel-collector/issues/1135) to keep up to date.
 1. **Any tips how to scale the ADOT collector?**

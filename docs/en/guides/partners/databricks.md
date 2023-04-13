@@ -55,6 +55,7 @@ Native solutions, such as Ganglia UI and Log Delivery, are great solutions for c
 [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) is a critical tool for monitoring and managing your Databricks clusters on AWS. It provides valuable insights into cluster performance and helps you identify and resolve issues quickly. Integrating Databricks with CloudWatch and enabling structured logging can help improve those areas. CloudWatch Application Insights can help you automatically discover the fields contained in the logs, and CloudWatch Logs Insights provides a purpose-built query language for faster debugging and analysis.
 
 ![Databricks With CloudWatch](../../images/databricks_cw_arch.png)
+*Figure 2: Databricks CloudWatch Architecture*
 
 For more informaton on how to use CloudWatch to monitor Databricks, see:
 [How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
@@ -77,9 +78,8 @@ ADOT is the best alternative for teams that need to send metrics and traces to d
 
 Finally, Amazon Managed Grafana supports many different Data Sources, including CloudWatch and Prometheus, and help correlate data for teams that decide on using more than one tool, allowing for the creation of templates that will enable observability for all Databricks Clusters, and a powerful API that allow its provisioning and configuration through Infrastructure as Code.
 
-### Architecture Overview
-
 ![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
+*Figure 3: Databricks Open Source Observability Architecture*
 
 To observe metrics from a Databricks cluster using AWS Managed Open Source Services for Observability, you will need an Amazon Managed Grafana workspace for visualizing both metrics and alerts, and an Amazon Managed Service for Prometheus workspace, configured as a datasource in the Amazon Managed Grafana workspace.
 

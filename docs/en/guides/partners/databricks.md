@@ -85,7 +85,7 @@ To observe metrics from a Databricks cluster using AWS Managed Open Source Servi
 
 There are two important kind of metrics that must be collected: Spark and node metrics.
 
-Spark metrics will bring information such as current number of workers in the cluster, or executors; shuffles, that happen when nodes exchenge data during processing; or spills, when data go from RAM to disk and from disk to RAM. To expose these metrics, Spark native Prometheus - available since version 3.0 - must be enabled through Databricks management console, and configured through a `init script`.
+Spark metrics will bring information such as current number of workers in the cluster, or executors; shuffles, that happen when nodes exchenge data during processing; or spills, when data go from RAM to disk and from disk to RAM. To expose these metrics, Spark native Prometheus - available since version 3.0 - must be enabled through Databricks management console, and configured through a `init_script`.
 
 To keep track of node metrics, such as disk usage, CPU time, memory, storage performance, we use the `node_exporter`, that can be used without any further configuration, but should only expose important metrics.
 
@@ -114,3 +114,4 @@ Amazon Managed Grafana leverages Grafana native templating feature, which allow 
 - [Create Amazon Managed Service for Prometheus workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
 - [Create Amazon Managed Grafana workspace](https://docs.aws.amazon.com/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)
 - [Configure Amazon Managed Service for Prometheus datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)
+- [Databricks Init Scripts](https://docs.databricks.com/clusters/init-scripts.html)

@@ -25,7 +25,7 @@ Finally, it's a best practice to configure metrics namespace in Databricks clust
 
 ## Key parts of a good Observability solution for DataBricks
 
-**1) Metrics:**: Metrics are numbers that describe activity or a particular process measured over a period of time. Here are different types of metrics on Databricks:
+**1) Metrics:** Metrics are numbers that describe activity or a particular process measured over a period of time. Here are different types of metrics on Databricks:
 
 System resource-level metrics, such as CPU, memory, disk, and network.
 Application Metrics using Custom Metrics Source, StreamingQueryListener, and QueryExecutionListener,
@@ -70,8 +70,11 @@ For more informaton on how to use CloudWatch to monitor Databricks, see:
 ### Use cases
 
 While AWS Native services will deliver the observability needed to manage Databricks clusters, there are some scenarios where using Open Source managed services is the best choice.
+
 Both Prometheus and Grafana are very popular technologies, and are already being used in many companies. AWS Open Source services for observability will allow operations teams to use the same existing infrastructure, the same query language, and existing dashboards and alerts to monitor Databricks workloads, without the heavy lifting of managing these services infrastructure, scalability, and performance.
+
 ADOT is the best alternative for teams that need to send metrics and traces to different destinations, such as CloudWatch and Prometheus, or work with different types of data sources, such as OTLP and StatsD.
+
 Finally, Amazon Managed Grafana supports many different Data Sources, including CloudWatch and Prometheus, and help correlate data for teams that decide on using more than one tool, allowing for the creation of templates that will enable observability for all Databricks Clusters, and a powerful API that allow its provisioning and configuration through Infrastructure as Code.
 
 ### Architecture Overview

@@ -22,7 +22,7 @@ We will now deep dive in to [AWS Distro for OpenTelemetry (ADOT)](https://aws-ot
 
 The ADOT Collector has the [concept of a pipeline](https://opentelemetry.io/docs/collector/configuration/) which comprises three key types of components, namely, receiver, processor, and exporter. A [receiver](https://opentelemetry.io/docs/collector/configuration/#receivers) is how data gets into the collector. It accepts data in a specified format, translates it into the internal format and passes it to [processors](https://opentelemetry.io/docs/collector/configuration/#processors) and [exporters](https://opentelemetry.io/docs/collector/configuration/#exporters) defined in the pipeline. It can be pull or push based. A processor is an optional component that is used to perform tasks such as batching, filtering, and transformations on data between being received and being exported. An exporter is used to determine which destination to send the metrics, logs or traces. The collector architecture allows multiple instances of such pipelines to be defined via YAML configuration. The following diagrams illustrates the pipeline components in an ADOT Collector instance deployed to Amazon EKS and Amazon EKS with Fargate profile.
 
-![CW-ADOT](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline-eks.jpg)
+![CW-ADOT-EKS](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline-eks.jpg)
 
 *Figure: Pipeline components in an ADOT Collector instance deployed to Amazon EKS*
 
@@ -41,7 +41,7 @@ receivers:
 
 This entails deploying the collector as a DaemonSet using the above configuration on Amazon EKS. You will also have access to a fuller set of metrics collected by this receiver directly from the Kubelet. Having more than one instances of ADOT Collector will suffice to collect resource metrics from all the nodes in a cluster. Having a single instance of ADOT collector can be overwhelming during higher loads so always recommend to deploy more than one collector.
 
-![CW-ADOT](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline.jpg)
+![CW-ADOT-FARGATE](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline.jpg)
 
 *Figure: Pipeline components in an ADOT Collector instance deployed to Amazon EKS with Fargate profile*
 

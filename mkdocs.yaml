@@ -61,6 +61,7 @@ nav:
     - Cost:
       - Using Kubecost: guides/cost/kubecost.md
       - Visualizing costs:
+        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
         - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
         - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
         - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md

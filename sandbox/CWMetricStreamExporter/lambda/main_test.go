@@ -110,8 +110,9 @@ func TestCreateSamples(t *testing.T) {
 }
 
 var noDimensions = &Dimensions{}
-var someDimensions = &Dimensions{Class: "Amazon", Resource: "Kinesis"}
-var allDimensions = &Dimensions{Class: "AWS", Resource: "Lambda", Service: "Data Firehose Transformation", Type: "Type 2"}
+var someDimensions = &Dimensions{"Class": "Amazon", "Resource": "Kinesis"}
+var ecsDimensions = &Dimensions{"ClusterName": "ecs-cluster", "ServiceName": "FluentBitService"}
+var allDimensions = &Dimensions{"Class": "AWS", "Resource": "Lambda", "Service": "Data Firehose Transformation", "Type": "Type 2"}
 
 type DimensionLabelTest struct {
 	dimensions           Dimensions
@@ -121,6 +122,7 @@ type DimensionLabelTest struct {
 var dimensionLabelsTest = []DimensionLabelTest{
 	DimensionLabelTest{*noDimensions, 0},
 	DimensionLabelTest{*someDimensions, 2},
+	DimensionLabelTest{*ecsDimensions, 2},
 	DimensionLabelTest{*allDimensions, 4},
 }
 

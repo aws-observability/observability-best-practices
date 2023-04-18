@@ -10,8 +10,6 @@ theme:
   logo: ../images/aws-logo.png
   favicon: ../images/aws-logo.png
   name: material
-  font:
-    text: ember
   custom_dir: overrides
   icon:
     repo: fontawesome/brands/github
@@ -21,6 +19,9 @@ theme:
   palette:
     primary: grey
     accent: red
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md

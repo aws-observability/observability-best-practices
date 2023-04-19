@@ -44,6 +44,8 @@ nav:
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
       - Open Source:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+    - Partners:
+      - Databricks: guides/partners/databricks.md
 
     - Operational:
       - ADOT Collector:

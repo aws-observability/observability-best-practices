@@ -1,0 +1,1644 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": 22,
+  "iteration": 1677540994602,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "gridPos": {
+        "h": 3,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 13,
+      "options": {
+        "content": "<h1>\n  <img height=\"50px\" src=\"data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAgAAAAIACAYAAAD0eNT6AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4ZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMTQ1IDc5LjE2MzQ5OSwgMjAxOC8wOC8xMy0xNjo0MDoyMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDphMjE1MWZmYi0wNGMyLTQ1YjAtODAyZC0wMjI5MGU3Zjc2NmMiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MkVDNTc4NTc2MDA0MTFFQUFCMkI5NjA5QjFEMTZFRDQiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MkVDNTc4NTY2MDA0MTFFQUFCMkI5NjA5QjFEMTZFRDQiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTkgKE1hY2ludG9zaCkiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5MTE0Y2I0Ny04MDc5LTRmYTEtYjhkNC00MDVjNzhhMTA1N2IiIHN0UmVmOmRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDozMWQzNmY2Zi05NjRjLTRlNDItYjdm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\">\n  ${databricks_cluster_name} </h1>",
+        "mode": "html"
+      },
+      "pluginVersion": "8.4.7",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 3
+      },
+      "id": 21,
+      "panels": [],
+      "title": "Status",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 0,
+        "y": 4
+      },
+      "id": 14,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "avg (\n    sum by (cpu, instance) (\n        rate(\n            node_cpu_seconds_total{\n                mode!=\"idle\",\n                databricks_driver=\"TRUE\",\n                databricks_cluster_id=\"$databricks_cluster_id\"\n            }\n            [5m])))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Driver CPU",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 4,
+        "y": 4
+      },
+      "id": 15,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "avg ( 1 -\nnode_memory_MemAvailable_bytes{\n    databricks_driver=\"TRUE\",\n    databricks_cluster_id=\"$databricks_cluster_id\"\n} /\nnode_memory_MemTotal_bytes)",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Driver Memory",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "noValue": "No disk bytes spilled?",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 8,
+        "y": 4
+      },
+      "id": 16,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "increase(executor_diskBytesSpilled_Count{databricks_cluster_id=\"$databricks_cluster_id\"}[$__range])",
+          "format": "time_series",
+          "instant": true,
+          "interval": "",
+          "legendFormat": "Disk Spills",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "noValue": "No worker CPU?",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 12,
+        "y": 4
+      },
+      "id": 17,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "avg (\n    sum by (cpu, instance) (\n        rate(\n            node_cpu_seconds_total{\n                mode!=\"idle\",\n                databricks_driver=\"FALSE\",\n                databricks_cluster_id=\"$databricks_cluster_id\"\n            }\n            [5m])))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Executor CPU",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "noValue": "No worker memory?",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 0.8
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "id": 18,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "avg(\n1 -\nnode_memory_MemAvailable_bytes{\n    databricks_driver=\"FALSE\",\n    databricks_cluster_id=\"$databricks_cluster_id\"\n} /\nnode_memory_MemTotal_bytes)",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Executor Memory",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "min": 0,
+          "noValue": "No worker running?",
+          "thresholds": {
+            "mode": "percentage",
+            "steps": [
+              {
+                "color": "transparent",
+                "value": null
+              },
+              {
+                "color": "dark-red",
+                "value": 50
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "area",
+        "justifyMode": "center",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "count (count by (instance) (node_cpu_seconds_total{databricks_cluster_id=\"$databricks_cluster_id\", databricks_driver=\"FALSE\"}))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Executors Running",
+          "refId": "A"
+        }
+      ],
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 9
+      },
+      "id": 23,
+      "panels": [],
+      "title": "Executor",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 10
+      },
+      "id": 2,
+      "maxDataPoints": 256,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "avg by (instance) (\n    sum by (cpu, instance) (\n        rate(\n            node_cpu_seconds_total{\n                mode!=\"idle\",\n                databricks_driver=\"FALSE\",\n                databricks_cluster_id=\"$databricks_cluster_id\"\n            }\n            [5m])))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Executor CPU Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMin": 0,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 3,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "always",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 10
+      },
+      "id": 3,
+      "maxDataPoints": 256,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "1 -\nnode_memory_MemAvailable_bytes{\n    databricks_driver=\"FALSE\",\n    databricks_cluster_id=\"$databricks_cluster_id\"\n} /\nnode_memory_MemTotal_bytes",
+          "interval": "",
+          "legendFormat": "{{ instance }}",
+          "refId": "A"
+        }
+      ],
+      "title": "Executor Memory Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "bars",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 10
+      },
+      "id": 8,
+      "maxDataPoints": 256,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "multi",
+          "sort": "desc"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "rate(\n    node_network_receive_bytes_total{\n        databricks_driver=\"FALSE\",\n        device!=\"lo\",\n        databricks_cluster_id=\"$databricks_cluster_id\"}\n    [5m]) +\nrate(\n    node_network_transmit_bytes_total\n    [5m])",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Executor N/W",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 19
+      },
+      "id": 25,
+      "panels": [],
+      "title": "Driver",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 0,
+        "y": 20
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "avg by (instance) (\n    sum by (cpu, instance) (\n        rate(\n            node_cpu_seconds_total{\n                mode!=\"idle\",\n                databricks_driver=\"TRUE\",\n                databricks_cluster_id=\"$databricks_cluster_id\"\n            }\n            [5m])))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Driver CPU Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percentunit"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 8,
+        "y": 20
+      },
+      "id": 5,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "1 -\nnode_memory_MemAvailable_bytes{\n    databricks_driver=\"TRUE\",\n    databricks_cluster_id=\"$databricks_cluster_id\"\n} /\nnode_memory_MemTotal_bytes",
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Driver Memory Utilization",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 8,
+        "x": 16,
+        "y": 20
+      },
+      "id": 7,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "rate(\n    node_network_receive_bytes_total{\n        databricks_driver=\"TRUE\",\n        device!=\"lo\",\n        databricks_cluster_id=\"$databricks_cluster_id\"}\n    [5m]) +\nrate(\n    node_network_transmit_bytes_total\n    [5m])",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "B"
+        }
+      ],
+      "title": "Driver N/W",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 29
+      },
+      "id": 27,
+      "panels": [],
+      "title": "Details",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "shuffleBytesWritten"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "shuffleTotalBytesRead"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 30
+      },
+      "id": 6,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "sum(rate(metrics_executor_totalShuffleWrite_bytes_total{databricks_cluster_id=\"$databricks_cluster_id\"}[5m]))",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "shuffleBytesWritten",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "sum(rate(metrics_executor_totalShuffleRead_bytes_total{databricks_cluster_id=\"$databricks_cluster_id\"}[5m]))",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "shuffleTotalBytesRead",
+          "refId": "B"
+        }
+      ],
+      "title": "Shuffle",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "axisSoftMax": 5,
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 30,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "decimals": 0,
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Failed Stages"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "purple",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Running Stages"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "orange",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 30
+      },
+      "id": 9,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "sum(DAGScheduler_stage_failedStages_Number{databricks_cluster_id=\"$databricks_cluster_id\"})",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Failed Stages",
+          "refId": "A"
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": false,
+          "expr": "sum(DAGScheduler_stage_runningStages_Number{databricks_cluster_id=\"$databricks_cluster_id\"})",
+          "format": "time_series",
+          "hide": false,
+          "instant": false,
+          "interval": "",
+          "legendFormat": "Running Stages",
+          "refId": "B"
+        }
+      ],
+      "title": "DAG Stages",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 39
+      },
+      "id": 10,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "rate(ExecutorMetrics_TotalGCTime_Number{databricks_cluster_id=\"$databricks_cluster_id\"}[5m])",
+          "format": "time_series",
+          "instant": false,
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Executor GC Time",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${databricks_database}"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 100,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "smooth",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "Bps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 39
+      },
+      "id": 11,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "8.4.7",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${databricks_database}"
+          },
+          "exemplar": true,
+          "expr": "rate(executor_diskBytesSpilled_Count{databricks_cluster_id=\"$databricks_cluster_id\"}[5m])",
+          "interval": "",
+          "legendFormat": "{{instance}}",
+          "refId": "A"
+        }
+      ],
+      "title": "Spill to Disk",
+      "type": "timeseries"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 35,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "Prometheus ws-8fd62a1a-c93b-4410-9842-0609bd2f4c6a",
+          "value": "Prometheus ws-8fd62a1a-c93b-4410-9842-0609bd2f4c6a"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "AMP Workspace",
+        "multi": false,
+        "name": "databricks_database",
+        "options": [],
+        "query": "prometheus",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "0123-205215-aj994av3",
+          "value": "0123-205215-aj994av3"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${databricks_database}"
+        },
+        "definition": "label_values(databricks_cluster_id)",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Databricks Cluster ID",
+        "multi": false,
+        "name": "databricks_cluster_id",
+        "options": [],
+        "query": {
+          "query": "label_values(databricks_cluster_id)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "AutoScaling Cluster",
+          "value": "AutoScaling Cluster"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${databricks_database}"
+        },
+        "definition": "label_values({databricks_cluster_id=\"$databricks_cluster_id\"}, databricks_cluster_name)",
+        "hide": 2,
+        "includeAll": false,
+        "multi": false,
+        "name": "databricks_cluster_name",
+        "options": [],
+        "query": {
+          "query": "label_values({databricks_cluster_id=\"$databricks_cluster_id\"}, databricks_cluster_name)",
+          "refId": "StandardVariableQuery"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Databricks Cluster Overview",
+  "uid": "oFrfSYoVz",
+  "version": 69,
+  "weekStart": ""
+}

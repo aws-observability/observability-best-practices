@@ -10,8 +10,6 @@ theme:
   logo: ../images/aws-logo.png
   favicon: ../images/aws-logo.png
   name: material
-  font:
-    text: ember
   custom_dir: overrides
   icon:
     repo: fontawesome/brands/github
@@ -21,6 +19,9 @@ theme:
   palette:
     primary: grey
     accent: red
+
+extra_css:
+  - stylesheets/extra.css
 
 nav:
   - Home: index.md
@@ -43,6 +44,8 @@ nav:
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
       - Open Source:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+    - Partners:
+      - Databricks: guides/partners/databricks.md
 
     - Operational:
       - ADOT Collector:
@@ -60,6 +63,7 @@ nav:
     - Cost:
       - Using Kubecost: guides/cost/kubecost.md
       - Visualizing costs:
+        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
         - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
         - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
         - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md

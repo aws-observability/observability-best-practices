@@ -55,4 +55,5 @@ With the preceding dashboard, you can now identify the cost of Amazon CloudWatch
 [publish]: https://docs.aws.amazon.com/quicksight/latest/user/creating-a-dashboard.html
 [report]: https://docs.aws.amazon.com/quicksight/latest/user/sending-reports.html
 [types]: https://docs.aws.amazon.com/quicksight/latest/user/working-with-visual-types.html
-[cid-implement]: http://127.0.0.1:8000/observability-best-practices/guides/cost-optimization/cost/#cloud-intelligence-dashboards
+[cid-implement]: ../../../guides/cost/cost-visualization/cost.md#implementation
+

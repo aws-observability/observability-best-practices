@@ -28,4 +28,4 @@ Using Athena as a data source, you can build dashboards in either Amazon Managed
 
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html
 [sql-query]: https://docs.aws.amazon.com/athena/latest/ug/querying-athena-tables.html
-[cid-implement]: http://127.0.0.1:8000/observability-best-practices/guides/cost-optimization/cost/#cloud-intelligence-dashboards
+[cid-implement]: ../../../guides/cost/cost-visualization/cost.md#implementation

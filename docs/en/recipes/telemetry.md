@@ -7,7 +7,7 @@ they are consumed:
 ![telemetry concept](images/telemetry.png)
 
 !!! success
-    See the [Data types](/signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
+    See the [Data types](../signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
 
 Let's further dive into the concepts introduced in above figure.
 
@@ -21,7 +21,7 @@ We consider sources as something where signals come from. There are two types of
 
 ## Agents
 
-In order to transpor signals from the sources to the destinations, you need
+In order to transport signals from the sources to the destinations, you need
 some sort of intermediary we call agent. These agents receive or pull signals 
 from the sources and, typically via configuration, determine where signals 
 shoud go, optionally supporting filtering and aggregation.

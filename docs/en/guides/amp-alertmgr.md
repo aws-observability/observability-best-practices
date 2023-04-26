@@ -195,8 +195,40 @@ container_spec_cpu_period{image!="",container!="POD", namespace!="kube-sys"}) by
 
 Amazon Managed Service for Prometheus [AWS Controller for Kubernetes](https://github.com/aws-controllers-k8s/community) (ACK) controller is available for Workspace, Alert Manager and Ruler resources which lets customers take advantage of Prometheus using [custom resource definitions](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/custom-resources/) (CRDs) and native objects or services that provide supporting capabilities without having to define any resources outside of Kubernetes cluster. The [ACK controller for Amazon Managed Service for Prometheus](https://aws.amazon.com/blogs/mt/introducing-the-ack-controller-for-amazon-managed-service-for-prometheus/) can be used to manage all resources directly from the Kubernetes cluster that you’re monitoring, allowing Kubernetes to act as your ‘source of truth’ for your workload’s desired state. [ACK](https://aws-controllers-k8s.github.io/community/docs/community/overview/) is a collection of Kubernetes CRDs and custom controllers working together to extend the Kubernetes API and manage AWS resources.
 
-For additional information customers can read the [AWS Documentation](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alert-manager.html), go through the [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/setup-alert-manager) on Amazon Managed Service for Prometheus Alert Manager and also check the [product page](https://aws.amazon.com/prometheus/) to know the [features](https://aws.amazon.com/prometheus/features/), and [pricing](https://aws.amazon.com/prometheus/pricing/) details.
+A snippet of alerting rules configured using ACK is shown below:
 
-Product FAQ: [https://aws.amazon.com/prometheus/faqs/](https://aws.amazon.com/prometheus/faqs/)
+```
+apiVersion: prometheusservice.services.k8s.aws/v1alpha1
+kind: RuleGroupsNamespace
+metadata:
+  name: default-rule
+spec:
+  workspaceID: WORKSPACE-ID
+  name: default-rule
+  configuration: |
+    groups:
+    - name: example
+      rules:
+      - alert: HostHighCpuLoad
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 60
+        for: 5m
+        labels:
+          severity: warning
+          event_type: scale_up
+        annotations:
+          summary: Host high CPU load (instance {{ $labels.instance }})
+          description: "CPU load is > 60%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+      - alert: HostLowCpuLoad
+        expr: 100 - (avg(rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) < 30
+        for: 5m
+        labels:
+          severity: warning
+          event_type: scale_down
+        annotations:
+          summary: Host low CPU load (instance {{ $labels.instance }})
+          description: "CPU load is < 30%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+```
+
+For more information customers can read the [AWS Documentation](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alert-manager.html), go through the [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/setup-alert-manager) on Amazon Managed Service for Prometheus Alert Manager.
 
 Additional Reference: [Amazon Managed Service for Prometheus Is Now Generally Available with Alert Manager and Ruler](https://aws.amazon.com/blogs/aws/amazon-managed-service-for-prometheus-is-now-generally-available-with-alert-manager-and-ruler/)

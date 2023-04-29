@@ -52,6 +52,8 @@ nav:
         - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
       - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
       - Percentiles: guides/operational/business/sla-percentile.md
+      - Key Performance Indicators: guides/operational/business/key-performance-indicators.md
+
     
     # - APM: guides/apm.md
     # - Containers: guides/containers.md

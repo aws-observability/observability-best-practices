@@ -16,6 +16,7 @@ people:
 |Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
 | Kiran Prakash| Bobby Hallahan| Toshal Dudhwala| Franklin Aguinaldo|
 | Nirmal Mehta| Lucas Vieira Souza da Silva| William Armiros| Abhi Khanna|
+| Arvind Raghunathan|
 
 
 Note that all recipes published on this site are available via the 

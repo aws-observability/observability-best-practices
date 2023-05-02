@@ -229,6 +229,106 @@ spec:
           description: "CPU load is < 30%\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 ```
 
+## Restricting access to rules using IAM policy
+
+Organizations require various teams to have their own rules to be created & administered for their recording and alerting requirements. Rules management in Amazon Managed Service for Prometheus allows rules to be access controlled using AWS Identity and Access Management (IAM) policy so that each team can control their own set of rules & alerts grouped by rulegroupnamespaces.
+
+The below image shows two example rulegroupnamespaces called devops and engg added into Rules management of Amazon Managed Service for Prometheus.
+
+<img src="..\images\2023-04-28_07_32_34-Amazon Prometheus_us-west-2.png">
+
+The below JSON is a sample IAM policy which restricts access to the devops rulegroupnamespace (shown above) with the Resource ARN specified. The notable actions in the below IAM policy are [PutRuleGroupsNamespace](https://docs.aws.amazon.com/cli/latest/reference/amp/put-rule-groups-namespace.html) and [DeleteRuleGroupsNamespace](https://docs.aws.amazon.com/cli/latest/reference/amp/delete-rule-groups-namespace.html) which are restricted to the specified Resource ARN of the rulegroupsnamespace of AMP workspace. Once the policy is created, it can be assigned to any required user, group or role for desired access control requirement. The Action in the IAM policy can be modified/restricted as required based on [IAM permissions](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-APIReference.html) for required & allowable actions.
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "VisualEditor0",
+      "Effect": "Allow",
+      "Action": [
+        "aps:RemoteWrite",
+        "aps:DescribeRuleGroupsNamespace",
+        "aps:PutRuleGroupsNamespace",
+        "aps:DeleteRuleGroupsNamespace"
+      ],
+      "Resource": [
+        "arn:aws:aps:us-west-2:XXXXXXXXXXXX:workspace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b",
+        "arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/devops"
+      ]
+    }
+  ]
+}
+```
+
+The below awscli interaction shows an example of an IAM user having restricted access to a rulegroupsnamespace specified through Resource ARN (i.e. devops rulegroupnamespace) in IAM policy and how the same user is denied access to other resources (i.e. engg rulegroupnamespace) not having access.
+
+```
+$ aws amp describe-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b --name devops
+{
+    "ruleGroupsNamespace": {
+        "arn": "arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/devops",
+        "createdAt": "2023-04-28T01:50:15.408000+00:00",
+        "data": "Z3JvdXBzOgogIC0gbmFtZTogZGV2b3BzX3VwZGF0ZWQKICAgIHJ1bGVzOgogICAgLSByZWNvcmQ6IG1ldHJpYzpob3N0X2NwdV91dGlsCiAgICAgIGV4cHI6IGF2ZyhyYXRlKGNvbnRhaW5lcl9jcHVfdXNhZ2Vfc2Vjb25kc190b3RhbFsybV0pKQogICAgLSBhbGVydDogaGlnaF9ob3N0X2NwdV91c2FnZQogICAgICBleHByOiBhdmcocmF0ZShjb250YWluZXJfY3B1X3VzYWdlX3NlY29uZHNfdG90YWxbNW1dKSkKICAgICAgZm9yOiA1bQogICAgICBsYWJlbHM6CiAgICAgICAgICAgIHNldmVyaXR5OiBjcml0aWNhbAogIC0gbmFtZTogZGV2b3BzCiAgICBydWxlczoKICAgIC0gcmVjb3JkOiBjb250YWluZXJfbWVtX3V0aWwKICAgICAgZXhwcjogYXZnKHJhdGUoY29udGFpbmVyX21lbV91c2FnZV9ieXRlc190b3RhbFs1bV0pKQogICAgLSBhbGVydDogY29udGFpbmVyX2hvc3RfbWVtX3VzYWdlCiAgICAgIGV4cHI6IGF2ZyhyYXRlKGNvbnRhaW5lcl9tZW1fdXNhZ2VfYnl0ZXNfdG90YWxbNW1dKSkKICAgICAgZm9yOiA1bQogICAgICBsYWJlbHM6CiAgICAgICAgc2V2ZXJpdHk6IGNyaXRpY2FsCg==",
+        "modifiedAt": "2023-05-01T17:47:06.409000+00:00",
+        "name": "devops",
+        "status": {
+            "statusCode": "ACTIVE",
+            "statusReason": ""
+        },
+        "tags": {}
+    }
+}
+
+
+$ cat > devops.yaml <<EOF
+> groups:
+>  - name: devops_new
+>    rules:
+>   - record: metric:host_cpu_util
+>     expr: avg(rate(container_cpu_usage_seconds_total[2m]))
+>   - alert: high_host_cpu_usage
+>     expr: avg(rate(container_cpu_usage_seconds_total[5m]))
+>     for: 5m
+>     labels:
+>            severity: critical
+>  - name: devops
+>    rules:
+>    - record: container_mem_util
+>      expr: avg(rate(container_mem_usage_bytes_total[5m]))
+>    - alert: container_host_mem_usage
+>      expr: avg(rate(container_mem_usage_bytes_total[5m]))
+>      for: 5m
+>      labels:
+>        severity: critical
+> EOF
+
+
+$ base64 devops.yaml > devops_b64.yaml
+
+
+$ aws amp put-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b --name devops --data file://devops_b64.yaml
+{
+    "arn": "arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/devops",
+    "name": "devops",
+    "status": {
+        "statusCode": "UPDATING"
+    },
+    "tags": {}
+}
+```
+
+`$ aws amp describe-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b --name engg
+An error occurred (AccessDeniedException) when calling the DescribeRuleGroupsNamespace operation: User: arn:aws:iam::XXXXXXXXXXXX:user/amp_ws_user is not authorized to perform: aps:DescribeRuleGroupsNamespace on resource: arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/engg`
+
+`$ aws amp put-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b --name engg --data file://devops_b64.yaml
+An error occurred (AccessDeniedException) when calling the PutRuleGroupsNamespace operation: User: arn:aws:iam::XXXXXXXXXXXX:user/amp_ws_user is not authorized to perform: aps:PutRuleGroupsNamespace on resource: arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/engg`
+
+`$ aws amp delete-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b --name engg
+An error occurred (AccessDeniedException) when calling the DeleteRuleGroupsNamespace operation: User: arn:aws:iam::XXXXXXXXXXXX:user/amp_ws_user is not authorized to perform: aps:DeleteRuleGroupsNamespace on resource: arn:aws:aps:us-west-2:XXXXXXXXXXXX:rulegroupsnamespace/ws-8da31ad6-f09d-44ff-93a3-a81609ca3e3b/engg`
+
+The user permissions to use rules can also be restricted using an [IAM policy](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alertmanager-IAM-permissions.html) (documentation sample).
+
 For more information customers can read the [AWS Documentation](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alert-manager.html), go through the [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/setup-alert-manager) on Amazon Managed Service for Prometheus Alert Manager.
 
 Additional Reference: [Amazon Managed Service for Prometheus Is Now Generally Available with Alert Manager and Ruler](https://aws.amazon.com/blogs/aws/amazon-managed-service-for-prometheus-is-now-generally-available-with-alert-manager-and-ruler/)

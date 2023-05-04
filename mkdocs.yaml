@@ -49,7 +49,8 @@ nav:
 
     - Operational:
       - ADOT Collector:
-        - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
+        - Operating At Scale: guides/operational/adot-at-scale/operating-adot-collector.md
+        - Manually Instrumenting Spring Integration Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
       - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
       - Percentiles: guides/operational/business/sla-percentile.md
       - Alerting:
@@ -150,7 +151,15 @@ markdown_extensions:
     - admonition
     - codehilite
     - footnotes
-    - pymdownx.critic    
+    - pymdownx.critic  
+    - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+
 
 plugins:
     - search

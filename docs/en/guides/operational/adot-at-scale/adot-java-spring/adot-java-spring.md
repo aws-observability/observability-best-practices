@@ -1,8 +1,8 @@
-# Instrumenting Java Spring Applications
+# Instrumenting Java Spring Integration Applications
 
-This article describes an approach for manually instrumenting [Spring-Integration](https://spring.io/why-spring) applications utilizing [Open Telemetry](https://opentelemetry.io/) and [X-ray](https://aws.amazon.com/xray/).
+This article describes an approach for manually instrumenting [Spring-Integration](https://docs.spring.io/spring-integration/reference/html/overview.html) applications utilizing [Open Telemetry](https://opentelemetry.io/) and [X-ray](https://aws.amazon.com/xray/).
 
-The Spring-integration framework is designed to enable the development of integration solutions typical of event-driven architectures and messaging-centric architectures. On the other hand, OpenTelemetry is much more focused on micro services architectures, in which services communicate and coordinate with each other using HTTP requests. Therefore this guide will provide a recommendation of how to instrument Spring-integration applications using “manual instrumentation” with the OpenTelemetry API.
+The Spring-Integration framework is designed to enable the development of integration solutions typical of event-driven architectures and messaging-centric architectures. On the other hand, OpenTelemetry tends to be more focused on micro services architectures, in which services communicate and coordinate with each other using HTTP requests. Therefore this guide will provide an example of how to instrument Spring-Integration applications using manual instrumentation with the OpenTelemetry API.
 
 ## Background Information
 
@@ -13,13 +13,11 @@ The following quote from the [OpenTelemetry documentation](https://opentelemetry
 !!! quote
     Traces give us the big picture of what happens when a request is made to an application. Whether your application is a monolith with a single database or a sophisticated mesh of services, traces are essential to understanding the full “path” a request takes in your application.
 
-Given that one of the main benefits of tracing is end-to-end visibility of a request, it is important for traces to link properly all the way from the request origin to the backend. A common way of doing this in OpenTelemetry is to utilize [nested spans](https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans). This works in a microservices architecture where the spans are passed from service to service until they reach the final destination. In a Spring application, we need to create parent/child relationships between spans created both remotely AND locally.
+Given that one of the main benefits of tracing is end-to-end visibility of a request, it is important for traces to link properly all the way from the request origin to the backend. A common way of doing this in OpenTelemetry is to utilize [nested spans](https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans). This works in a microservices architecture where the spans are passed from service to service until they reach the final destination. In a Spring Integration application, we need to create parent/child relationships between spans created both remotely AND locally.
 
 ## Tracing Utilizing Context Propagation
 
-This time we are going to suggest a different approach: Instead of passing spans around the application code, we are going to use the messages in the application to transport the context from spans associated with the previous message. To achieve this we are going to use this [approach](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation).
-
-Although this approach is traditionally used when you need to create parent/child relationship between spans created locally and in remote locations, it will be used for the case of the Spring-application because it simplifies the code and will allow the application to scale: it will be possible to process messages in parallel in multiple threads and it will also be possible to scale horizontally in case we need to process messages in different hosts.
+We will demonstrate an approach using context propagation. Although this approach is traditionally used when you need to create parent/child relationship between spans created locally and in remote locations, it will be used for the case of the Spring Integration Application because it simplifies the code and will allow the application to scale: it will be possible to process messages in parallel in multiple threads and it will also be possible to scale horizontally in case we need to process messages in different hosts.
 
 Here is an overview of what is necessary to achieve this:
 
@@ -39,7 +37,7 @@ Here is an overview of what is necessary to achieve this:
     - Close Scope.
     - End Span.
 
-This is a simplified description of what needs to be done. We are providing a functional sample application that uses the spring-integration framework. The code for this application can be found [here](https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp).
+This is a simplified description of what needs to be done. We are providing a functional sample application that uses the Spring-Integration framework. The code for this application can be found [here](https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp).
 
 To view only the changes that were put in place to instrument the application, view this [diff](https://github.com/rapphil/spring-integration-samples/compare/30e01ce9eefd8dae288eca44013810afa8c1a585..6f056a76350340a9658db0cad7fc12dbda505437).
 

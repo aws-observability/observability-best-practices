@@ -50,7 +50,7 @@ nav:
     - Operational:
       - ADOT Collector:
         - Operating At Scale: guides/operational/adot-at-scale/operating-adot-collector.md
-        - Manually Instrumenting Spring Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
+        - Manually Instrumenting Spring Integration Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
       - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
       - Percentiles: guides/operational/business/sla-percentile.md
     

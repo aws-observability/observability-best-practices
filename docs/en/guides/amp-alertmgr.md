@@ -165,7 +165,7 @@ Amazon Managed Grafana (AMG) alerting feature allows customers to gain visibilit
 
 Reference: [Announcing Prometheus Alertmanager rules in Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/announcing-prometheus-alertmanager-rules-in-amazon-managed-grafana/)
 
-<img src="..\images\amp-alerting.png">
+![AMP Alert Manager Grafana](../../../images/amp-alerting.png)
 
 ## Recommended alerts for a baseline monitoring
 
@@ -235,7 +235,7 @@ Organizations require various teams to have their own rules to be created & admi
 
 The below image shows two example rulegroupnamespaces called devops and engg added into Rules management of Amazon Managed Service for Prometheus.
 
-<img src="..\images\2023-04-28_07_32_34-Amazon Prometheus_us-west-2.png">
+![AMP Alert Manager Namespaces](../../../images/AMP_rules_namespaces.png)
 
 The below JSON is a sample IAM policy which restricts access to the devops rulegroupnamespace (shown above) with the Resource ARN specified. The notable actions in the below IAM policy are [PutRuleGroupsNamespace](https://docs.aws.amazon.com/cli/latest/reference/amp/put-rule-groups-namespace.html) and [DeleteRuleGroupsNamespace](https://docs.aws.amazon.com/cli/latest/reference/amp/delete-rule-groups-namespace.html) which are restricted to the specified Resource ARN of the rulegroupsnamespace of AMP workspace. Once the policy is created, it can be assigned to any required user, group or role for desired access control requirement. The Action in the IAM policy can be modified/restricted as required based on [IAM permissions](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-APIReference.html) for required & allowable actions.
 

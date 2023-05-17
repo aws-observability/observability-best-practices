@@ -28,8 +28,23 @@ nav:
   - Guides:
     - Best practices overview: guides/index.md
     - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
-    - EC2 Monitoring: guides/ec2/ec2-monitoring.md 
-    - ECS best practices: 
+
+    - Cost:
+      - Using Kubecost: guides/cost/kubecost.md
+      - Visualizing costs:
+        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
+        - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+        - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+        - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+        - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+      #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
+
+    - Databases:
+      - Aurora and RDS: guides/databases/rds-and-aurora.md
+    # - Creating an observability strategy: guides/strategy.md
+
+    - EC2 Monitoring: guides/ec2/ec2-monitoring.md
+    - ECS best practices:
       - AWS Native:
         - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
         - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
@@ -44,8 +59,8 @@ nav:
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
       - Open Source:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
-    - Partners:
-      - Databricks: guides/partners/databricks.md
+
+    - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
 
     - Operational:
       - ADOT Collector:
@@ -55,23 +70,14 @@ nav:
       - Percentiles: guides/operational/business/sla-percentile.md
       - Alerting:
         - Prometheus Alert Manager: guides/operational/alerting/amp-alertmgr.md
-    
+
+    - Partners:
+      - Databricks: guides/partners/databricks.md
+
     # - APM: guides/apm.md
     # - Containers: guides/containers.md
     # - Dashboards: guides/dashboards.md
     # - Full-stack: guides/full-stack.md
-    - Databases:
-      - Aurora and RDS: guides/databases/rds-and-aurora.md
-    # - Creating an observability strategy: guides/strategy.md
-    - Cost:
-      - Using Kubecost: guides/cost/kubecost.md
-      - Visualizing costs:
-        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
-        - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
-        - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
-        - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
-        - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
-      #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
 
   - Data types:
     - Logs: signals/logs.md
@@ -89,7 +95,7 @@ nav:
     - Dashboards: tools/dashboards.md
     # - Embedded Metric Format: tools/emf.md
     - Internet Monitor: tools/internet_monitor.md
-    - Logs: 
+    - Logs:
       - Logs: tools/logs/index.md
       - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
     - Metrics: tools/metrics.md
@@ -151,7 +157,7 @@ markdown_extensions:
     - admonition
     - codehilite
     - footnotes
-    - pymdownx.critic  
+    - pymdownx.critic
     - pymdownx.highlight:
         anchor_linenums: true
         line_spans: __span

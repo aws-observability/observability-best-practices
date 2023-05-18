@@ -60,7 +60,7 @@ Examples of common SLIs:
 
 6. Leverage [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) to analyze applications against defined RTOs and RPOs. Validate if the availability, latency and business continuity requirements are met by using controlled experiments using tools like [AWS Fault Injection Simulator](https://aws.amazon.com/fis/). Conduct additional Well-Architected reviews and service specific deep-dives to ensure workloads are designed to meet business requirements following AWS best practices.
 
-7. For further details refer to other sections of [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) guidance and AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) whitepaper.
+7. For further details refer to other sections of [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) guidance, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) whitepaper and AWS Well-Architected Framework Operational Excellence Pillar whitepaper content on '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)'.
     
 
 ### 3.2 TLG by Domain (emphasis on business metrics i.e. UX, BX)

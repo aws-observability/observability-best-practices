@@ -50,7 +50,7 @@ Please reference the One Observability Workshop module - [GitOps with Amazon Man
 * [External Secrets Operator](https://github.com/external-secrets/external-secrets/tree/main/deploy/charts/external-secrets) is installed successfully to read Amazon Managed Grafana secrets from AWS Secret Manager
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)to measure various machine resources such as memory, disk and CPU utilization
 * [Grafana Operator](https://github.com/grafana-operator/grafana-operator) to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way. 
-* [Flux](https://fluxcd.io/) to automate the deployment of applications on Kubernetes using GitOps mechanisms
+* [Flux](https://fluxcd.io/) to automate the deployment of applications on Kubernetes using GitOps mechanisms.
 
 ## Using Grafana Operator on Amazon EKS to manage Amazon Managed Grafana
 

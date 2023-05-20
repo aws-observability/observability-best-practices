@@ -2,7 +2,7 @@
 
 ## How to use this guide
 
-This Observability best practices guide is meant for developers and architects who want to understand how to use [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) as a Kubernetes operator on your Amazon EKS cluster to create and manage the lifecycle of data sources such as Amazon Managed Service for Prometheus, Amazon CloudWatch, AWS X-Ray to Amazon Managed Grafana and create Grafana dashboards in Amazon Managed Grafana in a Kubernetes native way.
+This Observability best practices guide is meant for developers and architects who want to understand how to use [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) as a Kubernetes operator on your Amazon EKS cluster to create and manage the lifecycle of data sources such as Amazon Managed Service for Prometheus, Amazon CloudWatch, AWS X-Ray to Amazon Managed Grafana and create Grafana dashboards in Amazon Managed Grafana in a Kubernetes native way
 
 ## Introduction
 

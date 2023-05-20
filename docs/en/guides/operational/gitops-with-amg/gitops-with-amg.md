@@ -45,7 +45,7 @@ As discussed above, Flux automates the deployment of applications on Kubernetes.
 
 ![GitOPS-WITH-AMG-1](../../../../images/Operational/gitops-with-amg/gitops-with-amg-1.jpg)
 
-Please reference the One Observability Workshop module - [GitOps with Amazon Managed Grafana](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/gitops-with-amg). This module sets up required day 2 operational tooling such as the following on your EKS cluster :
+Please reference the One Observability Workshop module - [GitOps with Amazon Managed Grafana](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/gitops-with-amg). This module sets up required day 2 operational tooling such as the following on your EKS cluster:
 
 * [External Secrets Operator](https://github.com/external-secrets/external-secrets/tree/main/deploy/charts/external-secrets) is installed successfully to read Amazon Managed Grafana secrets from AWS Secret Manager
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)to measure various machine resources such as memory, disk and CPU utilization

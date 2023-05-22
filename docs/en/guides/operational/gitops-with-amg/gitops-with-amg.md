@@ -2,7 +2,7 @@
 
 ## How to use this guide
 
-This Observability best practices guide is meant for developers and architects who want to understand how to use [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) as a Kubernetes operator on your Amazon EKS cluster to create and manage the lifecycle of data sources such as Amazon Managed Service for Prometheus, Amazon CloudWatch, AWS X-Ray to Amazon Managed Grafana and create Grafana dashboards in Amazon Managed Grafana in a Kubernetes native way.
+This Observability best practices guide is meant for developers and architects who want to understand how to use [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) as a Kubernetes operator on your Amazon EKS cluster to create and manage the lifecycle of Grafana resources and Grafana dashboards in Amazon Managed Grafana in a Kubernetes native way.
 
 ## Introduction
 
@@ -20,13 +20,13 @@ GitOps is a software development and operations methodology that uses Git as the
 
 Flux is a GitOps tool that automates the deployment of applications on Kubernetes. It works by continuously monitoring the state of a Git repository and applying any changes to a cluster. Flux integrates with various Git providers such as GitHub, [GitLab](https://dzone.com/articles/auto-deploy-spring-boot-app-using-gitlab-cicd), and Bitbucket. When changes are made to the repository, Flux automatically detects them and updates the cluster accordingly.
 
-### Pros of Flux
+### Advantages of using Flux
 
 * **Automated deployments**: Flux automates the deployment process, reducing manual errors and freeing up developers to focus on other tasks.
 * **Git-based workflow**: Flux leverages Git as a source of truth, which makes it easier to track and revert changes.
 * **Declarative configuration**: Flux uses [Kubernetes](https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co) manifests to define the desired state of a cluster, making it easier to manage and track changes.
 
-### Cons of Flux
+### Challenges in adopting Flux
 
 * **Limited customization**: Flux only supports a limited set of customizations, which may not be suitable for all use cases.
 * **Steep learning curve**: Flux has a steep learning curve for new users and requires a deep understanding of Kubernetes and Git.

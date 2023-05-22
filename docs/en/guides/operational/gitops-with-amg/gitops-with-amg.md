@@ -6,13 +6,22 @@ This Observability best practices guide is meant for developers and architects w
 
 ## Introduction
 
-In this Observability best practices we will focus on using Grafana Operator and GitOps with Amazon Managed Grafana via following topics:
+Customers use Grafana as an observability platform for open source analytics and monitoring solution. We have seen customers running their workloads in Amazon EKS want to shift their focus towards workload gravity and rely on Kubernetes-native controllers to deploy and manage the lifecycle of external resources such as Cloud resources. We have seen customers installing [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/)to create, deploy and manage AWS services. Many customers these days opt to offload the Prometheus and Grafana implementations to managed services and in case of AWS these services are [Amazon Managed Service for Prometheus](https://docs.aws.amazon.com/prometheus/?icmpid=docs_homepage_mgmtgov) and [Amazon Managed Grafana](https://docs.aws.amazon.com/grafana/?icmpid=docs_homepage_mgmtgov) for monitoring their workloads.
 
-* Introduction to GitOps and Grafana Operator
-* Using GitOps with Flux on Amazon EKS to manage Amazon Managed Grafana
+One common challenge customers face while using Grafana is, in creating and managing the lifecycle of Grafana resources and Grafana dashboards in external Grafana instances such as Amazon Managed Grafana from their Kubernetes cluster. Customers face  challenges in finding ways to completely automate and manage infrastructure and application deployment of their whole system using Git based workflows which also includes creating of Grafana resources in Amazon Managed Grafana. In this Observability best practices guide, we will focus on the following topics:
+
+* Introduction on Grafana Operator - A Kubernetes operator to manage external Grafana instances from your Kubernetes cluster 
+* Introduction to GitOps - Automated mechanisms to create and manage your infrastructure using Git based workflows
 * Using Grafana Operator on Amazon EKS to manage Amazon Managed Grafana
+* Using GitOps with Flux on Amazon EKS to manage Amazon Managed Grafana
 
-## Introduction to GitOps and Grafana Operator
+## Introduction on Grafana Operator
+
+The [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.)is a Kubernetes operator built to help you manage your Grafana instances inside Kubernetes. Grafana Operator makes it possible for you to manage and create Grafana dashboards, datasources etc. declaratively between multiple instances in an easy and scalable way. Though Grafana Operator makes it possible to manage Grafana instances using code in a Kubernetes native way, there was no mechanism to integrate Grafana services deployed outside of the cluster, such as Amazon Managed Grafana until recently.
+
+To address this gap, AWS team collaborated with the [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.)team and submitted a [design proposal](https://github.com/grafana-operator/grafana-operator-experimental/pull/39)to support the integration of external Grafana instances. With this mechanism it will be possible to add external Prometheus compatible data sources (e.g., Amazon Managed Service for Prometheus) and create Grafana dashboards in external Grafana instances (e.g., Amazon Managed Grafana) from your Kubernetes cluster. This enables us to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way. This ultimately enables us to use GitOps mechanisms using CNCF projects such as [Flux](https://fluxcd.io/) to create and manage the lifecyle of resources in Amazon Managed Grafana.
+
+## Introduction to GitOps
 
 ### What is GitOps and Flux
 
@@ -31,13 +40,13 @@ Flux is a GitOps tool that automates the deployment of applications on Kubernete
 * **Limited customization**: Flux only supports a limited set of customizations, which may not be suitable for all use cases.
 * **Steep learning curve**: Flux has a steep learning curve for new users and requires a deep understanding of Kubernetes and Git.
 
-### Deep dive on Grafana Operator
+## Using Grafana Operator on Amazon EKS to manage Amazon Managed Grafana
 
-Kubernetes APIs are robust and its control loop mechanism allows us to control the state of resources that are even outside of Kubernetes environments. Customers have shifted their focus towards workload gravity and rely on Kubernetes-native controllers to deploy and manage the lifecycle of external resources such as Cloud resources. We have seen customers installing [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/)to create, deploy and manage AWS services. Many customers these days opt to offload the Prometheus and Grafana implementations to managed services and in case of AWS these services are [Amazon Managed Service for Prometheus](https://docs.aws.amazon.com/prometheus/?icmpid=docs_homepage_mgmtgov) and [Amazon Managed Grafana](https://docs.aws.amazon.com/grafana/?icmpid=docs_homepage_mgmtgov) for monitoring their workloads. Fundamentally what they need is one single API - the Kubernetes API, to control heterogeneous deployments.
+As discussed in previous section, Grafana Operator enables us to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way.  The below architecture diagram shows the demonstration of Kubernetes cluster as a control plane with using Grafana Operator to setup an identity with AMG, adding Amazon Managed Service for Prometheus as a data source and creating dashboards on Amazon Managed Grafana from Amazon EKS cluster in a Kubernetes native way.
 
-The [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.)is a Kubernetes operator built to help you manage your Grafana instances inside Kubernetes. Grafana Operator makes it possible for you to manage and create Grafana dashboards, datasources etc. declaratively between multiple instances in an easy and scalable way. Though Grafana Operator makes it possible to manage Grafana instances using code in a Kubernetes native way, there was no mechanism to integrate Grafana services deployed outside of the cluster, such as Amazon Managed Grafana until recently.
+![GitOPS-WITH-AMG-2](../../../images/Operational/gitops-with-amg/gitops-with-amg-2.jpg)
 
-To address this gap, AWS team collaborated with the [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.)team and submitted a [design proposal](https://github.com/grafana-operator/grafana-operator-experimental/pull/39)to support the integration of external Grafana instances. With this mechanism it will be possible to add external Prometheus compatible data sources (e.g., Amazon Managed Service for Prometheus) and create Grafana dashboards in external Grafana instances (e.g., Amazon Managed Grafana) from your Kubernetes cluster. This enables us to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way. This ultimately enables us to use GitOps mechanisms using CNCF projects such as [Flux](https://fluxcd.io/) to create and manage the lifecyle of resources in Amazon Managed Grafana.
+Please reference our post on [Using Open Source Grafana Operator on your Kubernetes cluster to manage Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/using-open-source-grafana-operator-on-your-kubernetes-cluster-to-manage-amazon-managed-grafana/) for detailed demonstration of how to deploy the above solution on your Amazon EKS cluster.
 
 ## Using GitOps with Flux on Amazon EKS to manage Amazon Managed Grafana
 
@@ -51,14 +60,6 @@ Please reference the One Observability Workshop module - [GitOps with Amazon Man
 * [Prometheus Node Exporter](https://github.com/prometheus/node_exporter)to measure various machine resources such as memory, disk and CPU utilization
 * [Grafana Operator](https://github.com/grafana-operator/grafana-operator) to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way. 
 * [Flux](https://fluxcd.io/) to automate the deployment of applications on Kubernetes using GitOps mechanisms.
-
-## Using Grafana Operator on Amazon EKS to manage Amazon Managed Grafana
-
-As discussed in previous section, Grafana Operator enables us to use our Kubernetes cluster to create and manage the lifecyle of resources in Amazon Managed Grafana in a Kubernetes native way.  The below architecture diagram shows the demonstration of Kubernetes cluster as a control plane with using Grafana Operator to setup an identity with AMG, adding Amazon Managed Service for Prometheus as a data source and creating dashboards on Amazon Managed Grafana from Amazon EKS cluster in a Kubernetes native way.
-
-![GitOPS-WITH-AMG-2](../../../images/Operational/gitops-with-amg/gitops-with-amg-2.jpg)
-
-Please reference our post on [Using Open Source Grafana Operator on your Kubernetes cluster to manage Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/using-open-source-grafana-operator-on-your-kubernetes-cluster-to-manage-amazon-managed-grafana/) for detailed demonstration of how to deploy the above solution on your Amazon EKS cluster.
 
 ## Conclusion
 

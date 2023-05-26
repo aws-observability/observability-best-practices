@@ -213,7 +213,7 @@ VPC CNI add-on metrics are exposed by the CNI Metrics Helper. Monitoring the IP 
 
 CoreDNS is a flexible, extensible DNS server that can serve as the Kubernetes cluster DNS.  The CoreDNS pods provide name resolution for all pods in the cluster.  Running DNS intensive workloads can sometimes experience intermittent CoreDNS failures due to DNS throttling, and this can impact applications.  
 
-Checkout the latest best practices for tracking key [CoreDNS performance metrics here.](https://aws.github.io/aws-eks-best-practices/networking/CoreDNS/)
+Checkout the latest best practices for tracking key [CoreDNS performance metrics here](https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics) and [Monitoring CoreDNS traffic for DNS throttling issues](https://aws.github.io/aws-eks-best-practices/networking/monitoring/)
 
 
 ## Pod/Container Metrics

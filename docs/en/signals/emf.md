@@ -16,6 +16,14 @@ The Amazon CloudWatch output plugin for [Fluent Bit](https://docs.fluentbit.io/m
 
 ![CloudWatch EMF Architecture](../images/EMF-Arch.png)
 
+## When to use Embedded Metric Format (EMF) logs
+
+Traditionally, monitoring has been structured into three categories. The first category is the classic health check of an application. The second category is 'metrics', through which customers instrument their application using models like counters, timers, and gauges. The third category is 'logs', that are invaluable for the overall observability of the application. Logs provide customers continuous information about how their application is behaving. Now, customers have a way to significantly improve the way they can observe their application, without having to make sacrifices in data granularity or richness by unifying and simplifying all the instrumentation of their application while gaining incredible analytical capabilities through Embedded Metric Format (EMF) logs.
+
+[Embedded Metric Format (EMF) logs](https://aws.amazon.com/blogs/mt/enhancing-workload-observability-using-amazon-cloudwatch-embedded-metric-format/) is ideal for environments which generate high cardinality application data, that can be part of the EMF logs without having to increase metric dimensions. This still allows customers to slice and dice the application data by querying EMF logs through CloudWatch Logs Insights and CloudWatch Metrics Insights without needing to put every attribute as a metric dimension.
+
+Customers aggregating [telemetry data from millions of Telco or IoT devices](https://aws.amazon.com/blogs/mt/how-bt-uses-amazon-cloudwatch-to-monitor-millions-of-devices/) require insights into their devices performance and ability to quickly deep dive into unique telemetry that the devices report. They also need to troubleshoot problems easier & faster without requiring to dig through humongous data to provide a quality service. By using Embedded Metric Format (EMF) logs customers can accomplish large scale observability by combining metrics and logs into single entity and improve troubleshooting with cost efficiency and better performance.
+
 ## Generating Embedded Metric Format (EMF) logs
 
 The following methods can be used to generate Embedded metric format logs
@@ -127,4 +135,3 @@ With the increased complexity of managing modern applications, customers need mo
 - Serverless Observability Workshop on [Async metrics using Embedded Metrics Format](https://serverless-observability.workshop.aws/en/030_cloudwatch/async_metrics_emf.html) (EMF)
 - [Java code sample using PutLogEvents API](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/putlogevents) to send EMF logs to CloudWatch Logs
 - Blog article: [Lowering costs and focusing on our customers with Amazon CloudWatch embedded custom metrics](https://aws.amazon.com/blogs/mt/lowering-costs-and-focusing-on-our-customers-with-amazon-cloudwatch-embedded-custom-metrics/)
-- Blog article: [Enhancing workload observability using Amazon CloudWatch Embedded Metric Format](https://aws.amazon.com/blogs/mt/enhancing-workload-observability-using-amazon-cloudwatch-embedded-metric-format/)

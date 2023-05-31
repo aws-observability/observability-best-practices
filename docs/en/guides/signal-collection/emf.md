@@ -6,7 +6,7 @@ CloudWatch Embedded Metric Format (EMF) enables customers to ingest complex high
 
 ## How Embedded Metric Format (EMF) logs work
 
-Compute environments like Amazon EC2, On-premise Servers, containers in Amazon Elastic Container Service (Amazon ECS), Amazon Elastic Kubernetes Service (Amazon EKS), or Kubernetes on EC2 can generate & send Embedded Metric Format (EMF) logs through the CloudWatch Agent to Amazon CloudWatch
+Compute environments like Amazon EC2, On-premise Servers, containers in Amazon Elastic Container Service (Amazon ECS), Amazon Elastic Kubernetes Service (Amazon EKS), or Kubernetes on EC2 can generate & send Embedded Metric Format (EMF) logs through the CloudWatch Agent to Amazon CloudWatch.
 
 AWS Lambda allows customers to easily generate custom metrics without requiring any custom code, making blocking network calls or relying on any third party software to generate and ingest Embedded Metric Format (EMF) logs to Amazon CloudWatch.
 

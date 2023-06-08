@@ -12,7 +12,7 @@ Monitoring has evolved through the years.  We started working with debug and dum
 Metrics are a series of numerical values that are kept in order with the time that they are created. They are used to track everything from the number of servers in your environment, their disk usage, number of requests they handle per second, or the latency in completing these requests.  Metrics are data that tell you how your systems are performing.  Whether you are running a small or large cluster, getting insights on your systems health and performance allows you to identify areas of improvement, ability to troubleshoot and trace an issue, as well as improve your workloads performance and efficiency as whole.  These changes can impact how much time and resources you spend on your cluster, which translates directly into cost.
 
 
-# Metrics Collection 
+# Metrics Collection
 
 Collecting metrics from an EKS cluster consists of [three components](https://aws-observability.github.io/observability-best-practices/recipes/telemetry/) : 
 
@@ -24,7 +24,7 @@ Note: In this section, configuration examples are links to relevant sections of 
 
 ## Managed Open Source Solution 
 
-[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) is a supported version of the [OpenTelemetry](https://opentelemetry.io/) project that enables users to send correlated metrics and traces to various monitoring data collection solutions like [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) and [AWS Cloudwatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html). ADOT can be installed through [EKS Managed Add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) on to an EKS cluster and configured to collect metrics (like the ones listed on this page) and workload traces. AWS has validated that the ADOT add-on is compatible with Amazon EKS, and it is regularly updated with the latest bug fixes and security patches. [ADOT best practices and more information.](http://guides/operational/adot-at-scale/operating-adot-collector.md)
+[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) is a supported version of the [OpenTelemetry](https://opentelemetry.io/) project that enables users to send correlated metrics and traces to various monitoring data collection solutions like [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) and [AWS Cloudwatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html). ADOT can be installed through [EKS Managed Add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) on to an EKS cluster and configured to collect metrics (like the ones listed on this page) and workload traces. AWS has validated that the ADOT add-on is compatible with Amazon EKS, and it is regularly updated with the latest bug fixes and security patches. [ADOT best practices and more information.](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector/)
 
 
 ## ADOT + AMP

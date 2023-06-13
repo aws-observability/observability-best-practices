@@ -52,7 +52,7 @@ A common ask is for a “single pane of glass” to observe all of your workload
 
 For example, a dashboard with the CPU utilization of a hundred servers may show some anomalous spikes in consumption, but this does nothing to explain why this has happened, or what the contributing factors are for this behavior. And the importance of this metric may not be immediately clear.
 
-We have seen customers sometimes pursue the single pane of glass so aggressively that all business context is lost, and trying to see everything in one tool can actually dilute the value of that data. Your dashboards, and your tools, need to [tell a story](/tools/dashboards/). And this story needs to include the business metrics and outcomes that are impacted by events in your workloads.
+We have seen customers sometimes pursue the single pane of glass so aggressively that all business context is lost, and trying to see everything in one tool can actually dilute the value of that data. Your dashboards, and your tools, need to [tell a story](https://aws-observability.github.io/observability-best-practices/tools/dashboards/). And this story needs to include the business metrics and outcomes that are impacted by events in your workloads.
 
 Moreover, your tooling needs to align to your operating model. A single pane of glass can add value when your support teams are global with access to all of your environments, but if they are limited to only accessing a single workload, in a single CSP or hybrid environment, then there is no value added through this approach. In these instances, allowing teams to create dashboards within each environment natively may hasten time to value, and be more flexible changes in the future.
 

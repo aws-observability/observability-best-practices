@@ -7,7 +7,7 @@ The Prometheus mixin project expects prometheus to be installed via the Promethe
 
 ## Prerequisites
 
-* An EKS cluster - Starting from: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons)
+* An EKS cluster - Starting from: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/)
 * A Cloud9 environment
 * kubectl in Cloud9 configured to manage the EKS cluster
 * IAM credentials for EKS
@@ -39,7 +39,7 @@ ln -s /usr/local/bin/aws /usr/bin/aws
 ```
 
 
-Install prerequisites: 
+Install prerequisites:
 
 ```
 sudo yum install -y jsonnet

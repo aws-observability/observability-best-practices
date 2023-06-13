@@ -113,7 +113,7 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 ```
 ### Accessing Kubecost UI
 
-Kubecost provides a web dashboard that you can access either through kubectl port-forward, an ingress, or a load balancer. The enterprise version of Kubecost also supports restricting access to the dashboard using [SSO/SAML](http://docs.kubecost.com/user-management.html) and providing varying level of access. For example, restricting team’s view to only the products they are responsible for.
+Kubecost provides a web dashboard that you can access either through kubectl port-forward, an ingress, or a load balancer. The enterprise version of Kubecost also supports restricting access to the dashboard using [SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) and providing varying level of access. For example, restricting team’s view to only the products they are responsible for.
 
 In AWS environment, consider using the [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) to expose Kubecost and use [Amazon Cognito](https://aws.amazon.com/cognito/) for authentication, authorization, and user management. You can learn more on this [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/)
 

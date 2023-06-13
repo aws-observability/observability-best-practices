@@ -1,6 +1,6 @@
 # Logging
 
-The selection of logging tools is tied to your requirements for data transmission, filtering, retention, capture, and integration with the applications that generate your data. When using Amazon Web Services for observability (regardless whether you host [on-premises](/faq#what-is-a-cloud-first-approach) or in another cloud environment), you can leverage the [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) or another tool such as [Fluentd](https://www.fluentd.org/) to emit logging data for analysis. 
+The selection of logging tools is tied to your requirements for data transmission, filtering, retention, capture, and integration with the applications that generate your data. When using Amazon Web Services for observability (regardless whether you host [on-premises](../../faq#what-is-a-cloud-first-approach) or in another cloud environment), you can leverage the [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) or another tool such as [Fluentd](https://www.fluentd.org/) to emit logging data for analysis.
 
 Here we will expand on the best practices for implementing the CloudWatch agent for logging, and the use of CloudWatch Logs within the AWS console or APIs.
 
@@ -18,7 +18,7 @@ As an architect you will have to determine what your acceptable loss for logging
 The `force_flush_interval` instructs the agent to send logging data to the data plane at a regular cadence, unless the buffer size is reached, in which case it will send all buffered logs immediately.
 
 !!! tip
-	Edge devices may have very different requirements from low-latency, in-AWS workloads, and may need to have much longer `force_flush_interval` settings. For example, an IoT device on a low-bandwidth Internet connection may only need to flush logs every 15 minutes. 
+	Edge devices may have very different requirements from low-latency, in-AWS workloads, and may need to have much longer `force_flush_interval` settings. For example, an IoT device on a low-bandwidth Internet connection may only need to flush logs every 15 minutes.
 
 !!! success
 	Containerized or stateless workloads may be especially sensitive to log flush requirements. Consider a stateless Kubernetes application or EC2 fleet that can be scaled-in at any moment. Loss of logs may take place when these resources are suddenly terminated, leaving no way to extract logs from them in the future. The standard `force_flush_interval` is usually appropriate for these scenarios, but can be lowered if required.
@@ -35,27 +35,27 @@ This grouping is vital as it allows you to treat groups with the same retention 
 	There is no limitation on the number of log streams in a log group, and you can search through the entire compliment of logs for your application in a single CloudWatch Logs Insights query. Having a separate log stream for each pod in a Kubernetes service, or for every EC2 instance in your fleet, is a standard pattern.
 
 !!! success
-	The default retention period for a log group is *indefinite*. The best practice is to set the retention period at the time of creating the log group. 
+	The default retention period for a log group is *indefinite*. The best practice is to set the retention period at the time of creating the log group.
 
-	While you can set this in the CloudWatch console at any time, the best practice is to do so either in-tandem with the log group creation using infrastructure as code (CloudFormation, Cloud Development Kit, etc.) or using the `retention_in_days` setting inside of the CloudWatch agent configuration. 
+	While you can set this in the CloudWatch console at any time, the best practice is to do so either in-tandem with the log group creation using infrastructure as code (CloudFormation, Cloud Development Kit, etc.) or using the `retention_in_days` setting inside of the CloudWatch agent configuration.
 
 	Either approach lets you set the log retention period proactively, and aligned with your project's data retention requirements.
 
 !!! success
-	By default, your log groups will not be encrypted. The best practice is to set the encryption key at the time you create the log group, so as to prevent accidental leak of plaintext data. This can be done using infrastructure as code (CloudFormation, Cloud Development Kit, etc.). 
+	By default, your log groups will not be encrypted. The best practice is to set the encryption key at the time you create the log group, so as to prevent accidental leak of plaintext data. This can be done using infrastructure as code (CloudFormation, Cloud Development Kit, etc.).
 
-	Using AWS Key Management Service to manage keys for CloudWatch Logs requires additional configuration and granting permissions to the keys for your users.[^1] 
+	Using AWS Key Management Service to manage keys for CloudWatch Logs requires additional configuration and granting permissions to the keys for your users.[^1]
 
 ### Log formatting
 
-CloudWatch Logs has the ability to index JSON data on ingestion and use this index for ad hoc queries. While any kind of logging data can be delivered to CloudWatch Logs, the automatic indexing of this data will not take place unless it is so structured. 
+CloudWatch Logs has the ability to index JSON data on ingestion and use this index for ad hoc queries. While any kind of logging data can be delivered to CloudWatch Logs, the automatic indexing of this data will not take place unless it is so structured.
 
 Unstructured logs can still be search, though only using a regular expression.
 
 !!! success
 	There two best practices for log formats when using CloudWatch Logs:
 
-	1. Use a structured log formatter such as [Log4j](https://logging.apache.org/log4j/2.x/), [`python-json-logger`](https://pypi.org/project/python-json-logger/), or your framework's native JSON emitter. 
+	1. Use a structured log formatter such as [Log4j](https://logging.apache.org/log4j/2.x/), [`python-json-logger`](https://pypi.org/project/python-json-logger/), or your framework's native JSON emitter.
 	1. Send a single line of logging per event to your log destination.
 
 	Note that when sending multiple lines of JSON logging, each line will be interpreted as a single event.
@@ -121,4 +121,3 @@ While the [CloudWatch Logs query syntax](https://docs.aws.amazon.com/AmazonCloud
 
 
 [^1]: See [How to search through your AWS Systems Manager Session Manager console logs – Part 1](https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/) for a practical example of CloudWatch Logs log group encryption with access privileges.
-

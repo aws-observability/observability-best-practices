@@ -109,7 +109,7 @@ scrape_configs:
 
 Running the collector as a Deployment is particularly useful when you want to also provide High Availability for your collectors. Depending on the number of targets, metrics available to scrape etc the resources for the Collector should be adjusted to ensure the collector isn't starving and hence causing issues in signal collection.
 
-[Read more about this topic in the guide here.](/docs/en/guides/containers/oss/eks/best-practices-metrics-collection.md)
+[Read more about this topic in the guide here.](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
 
 The following architecture shows how a collector is deployed in a separate node outside of the workload nodes to collect metrics and traces.
 
@@ -346,4 +346,3 @@ The details of this protocol is well [documented in the upstream OpenTelemetry w
 * [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot]()
 * [https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/]()
 * [https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/]()
-

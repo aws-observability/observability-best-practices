@@ -1,0 +1,16 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: f71fa2c1f9cf5cb705f73dffe4b21f7c61470ba9  # frozen: v4.4.0
+    hooks:
+      - id: trailing-whitespace
+        args: ['--markdown-linebreak-ext=md']
+      - id: end-of-file-fixer
+      - id: check-merge-conflict
+      - id: detect-private-key
+      - id: detect-aws-credentials
+        args: ['--allow-missing-credentials']
+  - repo: https://github.com/tcort/markdown-link-check
+    rev: v3.11.2
+    hooks:
+      - id: markdown-link-check
+        args: ['-q', '-c .github/workflows/linkcheck.json']

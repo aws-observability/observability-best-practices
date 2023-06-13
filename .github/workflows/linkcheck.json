@@ -25,6 +25,15 @@
       "pattern": "^#"
     },
     {
+      "pattern": "^https://www.eksworkshop.com"
+    },
+    {
+      "pattern": "LICENSE"
+    },
+    {
+      "pattern": "https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus"
+    },
+    {
       "pattern": [
         "localhost"
       ]

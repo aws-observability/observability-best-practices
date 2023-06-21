@@ -323,12 +323,23 @@ You can solve the out of order sample error in this particular setup in a couple
 
 * Use a sticky load balancer to direct requests from a particular source to go to the same target based on IP address.
 
-Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/) for additional details:
+  Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/) for additional details.
+
 
 * As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
 
-!!! warning
-    Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
+    !!! warning
+        Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
+
+* **If you are deploying ADOT Collector as a Daemonset**: make sure you are using `relabel_configs` to only keep samples from the same node where each ADOT Collector pod is running. Check the links below to learn more.
+    - [Advanced Collector Configuration for Amazon Managed Prometheus](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - Expand the *Click to View* section, and look for the entried similar to the following:
+        ```yaml
+            relabel_configs:
+            - action: keep
+              regex: $K8S_NODE_NAME
+        ```
+    - [ADOT Add-On Advanced Configuration](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/add-on-configuration) - Learn how to deploy ADOT Collector using the ADOT Add-On for EKS advanced configurations.
+    - [ADOT Collector deployment strategies](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/installation#deploy-the-adot-collector) - Learn more about the different alternatives to deploy ADOT Collector at scale and the advantages of each approach.
 
 
 #### Open Agent Management Protocol (OpAMP)

@@ -37,6 +37,7 @@ nav:
         - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
         - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
         - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+        - Amazon Prometheus Metrics ingestion rate real-time cost monitoring: guides/cost/cost-visualization/AmazonManagedServiceforPrometheus.md
       #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
 
     - Databases:

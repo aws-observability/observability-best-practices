@@ -1,0 +1,47 @@
+{
+  "timeout": "5s",
+  "retryOn429": true,
+  "retryCount": 5,
+  "fallbackRetryDelay": "30s",
+  "aliveStatusCodes": [
+    200,
+    206
+  ],
+  "httpHeaders": [
+    {
+      "urls": [
+        "https://help.github.com/"
+      ],
+      "headers": {
+        "Accept-Encoding": "zstd, br, gzip, deflate"
+      }
+    }
+  ],
+  "ignorePatterns": [
+    {
+      "pattern": "^../"
+    },
+    {
+      "pattern": "^#"
+    },
+    {
+      "pattern": "^https://www.eksworkshop.com"
+    },
+    {
+      "pattern": "LICENSE"
+    },
+    {
+      "pattern": "https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus"
+    },
+    {
+      "pattern": [
+        "localhost"
+      ]
+    },
+    {
+      "pattern": [
+        "127.0.0.1"
+      ]
+    }
+  ]
+}

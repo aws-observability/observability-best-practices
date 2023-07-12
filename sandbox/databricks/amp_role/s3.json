@@ -7,7 +7,7 @@
         "s3:ListBucket"
       ],
      "Resource": [
-        "arn:aws:s3:::<S3_BUCKET_NAME>"
+        "arn:aws:s3:::${DATABRICKS_S3_CONFIG_BUCKET}"
       ]
     },
     {
@@ -16,7 +16,7 @@
         "s3:GetObject"
       ],
       "Resource": [
-         "arn:aws:s3:::<S3_BUCKET_NAME>/*"
+         "arn:aws:s3:::${DATABRICKS_S3_CONFIG_BUCKET}/*"
       ]
     }
   ]

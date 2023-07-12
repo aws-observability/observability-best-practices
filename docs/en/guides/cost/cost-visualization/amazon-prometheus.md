@@ -39,4 +39,4 @@ With the preceding dashboard, you can now identify the cost and usage of Amazon 
 [Prerequisites]: https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html
 [panels]: https://docs.aws.amazon.com/grafana/latest/userguide/Grafana-panels.html
-[cid-implement]: http://127.0.0.1:8000/observability-best-practices/guides/cost-optimization/cost/#cloud-intelligence-dashboards
+[cid-implement]: ../../../guides/cost/cost-visualization/cost.md#implementation

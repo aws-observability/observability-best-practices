@@ -205,6 +205,6 @@ For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](
 
 [Official Doc - Amazon Aurora Monitoring Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/MonitoringOverview.html)
 
-[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://awsauroralabsmy.com/provisioned/perf-observability/)
+[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://catalog.workshops.aws/awsauroramysql/en-US/provisioned/perfobserve)
 
 

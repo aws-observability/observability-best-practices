@@ -2,7 +2,7 @@
 
 In here you will find curated guidance, how-to's, and links to other resources that help with the application of observability (o11y) to various use cases. This includes managed services such as [Amazon Managed Service for Prometheus][amp]
 and [Amazon Managed Grafana][amg] as well as agents, for example [OpenTelemetry][otel]
-and [Fluent Bit][fluentbit]. Content here is not resitricted to AWS tools alone though, and many open source projects are referenced here. 
+and [Fluent Bit][fluentbit]. Content here is not resitricted to AWS tools alone though, and many open source projects are referenced here.
 
 We want to address the needs of both developers and infrastructure folks equally, so many of the recipes "cast a wide net". We encourge you to explore and find the solutions that work best for what you are seeking to accomplish.
 
@@ -46,7 +46,7 @@ categories:
 - **By Destination**: covering telemetry and analytics
 - **Tasks**: covering anomaly detection, alerting, troubleshooting, and more
 
-[Learn more about dimensions …](dimensions/)
+[Learn more about dimensions …](https://aws-observability.github.io/observability-best-practices/recipes/dimensions/)
 
 ## How to use
 
@@ -59,8 +59,8 @@ Alternatively, you can search the site pressing `/` or the `s` key:
 ![o11y space](images/search.png)
 
 !!! info "License"
-    All recipes published on this site are available via the 
-	[MIT-0][mit0] license, a modification to the usual MIT license 
+    All recipes published on this site are available via the
+	[MIT-0][mit0] license, a modification to the usual MIT license
 	that removes the requirement for attribution.
 
 ## How to contribute
@@ -69,14 +69,14 @@ Start a [discussion][discussion] on what you plan to do and we take it from ther
 
 ## Learn more
 
-The recipes on this site are a good practices collection. In addition, there 
+The recipes on this site are a good practices collection. In addition, there
 are a number of places where you can learn more about the status of open source
-projects we use as well as about the managed services from the recipes, so 
+projects we use as well as about the managed services from the recipes, so
 check out:
 
-- [observability @ aws][o11yataws], a playlist of AWS folks talking about 
+- [observability @ aws][o11yataws], a playlist of AWS folks talking about
   their projects and services.
-- [AWS observability workshops](workshops/), to try out the offerings in a
+- [AWS observability workshops](https://aws-observability.github.io/observability-best-practices/recipes/workshops/), to try out the offerings in a
   structured manner.
 - The [AWS monitoring and observability][o11yhome] homepage with pointers
   to case studies and partners.

@@ -42,7 +42,7 @@ nav:
     - Databases:
       - Aurora and RDS: guides/databases/rds-and-aurora.md
     # - Creating an observability strategy: guides/strategy.md
-
+    - Monitor Amazon OpenSearch Clusters: guides/opensearch-best-practices.md
     - EC2 Monitoring: guides/ec2/ec2-monitoring.md
     - ECS best practices:
       - AWS Native:

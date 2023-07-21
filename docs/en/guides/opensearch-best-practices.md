@@ -54,7 +54,7 @@ To perform bulk and transformation operations, you can use one of these services
 #### Optimize Bulk request size and compression:
 
 Defining the best bulk size for your use case depends on many variables, and to understand the right sizing it’s necessary to test the bulk sizing options, a good staring point is 5-15 MB.
-When you change the bulk request sizing, the performance of your cluster will change. When you choose a size that the cluster don't gets more performative, than this size is a good fit for your use pattern.
+When you change the bulk request sizing, the performance of your cluster will change. When you choose a size that the cluster doesn't get more performative, than this size is a good fit for your use pattern.
 
 #### Tune refresh intervals:
 
@@ -64,7 +64,7 @@ We recommend setting the refresh_interval parameter for all of your index to 30 
 
 ## Monitoring Options
 
-Monitoring is a relevant part to maintain your applications, and reduce the response time when an event occurs in your environment. For example, you can make a better troubleshooting detecting with accuracy where is the issue at your application.
+Monitoring is a relevant part of maintaining your applications and reduce the response time when an event occurs in your environment. For example, you can make a better troubleshooting detecting with accuracy where is the issue at your application.
 
 ![monitoring-opensearch.jpg](../images/monitoring-opensearch.jpg)
 
@@ -110,7 +110,7 @@ For more information about the alarm types that you can use with OpenSearch logs
 #### Amazon Managed Grafana
 
 [Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a fully managed and secure data visualization service that you can use to instantly query, correlate, and visualize operational metrics, logs, and traces from multiple sources.
-Grafana integrates with Amazon CloudWatch to query and visualize the Cluster metrics that OpenSearch Service sends. Some logs that OpenSearch sends are Cluster status, CPU Utilization, Free Storage Space, and OpenSearch Dashboards Healthy Nodes. See the complete list at [Monitoring OpenSearch cluster metrics with Amazon CloudWatch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-cloudwatchmetrics.html).
+Grafana integrates with Amazon CloudWatch to query and visualize the cluster metrics that OpenSearch Service sends. Some logs that OpenSearch sends are cluster status, CPU Utilization, Free Storage Space, and OpenSearch Dashboards Healthy Nodes. See the complete list at [Monitoring OpenSearch cluster metrics with Amazon CloudWatch](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-cloudwatchmetrics.html).
 
 ![grafana-visualization.jpg](../images/grafana-visualization.jpg)
 

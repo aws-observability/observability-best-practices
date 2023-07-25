@@ -30,7 +30,7 @@ For data that is also infrequent accessed, historical purpose, or Archive but fo
 
 ## Performance guidelines
 
-To optimize the performance of your OpenSearch Cluster, you can do these recommendations below:
+To optimize the performance of your OpenSearch Cluster, you can follow these recommendations below:
 
 #### Use Bulk API to aggregate your indexes:
 
@@ -58,7 +58,7 @@ When you change the bulk request sizing, the performance of your cluster will ch
 
 #### Tune refresh intervals:
 
-The refresh operation makes all the updates that are performed on an index available for search. The default refresh is 1 second, to improve the performance, you can increase the refresh rate at a period that you can tolerate. 
+The refresh operation makes all the updates that are performed on an index available for search. The default refresh rate is 1 second, to improve the performance, you can increase the refresh rate at a period that you can tolerate. 
 
 We recommend setting the refresh_interval parameter for all of your index to 30 seconds or more.
 
@@ -89,14 +89,14 @@ To Enable error logs at your cluster, see [Monitoring OpenSearch logs with Amazo
 
 * Slow logs - This type is used to detect performance issues at your OpenSearch cluster. After enabling this log, it’s necessary to figure out how much is "slow” search or indexing for your business context.
 
-These logs have two types, one focused on search slow logs and the other for indexing slow log.
+There are two types of logs, one focused on search slow logs and the other for indexing slow log.
 
 To enable slow logs at your cluster, see the [OpenSearch documentation about logs](https://opensearch.org/docs/latest/monitoring-your-cluster/logs/#slow-logs).
 
 
 * Audit logs - Enabling [fine-grained access control](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/fgac.html) at your OpenSearch cluster, you can enable audit logs for your data as well. With audit logs, you can track the user activities at your cluster, like authentication success and failures, requests to OpenSearch, index changes, and incoming search queries.
 
-The default configuration tracks the most popular set user actions, but is recommended to use the log setting that fit to your business needs.
+The default configuration tracks the most popular set user actions, but it is recommended to use the log setting that fit to your business needs.
 
 To enable audit logs at your cluster, see [Monitoring audit logs in Amazon OpenSearch Service](https://docs.aws.amazon.com/opensearch-service/latest/developerguide/audit-logs.html).
 

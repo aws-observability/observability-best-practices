@@ -18,7 +18,7 @@ HTTP endpoint or [S3 bucket](https://aws.amazon.com/s3).
 * The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
 * The [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html) is installed in your environment.
 * Node.js and Go.
-* The [repo](https://github.com/aws-observability/aws-o11y-recipes/) has been cloned to your local machine.
+* The [repo](https://github.com/aws-observability/observability-best-practices/) has been cloned to your local machine.
 
 ### Create an AMP workspace
 

@@ -174,7 +174,7 @@ The Control Plane API Server exposes thousands of metrics, the table below lists
 |API server number of objects	|apiserver_storage_object	|Number of stored objects at the time of last check split by kind.	|	|
 |Admission controller latency	|apiserver_admission_controller_admission_duration_seconds	|Admission controller latency histogram in seconds, identified  by name and broken out for each operation and API resource and type (validate  or admit).	|	|
 |Etcd latency	|etcd_request_duration_seconds	|Etcd request latency in seconds for each operation and object  type.	|	|
-|Etcd DB size	|etcd_db_total_size_in_bytes	|Etcd database size.	|This helps you proactively monitor etcd database usage, and avoid overrunning the limit.	|
+|Etcd DB size	|apiserver_storage_db_total_size_in_bytes	|Etcd database size.	|This helps you proactively monitor etcd database usage, and avoid overrunning the limit.	|
 
 ## Cluster State metrics
 

@@ -1,10 +1,10 @@
 site_name: AWS Observability Best Practices
-docs_dir: 'docs/en'
-copyright: 'Copyright &copy; Amazon 2022'
-site_author: 'AWS'
-site_url: 'https://aws-observability.github.io/observability-best-practices/'
-repo_name: 'aws-observability/observability-best-practices'
-repo_url: 'https://github.com/aws-observability/observability-best-practices'
+docs_dir: "docs/en"
+copyright: "Copyright &copy; Amazon 2022"
+site_author: "AWS"
+site_url: "https://aws-observability.github.io/observability-best-practices/"
+repo_name: "aws-observability/observability-best-practices"
+repo_url: "https://github.com/aws-observability/observability-best-practices"
 
 theme:
   logo: ../images/aws-logo.png
@@ -26,110 +26,111 @@ extra_css:
 nav:
   - Home: index.md
   - Guides:
-    - Best practices overview: guides/index.md
-    - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
-    - EC2 Monitoring: guides/ec2/ec2-monitoring.md 
-    - ECS best practices: 
-      - AWS Native:
-        - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
-        - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
-      - Open Source:
-        - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
-        - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
-    - EKS best practices:
-      - AWS Native:
-        - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
-        - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
-        - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
-        - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
-      - Open Source:
-        - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
-    - Partners:
-      - Databricks: guides/partners/databricks.md
+      - Best practices overview: guides/index.md
+      - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
+      - EC2 Monitoring: guides/ec2/ec2-monitoring.md
+      - ECS best practices:
+          - AWS Native:
+              - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
+              - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
+          - Open Source:
+              - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
+              - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
+      - EKS best practices:
+          - AWS Native:
+              - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
+              - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
+              - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
+              - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
+          - Open Source:
+              - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+      - Partners:
+          - Databricks: guides/partners/databricks.md
 
-    - Operational:
-      - ADOT Collector:
-        - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
-      - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
-      - Percentiles: guides/operational/business/sla-percentile.md
-    
-    # - APM: guides/apm.md
-    # - Containers: guides/containers.md
-    # - Dashboards: guides/dashboards.md
-    # - Full-stack: guides/full-stack.md
-    - Databases:
-      - Aurora and RDS: guides/databases/rds-and-aurora.md
-    # - Creating an observability strategy: guides/strategy.md
-    - Cost:
-      - Using Kubecost: guides/cost/kubecost.md
-      - Visualizing costs:
-        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
-        - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
-        - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
-        - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
-        - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
-      #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
+      - Operational:
+          - ADOT Collector:
+              - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
+          - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
+          - Percentiles: guides/operational/business/sla-percentile.md
+
+      # - APM: guides/apm.md
+      # - Containers: guides/containers.md
+      # - Dashboards: guides/dashboards.md
+      # - Full-stack: guides/full-stack.md
+      - Databases:
+          - Aurora and RDS: guides/databases/rds-and-aurora.md
+      # - Creating an observability strategy: guides/strategy.md
+      - Cost:
+          - Using Kubecost: guides/cost/kubecost.md
+          - Visualizing costs:
+              - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
+              - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+              - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+              - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+              - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+        #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
 
   - Data types:
-    - Logs: signals/logs.md
-    - Metrics: signals/metrics.md
-    - Traces: signals/traces.md
-    - Alarms: signals/alarms.md
-    - Events: signals/events.md
+      - Logs: signals/logs.md
+      - Metrics: signals/metrics.md
+      - Traces: signals/traces.md
+      - Alarms: signals/alarms.md
+      - Events: signals/events.md
     # - Anomalies: signals/anomalies.md
 
   - Tools:
-    - CloudWatch Agent: tools/cloudwatch_agent.md
-    # - Amazon Managed Prometheus: tools/amp.md
-    - Alarms: tools/alarms.md
-    # - Alerting and Incident Management: tools/alerting_and_incident_management.md
-    - Dashboards: tools/dashboards.md
-    # - Embedded Metric Format: tools/emf.md
-    - Internet Monitor: tools/internet_monitor.md
-    - Logs: 
-      - Logs: tools/logs/index.md
-      - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
-    - Metrics: tools/metrics.md
-    - Real User Monitoring: tools/rum.md
-    - Synthetic Testing: tools/synthetics.md
-    # - Tracing with ADOT: tools/adot-traces.md
-    - Tracing with AWS X-Ray: tools/xray.md
+      - CloudWatch Agent: tools/cloudwatch_agent.md
+      # - Amazon Managed Prometheus: tools/amp.md
+      - Alarms: tools/alarms.md
+      # - Alerting and Incident Management: tools/alerting_and_incident_management.md
+      - Dashboards: tools/dashboards.md
+      # - Embedded Metric Format: tools/emf.md
+      - Internet Monitor: tools/internet_monitor.md
+      - Logs:
+          - Logs: tools/logs/index.md
+          - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
+      - Metrics: tools/metrics.md
+      - Real User Monitoring: tools/rum.md
+      - Synthetic Testing: tools/synthetics.md
+      # - Tracing with ADOT: tools/adot-traces.md
+      - Tracing with AWS X-Ray: tools/xray.md
+      - CloudWatch Dashboard: tools/cloudwatch-dashboard.md
 
   - Curated recipes:
-    - Recipes: recipes/index.md
-    - Dimensions: recipes/dimensions.md
-    - Telemetry: recipes/telemetry.md
-    - By Compute:
-      - recipes/apprunner.md
-      - recipes/eks.md
-      - recipes/ecs.md
-      - recipes/lambda.md
-    - By Infra & Databases:
-      - Infra: recipes/infra.md
-      - Databases:
-         - recipes/rds.md
-         - recipes/dynamodb.md
-         - recipes/msk.md
-    - By Language:
-      - Java: recipes/java.md
-      - Node.js: recipes/nodejs.md
-    - By Destination:
-      - recipes/cw.md
-      - recipes/amp.md
-      - recipes/amg.md
-      - recipes/aes.md
-    - Tasks:
-      - Anomaly Detection: recipes/anomaly-detection.md
-      - Alerting: recipes/alerting.md
-      - Troubleshooting: recipes/troubleshooting.md
-      - Workshops: recipes/workshops.md
+      - Recipes: recipes/index.md
+      - Dimensions: recipes/dimensions.md
+      - Telemetry: recipes/telemetry.md
+      - By Compute:
+          - recipes/apprunner.md
+          - recipes/eks.md
+          - recipes/ecs.md
+          - recipes/lambda.md
+      - By Infra & Databases:
+          - Infra: recipes/infra.md
+          - Databases:
+              - recipes/rds.md
+              - recipes/dynamodb.md
+              - recipes/msk.md
+      - By Language:
+          - Java: recipes/java.md
+          - Node.js: recipes/nodejs.md
+      - By Destination:
+          - recipes/cw.md
+          - recipes/amp.md
+          - recipes/amg.md
+          - recipes/aes.md
+      - Tasks:
+          - Anomaly Detection: recipes/anomaly-detection.md
+          - Alerting: recipes/alerting.md
+          - Troubleshooting: recipes/troubleshooting.md
+          - Workshops: recipes/workshops.md
   - FAQ:
-    - General: faq/faq.md
-    - Amazon CloudWatch: faq/cloudwatch.md
-    - AWS X-Ray: faq/x-ray.md
-    - Amazon Managed Service for Prometheus: faq/amp.md
-    - Amazon Managed Grafana: faq/amg.md
-    - AWS Distro for OpenTelemetry: faq/adot.md
+      - General: faq/faq.md
+      - Amazon CloudWatch: faq/cloudwatch.md
+      - AWS X-Ray: faq/x-ray.md
+      - Amazon Managed Service for Prometheus: faq/amp.md
+      - Amazon Managed Grafana: faq/amg.md
+      - AWS Distro for OpenTelemetry: faq/adot.md
 
   - Contributors: contributors.md
 
@@ -143,13 +144,12 @@ nav:
 #       lang: fr
 
 markdown_extensions:
-    - toc:
-        permalink: true
-    - admonition
-    - codehilite
-    - footnotes
-    - pymdownx.critic    
+  - toc:
+      permalink: true
+  - admonition
+  - codehilite
+  - footnotes
+  - pymdownx.critic
 
 plugins:
-    - search
-
+  - search

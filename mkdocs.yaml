@@ -59,6 +59,8 @@ nav:
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
       - Open Source:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+    - Serverless best practices:
+      - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
 
     - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
 

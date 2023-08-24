@@ -1,10 +1,8 @@
-# Amazon Managed Service for Prometheus: Metrics ingestion rate real-time cost monitoring  
-
-AWS Cost and Usage Reports (CUR) contains the most comprehensive set of cost and usage data available and is updated with your cost data at least once every 24 hours. Each report contains line items for each AWS service like Amazon Managed Service for Prometheus. 
+# Real-time cost monitoring
 
 Amazon Managed Service for Prometheus is a server-less, Prometheus-compatible monitoring service for container metrics that makes it easier to securely monitor container environments at scale. Amazon Managed Service for Prometheus pricing model is based on Metric samples ingested, Query samples processed, and Metrics stored. You can find the latest pricing details [here][pricing]. 
 
-As a managed service, Amazon Managed Service for Prometheus automatically scales the ingestion, storage, and querying of operational metrics as workloads scale up and down. Some of our customers asked us guidance on how to track `metric samples ingestion rate` real-time and track its cost real-time. Let's explore how you can achieve that.
+As a managed service, Amazon Managed Service for Prometheus automatically scales the ingestion, storage, and querying of operational metrics as workloads scale up and down. Some of our customers asked us guidance on how to track `metric samples ingestion rate` and it's cost real-time. Let's explore how you can achieve that.
 
 ### Solution
 Amazon Managed Service for Prometheus [vends usage metrics][vendedmetrics] to Amazon CloudWatch. These metrics can be used to help you gain better visibility into your Amazon Managed Service for Prometheus workspace. The vended metrics can be found in the `AWS/Usage` and `AWS/Prometheus` namespaces in CloudWatch and these [metrics][AMPMetrics] are available in CloudWatch for no additional charge. You can always create a CloudWatch dashboard to further explore and visualize these metrics.

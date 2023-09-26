@@ -151,7 +151,7 @@ In this section of Observability best practices guide, we will deep dive on to f
 * Publish custom metrics
 * Use embedded-metrics to auto generate metrics from your logs
 * Use CloudWatch Lambda Insights to monitor system-level metrics
-* Creating CloudWatch Alarms based on static threshold and anomaly detection 
+* Creating CloudWatch Alarms 
 
 ### **Monitor and alert on out-of-the-box metrics**
 
@@ -213,7 +213,9 @@ You can then use CloudWatch console to view these system-level performance metri
 
 
 ![Lambda Insights](../../../images/Serverless/aws-native/lambda_insights.png)
-**`Creating CloudWatch Alarms`** and take necessary actions when metrics go off is a critical part of observability. Amazon [CloudWatch alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) are used to alert you or automate remediation actions when application and infrastructure metrics exceed static or dynamically set thresholds. 
+
+### **Creating CloudWatch Alarms**
+Creating CloudWatch Alarms and take necessary actions when metrics go off is a critical part of observability. Amazon [CloudWatch alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) are used to alert you or automate remediation actions when application and infrastructure metrics exceed static or dynamically set thresholds. 
 
 To set up an alarm for a metric, you select a threshold value that triggers a set of actions. A fixed threshold value is known as a static threshold. For instance, you can configure an alarm on `Throttles` metrics from Lambda function to activate if it exceeds 10% of the time within a 5-min period. This could potentially mean that Lambda function has reached its max concurrency for your account and region.
 
@@ -233,9 +235,9 @@ In this section of Observability best practices guide, we will deep dive on to f
 * Introduction to distributed tracing and AWS X-Ray
 * Apply appropriate sampling rule
 * Use X-Ray SDK to trace interaction with other services
-* Example of using X-Ray tracing for a serverless architecture
+* Code Sample for tracing integrated services using X-Ray SDK
 
-### **Use distributed tracing** using AWS X-Ray
+### Introduction to distributed tracing and AWS X-Ray
 
 Most serverless applications consist of multiple microservices, each using multiple AWS services. Due to the nature of serverless architectures, it’s crucial to have distributed tracing. For effective performance monitoring and error tracking, it is important to trace the transaction across entire application flow, from the source caller through all the downstream services. While it’s possible to achieve this using individual service’s logs, it’s faster and more efficient to use a tracing tool like AWS X-Ray. See [Instrumenting your application with AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) for more information.
 
@@ -282,6 +284,8 @@ It’s important to note that AWS X-Ray is not intended to be used as an audit o
 While X-Ray tracing can be easily enabled for services like AWS Lambda and Amazon API Gateway, with just few clicks or few lines on your IaC tool, other services require additional steps to instrument their code. Here is the complete [list of AWS Services integrated with X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/xray-services.html). 
 
 To instrument calls to the services which are not integrated with X-Ray, such as DynamoDB, you can capture traces by wrapping AWS SDK calls with the AWS X-Ray SDK. For instance, when using node.js, you can follow below code example to capture all AWS SDK calls:
+
+### **Code Sample for tracing integrated services using X-Ray SDK**
 
 ```
 //... FROM (old code)

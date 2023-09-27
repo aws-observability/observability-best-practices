@@ -155,6 +155,8 @@ extensions:
 ![ADOT Collector Gateway](../../../../images/adot-collector-deployment-gateway.png)
 
 
+
+
 ## Managing Collector health
 The OTEL Collector exposes several signals for us to keep tab of its health and performance. It is essential that the collector's health is closely monitored in order to take corrective actions such as,
 
@@ -347,6 +349,27 @@ You can solve the out of order sample error in this particular setup in a couple
 OpAMP is a client/server protocol that supports communication over HTTP and over WebSockets. OpAMP is implemented in the OTel Collector and hence the OTel Collector can be used as a server as part of the control plane to manage other agents that support OpAMP, like the OTel Collector itself. The "manage" portion here involves being able to update configurations for collectors, monitoring health or even upgrading the Collectors.
 
 The details of this protocol is well [documented in the upstream OpenTelemetry website.](https://opentelemetry.io/docs/collector/management/)
+
+### Horizontal Scaling
+It may become necessary to horizontally scale an ADOT Collector depending on your workload. The requirement to horizontally scale is entirely dependent on your use case, Collector configuration, and 
+telemetry throughput. 
+
+Platform specific horizontal scaling techniques can be applied to a Collector as you would any other application while being cognizant of stateful, stateless, and scraper Collector components. 
+
+Most collector components are `stateless`, meaning that they do not hold state in memory, and if they do it is not relevant for scaling purposes. Additional replicas of stateless Collectors can be scaled behind an 
+application load balancer.
+
+`Stateful` Collector components are collector components that retain information in memory which is crucial for the operation of that component.
+
+Examples of stateful components in the ADOT Collector include but are not limited to:
+
+* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - requires all spans for a trace to make an accurate sampling decisions.
+* [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - performs cummulative to delta conversions on some metric types. This conversion requires the previous metric value to be stored in memory. 
+* [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - cummulative to delta conversion requires storing the previous metric value in memory. 
+
+
+
+#### Stateless Scaling. 
 
 ### References
 

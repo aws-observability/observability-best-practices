@@ -155,8 +155,6 @@ extensions:
 ![ADOT Collector Gateway](../../../../images/adot-collector-deployment-gateway.png)
 
 
-
-
 ## Managing Collector health
 The OTEL Collector exposes several signals for us to keep tab of its health and performance. It is essential that the collector's health is closely monitored in order to take corrective actions such as,
 

@@ -363,18 +363,20 @@ application load balancer.
 
 Examples of stateful components in the ADOT Collector include but are not limited to:
 
-* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - requires all spans for a trace to make an accurate sampling decisions.
+* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - requires all spans for a trace to make an accurate sampling decisions. Avanced sampling scaling techniques is [documented on the ADOT developer portal](https://aws-otel.github.io/docs/getting-started/advanced-sampling). 
 * [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - performs cummulative to delta conversions on some metric types. This conversion requires the previous metric value to be stored in memory. 
 * [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - cummulative to delta conversion requires storing the previous metric value in memory. 
 
+Collector components that are `scrapers` actively obtain telemetry data rather than passively receive it. Currently, the [Prometheus receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) is the only scraper
+type component in the ADOT Collector. Horizontally scaling a collector configuration that contains a prometheus receiver will require splitting the scraping jobs per collector to ensure
+that no two Collectors scrape the same endpoint. Failure to do this may lead to Prometheus out of order sample errors. 
 
-
-#### Stateless Scaling. 
-
+The process of and techniques of scaling collectors is [documunted in greater detail in the upstream OpenTelemetry website](https://opentelemetry.io/docs/collector/scaling/). 
 ### References
 
 * [https://opentelemetry.io/docs/collector/deployment/]()
 * [https://opentelemetry.io/docs/collector/management/]()
+* [https://opentelemetry.io/docs/collector/scaling/]()
 * [https://github.com/aws-observability/aws-otel-collector]()
 * [https://aws-observability.github.io/terraform-aws-observability-accelerator/]()
 * [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot]()

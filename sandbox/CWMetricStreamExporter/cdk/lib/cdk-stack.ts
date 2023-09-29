@@ -19,9 +19,10 @@ export class CdkStack extends cdk.Stack {
 
     const lambdaFunction = new lambda.Function(this, "KinesisStreamFunction", {
       code: lambda.Code.fromAsset("../lambda"),
-      handler: "main",
+      handler: "bootstrap",
       functionName: "KinesisMessageHandler",
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2,
+      architecture:lambda.Architecture.X86_64,
       environment: {
         PROMETHEUS_REMOTE_WRITE_URL: data.AMP.remote_write_url,
         PROMETHEUS_REGION: data.AMP.region,
@@ -42,6 +43,10 @@ export class CdkStack extends cdk.Stack {
 
     const bucket = new s3.Bucket(this, data.S3?.s3_bucket_name ?? "Bucket", {
       encryption: s3.BucketEncryption.KMS_MANAGED,
+      lifecycleRules: [
+        {
+          expiration: cdk.Duration.days(5),
+        }]
     });
 
     const destination = new destinations.S3Bucket(bucket, {
@@ -54,15 +59,6 @@ export class CdkStack extends cdk.Stack {
     new alpha_kinesisfirehose.DeliveryStream(this, 'Delivery Stream', {
       destinations: [destination],
     });
-
-    // new kinesisfirehose.CfnDeliveryStream(
-    //   this,
-    //   data.Kinesis_Firehose?.delivery_stream_name ?? "Delivery Stream",
-    //   {
-    //     kinesisfirehose.destinations: [destination],
-    //   },
-      
-    // );
     
   }
 }

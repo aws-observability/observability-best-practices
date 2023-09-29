@@ -62,6 +62,7 @@ nav:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
     - Serverless best practices:
       - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
+      - Open Source: guides/serverless/oss/lambda-based-observability-adot.md
 
     - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
 

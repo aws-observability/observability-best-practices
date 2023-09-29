@@ -348,10 +348,33 @@ OpAMP is a client/server protocol that supports communication over HTTP and over
 
 The details of this protocol is well [documented in the upstream OpenTelemetry website.](https://opentelemetry.io/docs/collector/management/)
 
+### Horizontal Scaling
+It may become necessary to horizontally scale an ADOT Collector depending on your workload. The requirement to horizontally scale is entirely dependent on your use case, Collector configuration, and 
+telemetry throughput. 
+
+Platform specific horizontal scaling techniques can be applied to a Collector as you would any other application while being cognizant of stateful, stateless, and scraper Collector components. 
+
+Most collector components are `stateless`, meaning that they do not hold state in memory, and if they do it is not relevant for scaling purposes. Additional replicas of stateless Collectors can be scaled behind an 
+application load balancer.
+
+`Stateful` Collector components are collector components that retain information in memory which is crucial for the operation of that component.
+
+Examples of stateful components in the ADOT Collector include but are not limited to:
+
+* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - requires all spans for a trace to make an accurate sampling decisions. Avanced sampling scaling techniques is [documented on the ADOT developer portal](https://aws-otel.github.io/docs/getting-started/advanced-sampling). 
+* [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - performs cummulative to delta conversions on some metric types. This conversion requires the previous metric value to be stored in memory. 
+* [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - cummulative to delta conversion requires storing the previous metric value in memory. 
+
+Collector components that are `scrapers` actively obtain telemetry data rather than passively receive it. Currently, the [Prometheus receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) is the only scraper
+type component in the ADOT Collector. Horizontally scaling a collector configuration that contains a prometheus receiver will require splitting the scraping jobs per collector to ensure
+that no two Collectors scrape the same endpoint. Failure to do this may lead to Prometheus out of order sample errors. 
+
+The process of and techniques of scaling collectors is [documunted in greater detail in the upstream OpenTelemetry website](https://opentelemetry.io/docs/collector/scaling/). 
 ### References
 
 * [https://opentelemetry.io/docs/collector/deployment/]()
 * [https://opentelemetry.io/docs/collector/management/]()
+* [https://opentelemetry.io/docs/collector/scaling/]()
 * [https://github.com/aws-observability/aws-otel-collector]()
 * [https://aws-observability.github.io/terraform-aws-observability-accelerator/]()
 * [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot]()

@@ -16,13 +16,11 @@ In this section of the observability best practices guide, we will deep dive on 
 
 ## **Introduction to AWS Distro for OpenTelemetry (ADOT)**
 
-[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) is a secure, production-ready, AWS-supported distribution of the Cloud Native Computing Foundation (CNCF) [OpenTelemetry (OTel)](https://opentelemetry.io/) project. Using ADOT you can instrument your applications just once and send correlated metrics and traces to multiple monitoring solutions. ADOT Lambda Layer collector components, such as Receivers, Exporters, and Extensions supports integration with Amazon CloudWatch, Amazon Elastic Service, Amazon Managed Service for Prometheus, AWS X-Ray, and others. Find the complete list [here](https://github.com/aws-observability/aws-otel-lambda). ADOT also support integrations with [partner solutions](https://aws.amazon.com/otel/partners).
+[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) is a secure, production-ready, AWS-supported distribution of the Cloud Native Computing Foundation (CNCF) [OpenTelemetry (OTel)](https://opentelemetry.io/) project. Using ADOT, you can instrument your applications just once and send correlated metrics and traces to multiple monitoring solutions.
 
-With AWS's fully managed [OpenTelemetry Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda), you can easily instrument, generate, collect, and export telemetry data (metrics, and traces) of AWS Lambda function. With ADOT Lambda layer, you can instrument your Lambda functions just once and then send traces to [AWS X-Ray](https://aws.amazon.com/xray), as well as partner solutions.
+AWS's managed [OpenTelemetry Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda) utilizes [OpenTelemetry Lambda Layer](https://github.com/open-telemetry/opentelemetry-lambda)  to export telemetry data asynchronously from AWS Lambda. It provides plug-and-play user experience by wrapping an AWS Lambda function, and by packaging the OpenTelemetry runtime specific SDK, trimmed down version of ADOT collector together with an out-of-the-box configuration for auto-instrumenting AWS Lambda functions. ADOT Lambda Layer collector components, such as Receivers, Exporters, and Extensions support integration with Amazon CloudWatch, Amazon Elastic Service, Amazon Managed Service for Prometheus, AWS X-Ray, and others. Find the complete list [here](https://github.com/aws-observability/aws-otel-lambda). ADOT also supports integrations with [partner solutions](https://aws.amazon.com/otel/partners).
 
-AWS's managed [OpenTelemetry Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda) utilizes [OpenTelemetry Lambda Layer](https://github.com/open-telemetry/opentelemetry-lambda)  to export telemetry data asynchronously from AWS Lambda. It provides plug-and-play user experience by wrapping an AWS Lambda function, and by packaging the OpenTelemetry runtime specific SDK, trimmed down version of ADOT collector together with an out-of-the-box configuration for auto-instrumenting AWS Lambda functions.
-
-ADOT Lambda Layer supports both auto-instrumentation (for Python, NodeJS, and Java) as well as custom instrumentation for any specific set of libraries and SDKs. With auto-instrumentation, by default, the Lambda Layer is configured to export traces to AWS X-Ray. Make sure your Lambda role has the required AWS X-Ray permissions. For more on AWS X-Ray permissions for AWS Lambda, see the [AWS Lambda documentation](https://docs.aws.amazon.com/lambda/latest/dg/services-xray.html#services-xray-permissions). For custom instrumentation, you will need to include the corresponding library instrumentation from the respective [OpenTelemetry runtime instrumentation repository](https://github.com/open-telemetry) and modify your code to initialize it in your function.
+ADOT Lambda Layer supports both auto-instrumentation (for Python, NodeJS, and Java) as well as custom instrumentation for any specific set of libraries and SDKs. With auto-instrumentation, by default, the Lambda Layer is configured to export traces to AWS X-Ray. For custom instrumentation, you will need to include the corresponding library instrumentation from the respective [OpenTelemetry runtime instrumentation repository](https://github.com/open-telemetry) and modify your code to initialize it in your function.
 
 ## **Auto-instrumentation using ADOT Lambda Layer with AWS Lambda**
 
@@ -204,9 +202,6 @@ OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED=false
 OTEL_INSTRUMENTATION_AWS_LAMBDA_ENABLED=true
 OTEL_INSTRUMENTATION_AWS_SDK_ENABLED=true
 ```
-
-!!! note
-    If you choose to use ADOT Lambda Layer to instrument you Lambda functions, you should consider enabling provisioned concurrency to keep the Lambda execution environment warm, to avoid increased cold start time. 
 
 ## **Additional Resources**
 

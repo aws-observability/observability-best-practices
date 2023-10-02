@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := go_build
 
 go_build:
-	cd lambda && go build -o main main.go
+	cd lambda && GOOS=linux GOARCH=amd64 go build -o bootstrap main.go
 
 go_test:
 	cd lambda && go test -v -race -count=1 ./...

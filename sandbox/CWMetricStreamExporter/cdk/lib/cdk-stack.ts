@@ -1,19 +1,16 @@
-import * as cdk from "@aws-cdk/core";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as destinations from "@aws-cdk/aws-kinesisfirehose-destinations";
-
+import { Construct } from 'constructs';
 import {
-  DeliveryStream,
-  LambdaFunctionProcessor,
-} from "@aws-cdk/aws-kinesisfirehose";
-import * as lambda from "@aws-cdk/aws-lambda";
+  Stack, App, aws_s3 as s3, aws_kinesisfirehose as kinesisfirehose, aws_lambda as lambda, aws_iam as iam} from 'aws-cdk-lib'
+
+import * as alpha_kinesisfirehose from '@aws-cdk/aws-kinesisfirehose-alpha'
+import * as destinations from '@aws-cdk/aws-kinesisfirehose-destinations-alpha';
+
+import * as cdk from 'aws-cdk-lib';
 import * as yaml from "js-yaml";
 import * as path from "path";
 import * as fs from "fs";
-import * as iam from "@aws-cdk/aws-iam";
-
 export class CdkStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
     const INPUT_YAML_FILE = "config.yaml"; 
@@ -22,9 +19,10 @@ export class CdkStack extends cdk.Stack {
 
     const lambdaFunction = new lambda.Function(this, "KinesisStreamFunction", {
       code: lambda.Code.fromAsset("../lambda"),
-      handler: "main",
+      handler: "bootstrap",
       functionName: "KinesisMessageHandler",
-      runtime: lambda.Runtime.GO_1_X,
+      runtime: lambda.Runtime.PROVIDED_AL2,
+      architecture:lambda.Architecture.X86_64,
       environment: {
         PROMETHEUS_REMOTE_WRITE_URL: data.AMP.remote_write_url,
         PROMETHEUS_REGION: data.AMP.region,
@@ -37,7 +35,7 @@ export class CdkStack extends cdk.Stack {
       )
     );
 
-    const lambdaProcessor = new LambdaFunctionProcessor(lambdaFunction, {
+    const lambdaProcessor = new alpha_kinesisfirehose.LambdaFunctionProcessor(lambdaFunction, {
       bufferInterval: cdk.Duration.minutes(1),
       bufferSize: cdk.Size.mebibytes(3),
       retries: 5,
@@ -45,20 +43,23 @@ export class CdkStack extends cdk.Stack {
 
     const bucket = new s3.Bucket(this, data.S3?.s3_bucket_name ?? "Bucket", {
       encryption: s3.BucketEncryption.KMS_MANAGED,
+      lifecycleRules: [
+        {
+          expiration: cdk.Duration.days(5),
+        }]
     });
+
     const destination = new destinations.S3Bucket(bucket, {
       processor: lambdaProcessor,
       s3Backup: {
         bucket: bucket,
       },
     });
-    new DeliveryStream(
-      this,
-      data.Kinesis_Firehose?.delivery_stream_name ?? "Delivery Stream",
-      {
-        destinations: [destination],
-      }
-    );
+
+    new alpha_kinesisfirehose.DeliveryStream(this, 'Delivery Stream', {
+      destinations: [destination],
+    });
+    
   }
 }
 

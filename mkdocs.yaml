@@ -101,6 +101,7 @@ nav:
     # - Anomalies: signals/anomalies.md
 
   - Tools:
+    - AWS Observability Accelerator: tools/observability_accelerator.md
     - CloudWatch Agent: tools/cloudwatch_agent.md
     # - Amazon Managed Prometheus: tools/amp.md
     - Alarms: tools/alarms.md

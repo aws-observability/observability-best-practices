@@ -22,18 +22,16 @@ rds_client = boto3.client('rds')
 cw_client = boto3.client('cloudwatch')
 targetMetricNamespace = os.environ.get('TargetMetricNamespace')
 
-dbSliceGroup = { "db.sql_tokenized", "db.application", "db.wait_event", "db.user", "db.session_type", "db.host", "db", "db.application" }
-
-
 def lambda_handler(event, context):
     # Get DB instances for which Performance Insights have been enabled
     pi_instances = get_pi_instances()
     logger.info('## PI Instances --> ')
+
     for instance in pi_instances:
         pi_response = get_db_resource_metrics(instance)
 
         if pi_response:
-            send_cloudwatch_data(pi_response)
+            send_cloudwatch_data(instance, pi_response)
 
     return {
         'statusCode': 200,
@@ -44,30 +42,34 @@ def lambda_handler(event, context):
 def get_pi_instances():
     dbInstancesResponse = rds_client.describe_db_instances()
 
+    pi_instances = []
+
     if dbInstancesResponse:
         response = filter(lambda _: _.get('PerformanceInsightsEnabled', False), dbInstancesResponse['DBInstances'])
         
         if response:
-            dbInstanceList = [item['DbiResourceId'] for item in response]
-            return dbInstanceList
+            for item in response:
+                pi_instances.append(dict(DbiResourceId=item['DbiResourceId'], DBInstanceIdentifier=item['DBInstanceIdentifier']))
+            return pi_instances
     return None
 
 
 def get_db_resource_metrics(instance):
     # Build metric query list
+    # The example specifies the metric of db.load.avg and a GroupBy of the top seven wait events
+    # https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.API.html#USER_PerfInsights.API.Examples.CounterMetrics
+
     metric_queries = []
-    for group in dbSliceGroup:
-        # The example specifies the metric of db.load.avg and a GroupBy of the top seven wait events
-        # https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.API.html#USER_PerfInsights.API.Examples.CounterMetrics
-        
-        logger.info('## metrics for group --> %s ', group)
-        metric_queries.append(
+
+    metric_queries.append(
         {
             "Metric": "db.load.avg", 
             "GroupBy":
-                
-                { 
-                    "Group": group
+                {
+                    "Group": "db.sql_tokenized",
+                    "Dimensions": [
+                        "db.sql_tokenized.statement"
+                    ]
                 }
         }
         )
@@ -77,7 +79,7 @@ def get_db_resource_metrics(instance):
 
     response = pi_client.get_resource_metrics(
                 ServiceType='RDS',
-                Identifier=instance,
+                Identifier=instance['DbiResourceId'],
                 StartTime= time.time() - 900,   #15 mins
                 EndTime= time.time(),
                 PeriodInSeconds=60,
@@ -94,7 +96,7 @@ def remove_non_ascii(string):
     non_ascii = ascii(string)
     return non_ascii
 
-def send_cloudwatch_data(pi_response):
+def send_cloudwatch_data(instance, pi_response):
     
     metric_data = []
     
@@ -104,21 +106,20 @@ def send_cloudwatch_data(pi_response):
      
         is_metric_dimensions = False
         formatted_dims = []
+        formatted_dims.append(dict(Name='DbiResourceId', Value=instance['DbiResourceId']))
+        formatted_dims.append(dict(Name='DBInstanceIdentifier', Value=instance['DBInstanceIdentifier']))
         if metric_dict.get('Dimensions'):
             metric_dimensions = metric_response['Key']['Dimensions']  # return a dictionary
-            
             for key in metric_dimensions:
                 metric_name = key.split(".")[1]
-                formatted_dims.append(dict(Name=key, Value=str_encode(metric_dimensions[key])))
-                """ if key == "db.sql_tokenized.statement":
-                    formatted_dims.append(dict(Name=key, Value=str_encode(metric_dimensions[key])))
+                if key == "db.sql_tokenized.statement":
+                    formatted_dims.append(dict(Name=metric_name, Value=str_encode(metric_dimensions[key])))
                 else:
-                    formatted_dims.append(dict(Name=key, Value=str_encode(metric_dimensions[key]))) """
+                    formatted_dims.append(dict(Name=key, Value=str_encode(metric_dimensions[key])))
 
             is_metric_dimensions = True
         else:
             metric_name = metric_name.replace("avg","")
-
 
         for datapoint in metric_response['DataPoints']:
             # We don't always have values from an instance
@@ -138,7 +139,6 @@ def send_cloudwatch_data(pi_response):
                         'Timestamp': datapoint['Timestamp'],
                         'Value': round(datapoint['Value'], 2)
                     }) 
-    
     if metric_data:
         logger.info('## sending data to cloduwatch...')
         try:
@@ -149,5 +149,6 @@ def send_cloudwatch_data(pi_response):
             raise ValueError('The parameters you provided are incorrect: {}'.format(error))
     else:
         logger.info('## NO Metric Data ##')
+
 
 

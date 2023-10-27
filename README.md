@@ -2,7 +2,7 @@
 
 ## Welcome
 
-This is the source for the AWS Observability Best Practices site. Everyone is welcome to contribute here, not just AWS employees!
+This is the source for the [AWS Observability Best Practices site](https://aws-observability.github.io/observability-best-practices/). Everyone is welcome to contribute here, not just AWS employees!
 
 ## How to run/develop this site
 

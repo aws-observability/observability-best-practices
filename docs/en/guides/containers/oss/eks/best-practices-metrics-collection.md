@@ -169,8 +169,8 @@ The Control Plane API Server exposes thousands of metrics, the table below lists
 |Request latency	|rest_client_request_duration_seconds	|Request latency in seconds. Broken down by verb and URL.	|	|
 |Total requests	|rest_client_requests_total	|Number of HTTP requests, partitioned by status code, method,  and host.	|	|
 |API Server request duration	|apiserver_request_duration_seconds_bucket	|Measures the latency for each request to the Kubernetes API server in seconds	|	|
-|API server request latency sum	|apiserver_request_latencies_sum	|Cumulative Counter which tracks total time taken by the K8 API server to process requests	|	|
-|API server registered watchers	|apiserver_registered_watchers	|The number of currently registered watchers for a given resource	|	|
+|API server request duration seconds	|apiserver_request_duration_seconds	|Response latency distribution in seconds for each verb, dry run value, group, version, resource, subresource, scope and component	|	|
+|API server longrunning requests	|apiserver_longrunning_requests	|Gauge of all active long-running apiserver requests broken out by verb, group,version, resource, scope and component. This metric is used for monitoring api watchers |	|
 |API server number of objects	|apiserver_storage_object	|Number of stored objects at the time of last check split by kind.	|	|
 |Admission controller latency	|apiserver_admission_controller_admission_duration_seconds	|Admission controller latency histogram in seconds, identified  by name and broken out for each operation and API resource and type (validate  or admit).	|	|
 |Etcd latency	|etcd_request_duration_seconds	|Etcd request latency in seconds for each operation and object  type.	|	|

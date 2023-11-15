@@ -46,7 +46,6 @@ nav:
               - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
       - Partners:
           - Databricks: guides/partners/databricks.md
-
       - Operational:
           - ADOT Collector:
               - Operating at scale: guides/operational/adot-at-scale/operating-adot-collector.md
@@ -69,7 +68,7 @@ nav:
               - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
               - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
         #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
-
+      - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
       - Logs: signals/logs.md
       - Metrics: signals/metrics.md

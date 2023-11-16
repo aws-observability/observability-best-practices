@@ -108,7 +108,7 @@ nav:
               - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
               - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
         #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
-      - Observability Maturity Model: guides/observability-maturity-model.md
+    - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
       - Logs: signals/logs.md
       - Metrics: signals/metrics.md

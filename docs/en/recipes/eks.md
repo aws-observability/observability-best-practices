@@ -1,7 +1,7 @@
 # Amazon Elastic Kubernetes Service
 
-[Amazon Elastic Kubernetes Service][eks-main] (EKS) gives you the flexibility to 
-start, run, and scale Kubernetes applications in the AWS Cloud or on-premises. 
+[Amazon Elastic Kubernetes Service][eks-main] (EKS) gives you the flexibility to
+start, run, and scale Kubernetes applications in the AWS Cloud or on-premises.
 
 Check out the following recipes, grouped by compute engine:
 
@@ -70,5 +70,5 @@ Check out the following recipes, grouped by compute engine:
 [eks-am-amp-amg]: recipes/servicemesh-monitoring-ampamg.md
 [fargate-eks-xray-go-adot-amg]: recipes/fargate-eks-xray-go-adot-amg.md
 [eks-istio-monitoring]: https://aws.amazon.com/blogs/mt/monitor-istio-on-eks-using-amazon-managed-prometheus-and-amazon-managed-grafana/
-[eks-keda-cloudwatch-scaling]: https://aws-blogs-prod.amazon.com/mt/proactive-autoscaling-of-kubernetes-workloads-with-keda-using-metrics-ingested-into-amazon-cloudwatch/
+[eks-keda-cloudwatch-scaling]: https://aws.amazon.com/blogs/mt/proactive-autoscaling-of-kubernetes-workloads-with-keda-using-metrics-ingested-into-amazon-cloudwatch/
 [eks-anywhere-monitoring]: https://aws.amazon.com/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/

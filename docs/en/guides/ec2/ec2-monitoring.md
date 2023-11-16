@@ -187,7 +187,7 @@ The key components of ADOT are SDKs, auto-instrumentation agents, collectors and
 
 [OpenTelemetry SDK](https://github.com/aws-observability): To enable the collection of AWS resource-specific metadata, support to the OpenTelemetry SDKs for the X-Ray trace format and context. OpenTelemetry SDKs now correlate ingested trace and metrics data from AWS X-Ray and CloudWatch.
 
-[Auto-instrumentation agent](https://aws-otel.github.io/docs/getting-started/java-sdk/trace-auto-instr): Support in the OpenTelemetry Java auto-instrumentation agent are added for AWS SDK and AWS X-Ray trace data.
+[Auto-instrumentation agent](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr): Support in the OpenTelemetry Java auto-instrumentation agent are added for AWS SDK and AWS X-Ray trace data.
 
 [OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector): The collector in the distribution is built using the upstream OpenTelemetry collector. Added AWS-specific exporters to the upstream collector to send data to AWS services including AWS X-Ray, Amazon CloudWatch and Amazon Managed Service for Prometheus. 
 

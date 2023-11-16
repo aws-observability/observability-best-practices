@@ -109,7 +109,7 @@ scrape_configs:
 
 Running the collector as a Deployment is particularly useful when you want to also provide High Availability for your collectors. Depending on the number of targets, metrics available to scrape etc the resources for the Collector should be adjusted to ensure the collector isn't starving and hence causing issues in signal collection.
 
-[Read more about this topic in the guide here.](/docs/en/guides/containers/oss/eks/best-practices-metrics-collection.md)
+[Read more about this topic in the guide here.](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
 
 The following architecture shows how a collector is deployed in a separate node outside of the workload nodes to collect metrics and traces.
 
@@ -323,12 +323,23 @@ You can solve the out of order sample error in this particular setup in a couple
 
 * Use a sticky load balancer to direct requests from a particular source to go to the same target based on IP address.
 
-Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/) for additional details:
+  Refer to the [link here](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/) for additional details.
+
 
 * As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
 
-!!! warning
-    Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
+    !!! warning
+        Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
+
+* **If you are deploying ADOT Collector as a Daemonset**: make sure you are using `relabel_configs` to only keep samples from the same node where each ADOT Collector pod is running. Check the links below to learn more.
+    - [Advanced Collector Configuration for Amazon Managed Prometheus](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - Expand the *Click to View* section, and look for the entried similar to the following:
+        ```yaml
+            relabel_configs:
+            - action: keep
+              regex: $K8S_NODE_NAME
+        ```
+    - [ADOT Add-On Advanced Configuration](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/add-on-configuration) - Learn how to deploy ADOT Collector using the ADOT Add-On for EKS advanced configurations.
+    - [ADOT Collector deployment strategies](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/installation#deploy-the-adot-collector) - Learn more about the different alternatives to deploy ADOT Collector at scale and the advantages of each approach.
 
 
 #### Open Agent Management Protocol (OpAMP)
@@ -337,13 +348,35 @@ OpAMP is a client/server protocol that supports communication over HTTP and over
 
 The details of this protocol is well [documented in the upstream OpenTelemetry website.](https://opentelemetry.io/docs/collector/management/)
 
+### Horizontal Scaling
+It may become necessary to horizontally scale an ADOT Collector depending on your workload. The requirement to horizontally scale is entirely dependent on your use case, Collector configuration, and 
+telemetry throughput. 
+
+Platform specific horizontal scaling techniques can be applied to a Collector as you would any other application while being cognizant of stateful, stateless, and scraper Collector components. 
+
+Most collector components are `stateless`, meaning that they do not hold state in memory, and if they do it is not relevant for scaling purposes. Additional replicas of stateless Collectors can be scaled behind an 
+application load balancer.
+
+`Stateful` Collector components are collector components that retain information in memory which is crucial for the operation of that component.
+
+Examples of stateful components in the ADOT Collector include but are not limited to:
+
+* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - requires all spans for a trace to make an accurate sampling decisions. Avanced sampling scaling techniques is [documented on the ADOT developer portal](https://aws-otel.github.io/docs/getting-started/advanced-sampling). 
+* [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - performs cummulative to delta conversions on some metric types. This conversion requires the previous metric value to be stored in memory. 
+* [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - cummulative to delta conversion requires storing the previous metric value in memory. 
+
+Collector components that are `scrapers` actively obtain telemetry data rather than passively receive it. Currently, the [Prometheus receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) is the only scraper
+type component in the ADOT Collector. Horizontally scaling a collector configuration that contains a prometheus receiver will require splitting the scraping jobs per collector to ensure
+that no two Collectors scrape the same endpoint. Failure to do this may lead to Prometheus out of order sample errors. 
+
+The process of and techniques of scaling collectors is [documunted in greater detail in the upstream OpenTelemetry website](https://opentelemetry.io/docs/collector/scaling/). 
 ### References
 
 * [https://opentelemetry.io/docs/collector/deployment/]()
 * [https://opentelemetry.io/docs/collector/management/]()
+* [https://opentelemetry.io/docs/collector/scaling/]()
 * [https://github.com/aws-observability/aws-otel-collector]()
 * [https://aws-observability.github.io/terraform-aws-observability-accelerator/]()
 * [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot]()
 * [https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/]()
 * [https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/]()
-

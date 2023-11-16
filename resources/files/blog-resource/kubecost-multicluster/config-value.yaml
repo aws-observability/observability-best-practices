@@ -1,0 +1,14 @@
+global:
+  amp:
+    enabled: true
+    prometheusServerEndpoint: http://localhost:8005/workspaces/ws-020a693c-4d10-4292-b4a0-e6703ba1d33b
+    remoteWriteService: https://aps-workspaces.us-east-1.amazonaws.com/workspaces/ws-020a693c-4d10-4292-b4a0-e6703ba1d33b/api/v1/remote_write
+    sigv4:
+      region: us-east-1
+      role_arn: arn:aws:iam::1234567890:role/EKS-AMP-Central-Role
+
+sigV4Proxy:
+  region: us-east-1
+  host: aps-workspaces.us-east-1.amazonaws.com
+  role_arn: arn:aws:iam::1234567890:role/EKS-AMP-Central-Role
+

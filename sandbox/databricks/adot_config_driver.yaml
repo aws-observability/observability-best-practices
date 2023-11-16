@@ -1,0 +1,78 @@
+receivers:
+  prometheus:
+    config:
+      global:
+        scrape_interval: 1m
+        scrape_timeout: 10s
+
+      scrape_configs:
+      - job_name: databricks_prometheus_executors
+        metrics_path: /metrics/executors/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - $SPARK_LOCAL_IP:40001
+      - job_name: databricks_prometheus_master
+        metrics_path: /metrics/master/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - $SPARK_LOCAL_IP:40000
+      - job_name: databricks_prometheus
+        metrics_path: /metrics/prometheus/
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - $SPARK_LOCAL_IP:40001
+      - job_name: databricks_node
+        sample_limit: 10000
+        static_configs:
+        - targets:
+          - $SPARK_LOCAL_IP:9100
+
+extensions:
+  sigv4auth:
+    service: "aps"
+    region: "$AMP_REGION"
+
+exporters:
+  prometheusremotewrite:
+    endpoint: "$AMP_REMOTE_WRITE_ENDPOINT"
+    auth:
+      authenticator: sigv4auth
+
+processors:
+  metricstransform/databricks:
+    transforms:
+      - include: .*
+        match_type: regexp
+        action: update
+        operations:
+        - action: add_label
+          new_label: databricks_cluster_id
+          new_value: "$DB_CLUSTER_ID"
+        - action: add_label
+          new_label: databricks_cluster_name
+          new_value: "$DB_CLUSTER_NAME"
+        - action: add_label
+          new_label: databricks_driver
+          new_value: "$DB_IS_DRIVER"
+  metricstransform/databricksdriver:
+    transforms:
+      - include: ^metrics_app_([0-9]+_[0-9]+)_driver_(.*)$$
+        match_type: regexp
+        action: update
+        new_name: $${2}
+      - include: ^metrics_local_([0-9]+)_driver_(.*)$$
+        match_type: regexp
+        action: update
+        new_name: $${2}
+
+service:
+  pipelines:
+    metrics:
+      receivers: [prometheus]
+      processors: [metricstransform/databricks, metricstransform/databricksdriver]
+      exporters: [prometheusremotewrite]
+
+  extensions: [sigv4auth]

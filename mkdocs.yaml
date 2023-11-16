@@ -92,12 +92,29 @@ nav:
     # - Dashboards: guides/dashboards.md
     # - Full-stack: guides/full-stack.md
 
+      # - APM: guides/apm.md
+      # - Containers: guides/containers.md
+      # - Dashboards: guides/dashboards.md
+      # - Full-stack: guides/full-stack.md
+      - Databases:
+          - Aurora and RDS: guides/databases/rds-and-aurora.md
+      # - Creating an observability strategy: guides/strategy.md
+      - Cost:
+          - Using Kubecost: guides/cost/kubecost.md
+          - Visualizing costs:
+              - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
+              - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+              - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+              - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+              - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+        #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
+      - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
-    - Logs: signals/logs.md
-    - Metrics: signals/metrics.md
-    - Traces: signals/traces.md
-    - Alarms: signals/alarms.md
-    - Events: signals/events.md
+      - Logs: signals/logs.md
+      - Metrics: signals/metrics.md
+      - Traces: signals/traces.md
+      - Alarms: signals/alarms.md
+      - Events: signals/events.md
     # - Anomalies: signals/anomalies.md
 
   - Tools:
@@ -121,40 +138,40 @@ nav:
     - Tracing with AWS X-Ray: tools/xray.md
 
   - Curated recipes:
-    - Recipes: recipes/index.md
-    - Dimensions: recipes/dimensions.md
-    - Telemetry: recipes/telemetry.md
-    - By Compute:
-      - recipes/apprunner.md
-      - recipes/eks.md
-      - recipes/ecs.md
-      - recipes/lambda.md
-    - By Infra & Databases:
-      - Infra: recipes/infra.md
-      - Databases:
-         - recipes/rds.md
-         - recipes/dynamodb.md
-         - recipes/msk.md
-    - By Language:
-      - Java: recipes/java.md
-      - Node.js: recipes/nodejs.md
-    - By Destination:
-      - recipes/cw.md
-      - recipes/amp.md
-      - recipes/amg.md
-      - recipes/aes.md
-    - Tasks:
-      - Anomaly Detection: recipes/anomaly-detection.md
-      - Alerting: recipes/alerting.md
-      - Troubleshooting: recipes/troubleshooting.md
-      - Workshops: recipes/workshops.md
+      - Recipes: recipes/index.md
+      - Dimensions: recipes/dimensions.md
+      - Telemetry: recipes/telemetry.md
+      - By Compute:
+          - recipes/apprunner.md
+          - recipes/eks.md
+          - recipes/ecs.md
+          - recipes/lambda.md
+      - By Infra & Databases:
+          - Infra: recipes/infra.md
+          - Databases:
+              - recipes/rds.md
+              - recipes/dynamodb.md
+              - recipes/msk.md
+      - By Language:
+          - Java: recipes/java.md
+          - Node.js: recipes/nodejs.md
+      - By Destination:
+          - recipes/cw.md
+          - recipes/amp.md
+          - recipes/amg.md
+          - recipes/aes.md
+      - Tasks:
+          - Anomaly Detection: recipes/anomaly-detection.md
+          - Alerting: recipes/alerting.md
+          - Troubleshooting: recipes/troubleshooting.md
+          - Workshops: recipes/workshops.md
   - FAQ:
-    - General: faq/faq.md
-    - Amazon CloudWatch: faq/cloudwatch.md
-    - AWS X-Ray: faq/x-ray.md
-    - Amazon Managed Service for Prometheus: faq/amp.md
-    - Amazon Managed Grafana: faq/amg.md
-    - AWS Distro for OpenTelemetry: faq/adot.md
+      - General: faq/faq.md
+      - Amazon CloudWatch: faq/cloudwatch.md
+      - AWS X-Ray: faq/x-ray.md
+      - Amazon Managed Service for Prometheus: faq/amp.md
+      - Amazon Managed Grafana: faq/amg.md
+      - AWS Distro for OpenTelemetry: faq/adot.md
 
   - Contributors: contributors.md
 
@@ -184,5 +201,4 @@ markdown_extensions:
 
 
 plugins:
-    - search
-
+  - search

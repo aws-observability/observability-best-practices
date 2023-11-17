@@ -63,13 +63,12 @@ Use CloudWatch Logs Insights, which can automatically discover fields in JSON fo
 
 ### **Logging correlation Id**
 
-For example, for an http request coming in from API Gateway, the correlation Id if set at the `requestContext.requestId` path, which can be easily extracted and logged in the downstream Lambda functions using Lambda powertools. Distributed systems often involve multiple services and components working together to handle a request. So, logging correlation Id and passing them to downstream systems becomes crucial for end-to-end tracing and debugging. A correlation Id is a unique identifier assigned to a request at the very beginning. As the request moves through different services, the correlation Id is included in the logs, allowing you to trace the entire path of the request. You can either manually insert correlation Id to your AWS Lambda logs or use tools like [AWS Lambda powertools](https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id) to easily grab the correlation Id the from API Gateway and log it along with your application logs. For example, for an http request correlation Id could be a request-id which can be initiated at API Gateway and then passed on to your backend services like Lambda functions. 
-Distributed systems often involve multiple services and components working together to handle a request. So, generating, logging, and passing correlation Id to the downstream systems becomes crucial for end-to-end tracing and debugging. A correlation Id is a unique identifier which links related logs, and traces across various systems.
+For example, for an http request coming in from API Gateway, the correlation Id is set at the `requestContext.requestId` path, which can be easily extracted and logged in the downstream Lambda functions using Lambda powertools. Distributed systems often involve multiple services and components working together to handle a request. So, logging correlation Id and passing them to downstream systems becomes crucial for end-to-end tracing and debugging. A correlation Id is a unique identifier assigned to a request at the very beginning. As the request moves through different services, the correlation Id is included in the logs, allowing you to trace the entire path of the request. You can either manually insert correlation Id to your AWS Lambda logs or use tools like [AWS Lambda powertools](https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id) to easily grab the correlation Id the from API Gateway and log it along with your application logs. For example, for an http request correlation Id could be a request-id which can be initiated at API Gateway and then passed on to your backend services like Lambda functions.
 
 ### **Code Sample using Lambda Powertools**
 As a best practice, generate a correlation Id as early as possible in the request lifecycle, preferably at the entry point of your serverless application, such as API Gateway or application load balancer. Use UUIDs, or request id or any other unique attribute which can used to track the request across distributed systems. Pass the correlation id along with each request either as part of the custom header, body or metadata. Ensure that correlation Id is included in all the log entries and traces in your downstream services. 
 
-You can either manually capture and include correlation Id as part of your Lambda function logs or use tools like [AWS Lambda powertools](https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id). With Lambda Powertools, you can easily grab the correlation Id from predefined request [path mapping](https://github.com/aws-powertools/powertools-lambda-python/blob/08a0a7b68d2844d36c33ab8156640f4ea9632d0c/aws_lambda_powertools/logging/correlation_paths.py) for supported upstream services and automatically add it alongside your application logs. Also, ensure that correlation Id is added to all your error messages to easily debug and identify the root cause in case of failures and tie it back to the original request.
+You can either manually capture and include correlation Id as part of your Lambda function logs or use tools like [AWS Lambda Powertools](https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id). With Lambda Powertools, you can easily grab the correlation Id from predefined request [path mapping](https://github.com/aws-powertools/powertools-lambda-python/blob/08a0a7b68d2844d36c33ab8156640f4ea9632d0c/aws_lambda_powertools/logging/correlation_paths.py) for supported upstream services and automatically add it alongside your application logs. Also, ensure that correlation Id is added to all your error messages to easily debug and identify the root cause in case of failures and tie it back to the original request.
 
 Let's look at the code sample to demostrate structured logging with correlation id and viewing it in CloudWatch for below serverless architecture:
 
@@ -160,7 +159,7 @@ Metrics are numeric data measured at various time intervals (time series data) a
 One challenge with out-of-the-box metrics is knowing how to analyze them in a CloudWatch dashboard. For example, when looking at Concurrency, do I look at max, average, or percentile? And the right statistics to monitor differs for each metric.
 
 As best practices, for Lambda function’s `ConcurrentExecutions` metrics look at the `Count` statistics to check if it is getting close to the account and regional limit or close to the Lambda reserved concurrency limit if applicable. 
-For `Duration` metric, which indicates how long your function takes to process an event, look at the `Average` or `Max` statistic. For measuring the latency of your api, look at the `Percentile` statistics for API Gateway’s `Latency` metrics. P50, P90, and P99 are much better methods of monitoring latency over averages. 
+For `Duration` metric, which indicates how long your function takes to process an event, look at the `Average` or `Max` statistic. For measuring the latency of your API, look at the `Percentile` statistics for API Gateway’s `Latency` metrics. P50, P90, and P99 are much better methods of monitoring latency over averages.
 
 Once you know what metrics to monitor, configure alerts on these key metrics to engage you when components of your application are unhealthy. For Example
 
@@ -285,7 +284,7 @@ While X-Ray tracing can be easily enabled for services like AWS Lambda and Amazo
 
 To instrument calls to the services which are not integrated with X-Ray, such as DynamoDB, you can capture traces by wrapping AWS SDK calls with the AWS X-Ray SDK. For instance, when using node.js, you can follow below code example to capture all AWS SDK calls:
 
-### **Code Sample for tracing integrated services using X-Ray SDK**
+### **Code sample for tracing integrated services using X-Ray SDK**
 
 ```
 //... FROM (old code)
@@ -293,7 +292,7 @@ const AWS = require('aws-sdk');
 
 //... TO (new code)
 const AWSXRay = require('aws-xray-sdk-core');
-const AWS = AWSXRay.**captureAWS**(require('aws-sdk'));
+const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 ...
 ```
 

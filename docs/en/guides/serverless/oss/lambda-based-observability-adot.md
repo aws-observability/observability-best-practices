@@ -138,7 +138,7 @@ exporters:
       authenticator: sigv4auth
 
 service:
-  extensions: [sig4vauth]
+  extensions: [sigv4auth]
   pipelines:
     traces:
       receivers: [otlp]

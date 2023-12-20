@@ -134,6 +134,7 @@ nav:
     - Metrics: tools/metrics.md
     - Real User Monitoring: tools/rum.md
     - Synthetic Testing: tools/synthetics.md
+    - Service Level Objectives (SLOs): tools/slos.md
     # - Tracing with ADOT: tools/adot-traces.md
     - Tracing with AWS X-Ray: tools/xray.md
 

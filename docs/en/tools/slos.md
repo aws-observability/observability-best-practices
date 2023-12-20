@@ -1,9 +1,9 @@
 # Service Level Objectives (SLOs)
 
-Is highly available and resilient applications an active business driver for your company**?**  
+Are highly available and resilient applications an active business driver for your company**?**  
 If the answer is ‘**yes**’, continue reading. 
 
-Failures are a given and everything will eventually fail over time! This becomes an even more important lesson when you are building applications that need to scale. Here comes the important of SLOs.
+Failures are a given and everything will eventually fail over time! This becomes an even more important lesson when you are building applications that need to scale. Here comes the importance of SLOs.
 
 SLOs measure an agreed-upon target for service availability based on critical end-user journeys. That agreed-upon target should be crafted around what matters to your customer / end-user. To build such a resilient eco-system, you should measure performance objectively and report reliability accurately using meaningful, realistic, and actionable SLOs. Now, let us get familiarized with key service level terminologies.
 
@@ -29,7 +29,7 @@ Application Signals helps you set SLOs on your key performance metrics. You can 
 
 Application Signals automatically collects latency and availability metrics for every service and operation that it discovers, and these metrics are often ideal to use as SLIs. At the same time, Application Signals gives you the flexibility to use any CloudWatch metric or metric expression as an SLI! 
 
-Application Signals automatically instrument applications based on best practices for application performance and correlates telemetry across metrics, traces, logs, real user monitoring, and synthetic monitoring for applications running on Amazon EKS. Read this [blog](https://aws.amazon.com/blogs/aws/amazon-cloudwatch-application-signals-for-automatic-instrumentation-of-your-applications-preview/) for more details.
+Application Signals automatically instruments applications based on best practices for application performance and correlates telemetry across metrics, traces, logs, real user monitoring, and synthetic monitoring for applications running on Amazon EKS. Read this [blog](https://aws.amazon.com/blogs/aws/amazon-cloudwatch-application-signals-for-automatic-instrumentation-of-your-applications-preview/) for more details.
 
 Check this [blog](https://aws.amazon.com/blogs/mt/how-to-monitor-application-health-using-slos-with-amazon-cloudwatch-application-signals/) to learn how to set up an SLO in CloudWatch Application Signals to monitor the reliability of a service. 
 

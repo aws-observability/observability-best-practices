@@ -7,8 +7,8 @@ repo_name: "aws-observability/observability-best-practices"
 repo_url: "https://github.com/aws-observability/observability-best-practices"
 
 theme:
-  logo: ../images/aws-logo.png
-  favicon: ../images/aws-logo.png
+  logo: images/aws-logo.png
+  favicon: images/aws-logo.png
   name: material
   custom_dir: overrides
   icon:

@@ -20,8 +20,8 @@ jobs:
           key: ${{ github.ref }}
           path: .cache
       - run: pip install mkdocs-material
-      - run: mkdocs build -f mkdocs.yaml
       - run: mkdocs build -f mkdocs.ja.yaml
+      - run: mkdocs build -f mkdocs.yaml
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

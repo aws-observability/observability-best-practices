@@ -1,86 +1,83 @@
-# Exporting CloudWatch Metric Streams via Firehose and AWS Lambda to Amazon Managed Service for Prometheus
+# CloudWatch メトリックストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする
 
-In this recipe we show you how to instrument a [CloudWatch Metric Stream](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) and use [Kinesis Data Firehose](https://aws.amazon.com/kinesis/data-firehose/) and [AWS Lambda](https://aws.amazon.com/lambda) to ingest metrics into [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/).
+このレシピでは、[CloudWatch メトリックストリーム](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) を計装し、[Kinesis Data Firehose](https://aws.amazon.com/kinesis/data-firehose/) と [AWS Lambda](https://aws.amazon.com/lambda) を使用してメトリクスを [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/) にインジェストする方法を示します。
 
-We will be setting up a stack using [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) to create a Firehose Delivery Stream, Lambda, and a S3 Bucket to demonstrate a complete scenario.
+[AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) を使用して Firehose デリバリーストリーム、Lambda、S3 バケットを作成するスタックを設定し、完全なシナリオを示します。
 
 !!! note
-    This guide will take approximately 30 minutes to complete.
+    このガイドの完了には約 30 分かかります。
 
-## Infrastructure
-In the following section we will be setting up the infrastructure for this recipe. 
+## インフラストラクチャ
+このレシピのインフラストラクチャを以下で設定します。
 
-CloudWatch Metric Streams allow forwarding of the streaming metric data to a 
-HTTP endpoint or [S3 bucket](https://aws.amazon.com/s3).
+CloudWatch メトリックストリームを使用すると、ストリーミングメトリックデータを HTTP エンドポイントや [S3 バケット](https://aws.amazon.com/s3) に転送できます。
 
-### Prerequisites
+### 前提条件
 
-* The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
-* The [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html) is installed in your environment.
-* Node.js and Go.
-* The [repo](https://github.com/aws-observability/aws-o11y-recipes/) has been cloned to your local machine.
+* AWS CLI がインストールされ、環境に構成されています。
+* AWS CDK TypeScript がインストールされています。  
+* Node.js と Go がインストールされています。
+* リポジトリがローカルマシンにクローンされています。
 
-### Create an AMP workspace
+### AMP ワークスペースの作成
 
-Our demo application in this recipe will be running on top of AMP. 
-Create your AMP Workspace via the following command:
+このレシピのデモアプリケーションは、AMP の上で実行されます。
+次のコマンドを使用して AMP ワークスペースを作成します。
 
 ```
 aws amp create-workspace --alias prometheus-demo-recipe
 ```
 
-Ensure your workspace has been created with the following command:
+次のコマンドでワークスペースが作成されたことを確認します。
+
 ```
 aws amp list-workspaces
 ```
 
 !!! info
-    For more details check out the [AMP Getting started](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) guide.
+    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) をご確認ください。
 
-### Install dependencies
+### 依存関係のインストール
 
-From the root of the aws-o11y-recipes repository, change your directory to CWMetricStreamExporter via the command:
+aws-o11y-recipes リポジトリのルートから、次のコマンドを使用して CWMetricStreamExporter ディレクトリに移動します。
 
 ```
 cd sandbox/CWMetricStreamExporter
 ```
 
-This will now be considered the root of the repo, going forward.
+これからは、このディレクトリをリポジトリのルートとします。
 
-Change directory to `/cdk` via the following command:
+次のコマンドを使用して `/cdk` ディレクトリに移動します。
 
 ```
 cd cdk
 ```
 
-Install the CDK dependencies via the following command:
+次のコマンドを使用して CDK の依存関係をインストールします。
 
 ```
 npm install
 ```
 
-Change directory back to the root of the repo, and then change directory 
-to `/lambda` using following command:
+リポジトリのルートに戻り、次のコマンドを使用して `/lambda` ディレクトリに移動します。
 
 ```
 cd lambda
 ```
 
-Once in the `/lambda` folder, install the Go dependencies using:
+`/lambda` フォルダ内で、次のコマンドを使用して Go の依存関係をインストールします。
 
 ```
 go get
 ```
 
-All the dependencies are now installed.
+すべての依存関係がインストールされました。
 
-### Modify config file
+### 設定ファイルの変更
 
-In the root of the repo, open `config.yaml` and modify the AMP workspace URL 
-by replacing the `{workspace}` with the newly created workspace id, and the 
-region your AMP workspace is in.
+リポジトリのルートで、`config.yaml` を開き、 `{workspace}` を新しく作成したワークスペース ID に置き換え、AMP ワークスペースがあるリージョンを変更して、AMP ワークスペースの URL を変更します。
 
-For example, modify the following with:
+例えば、次のように変更します。
 
 ```
 AMP:
@@ -88,69 +85,64 @@ AMP:
     region: us-east-2
 ```
 
-Change the names of the Firehose Delivery Stream and S3 Bucket to your liking.
+Firehose デリバリーストリームと S3 バケットの名前を好きなように変更します。
 
-### Deploy stack
+### スタックのデプロイ
 
-Once the `config.yaml` has been modified with the AMP workspace ID, it is time 
-to deploy the stack to CloudFormation. To build the CDK and the Lambda code, 
-in the root of the repo run the following commend:
+`config.yaml` が AMP ワークスペース ID で変更されたら、スタックを CloudFormation にデプロイする時間です。
+CDK と Lambda コードをビルドするには、リポジトリのルートで次のコマンドを実行します。
 
 ```
 npm run build
 ```
 
-This build step ensures that the Go Lambda binary is built, and deploys the CDK
-to CloudFormation.
+このビルド手順により、Go Lambda バイナリがビルドされ、CDK が CloudFormation にデプロイされます。
 
-Accept the following IAM changes to deploy the stack:
+スタックをデプロイするために、次の IAM の変更を承認してください。
 
-![Screen shot of the IAM Changes when deploying the CDK](../images/cdk-amp-iam-changes.png)
+![CDK をデプロイするときの IAM 変更のスクリーンショット](../images/cdk-amp-iam-changes.png)
 
-Verify that the stack has been created by running the following command:
+次のコマンドを実行して、スタックが作成されたことを確認します。
 
 ```
 aws cloudformation list-stacks
 ```
 
-A stack by the name `CDK Stack` should have been created.
+`CDK Stack` という名前のスタックが作成されているはずです。
 
-## Create CloudWatch stream
+## CloudWatch ストリームの作成
 
-Navigate to the CloudWatch consoloe, for example 
-`https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList` 
-and click "Create metric stream".
+CloudWatch コンソール(例: `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList`)に移動し、「メトリックストリームの作成」をクリックします。
 
-Select the metics needed, either all metrics of only from selected namespaces.
+必要なメトリクスを選択します。名前空間からのすべてのメトリクスまたは一部のメトリクスを選択できます。
 
-Configure the Metric Stream by using an existing Firehose which was created by the CDK.
-Change the output format to JSON instead of OpenTelemetry 0.7.
-Modify the Metric Stream name to your liking, and click "Create metric stream":
+CDK によって作成された既存の Firehose を使用して、メトリックストリームを構成します。
+出力形式を OpenTelemetry 0.7 ではなく JSON に変更します。
+メトリックストリームの名前を好みに応じて変更し、「メトリックストリームの作成」をクリックします。
 
-![Screen shot of the Cloudwatch Metric Stream Configuration](../images/cloudwatch-metric-stream-configuration.png)
+![Cloudwatch メトリックストリーム構成のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
 
-To verify the Lambda function invocation, navigate to the [Lambda console](https://console.aws.amazon.com/lambda/home)
-and click the function `KinesisMessageHandler`. Click the `Monitor` tab and `Logs` subtab, and under `Recent Invocations` there should be entries of the Lambda function being triggered.
+Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。`Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
 !!! note
-    It may take upto 5 minutes for invocations to show in the Monitor tab.
+    呼び出しが Monitor タブに表示されるまでに最大 5 分かかる場合があります。
+    
+おめでとうございます。これでメトリクスが CloudWatch から Amazon Managed Service for Prometheus にストリーミングされるようになりました。
 
-That is it! Congratulations, your metrics are now being streamed from CloudWatch to Amazon Managed Service for Prometheus.
+## クリーンアップ
 
-## Cleanup
-
-First, delete the CloudFormation stack:
+まず、CloudFormation スタックを削除します。
 
 ```
 cd cdk
 cdk destroy
 ```
 
-Remove the AMP workspace:
+AMP ワークスペースを削除します。
 
 ```
 aws amp delete-workspace --workspace-id \
     `aws amp list-workspaces --alias prometheus-sample-app --query 'workspaces[0].workspaceId' --output text`
 ```
 
-Last but not least, remove the CloudWatch Metric Stream by removing it from the console.
+最後に、コンソールからメトリックストリームを削除してください。

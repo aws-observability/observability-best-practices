@@ -1,72 +1,63 @@
-# Using AWS Distro for OpenTelemetry in EKS on Fargate with Amazon Managed Service for Prometheus
+# Fargate 上の EKS で AWS Distro for OpenTelemetry を Amazon Managed Service for Prometheus と共に利用する
 
-In this recipe we show you how to instrument a [sample Go application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus) and
-use [AWS Distro for OpenTelemetry (ADOT)](https://aws.amazon.com/otel) to ingest metrics into
-[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) .
-Then we're using [Amazon Managed Grafana](https://aws.amazon.com/grafana/) to visualize the metrics.
+このレシピでは、[サンプルの Go アプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)にインスツルメンテーションを施し、[AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel) を使用してメトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/)にインジェストする方法を示します。
+その後、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) を使用してメトリクスを可視化します。
 
-We will be setting up an [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)
-on [AWS Fargate](https://aws.amazon.com/fargate/) cluster and use an
-[Amazon Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/) repository
-to demonstrate a complete scenario.
+[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) 上に [AWS Fargate](https://aws.amazon.com/fargate/) クラスターをセットアップし、[Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) レポジトリを使用して、完全なシナリオをデモンストレーションします。
 
 !!! note
-    This guide will take approximately 1 hour to complete.
+    このガイドの完了には約 1 時間かかります。
 
-## Infrastructure
-In the following section we will be setting up the infrastructure for this recipe. 
+## インフラストラクチャ
+このレシピのインフラストラクチャを設定します。
 
-### Architecture
+### アーキテクチャ
 
-The ADOT pipeline enables us to use the 
-[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) to 
-scrape a Prometheus-instrumented application, and ingest the scraped metrics to
-Amazon Managed Service for Prometheus. 
+ADOT パイプラインを使用すると、[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) で Prometheus インスツルメンテーションされたアプリケーションをスクレイプし、スクレイプしたメトリクスを Amazon Managed Service for Prometheus にインジェストできます。
 
-![Architecture](../images/adot-metrics-pipeline.png)
+![アーキテクチャ](../images/adot-metrics-pipeline.png)
 
-The ADOT Collector includes two components specific to Prometheus: 
+ADOT Collector には、Prometheus 固有の 2 つのコンポーネントが含まれています。
 
-* the Prometheus Receiver, and 
-* the AWS Prometheus Remote Write Exporter.
+* Prometheus Receiver
+* AWS Prometheus Remote Write Exporter
 
-!!! info 
-    For more information on Prometheus Remote Write Exporter check out:
-    [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter).
+!!! info
+    Prometheus Remote Write Exporter の詳細については、以下をご確認ください。 
+    [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)
 
+### 前提条件
 
-### Prerequisites
+* AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
+* 環境に [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) コマンドをインストールする必要があります。
+* 環境に [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
+* [Docker](https://docs.docker.com/get-docker/) が環境にインストールされている必要があります。
 
-* The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
-* You need to install the [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) command in your environment.
-* You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment. 
-* You have [Docker](https://docs.docker.com/get-docker/) installed into your environment.
+### Fargate 上に EKS クラスターを作成する
 
-### Create EKS on Fargate cluster
+デモアプリケーションは、Fargate 上の EKS クラスターで実行する Kubernetes アプリケーションです。
+そこで、まず提供されている [cluster-config.yaml](./fargate-eks-metrics-go-adot-ampamg/cluster-config.yaml) テンプレートファイルを使用して、EKS クラスターを作成します。
+`<your_region>` を [AMP でサポートされているリージョン](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions) のいずれかに変更してください。
 
-Our demo application is a Kubernetes app that we will run in an EKS on Fargate
-cluster. So, first create an EKS cluster using the
-provided [cluster-config.yaml](./fargate-eks-metrics-go-adot-ampamg/cluster-config.yaml)
-template file by changing `<YOUR_REGION>` to one of the
-[supported regions for AMP](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions).
-
-Make sure to set `<YOUR_REGION>` in your shell session, for example, in Bash:
+シェルセッションで `<your_region>` を設定することを確認してください。例えば、Bash の場合は次のようになります。
 
 ```
 export AWS_DEFAULT_REGION=<YOUR_REGION>
 ```
 
-Create your cluster using the following command:
+次のコマンドを使用してクラスターを作成します。
 
 ```
 eksctl create cluster -f cluster-config.yaml
 ```
 
-### Create ECR repository
+</your_region></your_region></your_region>
 
-In order to deploy our application to EKS we need a container repository. 
-You can use the following command to create a new ECR repository in your account.
-Make sure to set `<YOUR_REGION>` as well.
+### ECR リポジトリの作成
+
+アプリケーションを EKS にデプロイするには、コンテナリポジトリが必要です。
+次のコマンドを使用して、アカウントに新しい ECR リポジトリを作成できます。
+`<your_region>` も設定するようにしてください。
 
 ```
 aws ecr create-repository \
@@ -75,43 +66,41 @@ aws ecr create-repository \
     --region <YOUR_REGION>
 ```
 
-### Set up AMP
+</your_region></your_region>
 
-First, create an Amazon Managed Service for Prometheus workspace using the AWS CLI with:
+### AMPのセットアップ
+
+まず、AWS CLIを使用してAmazon Managed Service for Prometheusワークスペースを次のコマンドで作成します。
 
 ```
 aws amp create-workspace --alias prometheus-sample-app
 ```
 
-Verify the workspace is created using:
+次のコマンドでワークスペースが作成されたことを確認します。
 
 ```
 aws amp list-workspaces
 ```
 
 !!! info
-    For more details check out the [AMP Getting started](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) guide.
+    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html)をご確認ください。
 
+### ADOT Collectorのセットアップ
 
-### Set up ADOT Collector
+[adot-collector-fargate.yaml](./fargate-eks-metrics-go-adot-ampamg/adot-collector-fargate.yaml)をダウンロードし、次のステップで説明するパラメータを使用してこのYAMLドキュメントを編集します。
 
-Download [adot-collector-fargate.yaml](./fargate-eks-metrics-go-adot-ampamg/adot-collector-fargate.yaml) 
-and edit this YAML doc with the parameters described in the next steps.
+この例では、ADOT Collectorの構成ではアノテーション `(scrape=true)` を使用して、スクレイプする対象のエンドポイントを指示しています。 これにより、ADOT Collectorはクラスタ内のサンプルアプリのエンドポイントと `kube-system` エンドポイントを区別できます。
+別のサンプルアプリをスクレイプしたい場合は、このre-label構成を削除できます。
 
-In this example, the ADOT Collector configuration uses an annotation `(scrape=true)` 
-to tell which target endpoints to scrape. This allows the ADOT Collector to distinguish 
-the sample app endpoint from `kube-system` endpoints in your cluster.
-You can remove this from the re-label configurations if you want to scrape a different sample app. 
+環境に合わせてダウンロードしたファイルを編集するには、次のステップに従ってください。
 
-Use the following steps to edit the downloaded file for your environment:
+1\. `<your_region>` を現在のリージョンに置き換えます。
 
-1\. Replace `<YOUR_REGION>` with your current region. 
+2\. `<your_endpoint>` をワークスペースのリモートライト URL に置き換えます。
 
-2\. Replace `<YOUR_ENDPOINT>` with the remote write URL of your workspace.
+次のクエリを実行することでAMPリモートライト URLエンドポイントを取得できます。
 
-Get your AMP remote write URL endpoint by executing the following queries. 
-
-First, get the workspace ID like so:
+まず、次のようにワークスペースIDを取得します。
 
 ```
 YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
@@ -119,7 +108,7 @@ YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
                     --query 'workspaces[0].workspaceId' --output text)
 ```
 
-Now get the remote write URL endpoint URL for your workspace using:
+次に、ワークスペースのリモートライト URL エンドポイントを取得するには、次を使用します。
 
 ```
 YOUR_ENDPOINT=$(aws amp describe-workspace \
@@ -128,78 +117,77 @@ YOUR_ENDPOINT=$(aws amp describe-workspace \
 ```
 
 !!! warning
-    Make sure that `YOUR_ENDPOINT` is in fact the remote write URL, that is, 
-    the URL should end in `/api/v1/remote_write`.
+    `YOUR_ENDPOINT`が実際にリモートライトURLであること、つまりURLが `/api/v1/remote_write` で終わっていることを確認してください。
 
-After creating deployment file we can now apply this to our cluster by using the following command: 
+
+デプロイメントファイルを作成したら、次のコマンドを使用してクラスタに適用できます。
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
 ```
 
 !!! info
-    For more information check out the [AWS Distro for OpenTelemetry (ADOT) 
-    Collector Setup](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup).
+    詳細は、[AWS Distro for OpenTelemetry(ADOT)Collectorのセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup)をご覧ください。
 
-### Set up AMG
+</your_endpoint></your_region>
 
-Set up a new AMG workspace using the 
-[Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) guide.
+### AMGのセットアップ
 
-Make sure to add "Amazon Managed Service for Prometheus" as a datasource during creation.
+[Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) ガイドを使用して、新しい AMG ワークスペースをセットアップします。
+
+作成時に「Amazon Managed Service for Prometheus」をデータソースとして追加するようにしてください。
 
 ![Service managed permission settings](../images/amg-console-create-workspace-managed-permissions.jpg)
 
-## Application
+## アプリケーション
 
-In this recipe we will be using a
-[sample application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus) 
-from the AWS Observability repository.
+このレシピでは、AWS Observability リポジトリの
+[サンプルアプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)
+を使用します。
 
-This Prometheus sample app generates all four Prometheus metric types 
-(counter, gauge, histogram, summary) and exposes them at the `/metrics` endpoint.
+この Prometheus のサンプルアプリケーションは、4 つの Prometheus メトリクスタイプ
+(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、`/metrics` エンドポイントで公開します。
 
-### Build container image
+### コンテナイメージのビルド
 
-To build the container image, first clone the Git repository and change
-into the directory as follows:
+コンテナイメージをビルドするには、まず Git リポジトリをクローンし、次のようにディレクトリを変更します。
 
 ```
 git clone https://github.com/aws-observability/aws-otel-community.git && \
 cd ./aws-otel-community/sample-apps/prometheus
 ```
 
-First, set the region (if not already done above) and account ID to what is applicable in your case. 
-Replace `<YOUR_REGION>` with your current region. For
-example, in the Bash shell this would look as follows:
+まず、リージョン(上記でまだ設定していない場合)とアカウント ID をご自身の場合に当てはまるものに設定します。
+`<your_region>` を現在のリージョンに置き換えます。
+たとえば、Bash シェルでは次のようになります。
 
 ```
 export AWS_DEFAULT_REGION=<YOUR_REGION>
 export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 ```
 
-Next, build the container image:
+次に、コンテナイメージをビルドします。
 
 ```
 docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
 !!! note
-    If `go mod` fails in your environment due to a proxy.golang.or i/o timeout,
-    you are able to bypass the go mod proxy by editing the Dockerfile.
-
-    Change the following line in the Docker file:
+    proxy.golang.or のタイムアウトが原因で `go mod` が失敗する場合は、
+    Dockerfile を編集して go mod プロキシをバイパスできます。
+    
+    Dockerfile の次の行を変更します。
     ```
     RUN GO111MODULE=on go mod download
     ```
-    to:
+    を次のように変更します。
     ```
     RUN GOPROXY=direct GO111MODULE=on go mod download
     ```
 
-Now you can push the container image to the ECR repo you created earlier on.
+これで、前に作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。
 
-For that, first log in to the default ECR registry:
+そのために、まずデフォルトの ECR レジストリにログインします。
 
 ```
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
@@ -207,48 +195,44 @@ aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
     "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 ```
 
-And finally, push the container image to the ECR repository you created, above:
+最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。
 
 ```
 docker push "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-### Deploy sample app
+</your_region></your_region>
 
-Edit [prometheus-sample-app.yaml](./fargate-eks-metrics-go-adot-ampamg/prometheus-sample-app.yaml)
-to contain your ECR image path. That is, replace `ACCOUNTID` and `AWS_DEFAULT_REGION` in the
-file with your own values:
+### サンプルアプリのデプロイ
+
+ECR イメージパスを含むように [prometheus-sample-app.yaml](./fargate-eks-metrics-go-adot-ampamg/prometheus-sample-app.yaml) を編集してください。つまり、ファイル内の `ACCOUNTID` と `AWS_DEFAULT_REGION` を自分の値に置き換えます。
 
 ``` 
     # change the following to your container image:
     image: "ACCOUNTID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-Now you can deploy the sample app to your cluster using:
+これで以下のコマンドを使用してサンプルアプリをクラスタにデプロイできます。
 
 ```
 kubectl apply -f prometheus-sample-app.yaml
 ```
 
-## End-to-end
+## エンドツーエンド
 
-Now that you have the infrastructure and the application in place, we will
-test out the setup, sending metrics from the Go app running in EKS to AMP and
-visualize it in AMG.
+インフラとアプリケーションが整ったので、EKS で実行されている Go アプリから AMP にメトリクスを送信し、AMG で可視化するという設定をテストします。
 
-### Verify your pipeline is working 
+### パイプラインが機能していることを確認する
 
-To verify if the ADOT collector is scraping the pod of the sample app and
-ingests the metrics into AMP, we look at the collector logs.
+サンプルアプリの Pod から ADOT コレクターがメトリクスをスクレイピングし、それを AMP に取り込んでいることを確認するには、コレクターログを確認します。
 
-Enter the following command to follow the ADOT collector logs:
+ADOT コレクターログをフォローするために、次のコマンドを入力します。
 
 ```
 kubectl -n adot-col logs adot-collector -f
 ```
 
-One example output in the logs of the scraped metrics from the sample app 
-should look like the following:
+サンプルアプリからスクレイプされたメトリクスのログ出力の一例は、次のようになります。
 
 ```
 ...
@@ -269,13 +253,13 @@ StartTime: 0
 Timestamp: 1606511460471000000
 Value: 0.000000
 ...
-```
+```  
 
 !!! tip
-    To verify if AMP received the metrics, you can use [awscurl](https://github.com/okigan/awscurl).
-    This tool enables you to send HTTP requests from the command line with AWS Sigv4 authentication,
-    so you must have AWS credentials set up locally with the correct permissions to query from AMP.
-    In the following command replace `$AMP_ENDPOINT` with the endpoint for your AMP workspace:
+    AMP がメトリクスを受信したかどうかを確認するには、[awscurl](https://github.com/okigan/awscurl) を使用できます。
+    このツールを使用すると、AWS Sigv4 認証を使用してコマンドラインから HTTP リクエストを送信できるため、
+    AMP からクエリするための適切なアクセス許可を持つ AWS 資格情報をローカルに設定する必要があります。
+    次のコマンドでは、`$AMP_ENDPOINT` を AMP ワークスペースのエンドポイントに置き換えます。
 
     ```
     $ awscurl --service="aps" \ 
@@ -283,42 +267,39 @@ Value: 0.000000
     {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"adot_test_gauge0"},"value":[1606512592.493,"16.87214000011479"]}]}}
     ```
 
-### Create a Grafana dashboard
+### Grafana ダッシュボードの作成
 
-You can import an example dashboard, available via
-[prometheus-sample-app-dashboard.json](./fargate-eks-metrics-go-adot-ampamg/prometheus-sample-app-dashboard.json),
-for the sample app that looks as follows:
+[prometheus-sample-app-dashboard.json](./fargate-eks-metrics-go-adot-ampamg/prometheus-sample-app-dashboard.json) からサンプルアプリ用のダッシュボードをインポートできます。ダッシュボードは次のように表示されます。
 
-![Screen shot of the Prometheus sample app dashboard in AMG](../images/amg-prom-sample-app-dashboard.png)
+![AMG の Prometheus サンプルアプリダッシュボードのスクリーンショット](../images/amg-prom-sample-app-dashboard.png)
 
-Further, use the following guides to create your own dashboard in Amazon Managed Grafana:
+さらに、以下のガイドを使用して Amazon Managed Grafana で独自のダッシュボードを作成してください。
 
-* [User Guide: Dashboards](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [Best practices for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [ユーザーガイド: ダッシュボード](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
+* [ダッシュボード作成のベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
-That's it, congratulations you've learned how to use ADOT in EKS on Fargate to 
-ingest metrics.
+以上で完了です。おめでとうございます。Fargate 上の EKS で ADOT を使用してメトリクスをインジェストする方法を学びました。
 
-## Cleanup
+## クリーンアップ
 
-First remove the Kubernetes resources and destroy the EKS cluster:
+まず、Kubernetes リソースを削除し、EKS クラスターを破棄します。
 
 ```
 kubectl delete all --all && \
 eksctl delete cluster --name amp-eks-fargate
 ```
 
-Remove the Amazon Managed Service for Prometheus workspace:
+Amazon Managed Service for Prometheus ワークスペースを削除します。
 
 ```
 aws amp delete-workspace --workspace-id \
     `aws amp list-workspaces --alias prometheus-sample-app --query 'workspaces[0].workspaceId' --output text`
 ```
 
-Remove the  IAM role:
+IAM ロールを削除します。
 
 ```
 aws delete-role --role-name adot-collector-role
 ```
 
-Finally, remove the Amazon Managed Grafana  workspace by removing it via the AWS console. 
+最後に、AWS コンソールから Amazon Managed Grafana ワークスペースを削除します。

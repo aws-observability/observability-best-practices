@@ -1,14 +1,14 @@
 # Amazon Managed Service for Prometheus
 
-Amazon Managed Service for Prometheus cost and usage visuals will allow you to gain insights into cost of individual AWS Accounts, AWS Regions, specific Prometheus Workspace instances along with Operations like RemoteWrite, Query, and HourlyStorageMetering!  
+Amazon Managed Service for Prometheus のコストと使用状況のビジュアルにより、個々の AWS アカウント、AWS リージョン、RemoteWrite、Query、HourlyStorageMetering などの特定の Prometheus ワークスペースインスタンスとその操作のコストの洞察を得ることができます。
 
-To visualize and analyze the cost and usage data, you need to create a custom Athena view.
+コストと使用状況データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。
 
-1.	Before proceeding, make sure that you’ve created the CUR (step #1) and deployed the AWS Conformation Template (step #2) mentioned in the [Implementation overview][cid-implement].
+1. 進める前に、[実装の概要][cid-implement] で言及されている CUR (ステップ #1) を作成し、AWS 準拠テンプレート (ステップ #2) をデプロイしたことを確認してください。
 
-2.	Now, Create a new Amazon Athena [view][view] by using the following query. This query fetches cost and usage of Amazon Managed Service for Prometheus across all the AWS Accounts in your Organization.
+2. 次に、以下のクエリを使用して、新しい Amazon Athena [ビュー][view] を作成します。このクエリは、Organization のすべての AWS アカウントにわたる Amazon Managed Service for Prometheus のコストと使用状況を取得します。
 
-        CREATE OR REPLACE VIEW "prometheus_cost" AS 
+        CREATE OR REPLACE VIEW "prometheus_cost" AS
         SELECT
         line_item_usage_type
         , line_item_resource_id
@@ -23,20 +23,20 @@ To visualize and analyze the cost and usage data, you need to create a custom At
         WHERE ("line_item_product_code" = 'AmazonPrometheus')
         GROUP BY 1, 2, 3, 4, 5, 6
 
-## Create Amazon Managed Grafana dashboard  
+## Amazon Managed Grafana ダッシュボードの作成
 
-With Amazon Managed Grafana, you can add Athena as a data source by using the AWS data source configuration option in the Grafana workspace console. This feature simplifies adding Athena as a data source by discovering your existing Athena accounts and manages the configuration of the authentication credentials that are required to access Athena. For prerequisites associated with using the Athena data source, see [Prerequisites][Prerequisites].
+Amazon Managed Grafana を使用すると、Grafana ワークスペースコンソールの AWS データソース構成オプションを使用して、Athena をデータソースとして追加できます。この機能により、既存の Athena アカウントを検出し、Athena へのアクセスに必要な認証情報の構成を管理することで、Athena をデータソースとして簡単に追加できます。Athena データソースを使用するための前提条件については、[前提条件][Prerequisites] を参照してください。
 
 
-The following **Grafana dashboard** shows Amazon Managed Service for Prometheus cost and usage across all AWS Accounts in your AWS Organizations along with cost of individual Prometheus Workspace instances and the Operations like RemoteWrite, Query, and HourlyStorageMetering! 
+以下の **Grafana ダッシュボード** は、AWS Organizations のすべての AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を、個々の Prometheus ワークスペースインスタンスのコストや RemoteWrite、Query、HourlyStorageMetering などのオペレーションとともに示しています。
 
 ![prometheus-cost](../../../images/prometheus-cost.png)
 
-A dashboard in Grafana is represented by a JSON object, which stores metadata of its dashboard. Dashboard metadata includes dashboard properties, metadata from panels, template variables, panel queries, etc. Access the JSON template of the above dashboard [here](AmazonPrometheus.json).
+Grafana のダッシュボードは JSON オブジェクトで表され、ダッシュボードのメタデータが格納されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記のダッシュボードの JSON テンプレートにアクセスするには、[こちら](AmazonPrometheus.json) を参照してください。
 
-With the preceding dashboard, you can now identify the cost and usage of Amazon Managed Service for Prometheus in the AWS accounts across your Organization. You can use other Grafana [dashboard panels][panels] to build visuals to suit your requirements.
+上記のダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana [ダッシュボードパネル][panels] を使用できます。
 
-[Prerequisites]: https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html
+[前提条件]: https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html
 [panels]: https://docs.aws.amazon.com/grafana/latest/userguide/Grafana-panels.html
 [cid-implement]: ../../../guides/cost/cost-visualization/cost.md#implementation

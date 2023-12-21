@@ -1,18 +1,17 @@
-# Dashboarding
+# ダッシュボード
 
-## Best practices
+## ベストプラクティス
 
-### Create views for your important personas
+### 重要なパーソナのためのビューを作成する
 
-### Share your business metrics along side operational ones
+### ビジネスメトリクスを運用メトリクスと共に共有する
 
-### Dashboards should build bridges, not walls
+### ダッシュボードは壁ではなく架け橋を築くべきだ
 
-### Your dashboards should tell a story
+### ダッシュボードはストーリーを伝えるべきです
 
-### Dashboards should be available to technical and non-technical users
+### ダッシュボードは技術者・非技術者の両方が利用できる必要があります
 
-## Recommendations
+## おすすめ
 
-### Leverage existing identity providers
-
+### 既存の ID プロバイダーの活用

@@ -1,61 +1,61 @@
-# General - FAQ
+# 全般 - FAQ
 
-## How are logs different from traces?
+## ログとトレースの違いは何ですか?
 
-Logs are limited to a single application and the events that relate to it. For example, if a user logs into a web site hosted on a microservices platform, and makes a purchase on this site, there may be logs related to that user emitted from multiple applications:
+ログは、単一のアプリケーションとそれに関連するイベントに限定されます。 たとえば、ユーザーがマイクロサービス プラットフォームでホストされている Web サイトにログインし、そのサイトで購入を行った場合、そのユーザーに関連するログが複数のアプリケーションから発行される可能性があります:
 
-1. A front-end web server
-1. Authentication service
-1. The inventory service
-1. A payment processing backend
-1. Outbound mailer that sends the user a receipt
+1. フロントエンド Web サーバー  
+2. 認証サービス  
+3. 在庫サービス
+4. 支払い処理バックエンド
+5. ユーザーに領収書を送信するアウトバウンド メーラー
 
-Every one of these may log something about this user, and that data is all valuable. However, traces will present a single, cohesive view of the user's entire interaction across that single transaction, spanning all of these discrete components.
+これらのそれぞれがそのユーザーについて何かを記録する可能性があり、そのデータはすべて有盡です。 しかし、トレースでは、その単一のトランザクションにまたがる、これらの個別のコンポーネント全体で、ユーザーの全体的な対話の単一の、一貫したビューが表示されます。
 
-In this way, a trace a collection of events from multiple services intended to show a single view of an activity, whereas logs are bound to the context of the application that created them.
+このように、トレースは複数のサービスからのイベントのコレクションで、単一のアクティビティの単一のビューを示すことを目的としているのに対し、ログはそれらを作成したアプリケーションのコンテキストにバインドされます。
 
-## What signal types are immutable?
+## どの種類のシグナルが不変ですか?
 
-All three of the basic signal types ([metrics](../signals/metrics/), [logs](../signals/logs/), and [traces](../signals/traces/)) are immutable, though some implementations have greater or lesser assurance of this. For example, immutability of logs is a strict requirement in many governance frameworks - and many tools exist to ensure this. Metrics and traces should likewise *always* be immutable. 
+3つの基本的なシグナルタイプ([メトリクス](../signals/metrics/)、[ログ](../signals/logs/)、[トレース](../signals/traces/))はすべて不変ですが、この保証の程度には実装による差異があります。例えば、ログの不変性は多くのガバナンスフレームワークで厳格な要件とされており、これを保証するための多くのツールが存在します。同様に、メトリクスとトレースも常に不変である*必要があります*。
 
-This leads to a question as to handling "bad data", or data that was inaccurate. With  AWS observability services, there is no facility to delete metrics or traces that were emitted in error. CloudWatch Logs does allow for the deletion of an entire log stream, but you cannot retroactively change data once it has been collected. This is by design, and an important feature to ensure customer data is treated with the utmost care.
+これにより、「不正確なデータ」や誤って送信されたデータをどのように処理するかという疑問が生じます。AWS のオブザーバビリティサービスでは、誤って送信されたメトリクスやトレースを削除する機能はありません。CloudWatch Logs ではログストリーム全体を削除できますが、データが収集された後で遡って変更することはできません。これは設計上の意図されたもので、顧客データを最高の注意を払って扱うための重要な機能です。
 
-## Why does immutability matter for observability?
+## なぜイマュータビリティがオブザーバビリティにとって重要なのか
 
-Immutability is paramount to observability! If past data can be modified then you would lose critical errors, or outliers in behaviour, that inform your *choices* when evolving your systems and operations. For example, a metric datapoint that shows a large gap in time does not simply show a lack of data collection, it may indicate a much larger issue in your infrastructure. Likewise, with "null" data - even empty timeseries are valuable.
+イマュータビリティはオブザーバビリティにとって極めて重要です。過去のデータが変更できると、システムと運用の進化における*選択*を導く上で欠かせない重要なエラーや挙動の外れ値が失われてしまいます。例えば、大きな時間的ギャップを示すメトリクスのデータポイントは、データ収集の欠落を単に示しているだけでなく、インフラストラクチャにおけるより大きな問題を示唆している可能性があります。同様に、「ヌル」データでさえも - 空のタイムシリーズでさえ価値があります。
 
-From a governance perspective, changing application logs or tracing after the fact violates the principal of [non-reputability](https://en.wikipedia.org/wiki/Non-repudiation), where you would not be able to trust that the data in your system is precisely as it was intended be by the source application. 
+ガバナンスの観点からは、事後的にアプリケーションログやトレースを変更することは、[否認防止](https://en.wikipedia.org/wiki/Non-repudiation) の原則に違反し、ソースアプリケーションによって意図されたとおりにシステム内のデータが信頼できなくなることを意味します。
 
-## What is a blast radius?
+## ブラスト半径とは
 
-The blast radius of a change is the potential damage that it can create in your environment. For example, if you make a database schema change then the potential risk could include the data in the database plus all of the applications that depend on it.
+ブラスト半径とは、変更が環境に与える可能性のあるダメージのことです。 例えば、データベースのスキーマを変更すると、データベース内のデータとそれに依存するすべてのアプリケーションが潜在的なリスクに含まれます。
 
-Generally speaking, working to reduce the blast radius of a change is a best practice, and breaking a change into smaller, safer, and reversible chunks is always recommended wherever feasible.
+一般に、変更のブラスト半径を小さくすることはベストプラクティスであり、可能であれば変更を小さく、安全で、元に戻せる塊に分割することが常に推奨されます。
 
-## What is a "cloud first" approach?
+## 「クラウドファースト」アプローチとは
 
-Cloud-first strategies are where organization move all or most of their infrastructure to cloud-computing platforms. Instead of using physical resources like servers, they house resources in the cloud. 
+クラウドファースト戦略とは、組織がインフラストラクチャの全部またはほとんど全部をクラウドコンピューティングプラットフォームに移行することです。物理的なサーバーの代わりに、リソースをクラウドに配置します。
 
-To those used to co-located hardware, this might seem radical. However, the opposite is also true. Developers who adopt a cloud-first mentality find the idea of tying your servers to a physical location unthinkable. Cloud-first teams don’t think of their servers as discrete pieces of hardware or even virtual servers. Instead, they think of them as software to fulfill a business function.
+オンプレミスのハードウェアに慣れている人にとっては、これはラディカルな変化に見えるかもしれません。しかし、逆のことも真実です。クラウドファーストのメンタリティを採用する開発者は、サーバーを物理的な場所に縛り付けることを考えられないと思います。クラウドファーストチームは、サーバーを個別のハードウェアや仮想サーバーとは考えません。代わりに、ビジネス機能を満たすためのソフトウェアと考えます。
 
-Cloud-first is to the 2020's what mobile-first was to the 2010's, and virtualization was to the early 2000's. 
+クラウドファーストは2010年代のモバイルファーストに相当し、2000年代初頭の仮想化に相当します。
 
-## What is technical debt?
+## 技術的負債とは
 
-Taken from [Wikipedia](https://en.wikipedia.org/wiki/Technical_debt):
+[Wikipedia](https://en.wikipedia.org/wiki/Technical_debt) から引用:
 
-> In software development, technical debt (also known as design debt or code debt) is the implied cost of additional rework caused by choosing an easy (limited) solution now instead of using a better approach that would take longer.
+> ソフトウェア開発における技術的負債(デザイン負債やコード負債とも呼ばれる)とは、より良いアプローチを取る代わりに、現時点で簡単な(限定的な)ソリューションを選択することによって、将来的に再開発が必要となることに伴う潜在的コストを指します。
 
-Basically, you accumulate debt over time as you add more to your workload without removing legacy code, applications, or human processes. Technical debt detracts from your absolute productivity. 
+基本的に、レガシーコード、アプリケーション、人的プロセスを削減することなく、作業負荷を増やしていくにつれて、時間とともに負債が蓄積していきます。技術的負債は絶対的な生産性を低下させます。
 
-For example, if you have to spend 10% of your time performing maintenance on a legacy system that provides little or no direct value to your business, then that 10% is a *cost* that you pay. Reduction of technical debt equals increasing effective time to create new products that add value. 
+例えば、ビジネスにほとんどまたは全く直接的な価値をもたらさないレガシーシステムのメンテナンスに時間の 10% を費やさなければならない場合、その 10% は支払う*コスト*です。技術的負債の削減は、価値を付加する新製品を作成するのに実際に費やす時間の増加に等しいのです。
 
-## What is the separation of concerns
+## 関心事の分離とは
 
-In the context of observability solutions, the separation of concerns means to divide functional areas of a workload or an application into discrete components that are independently managed. Each component addresses a separate concern (such as log structure and the *emitting* of logs). Controlling configuration of a component without modifying the underlying code means that developers can focus on their concerns (application functionality and feature development), while DevOps personas can focus on optimizing system performance and troubleshooting.
+オブザーバビリティソリューションのコンテキストでは、関心事の分離とは、ワークロードやアプリケーションの機能領域を個別に管理される別個のコンポーネントに分割することを意味します。各コンポーネントは個別の関心事(ログ構造やログの*エミット*など)に対応します。基礎となるコードを変更することなくコンポーネントの構成を制御することで、開発者はアプリケーションの機能と機能開発に集中でき、DevOps の人物はシステムパフォーマンスの最適化とトラブルシューティングに集中できます。
 
-Separation of concerns is a [core concept](https://en.wikipedia.org/wiki/Separation_of_concerns) in computer science.
+関心事の分離は、[コンピュータサイエンスの中核的概念](https://en.wikipedia.org/wiki/Separation_of_concerns)です。
 
-## What is operational excellence?
+## 運用上の卓越性とは
 
-Operational excellence is the performance of best practices that align with operating workloads. AWS has an entire framework dedicated to being Well-Architected. See [this page](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html) to get started with operational excellence.
+運用上の卓越性とは、ワークロードの運用に合わせたベストプラクティスの実行です。AWS には Well-Architected フレームワーク全体が運用上の卓越性のために捧げられています。運用上の卓越性の概要については、[このページ](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)を参照してください。

@@ -1,11 +1,11 @@
 # Amazon Managed Service for Prometheus
 
-[Prometheus](https://prometheus.io/) is a popular open source monitoring tool that provides wide ranging metrics capabilities and insights about resources such as compute nodes and application related performance data. 
+[Prometheus](https://prometheus.io/) は、コンピュートノードやアプリケーション関連のパフォーマンスデータなどのリソースに関する幅広いメトリクス機能とインサイトを提供する人気のオープンソースモニタリングツールです。
 
-Prometheus uses a *pull* model to collect data, where as CloudWatch uses a *push* model. Prometheus and CloudWatch are used for some overlapping use cases, though their operating models are very different and are priced differently.
+Prometheus はデータを収集するために *プル* モデルを使用しますが、CloudWatch は *プッシュ* モデルを使用します。Prometheus と CloudWatch はいくつかの重複するユースケースで使用されていますが、その運用モデルは非常に異なっており、価格設定も異なっています。
 
-[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) is widely used in containerized applications hosted in Kubernetes and [Amazon ECS](https://aws.amazon.com/ecs/).
+[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) は、Kubernetes でホストされるコンテナ化されたアプリケーションや [Amazon ECS](https://aws.amazon.com/ecs/) で広く使用されています。
 
-You can add Prometheus metric capabilities on your EC2 instance or ECS/EKS cluster using the [CloudWatch agent](../../tools/cloudwatch_agent/) or [AWS Distro for OpenTelemetry](https://aws-otel.github.io/). The CloudWatch agent with Prometheus support discovers and collects Prometheus metrics to monitor, troubleshoot, and alarm on application performance degradation and failures faster. This also reduces the number of monitoring tools required to improve observability.
+[CloudWatch エージェント](../../tools/cloudwatch_agent/) や [AWS Distro for OpenTelemetry](https://aws-otel.github.io/) を使用して、EC2 インスタンスや ECS/EKS クラスターに Prometheus メトリクス機能を追加できます。Prometheus サポート付きの CloudWatch エージェントは、Prometheus メトリクスを発見および収集して、アプリケーションのパフォーマンス低下と障害をより迅速に監視、トラブルシューティング、アラームできるようにします。これにより、オブザーバビリティを改善するために必要なモニタリングツールの数も削減されます。
 
-CloudWatch Container Insights monitoring for Prometheus automates the discovery of Prometheus metrics from containerized systems and workloads https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html
+Prometheus 用の CloudWatch Container Insights モニタリングは、コンテナ化されたシステムとワークロードからの Prometheus メトリクスの自動検出を行います https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html

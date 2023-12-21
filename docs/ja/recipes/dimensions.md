@@ -1,104 +1,64 @@
-# Dimensions
+# ディメンション
 
-In the context of this site we consider the o11y space along six dimensions.
-Looking at each dimension independently is beneficial from an synthetic
-point-of-view, that is, when you're trying to build out a concrete o11y solution
-for a given workload, spanning developer-related aspects such as the programming
-language used as well as operational topics, for example the runtime environment
-like containers or Lambda functions.
+このサイトのコンテキストでは、6つのディメンションに沿ってo11yスペースを考えています。
+各ディメンションを独立して見ることは、合成的な視点から有益です。つまり、特定のワークロードの具体的なo11yソリューションを構築しようとしているときに、使用されているプログラミング言語などの開発者関連の側面と、コンテナやLambda関数などのランタイム環境などの運用上のトピックをまたいでいます。
 
 ![o11y space](images/o11y-space.png)
 
 
-!!! question "What is a signal?"
-    When we say signal here we mean any kinds of o11y data and metadata points,
-    including log entries, metrics, and traces. Unless we want to or have to be
-    more specific, we use "signal" and it should be clear from the context what
-    restrictions may apply.
+!!! question "シグナルとは何ですか?"
+    ここで言うシグナルとは、ログエントリ、メトリクス、トレースを含むあらゆる種類のo11yデータとメタデータポイントのことです。特に具体的である必要がある場合やしたい場合を除き、「シグナル」という用語を使用し、コンテキストからどのような制限が適用されるかが明らかになるはずです。
 
-Let's now have a look at each of the six dimensions one by one:
+それでは、6つのディメンションのそれぞれを一つずつ見ていきましょう。
 
-## Destinations
+## デスティネーション
 
-In this dimension we consider all kinds of signal destinations including long term
-storage and graphical interfaces that let you consume signals. As a developer,
-you want access to an UI or an API that allows you to discover, look up, and
-correlate signals to troubleshoot your service. In an infrastructure or platform
-role you want access to an UI or an API that allows you to manage, discover,
-look up, and correlate signals to understand the state of the infrastructure.
+このディメンションでは、長期ストレージやシグナルを消費できるグラフィカルインターフェイスなど、あらゆる種類のシグナルデスティネーションを考慮します。 開発者としては、サービスのトラブルシューティングのためにシグナルを発見、検索、相関付けできる UI や API にアクセスしたいと考えています。 インフラストラクチャまたはプラットフォームの役割では、インフラストラクチャの状態を理解するためにシグナルを管理、発見、検索、相関付けできる UI や API にアクセスしたいと考えています。
 
-![Grafana screen shot](images/grafana.png)
+![Grafana のスクリーンショット](images/grafana.png)
 
-Ultimately, this is the most interesting dimension from a human point of view.
-However, in order to be able to reap the benefits we first have to invest a bit
-of work: we need to instrument our software and external dependencies and ingest
-the signals into the destinations.
+最終的に、これは人間の視点から見て最も興味深いディメンションです。 しかし、メリットを享受するためには、まず少し作業を投資する必要があります。ソフトウェアと外部依存関係を計装化し、シグナルをデスティネーションにインジェストする必要があります。
 
-So, how do the signals arrive in the destinations? Glad you asked, it's …
+では、シグナルはどのようにしてデスティネーションに到達するのでしょうか? 良い質問ですね。それは...
 
-## Agents
+## エージェント
 
-How the signals are collected and routed to analytics. The signals can come 
-from two sources: either your application source code (see also the
-[language](#language) section) or from things your application depends on, 
-such as state managed in datastores as well as infrastructure like VPCs (see
-also the [infra & data](#infra-data) section).
+シグナルがどのように収集され、分析にルーティングされるか。シグナルは2つのソースから来る可能性があります。1つはアプリケーションのソースコード([言語](#language)のセクションも参照)、もう1つはVPCなどのインフラストラクチャのような、アプリケーションが依存するものからのシグナルです([インフラとデータ](#infra-data)のセクションも参照)。
 
-Agents are part of the [telemetry](../telemetry) that you would use to collect
-and ingest signals. The other part are the instrumented applications and infra
-pieces like databases.
+エージェントは、シグナルを収集および取り込むために使用する[テレメトリ](../telemetry)の一部です。もう一方の部分は、データベースなどの計装されたアプリケーションとインフラです。
 
-## Languages
+## 言語
 
-This dimension is concerned with the programming language you use for writing
-your service or application. Here, we're dealing with SDKs and libraries, such 
-as the [X-Ray SDKs][xraysdks] or what OpenTelemetry provides in the context
-of [instrumentation][otelinst]. You want to make sure that an o11y solution
-supports your programming language of choice for a given signal type such as
-logs or metrics.
+この次元は、サービスやアプリケーションを記述するために使用するプログラミング言語に関係しています。ここでは、[X-Ray SDK][xraysdks] や OpenTelemetry が[インスツルメンテーション][otelinst]のコンテキストで提供しているものなどの SDK やライブラリを扱っています。ログやメトリクスなどの特定のシグナルタイプについて、o11y ソリューションが選択したプログラミング言語をサポートしていることを確認する必要があります。
 
-## Infrastructure & databases
+## インフラストラクチャとデータベース
 
-With this dimension we mean any sort of application-external dependencies, 
-be it infrastructure like the VPC the service is running in or a datastore
-like RDS or DynamoDB or a queue like SQS. 
+この次元では、サービスが実行されている VPC などのインフラストラクチャや、RDS や DynamoDB などのデータストア、SQS などのキューなど、アプリケーションの外部の依存関係のすべてを意味します。
 
-!!! tip "Commonalities"
-    One thing all the sources in this dimension have
-    in common is that they are located outside of your application (as well
-    as the compute environment your app runs in) and with that you have to treat
-    them as an opaque box.
+!!! tip "共通点"
+    この次元のすべてのソースが共通しているのは、アプリケーション(およびアプリが実行されるコンピュート環境)の外部に位置し、不透明なボックスとして扱わなければならないことです。
 
-This dimension includes but is not limited to:
+この次元には以下が含まれますが、これらに限定されません。
 
-- AWS infrastructure, for example [VPC flow logs][vpcfl].
-- Secondary APIs such as [Kubernetes control plane logs][kubecpl].
-- Signals from datastores, such as or [S3][s3mon], [RDS][rdsmon] or [SQS][sqstrace].
+- AWS インフラストラクチャー、例えば [VPC フローログ][vpcfl] など。 
+- [Kubernetes コントロールプレーンログ][kubecpl] などのセカンダリ API。
+- [S3][s3mon]、[RDS][rdsmon]、[SQS][sqstrace] などのデータストアからのシグナル。
 
+## コンピュートユニット
 
-## Compute unit
+コードをパッケージ化、スケジュール設定、実行する方法です。 たとえば、Lambda では関数であり、[ECS][ecs] と [EKS][eks] では、それぞれタスク(ECS)またはポッド(EKS)内で実行されるコンテナがユニットです。 Kubernetes などのコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよくあります。サイドカーとして、またはノード(インスタンス)デーモンプロセスとしてです。
 
-The way your package, schedule, and run your code. For example, in Lambda that's a
-function and in [ECS][ecs] and [EKS][eks] that unit is a container running in
-a tasks (ECS) or pods (EKS), respectively. Containerized environments like Kubernetes
-often allow for two options concerning telemetry deployments: as side cars or
-as per-node (instance) daemon processes.
+## コンピュートエンジン
 
-## Compute engine
-
-This dimension refers to the base runtime environment, which may (in case of an
-EC2 instance, for example) or may not (serverless offerings such as Fargate or Lambda)
-be your responsibility to provision and patch. Depending on the compute engine
-you use, the telemetry part might already be part of the offering, for example,
-[EKS on Fargate][firelensef] has log routing via Fluent Bit integrated.
+このディメンションは、ベースとなるランタイム環境を指します。これは、EC2 インスタンスなどの場合はプロビジョニングおよびパッチ適用がお客様の責任である一方、Fargate や Lambda などのサーバーレスオファリングの場合はそうでない場合があります。使用するコンピュートエンジンに応じて、テレメトリの部分はすでにオファリングの一部となっている場合があります。たとえば、[Fargate 上の EKS][firelensef] には Fluent Bit を介したログルーティングが統合されています。
 
 
 [aes]: https://aws.amazon.com/elasticsearch-service/ "Amazon Elasticsearch Service"
-[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
+[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"  
 [amg]: https://aws.amazon.com/grafana/ "Amazon Managed Grafana"
 [amp]: https://aws.amazon.com/prometheus/ "Amazon Managed Service for Prometheus"
 [batch]: https://aws.amazon.com/batch/ "AWS Batch"
-[beans]: https://aws.amazon.com/elasticbeanstalk/ "AWS Elastic Beanstalk"
+[beans]: https://aws.amazon.com/elasticbeanstalk/ "AWS Elastic Beanstalk"  
 [cw]: https://aws.amazon.com/cloudwatch/ "Amazon CloudWatch"
 [dimensions]: ../dimensions
 [ec2]: https://aws.amazon.com/ec2/ "Amazon EC2"
@@ -108,7 +68,7 @@ you use, the telemetry part might already be part of the offering, for example,
 [fluentbit]: https://fluentbit.io/ "Fluent Bit"
 [firelensef]: https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/ "Fluent Bit for Amazon EKS on AWS Fargate is here"
 [jaeger]: https://www.jaegertracing.io/ "Jaeger"
-[kafka]: https://kafka.apache.org/ "Apache Kafka"
+[kafka]: https://kafka.apache.org/ "Apache Kafka"  
 [kubecpl]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html "Amazon EKS control plane logging"
 [lambda]: https://aws.amazon.com/lambda/ "AWS Lambda"
 [lightsail]: https://aws.amazon.com/lightsail/ "Amazon Lightsail"
@@ -116,7 +76,7 @@ you use, the telemetry part might already be part of the offering, for example,
 [otelinst]: https://opentelemetry.io/docs/concepts/instrumenting/
 [promex]: https://prometheus.io/docs/instrumenting/exporters/ "Prometheus exporters and integrations"
 [rdsmon]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html "Logging and monitoring in Amazon RDS"
-[s3]: https://aws.amazon.com/s3/ "Amazon S3"
+[s3]: https://aws.amazon.com/s3/ "Amazon S3" 
 [s3mon]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html "Logging and monitoring in Amazon S3"
 [sqstrace]: https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html "Amazon SQS and AWS X-Ray"
 [vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html "VPC Flow Logs"

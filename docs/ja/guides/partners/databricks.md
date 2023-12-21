@@ -1,117 +1,121 @@
-# Databricks Monitoring and Observability Best Practices in AWS
+# AWS における Databricks のモニタリングとオブザーバビリティのベストプラクティス
 
-Databricks is a platform for managing data analytics and AI/ML workloads. This guide aim at supporting customers running [Databricks on AWS](https://aws.amazon.com/solutions/partners/databricks/) with monitoring these workloads using AWS Native services for observability or OpenSource Managed Services.
+Databricks は、データ分析や AI/ML ワークロードを管理するプラットフォームです。このガイドは、AWS のネイティブなオブザーバビリティ サービスまたはオープンソースのマネージドサービスを使用して、[AWS 上の Databricks](https://aws.amazon.com/solutions/partners/databricks/) を実行しているお客様のこれらのワークロードのモニタリングをサポートすることを目的としています。
 
-## Why monitor Databricks
+## Databricks を監視する理由
 
-Operation teams managing Databricks clusters benefit from having an integrated, customized dashboard to track workload status, errors, performance bottlenecks; alerting on unwanted behaviour, such as total resource usage over time, or percentual amount of errors; and centralized logging, for root cause analysis, as well as extracting additional customized metrics.
+Databricks クラスタを管理する運用チームは、ワークロードのステータス、エラー、パフォーマンスのボトルネックを追跡するための統合カスタマイズダッシュボード;時間経過に伴うリソース使用量合計やエラー発生率などの望ましくない動作に対するアラート;根本原因分析のための集中ログや、カスタマイズメトリクスの抽出などの恩恵を受けます。
 
-## What to monitor
+## 監視する項目
 
-Databricks run Apache Spark in its cluster instances, which has native features to expose metrics. These metrics will give information regarding drivers, workers, and the workloads being executed in the cluster.
+Databricks はクラスターインスタンスで Apache Spark を実行します。Spark にはメトリクスを公開するネイティブ機能があります。これらのメトリクスは、ドライバー、ワーカー、クラスターで実行されているワークロードに関する情報を提供します。
 
-The instances running Spark will have additional useful information about storage, CPU, memory, and networking. It´s important to understand what external factors could be affecting the performance of a Databricks cluster. In the case of clusters with numerous instances, understanding bottlenecks and general health is important as well.
+Spark を実行しているインスタンスには、ストレージ、CPU、メモリ、ネットワークに関する追加の有用な情報があります。Databricks クラスターのパフォーマンスに影響を与え得る外部要因を理解することが重要です。インスタンスの多いクラスターの場合、ボトルネックと全体的な健全性を理解することもまた重要です。
 
-## How to monitor
+## モニタリングの方法
 
-To install collectors and it's dependencies, Databricks init scripts will be needed. These are scripts that are runned in each instance of a Databricks cluster at boot time.
+コレクタとその依存関係をインストールするには、Databricks の init スクリプトが必要です。 これらは、Databricks クラスタの各インスタンスのブート時に実行されるスクリプトです。
 
-Databricks cluster permissions will also need permission to send metrics and logs using instance profiles.
+Databricks クラスターのアクセス許可も、インスタンスプロファイルを使用してメトリクスとログを送信するアクセス許可が必要です。
 
-Finally, it's a best practice to configure metrics namespace in Databricks cluster Spark configuration, replacing `testApp` with a proper reference to the cluster.
+最後に、クラスタへの適切な参照に `testApp` を置き換えて、Databricks クラスターの Spark 設定でメトリクス名前空間を設定することがベストプラクティスです。
 
 ![Databricks Spark Config](../../images/databricks_spark_config.png)
-*Figure 1: example of metrics namespace Spark configuration*
+*図 1: メトリクス名前空間の Spark 設定の例*
 
-## Key parts of a good Observability solution for DataBricks
+## DataBricksの良いオブザーバビリティソリューションの主要部分
 
-**1) Metrics:** Metrics are numbers that describe activity or a particular process measured over a period of time. Here are different types of metrics on Databricks:
+**1) メトリクス:** メトリクスとは、一定期間に測定されたアクティビティや特定のプロセスを記述する数字です。Databricks でのメトリクスの種類は以下の通りです。
 
-System resource-level metrics, such as CPU, memory, disk, and network.
-Application Metrics using Custom Metrics Source, StreamingQueryListener, and QueryExecutionListener,
-Spark Metrics exposed by MetricsSystem.
+- システムリソースレベルのメトリクス(CPU、メモリ、ディスク、ネットワークなど)
+- Custom Metrics Source、StreamingQueryListener、QueryExecutionListener を使用したアプリケーションメトリクス  
+- MetricsSystem によって公開される Spark メトリクス
 
-**2) Logs:** Logs are a representation of serial events that have happened, and they tell a linear story about them. Here are different types of logs on Databricks:
+**2) ログ:** ログは発生した一連のイベントを表すもので、それらについて線形的なストーリーを伝えます。Databricks でのログの種類は以下の通りです。
 
-- Event logs
-- Audit logs
-- Driver logs: stdout, stderr, log4j custom logs (enable structured logging)
-- Executor logs: stdout, stderr, log4j custom logs (enable structured logging)
+- イベントログ  
+- 監査ログ
+- ドライバーログ: 標準出力、標準エラー出力、log4j カスタムログ(構造化ロギングの有効化)
+- エグゼキューターログ: 標準出力、標準エラー出力、log4j カスタムログ(構造化ロギングの有効化)
 
-**3) Traces:** Stack traces provide end-to-end visibility, and they show the entire flow through stages. This is useful when you must debug to identify which stages/codes cause errors/performance issues.
+**3) トレース:** スタックトレースはエンドツーエンドの可視性を提供し、ステージ全体のフローを示します。これは、エラーやパフォーマンスの問題を引き起こすステージやコードを特定するためのデバッグに役立ちます。
 
-**4) Dashboards:** Dashboards provide a great summary view of an application/service’s golden metrics.
+**4) ダッシュボード:** ダッシュボードは、アプリケーションやサービスの重要なメトリクスの概要を素晴らしい形で提供します。
 
-**5) Alerts:** Alerts notify engineers about conditions that require attention.
+**5) アラート:** アラートは、注意が必要な条件についてエンジニアに通知します。
 
-## AWS Native Observability options
+## AWS ネイティブのオブザーバビリティオプション
 
-Native solutions, such as Ganglia UI and Log Delivery, are great solutions for collecting system metrics and querying Apache Spark™ metrics. However, some areas can be improved:
+Ganglia UI や Log Delivery などのネイティブソリューションは、システムメトリクスの収集や Apache SparkTM メトリクスのクエリには最適なソリューションです。しかし、改善の余地がある分野もあります。
 
-- Ganglia doesn’t support alerts.
-- Ganglia doesn’t support creating metrics derived from logs (e.g., ERROR log growth rate).
-- You can’t use custom dashboards to track SLO (Service Level Objectives) and SLI (Service Level Indicators) related to data-correctness, data-freshness, or end-to-end latency, and then visualize them with ganglia.
+- Ganglia はアラートをサポートしていません。 
+- Ganglia はログから派生したメトリクス(例: ERROR ログの成長率)をサポートしていません。
+- データ正確性、データ新鮮度、エンドツーエンドのレイテンシに関連する SLO(サービス レベル オブジェクティブ) と SLI(サービス レベル インジケータ) を Ganglia で追跡するためのカスタムダッシュボードを使用できません。
 
-[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) is a critical tool for monitoring and managing your Databricks clusters on AWS. It provides valuable insights into cluster performance and helps you identify and resolve issues quickly. Integrating Databricks with CloudWatch and enabling structured logging can help improve those areas. CloudWatch Application Insights can help you automatically discover the fields contained in the logs, and CloudWatch Logs Insights provides a purpose-built query language for faster debugging and analysis.
+[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) は、AWS 上の Databricks クラスターを監視および管理するための重要なツールです。クラスターのパフォーマンスに関する貴重な洞察を提供し、問題をすばやく特定および解決するのに役立ちます。Databricks と CloudWatch の統合および構造化ロギングの有効化は、これらの分野の改善に役立ちます。CloudWatch Application Insights は、ログに含まれるフィールドを自動的に検出するのに役立ち、CloudWatch Logs Insights は、より高速なデバッグと分析のための目的構築型クエリ言語を提供します。
 
 ![Databricks With CloudWatch](../../images/databricks_cw_arch.png)
-*Figure 2: Databricks CloudWatch Architecture*
+*図 2: Databricks CloudWatch アーキテクチャ*
 
-For more informaton on how to use CloudWatch to monitor Databricks, see:
+CloudWatch を使用して Databricks を監視する方法の詳細については、以下を参照してください。 
 [How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
 
-## Open-source software observability options
+## オープンソースのソフトウェア オブザーバビリティ オプション
 
-[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) is a Prometheus-compatible monitoring managed, serverless service, that will be responsible for storing metrics, and managing alerts created on top of these metrics. Prometheus is a popular open source monitoring technology, being the second project belonging to the Cloud Native Computing Foundation, right after Kubernetes.
+[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) は、メトリクスを保存し、それらのメトリクス上に作成されたアラートを管理する、サーバーレスなマネージド型の Prometheus 互換モニタリングサービスです。Prometheus は人気のオープンソースモニタリングテクノロジーで、Kubernetes に次いで Cloud Native Computing Foundation に属する 2 番目のプロジェクトです。
 
-[Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a managed service for Grafana. Grafana is an open source technology for time-series data visualization, commonly used for observability. We can use Grafana to visualize data from several sources, such as Amazon Managed Service for Prometheus, Amazon CloudWatch, and many others. It will be used to visualize Databricks metrics and alerts.
+[Amazon Managed Grafana](https://aws.amazon.com/grafana/) は、Grafana のマネージドサービスです。Grafana は、時系列データの可視化のためのオープンソーステクノロジーで、一般的にオブザーバビリティに使用されます。Grafana を使用して、Amazon Managed Service for Prometheus、Amazon CloudWatch などのさまざまなソースからのデータを可視化できます。Databricks のメトリクスとアラートの可視化に使用されます。
 
-[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) is the AWS-supported distribution of OpenTelemetry project, which provides open source standards, libraries, and services for collecting traces and metrics. Through OpenTelemetry, we can collect several different observability data formats, such as Prometheus or StatsD, enrich this data, and send it to several destinations, such as CloudWatch or Amazon Managed Service for Prometheus.
+[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) は、トレースとメトリクスを収集するためのオープンソースの標準、ライブラリ、サービスを提供する OpenTelemetry プロジェクトの AWS 対応ディストリビューションです。OpenTelemetry を通じて、Prometheus や StatsD などのさまざまなオブザーバビリティデータ形式を収集し、このデータをエンリッチして、CloudWatch や Amazon Managed Service for Prometheus などのさまざまなデスティネーションに送信できます。
 
-### Use cases
+### ユースケース
 
-While AWS Native services will deliver the observability needed to manage Databricks clusters, there are some scenarios where using Open Source managed services is the best choice.
+AWS ネイティブサービスは、Databricks クラスターを管理するために必要なオブザーバビリティを提供しますが、オープンソースのマネージドサービスを使用するのが最適なシナリオもあります。
 
-Both Prometheus and Grafana are very popular technologies, and are already being used in many companies. AWS Open Source services for observability will allow operations teams to use the same existing infrastructure, the same query language, and existing dashboards and alerts to monitor Databricks workloads, without the heavy lifting of managing these services infrastructure, scalability, and performance.
+Prometheus と Grafana は非常に人気のあるテクノロジーで、すでに多くの企業で使用されています。オブザーバビリティのための AWS オープンソースサービスを使用すると、運用チームは同じ既存のインフラストラクチャ、同じクエリ言語、既存のダッシュボードとアラートを使用して、これらのサービスのインフラストラクチャ、スケーラビリティ、パフォーマンスを管理する大変な作業なしに、Databricks ワークロードを監視できます。
 
-ADOT is the best alternative for teams that need to send metrics and traces to different destinations, such as CloudWatch and Prometheus, or work with different types of data sources, such as OTLP and StatsD.
+ADOT は、CloudWatch と Prometheus などの異なるデスティネーションにメトリクスとトレースを送信したり、OTLP と StatsD などの異なるタイプのデータソースと連携したりする必要があるチームにとって、最良の選択肢です。
 
-Finally, Amazon Managed Grafana supports many different Data Sources, including CloudWatch and Prometheus, and help correlate data for teams that decide on using more than one tool, allowing for the creation of templates that will enable observability for all Databricks Clusters, and a powerful API that allow its provisioning and configuration through Infrastructure as Code.
+最後に、Amazon Managed Grafana は CloudWatch と Prometheus を含むさまざまなデータソースをサポートしており、複数のツールを使用することを選択したチームのデータの相関を支援します。これにより、すべての Databricks クラスタのオブザーバビリティを可能にするテンプレートの作成と、インフラストラクチャ as コードを通じたプロビジョニングと構成を可能にする強力な API が実現します。
 
 ![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
-*Figure 3: Databricks Open Source Observability Architecture*
+*図 3: Databricks オープンソース オブザーバビリティ アーキテクチャ*
 
-To observe metrics from a Databricks cluster using AWS Managed Open Source Services for Observability, you will need an Amazon Managed Grafana workspace for visualizing both metrics and alerts, and an Amazon Managed Service for Prometheus workspace, configured as a datasource in the Amazon Managed Grafana workspace.
+AWS Managed オープンソース サービス for オブザーバビリティを使用して Databricks クラスタからメトリクスを観測するには、メトリクスとアラートの両方を可視化するための Amazon Managed Grafana ワークスペースと、Amazon Managed Grafana ワークスペースでデータソースとして構成されている Amazon Managed Service for Prometheus ワークスペースが必要です。
 
-There are two important kind of metrics that must be collected: Spark and node metrics.
+収集する必要がある重要な 2 つの種類のメトリクスがあります。Spark メトリクスとノードメトリクスです。
 
-Spark metrics will bring information such as current number of workers in the cluster, or executors; shuffles, that happen when nodes exchenge data during processing; or spills, when data go from RAM to disk and from disk to RAM. To expose these metrics, Spark native Prometheus - available since version 3.0 - must be enabled through Databricks management console, and configured through a `init_script`.
+Spark メトリクスには、クラスタ内の現在のワーカー数やエグゼキュタ数、処理中のノード間でのデータ交換時に発生するシャッフル数、データが RAM からディスクへ、ディスクから RAM へ移動する際のスピル数などの情報が含まれます。これらのメトリクスを公開するには、Spark 3.0 以降で利用できるネイティブの Spark Prometheus を Databricks 管理コンソールで有効にし、`init_script` を介して構成する必要があります。
 
-To keep track of node metrics, such as disk usage, CPU time, memory, storage performance, we use the `node_exporter`, that can be used without any further configuration, but should only expose important metrics.
+ディスク使用量、CPU 時間、メモリ、ストレージパフォーマンスなどのノードメトリクスを追跡するには、`node_exporter` を使用します。これは追加の構成なしで使用できますが、重要なメトリクスのみを公開する必要があります。
 
-An ADOT Collector must be installed in each node of the cluster, scraping the metrics exposed by both Spark and the `node_exporter`, filtering these metrics, injecting metadata such as `cluster_name`, and sending these metrics to the Prometheus workspace.
+各ノードに ADOT Collector をインストールし、Spark と `node_exporter` が公開するメトリクスをスクレイピング、`cluster_name` などのメタデータを注入し、これらのメトリクスを Prometheus ワークスペースに送信する必要があります。
 
-Both the ADOT Collector and the `node _exporter` must be installed and configured through a `init_script`.
+ADOT Collector と `node_exporter` の両方を `init_script` を介してインストールおよび構成する必要があります。
 
-The Databricks cluster must be configured with an IAM Role with permission to write metrics in the Prometheus workspace.
+Databricks クラスタは、Prometheus ワークスペースにメトリクスを書き込む権限を持つ IAM ロールで構成する必要があります。
 
-## Best Practices
+## ベストプラクティス
 
-### Prioritize valuable metrics
+### 価値のあるメトリクスを優先する
 
-Spark and node_exporter both expose several metrics, and several formats for the same metrics. Without filtering which metrics are useful for monitoring and incident response, the mean time to detect problems increase, costs with storing samples increase, valuable information will be harder to be found and understood. Using OpenTelemetry processors, it is possible to filter and keep only valuable metrics, or filter out metrics that doesn't make sense; aggregate and calculate metrics before sending them to AMP.
+Spark と node_exporter はどちらもいくつかのメトリクスと、同じメトリクスのいくつかのフォーマットを公開しています。監視とインシデント対応に役立つメトリクスをフィルタリングせずにいると、問題を検出するまでの平均時間が増加し、サンプルを保存するコストが増加し、価値のある情報が見つけづらくなり理解しにくくなります。OpenTelemetry プロセッサを使用することで、価値のあるメトリクスのみをフィルタリングして保持したり、意味のないメトリクスをフィルタリングしたり、送信する前にメトリクスを集計および計算したりすることができます。
 
-### Avoid alerting fatigue
+### アラート疲れを避ける
 
-Once valuable metrics are being ingested into AMP, it's essential to configure alerts. However, alerting on every resource usage burst may cause alerting fatigue, that is when too much noise will decrease the confidence in alerts severity, and leave important events undetected. AMP alerting rules group feature should be use to avoid ambiqguity, i.e., several connected alerts generating separated notifications. Also, alerts should receive the proper severity, and it should reflect business priorities.
+貴重なメトリクスが AMP に取り込まれたら、アラートの設定が不可欠です。
+ただし、すべてのリソース使用量のバーストに対してアラートを出すと、アラート疲れを引き起こす可能性があります。
+これは、過度のノイズによってアラートの重要度への信頼性が低下し、重要なイベントが検出されなくなることを意味します。
+AMP のアラートルールグループ機能を使用して、つながった複数のアラートによって個別の通知が生成されるというあいまいさを避ける必要があります。
+また、アラートに適切な重要度を割り当て、ビジネスの優先事項を反映する必要があります。
 
-### Reuse Amazon Managed Grafana dashboards
+### Amazon Managed Grafana ダッシュボードの再利用
 
-Amazon Managed Grafana leverages Grafana native templating feature, which allow the creation for dashboards for all existing and new Databricks clusters. It removes the need of manually creating and keeping visualizations for each cluster. To use this feature, its important to have the correct labels in the metrics to group these metrics per cluster. Once again, it's possible with OpenTelemetry processors.
+Amazon Managed Grafana は、Grafana ネイティブのテンプレート機能を利用しています。これにより、すべての既存および新しい Databricks クラスターのダッシュボードを作成できます。各クラスターごとに視覚化を手動で作成および保守する必要がなくなります。この機能を使用するには、メトリクスにクラスターごとにこれらのメトリクスをグループ化するのに適切なラベルがあることが重要です。ここでも、OpenTelemetry プロセッサを使用することで実現できます。
 
-## References and More Information
+## 参考文献とその他の情報
 
-- [Create Amazon Managed Service for Prometheus workspace](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
-- [Create Amazon Managed Grafana workspace](https://docs.aws.amazon.com/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)
-- [Configure Amazon Managed Service for Prometheus datasource](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)
-- [Databricks Init Scripts](https://docs.databricks.com/clusters/init-scripts.html)
+- [Amazon Managed Service for Prometheus ワークスペースの作成](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
+- [Amazon Managed Grafana ワークスペースの作成](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)  
+- [Amazon Managed Service for Prometheus データソースの設定](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/prometheus-data-source.html)
+- [Databricks 初期化スクリプト](https://docs.databricks.com/ja/clusters/init-scripts.html)

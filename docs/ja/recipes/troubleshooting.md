@@ -1,8 +1,8 @@
-# Troubleshooting
+# トラブルシューティング
 
-We include troubleshooting recipes for various situations and dimensions in this section.
+このセクションでは、さまざまな状況と次元のトラブルシューティングのレシピを紹介します。
 
-- [Troubleshooting performance bottleneck in DynamoDB][ddb-troubleshooting]
+- [DynamoDB のパフォーマンスボトルネックのトラブルシューティング][ddb-troubleshooting]
 
 
-[ddb-troubleshooting]: https://observability.workshop.aws/en/scaleup.html
+[ddb-troubleshooting]: https://observability.workshop.aws/ja/scaleup.html

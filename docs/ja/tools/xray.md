@@ -1,59 +1,67 @@
 # AWS X-Ray
- 
-## Sampling rules
 
-Sampling rules using X-Ray can be configured in the AWS Console, through local configuration file, or both. The local configuration will override those set in the console. 
+## サンプリングルール
+
+X-Ray を使用したサンプリングルールは、AWS コンソール、ローカル設定ファイル、またはその両方で構成できます。
+ローカル設定はコンソールで設定されたものをオーバーライドします。
 
 !!! success
-	Use the X-Ray console, API, or CloudFormation whenever possible. This allows you to change the sampling behaviour of an application at runtime.
+	可能な限り X-Ray コンソール、API、CloudFormation を使用してください。
+これにより、アプリケーションのサンプリング動作を実行時に変更できます。
 
-You can set sample rates separately for each of these criteria:
+これらの基準ごとにサンプルレートを個別に設定できます。
 
-* Service name (e.g. billing, payments)
-* Service type (e.g. EC2, Container)
-* HTTP method
-* URL path
-* Resource ARN
-* Host (e.g. www.example.com)
+* サービス名 (例: billing、payments)
+* サービスタイプ (例: EC2、コンテナ)  
+* HTTP メソッド
+* URL パス
+* リソース ARN
+* ホスト (例: www.example.com)
 
-The best practice is to set a sample rate that collects enough data to diagnose issues and understand performance profiles, while not collecting so much data that it is unmanageable. For example, sampling 1% of traffic to a landing page, but 10% of requests to a payment page, would align well with a strong observability practice.
+ベストプラクティスは、問題を診断しパフォーマンスプロファイルを理解するのに十分なデータを収集しながら、管理できないほど多くのデータを収集しないサンプルレートを設定することです。
+たとえば、ランディングページへのトラフィックの 1% をサンプリングしながら、支払いページへのリクエストの 10% をサンプリングすることが、高度な可観測性の慣行とうまく合致します。
 
-Some transactions you may wish to capture 100% of. Be cautious though as traces are not intended for forensic audits of access to your workload!
+100% キャプチャしたいトランザクションがあるかもしれません。
+ただし、トレースはワークロードへのアクセスの法的監査を目的としたものではないことに注意してください。 
 
 !!! warning
-	As traces are not intended to be used for [auditing or forensic analysis](../../signals/traces/#trace-data-is-not-intended-for-forensics-and-auditing), avoid sample rates of 100%. This can set a false expectation that X-Ray (by default using a UDP emitter) will never lose a transaction trace.
+	トレースは [監査または法的分析](../../signals/traces/#trace-data-is-not-intended-for-forensics-and-auditing) を目的としたものではないため、100% のサンプルレートを避けてください。
+これは、X-Ray(デフォルトで UDP エミッタを使用)がトランザクショントレースを決して失うことがないという誤った期待を生み出す可能性があります。
 
-As a rule, capturing transaction traces should never create an onerous load on your staff, or your AWS bill. Add traces to your environment slowly while you learn the volume of data that your workload emits.
+ルールとして、トランザクショントレースのキャプチャーは、スタッフへの過度な負荷や AWS の請求額の増加を招くべきではありません。 
+ワークロードが発生させるデータ量を学習しながら、トレースを環境にゆっくりと追加してください。
 
 !!! info
-	By default, the X-Ray SDK records the first request each second, and five percent of any additional requests.
+	デフォルトでは、X-Ray SDK は 1 秒ごとに最初のリクエストと、追加のリクエストの 5% を記録します。
 
 !!! success
-	Always set a reservoir size that you can tolerate. The reservoir size determines the maximum number of requests per second that you will capture. This protects you from malicious attack, unwanted charges, and configuration errors.
+	常に許容できるリザーバサイズを設定してください。
+リザーバサイズは、キャプチャするリクエストの最大数/秒を決定します。
+これにより、悪意のある攻撃、望ましくない料金、設定エラーから保護されます。
 
-## Daemon configuration
+## デーモンの設定
 
-The X-Ray daemon is intended to offload the effort of sending telemetry to the X-Ray dataplane for analysis. As such, it should not consume too many resources on the server, container, or instance on which the source application runs.
-
-!!! success
-	The best practice is to run the X-Ray daemon on another instance or container, thereby enforcing the [separation of concerns](../../faq/#what-is-the-separation-of-concerns) and allowing your source system to be unencumbered. 
-
-!!! success
-	In a container orchestration pattern, such as Kubernetes, operating your X-Ray daemon as a sidecar is a common practice.
-
-The daemon has safe default settings and can operate in EC2, ECS, EKS, or Fargate environments without futher configuration in most instances. For hybrid and other cloud environments though, you may with to adjust the `Endpoint` to reflect a [VPC endpoint](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html) if you are using a Direct Connect or VPN to integrate your remote environments.
-
-!!! tip
-	If you must run the X-Ray daemon on the same instance or virtual machine as the source application, consider setting the `TotalBufferSizeMB` setting to ensure X-ray does not consume more system resources than you can afford.
-
-## Annotations
-
-AWS X-Ray supports arbitrary metadata to be sent along with your traces. These are called *annotations*. They are a powerful feature that allows you to group your traces logically. Annotations are indexed as well, making for an easy way to find traces that pertain to a single entity.
-
-When you use auto-instrumentation SDKs for X-Ray, annotations may not appear automatically. You need to add them to your code, which greatly enriches your traces and creates ways for you to generate X-Ray Insights, metrics based off of your annotations, alarms and anomaly detection models from your system behaviour, and automate ticketing and remediation when a component impacting your users is observed.
+X-Ray デーモンは、分析のためにテレメトリを X-Ray データプレーンに送信する労力を軽減することを目的としています。そのため、ソースアプリケーションが実行されているサーバー、コンテナ、インスタンス上で余分なリソースを消費してはいけません。 
 
 !!! success
-	Use annotations to understand the flow of data in your environment.
+	ベストプラクティスは、X-Ray デーモンを別のインスタンスやコンテナ上で実行し、[懸念事項の分離](../../faq/#what-is-the-separation-of-concerns)を強制し、ソースシステムが邪魔されないようにすることです。
 
 !!! success
-	Create alarms based on the performance and results of your annotated traces.
+	Kubernetes のようなコンテナオーケストレーションパターンでは、サイドカーとして X-Ray デーモンを運用するのが一般的なプラクティスです。
+
+デーモンには安全なデフォルト設定があり、ほとんどの場合、EC2、ECS、EKS、Fargate などの環境でさらなる設定なしで動作できます。ただし、ハイブリッドやその他のクラウド環境の場合は、リモート環境を統合するためにダイレクトコネクトや VPN を使用している場合は、`Endpoint` を [VPC エンドポイント](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html) を反映するように調整することができます。
+
+!!! tip 
+	ソースアプリケーションと同じインスタンスや仮想マシン上で X-Ray デーモンを実行する必要がある場合は、X-Ray が許容できる以上のシステムリソースを消費しないように `TotalBufferSizeMB` 設定を調整することを検討してください。
+
+## アノテーション
+
+AWS X-Ray では、トレースとともに任意のメタデータを送信できます。これらを *アノテーション* と呼びます。アノテーションは強力な機能で、トレースを論理的にグループ化できます。インデックスも作成されるため、特定のエンティティに関連するトレースを簡単に見つけることができます。
+
+X-Ray の自動インスツルメンテーション SDK を使用する場合、アノテーションが自動的に表示されないことがあります。コードにアノテーションを追加する必要があり、これによりトレースが大幅に充実し、X-Ray Insights を生成したり、アノテーションに基づいてメトリクスを作成したり、システムの動作からアラームと異常検知モデルを作成したり、ユーザーに影響を与えるコンポーネントを観測してチケットの自動化と修復を行う方法が作成されます。
+
+!!! success
+	アノテーションを使用して、環境内のデータフローを理解してください。
+	
+!!! success
+	アノテーションされたトレースのパフォーマンスと結果に基づいてアラームを作成します。

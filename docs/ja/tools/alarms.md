@@ -1,45 +1,44 @@
-# Alarms
+# アラーム
 
-Amazon CloudWatch alarms allows you to define thresholds around CloudWatch Metrics and Logs and receive notifications based on the rules configured in the CloudWatch.  
+Amazon CloudWatch アラームを使用すると、CloudWatch メトリクスとログに対してしきい値を定義し、CloudWatch で構成されているルールに基づいて通知を受信できます。
 
-**Alarms on CloudWatch metrics:**
+**CloudWatch メトリクスのアラーム:**
 
-CloudWatch alarms allows you to define thresholds on CloudWatch metrics and receive notifications when the metrics fall outside range. Each metric can trigger multiple alarms, and each alarm can have many actions associated with it. There are two different ways you could setup metric alarms based on CloudWatch metrics.
+CloudWatch アラームを使用すると、CloudWatch メトリクスに対してしきい値を定義し、メトリクスが範囲外に出たときに通知を受信できます。各メトリクスは複数のアラームをトリガーでき、各アラームには多数のアクションを関連付けることができます。CloudWatch メトリクスに基づいてメトリクスアラームを設定する方法には、次の 2 つの方法があります。
 
-1. **Static threshold**: A static threshold represents a hard limit that the metric should not violate. You must define the range for the static threshold like upper limit and the lower limit to understand the behaviour during the normal operations.  If the metric value falls below or above the static threshold you may configure the CloudWatch to generate the alarm.
+1. **静的しきい値**: 静的しきい値は、メトリクスが違反してはならない厳密な制限を表します。上限と下限などの静的しきい値の範囲を定義する必要があり、これにより通常の運用中の動作を理解できます。メトリクス値が静的しきい値の上下限を外れた場合、CloudWatch でアラームを生成するように構成できます。
 
-2. **Anomaly detection**: Anomaly detection is generally identified as rare items, events or observations which deviate significantly from the majority of the data and do not conform to a well-defined notion of normal behaviour.  CloudWatch anomaly detection analyzes past metric data and creates a model of expected values. The expected values take into account the typical hourly, daily, and weekly patterns in the metric.  You can apply the anomaly detection for each metric as required and CloudWatch applies a machine-learning algorithm to define the upper limit and lower limit for each of the enabled metrics and generate an alarm only when the metrics fall out of the expected values. 
+2. **異常検知**: 異常検知は、データの大多数から大きく逸脱し、正常な動作の明確な概念に適合しないまれなアイテム、イベント、観測結果として一般的に識別されます。CloudWatch の異常検知は、過去のメトリクスデータを分析し、期待値のモデルを作成します。期待値には、メトリクスの典型的な時間帯、日次、週次のパターンが考慮されます。必要に応じて各メトリクスに異常検知を適用でき、CloudWatch は機械学習アルゴリズムを適用して、有効になっている各メトリクスの上限と下限を定義し、メトリクスが期待値の範囲外に出た場合にのみアラームを生成します。
 
 !!! tip
-	Static thresholds are best used for metrics that you have a firm understanding of, such as identified performance breakpoints in your workload, or absolute limits on infrastructure components.
+	静的しきい値は、ワークロードの特定のパフォーマンスのブレークポイントや、インフラストラクチャコンポーネントの絶対制限など、メトリクスの確固たる理解がある場合に最適です。
+	
+!!! success
+	特定のメトリクスの時間経過に伴うパフォーマンスが不明な場合や、メトリクス値が負荷テストや異常トラフィック下で以前に観測されなかった場合は、アラームで異常検知モデルを使用してください。
+
+![CloudWatch アラームの種類](../images/cwalarm1.png)
+
+以下の手順では、CloudWatch での静的および異常ベースのアラームの設定方法を説明しています。
+
+[静的しきい値アラーム](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/mericalarm)
+
+[CloudWatch 異常検知ベースのアラーム](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/adalarm)
 
 !!! success
-	Use an anomaly detection model with your alarms when you do not have visibility into the performance of a particular metric over time, or when the metric value has not been observed under load-testing or anomalous traffic previously.
+	アラーム疲労の軽減やアラームのノイズの削減のために、アラームを構成する際に次の 2 つの高度な方法があります。
 
-![CloudWatch Alarm types](../images/cwalarm1.png)
+	1. **コンポジットアラーム**: コンポジットアラームには、他の作成済みアラームのアラーム状態を考慮に入れたルール式が含まれます。ルールのすべての条件が満たされた場合にのみ、コンポジットアラームが `ALARM` 状態になります。コンポジットアラームのルール式で指定されるアラームには、メトリクスアラームと他のコンポジットアラームを含めることができます。コンポジットアラームは、[集約によるアラーム疲労との戦い](../../signals/alarms/#fight-alarm-fatigue-with-aggregation) に役立ちます。
 
-You can follow the instructions below on how to setup of Static and Anomaly based alarms in CloudWatch.
+	2. **メトリック数式に基づくアラーム**: メトリック数式を使用して、より意味のある KPI とそのアラームを構築できます。複数のメトリクスを組み合わせ、統合利用率メトリクスを作成し、それらにアラームを設定できます。
 
-[Static threshold alarms](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/mericalarm)
+以下の手順では、コンポジットアラームとメトリック数式ベースのアラームの設定方法を説明しています。
 
-[CloudWatch anomaly Detection based alarms](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/adalarm)
+[コンポジットアラーム](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/compositealarm)
 
-!!! success
-	To reduce the alarm fatigue or reduce the noise from the number of alarms generated, you have two advanced methods to configure the alarms:
+[メトリック数式アラーム](https://aws.amazon.com/blogs/mt/create-a-metric-math-alarm-using-amazon-cloudwatch/)
 
-	1. **Composite alarms**: A composite alarm includes a rule expression that takes into account the alarm states of other alarms that have been created. The composite alarm goes into `ALARM` state only if all conditions of the rule are met. The alarms specified in a composite alarm's rule expression can include metric alarms and other composite alarms. Composite alarms help to [fight alarm fatigue with aggregation](../../signals/alarms/#fight-alarm-fatigue-with-aggregation).
+**CloudWatch ログのアラーム**
 
-	2. **Metric math based alarms**: Metric math expressions can be used to build more meaningful KPIs and alarms on them. You can combine multiple metrics and create a combined utilization metric and alarm on them.
+CloudWatch Logs を使用すると、CloudWatch メトリクスフィルタを使用してアラームを作成できます。メトリクスフィルタはログデータを数値の CloudWatch メトリクスに変換し、グラフ化したりアラームを設定したりできます。メトリクスの設定が完了したら、CloudWatch ログから生成された CloudWatch メトリクスに対して、静的または異常ベースのアラームを使用できます。
 
-These instructions below guide you on how to setup of Composite alarms and Metric math based alarms.
-
-[Composite Alarms](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/compositealarm)
-
-[Metric Math alarms](https://aws.amazon.com/blogs/mt/create-a-metric-math-alarm-using-amazon-cloudwatch/)
-
-**Alarms on CloudWatch Logs**
-
-You can create alarms based on the CloudWatch Logs uses CloudWatch Metric filter. Metric filters turn the log data into numerical CloudWatch metrics that you can graph or set an alarm on. Once you have setup the metrics you could use either the static or anomaly based alarms on the CloudWatch metrics generated from the CloudWatch Logs.
-
-You can find an example on how to setup [metric filter on CloudWatch logs](https://aws.amazon.com/blogs/mt/quantify-custom-application-metrics-with-amazon-cloudwatch-logs-and-metric-filters/).
-
+[CloudWatch ログのメトリックフィルタの設定例](https://aws.amazon.com/blogs/mt/quantify-custom-application-metrics-with-amazon-cloudwatch-logs-and-metric-filters/) を参照してください。

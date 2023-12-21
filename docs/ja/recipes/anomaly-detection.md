@@ -1,8 +1,7 @@
-# Anomaly Detection
+# 異常検知
 
-This section contains recipes for anomaly detection.
+このセクションには、異常検知のレシピが含まれています。
 
-- [Enabling Anomaly Detection for a CloudWatch Metric][am-oow]
+- [CloudWatch メトリクスの異常検知を有効にする][am-oow]
 
-[am-oow]: https://observability.workshop.aws/en/anomalydetection.html
-
+[am-oow]: https://observability.workshop.aws/ja/anomalydetection.html

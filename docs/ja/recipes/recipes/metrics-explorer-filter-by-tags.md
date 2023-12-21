@@ -1,61 +1,53 @@
-# Using Amazon CloudWatch Metrics explorer to aggregate and visualize metrics filtered by resource tags
+# リソースタグでフィルタリングしたメトリクスを集計および可視化するために Amazon CloudWatch メトリクスエクスプローラーを使用する
 
-In this recipe we show you how to use Metrics explorer to filter, aggregate, and visualize metrics by resource tags and resource properties - [Use metrics explorer to monitor resources by their tags and properties][metrics-explorer].
+このレシピでは、メトリクスエクスプローラーを使用してリソースタグとリソースプロパティでメトリクスをフィルタリング、集計、および可視化する方法を示します。 - [タグとプロパティによってリソースを監視するためにメトリクスエクスプローラーを使用する][metrics-explorer]。
 
-There are number of ways to create visualizations with Metrics explorer; in this walkthrough we simply leverage the AWS Console.
+メトリクスエクスプローラーで可視化を作成する方法はいくつかあります。このチュートリアルでは、単純に AWS コンソールを利用します。
 
 !!! note
-    This guide will take approximately 5 minutes to complete.
+    このガイドは約 5 分で完了します。
 
-## Prerequisites
+## 前提条件
 
-* Access to AWS account
-* Access to Amazon CloudWatch Metrics explorer via AWS Console
-* Resource tags set for the relevant resources 
+* AWS アカウントへのアクセス権
+* AWS コンソール経由での Amazon CloudWatch メトリクスエクスプローラへのアクセス権
+* 関連リソースに対してリソースタグが設定されていること
 
+## メトリクスエクスプローラーによるタグベースのクエリと視覚化
 
-## Metrics Explorer tag based queries and visualizations
+* CloudWatch コンソールを開きます
 
-*  Open the CloudWatch console 
+* **Metrics** の下の **Explorer** メニューをクリックします
 
-*  Under <b>Metrics</b>, click on the <b>Explorer</b> menu 
+![タグ別にフィルタリングされたメトリクスのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-cw-menu.png)
 
-![Screen shot of metrics filtered by tag](../images/metrics-explorer-filter-by-tags/metrics-explorer-cw-menu.png)
-<!-- <img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-cw-menu.png" alt="Screen shot of the CloudWatch menu" width="271" height="382" style="vertical-align:left"> -->
+* **Generic templates** または **Service based templates** リストからテンプレートを選択できます。この例では **EC2 Instances by type** テンプレートを使用します
 
-*  You can either choose from one of the <b>Generic templates</b> or a <b>Service based templates</b> list; in this example we use the <b>EC2 Instances by type</b> template 
+![Explorer テンプレートのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-templates-ec2-by-type.png)
 
-![Screen shot of metrics filtered by tag](../images/metrics-explorer-filter-by-tags/metrics-explorer-templates-ec2-by-type.png)
-<!-- <img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-templates-ec2-by-type.png" alt="Screen shot of Explorer templates" width="250" height="601" style="vertical-align:left"> -->
+* 探索したいメトリクスを選択します。不要なものは削除し、表示したい他のメトリクスを追加します
 
-*  Choose metrics you would like to explore; remove obsolete once, and add other metrics you would like to see
+![EC2 メトリクスのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-metrics.png)
 
-![Screen shot of the EC2 metrics](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-metrics.png)
-<!-- <img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-metrics.png" alt="Screen shot of EC2 metrics" width="424" height="393" style="vertical-align:left"> -->
+* **From** の下で、探しているリソースタグまたはリソースプロパティを選択します。以下の例では、<b>Name: TeamX</b> タグが付いた異なる EC2 インスタンスの CPU およびネットワーク関連メトリクスの数を示しています
 
-*  Under <b>From</b>, choose a resource tag or a resource property you are looking for; in the below example we show number of CPU and Network related metrics for different EC2 instances with <b>Name: TeamX</b> Tag
+![Name タグの例のスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-teamx-name-tag.png)
 
-![Screen shot of the Name tag example](../images/metrics-explorer-filter-by-tags/metrics-explorer-teamx-name-tag.png)
-<!--
-<img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-teamx-name-tag.png" alt="Screen shot of EC2 metrics" style="vertical-align:left">
-// width="386" height="176" -->
+* **Aggregated by** の下で時系列を集計関数を使用して結合できることに注意してください。以下の例では、<b>TeamX</b> メトリクスが <b>Availability Zone</b> 別に集計されています
 
-*  Please note, you can combine time series using an aggregation function under <b>Aggregated by</b>; in the below example <b>TeamX</b> metrics are aggregated by <b>Availability Zone</b>
+![Name タグでフィルタリングされた EC2 ダッシュボードのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-name-dashboard.png)
 
-![Screen shot of the EC2 dashboard filter by tag Name](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-name-dashboard.png)
-<!-- <img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-name-dashboard.png" alt="Screen shot of EC2 metrics" style="vertical-align:left"> -->
+あるいは、<b>Team</b> タグで <b>TeamX</b> と <b>TeamY</b> を集計したり、ニーズに合った他の構成を選択することもできます
 
-Alternatively, you could aggregate <b>TeamX</b> and <b>TeamY</b> by the <b>Team</b> Tag, or choose any other configuration that suits your needs
+![Team タグでフィルタリングされた EC2 ダッシュボードのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-team-dashboard.png)
 
-![Screen shot of the EC2 dashboard filter by tag Team](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-team-dashboard.png)
-<!-- <img src="../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-team-dashboard.png" alt="Screen shot of EC2 metrics" style="vertical-align:left"> -->
+## 動的なビジュアライゼーション
+<b>From</b>、<b>Aggregated by</b>、<b>Split by</b> の各オプションを使用することで、結果のビジュアライゼーションを簡単にカスタマイズできます。
+メトリクスエクスプローラーのビジュアライゼーションは動的なので、新しくタグ付けされたリソースはエクスプローラーウィジェットに自動的に表示されます。
 
-## Dynamic visualizations
-You can easily customize resulting visualizations by using <b>From</b>, <b>Aggregated by</b> and <b>Split by</b> options. Metrics explorer visualizations are dynamic, so any new tagged resource automatically appears in the explorer widget.
+## 参考情報
 
-## Reference
+メトリクスエクスプローラの詳細については、以下の記事を参照してください。
+https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Explorer.html
 
-For more information on Metrics explorer please refer to the following article:
-https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Explorer.html
-
-[metrics-explorer]: https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Explorer.html
+[metrics-explorer]: https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Explorer.html

@@ -1,143 +1,144 @@
-# Monitor Amazon RDS and Aurora databases
+# Amazon RDS と Aurora データベースのモニタリング
 
-Monitoring is a critical part of maintaining the reliability, availability, and performance of Amazon RDS and Aurora database clusters. AWS provides several tools for monitoring health of your Amazon RDS and Aurora databases resources, detect issues before they become critical and optimize performance for consistent user experience.  This guide provides the observability best practices to ensure your databases are running smoothly. 
+モニタリングは、Amazon RDS および Aurora データベースクラスターの信頼性、可用性、パフォーマンスを維持するうえで重要な部分です。AWS は、Amazon RDS および Aurora データベースリソースの正常性を監視し、重大な問題になる前に問題を検出し、一貫したユーザーエクスペリエンスのためにパフォーマンスを最適化するいくつかのツールを提供しています。このガイドでは、データベースがスムーズに実行されていることを確認するためのオブザーバビリティのベストプラクティスを提供します。
 
-## Performance guidelines
+## パフォーマンスガイドライン
 
-As a best practice, you want to start with establishing a baseline performance for your workloads. When you set up a DB instance and run it with a typical workload, capture the average, maximum, and minimum values of all performance metrics. Do so at a number of different intervals (for example, one hour, 24 hours, one week, two weeks). This can give you an idea of what is normal. It helps to get comparisons for both peak and off-peak hours of operation. You can then use this information to identify when performance is dropping below standard levels.
- 
-## Monitoring Options
+ベストプラクティスとして、ワークロードのベースライン パフォーマンスを確立することから始めることをおすすめします。DB インスタンスをセットアップして一般的なワークロードで実行したときに、すべてのパフォーマンス メトリクスの平均値、最大値、最小値をキャプチャします。いくつかの異なるインターバル(例: 1時間、24時間、1週間、2週間など)でこれを行ってください。これにより、何が正常なのかについての考え方が得られます。運用のピーク時間帯とオフピーク時間帯の両方の比較を取得することが役立ちます。次に、この情報を使用して、パフォーマンスが標準レベルを下回っているときを特定できます。
 
-### Amazon CloudWatch metrics
+## モニタリングオプション
 
-[Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html) is a critical tool for monitoring and managing your [RDS](https://aws.amazon.com/rds/) and [Aurora](https://aws.amazon.com/rds/aurora/) databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Both Amazon RDS and Aurora database sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. RDS and Aurora publish instance-level metrics metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
+### Amazon CloudWatch メトリクス
 
-Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are key metricsto monitor :
+[Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html) は、[RDS](https://aws.amazon.com/rds/) および [Aurora](https://aws.amazon.com/rds/aurora/) データベースの監視と管理に不可欠なツールです。データベースのパフォーマンスに関する貴重な洞察を提供し、問題をすばやく特定および解決するのに役立ちます。Amazon RDS および Aurora データベースの両方が、アクティブな各データベースインスタンスについて 1 分間隔の粒度でメトリクスを CloudWatch に送信します。監視はデフォルトで有効になっており、メトリクスは 15 日間利用できます。RDS および Aurora は、**AWS/RDS** 名前空間でインスタンスレベルのメトリクスを Amazon CloudWatch に公開します。
 
-* **CPU Utilization** - Percentage of computer processing capacity used.
-* **DB Connections** - The number of client sessions that are connected to the DB instance. Consider constraining database connections if you see high numbers of user connections in conjunction with decreases in instance performance and response time. The best number of user connections for your DB instance will vary based on your instance class and the complexity of the operations being performed. To determine the number of database connections, associate your DB instance with a parameter group.
-* **Freeable Memory** - How much RAM is available on the DB instance, in megabytes. The red line in the Monitoring tab metrics is marked at 75% for CPU, Memory and Storage Metrics. If instance memory consumption frequently crosses that line, then this indicates that you should check your workload or upgrade your instance.
-* **Network throughput** - The rate of network traffic to and from the DB instance in bytes per second.
-* **Read/Write Latency** - The average time for a read or write operation in milliseconds.
-* **Read/Write IOPS** - The average number of disk read or write operations per second.
-* **Free Storage Space** - How much disk space is not currently being used by the DB instance, in megabytes. Investigate disk space consumption if space used is consistently at or above 85 percent of the total disk space. See if it is possible to delete data from the instance or archive data to a different system to free up space.
+CloudWatch メトリクスを使用することで、データベースのパフォーマンスの傾向やパターンを特定し、この情報を使用して構成を最適化し、アプリケーションのパフォーマンスを向上させることができます。ここでは、監視する主要なメトリクスを示します。
+
+* **CPU 利用率** - 使用されているコンピュータ処理容量の割合。
+* **DB 接続** - DB インスタンスに接続されているクライアントセッションの数。インスタンスのパフォーマンスと応答時間の低下と合わせて、大量のユーザー接続を確認した場合は、データベース接続を制限することを検討してください。DB インスタンスの最適なユーザー接続数は、インスタンスクラスと実行される操作の複雑さによって異なります。データベース接続数を判断するには、DB インスタンスをパラメータグループと関連付けます。
+* **使用可能メモリ** - DB インスタンスで利用できる RAM の量(メガバイト単位)。[監視] タブのメトリクスにおける赤線は、CPU、メモリ、ストレージメトリクスについて 75% でマークされています。インスタンスメモリ消費が頻繁にその線を超える場合は、ワークロードを確認するかインスタンスをアップグレードする必要があることを示しています。 
+* **ネットワークスループット** - DB インスタンスへの流入および流出ネットワークトラフィックの速度(秒あたりのバイト数)。
+* **読み取り/書き込みレイテンシ** - 読み取りまたは書き込み操作の平均時間(ミリ秒)。
+* **読み取り/書き込み IOPS** - 1 秒あたりの平均ディスク読み取りまたは書き込み操作回数。  
+* **空きストレージ領域** - 現在 DB インスタンスで使用されていないディスク領域の量(メガバイト)。使用済み領域が全ディスク領域の 85% 以上に一貫して達している場合は、ディスク領域の消費を調査してください。インスタンスからデータを削除したり、データをアーカイブしてシステムの領域を解放できるかどうかを確認してください。
 
 ![db_cw_metrics.png](../../images/db_cw_metrics.png)
 
-For troubleshooting performance related issues, first step is to tune the most used and expensive queries. Tune them to see if doing so lowers the pressure on system resources. For more information, see [Tuning queries](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries).
+パフォーマンス関連の問題をトラブルシューティングする第一歩は、最も使用頻度が高く費用のかかるクエリをチューニングすることです。チューニングによってシステムリソースへのプレッシャーが下がるかどうかを確認してください。詳細については、[クエリのチューニング](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries) を参照してください。
 
-If your queries are tuned and the issue still persists, consider upgrading your database instance classes. You can upgrade it to an instance with more resources (CPU, RAM, disk space, network bandwidth, I/O capacity).
+クエリがチューニングされていても問題が続く場合は、データベースインスタンスクラスのアップグレードを検討してください。リソース(CPU、RAM、ディスク領域、ネットワーク帯域幅、I/O 容量)が多いインスタンスにアップグレードできます。
 
-Then, you can set up alarms to alert when these metrics reach critical thresholds, and take action to resolve any issues as quickly as possible. 
+その後、これらのメトリクスが重要なしきい値に達したときにアラートが発生するようにアラームを設定し、問題をできるだけ早く解決するためのアクションを実行できます。
 
-For more information on CloudWatch metrics, refer [Amazon CloudWatch metrics for Amazon RDS]( https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/rds-metrics.html) and [Viewing DB instance metrics in the CloudWatch console and AWS CLI](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/metrics_dimensions.html).
+CloudWatch メトリクスの詳細については、[Amazon RDS 用の Amazon CloudWatch メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/rds-metrics.html) および [CloudWatch コンソールと AWS CLI での DB インスタンスメトリクスの表示](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/metrics_dimensions.html) を参照してください。
 
 #### CloudWatch Logs Insights
 
-[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) enables you to interactively search and analyze your log data in Amazon CloudWatch Logs. You can perform queries to help you more efficiently and effectively respond to operational issues. If an issue occurs, you can use CloudWatch Logs Insights to identify potential causes and validate deployed fixes.
+[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) を使用すると、Amazon CloudWatch Logs のログデータを対話形式で検索および分析できます。操作上の問題により効率的かつ効果的に対応するためのクエリを実行できます。問題が発生した場合は、CloudWatch Logs Insights を使用して潜在的な原因を特定し、導入された修正を検証できます。
 
-To publish logs from RDS or Aurora database cluster to CloudWatch, see [Publish logs for Amazon RDS or Aurora for MySQL instances to CloudWatch](https://repost.aws/knowledge-center/rds-aurora-mysql-logs-cloudwatch)
+RDS または Aurora データベースクラスターから CloudWatch にログをパブリッシュするには、[RDS または Aurora for MySQL インスタンスのログを CloudWatch にパブリッシュ](https://repost.aws/knowledge-center/rds-aurora-mysql-logs-cloudwatch) を参照してください。
 
-For more information on monitoring RDS or Aurora logs with CloudWatch, see [Monitoring Amazon RDS log file](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html).
+CloudWatch を使用した RDS または Aurora ログの監視の詳細については、[Amazon RDS ログファイルの監視](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_LogAccess.html) を参照してください。
 
-#### CloudWatch Alarms
+#### CloudWatch アラーム
 
-To identify when performance is degraded for your database clusters, you should monitor and alert on key performance metrics on a regular basis. Using [Amazon CloudWatch alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html), you can watch a single metric over a time period that you specify. If the metric exceeds a given threshold, a notification is sent to an Amazon SNS topic or AWS Auto Scaling policy. CloudWatch alarms do not invoke actions simply because they are in a particular state. Rather the state must have changed and been maintained for a specified number of periods. Alarms invoke actions only when alarm change state occurs. Being in alarm state is not enough.
+データベースクラスターのパフォーマンスが低下した場合を特定するために、主要なパフォーマンスメトリクスを定期的に監視およびアラートする必要があります。[Amazon CloudWatch アラーム](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) を使用すると、指定した期間にわたって単一のメトリクスを監視できます。メトリクスが指定したしきい値を超えると、Amazon SNS トピックまたは AWS オートスケーリングポリシーに通知が送信されます。CloudWatch アラームは、特定の状態にあるため単にアクションを起動するわけではありません。むしろ、状態が変更され、アラームをトリガーするために指定された期間中に維持されている必要があります。アラームは、アラームの状態変化が発生したときにのみアクションを起動します。アラーム状態であること自体では不十分です。
 
-To set a CloudWatch alarm -
+CloudWatch アラームの設定方法は以下のとおりです。
 
-* Navigate to AWS Management Console and open the Amazon RDS console at [https://console.aws.amazon.com/rds/]().
-* In the navigation pane, choose Databases, and then choose a DB instance.
-* Choose Logs & events.
+* AWS Management Console に移動し、[https://console.aws.amazon.com/rds/]() で Amazon RDS コンソールを開きます。
+* ナビゲーションペインで [Databases] を選択し、DB インスタンスを選択します。
+* [Logs & events] を選択します。
 
-In the CloudWatch alarms section, choose Create alarm.
+[CloudWatch alarms] セクションで、[Create alarm] を選択します。
 
 ![db_cw_alarm.png](../../images/db_cw_alarm.png)
 
-* For Send notifications, choose Yes, and for Send notifications to, choose New email or SMS topic.
-* For Topic name, enter a name for the notification, and for With these recipients, enter a comma-separated list of email addresses and phone numbers.
-* For Metric, choose the alarm statistic and metric to set.
-* For Threshold, specify whether the metric must be greater than, less than, or equal to the threshold, and specify the threshold value.
-* For Evaluation period, choose the evaluation period for the alarm. For consecutive period(s) of, choose the period during which the threshold must have been reached in order to trigger the alarm.
-* For Name of alarm, enter a name for the alarm.
-* Choose Create Alarm.
+* [Send notifications] で [Yes] を選択し、[Send notifications to] で [New email or SMS topic] を選択します。
+* [Topic name] に通知の名前を入力し、[With these recipients] にカンマ区切りのメールアドレスと電話番号のリストを入力します。  
+* [Metric] でアラームの統計とメトリクスを選択します。
+* [Threshold] で、メトリクスがしきい値より大きいか小さいか等しいかを指定し、しきい値を指定します。
+* [Evaluation period] で、アラームの評価期間を選択します。[consecutive period(s) of] で、アラームをトリガーするためにしきい値に達していなければならない期間を選択します。
+* [Name of alarm] にアラームの名前を入力します。
+* [Create Alarm] を選択します。  
 
-The alarm appears in the CloudWatch alarms section.
+アラームが [CloudWatch alarms] セクションに表示されます。  
 
-Take a look at this [example](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/multi-az-db-cluster-cloudwatch-alarm.html) to create an Amazon CloudWatch alarm for Multi-AZ DB cluster replica lag. 
+Multi-AZ DB クラスターレプリカの遅延の Amazon CloudWatch アラームの作成例は[こちら](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/multi-az-db-cluster-cloudwatch-alarm.html)をご覧ください。
 
-#### Database Audit Logs
+#### データベース監査ログ
 
-Database Audit Logs provide a detailed record of all actions taken on your RDS and Aurora databases, enabling you to monitor for unauthorized access, data changes, and other potentially harmful activities. Here are some best practices for using Database Audit Logs:
+データベース監査ログは、RDS および Aurora データベースで実行されたすべてのアクションの詳細な記録を提供します。これにより、不正アクセス、データ変更、その他の有害なアクティビティを監視できます。データベース監査ログのベストプラクティスを以下に示します。
 
-* Enable Database Audit Logs for all of your RDS and Aurora instances, and configure them to capture all relevant data.
-* Use a centralized log management solution, such as Amazon CloudWatch Logs or Amazon Kinesis Data Streams, to collect and analyze your Database Audit Logs.
-* Monitor your Database Audit Logs regularly for suspicious activity, and take action to investigate and resolve any issues as quickly
+* すべての RDS および Aurora インスタンスでデータベース監査ログを有効にし、関連するすべてのデータをキャプチャするよう設定してください。
+* Amazon CloudWatch Logs や Amazon Kinesis Data Streams などの集中ログ管理ソリューションを使用して、データベース監査ログを収集および分析してください。 
+* データベース監査ログを定期的に監視し、疑わしいアクティビティがあれば迅速に調査および解決してください。
 
-For more information on how to configure database audit logs, see [Configuring an Audit Log to Capture database activities for Amazon RDS and Aurora](https://aws.amazon.com/blogs/database/configuring-an-audit-log-to-capture-database-activities-for-amazon-rds-for-mysql-and-amazon-aurora-with-mysql-compatibility/).
+データベース監査ログの設定方法の詳細は、[Configuring an Audit Log to Capture database activities for Amazon RDS and Aurora](https://aws.amazon.com/blogs/database/configuring-an-audit-log-to-capture-database-activities-for-amazon-rds-for-mysql-and-amazon-aurora-with-mysql-compatibility/) を参照してください。
 
-#### Database Slow Query and Error Logs
+#### データベースの遅いクエリとエラーログ
 
-Slow query logs help you find slow-performing queries in the database so you can investigate the reasons behind the slowness and tune the queries if needed. Error logs help you to find the query errors, which further helps you find the changes in the application due to those errors. 
+遅いクエリのログは、データベース内のパフォーマンスの低いクエリを見つけるのに役立ちます。これにより、遅さの原因を調査し、必要に応じてクエリをチューニングできます。エラーログは、クエリのエラーを見つけるのに役立ち、これによりそれらのエラーによるアプリケーションの変更を見つけることができます。
 
-You can monitor the slow query log and error log by creating a CloudWatch dashboard using Amazon CloudWatch Logs Insights (which enables you to interactively search and analyze your log data in Amazon CloudWatch Logs). 
+CloudWatch Logs Insights (Amazon CloudWatch Logs で対話的にログデータを検索および分析できる) を使用して CloudWatch ダッシュボードを作成することにより、遅いクエリログとエラーログを監視できます。
 
-To activate and monitor the error log, the slow query log, and the general log for an Amazon RDS, see [Manage slow query logs and general logs for RDS MySQL](https://repost.aws/knowledge-center/rds-mysql-logs). To activate slow query log for Aurora PostgreSQL, see [Enable slow query logs for PostgreSQL](https://catalog.us-east-1.prod.workshops.aws/workshops/31babd91-aa9a-4415-8ebf-ce0a6556a216/en-US/postgresql-logs/enable-slow-query-log).
+Amazon RDS のエラーログ、遅いクエリログ、一般ログを有効にして監視するには、[RDS MySQL 用の遅いクエリログと一般ログの管理](https://repost.aws/knowledge-center/rds-mysql-logs) を参照してください。Aurora PostgreSQL 用の遅いクエリログを有効にするには、[PostgreSQL 用の遅いクエリログの有効化](https://catalog.us-east-1.prod.workshops.aws/workshops/31babd91-aa9a-4415-8ebf-ce0a6556a216/en-US/postgresql-logs/enable-slow-query-log) を参照してください。
 
-## Performance Insights and operating-system metrics
+## パフォーマンスインサイトとオペレーティングシステムメトリクス
 
-####  Enhanced Monitoring
+#### 強化モニタリング
 
-[Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html) enables you to get fine-grain metrics in real time for the operating system (OS) that your DB instance runs on. 
+[強化モニタリング](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html) を使用すると、DB インスタンスが実行されているオペレーティングシステム (OS) の細かい粒度のメトリクスをリアルタイムで取得できます。
 
-RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Logs account. By default, these metrics are stored for 30 days and stored in **RDSOSMetrics** Log group in Amazon CloudWatch. You have the option to choose a granularity between 1s to 60s. You can create custom metrics filters in CloudWatch from CloudWatch Logs and display the graphs on the CloudWatch dashboard.
+RDS は強化モニタリングからのメトリクスを Amazon CloudWatch Logs アカウントに配信します。 デフォルトでは、これらのメトリクスは 30 日間保存され、Amazon CloudWatch の **RDSOSMetrics** ロググループに保存されます。 1 秒から 60 秒の間で粒度を選択できます。 CloudWatch Logs から CloudWatch でカスタムメトリクスフィルターを作成し、グラフを CloudWatch ダッシュボードに表示できます。
 
 ![db_enhanced_monitoring_loggroup.png](../../images/db_enhanced_monitoring_loggroup.png)
 
-Enhanced monitoring also include the OS level process list. Currently, Enhanced Monitoring is available for the following database engines:
-*MariaDB
-*Microsoft SQL Server
-*MySQL
-*Oracle
-*PostgreSQL
+強化モニタリングには、OS レベルのプロセスリストも含まれます。 現在、強化モニタリングは次のデータベースエンジンで利用できます:
 
-**Different between CloudWatch and Enhanced Monitoring**
-CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance. In contrast, Enhanced Monitoring gathers its metrics from an agent on the DB instance. A hypervisor creates and runs virtual machines (VMs). Using a hypervisor, an instance can support multiple guest VMs by virtually sharing memory and CPU. You might find differences between the CloudWatch and Enhanced Monitoring measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes. In this scenario, more virtual machines (VMs) are probably managed by the hypervisor layer on a single physical instance.
+* MariaDB
+* Microsoft SQL Server  
+* MySQL
+* Oracle
+* PostgreSQL
 
+**CloudWatch と強化モニタリングの違い**
 
-To learn about all the metrics available with Enhanced Monitoring, please refer [OS metrics in Enhanced Monitoring](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html)
+CloudWatch は、DB インスタンスのハイパーバイザから CPU 使用率に関するメトリクスを収集します。対照的に、強化モニタリングは、DB インスタンス上のエージェントからメトリクスを収集します。 ハイパーバイザは仮想マシン (VM) を作成および実行します。 ハイパーバイザを使用すると、インスタンスはメモリと CPU を仮想的に共有することで、複数のゲスト VM をサポートできます。 ハイパーバイザ層は少量の作業を実行するため、CloudWatch と強化モニタリングの測定値が異なる場合があります。 インスタンスが小さいインスタンスクラスを使用している場合、差は大きくなる可能性があります。 このシナリオでは、複数の仮想マシン (VM) が物理インスタンス上のハイパーバイザ層によって管理されている可能性が高くなります。
+
+強化モニタリングで利用できるすべてのメトリクスの詳細については、[強化モニタリングの OS メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html) を参照してください。
 
 
 ![db-enhanced-monitoring.png](../../images/db_enhanced_monitoring.png)
 
-#### Performance Insights 
+#### パフォーマンスインサイト
 
-[Amazon RDS Performance Insights](https://aws.amazon.com/rds/performance-insights/) is a database performance tuning and monitoring feature that helps you quickly assess the load on your database, and determine when and where to take action. With the Performance Insights dashboard, you can visualize the database load on your db cluster and filter the load by waits, SQL statements, hosts, or users. It allows you to pin point on the root cause rather than chasing symptoms. Performance Insights uses lightweight data collection methods that do not impact the performance of your applications and makes it easy to see which SQL statements are causing the load and why.
+[Amazon RDS Performance Insights](https://aws.amazon.com/rds/performance-insights/) は、データベースの負荷をすばやく評価し、アクションを取る必要があるタイミングと場所を判断するのに役立つデータベースパフォーマンスチューニングおよびモニタリング機能です。Performance Insights ダッシュボードを使用すると、db クラスターのデータベース負荷を視覚化し、待ち時間、SQL ステートメント、ホスト、ユーザー別に負荷をフィルタリングできます。これにより、症状を追跡するのではなく、根本原因にスポットライトを当てることができます。Performance Insights は、アプリケーションのパフォーマンスに影響を与えない軽量のデータ収集方法を使用し、どの SQL ステートメントが負荷の原因であるかと、なぜそうなっているかを簡単に確認できるようにします。
 
-Performance Insights provides seven days of free performance history retention and you can extend that up to 2 years with a fees. You can enable Performance Insights from RDS management console or AWS CLI. Performance Insights also exposes a publicly available API to enable customers and third parties to integrate Performance Insights with their own custom tooling.
+Performance Insights は 7 日間の無料のパフォーマンス履歴保持を提供し、料金を支払うことで最大 2 年間まで延長できます。Performance Insights は RDS 管理コンソールまたは AWS CLI から有効にできます。Performance Insights は、カスタマーやサードパーティが Performance Insights を独自のカスタムツールと統合できるように、パブリックに利用可能な API も公開しています。  
 
-!!! Note
-	Currently, RDS Performance Insights is available only for Aurora (PostgreSQL- and MySQL-compatible editions), Amazon RDS for PostgreSQL, MySQL, MariaDB, SQL Server and Oracle.
+!!! 注意
+	現在、RDS Performance Insights は Aurora (PostgreSQL および MySQL 互換エディション)、Amazon RDS for PostgreSQL、MySQL、MariaDB、SQL Server、Oracle 用のみ利用できます。
 
-**DBLoad** is the key metric which represents the average number of database active sessions. In Performance Insights, this data is queried as **db.load.avg** metric.
+**DBLoad** は、平均アクティブセッション数を表す主要メトリックです。Performance Insights では、このデータが **db.load.avg** メトリックとしてクエリされます。
 
 ![db_perf_insights.png](../../images/db_perf_insights.png)
 
-For more information on using Performance Insights with Aurora, refer: [Monitoring DB load with Performance Insights on Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.html). 
+Aurora での Performance Insights の使用方法の詳細については、以下を参照してください。 [Monitoring DB load with Performance Insights on Amazon Aurora](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.html)。
 
-
-## Open-source Observability Tools
+## オープンソースのオブザーバビリティツール
 
 #### Amazon Managed Grafana
-[Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a fully managed service that makes it easy to visualize and analyze data from RDS and Aurora databases. 
 
-The **AWS/RDS namespace** in Amazon CloudWatch includes the key metrics that apply to database entities running on Amazon RDS and Amazon Aurora.To visualize and track the health and potential performance issues of our RDS/Aurora databases in Amazon Managed Grafana, we can leverage CloudWatch data source. 
+[Amazon Managed Grafana](https://aws.amazon.com/grafana/) は、Amazon RDS や Aurora データベースからのデータを可視化および分析するのに役立つ、完全マネージドなサービスです。
+
+Amazon CloudWatch の **AWS/RDS ネームスペース** には、Amazon RDS と Amazon Aurora で実行されているデータベースエンティティに適用される主要なメトリクスが含まれています。 Amazon Managed Grafana で RDS/Aurora データベースの正常性と潜在的なパフォーマンスの問題を追跡および確認するには、CloudWatch データソースを利用できます。
 
 ![amg-rds-aurora.png](../../images/amg-rds-aurora.png)
 
-As of now, only basic Performance Insights metrics are available in CloudWatch which is not sufficient to analyze database performance and identify bottlenecks in your database. To visualize RDS Performance Insight metrics in Amazon Managed Grafana and have a single pane of glass visibility, customers can use a custom lambda function to collect all the RDS Performance insights metrics and publish them in a custom CloudWatch metrics namespace. Once you have these metrics available in Amazon CloudWatch, you can visualize them in Amazon Managed Grafana.
+現時点では、CloudWatch で利用できるのは基本的な Performance Insights メトリクスのみであり、データベースのパフォーマンスを分析し、データベース内のボトルネックを特定するには不十分です。 Amazon Managed Grafana で RDS Performance Insight メトリクスを可視化し、シングルパネでの可視性を実現するには、カスタム Lambda 関数を使用してすべての RDS Performance Insights メトリクスを収集し、カスタム CloudWatch メトリクスネームスペースに公開できます。 これらのメトリクスが Amazon CloudWatch で利用できるようになったら、Amazon Managed Grafana で可視化できます。
 
-To deploy the custom lambda function to gather RDS Performance Insights metrics, clone the following GitHub repository and run the install.sh script.
+RDS Performance Insights メトリクスを収集するカスタム Lambda 関数をデプロイするには、次の GitHub リポジトリをクローンし、install.sh スクリプトを実行します。
 
 ```
 $ git clone https://github.com/aws-observability/observability-best-practices.git
@@ -147,64 +148,62 @@ $ chmod +x install.sh
 $ ./install.sh
 ```
 
-Above script uses AWS CloudFormation to deploy a custom lambda function and an IAM role. Lambda function auto triggers every 10 mins to invoke RDS Performance Insights API and publish custom metrics to /AuroraMonitoringGrafana/PerformanceInsights custom namespace in Amazon CloudWatch.
+上記のスクリプトは、AWS CloudFormation を使用してカスタム Lambda 関数と IAM ロールをデプロイします。Lambda 関数は自動的に 10 分ごとにトリガーされ、RDS Performance Insights API を呼び出してカスタムメトリクスを /AuroraMonitoringGrafana/PerformanceInsights という名前の Amazon CloudWatch のカスタムネームスペースに公開します。
 
 ![db_performanceinsights_amg.png](../../images/db_performanceinsights_amg.png)
 
-For detailed step-by-step information on custom lambda function deployment and grafana dashboards, refer [Performance Insights in Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/).
+カスタム Lambda 関数のデプロイと Grafana ダッシュボードの詳細な手順については、[Amazon Managed Grafana での Performance Insights](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/) を参照してください。
 
-By quickly identifying unintended changes in your database and notifying using alerts, you can take actions to minimize disruptions. Amazon Managed Grafana supports multiple notification channels such as SNS, Slack, PagerDuty etc. to which you can send alerts notifications. [Grafana Alerting](https://docs.aws.amazon.com/grafana/latest/userguide/alerts-overview.html) will show you more information on how to set up alerts in Amazon Managed Grafana.
+データベースの意図しない変更をすばやく特定し、アラートを使用して通知することで、中断を最小限に抑えるためのアクションを実行できます。Amazon Managed Grafana は、SNS、Slack、PagerDuty など、アラート通知を送信できる複数の通知チャネルをサポートしています。 [Grafana アラート](https://docs.aws.amazon.com/grafana/latest/userguide/alerts-overview.html) では、Amazon Managed Grafana でのアラートの設定方法の詳細を確認できます。
 
 <!-- blank line -->
 <figure class="video_container">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/Uj9UJ1mXwEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/Uj9UJ1mXwEA" title="YouTube video player" width="560"></iframe>
 </figure>
 <!-- blank line -->
 
-## AIOps - Machine learning based performance bottlenecks detection
+## AIOps - マシンラーニングベースのパフォーマンスボトルネック検出
 
 #### Amazon DevOps Guru for RDS
 
-With [Amazon DevOps Guru for RDS](https://aws.amazon.com/devops-guru/features/devops-guru-for-rds/), you can monitor your databases for performance bottlenecks and operational issues. It uses Performance Insights metrics, analyzes them using Machine Learning (ML) to provide database-specific analyses of performance issues, and recommends corrective actions. DevOps Guru for RDS can identify and analyze various performance-related database issues, such as over-utilization of host resources, database bottlenecks, or misbehavior of SQL queries, among others. When an issue or anomalous behavior is detected, DevOps Guru for RDS displays the finding on the DevOps Guru console and sends notifications using [Amazon EventBridge](https://aws.amazon.com/pm/eventbridge) or [Amazon Simple Notification Service (SNS)](https://aws.amazon.com/pm/sns), allowing DevOps or SRE teams to take real-time action on performance and operational issues before they become customer-impacting outages.
+[Amazon DevOps Guru for RDS](https://aws.amazon.com/devops-guru/features/devops-guru-for-rds/) を使用すると、パフォーマンスのボトルネックや運用上の問題のためにデータベースを監視できます。Performance Insights メトリクスを使用し、機械学習(ML)で分析して、パフォーマンスの問題に関するデータベース固有の分析を提供し、修正アクションを推奨します。DevOps Guru for RDS は、ホストリソースの過剰利用、データベースのボトルネック、SQL クエリの誤動作など、さまざまなパフォーマンス関連のデータベースの問題を特定および分析できます。問題または異常な動作が検出されると、DevOps Guru for RDS は調査結果を DevOps Guru コンソールに表示し、[Amazon EventBridge](https://aws.amazon.com/jp/eventbridge/) または [Amazon Simple Notification Service(SNS)](https://aws.amazon.com/jp/sns/) を使用して通知を送信するため、DevOps または SRE チームは、顧客に影響を及ぼす障害になる前に、パフォーマンスと運用上の問題に対してリアルタイムでアクションを実行できます。
 
-DevOps Guru for RDS establishes a baseline for the database metrics. Baselining involves analyzing the database performance metrics over a period of time to establish a normal behavior. Amazon DevOps Guru for RDS then uses ML to detect anomalies against the established baseline. If your workload pattern changes, then DevOps Guru for RDS establishes a new baseline that it uses to detect anomalies against the new normal. 
+DevOps Guru for RDS は、データベース メトリクスのベースラインを確立します。ベースライニングとは、一定期間データベース パフォーマンス メトリクスを分析して、通常の動作を確立することを意味します。Amazon DevOps Guru for RDS は、確立されたベースラインに対する異常を検出するために機械学習を使用します。ワークロード パターンが変更された場合、DevOps Guru for RDS は、新しい通常値に対して異常を検出するために使用される新しいベースラインを確立します。
 
-!!! Note
-	For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
+!!! 注意
+	新しいデータベース インスタンスの場合、Amazon DevOps Guru for RDS は、データベースの使用パターンの分析と通常の動作と見なされるものの確立が必要なため、最初のベースラインを確立するまでに最大 2 日かかります。
 
 
 ![db_dgr_anomaly.png.png](../../images/db_dgr_anomaly.png)
 
 ![db_dgr_recommendation.png](../../images/db_dgr_recommendation.png)
 
-For more information on how to get started, please visit [Amazon DevOps Guru for RDS to Detect, Diagnose, and Resolve Amazon Aurora-Related Issues using ML](https://aws.amazon.com/blogs/aws/new-amazon-devops-guru-for-rds-to-detect-diagnose-and-resolve-amazon-aurora-related-issues-using-ml/)
+開始方法の詳細については、[ML を使用した Amazon Aurora 関連の問題の検出、診断、解決のための新しい Amazon DevOps Guru for RDS](https://aws.amazon.com/jp/blogs/news/new-amazon-devops-guru-for-rds-to-detect-diagnose-and-resolve-amazon-aurora-related-issues-using-ml/) をご覧ください。
 
 <!-- blank line -->
 <figure class="video_container">
-  <iframe width="560" height="315" src="https://www.youtube.com/embed/N3NNYgzYUDA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="" frameborder="0" height="315" src="https://www.youtube.com/embed/N3NNYgzYUDA" title="YouTube video player" width="560"></iframe>
 </figure>
 <!-- blank line -->
 
-## Auditing and Governance
+## 監査とガバナンス
 
-####  AWS CloudTrail Logs
+#### AWS CloudTrail ログ
 
-[AWS CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) provides a record of actions taken by a user, role, or an AWS service in RDS. CloudTrail captures all API calls for RDS as events, including calls from the console and from code calls to RDS API operations. Using the information collected by CloudTrail, you can determine the request that was made to RDS, the IP address from which the request was made, who made the request, when it was made, and additional details. For more information, see [Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html).
+[AWS CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) は、RDS でユーザー、ロール、AWS サービスによって実行されたアクションの記録を提供します。CloudTrail はコンソールからの呼び出しや RDS API オペレーションへのコード呼び出しを含む、RDS のすべての API 呼び出しをイベントとしてキャプチャします。CloudTrail で収集した情報を使用することで、RDS へのリクエストの内容、リクエストの発信元 IP アドレス、リクエストを行った人、リクエストの日時、その他の詳細を確認できます。 詳細については、[Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html) を参照してください。
 
-For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html).
+詳細は、[Monitoring Amazon RDS API calls in AWS CloudTrail](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/logging-using-cloudtrail.html) を参照してください。
 
-## References for more information
+## 詳細情報の参照
 
-[Blog - Monitor RDS and Aurora databases with Amazon Managed Grafana](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/)
+[ブログ - Amazon Managed Grafana を使用した RDS と Aurora データベースの監視](https://aws.amazon.com/blogs/mt/monitoring-amazon-rds-and-amazon-aurora-using-amazon-managed-grafana/)
 
-[Video - Monitor RDS and Aurora databases with Amazon Managed Grafana](https://www.youtube.com/watch?v=Uj9UJ1mXwEA)
+[動画 - Amazon Managed Grafana を使用した RDS と Aurora データベースの監視](https://www.youtube.com/watch?v=Uj9UJ1mXwEA)
 
-[Blog - Monitor RDS and Aurora databases with Amazon CloudWatch](https://aws.amazon.com/blogs/database/creating-an-amazon-cloudwatch-dashboard-to-monitor-amazon-rds-and-amazon-aurora-mysql/)
+[ブログ - Amazon CloudWatch を使用した RDS と Aurora データベースの監視](https://aws.amazon.com/blogs/database/creating-an-amazon-cloudwatch-dashboard-to-monitor-amazon-rds-and-amazon-aurora-mysql/)
 
-[Blog - Build proactive database monitoring for Amazon RDS with Amazon CloudWatch Logs, AWS Lambda, and Amazon SNS](https://aws.amazon.com/blogs/database/build-proactive-database-monitoring-for-amazon-rds-with-amazon-cloudwatch-logs-aws-lambda-and-amazon-sns/)
+[ブログ - Amazon CloudWatch Logs、AWS Lambda、Amazon SNS を使用した Amazon RDS のプロアクティブなデータベース監視の構築](https://aws.amazon.com/blogs/database/build-proactive-database-monitoring-for-amazon-rds-with-amazon-cloudwatch-logs-aws-lambda-and-amazon-sns/)
 
-[Official Doc - Amazon Aurora Monitoring Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/MonitoringOverview.html)
+[公式ドキュメント - Amazon Aurora の監視ガイド](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/MonitoringOverview.html)
 
-[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://awsauroralabsmy.com/provisioned/perf-observability/)
-
-
+[ハンズオンワークショップ - Amazon Aurora の SQL パフォーマンスの問題の観察と特定](https://awsauroralabsmy.com/provisioned/perf-observability/)

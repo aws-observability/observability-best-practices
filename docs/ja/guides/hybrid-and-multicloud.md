@@ -1,86 +1,100 @@
-# Best practices for hybrid and multicloud
+# ハイブリッドとマルチクラウドのためのベストプラクティス
 
-## Intro
+## はじめに
 
-We consider multicloud to be the concurrent use of more than one cloud services provider to operate your own workloads, and hybrid is the extending of your workloads across both on-premises and cloud environments. Observability across hybrid and multicloud environments may add significant complexity due to tool diversity, latency, and heterogenous workloads. Regardless, this remains a common goal for both development and business users. A rich ecosystem of products and services address this.
+マルチクラウドとは、複数のクラウドサービスプロバイダーを利用して自社のワークロードを運用することを指します。ハイブリッドとは、オンプレミスとクラウドの両方の環境にわたってワークロードを拡張することです。ハイブリッドおよびマルチクラウド環境におけるオブザーバビリティは、ツールの多様性、レイテンシー、異種のワークロードにより、複雑性が大幅に増加する可能性があります。にもかかわらず、これは開発者とビジネスユーザーの両方にとって共通の目標であり続けています。製品とサービスの豊富なエコシステムがこれに対応しています。
 
-However, the usefulness of observability tools for cloud-native workloads can vary dramatically. Consider the different requirements of monitoring a containerized batch processing workload, compared to a real-time banking application using a serverless framework: both have logs, metrics, and traces; however, the toolchain for observing them will vary, with a number of cloud-native, open source, and ISV products available. An open-source tool such as Prometheus may be an excellent fit for one, whereas a cloud-native tool provided as a managed service could better meet your requirements.
+ただし、クラウドネイティブなワークロードのためのオブザーバビリティツールの有用性は劇的に異なる可能性があります。 コンテナ化されたバッチ処理ワークロードを監視する要件と、サーバーレスフレームワークを使用したリアルタイムの銀行アプリケーションの要件を比較してみてください。両方にログ、メトリクス、トレースがあります。ただし、それらを観察するためのツールチェーンは異なり、多数のクラウドネイティブ、オープンソース、ISV製品が利用可能です。 Prometheusなどのオープンソースツールは、一方で非常に適している可能性がありますが、マネージドサービスとして提供されるクラウドネイティブツールの方が要件をより満たす可能性があります。
 
-Add to this the complexity of multicloud and hybrid, and gaining insights from your applications becomes considerably harder.
+これにマルチクラウドとハイブリッドの複雑さが加わると、アプリケーションからの洞察を取得することがかなり難しくなります。
 
-In order to deal with these added dimensions and facilitate approaches to observability, customers tend to invest in a single toolchain with a unified interface. After all, reducing the signal-to-noise ratio is usually a good thing! However, a single approach does not work for all use cases, and the operating models of various platforms may add confusion. Our goal is to help you make informed decisions that compliment your needs and reduce your mean time to remediation when issues do occur. Below are the best practices that we have learned through working with customers of all sizes, and across every industry.
+これらの次元を追加し、オブザーバビリティへのアプローチを容易にするために、顧客は単一のツールチェーンと統一されたインターフェースへの投資する傾向があります。 結局、信号対雑音比を下げることは通常、良いことです! ただし、単一のアプローチはすべてのユースケースには機能せず、さまざまなプラットフォームの運用モデルは混乱を招く可能性があります。 私たちの目標は、問題が発生したときの対応時間を短縮するのに役立つ、ニーズに合った意思決定を支援することです。 以下は、あらゆる規模の顧客と、あらゆる業界での経験から学んだベストプラクティスです。
 
 !!! info
-    These best practices are intended for a broad set of roles: enterprise architects, developers, DevOps, and more. We suggest evaluating them through the lens of your organization’s business needs, and how observability in distributed environments can provide as much value as possible.
+    これらのベストプラクティスは、エンタープライズアーキテクト、開発者、DevOpsなど、幅広い役割を対象としています。 分散環境におけるオブザーバビリティが、組織のビジネスニーズの観点から可能な限り多くの価値を提供できるようにこれらを評価することをお勧めします。
 
-## Don’t let your tooling dictate your decisions
+## ツールが判断を左右することがあってはならない
 
-Your applications, tools, and processes exist to help achieve business outcomes, such as increasing sales and customer satisfaction. A well-advised technology strategy is one that does everything possible to help you achieve those business goals. But the things that help you get there are simply tools, and they are meant to support your strategy – not be the strategy. To make an analogy, if you needed to build a house, you would not ask your tools how to design and build it. Rather, your tools are a means to an end.
+アプリケーション、ツール、プロセスは、売上や顧客満足度の向上などのビジネス目標の達成を支援するために存在します。
+適切な技術戦略とは、これらのビジネス目標の達成を可能な限り支援するものです。
+しかし、目標達成に役立つものは単なるツールであり、戦略を支えるためのものであって、戦略そのものではありません。
+たとえば、家を建てる必要がある場合、ツールに設計や建設の方法を尋ねることはありません。
+むしろ、ツールは目的を達成するための手段なのです。
 
-In a single, homogeneous environment, the decisions around tooling are easier. After all, if you run a single application in one environment, then you tooling can easily be the same across the board. But for hybrid and multicloud environments things are less clear, and keeping an eye on your business outcomes - and [the value added](https://arxiv.org/abs/2303.13402) by observing your workloads across these environments - is critical. Each Cloud Services Provider (CSP) has their own native observability solutions, and a rich set of partner and Independent Software Vendors (ISVs) whom you can use as well.
+単一かつ同質の環境では、ツールの決定はより簡単です。
+1つの環境で単一のアプリケーションを実行している場合、ツールを全体的に同じにすることができるからです。
+しかし、ハイブリッドおよびマルチクラウド環境では状況はより複雑であり、これらの環境にわたるワークロードを観察することによる[付加価値](https://arxiv.org/abs/2303.13402)やビジネス目標を常に考慮することが重要です。
+各クラウドサービスプロバイダー(CSP)には独自のネイティブな可観測性ソリューションがあり、パートナー各社やインディペンデント・ソフトウェア・ベンダー(ISV)の豊富な製品セットも利用できます。
 
-Just because you operate in multiple environments does not mean that a single tool for every workload is advisable, nor even recommended. This can potentially mean using multiple services, frameworks, or providers, to observe your workloads. See "[a single pane of glass is less important than your workload’s context](#a-single-pane-of-glass-is-less-important-than-your-workloads-context)” below for details of how your operating model needs to reflect your needs. Regardless, when implementing your tools, remember to create “[two-way doors](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/)” so you can evolve your observability solution in the future.
+複数の環境で運用しているからといって、すべてのワークロードに1つのツールを使用することが望ましいとは限らず、むしろ推奨できません。
+これは、ワークロードを観察するために複数のサービス、フレームワーク、プロバイダを使用することを意味する可能性があります。
+詳細については、以下の「[シングルパネルはワークロードのコンテキストよりも重要ではない](#a-single-pane-of-glass-is-less-important-than-your-workloads-context)」を参照してください。
+とにかく、ツールを実装する際は、将来的に可観測性ソリューションを進化させることができるように「[二方向ドア](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/)」を作成することを忘れないでください。
 
-Here are some examples of “tool-first” outcomes to avoid:
+以下は、避けるべき「ツール優先」の結果の例です。
 
-1.	Focusing on implementation of a single tool without a two-way door to upgrade it, or move to a new solution in the future, may create technical debt that is otherwise avoidable. This can happen when the tool is the solution, and one day may become the problem you need to solve.
-2.	A company standard to use a single tool due to a volume discount may end-up without features they would benefit from. This may be “cost over quality”, and inadvertently creates a monolithic anti-pattern. This may discourage the collection of telemetry in order to remain under a volume threshold, thereby de-incentivizing the use of observability tooling.
-3.	Not collecting an entire type of telemetry (usually traces) due to a lack of existing trace collection infrastructure, but a rich set of log and metric collectors, can lead to an incomplete observability solution.
-4.	Support staff having been trained on only a single toolchain, in the desire to reduce labour and training costs, thereby reducing the potential value of other observability patterns.
+1. 将来的にアップグレードしたり、新しいソリューションに移行したりするための二方向ドアなしに、単一ツールの実装に焦点を当てることは、そうでなければ回避できた技術的負債を作り出す可能性があります。 ツールがソリューションであり、いつかは解決しなければならない問題になる場合があります。
+
+2. ボリュームディスカウントにより、単一ツールの企業標準を使用することになる場合がありますが、この場合役立つはずの機能がないことがあります。 これは「コスト優先」であり、意図せずモノリシックなアンチパターンを作り出す可能性があります。 これは、ボリュームのしきい値以下にとどめるためにテレメトリの収集を阻害し、結果として可観測性ツールの使用を阻害する可能性があります。
+
+3. 既存のトレース収集インフラがない一方で、ログとメトリクスの収集機能が豊富な場合、通常トレースの収集を行わない不完全な可観測性ソリューションにつながる可能性があります。
+
+4. 人件費とトレーニングコストの削減を望み、従業員を単一のツールチェーンでのみ訓練することによって、他の可観測性パターンの潜在的な価値を低下させる可能性があります。
 
 !!! success
-    If your tooling is dictating your observability strategy, then you need to invert the approach. Tools are meant to enable and empower observability, not to limit your choices.
-
+    可観測性戦略をツールが左右している場合は、アプローチを逆転させる必要があります。 ツールは可観測性を可能にし、強化するためのものであって、選択肢を制限するためのものではありません。
+    
 !!! success
-    Tool sprawl is a very real issue that companies struggle with, however a radical shift to a singular toolchain can likewise reduce your observability solution’s usefulness. Hybrid and multicloud workloads have technologies that are unique to each platform, and higher-level services from each CSP are useful – though the trade-offs in using a single-source product require a value-based analysis. See “[Invest in OpenTelemetry](#invest-in-opentelemetry)” for an approach that mitigates some of these risks.
+    ツールの乱立は、企業が実際に苦しんでいる本物の問題ですが、単一のツールチェーンへの急激な移行も同様に可観測性ソリューションの有用性を低下させる可能性があります。 ハイブリッドおよびマルチクラウドワークロードには、各プラットフォーム固有のテクノロジーがあり、各CSPの高レベルサービスも有用です。ただし、単一ソース製品を使用することのトレードオフには、価値ベースの分析が必要です。 これらのリスクの一部を軽減するアプローチについては、「[OpenTelemetry に投資する](#invest-in-opentelemetry)」を参照してください。
 
-## (Observability) data has gravity
+## (オブザーバビリティ) データには重力がある
 
-All data has gravity – which is to say that it attracts workloads, solutions, tools, people, processes, and projects around it. For example, a database with your customer transactions in it will be the attractive force that brings compute and analytics workloads to it. This has direct implications for where you place your workloads, in which environment, and how you operate them going-forward. And the same is true for observability signals, though the gravity this data creates is tied to your workload and organizational context (see "[a single pane of glass is less important than your workload’s context](#a-single-pane-of-glass-is-less-important-than-your-workloads-context)”).
+すべてのデータには重力があり、ワークロード、ソリューション、ツール、人、プロセス、プロジェクトなどを引き寄せる力があると言えます。たとえば、顧客の取引が記録されたデータベースは、コンピューティングや分析のワークロードを引き寄せる魅力的な力となります。これはワークロードの配置場所、環境、運用方法に直接影響します。同じことがオブザーバビリティ シグナルにも当てはまりますが、このデータが生み出す重力は、ワークロードと組織のコンテキストに結び付いています(「[シングルパネオブグラスよりもワークロードのコンテキストが重要](#a-single-pane-of-glass-is-less-important-than-your-workloads-context)」を参照)。
 
-One cannot completely separate the context of your observability telemetry from the underlying workload and data that it relates to. The same rule applies here: your telemetry is data, and it has gravity to it. This should influence where you place your telemetry agents, collectors, or systems that aggregate and analyze signals.
+オブザーバビリティ テレメトリのコンテキストを、基礎となるワークロードや関連データから完全に切り離すことはできません。同じルールがここでも適用されます。テレメトリはデータであり、重力を持っています。これは、テレメトリ エージェント、コレクター、シグナルを集約および分析するシステムの配置場所に影響を与えるはずです。
 
 !!! tip
-    The value of observability data over time is considerably less than most other data types. You could call it the “half-life” of observability data. Consider the additional latency in relaying telemetry to another environment as a potential forced devaluation of this data prior to its potential use, and then weigh that against the requirements you have for alerting when issues occur.
+    オブザーバビリティ データの時間経過とともにの価値は、他のデータ型よりもかなり低いです。オブザーバビリティ データの「半減期」と呼ぶことができます。テレメトリを別の環境に中継する際の追加のレイテンシを、使用前のこのデータの強制的な価値下落と見なし、それを問題発生時のアラート要件と比較検討してください。
+    
+!!! success
+    データのこの集約からビジネス上のメリットが得られる場合にのみ、環境間でデータを送信することがベスト プラクティスです。データのクエリにシングル ソースがあること自体、多くのビジネス ニーズを満たすものではなく、望ましくないほど高コストなソリューションや、障害点を多く持つソリューションを生み出す可能性があります。
+
+## 1枚のガラスで全てを見渡すことより、ワークロードのコンテキストが重要
+
+「1枚のガラス」で全てのワークロードを観測できることがよく要望されます。これは、可能な限りシンプルな方法で、できるだけ多くのデータを表示したいという自然な欲求から生じています。また、こうしたアプローチによって、作業の負担やフラストレーション、障害診断にかかる時間を削減できると考えられているためです。この1つのインターフェースから一度に全体の可観測性ソリューションを確認できることは役立ちますが、テレメトリデータを発生源であるコンテキストから切り離すというトレードオフが伴う可能性があります。 
+
+例えば、100台のサーバーのCPU使用率を示したダッシュボードでは、消費量に異常なスパイクが表示される可能性がありますが、これはなぜこのようなことが発生したのか、あるいはこのような動作を招いた要因が何であるかを説明することはありません。また、このメトリクスの重要性がすぐには明らかではない場合があります。
+
+1枚のガラスを過度に追求するあまり、顧客のビジネスコンテキストがすべて失われ、1つのツールで全てを見ようとすることが、実際にはそのデータの価値を希釈してしまうことがあります。ダッシュボードやツールは、[物語を語る必要があります](/tools/dashboards/)。そして、この物語には、ワークロード内のイベントによって影響を受けるビジネスメトリクスと結果を含める必要があります。
+
+さらに、ツールは運用モデルに合わせる必要があります。グローバルなサポートチームが全ての環境にアクセスできる場合には、1枚のガラスが付加価値を提供できますが、単一のワークロードや単一のクラウドプロバイダーまたはハイブリッド環境にのみアクセスできる場合には、このアプローチから価値が生まれることはありません。このような場合、各環境内でネイティブにダッシュボードを作成できるようにすることで、迅速に価値を提供し、将来的な変更への柔軟性を高めることができます。
 
 !!! success
-    The best practice is to emit data between environments only when there is business value to be gained from this aggregation. Having a single source for querying data does not solve many business needs on its own, and may create a more expensive solution than desired, with more points of failure.
-
-## A single pane of glass is less important than your workload’s context
-
-A common ask is for a “single pane of glass” to observe all of your workloads. This arises from a natural desire to view as much data as possible, but in as simple a way as can be achieved, and reduce churn, frustration, and diagnosis time. Creating this one interface to see your entire observability solution at once is useful, but can come with the trade-off of separating your telemetry from the context it came from.
-
-For example, a dashboard with the CPU utilization of a hundred servers may show some anomalous spikes in consumption, but this does nothing to explain why this has happened, or what the contributing factors are for this behavior. And the importance of this metric may not be immediately clear.
-
-We have seen customers sometimes pursue the single pane of glass so aggressively that all business context is lost, and trying to see everything in one tool can actually dilute the value of that data. Your dashboards, and your tools, need to [tell a story](/tools/dashboards/). And this story needs to include the business metrics and outcomes that are impacted by events in your workloads.
-
-Moreover, your tooling needs to align to your operating model. A single pane of glass can add value when your support teams are global with access to all of your environments, but if they are limited to only accessing a single workload, in a single CSP or hybrid environment, then there is no value added through this approach. In these instances, allowing teams to create dashboards within each environment natively may hasten time to value, and be more flexible changes in the future.
+    可観測性データの価値は、発生源であるアプリケーションと深く統合されています。テレメトリには、その環境から得られるコンテキスト認識が必要です。ハイブリッドおよびマルチクラウド環境では、テクノロジー間の違いが大きいため(ただし、Kubernetesなどのシステムはクラウドプロバイダーやオンプレミス間で似通っている場合があります)、コンテキストの必要性はさらに大きくなります。
 
 !!! success
-    The value of observability data is deeply integrated into the application from which it came. Your telemetry requires contextual awareness that comes from its environment. In hybrid and multicloud environments, the differences between technologies makes the need for context even greater (though systems such as Kubernetes can be similar between different cloud providers and on-premises).
+    分散システムの1枚のガラスを構築する際は、ビジネスメトリクスとサービスレベル目標(SLO)を、これらのSLOに影響を与える他のデータ(インフラストラクチャメトリクスなど)と同じビューに表示してください。これにより、そうでない場合に不足しがちなコンテキストを提供できます。
 
-!!! success
-    When building a single pane of glass for distributed system, display your business metrics and Service Level Objectives (SLOs) in the same view as other data (such as infrastructure metrics) that contributes to these SLOs. This gives context that may otherwise be lacking.
 
 !!! tip
-    A single pane of glass can help to rapidly diagnose issues and reduce Time to Detection (MTTD) and thereby Mean Time to Resolution (MTTR), but only if the meaning of telemetry data can be preserved. Without this, a single pane of glass approach can increase the time to value, or become a net-negative for operations teams.
+    1枚のガラスは、問題を迅速に診断し、検知までの時間(MTTD)を短縮することで、平均復旧時間(MTTR)を短縮するのに役立ちますが、これはテレメトリデータの意味を保持できる場合に限られます。保持できない場合、1枚のガラスアプローチは時間の損失につながったり、運用チームにとってマイナスの影響を及ぼしたりする可能性があります。
 
 !!! success
-    If the value of a single pane of glass cannot be determined, or if workloads are bound entirely to a single CSP or on-premises environment, consider only rolling-up top-level business metrics to a single pane of glass, leaving the raw metrics and other contributing factors in their original environments.
+    1枚のガラスの価値が判断できない場合や、ワークロードが単一のクラウドプロバイダーまたはオンプレミス環境に完全に縛られている場合は、上位レベルのビジネスメトリクスのみを1枚のガラスにロールアップし、生のメトリクスやその他の影響要因は元の環境に残すことを検討してください。
 
-## Invest in OpenTelemetry
+## OpenTelemetry への投資
 
-Across the observability vendor landscape, OpenTelemetry (OTel) has become the de-facto standard. OTEL can marshal each of your telemetry types into one or many collectors, which can include cloud-native services, or a wide variety of SaaS and ISV products. OTel agents and collectors communicate using the OpenTelemetry Protocol (OTLP), which encapsulates signals into a format allowing a wide variety of deployment patterns.
+オブザーバビリティ ベンダーのランドスケープ全体で、OpenTelemetry(OTel) はデファクトスタンダードとなっています。OTEL は各テレメトリ型を 1 つまたは複数の Collector にマーシャリングできます。これにはクラウドネイティブ サービスや、さまざまな SaaS および ISV 製品を含めることができます。OTel エージェントと Collector は、OpenTelemetry プロトコル(OTLP)を使用して通信します。これにより、さまざまなデプロイ パターンを可能にする形式でシグナルをカプセル化します。
 
-To collect transaction traces with the most value, and with your business and infrastructure context, you will need to integrate trace collection into your application. Some auto-instrumentation agents can perform this with almost no effort. However, the most sophisticated use cases do require code changes on your behalf to support transaction traces. This creates some technical debt and ties-down your workload to a particular technology.
+最も価値のあるトランザクション トレースを収集し、ビジネスとインフラストラクチャのコンテキストを取得するには、アプリケーションにトレース収集を統合する必要があります。ほとんど労力を必要とせずにこれを実行できる自動インスツルメンテーション エージェントがあります。ただし、最も洗練されたユース ケースでは、トランザクション トレースをサポートするためにコード変更が必要です。これにより、技術的負債が発生し、ワークロードが特定のテクノロジに縛られます。 
 
-OTel captures logs, metrics, and traces using a concept of a span. Spans contain these signals grouped together from a single transaction, packaging them into a contextualized, searchable object. This means you can view your signals from a single application event in one simple entity. For example, a user logging into a web site, and the requests this creates to all the downstream services this integrates with, can be presented as a single span.
+OTel は、span のコンセプトを使用して、ログ、メトリクス、トレースをキャプチャします。Span には、単一のトランザクションからグループ化されたこれらのシグナルが含まれ、コンテキスト化された検索可能なオブジェクトにパッケージ化されます。これは、単一のアプリケーション イベントからのシグナルを 1 つのシンプルなエンティティで表示できることを意味します。たとえば、Web サイトにログインしているユーザーと、このユーザーが統合しているすべてのダウンストリーム サービスへのリクエストを、1 つの span として表示できます。
 
 !!! tip
-    OTel is not limited to application traces, and is widely used for logs and metrics. And many [ISV products accept OTLP directly today](https://opentelemetry.io/ecosystem/vendors/).
-
+    OTel はアプリケーション トレースに限定されておらず、ログとメトリクスに広く使用されています。また、[多くの ISV 製品が現在、OTLP を直接受け入れています](https://opentelemetry.io/ecosystem/vendors/)。
+    
 !!! Success
-    By instrumenting your applications using OTel, you remove the need to replace this instrumentation at the application layer in the future, should you choose to move from one observability platform to another. This turns part of your observability solution into a [two-way door](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/).
-
+    OTel を使用してアプリケーションにインスツルメンテーションを適用することで、将来的に 1 つのオブザーバビリティ プラットフォームから別のプラットフォームに移行する場合でも、このインスツルメンテーションをアプリケーション層で置き換える必要がなくなります。これにより、オブザーバビリティ ソリューションの一部が [two-way door](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/) になります。
+    
 !!! success
-    OTel is future-proofing, scalable, and makes it easier to change your collection and analysis systems in the future without having to change application code, making it an efficient [shift to the left](https://www.youtube.com/watch?v=99r7cxKW8Rg).
+   OTelは、将来の変更に対応可能でスケーラブルであり、アプリケーションコードを変更することなく収集および分析システムを将来的に変更しやすくするため、効率的な [left shift](https://www.youtube.com/watch?v=99r7cxKW8Rg) です。

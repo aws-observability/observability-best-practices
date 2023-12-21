@@ -21,6 +21,8 @@ theme:
     primary: grey
     accent: red
 
+  language: ja
+
 extra_css:
   - stylesheets/extra.css
 
@@ -174,4 +176,5 @@ markdown_extensions:
   - pymdownx.superfences
 
 plugins:
-  - search
+  search:
+    lang: "ja"

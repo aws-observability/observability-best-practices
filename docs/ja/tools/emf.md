@@ -1,8 +1,8 @@
-# Embedded Metric Format
+# 組み込みメトリックフォーマット
 
-The CloudWatch embedded metric format(EMF) is a JSON specification used to instruct CloudWatch Logs to automatically extract metric values embedded in structured log events. You can use CloudWatch to graph and create alarms on the extracted metric values. With EMF, you can push the metric related data in terms of CloudWatch logs which gets discovered as metric in CloudWatch.
+CloudWatch 組み込みメトリックフォーマット(EMF)は、構造化されたログイベントに埋め込まれたメトリック値を自動的に抽出するよう CloudWatch Logs に指示するために使用される JSON 仕様です。抽出されたメトリック値をグラフ化し、アラームを作成するために CloudWatch を使用できます。EMF を使用すると、メトリックとして CloudWatch で検出される CloudWatch ログとしてメトリック関連データをプッシュできます。
 
-Below is a sample EMG for mat encamp and JSON schema :
+以下は、EMF のサンプルエンコードと JSON スキーマです。
 
 	{
 	  "_aws": {
@@ -29,4 +29,4 @@ Below is a sample EMG for mat encamp and JSON schema :
 	  "requestId": "989ffbf8-9ace-4817-a57c-e4dd734019ee"
 	}
 
-Thus, with help of EMF you can send high cardinality metrics without the need of making manual PutMetricData API calls.
+したがって、EMF の助けにより、手動で PutMetricData API 呼び出しを行う必要なく、高カーディナリティメトリクスを送信できます。

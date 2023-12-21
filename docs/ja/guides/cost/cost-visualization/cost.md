@@ -1,44 +1,44 @@
-# AWS Observability services and Cost
+# AWS Observability サービスとコスト
 
-As you invest in your Observability stack, it’s important that you monitor the **cost** of your observability products on a regular basis. This allows you to ensure that you are only incurring the costs you need and that you are not overspending on resources you don't need.
+オブザーバビリティスタックへの投資に伴い、定期的にオブザーバビリティ製品の**コスト**を監視することが重要です。これにより、必要なコストのみを発生させ、不要なリソースの過剰支出を防ぐことができます。
 
-## AWS Tools for Cost Optimization
+## コスト最適化のための AWS ツール
 
-Most organizations’ core focus lies on scaling their IT infrastructure on cloud, and usually are uncontrolled, unprepared, and unaware of their actual or forthcoming cloud spend. To help you track, report, and analyze costs over time, AWS provides several cost-optimization tools:
+ほとんどの組織の主要な焦点は、クラウド上での IT インフラストラクチャのスケーリングにあり、通常、クラウドでの実際または今後の支出を制御、準備、認識できていません。時間の経過とともにコストを追跡、報告、分析するために、AWS はいくつかのコスト最適化ツールを提供しています。
 
-[AWS Cost Explorer][cost-explorer] – See patterns in AWS spending over time, project future costs, identify areas that need further inquiry, observe Reserved Instance utilization, observe Reserved Instance coverage, and receive Reserved Instance recommendations.
+[AWS Cost Explorer][cost-explorer] - 時間の経過とともに AWS の支出パターンを確認し、将来のコストを予測し、さらなる調査が必要な領域を特定し、Reserved Instance の利用状況を観察し、Reserved Instance のカバレッジを観察し、Reserved Instance の推奨を取得します。
 
-[AWS Cost and Usage Report(CUR)][CUR]– Granular raw data files detailing your hourly AWS usage across accounts used for Do-It-Yourself (DIY) analysis. The AWS Cost and Usage Report has dynamic columns that populate depending on the services you use.
+[AWS Cost and Usage Report(CUR)][CUR] - アカウント間の時間単位の AWS 使用状況の詳細な生データファイルで、Do-It-Yourself(DIY)分析に使用されます。AWS Cost and Usage Report には、使用するサービスに応じてポピュレートされる動的な列があります。
 
-## Architecture overview: Visualizing AWS Cost and Usage Report
+## アーキテクチャの概要: AWS コストと使用状況レポートの視覚化
 
-You can build AWS cost and usage dashboards in Amazon Managed Grafana or Amazon QuickSight. The following architecture diagram illustrates both the solutions.
+Amazon Managed Grafana または Amazon QuickSight で、AWS のコストと使用状況のダッシュボードを構築できます。次のアーキテクチャ図は、両方のソリューションを示しています。
 
-![Architecture diagram](../../../images/cur-architecture.png)
-*Architecture diagram*
+![アーキテクチャ図](../../../images/cur-architecture.png)
+*アーキテクチャ図*
 
-## Cloud Intelligence Dashboards
+## クラウドインテリジェンスダッシュボード
 
-The [Cloud Intelligence Dashboards][cid] are a collection of [Amazon QuickSight][quicksight] dashboards built on top of AWS Cost and Usage report (CUR). These dashboards work as your own cost management and optimization (FinOps) tool. You get in-depth, granular, and recommendation-driven dashboards that can help you get a detailed view of your AWS usage and costs.
+[Cloud Intelligence Dashboards][cid] は、AWS のコストと使用状況レポート (CUR) を基に構築された [Amazon QuickSight][quicksight] ダッシュボードのコレクションです。これらのダッシュボードは、自身のコスト管理と最適化 (FinOps) ツールとして機能します。AWS の使用状況とコストの詳細なビューを取得できる、詳細で細かい推奨駆動型のダッシュボードが用意されています。
 
-### Implementation
+### 実装
 
-1.	Create a [CUR report][cur-report] with [Amazon Athena][amazon-athnea] integration enabled.  
-*During the initial configuration, it can take up to 24 hours for AWS to start delivering reports to your Amazon S3 bucket. Reports are delivered once a day. To streamline and automate integration of your Cost and Usage Reports with Athena, AWS provides an AWS CloudFormation template with several key resources along with the reports that you set up for Athena integration.*
+1. [Amazon Athena][amazon-athnea] インテグレーションが有効になった [CUR レポート][cur-report] を作成します。
+*初期設定時に、AWS が Amazon S3 バケットにレポートを配信し始めるまでに最大 24 時間かかる場合があります。レポートは 1 日に 1 度配信されます。Athena との統合のために設定したレポートとともに、Cost and Usage レポートを Athena との統合を合理化および自動化するためのいくつかの主要なリソースを含む AWS CloudFormation テンプレートを AWS は提供しています。*
 
-2.	Deploy the [AWS CloudFormation template][cloudformation].  
-*This template includes an AWS Glue crawler, an AWS Glue database, and an AWS Lambda event. At this point, CUR data is made available through tables in Amazon Athena for you to query.*  
+2. [AWS CloudFormation テンプレート][cloudformation] をデプロイします。
+*このテンプレートには、AWS Glue クローラー、AWS Glue データベース、AWS Lambda イベントが含まれています。この時点で、Athena のテーブルを介して CUR データが利用できるようになります。クエリを実行できます。*
 
-    - Run [Amazon Athena][athena-query] queries directly on your CUR data.  
-*To run Athena queries on your data, first use the Athena console to check whether AWS is refreshing your data and then run your query on the Athena console.*
+    - CUR データに直接 [Amazon Athena][athena-query] クエリを実行します。  
+*データに対して Athena クエリを実行するには、まず Athena コンソールを使用して AWS がデータを更新しているかどうかを確認し、次に Athena コンソールでクエリを実行します。*
 
-3.	Deploy Cloud Intelligence dashboards.
-    - For manual deployment, refer the AWS Well-Architected **[Cost Optimization lab][cost-optimization-lab]**. 
-    - For automated deployment, refer the [GitHub repo][GitHub-repo].
+3. Cloud Intelligence ダッシュボードをデプロイします。
+    - マニュアルデプロイの場合は、AWS Well-Architected の **[Cost Optimization ラボ][cost-optimization-lab]** を参照してください。
+    - 自動デプロイの場合は、[GitHub リポジトリ][GitHub-repo] を参照してください。
 
-Cloud Intelligence dashboards are great for Finance teams, Executives, and IT managers. However, one common question that we get from customers is how to gain insights into organizational wide cost of individual AWS Observability products like Amazon CloudWatch, AWS X-Ray, Amazon Managed Service for Prometheus, and Amazon Managed Grafana.  
+Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって非常に便利です。しかし、お客様からよくいただくご質問の 1 つが、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS Observability 製品の組織全体のコストに関する洞察の得方です。  
 
-In the next section, you will dive-deep into cost and usage of each of those products. Companies of any size can adopt this proactive approach to cloud cost optimization strategy and improve business efficiency through cloud cost analytics and data-driven decisions, without any performance impact or operational overhead.
+次のセクションでは、これらの製品のコストと使用状況を深く掘り下げます。 あらゆる規模の企業がこの積極的なアプローチを採用してクラウドコスト最適化戦略を採用し、パフォーマンスへの影響や運用オーバーヘッドなしに、クラウドコスト分析とデータドリブンの意思決定を通じてビジネス効率を向上させることができます。
 
 
 [cost-explorer]: https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html
@@ -51,9 +51,3 @@ In the next section, you will dive-deep into cost and usage of each of those pro
 [athena-query]: https://docs.aws.amazon.com/cur/latest/userguide/cur-ate-run.html
 [cost-optimization-lab]: https://www.wellarchitectedlabs.com/cost/200_labs/200_cloud_intelligence/
 [GitHub-repo]: https://github.com/aws-samples/aws-cudos-framework-deployment
-
-
-
-
-
-

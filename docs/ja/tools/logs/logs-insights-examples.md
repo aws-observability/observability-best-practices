@@ -1,22 +1,22 @@
-# CloudWatch Logs Insights Example Queries
+# CloudWatch Logs Insights のクエリ例
 
-[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) provides a powerful platform for analyzing and querying CloudWatch log data. It allows you interactively search through your log data using a SQL like query language with a few simple but powerful commands. 
+[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) は、CloudWatch ログデータの分析とクエリを実行するための強力なプラットフォームを提供します。SQL ライクなクエリ言語を使用してログデータを対話的に検索できます。
 
-CloudWatch Logs insights provides out of the box example queries for the following categories:
+CloudWatch Logs Insights は、次のカテゴリのサンプルクエリをすぐに利用できるように用意しています:
 
 - Lambda
-- VPC Flow Logs
+- VPC フローログ  
 - CloudTrail
-- Common Queries
+- 一般的なクエリ
 - Route 53
 - AWS AppSync
-- NAT Gateway
+- NAT ゲートウェイ
 
-In this section of the best practices guide we provide some example queries for other types of logs that are not currently included in the out of the box examples. This list will evolve and change over time and you can submit your own examples for review by leaving an [issue](https://github.com/aws-observability/observability-best-practices/issues) on the git hub.
+このベストプラクティスガイドのこのセクションでは、現在サンプルクエリに含まれていないその他のタイプのログのクエリ例を紹介します。このリストは時間とともに進化し変化していきます。GitHub の [issue](https://github.com/aws-observability/observability-best-practices/issues) に投稿してクエリ例を提出できます。
 
 ## API Gateway
 
-### Last 20 Messages containing an HTTP Method Type
+### HTTP メソッドタイプを含む最新 20 件のメッセージ
 
 ```
 filter @message like /$METHOD/ 
@@ -25,7 +25,7 @@ filter @message like /$METHOD/
 | limit 20
 ```
 
-This query will return the last 20 log messages containing a specific HTTP method sorted in descending timestamp order. Substitute **METHOD** for the method you are querying for. Here is an example of how to use this query:
+このクエリは、指定した HTTP メソッドを含む直近 20 件のログメッセージをタイムスタンプの降順で返します。**METHOD** を検索対象のメソッドに置き換えます。このクエリの使用例を次に示します。
 
 ```
 filter @message like /POST/ 
@@ -35,11 +35,9 @@ filter @message like /POST/
 ```
 
 !!! tip
+    $limit の値を変更することで、返されるメッセージ数を変更できます。
 
-    You can change the $limit value in order to return a different amount of messages.
-
-
-### Top 20 Talkers Sorted by IP
+### IP でソートされた上位 20 の通信元
 
 ```
 fields @timestamp, @message
@@ -48,9 +46,9 @@ fields @timestamp, @message
 | limit 20
 ```
 
-This query will return the top 20 talkers sorted by IP. This can be useful for detecting malicious activity against your API.
+このクエリは、IP でソートされた上位 20 の通信元を返します。これは、API に対する悪意のあるアクティビティを検出するのに役立ちます。
 
-As a next step you could then add an additional filter for method type. For example, this query would show the top talkers by IP but only the "PUT" method call:
+次のステップとして、メソッドタイプのフィルタを追加することができます。 たとえば、このクエリは IP での上位の通信元を示しますが、「PUT」メソッド呼び出しのみに限定されます。
 
 ```
 fields @timestamp, @message
@@ -60,9 +58,9 @@ fields @timestamp, @message
 | limit 20
 ```
 
-## CloudTrail Logs
+## CloudTrail ログ
 
-### API throttling errors grouped by error category
+### エラーカテゴリ別にグループ化された API スロットリングエラー
 
 ```
 stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userAgent, errorCode
@@ -70,15 +68,15 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 | sort eventCount desc
 ```
 
-This query allows you to see API throttling errors grouped by category and displayed in descending order.
+このクエリを使用すると、カテゴリ別にグループ化された API スロットリングエラーを降順で表示できます。  
 
 !!! tip
     
-    In order to use this query you would first need to ensure you are [sending CloudTrail logs to CloudWatch.](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)
+    このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)していることを確認する必要があります。
 
-## VPC Flow Logs
+## VPC フローログ
 
-### Filtering flow logs for selected source IP address with action as REJECT.
+### 選択した送信元 IP アドレスのフローログをアクションが REJECT であるものにフィルタリング
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP' and action = 'REJECT'
@@ -86,14 +84,13 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP'
 | limit 20
 ```
 
-This query will return the last 20 log messages containing a 'REJECT' from the $SOURCEIP. This can be used to detect if traffic is explicitly rejected, or if the issue is some type of client side network configuration problem.
+このクエリは、$SOURCEIP からの「REJECT」が含まれる直近 20 件のログメッセージを返します。これは、トラフィックが明示的に拒否されているか、問題がクライアント側のネットワーク構成の問題であるかを検出するために使用できます。 
 
 !!! tip
-    Ensure that you substitute the value of the IP address you are interested in for '$SOURCEIP'
+    '$SOURCEIP' を興味のある IP アドレスの値に置き換えてください。
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' and action = 'REJECT'
 | sort @timestamp desc
 | limit 20
 ```
-

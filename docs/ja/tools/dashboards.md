@@ -1,158 +1,163 @@
-# Dashboards
+# ダッシュボード
 
-Dashboards are an important part of your Observability soluution. They enable you to produce a curated visualization of your data. They enable you see a history of your data, and see it alongside other related data. They also allow you to provide context. They help you understand the bigger picture.
+ダッシュボードは、オブザーバビリティソリューションの重要な部分です。データのキュレーションされたビジュアライゼーションを生成できます。データの履歴を確認したり、関連するその他のデータとともに確認したりすることができます。また、コンテキストを提供することもできます。全体像を理解するのに役立ちます。
 
-Often people gather their data and create alarms, and then stop. However, alarms only show a point in time, and usually for a single metric, or small set of data. Dashboards help you see the behaviour over time.
+多くの場合、人々はデータを収集し、アラームを作成して、そこで止まってしまいます。しかし、アラームはある瞬間の状態を示すだけで、通常は単一のメトリクス、または少量のデータについてのみ示します。ダッシュボードは時間経過とともに動作を確認するのに役立ちます。
 
-![Sample dashboard](../images/dashboard1.png)
+![サンプルダッシュボード](../images/dashboard1.png)
 
-## A practical example: consider an alarm for high CPU
-You know the machine is running with higher than desired CPU. Do you need to act, and how quickly? What might help you decide?
+## 実践的な例: 高CPU用のアラームを考える
 
-* What does normal CPU look like for this instance/application? 
-* Is this a spike, or a trend of increasing CPU? 
-* Is it impacting performance? If not, how long before it will does? 
-* Is this a regular occurrance? And does it usually recover on its own?
+インスタンスやアプリケーションのCPU使用率が望ましい値よりも高くなっていることがわかっています。
+対応が必要なのか、そしてその緊急性はどの程度なのか判断するために、次のような点を確認することが役立ちます。
 
-### See the history of the data
+* このインスタンスやアプリケーションにおける通常のCPU使用率はどの程度か
+* スパイクなのか、CPU使用率が徐々に上昇しているトレンドなのか
+* パフォーマンスに影響が出ているか。まだ出ていなければ、影響が出始めるまでどの程度時間があるか
+* このようなことが定期的に起こっているか。自動回復することが多いか
 
-Now consider a dashboard, with a historic timechart of the CPU. Even with only this single metric, you can see if this is a spike, or an upward trend. You can also see how quickly it is trending upwards, and so make some decisions on the priority for action.
+### データの履歴を確認する
 
-### See the impact on the workflow
+ここで、CPU の時系列チャートを含むダッシュボードを考えてみましょう。この単一のメトリクスからでも、スパイクなのか上昇傾向なのかがわかります。また、上昇の速度もわかるので、対応の優先順位を決定することができます。
 
-But what does this machine do? How important is this in our overall context? Imagine we now add a visualization of the workflow  performance, be it response time, throughput, errors, or some other measure. Now we can see if the high CPU is having an impact on the workflow or users this instance is supporting.
+### ワークフローへの影響を確認する
 
-### See the history of the alarm
+しかし、このマシンは何をしているのでしょうか? 全体的なコンテキストの中で、どの程度重要なのでしょうか? ここで、レスポンスタイム、スループット、エラー、その他の測定値など、ワークフローのパフォーマンスの視覚化を追加したとします。 これにより、高い CPU 使用率が、このインスタンスがサポートしているワークフローやユーザーに影響を与えているかどうかを確認できます。
 
-Consider adding a visualization which shows how often the alarm has triggered in the last month, and combining that with looking further back to see if this is a regular occurrance. For example, is a backup job triggering the spike? Knowing the pattern of reoccurance can help you understand the underlying issue, and make longer term decisions on how to stop the alarm reoccurring altogether.
+### アラームの履歴を確認する
 
-### Add context
+過去1ヶ月間にアラームが発生した頻度を示す視覚化を追加し、さらに過去を遡ってこの発生が定期的なものかどうかを確認することを検討してください。
+例えば、バックアップジョブがスパイクを引き起こしているのでしょうか。
+再発のパターンを知ることで、根本的な問題を理解し、アラームの再発を完全に停止するための長期的な判断を下すのに役立ちます。
 
-Finally, add some context to the dashboard. Include a brief description of the reason this dashboard exists, the workflow it relates to, what to do when there is an issue, links to documentation, and who to contact.
+### コンテキストを追加する
+
+最後に、ダッシュボードにコンテキストを追加します。このダッシュボードが存在する理由の簡単な説明、関連するワークフロー、問題が発生したときの対処法、ドキュメントへのリンク、および連絡先を含めます。
 
 !!! info
-    Now we have a *story*, which helps the dashboard user to see what is happening, understand the impact, and make appropriate data driven decisions on what action and the urgency of it.
+    これで*ストーリー*ができあがり、ダッシュボードのユーザーが状況を把握し、影響を理解し、適切なデータドリブンの意思決定を行うのに役立ちます。これには、実行すべきアクションとその緊急性の判断が含まれます。
 
-### Don't try to visualize everything all at once
+### 一度にすべてを可視化しようとしない
 
-We often talk about alarm fatigue. Too many alarms, without identifiable actions and priorities, can overload your team and lead to inefficiencies. Alarms should be for things which are important to you, and actionable.
+アラームの疲労についてよく話します。明確なアクションと優先順位がない状態でアラームが多すぎると、チームが過負荷になり非効率につながる可能性があります。アラームは、重要でアクション可能なものに設定する必要があります。
 
-Dashboards are more flexible here. They don't demand your attention in the same way, so you have more freedom to visualize things that you may not be certain are important yet, or that support your exploration. Still, don't over do it! Everything can suffer from too much of a good thing.
+ダッシュボードはここでより柔軟です。同じように注意を要求するわけではないので、まだ重要性がわからないものや探索を支援するものを可視化する自由度が高くなります。それでも過剰は禁物です! 良いものでも過剰はすべてを損なう可能性があります。
 
-Dashboards should provide a picture of something that is important to you. In the same was as deciding what data to ingest, you need to think about what matters to you for dashboards. 
-For your dashboards, think about
+ダッシュボードは、あなたにとって重要なものの全体像を提供する必要があります。取り込むデータを決定するのと同じように、ダッシュボードについてもあなたにとって何が重要かを考える必要があります。
+ダッシュボードの場合、次のことを考えてください。
 
-* Who will be viewing this?
-    * What is their background and knowledge? 
-	* How much context do they need? 
-* What questions are they trying to answer?
-* What actions will they be taking as a result of seeing this data?
+* 誰がこれを見るのか
+    * その人のバックグラウンドと知識は何か 
+	* どの程度のコンテキストが必要か
+* どのような疑問に答えようとしているのか
+* このデータを見た結果として、どのようなアクションを取るのか
 
 !!! tip
-    Sometimes it can be hard to know what your dashboard story should be, and how much to include. So where could you start to design your dashboard? Lets look at two ways: *KPI driven*, or *incident driven*.
+    ダッシュボードのストーリーは何にすべきか、どの程度含めるべきか、判断しづらいことがよくあります。そこで、ダッシュボードの設計にどこから着手するか、2つの方法を見ていきましょう。*KPI駆動*、または*インシデント駆動*です。
 
-#### Design your dashboard: KPI driven
+#### ダッシュボードの設計: KPI 主導
 
-One way to understand this is to work back from your KPIs. This is usually a very user driven approach.
-For [layout](#layout), typically we are working top down, getting to more detail as we move further down a dashboard, or navigate to lower level dashboards. 
+これを理解する1つの方法は、KPI から逆算することです。これは通常、非常にユーザー主導のアプローチです。
+[レイアウト](#layout) では、通常、上から下に作業を進め、ダッシュボードを下に移動したり、下位のダッシュボードに移動したりするにつれて、詳細について得ることができます。
 
-First, **understand your KPIs**. What they mean. This wil help you decide how you want to visualize these. 
-Many KPIs are shown as a single number. For example, what percentage of customers are successfully completing a specific workflow, and in what time? But over what time period? You may well meet your KPI if you average over a week, but still have smaller periods of time within this that breach your standards. Are these breaches important to you? Do they impact your customer experience. If so, you may consider different periods and time charts to see your KPIs. And maybe not everyone needs to see the detail, so perhaps you move the breakdown of KPIs to a separate dashboard, for a separate audience.
+まず、**KPI を理解します**。それらが意味することを理解します。これにより、それらをどのように視覚化したいかを決定するのに役立ちます。
+多くの KPI は単一の数字として示されます。たとえば、特定のワークフローを正常に完了した顧客の割合と、その完了に要した時間はどうなっているでしょうか。しかし、どの期間についてでしょうか? 1週間の平均であれば KPI を満たしている可能性が高い一方で、この期間内で基準を超えているより短い期間がある可能性があります。こうした違反は重要なのでしょうか。それらはお客様のエクスペリエンスに影響を与えるのでしょうか。そうであるならば、異なる期間と時系列チャートを使用して KPI を確認することを検討するかもしれません。そして、詳細を確認する必要がない人もいると思います。したがって、KPI の内訳を別のダッシュボードに移動し、別の対象者用にすることが考えられます。
 
-Next, **what contribute to those KPIs?** What workflows need to be running in order for those actions to happen? Can you measure these?
+次に、**それらの KPI に影響を与えるものは何か** を特定します。それらのアクションが発生するためには、どのようなワークフローが実行されている必要があるでしょうか? それらを測定できますか?
 
-Identify the main components and add visualizations of their performance. When a KPI breeches, you should be able to quickly look and see where in the workflow the main impact is.
+主要コンポーネントを特定し、それらのパフォーマンスの視覚化を追加します。KPI が基準値を超えた場合、ワークフローのどこで主な影響が生じているかをすぐに確認できる必要があります。
 
-And you can keep going down - what impacts the perfomance of those workflows? Remember your audience as you decide the level of depth. 
+そして、さらに掘り下げることができます。これらのワークフローのパフォーマンスに影響を与えるものは何か? 対象者を考慮しながら、深さのレベルを決定してください。
 
-Consider the example of an e-commerce system with a KPI for the number of order placed.
-For an order to be placed, users must be able to perform the following action: search for products, add them to their cart, add their delivery details, and pay for the order.
-For each of these workflows, you might consider checking key components are functioning. For example by using RUM or Synthetics to get data on action success and see if the user is being impacted by an issue. You might consider a measurement of throughput, latency, failed action percentages to see if the performance of each action is as expected. You might consider measurements of the underlying infrastructure to see what might be impacting performance.
+KPI が注文数である電子商取引システムを例に考えてみましょう。
+注文を行うために、ユーザーは次のアクションを実行できる必要があります: 商品を検索し、カートに追加し、配送詳細を入力し、注文を支払う。
+これらの各ワークフローについて、主要コンポーネントが機能していることを確認することを検討できます。たとえば、RUM や Synthetics を使用してアクションの成功とユーザーが問題の影響を受けているかどうかのデータを取得することが考えられます。各アクションのスループット、レイテンシ、失敗したアクションの割合などを測定し、パフォーマンスが期待どおりであるかどうかを確認することもできます。パフォーマンスに影響を与えている可能性のある基盤となるインフラストラクチャの測定も検討できます。
 
-However, don't put all of your information on the same dashboard. Again, consider your user audience.
-
-!!! success
-    Create layers of dashboards that allow drilldown and provide the right context for the right users.
-
-#### Design your dashboard: Incident driven
-
-For many people, incident resolution is a key driver for observability. You have been alerted to an issue, by a user, or by an Observability alarm, and you need to quickly find a fix and potentially a root cause of the issue.
+ただし、すべての情報を同じダッシュボードに置くべきではありません。再度、ユーザーの対象者を考慮してください。
 
 !!! success
-    Start by looking at your recent incidents. Are there common patterns? Which were the most impactful for your company? Which ones repeat?
+    ドリルダウンを可能にし、適切なコンテキストを適切なユーザーに提供するダッシュボードのレイヤーを作成します。
 
-In this case, we're designing a dashboard for those trying to understand the severity, identify the root cause and fix the incident.
+#### ダッシュボードの設計: インシデント駆動
 
-Think back to the specific indcident. 
-
-* How did you verify the incident was as reported?
-    * What did you check? Endpoints? Errors? 
-* How did you understand the impact, and therefore priority of the issue?
-* What did you look at for cause of the issue?	
-
-Application Performance Monitoring (APM) can help here, with [Synthetics](../../tools/synthetics/) for regular baseline and testing of endpoints and workflows, and [RUM](../../tools/rum/) for the actual customer experience. You can use this data to quickly visualize which workflows are impacted, and by how much.
-
-Visualizations which show the error count over time, and the top # errors, can help you to focus on the right area, and show you specific details of errors. This is where we are often using log data, and dynamic visualizations of error codes and reasons.
-
-It can be very useful here to have some kind of filtering or drilldown, to get to the specifics as quickly as possible. Think about ways to implement this without too much overhead. For example, having a single dashboard which you can filter to get closer to the details.
- 
-### Layout
-
-The layout of your dashboard is also important. 
+多くの人にとって、インシデントの解決はオブザーバビリティの重要なドライバーです。ユーザーやオブザーバビリティのアラームから問題が通知され、迅速に修正と潜在的な原因特定が必要です。
 
 !!! success
-    Typically the most significant visualizations for your user want to be top left, or otherwise aligned with a natural *beginning* of page navigation.
+    最近のインシデントから確認を始めましょう。共通のパターンはありますか? 会社にとって最も影響の大きいものはどれですか? 繰り返し発生するものは?
 
-You can use layout to help tell the story. For example, you may use a top-down layout, where the further down you scroll, the more details you see. Or perhaps a left-right display would be useful with higher level services on the left, and their dependencies as you move to the right.
+この場合、重要度を理解し、根本原因を特定し、インシデントを修正しようとする人々のためのダッシュボードを設計しています。
 
-### Create dynamic content
+特定のインシデントを思い出してください。
 
-Many of your workloads will be designed to grow or shrink as demand dictates, and your dashboards need to take this into account. For example you may have your instances in an autoscaling group, and when you hit a certain load, additional instances are added.
+* インシデントが報告されたとおりに確認するにはどうしましたか?
+    * 何をチェックしましたか? エンドポイント? エラー?
+* 影響度を理解し、問題の優先順位を判断するにはどうしましたか?
+* 問題の原因を調べるために何を確認しましたか?
 
-!!! success
-    A dashboard showing data from specific instances, specified by some kind of ID, will not allow the data from those new instances to be seen. Add metadata to your resources and data, so you can create your visualizations to capture all instances with a specific metadata value. This way they will reflect the actual state.
+ここでは、[Synthetics](../../tools/synthetics/) によるエンドポイントとワークフローの定期的なベースラインとテスト、[RUM](../../tools/rum/) による実際の顧客体験で、Application Performance Monitoring (APM) が役立ちます。このデータを使用して、どのワークフローが影響を受けているかとその程度をすばやく視覚化できます。
 
-Another example of dynamic visualizations might be being able to find the top 10 errors occurring now, and how they have behaved over recent history. You want to be able to see a table, or a chart, without knowledge of which errors might occur.
+時間経過に伴うエラー数と上位エラー数を示す視覚化により、適切な領域に焦点を当て、エラーコードと理由の詳細を示すことができます。ここではログデータとエラーコードや理由の動的な視覚化を活用しています。
 
-### Think about symptoms first over causes
+できるだけ早く詳細に辿り着けるようなフィルタリングやドリルダウンがあると大変便利です。過度なオーバーヘッドなくこれを実装する方法を考えてください。たとえば、フィルタで詳細に迫れる単一のダッシュボードなどです。
 
-When you observe symptoms, you are considering about the impact this has on your users and systems. Many underlying causes might give the same symptoms. This enables you to capture more issues, including unknown issues. As you understand causes, your lower level dashboards may be more specific to these to help you quickly diagnose and fix issues.
+### レイアウト
 
-!!! tip 
-    Don't capture the specific JavaScript error that impacted the users last week. Capture the *impact* on the workflow it disrupted, and then show the top count of JavaScript errors over recent history, or which have dramatically increased in recent history.
-
-### Use top/bottom N
-
-Most of the time there is no need to visualize *all* of your operational metrics at the same time. A large fleet of EC2 instances is a good example of this: there is no need or value in having the disk IOPS or CPU utilization for an entire farm of hundreds of servers displayed simultaneously. This creates an anti-pattern where you can spend more time trying to dig-through your metrics than seeing the best (or worst) performing resources.
+ダッシュボードのレイアウトも重要です。
 
 !!! success
-    Use your dashboards to show the ten or 20 of any given metric, and then focus on the [symptoms](#think-about-symptoms-first-over-causes) this reveals. 
+    通常、ユーザーが最も重要だと考えるビジュアライゼーションは、ページの左上またはナビゲーションの*始まり*に配置することが望ましいでしょう。
 
-[CloudWatch metrics](../../tools/metrics/) allows you to search for the top N for any time series. For example, this query will return the busiest 20 EC2 instances by CPU utilization:
+レイアウトを使用してストーリーを伝えるのに役立てることができます。例えば、上から下へのレイアウトを使用して、スクロールを下げるほど詳細が表示されるようにすることができます。または、左右の表示が役立つ場合もあり、左側に上位サービス、右側に依存関係を配置するなどが考えられます。
+
+### 動的コンテンツの作成
+
+多くのワークロードは需要に応じて拡大縮小するように設計されているため、ダッシュボードもこれを考慮する必要があります。 
+たとえば、インスタンスをオートスケーリンググループに置いている場合、特定の負荷に達すると追加のインスタンスが追加されます。
+
+!!! success
+    特定のインスタンスからのデータを示すダッシュボードは、それらの新しいインスタンスからのデータが表示されないでしょう。 リソースとデータにメタデータを追加することで、特定のメタデータ値を持つすべてのインスタンスをキャプチャするように視覚化を作成できます。 このようにして、実際の状態を反映できます。
+
+動的な視覚化の別の例は、現在発生している上位10のエラーと、最近の履歴でのそれらの動作を見つける能力です。 テーブルやチャートを、発生する可能性のあるエラーの知識なしに見ることができる必要があります。
+
+### 原因よりもまず症状を考える
+
+症状を観察するとき、ユーザーやシステムへの影響を考えています。多くの根本的な原因が同じ症状を引き起こす可能性があります。これにより、未知の問題を含む、より多くの問題を把握できます。原因を理解するにつれて、下位のダッシュボードはこれらの特定のものになり、問題の迅速な診断と修正に役立ちます。
+
+!!! tip
+    先週ユーザーに影響を与えた特定の JavaScript エラーを記録するのではなく、*ワークフローへの影響*を記録し、最近の履歴における JavaScript エラーの上位カウント、または最近の履歴で劇的に増加したものを示すことを検討してください。
+
+### 上位/下位 N を使用する
+
+ほとんどの場合、同時に*すべての*運用メトリクスを可視化する必要はありません。大規模な EC2 インスタンスのフリートがその良い例です。数百台のサーバーから成るファーム全体のディスク IOPS や CPU 使用率を同時に表示する必要や価値はありません。これは、メトリクスの掘り下げに時間を費やすことが、最高(または最低)のパフォーマンスのリソースを見ることよりも多くなるというアンチパターンを生み出します。
+
+!!! success
+    ダッシュボードを使用して、任意のメトリクスの上位10個または20個を表示し、これが明らかにする[症状](#think-about-symptoms-first-over-causes)に焦点を当ててください。
+
+[CloudWatch メトリクス](../../tools/metrics/) を使用すると、任意の時系列の上位 N を検索できます。たとえば、このクエリは CPU 使用率が最も高い上位 20 の EC2 インスタンスを返します。
 
 ```
 SORT(SEARCH('{AWS/EC2,InstanceId} MetricName="CPUUtilization"', 'Average', 300), SUM, DESC, 10)
 ```
 
-Use this approach, or similar with [CloudWatch Metric Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/query_with_cloudwatch-metrics-insights.html) to identify the top or bottom performing metrics in your dashboards.
+このアプローチ、または [CloudWatch メトリクスインサイト](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/query_with_cloudwatch-metrics-insights.html) で似たようなことを行い、ダッシュボードのパフォーマンスの高い/低いメトリクスを特定してください。
 
-### Show KPIs with thresholds visually
+### 閾値を用いた KPI の視覚的表示
 
-Your KPIs should have a warning or error threshold, and dashboards can show this using a horizontal annotation. This will appear as a high water mark on a widget. Showing this visually can give human operators a forewarning if business outcomes or infrastructure are in jeopardy.
+KPI には警告やエラーの閾値を設定し、ダッシュボード上で水平アノテーションを使用してこれを視覚的に表示できます。これはウィジェット上に高水準マークとして表示されます。これを視覚的に表示することで、ビジネスの成果やインフラが危険な状態にある兆候を人間のオペレーターに早期に警告することができます。
 
-![Image of a horizonal annotation](../images/horizontal-annotation.png)
-
-!!! success
-    Horizontal annotations are a critical part of a well-developed dashboard.
-
-### The importance of context
-
-People can easily misinterpret data. Their background and current context will colour how they view the data.
-
-So make sure you include *text* within your dashboard. What is this data for, and who? What does it mean? Link to documentation on the application, who supports it, the troubleshooting docs. You can also uses text displays to divide your dashboard display. se them on the left to set left-right context. Use them as full horizontal displays to divide your dashboard vertically.
+![水平アノテーションの画像](../images/horizontal-annotation.png)
 
 !!! success
-    Having links to IT support, operations on-call, or business owners can give teams a fast path to contact people who can help support when issues occur.
+    水平アノテーションは、洗練されたダッシュボードの重要な一部です。
+
+### コンテキストの重要性
+
+人はデータを誤解しやすいものです。背景や現在のコンテキストが、データの見方に影響を与えます。
+
+だから、ダッシュボード内に*テキスト*を含めることが大切です。このデータは何のためのものなのか、対象者は誰なのか。意味するところは何か。アプリケーションのドキュメントへのリンク、サポート担当者、トラブルシューティングのドキュメントへのリンクを含めてください。テキストディスプレイを使用して、ダッシュボードの表示を分割することもできます。左右のコンテキストを設定するために左側に配置します。完全な水平ディスプレイとして使用して、ダッシュボードを垂直に分割します。 
+
+!!! success
+    IT サポート、オンコール運用、ビジネスオーナーへのリンクを用意することで、発生した問題のサポートを受けるための迅速な連絡ルートをチームに提供できます。
 
 !!! tip
-    Hyperlinks to ticketing systems is also a very useful addition for dashboards.
+    ダッシュボードにとって、チケットシステムへのハイパーリンクを追加することも、非常に有用なことです。

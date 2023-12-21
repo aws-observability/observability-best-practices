@@ -1,26 +1,24 @@
-# Adding [**kubernetes-mixin**](https://github.com/kubernetes-monitoring/kubernetes-mixin) dashboards to Managed Grafana
+# Managed Grafana に [**kubernetes-mixin**](https://github.com/kubernetes-monitoring/kubernetes-mixin) ダッシュボードを追加する
 
-Even as a managed service, EKS still exposes many of the metrics from the Kubernetes control plane. The Prometheus community has put together a series of dashboards to review and investigate these metrics. This document will show you how to install them in an environment hosted by Amazon Managed Service for Prometheus.
+マネージドサービスであっても、EKS は Kubernetes コントロールプレーンから多くのメトリクスを公開しています。Prometheus コミュニティは、これらのメトリクスをレビューおよび調査するための一連のダッシュボードを作成しました。このドキュメントでは、Amazon Managed Service for Prometheus でホストされる環境にこれらをインストールする方法を示します。
 
-The Prometheus mixin project expects prometheus to be installed via the Prometheus Operator, but the Terraform blueprints install the Prometheus agent via the default helm charts. In order for the scraping jobs and the dashboards to line up, we need to update the Prometheus rules and the mixin dashboard configuration, then upload the dashboard to our Grafana instance.
+Prometheus mixin プロジェクトは、Prometheus Operator を介して Prometheus がインストールされることを想定していますが、Terraform ブループリントはデフォルトの Helm チャートを介して Prometheus エージェントをインストールします。スクレイピングジョブとダッシュボードを一致させるために、Prometheus ルールと mixin ダッシュボード構成を更新した後、ダッシュボードを Grafana インスタンスにアップロードする必要があります。
 
+## 前提条件
 
-## Prerequisites
+* EKS クラスター - 開始場所: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons)
+* Cloud9 環境
+* EKS クラスターを管理するように構成された Cloud9 の kubectl
+* EKS の IAM 資格情報
+* AMP のインスタンス
+* Amazon Managed Grafana のインスタンス
 
-* An EKS cluster - Starting from: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons)
-* A Cloud9 environment
-* kubectl in Cloud9 configured to manage the EKS cluster
-* IAM credentials for EKS
-* An instance of AMP
-* An instance of Amazon Managed Grafana
-
-
-## Installing the mixin dashboards
+## ミックスイン ダッシュボードのインストール
 
 
-Starting from a fresh Cloud9 instance and using the AWS blueprint for terraform complete addon example as the target EKS cluster as linked in the Prerequisites:
+Cloud9 インスタンスを新規作成し、Terraform による完全なアドオンの例として EKS クラスターを対象に前提条件でリンクした AWS ブループリントを使用します。
 
-Expand the file system of the Cloud9 instance to at least 20 gb. In the EC2 console, extend the EBS volume to 20 GB thenfrom the Cloud9 shell, run the commands below:
+Cloud9 インスタンスのファイルシステムを少なくとも 20 GB に拡張します。EC2 コンソールで EBS ボリュームを 20 GB に拡張してから、Cloud9 シェルから以下のコマンドを実行します。
 
 ```
 sudo growpart /dev/nvme0n1 1
@@ -28,7 +26,7 @@ sudo xfs_growfs -d /
 ```
 
 
-Upgrade awscli to version 2:
+awscli をバージョン 2 にアップグレードします。
 
 ```
 sudo yum remove -y awscli
@@ -39,7 +37,7 @@ ln -s /usr/local/bin/aws /usr/bin/aws
 ```
 
 
-Install prerequisites: 
+前提パッケージをインストールします。
 
 ```
 sudo yum install -y jsonnet
@@ -48,7 +46,7 @@ export PATH="$PATH:~/go/bin"
 ```
 
 
-Download and install the jsonnet libraries for the kubernetes-mixin project:
+kubernetes-mixin プロジェクトの jsonnet ライブラリをダウンロードしてインストールします。
 
 
 ```
@@ -57,7 +55,7 @@ jb install
 ```
 
 
-Edit config.libsonnet and replace the “selectors“ section with the following in order to match the prometheus job names:
+Prometheus ジョブ名と一致するように、config.libsonnet を編集し、「selectors」セクションを以下のように置き換えます。
 
 ```
  // Selectors are inserted between {} in Prometheus queries.
@@ -78,7 +76,7 @@ Edit config.libsonnet and replace the “selectors“ section with the following
 
 
 
-Build the prometheus rules, alerts, and grafana dashboards:
+Prometheus のルール、アラート、Grafana ダッシュボードをビルドします。
 
 ```
 make prometheus_alerts.yaml
@@ -87,7 +85,7 @@ make dashboards_out
 ```
 
 
-Upload the prometheus rules to managed prometheus. Replace <<WORKSPACE-ID>> with the ID of your managed prometheus instance and <<REGION>> with the appropriate value
+Prometheus ルールを Managed Prometheus にアップロードします。&lt;<workspace-id>> を Managed Prometheus インスタンスの ID に、&lt;<region>> を適切な値に置き換えます。
 
 ```
 base64 prometheus_rules.yaml > prometheus_rules.b64
@@ -96,4 +94,6 @@ aws amp create-rule-groups-namespace --data file://prometheus_rules.b64 --name k
 
 
 
-Download the contents of the ‘dashboard_out’ folder from the Cloud9 environment and upload them using the Grafana web UI.
+Cloud9 環境から 「dashboard_out」フォルダーの内容をダウンロードし、Grafana Web UI を使用してアップロードします。
+
+</region></workspace-id></region></workspace-id>

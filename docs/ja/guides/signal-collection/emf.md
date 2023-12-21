@@ -1,55 +1,57 @@
 # CloudWatch Embedded Metric Format
 
-## Introduction
+## はじめに
 
-CloudWatch Embedded Metric Format (EMF) enables customers to ingest complex high-cardinality application data to Amazon CloudWatch in the form of logs and generate actionable metrics. With Embedded Metric Format customers do not have to rely on complex architecture or need to use any third party tools to gain insights into their environments. Although this feature can be used in all environments, it’s particularly useful in workloads that have ephemeral resources like AWS Lambda functions or containers in Amazon Elastic Container Service (Amazon ECS), Amazon Elastic Kubernetes Service (Amazon EKS), or Kubernetes on EC2. Embedded Metric Format lets customers easily create custom metrics without having to instrument or maintain separate code, while gaining powerful analytical capabilities on log data.
+CloudWatch Embedded Metric Format(EMF) を使用すると、ログの形式で複雑な高基数のアプリケーションデータを Amazon CloudWatch にインジェストし、実行可能なメトリクスを生成できます。Embedded Metric Format を使用すると、複雑なアーキテクチャに依存したり、サードパーティのツールを使用したりすることなく、環境の洞察を得ることができます。この機能はすべての環境で使用できますが、AWS Lambda 関数や Amazon Elastic Container Service(Amazon ECS)、Amazon Elastic Kubernetes Service(Amazon EKS)、Kubernetes on EC2 のコンテナなどの短期的なリソースを使用するワークロードで特に役立ちます。Embedded Metric Format を使用すると、インスツルメンテーションや個別のコードのメンテナンスを行うことなく、カスタムメトリクスを簡単に作成でき、ログデータから強力な分析機能を得ることができます。
 
-## How Embedded Metric Format (EMF) logs work
+## 埋め込みメトリックフォーマット(EMF)ログの仕組み
 
-Compute environments like Amazon EC2, On-premise Servers, containers in Amazon Elastic Container Service (Amazon ECS), Amazon Elastic Kubernetes Service (Amazon EKS), or Kubernetes on EC2 can generate & send Embedded Metric Format (EMF) logs through the CloudWatch Agent to Amazon CloudWatch.
+Amazon EC2、オンプレミスのサーバー、Amazon Elastic Container Service(Amazon ECS)のコンテナ、Amazon Elastic Kubernetes Service(Amazon EKS)、EC2 上の Kubernetes などのコンピュート環境は、CloudWatch エージェントを通じて埋め込みメトリックフォーマット(EMF)ログを生成し、Amazon CloudWatch に送信できます。
 
-AWS Lambda allows customers to easily generate custom metrics without requiring any custom code, making blocking network calls or relying on any third party software to generate and ingest Embedded Metric Format (EMF) logs to Amazon CloudWatch.
+AWS Lambda では、カスタムコードの記述やブロッキングネットワーク呼び出し、サードパーティソフトウェアに依存することなく、簡単にカスタムメトリクスを生成できるため、構造化ログの公開時に特別なヘッダー宣言を提供する必要がなく、[EMF 仕様](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)に合わせて非同期的に詳細なログイベントデータとともにカスタムメトリクスを埋め込むことができます。CloudWatch は自動的にカスタムメトリクスを抽出するので、ユーザーはメトリクスの可視化やリアルタイムのインシデント検知のためのアラームを設定できます。抽出されたメトリクスに関連付けられている詳細なログイベントと高基数コンテキストは、CloudWatch Logs Insights を使用してクエリできるため、運用イベントの根本原因について深い洞察を得ることができます。 
 
-Customers can embed custom metrics alongside detailed log event data asynchronously without requiring to provide special header declaration while publishing structured logs aligning the [EMF specification](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html). CloudWatch automatically extracts the custom metrics so that customers can visualize & set alarm for real-time incident detection. The detailed log events and high-cardinality context associated with the extracted metrics can be queried using CloudWatch Logs Insights to provide deep insights into the root causes of operational events.
+Fluent Bit 向け [Amazon CloudWatch 出力プラグイン](https://docs.fluentbit.io/manual/pipeline/outputs/cloudwatch) を使用すると、[埋め込みメトリックフォーマット(EMF)](https://github.com/aws/aws-for-fluent-bit) に対応したメトリクスとログデータを Amazon CloudWatch サービスにインジェストできます。
 
-The Amazon CloudWatch output plugin for [Fluent Bit](https://docs.fluentbit.io/manual/pipeline/outputs/cloudwatch) allows customers to ingest metrics & logs data into the Amazon CloudWatch service that includes support for [Embedded Metric Format](https://github.com/aws/aws-for-fluent-bit) (EMF).
+![CloudWatch EMF アーキテクチャ](../../images/EMF-Arch.png)
 
-![CloudWatch EMF Architecture](../../images/EMF-Arch.png)
+## Embedded Metric Format(EMF)ログの使用時期
 
-## When to use Embedded Metric Format (EMF) logs
+従来、モニタリングは3つのカテゴリに分類されていました。1つ目は、アプリケーションのクラシックなヘルスチェックです。2つ目は「メトリクス」で、カウンター、タイマー、ゲージなどのモデルを使用してアプリケーションに計装するものです。3つ目は、アプリケーションの全体的な可観測性に不可欠な「ログ」です。 ログにより、お客様はアプリケーションの動作について連続的な情報を得ることができます。 現在、お客様はデータの粒度や豊富さを犠牲にすることなく、アプリケーションの観測可能性を大幅に改善する方法があります。それは、すべての計装を統一および簡素化しながら、Embedded Metric Format(EMF)ログを通じて信じられない分析機能を得ることです。
 
-Traditionally, monitoring has been structured into three categories. The first category is the classic health check of an application. The second category is 'metrics', through which customers instrument their application using models like counters, timers, and gauges. The third category is 'logs', that are invaluable for the overall observability of the application. Logs provide customers continuous information about how their application is behaving. Now, customers have a way to significantly improve the way they can observe their application, without having to make sacrifices in data granularity or richness by unifying and simplifying all the instrumentation of their application while gaining incredible analytical capabilities through Embedded Metric Format (EMF) logs.
+[Embedded Metric Format(EMF)ログ](https://aws.amazon.com/blogs/mt/enhancing-workload-observability-using-amazon-cloudwatch-embedded-metric-format/)は、EMFログの一部として存在できる高基数アプリケーションデータを生成する環境に理想的です。これにより、メトリックの次元を増やさずに済みます。 これにより、お客様はCloudWatch Logs InsightsとCloudWatch Metrics Insightsを使用してEMFログをクエリすることで、すべての属性をメトリック次元として設定する必要なく、アプリケーションデータをスライスおよびダイスできます。
 
-[Embedded Metric Format (EMF) logs](https://aws.amazon.com/blogs/mt/enhancing-workload-observability-using-amazon-cloudwatch-embedded-metric-format/) is ideal for environments which generate high cardinality application data, that can be part of the EMF logs without having to increase metric dimensions. This still allows customers to slice and dice the application data by querying EMF logs through CloudWatch Logs Insights and CloudWatch Metrics Insights without needing to put every attribute as a metric dimension.
+[数百万のTelcoまたはIoTデバイスからのテレメトリデータを集計](https://aws.amazon.com/blogs/mt/how-bt-uses-amazon-cloudwatch-to-monitor-millions-of-devices/)するお客様は、デバイスのパフォーマンスとデバイスが報告する一意のテレメトリに迅速に深掘りする機能の洞察が必要です。 また、膨大なデータを掘り下げることなく、問題をより簡単かつ迅速にトラブルシューティングする必要があります。 Embedded Metric Format(EMF)ログを使用することで、メトリクスとログを1つのエンティティに組み合わせることで大規模な可観測性を実現し、コスト効率とパフォーマンスの向上によりトラブルシューティングを改善できます。
 
-Customers aggregating [telemetry data from millions of Telco or IoT devices](https://aws.amazon.com/blogs/mt/how-bt-uses-amazon-cloudwatch-to-monitor-millions-of-devices/) require insights into their devices performance and ability to quickly deep dive into unique telemetry that the devices report. They also need to troubleshoot problems easier & faster without requiring to dig through humongous data to provide a quality service. By using Embedded Metric Format (EMF) logs customers can accomplish large scale observability by combining metrics and logs into single entity and improve troubleshooting with cost efficiency and better performance.
+## 埋め込みメトリックフォーマット(EMF)ログの生成
 
-## Generating Embedded Metric Format (EMF) logs
+以下の方法で埋め込みメトリックフォーマットログを生成できます。
 
-The following methods can be used to generate Embedded metric format logs
+1. オープンソースのクライアントライブラリを使用して、エージェント([CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_CloudWatch_Agent.html) や Fluent-Bit、Firelensなど)を介してEMFログを生成および送信します。
 
-1. Generate and send the EMF logs through an agent (like [CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_CloudWatch_Agent.html) or Fluent-Bit or Firelens) using open-sourced client libraries.
-
-   - Open-sourced client libraries are available in the following languages which can be used to create EMF logs
+   - EMFログを作成するために使用できる以下の言語でオープンソースのクライアントライブラリが利用可能です。
      - [Node.Js](https://github.com/awslabs/aws-embedded-metrics-node)
      - [Python](https://github.com/awslabs/aws-embedded-metrics-python)
      - [Java](https://github.com/awslabs/aws-embedded-metrics-java)
      - [C#](https://github.com/awslabs/aws-embedded-metrics-dotnet)
-   - EMF logs can be generated using AWS Distro for OpenTelemetry (ADOT). ADOT is a secure, production-ready, AWS-supported distribution of the OpenTelemetry project part of the Cloud Native Computing Foundation (CNCF). OpenTelemetry is an open-source initiative that provides APIs, libraries, and agents to collect distributed traces, logs and metrics for application monitoring & removes boundaries and restrictions between vendor-specific formats. There are two components required for this, an OpenTelemetry compliant data source and [ADOT Collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) enabled for use with [CloudWatch EMF](https://aws-otel.github.io/docs/getting-started/cloudwatch-metrics#cloudwatch-emf-exporter-awsemf) logs.
+   - EMFログは、AWS Distro for OpenTelemetry (ADOT) を使用して生成できます。ADOT は、Cloud Native Computing Foundation (CNCF) の一部である OpenTelemetry プロジェクトの、セキュアで実稼働準備ができており、AWS がサポートするディストリビューションです。OpenTelemetry は、アプリケーションモニタリングのための分散トレース、ログ、メトリクスを収集する API、ライブラリ、エージェントを提供し、ベンダー固有のフォーマット間の境界と制限を取り除くオープンソースイニシアチブです。これには、OpenTelemetry 準拠のデータソースと、[CloudWatch EMF](https://aws-otel.github.io/docs/getting-started/cloudwatch-metrics#cloudwatch-emf-exporter-awsemf) ログで使用するために有効化された [ADOT Collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) の 2 つのコンポーネントが必要です。
 
-2. Manually constructed logs conforming to [defined specification in JSON format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html), can be sent through [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_CloudWatch_Agent.html) or [PutLogEvents API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_PutLogEvents.html) to CloudWatch.
+2. [JSON 形式で定義された仕様](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)に準拠する手動で構築されたログを、[CloudWatch エージェント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_CloudWatch_Agent.html) または [PutLogEvents API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_PutLogEvents.html) を介して CloudWatch に送信できます。
 
-## Viewing Embedded Metric Format logs in CloudWatch console
+## CloudWatch コンソールで Embedded Metric Format ログを表示する
 
-After generating the Embedded Metric Format (EMF) logs that extract metrics customers can [view them in CloudWatch console](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_View.html) under Metrics. Embedded metrics have the dimensions that are specified while generating the logs. Embedded metrics generated using client libraries have ServiceType, ServiceName, LogGroup as default dimensions.
+メトリクスを抽出する Embedded Metric Format(EMF)ログを生成した後、お客様は [CloudWatch コンソールのメトリクス下](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_View.html) でそれらを表示できます。埋め込みメトリクスには、ログ生成時に指定されたディメンションがあります。クライアントライブラリを使用して生成された埋め込みメトリクスには、ServiceType、ServiceName、LogGroup がデフォルトのディメンションとしてあります。
 
-- **ServiceName**: The name of the service is overridden, however for services where the name cannot be inferred (e.g. Java process running on EC2) a default value of Unknown is used if not explicitly set.
-- **ServiceType**: The type of the service is overridden, however for services where the type cannot be inferred (e.g. Java process running on EC2) a default value of Unknown is used if not explicitly set.
-- **LogGroupName**: Customers can optionally configure the destination log group that metrics should be delivered to, for agent-based platforms. This value is passed from the library to the agent in the Embedded Metric payload. If a LogGroup is not provided, the default value will be derived from the service name: -metrics
-- **LogStreamName**: Customers can optionally configure the destination log stream that metrics should be delivered to, for agent-based platforms. This value will be passed from the library to the agent in the Embedded Metric payload. If a LogStreamName is not provided, the default value will be derived by the agent (this will likely be the hostname).
-- **NameSpace**: Overrides the CloudWatch namespace. If not set, a default value of aws-embedded-metrics is used.
+- **ServiceName**: サービス名は上書きされますが、名前を推測できないサービス(EC2 で実行されている Java プロセスなど)の場合、明示的に設定されていない限り、Unknown のデフォルト値が使用されます。
 
-A sample EMF logs looks like below in the CloudWatch Console logs
+- **ServiceType**: サービスタイプは上書きされますが、タイプを推測できないサービス(EC2で実行されているJavaプロセスなど)の場合、明示的に設定されていない限り、Unknownのデフォルト値が使用されます。
+
+- **LogGroupName**: エージェントベースのプラットフォームの場合、お客様はオプションで、メトリクスを配信する宛先のロググループを構成できます。この値は、Embedded Metric ペイロード内のエージェントにライブラリから渡されます。LogGroupが指定されていない場合、デフォルト値はサービス名から導出されます: -metrics
+
+- **LogStreamName**: エージェントベースのプラットフォームの場合、お客様はオプションで、メトリクスを配信する宛先のログストリームを構成できます。この値は、Embedded Metric ペイロード内のエージェントにライブラリから渡されます。LogStreamNameが指定されていない場合、デフォルト値はエージェントによって導出されます(これはおそらくホスト名になります)。
+
+- **NameSpace**: CloudWatch 名前空間をオーバーライドします。設定されていない場合、デフォルト値の aws-embedded-metrics が使用されます。
+
+CloudWatch コンソールのログ内のサンプル EMF ログは次のようになります。
 
 ```json
 2023-05-19T15:20:39.391Z 238196b6-c8da-4341-a4b7-0c322e0ef5bb INFO
@@ -96,42 +98,42 @@ A sample EMF logs looks like below in the CloudWatch Console logs
 }
 ```
 
-For the same EMF log, the extracted metrics looks like below, which can be queried in **CloudWatch Metrics**.
+同じ EMF ログについて、抽出されたメトリクスは以下のようになり、**CloudWatch メトリクス** でクエリできます。
 
-![CloudWatch EMF Metrics](../../images/emf_extracted_metrics.png)
+![CloudWatch EMF メトリクス](../../images/emf_extracted_metrics.png)
 
-Customers can query the detailed log events associated with the extracted metrics using **CloudWatch Logs Insights** to get deep insights into the root causes of operational events. One of the benefits of extracting metrics from EMF logs is that the customers can filter logs by the unique metric (metric name plus unique dimension set) and metric values, to get context on the events that contributed to the aggregated metric value.
+お客様は、**CloudWatch Logs Insights** を使用して、抽出されたメトリクスに関連付けられている詳細なログイベントをクエリすることで、運用イベントの根本原因について深い洞察を得ることができます。EMF ログからメトリクスを抽出するメリットの 1 つは、お客様がログを一意のメトリクス(メトリクス名プラス一意のディメンションセット)とメトリクス値でフィルタリングできることです。これにより、集計されたメトリクス値に貢献したイベントのコンテキストが得られます。
 
-For the same EMF logs discussed above, an example query having ProcessingLatency as a metric and Service as a dimension to get an impacted request id or device id is shown below as sample query in CloudWatch Logs Insights.
+上記で説明した同じ EMF ログについて、ProcessingLatency をメトリクス、Service をディメンションとするサンプルクエリを、影響を受けたリクエスト ID やデバイス ID を取得するための CloudWatch Logs Insights のサンプルクエリとして以下に示します。
 
 ```json
 filter ProcessingLatency < 200 and Service = "Aggregator"
 | fields @requestId, @ingestionTime, @DeviceId
 ```
 
-![CloudWatch EMF Logs](../../images/emf_extracted_CWLogs.png)
+![CloudWatch EMF ログ](../../images/emf_extracted_CWLogs.png)
 
-## Alarms on metrics created with EMF logs
+## EMF ログで作成されたメトリクスのアラーム
 
-Creating [alarms on metrics generated by EMF](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Alarms.html) follows the same pattern as creating alarms on any other metrics. The key thing to note here is, EMF metric generation depends on log publishing flow, because the CloudWatch Logs process the EMF logs & transform the metrics. So it’s important to publish logs in a timely manner so that the metric datapoints are created within the period of time in which alarms are evaluated.
+[EMF で生成されたメトリクスのアラーム](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Alarms.html) の作成は、他のメトリクスのアラーム作成と同じパターンに従います。ここで注意すべき重要な点は、EMF メトリクスの生成はログ公開フローに依存していることです。これは、CloudWatch Logs が EMF ログを処理し、メトリクスに変換するためです。したがって、アラームが評価される期間内にメトリックデータポイントが作成されるように、タイムリーにログを公開することが重要です。
 
-For the same EMF logs discussed above, an example alarm is created and shown below using the ProcessingLatency metric as a datapoint with a threshold.
+上記の同じ EMF ログを使用して、ProcessingLatency メトリクスをデータポイントとし、しきい値を使用したアラームの例を以下に示します。
 
 ![CloudWatch EMF Alarm](../../images/EMF-Alarm.png)
 
-## Latest features of EMF Logs
+## EMF ログの最新機能
 
-Customers can send EMF logs to CloudWatch Logs using [PutLogEvents API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_PutLogEvents.html) and may optionally include the HTTP header `x-amzn-logs-format: json/emf` to instruct CloudWatch Logs that the metrics should be extracted, it is no longer necessary.
+お客様は [PutLogEvents API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Generation_PutLogEvents.html) を使用して EMF ログを CloudWatch Logs に送信できます。オプションで HTTP ヘッダー `x-amzn-logs-format: json/emf` を含めることで、CloudWatch Logs にメトリクスを抽出する必要があることを指示できましたが、これはもう必要ありません。
 
-Amazon CloudWatch supports [high resolution metric extraction](https://aws.amazon.com/about-aws/whats-new/2023/02/amazon-cloudwatch-high-resolution-metric-extraction-structured-logs/) with up to 1 second granularity from structured logs using Embedded Metric Format (EMF). Customers can provide an optional [StorageResolution](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Resolution_definition) parameter within EMF specification logs with a value of 1 or 60 (default) to indicate the desired resolution (in seconds) of the metric. Customers can publish both standard resolution (60 seconds) and high resolution (1 second) metrics via EMF, enabling granular visibility into their applications’ health and performance.
+Amazon CloudWatch は、Embedded Metric Format(EMF)を使用した構造化ログから、最大 1 秒の粒度で[高解像度メトリック抽出](https://aws.amazon.com/about-aws/whats-new/2023/02/amazon-cloudwatch-high-resolution-metric-extraction-structured-logs/)をサポートしています。 お客様は EMF 仕様ログ内にオプションの [StorageResolution](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Resolution_definition) パラメータを指定し、値を 1 または 60(デフォルト) のいずれかに設定することで、メトリックの希望解像度(秒単位)を示すことができます。 お客様は EMF を介して標準解像度(60 秒)および高解像度(1 秒)の両方のメトリックを公開できるため、アプリケーションの正常性とパフォーマンスを詳細に可視化できます。
 
-Amazon CloudWatch provides [enhanced visibility into errors](https://aws.amazon.com/about-aws/whats-new/2023/01/amazon-cloudwatch-enhanced-error-visibility-embedded-metric-format-emf/) in Embedded Metric Format (EMF) with two error metrics ([EMFValidationErrors & EMFParsingErrors](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch-Logs-Monitoring-CloudWatch-Metrics.html)). This enhanced visibility helps customers quickly identify and remediate errors when leveraging EMF, thereby simplifying the instrumentation process .
+Amazon CloudWatch は、Embedded Metric Format(EMF) で 2 つのエラーメトリック ([EMFValidationErrors と EMFParsingErrors](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch-Logs-Monitoring-CloudWatch-Metrics.html)) を使用して[エラーの可視性を強化](https://aws.amazon.com/about-aws/whats-new/2023/01/amazon-cloudwatch-enhanced-error-visibility-embedded-metric-format-emf/)しています。 この可視性の向上により、お客様は EMF を活用した際にエラーをすばやく特定および修正できるため、計装プロセスが簡素化されます。
 
-With the increased complexity of managing modern applications, customers need more flexibility when defining and analyzing custom metrics. Hence the maximum number of metric dimensions has been increased from 10 to 30. Customers can create custom metrics using [EMF logs with up to 30 dimensions](https://aws.amazon.com/about-aws/whats-new/2022/08/amazon-cloudwatch-metrics-increases-throughput/).
+近代的なアプリケーションの管理が複雑化するにつれ、お客様はカスタムメトリックの定義と分析についてより柔軟性が必要となっています。 そのため、メトリックディメンションの最大数が 10 から 30 に増加しました。 お客様は [最大 30 のディメンションを持つ EMF ログを使用して](https://aws.amazon.com/about-aws/whats-new/2022/08/amazon-cloudwatch-metrics-increases-throughput/) カスタムメトリックを作成できます。
 
-## Additional References:
+## 参考資料
 
-- One Observability Workshop on [Embedded Metric Format with an AWS Lambda function](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/clientlibrary) sample using NodeJS Library.
-- Serverless Observability Workshop on [Async metrics using Embedded Metrics Format](https://serverless-observability.workshop.aws/en/030_cloudwatch/async_metrics_emf.html) (EMF)
-- [Java code sample using PutLogEvents API](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/putlogevents) to send EMF logs to CloudWatch Logs
-- Blog article: [Lowering costs and focusing on our customers with Amazon CloudWatch embedded custom metrics](https://aws.amazon.com/blogs/mt/lowering-costs-and-focusing-on-our-customers-with-amazon-cloudwatch-embedded-custom-metrics/)
+- NodeJS ライブラリを使用した AWS Lambda 関数での[Embedded Metric Format を用いたワークショップ](https://catalog.workshops.aws/observability/ja/aws-native/metrics/emf/clientlibrary)
+- 非同期メトリクスを用いた[Embedded Metrics Format (EMF) を用いたサーバーレス可観測性ワークショップ](https://serverless-observability.workshop.aws/ja/030_cloudwatch/async_metrics_emf.html)
+- PutLogEvents API を使用した[Java コードサンプル](https://catalog.workshops.aws/observability/ja/aws-native/metrics/emf/putlogevents) CloudWatch Logs へ EMF ログを送信
+- ブログ記事: [Amazon CloudWatch 組み込みカスタムメトリクスを使用してコストを削減し、顧客に注力](https://aws.amazon.com/blogs/mt/lowering-costs-and-focusing-on-our-customers-with-amazon-cloudwatch-embedded-custom-metrics/)

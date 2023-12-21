@@ -1,57 +1,56 @@
-# Traces
+# トレース
 
-Traces represent an entire journey of the requests as they traverse through different components of an application. 
+トレースは、アプリケーションの異なるコンポーネントを通過する際のリクエストの完全な経路を表しています。
 
-Unlike logs or metrics, *traces* are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters, and metadata.
-
-!!! tip
-    There is conceptual similarity between [logs](../../signals/logs/) and traces, however a trace is intended to be considered in a cross-service context, whereas logs are typically limited to the execution of a single service or application.
-
-Today's developers are leaning towards building modular and distributed applications. Some call these [Service Oriented Architecture](https://en.wikipedia.org/wiki/Service-oriented_architecture), others will refer to them as [microservices](https://aws.amazon.com/microservices/). Regardless of the name, when something goes wrong in these loosely coupled applications, just looking at logs or events may not be sufficient to track down the root cause of an incident.  Having full visibility into request flow is essential and this is where traces add value. Through a series of causally related events that depict end-to-end request flow, traces help  you gain that visibility.
-
-Traces are an essential pillar of observability because they provide the basic information on the flow of the request as it comes and leaves the system.
+ログやメトリクスとは異なり、*トレース* は複数のアプリケーションやサービスからのイベントで構成されており、レスポンス待ち時間やサービス障害、リクエストパラメータ、メタデータなどのサービス間の接続に関するコンテキストが含まれています。 
 
 !!! tip
-    Common use cases for traces include performance profiling, debugging production issues, and root cause analysis of failures.
+    [ログ](../../signals/logs/)とトレースの間には概念的な類似点がありますが、トレースはサービス間のコンテキストで考慮されることを意図しているのに対し、ログは通常、単一のサービスまたはアプリケーションの実行に限定されます。
 
-## Instrument all of your integration points
+今日の開発者は、モジュラーで分散したアプリケーションの構築に傾倒しています。ある人はこれを [サービス指向アーキテクチャ](https://en.wikipedia.org/wiki/Service-oriented_architecture)と呼び、別の人は [マイクロサービス](https://aws.amazon.com/microservices/) と呼ぶでしょう。名前はどうあれ、こうしたゆるく結合されたアプリケーションで何か問題が発生したとき、ログやイベントだけを見ても、インシデントの根本原因を追跡するのに十分とは言えません。エンドツーエンドのリクエストフローを完全に可視化することが不可欠であり、これがトレースの付加価値です。エンドツーエンドのリクエストフローを描写する一連の因果関係のあるイベントを通じて、トレースはその可視性を得るのに役立ちます。
 
-When all of your workload functionality and code is at one place, it is easy to look at the source code to see how a request is passed across different functions. At a system level you know which machine the app is running and if something goes wrong, you can find the root cause quickly. Imagine doing that in a microservices-based architecture where different components are loosely coupled and are running in an distributed environment. Logging into numerous systems to see their logs from each interconnected request would be impractical, if not impossible.
+トレースは、システムへの入出力のリクエストフローの基本情報を提供するため、オブザーバビリティの必須の柱です。 
 
-This is where observability can help. Instrumentation is a key step towards increasing that observability. In broader terms Instrumentation is measuring the events in your application using code.
+!!! tip
+   トレースの一般的なユースケースには、パフォーマンスプロファイリング、本番環境のデバッグ、障害の根本原因分析などがあります。
 
-A typical instrumentation approach would be to assign a unique trace identifier for each request entering the system and carry that trace id as it passes through different components while adding additional metadata.
+## すべての統合ポイントにインスツルメンテーションを適用する
 
-!!! success
-    Every connection from one service to another should be instrumented to emit traces to a central collector. This approach helps you see into otherwise opaque aspects of your workload.
+ワークロードの機能とコードがすべて1か所にある場合、ソースコードを見ることで、リクエストが異なる関数間をどのように渡されるかを確認できます。システムレベルでは、アプリがどのマシンで実行されているかがわかり、問題が発生した場合は、根本原因をすぐに特定できます。 これを、緩く結合された異なるコンポーネントで構成され、分散型環境で実行されているマイクロサービスベースのアーキテクチャで行うことを想像してみてください。 相互接続された各リクエストのログを見るために数多くのシステムにログインすることは、不可能ではないにせよ非実用的です。
 
-!!! success
-    Instrumenting your application can be a largely automated process when using an auto-instrumentation agent or library.
+これは、オブザーバビリティが役立つ場面です。 インスツルメンテーションは、そのオブザーバビリティを高めるための重要なステップです。 広い意味で、インスツルメンテーションとは、コードを使用してアプリケーションのイベントを測定することです。
 
-
-## Transaction time and status matters, so measure it!
-
-A well instrumented application can produce end to end trace, which can be viewed aseither a waterfall graph like this:
-
-![WaterFall Trace](../images/waterfall-trace.png)
-
-Or a service map:
-
-![servicemap Trace](../images/service-map-trace.png)
-
-It is important that you measure the transaction times and response codes to every interaction. This will help in calculating the overall processing times and track it for compliance with your SLAs, SLOs, or business KPIs.
+典型的なインスツルメンテーションのアプローチは、システムに入ってくる各リクエストに一意のトレースIDを割り当て、そのトレースIDを異なるコンポーネントを通過しながら追加のメタデータとともに伝播させることです。
 
 !!! success
-    Only by understanding and recording the response times and status codes of your interactions can you see the contributing factors overall request patterns and workload health.
-
-## Metadata, annotations, and labels are your best friend
-
-Traces are persisted and assigned a unique ID, with each trace broken down into *spans* or *segments* (depending on your tooling) that record each step within the request’s path. A span indicates the entities with which the trace interacts, and, like the parent trace, each span is assigned a unique ID and time stamp and can include additional data and metadata as well. This information is useful for debugging because it gives you the exact time and location a problem occurred.
-
-This is best explained through a practical example. An e-commerce application may be divided into many domains: authentication, authorizatino, shipping, inventory, payment processing, fulfillment, product search, recommendations, and many more. Rather than search through traces from all of these interconnected domains though, labelling your trace with a customer ID allows you to search for only interactions that are specific to this one person. This helps you to narrow your search instantly when diagnosing an operational issue.
+    1つのサービスから別のサービスへの接続は、中央のコレクタにトレースをエミットするようにインスツルメンテーションする必要があります。このアプローチにより、ワークロードのそうでないと不透明な側面を可視化できます。
 
 !!! success
-    While the naming convention may vary between vendors, each trace can be augmented with metadata, labels, or annotations, and these are searchable across your entire workload. Adding them does require code on your part, but greatly increases the observability of your workload. 
+    自動インスツルメンテーションエージェントやライブラリを使用すると、アプリケーションのインスツルメンテーションを大幅に自動化できます。
+
+## トランザクション時間とステータスは重要なので測定しましょう!
+
+適切に計装されたアプリケーションは、エンドツーエンドのトレースを生成できます。これは、次のようなウォーターフォールグラフとして表示できます。
+
+![ウォーターフォールトレース](../images/waterfall-trace.png)
+
+または、サービスマップとして表示できます。
+
+![サービスマップトレース](../images/service-map-trace.png)
+
+すべての対話のトランザクション時間とレスポンスコードを測定することが重要です。これにより、全体的な処理時間を計算し、SLA、SLO、ビジネス KPI へのコンプライアンスを追跡できます。 
+
+!!! success
+    相互作用のレスポンス時間とステータスコードを理解・記録することで、全体的なリクエストパターンとワークロードの健全性に影響する要因がわかります。
+
+## メタデータ、アノテーション、ラベルが最良のパートナー
+
+トレースは永続化され、一意の ID が割り当てられます。各トレースは、*スパン* または *セグメント*(ツールによって呼び方が異なります)に分割され、リクエストパス内の各ステップが記録されます。スパンは、トレースが対話するエンティティを示し、親トレースと同様に、各スパンには一意の ID とタイムスタンプが割り当てられ、追加のデータやメタデータも含めることができます。この情報は、問題が発生した正確な時間と場所が分かるため、デバッグに役立ちます。
+
+これを実際の例で説明すると分かりやすいでしょう。電子商取引アプリケーションは、認証、認可、出荷、在庫、支払い処理、履行、商品検索、推奨など、多くのドメインに分割される場合があります。しかし、これらの相互接続されたすべてのドメインからのトレースを検索する代わりに、顧客 ID でトレースにラベルを付けることで、この 1 人のユーザーに固有の対話のみを検索できます。これにより、運用上の問題を診断するときに検索をすぐに絞り込むことができます。  
+
+!!! success
+    ベンダーによって命名規則は異なる可能性がありますが、各トレースにメタデータ、ラベル、アノテーションを追加でき、これらはワークロード全体で検索可能です。これらを追加するにはコードが必要ですが、ワークロードの可観測性が大幅に向上します。
 
 !!! warning
-    Traces are not logs, so be frugal with what metadata you include in your traces. And trace data is not intended for forensics and auditing, even with a high sample rate.
+   トレースはログではないので、トレースに含めるメタデータを控えめにしてください。また、トレースデータは、サンプリングレートが高くても、フォレンジックや監査を目的としたものではありません。

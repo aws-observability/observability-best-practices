@@ -1,21 +1,20 @@
 # AWS X-Ray - FAQ
 
-1. **Does AWS Distro for Open Telemetry (ADOT) support trace propagation across AWS services such as Event Bridge or SQS?
-    **Technically, that’s not ADOT but AWS X-Ray. We are working on expanding the number and types of AWS services that propagate and/or generate spans. If you have a use case depending on this, please reach out to us.
-1. **Will I be able to use the W3C trace header to ingest spans into AWS X-Ray using ADOT?**
-    Yes, later in 2023. We’re working on supporting W3C trace context propagation. 
-1. Can I trace requests across Lambda functions when SQS is involved in the middle?
-    Yes. X-Ray now supports tracing across Lambda functions when SQS is involved in the middle. Traces from upstream message producers are [automatically linked to traces](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html) from downstream Lambda consumer nodes, creating an end-to-end view of the application.
-1. **Should I use X-Ray SDK or the OTel SDK to instrument my application?**
-    OTel offers more features than the X-Ray SDK, but to choose which one is right for your use case see [Choosing between ADOT and X-Ray SDK](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html#xray-instrumenting-choosing)
-1. **Are [span events](https://opentelemetry.io/docs/instrumentation/ruby/manual/#add-span-events) supported in AWS X-Ray?**
- Span events do not fit into the X-Ray model and are hence dropped.
-1. **How can I extract data out of AWS X-Ray?**
- You can retrieve Service Graph, Traces and Root cause analytics data [using X-Ray APIs](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-gettingdata.html).
-1. **Can I achieve 100% sampling? That is, I want all traces to be recorded without sampling at all.**
- You can adjust the sampling rules to capture significantly increased amount of trace data. As long as the total segments sent do not breach the [service quota limits mentioned here](https://docs.aws.amazon.com/general/latest/gr/xray.html#limits_xray), X-Ray will make an effort to collect data as configured. There is no guarantee that this will result in 100% trace data capture as a result.
-1. **Can I dynamically increase or decrease sampling rules through APIs?**
-Yes, you can use the [X-Ray sampling APIs](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-sampling.html) to make adjustments dynamically as necessary. See this [blog for a use-case based explanation](https://aws.amazon.com/blogs/mt/dynamically-adjusting-x-ray-sampling-rules/).
-1. **Product FAQ**
-[https://aws.amazon.com/xray/faqs/]()
-
+1. **EventBridge や SQS などの AWS サービス間でトレースの伝播を ADOT はサポートしていますか?**
+    技術的には、それは ADOT ではなく AWS X-Ray です。スパンを伝播および/または生成する AWS サービスの数と種類を拡大することに取り組んでいます。これに依存するユースケースがある場合は、お問い合わせください。
+1. **2023年後半にW3Cトレースヘッダを使用して、ADOTを使用してAWS X-Rayにスパンを取り込むことができますか?**
+    はい、2023年後半にできるようになります。W3Cトレースコンテキストの伝播をサポートする作業を行っています。
+1. SQS が途中に関与している場合、Lambda 関数間でリクエストをトレースできますか?
+    はい。X-Ray は現在、SQS が途中に関与している場合の Lambda 関数間のトレースをサポートしています。上流のメッセージプロデューサーからのトレースは、下流の Lambda コンシューマーノードからのトレースと[自動的にリンクされ](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html)、アプリケーションのエンドツーエンドのビューが作成されます。
+1. **アプリケーションの計装に X-Ray SDK と OTel SDK のどちらを使用するべきですか?**
+    OTel は X-Ray SDK よりも機能が豊富ですが、ユースケースに適したものを選択するには、 [ADOT と X-Ray SDK の比較](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html#xray-instrumenting-choosing) を参照してください。
+1. **[スパンイベント](https://opentelemetry.io/docs/instrumentation/ruby/manual/#add-span-events) は AWS X-Ray でサポートされていますか?**
+    スパンイベントは X-Ray モデルに適合せず、ドロップされます。  
+1. **AWS X-Ray からデータを抽出するにはどうすればよいですか?**
+    [X-Ray API を使用して](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-gettingdata.html)、サービスグラフ、トレース、ルート原因分析データを取得できます。
+1. **サンプリングなしで、すべてのトレースを記録する 100% サンプリングを実現できますか?**
+    サンプリングルールを調整して、大幅に増加した量のトレースデータをキャプチャできます。送信されるセグメントの合計が[ここで述べられているサービスクォータ制限](https://docs.aws.amazon.com/general/latest/gr/xray.html#limits_xray)を超えない限り、X-Ray は設定されたとおりにデータを収集する努力をします。ただし、これが必ずしも 100% のトレースデータのキャプチャにつながるとは限りません。  
+1. **サンプリングルールを動的に増減できますか?**
+    はい、必要に応じて[X-Ray サンプリング API](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-sampling.html) を使用して動的に調整できます。ユースケースベースの説明については、この[ブログ](https://aws.amazon.com/blogs/mt/dynamically-adjusting-x-ray-sampling-rules/)を参照してください。
+1. **製品に関する FAQ**  
+ [https://aws.amazon.com/xray/faqs/]()

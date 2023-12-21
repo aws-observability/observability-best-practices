@@ -1,61 +1,61 @@
-# Alarms
+# アラーム
 
-An alarm refers to the state of a probe, monitor, or change in a value over or under a given threshold. A simple example would be an alarm that sends an email when a disk is full or a web site is down. More sophisticated alarms are entirely programmatic and used to drive complex interactions such as auto-scaling or creating of entire server clusters. 
+アラームとは、プローブ、モニター、または特定のしきい値を超えるか下回る値の変化の状態を指します。簡単な例として、ディスクがいっぱいになったときや Web サイトがダウンしたときにメールを送信するアラームがあります。より高度なアラームは完全にプログラムで制御されており、オートスケーリングやサーバークラスタの作成などの複雑な対話を駆動するために使用されます。
 
-Regardless of the use case though, an alarm indicates the current *state* of a metric. This state can be `OK`, `WARNING`, `ALERT`, or `NO DATA`, depending on the system in question. 
+ただし、ユースケースに関係なく、アラームはメトリクスの現在の*状態*を示します。この状態は、システムによって `OK`、`WARNING`、`ALERT`、`NO DATA` のいずれかになります。
 
-Alarms reflect this state for a period of time and are built on top of a timeseries. As such, they are derived *from* a time series. This graph below shows two alarms: one with a warning threshold, and another that is indicative of average values across this timeseries. As the volume of traffic in this shows, the alarms for the warning threshold should be in a breach state when it dips below the defined value.
+アラームはこの状態を一定期間反映し、タイムシリーズの上に構築されます。したがって、それらはタイムシリーズ*から*導出されます。この下のグラフは、2つのアラームを示しています。1つは警告しきい値のアラームで、もう1つはこのタイムシリーズ全体の平均値を示すアラームです。このグラフが示すトラフィック量で、警告しきい値のアラームは、定義された値を下回ると違反状態になる必要があります。
 
-![Timeseries with two alarms](../images/cwalarm2.png)
+![2つのアラームを持つタイムシリーズ](../images/cwalarm2.png)
 
 !!! info
-	The purpose of an alarm can be either to trigger an action (either human or progammatic), or to be informational (that a threshold is breached). Alarms provide insight into performance of a metric.
+	アラームの目的は、アクション(人間またはプログラム)をトリガーするか、情報提供(しきい値の違反)のいずれかです。アラームはメトリクスのパフォーマンスを洞察します。
 
-## Alert on things that are actionable
+## アクション可能なものに対するアラートの設定
 
-Alarm fatigue is when people get so many alerts that they have learned to ignore them. This is not an indication of a well-monitored system! Rather this is an anti-pattern.
-
-!!! success
-	Create alarms for things that are actionable, and you should always work from your [objectives](../../guides/#monitor-what-matters) backwards.
-
-For example, if you operate a web site that requires fast response times, create an alert to be delivered when your response times are exceeding a given threshold. And if you have identified that poor performance is tied to high CPU utilization then alert on this datapoint *proactively* before it becomes an issue. However, there may no need to alert on all CPU utilization *everywhere* in your environment if it does not *endanger your outcomes*.
+アラーム疲労とは、大量のアラートを受信することでそれらを無視するようになることです。これは、適切にモニタリングされているシステムの兆候ではありません。むしろ、これはアンチパターンです。
 
 !!! success
-	If an alarm does not need alert you, or trigger an automated process, then there is no need to have it alert you. You should remove the notifications from alarms that are superfluous. 
+	アクション可能なものに対してアラームを設定し、常に[目的](../../guides/#monitor-what-matters)から逆算してください。
 
-## Beware of the "everything is OK alarm"
+例えば、高速なレスポンスタイムが必要な Web サイトを運用している場合は、レスポンスタイムが特定のしきい値を超えたときにアラートが配信されるように設定します。また、パフォーマンスの低下が高い CPU 使用率と関連していることを特定した場合は、このデータポイントに対して事前に*プロアクティブに*アラートを設定します。ただし、アウトカムに*危険が及ばない*場合には、環境内の*すべて*の CPU 使用率に対してアラートを設定する必要はないかもしれません。 
 
-Likewise, a common pattern is the "everything is OK" alarm, when operators are so used to getting constant alerts that they only notice when things suddenly go silent! This is a very dangerous mode to operate in, and a pattern that works against [operational excellence](../../faq/#what-is-operational-excellence).
+!!! success
+	アラートがアクションをトリガーしたり通知する必要がない場合は、そのアラートを設定する必要はありません。不要なアラートの通知は削除する必要があります。
+
+## 「すべてOKアラーム」に注意
+
+同様に、一般的なパターンとして、オペレーターが絶え間なくアラートを受け取ることに慣れすぎているため、突然静かになったときだけ気づく「すべてOKアラーム」があります。これは非常に危険なモードで運用することであり、[運用上の卓越性](../../faq/#運用上の卓越性とは)に反するパターンです。 
 
 !!! warning
-	The "everything is OK alarm" usually requries a human to interpret it! This makes patterns like self-healing applications impossible.[^1]
+	「すべてOKアラーム」は通常、人間による解釈が必要です! これにより、セルフヒーリングアプリケーションなどのパターンが不可能になります。[^1]
 
-## Fight alarm fatigue with aggregation
+## 集約によるアラーム疲労の軽減
 
-Observability is a *human* problem, not a technology problem. And as such, your alarm strategy should focus on reducing alarms rather than creating more. As you implement  telemetry collection, it is natural to have more alerts from your environment. Be cautious though to only [alert on things that are actionable](../../signals/alarms/#alert-on-things-that-are-actionable). If the condition that caused the alert is not actionable then there is no need to report on it.
+オブザーバビリティは技術的な問題ではなく、人間的な問題です。そのため、アラーム戦略は更なるアラームの作成よりも、アラームの削減に焦点を当てるべきです。テレメトリ収集を実装するにつれて、環境からのアラートが増えるのは自然なことです。しかし、[対処可能なものだけをアラートする](../../signals/alarms/#alert-on-things-that-are-actionable)よう注意する必要があります。アラートの原因となった条件が対処できないものであれば、報告する必要はありません。
 
-This is best shown by example: if you have five web servers that use a single database for their backend, what happens to your web servers if the database is down? The answer for many people is that they get *at least six* alerts - *five* for the web servers and *one* for the database! 
+これは例を示すのが一番わかりやすいでしょう。バックエンドに単一のデータベースを使用する 5 つの Web サーバーがある場合、データベースがダウンしたときに Web サーバーに何が起こるでしょうか? 多くの人の答えは、少なくとも 6 つのアラートが発生するということです。Web サーバーからの*5* つと、データベースからの*1* つです!
 
-![Six alarms](../images/alarm3.png)
+![6 つのアラーム](../images/alarm3.png)
 
-But there are only two alerts that make sense to deliver:
+しかし、配信する意味のあるアラートは 2 つだけです。
 
-1. The web site is down, and
-1. The database is the cause
+1. Web サイトがダウンしている
+2. データベースが原因である
 
-![Two alarms](../images/alarm4.png)
-
-!!! success
-	Distilling your alerts into aggregates makes it easier for people to understand, and then easier to create runbooks and automation for.
-
-## Use your existing ITSM and support processes
-
-Regardless of your monitoring and observability platform, they must integrate into your current toolchain. 
+![2 つのアラーム](../images/alarm4.png)
 
 !!! success
-	Create trouble tickets and issues using a programmatic integration from your alerts into these tools, removing human effort and streamlining processes along the way. 
+	アラートを集約することで、人々が理解しやすくなり、次に実行手順書や自動化を作成しやすくなります。
 
-This allows you to derive important operatonal data such as [DORA metrics](https://en.wikipedia.org/wiki/DevOps).
+## 既存の ITSM とサポートプロセスを利用する
+
+監視およびオブザーバビリティプラットフォームに関係なく、それらは現在のツールチェーンと統合する必要があります。
+
+!!! success
+	アラートからこれらのツールへのプログラムによる統合を使用して、トラブルチケットと問題を作成し、人的作業を削減し、プロセスを効率化します。
+
+これにより、[DORA メトリクス](https://en.wikipedia.org/wiki/DevOps)などの重要な運用データを導出できます。
 
 
-[^1]: See https://aws.amazon.com/blogs/apn/building-self-healing-infrastructure-as-code-with-dynatrace-aws-lambda-and-aws-service-catalog/ for more about this pattern.
+[^1]: このパターンの詳細については、 https://aws.amazon.com/blogs/apn/building-self-healing-infrastructure-as-code-with-dynatrace-aws-lambda-and-aws-service-catalog/ を参照してください。

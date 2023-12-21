@@ -1,33 +1,28 @@
 # AWS App Runner
 
-[AWS App Runner][apprunner-main] is a fully managed service that makes it easy for developers to quickly deploy containerized web applications and APIs, at scale and with no prior infrastructure experience required. Start with your source code or a container image. App Runner builds and deploys the web application automatically, load balances traffic with encryption, scales to meet your traffic needs, and makes it easy for your services to communicate with other AWS services and applications that run in a private Amazon VPC. With App Runner, rather than thinking about servers or scaling, you have more time to focus on your applications.
+[AWS App Runner][apprunner-main] は、開発者がコンテナ化された Web アプリケーションや API を、インフラストラクチャの経験がなくてもスケールアウトしやすく迅速にデプロイできる、完全マネージド型のサービスです。ソースコードやコンテナイメージから始めます。App Runner は Web アプリケーションを自動的にビルドおよびデプロイし、トラフィックを暗号化してロードバランシングし、トラフィックニーズに合わせてスケールし、サービスがプライベート Amazon VPC 内で実行される他の AWS サービスやアプリケーションと簡単に通信できるようにします。App Runner を使用することで、サーバーやスケーリングを考えるのではなく、アプリケーションに集中する時間が増えます。
 
+以下のレシピをご確認ください。
 
+## 全般
+- [Container Day - Docker Con | 開発者がスケール可能な本番ウェブアプリケーションを簡単に構築する方法](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
+- [AWS ブログ | AWS App Runner サービスの集中化されたオブザーバビリティ](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
+- [AWS ブログ | AWS App Runner VPC ネットワーキングのためのオブザーバビリティ](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
+- [AWS ブログ | Amazon EventBridge による AWS App Runner アプリケーションの制御とモニタリング](https://aws.amazon.com/blogs/containers/controlling-and-monitoring-aws-app-runner-applications-with-amazon-eventbridge/)
 
+## ログ
 
-Check out the following recipes:
+- [CloudWatch Logs にストリーミングされた App Runner ログの表示][apprunner-cwl]
 
-## General
-- [Container Day - Docker Con | How Developers can get to production web applications at scale easily](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
-- [AWS Blog | Centralized observability for AWS App Runner services](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
-- [AWS Blog | Observability for AWS App Runner VPC networking](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
-- [AWS Blog | Controlling and monitoring AWS App Runner applications with Amazon EventBridge](https://aws.amazon.com/blogs/containers/controlling-and-monitoring-aws-app-runner-applications-with-amazon-eventbridge/)
+## メトリクス
 
+- [CloudWatch にレポートされた App Runner サービスのメトリクスの表示][apprunner-cwm]
 
-## Logs
-
-- [Viewing App Runner logs streamed to CloudWatch Logs][apprunner-cwl]
-
-## Metrics
-
-- [Viewing App Runner service metrics reported to CloudWatch][apprunner-cwm]
-
-
-## Traces
-- [Getting Started with AWS X-Ray tracing for App Runner using AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/getting-started/apprunner)
+## トレース
+- [AWS Distro for OpenTelemetry を使用した App Runner の AWS X-Ray トレース入門](https://aws-otel.github.io/docs/getting-started/apprunner)
 - [Containers from the Couch | AWS App Runner X-Ray Integration](https://youtu.be/cVr8N7enCMM)
-- [AWS Blog | Tracing an AWS App Runner service using AWS X-Ray with OpenTelemetry](https://aws.amazon.com/blogs/containers/tracing-an-aws-app-runner-service-using-aws-x-ray-with-opentelemetry/)
-- [AWS Blog | Enabling AWS X-Ray tracing for AWS App Runner service using AWS Copilot CLI](https://aws.amazon.com/blogs/containers/enabling-aws-x-ray-tracing-for-aws-app-runner-service-using-aws-copilot-cli/)
+- [AWS ブログ | OpenTelemetry を使用した AWS X-Ray による AWS App Runner サービスのトレース](https://aws.amazon.com/blogs/containers/tracing-an-aws-app-runner-service-using-aws-x-ray-with-opentelemetry/)
+- [AWS ブログ | AWS Copilot CLI を使用した AWS App Runner サービスの AWS X-Ray トレースの有効化](https://aws.amazon.com/blogs/containers/enabling-aws-x-ray-tracing-for-aws-app-runner-service-using-aws-copilot-cli/)
 
 [apprunner-main]: https://aws.amazon.com/apprunner/
 [aes-ws]: https://bookstore.aesworkshops.com/

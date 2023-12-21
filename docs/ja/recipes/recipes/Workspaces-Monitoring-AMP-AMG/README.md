@@ -1,15 +1,15 @@
-Organizations have started adopting [Amazon Workspaces](https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces.html) as virtual cloud based desktop as a solution (DAAS) to replace their existing traditional desktop solution to shift the cost and effort of maintaining laptops and desktops to a cloud pay-as-you-go model. Organizations using Amazon Workspaces would need support of these managed services to monitor their workspaces environment for Day 2 operations. A cloud based managed open source monitoring solution such as Amazon Managed Service for Prometheus and Amazon Managed Grafana helps IT teams to quickly setup and operate a monitoring solution to save cost. Monitoring CPU, memory, network, or disk activity from Amazon Workspace eliminates guesswork while troubleshooting Amazon Workspaces environment.
+組織は、既存の従来のデスクトップソリューションをクラウドのペイアスユーゴー型モデルに移行し、ラップトップやデスクトップのメンテナンスコストと労力を転嫁するソリューション(DAAS)として、[Amazon Workspaces](https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces.html) を仮想クラウドベースのデスクトップとして採用し始めています。 Amazon Workspaces を使用する組織は、これらのマネージドサービスのサポートが必要になり、デイ 2 オペレーションの Workspaces 環境を監視するでしょう。 Amazon Managed Service for Prometheus や Amazon Managed Grafana などのクラウドベースのオープンソース監視ソリューションは、IT チームが迅速に監視ソリューションのセットアップと運用を行い、コストを節約するのに役立ちます。 Amazon Workspace からの CPU、メモリ、ネットワーク、ディスクアクティビティを監視することで、Amazon Workspaces 環境のトラブルシューティング時の推測作業が不要になります。
 
-A managed monitoring solution on your Amazon Workspaces environments yields following organizational benefits:
+Amazon Workspaces 環境でのマネージド監視ソリューションによって、以下のような組織的メリットが得られます。
 
-* Service desk staff can quickly identify and drill down to Amazon Workspace issues that need investigation without guesswork by leveraging managed monitoring services such as Amazon Managed Service for Prometheus and Amazon Managed Grafana
-* Service desks staffs can investigate Amazon Workspace issues after the event using the historical data in Amazon Managed Service for Prometheus
-* Eliminates long calls that waste time questioning business users on Amazon Workspaces issues
+* サービスデスクスタッフは、Amazon Managed Service for Prometheus や Amazon Managed Grafana などのマネージド監視サービスを活用することで、調査が必要な Amazon Workspace の問題をすぐに特定し、推測することなくドリルダウンできます。
+* サービスデスクスタッフは、Amazon Managed Service for Prometheus の履歴データを使用して、イベント後に Amazon Workspace の問題を調査できます。 
+* Amazon Workspaces の問題についてビジネスユーザーに時間のかかる質問をする必要がなくなります。
 
 
-In this blog post, we will set up Amazon Managed Service for Prometheus, Amazon Managed Grafana, and a Prometheus server on Amazon Elastic Compute Cloud (EC2) to provide a monitoring solution for Amazon Workspaces.  We will automate the deployment of Prometheus agents on any new Amazon Workspace using Active Directory Group Policy Objects (GPO).
+このブログ記事では、Amazon Workspaces の監視ソリューションを提供するために、Amazon Managed Service for Prometheus、Amazon Managed Grafana、Amazon Elastic Compute Cloud(EC2)上の Prometheus サーバーを設定します。 アクティブディレクトリのグループポリシーオブジェクト(GPO)を使用して、新しい Amazon Workspace 上の Prometheus エージェントを自動的にデプロイします。
 
-**Solution Architecture**
+**ソリューションアーキテクチャ**
 
-The following diagram demonstrates the solution to monitor your Amazon Workspaces environment using AWS native managed services such as Amazon Managed Service for Prometheus and Amazon Managed Grafana. This solution will deploy a Prometheus server on Amazon Elastic Compute Cloud (EC2) instance which polls prometheus agents on your Amazon Workspace periodically and remote writes metrics to Amazon Managed Service for Prometheus. We will be using Amazon Managed Grafana to query and visualize metrics on your Amazon Workspaces infrastructure.
+次の図は、Amazon Managed Service for Prometheus や Amazon Managed Grafana などの AWS ネイティブマネージドサービスを使用して Amazon Workspaces 環境を監視するソリューションを示しています。 このソリューションでは、定期的に Amazon Workspace 上の prometheus エージェントをポーリングし、メトリクスを Amazon Managed Service for Prometheus にリモートライトする Amazon Elastic Compute Cloud(EC2)インスタンス上に Prometheus サーバーをデプロイします。 Amazon Workspaces インフラストラクチャ上のメトリクスをクエリおよび視覚化するために Amazon Managed Grafana を使用します。
 ![Screenshot](prometheus.drawio-dotted.drawio.png)

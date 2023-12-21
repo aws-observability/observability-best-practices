@@ -1,32 +1,32 @@
 # Amazon CloudWatch Container Insights
 
-In this section of Observability best practices guide, we will deep dive on to following topics related to Amazon CloudWatch Container Insights :
+このオブザーバビリティのベストプラクティスガイドのセクションでは、Amazon CloudWatch Container Insights に関連する次のトピックを深掘りします。
 
-* Introduction to Amazon CloudWatch Container Insights
-* Using Amazon CloudWatch Container Insights with AWS Distro for Open Telemetry
-* Fluent Bit Integration in CloudWatch Container Insights for Amazon EKS
-* Cost savings with Container Insights on Amazon EKS
-* Using EKS Blueprints to setup Container Insights
+* Amazon CloudWatch Container Insights の概要
+* AWS Distro for OpenTelemetry での Amazon CloudWatch Container Insights の使用  
+* Amazon EKS の CloudWatch Container Insights 用 Fluent Bit インテグレーション
+* Amazon EKS での Container Insights によるコスト削減
+* EKS ブループリントを使用した Container Insights の設定
 
-### Introduction
+### はじめに
 
-[Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) helps customers collect, aggregate, and summarize metrics and logs from containerized applications and microservices. Metrics data is collected as performance log events using the [embedded metric format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html). These performance log events use a structured JSON schema that enables high-cardinality data to be ingested and stored at scale. From this data, CloudWatch creates aggregated metrics at the cluster, node, pod, task, and service level as CloudWatch metrics. The metrics that Container Insights collects are available in CloudWatch automatic dashboards. Container Insights are available for Amazon EKS clusters with self managed node groups, managed node groups and AWS Fargate profiles.
+[Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) は、コンテナ化されたアプリケーションとマイクロサービスからメトリクスとログを収集、集約、要約するのに役立ちます。メトリクスデータは、[埋め込みメトリックフォーマット](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html)を使用したパフォーマンスログイベントとして収集されます。これらのパフォーマンスログイベントは、高基数データを大規模に取り込み、保存できるように構造化された JSON スキーマを使用します。このデータから、CloudWatch はクラスター、ノード、Pod、タスク、サービスレベルで CloudWatch メトリクスとして集計メトリクスを作成します。Container Insights が収集するメトリクスは、CloudWatch の自動ダッシュボードで利用できます。Container Insights は、セルフマネージドノードグループ、マネージドノードグループ、AWS Fargate プロファイルを持つ Amazon EKS クラスターで利用できます。
 
-From a cost optimization standpoint and to help you manage your Container Insights cost, CloudWatch does not automatically create all possible metrics from the log data. However, you can view additional metrics and additional levels of granularity by using CloudWatch Logs Insights to analyze the raw performance log events. Metrics collected by Container Insights are charged as custom metrics. For more information about CloudWatch pricing, see [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/).
+コスト最適化の観点から、Container Insights のコストを管理するのに役立つように、CloudWatch はログデータから可能なすべてのメトリクスを自動的に作成しません。ただし、CloudWatch Logs Insights を使用して生のパフォーマンスログイベントを分析することで、追加のメトリクスとより詳細な粒度レベルを表示できます。Container Insights によって収集されたメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、 [Amazon CloudWatch 料金](https://aws.amazon.com/cloudwatch/pricing/) を参照してください。
 
-In Amazon EKS, Container Insights uses a containerized version of the [CloudWatch agent](https://gallery.ecr.aws/cloudwatch-agent/cloudwatch-agent) which is provided by Amazon via Amazon Elastic Container Registry to discover all of the running containers in a cluster. It then collects performance data at every tier of the performance stack. Container Insights supports encryption with the AWS KMS key for the logs and metrics that it collects. To enable this encryption, you must manually enable AWS KMS encryption for the log group that receives Container Insights data. This results in CloudWatch Container Insights encrypting this data using the provided AWS KMS key. Only symmetric keys are supported and asymmetric AWS KMS keys are not supported to encrypt your log groups. Container Insights are supported only in Linux instances. Container Insights for Amazon EKS is supported in the [these](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html#:~:text=Container%20Insights%20for%20Amazon%20EKS%20and%20Kubernetes%20is%20supported%20in%20the%20following%20Regions%3A) AWS Regions.
+Amazon EKS では、Container Insights は Amazon Elastic Container Registry を介して Amazon が提供するコンテナ化された [CloudWatch エージェント](https://gallery.ecr.aws/cloudwatch-agent/cloudwatch-agent) バージョンを使用して、クラスター内のすべての実行中コンテナを検出します。次に、パフォーマンススタックのすべてのレベルでパフォーマンスデータを収集します。Container Insights は、収集するログとメトリクスの AWS KMS キーによる暗号化をサポートしています。この暗号化を有効にするには、Container Insights データを受信するロググループで AWS KMS 暗号化を手動で有効にする必要があります。これにより、CloudWatch Container Insights が提供された AWS KMS キーを使用してこのデータを暗号化します。サポートされているのは対称キーのみであり、非対称 AWS KMS キーによるロググループの暗号化はサポートされていません。Container Insights は Linux インスタンスでのみサポートされています。Amazon EKS 用の Container Insights は、[こちらの](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html#:~:text=Container%20Insights%20for%20Amazon%20EKS%20and%20Kubernetes%20is%20supported%20in%20the%20following%20Regions%3A) AWS リージョンでサポートされています。
 
-### Using Amazon CloudWatch Container Insights  with AWS Distro for Open Telemetry
+### AWS Distro for OpenTelemetry を使用した Amazon CloudWatch Container Insights
 
-We will now deep dive in to [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) which is one of the options to enable collection of Container insight metrics from Amazon EKS workloads. [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) is a secure, AWS-supported distribution of the [OpenTelemetry](https://opentelemetry.io/docs/) project. With ADOT, users can instrument their applications just once to send correlated metrics and traces to multiple monitoring solutions. With ADOT support for CloudWatch Container Insights, customers can collect system metrics such as CPU, memory, disk, and network usage from Amazon EKS clusters running on [Amazon Elastic Cloud Compute](https://aws.amazon.com/pm/ec2/?trk=ps_a134p000004f2ZFAAY&trkCampaign=acq_paid_search_brand&sc_channel=PS&sc_campaign=acquisition_US&sc_publisher=Google&sc_category=Cloud%20Computing&sc_country=US&sc_geo=NAMER&sc_outcome=acq&sc_detail=amazon%20ec2&sc_content=EC2_e&sc_matchtype=e&sc_segment=467723097970&sc_medium=ACQ-P|PS-GO|Brand|Desktop|SU|Cloud%20Computing|EC2|US|EN|Text&s_kwcid=AL!4422!3!467723097970!e!!g!!amazon%20ec2&ef_id=Cj0KCQiArt6PBhCoARIsAMF5waj-FXPUD0G-cm0dJ05Mz6aXDvqEGu-S7pCXwvVusULN6ZbPbc_Alg8aArOHEALw_wcB:G:s&s_kwcid=AL!4422!3!467723097970!e!!g!!amazon%20ec2) (Amazon EC2), providing the same experience as Amazon CloudWatch agent. ADOT Collector is now available with support for CloudWatch Container Insights for Amazon EKS and AWS Fargate profile for Amazon EKS. Customers can now collect container and pod metrics such as CPU and memory utilization for their pods that are deployed to an Amazon EKS cluster and view them in CloudWatch dashboards without any changes to their existing CloudWatch Container Insights experience. This will enable customers to also determine whether to scale up or down to respond to traffic and save costs.
+次に、Amazon EKS ワークロードからコンテナインサイトメトリクスの収集を有効にするオプションの1つである [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) について詳しく見ていきます。[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) は、[OpenTelemetry](https://opentelemetry.io/docs/) プロジェクトのセキュアで AWS サポートのディストリビューションです。ADOT を使用すると、ユーザーはアプリケーションを 1 回のインスツルメンテーションで、相関メトリクスとトレースを複数のモニタリングソリューションに送信できます。ADOT が CloudWatch Container Insights をサポートすることで、[Amazon Elastic Cloud Compute](https://aws.amazon.com/pm/ec2/?trk=ps_a134p000004f2ZFAAY&trkCampaign=acq_paid_search_brand≻_channel=PS≻_campaign=acquisition_US≻_publisher=Google≻_category=Cloud%20Computing≻_country=US≻_geo=NAMER≻_outcome=acq≻_detail=amazon%20ec2≻_content=EC2_e≻_matchtype=e≻_segment=467723097970≻_medium=ACQ-P|PS-GO|Brand|Desktop|SU|Cloud%20Computing|EC2|US|EN|Text&s_kwcid=AL!4422!3!467723097970!e!!g!!amazon%20ec2&ef_id=Cj0KCQiArt6PBhCoARIsAMF5waj-FXPUD0G-cm0dJ05Mz6aXDvqEGu-S7pCXwvVusULN6ZbPbc_Alg8aArOHEALw_wcB:G:s&s_kwcid=AL!4422!3!467723097970!e!!g!!amazon%20ec2) (Amazon EC2) 上で実行されている Amazon EKS クラスターから CPU、メモリ、ディスク、ネットワークの使用状況などのシステムメトリクスを収集できるようになり、Amazon CloudWatch エージェントと同じエクスペリエンスが提供されます。ADOT Collector は現在、Amazon EKS 用および Amazon EKS の Fargate プロファイル用の CloudWatch Container Insights をサポートしています。お客様は現在、Amazon EKS クラスターにデプロイされた Pod の CPU およびメモリの使用状況などのコンテナーおよび Pod のメトリクスを収集し、既存の CloudWatch Container Insights エクスペリエンスを変更することなく CloudWatch ダッシュボードでそれらを表示できます。これにより、お客様はトラフィックに対応してスケールアップまたはスケールダウンを決定し、コストを節約することもできます。
 
-The ADOT Collector has the [concept of a pipeline](https://opentelemetry.io/docs/collector/configuration/) which comprises three key types of components, namely, receiver, processor, and exporter. A [receiver](https://opentelemetry.io/docs/collector/configuration/#receivers) is how data gets into the collector. It accepts data in a specified format, translates it into the internal format and passes it to [processors](https://opentelemetry.io/docs/collector/configuration/#processors) and [exporters](https://opentelemetry.io/docs/collector/configuration/#exporters) defined in the pipeline. It can be pull or push based. A processor is an optional component that is used to perform tasks such as batching, filtering, and transformations on data between being received and being exported. An exporter is used to determine which destination to send the metrics, logs or traces. The collector architecture allows multiple instances of such pipelines to be defined via YAML configuration. The following diagrams illustrates the pipeline components in an ADOT Collector instance deployed to Amazon EKS and Amazon EKS with Fargate profile.
+ADOT Collector には、[パイプラインの概念](https://opentelemetry.io/docs/collector/configuration/)があり、レシーバー、プロセッサー、エクスポーターの 3 つの主要なコンポーネントタイプで構成されます。[レシーバー](https://opentelemetry.io/docs/collector/configuration/#receivers) は、データがコレクターに入る方法です。指定された形式でデータを受け入れ、内部形式に変換して、パイプラインで定義されている [プロセッサー](https://opentelemetry.io/docs/collector/configuration/#processors) と [エクスポーター](https://opentelemetry.io/docs/collector/configuration/#exporters) に渡します。プルベースまたはプッシュベースのいずれかです。プロセッサーは、受信とエクスポートの間のデータに対してバッチ処理、フィルタリング、変換などのタスクを実行するために使用されるオプションのコンポーネントです。エクスポーターは、メトリクス、ログ、トレースを送信する宛先を決定するために使用されます。コレクターアーキテクチャを使用すると、YAML 設定を介して、このようなパイプラインの複数のインスタンスを定義できます。次の図は、Amazon EKS にデプロイされた ADOT Collector インスタンスと Amazon EKS with Fargate プロファイルのパイプラインコンポーネントを示しています。
 
 ![CW-ADOT-EKS](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline-eks.jpg)
 
-*Figure: Pipeline components in an ADOT Collector instance deployed to Amazon EKS*
+*図: Amazon EKS にデプロイされた ADOT Collector インスタンスのパイプラインコンポーネント*
 
-In the above architecture, we are deploying we are using an instance of [AWS Container Insights Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver) in the pipeline and collect the metrics directly from the Kubelet. AWS Container Insights Receiver (`awscontainerinsightreceiver`) is an AWS specific receiver that supports [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html). CloudWatch Container Insights collect, aggregate, and summarize metrics and logs from your containerized applications and microservices. Data are collected as as performance log events using [embedded metric format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html). From the EMF data, Amazon CloudWatch can create the aggregated CloudWatch metrics at the cluster, node, pod, task, and service level. Below is an example of a sample `awscontainerinsightreceiver` configuration :
+上記のアーキテクチャでは、パイプラインで [AWS Container Insights Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver) のインスタンスをデプロイし、Kubelet から直接メトリクスを収集しています。AWS Container Insights Receiver (`awscontainerinsightreceiver`) は、[CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) をサポートする AWS 専用のレシーバーです。CloudWatch Container Insights は、コンテナ化されたアプリケーションとマイクロサービスからメトリクスとログを収集、集計、要約します。データは、[埋め込みメトリクスフォーマット](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html)を使用してパフォーマンスログイベントとして収集されます。EMF データから、Amazon CloudWatch はクラスター、ノード、Pod、タスク、サービスレベルで集計された CloudWatch メトリクスを作成できます。以下は、`awscontainerinsightreceiver` の設定例です。
 
 ```
 receivers:
@@ -39,17 +39,17 @@ receivers:
     add_full_pod_name_metric_label: false 
 ```
 
-This entails deploying the collector as a DaemonSet using the above configuration on Amazon EKS. You will also have access to a fuller set of metrics collected by this receiver directly from the Kubelet. Having more than one instances of ADOT Collector will suffice to collect resource metrics from all the nodes in a cluster. Having a single instance of ADOT collector can be overwhelming during higher loads so always recommend to deploy more than one collector.
+これは、上記の構成を使用してコレクターを Amazon EKS 上に DaemonSet としてデプロイすることを意味します。このレシーバーから直接 Kubelet から収集されるより完全なメトリクスセットにもアクセスできます。ADOT Collector のインスタンスが複数あれば、クラスター内のすべてのノードからリソースメトリクスを収集するのに十分です。単一の ADOT コレクターインスタンスでは、高負荷時に圧倒される可能性があるため、常に複数のコレクターをデプロイすることをお勧めします。
 
 ![CW-ADOT-FARGATE](../../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline.jpg)
 
-*Figure: Pipeline components in an ADOT Collector instance deployed to Amazon EKS with Fargate profile*
+*図: Amazon EKS with Fargate プロファイルにデプロイされた ADOT Collector インスタンスのパイプラインコンポーネント*
 
-In the above architecture, the kubelet on a worker node in a Kubernetes cluster exposes resource metrics such as CPU, memory, disk, and network usage at the */metrics/cadvisor* endpoint. However, in EKS Fargate networking architecture, a pod is not allowed to directly reach the kubelet on that worker node. Hence, the ADOT Collector calls the Kubernetes API Server to proxy the connection to the kubelet on a worker node, and collect kubelet’s cAdvisor metrics for workloads on that node. These metrics are made available in Prometheus format. Therefore, the collector uses an instance of [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) as a drop-in replacement for a Prometheus server and scrapes these metrics from the Kubernetes API server endpoint. Using Kubernetes service discovery, the receiver can discover all the worker nodes in an EKS cluster. Hence, more than one instances of ADOT Collector will suffice to collect resource metrics from all the nodes in a cluster. Having a single instance of ADOT collector can be overwhelming during higher loads so always recommend to deploy more than one collector.
+上記のアーキテクチャでは、Kubernetes クラスター内のワーカーノード上の kubelet が、CPU、メモリ、ディスク、ネットワークの使用状況などのリソースメトリクスを */metrics/cadvisor* エンドポイントで公開します。ただし、EKS Fargate ネットワーキングアーキテクチャでは、Pod が直接そのワーカーノード上の kubelet に到達することはできません。したがって、ADOT Collector は Kubernetes API サーバーを呼び出して、ワーカーノード上の kubelet への接続をプロキシし、そのノード上のワークロードの kubelet の cAdvisor メトリクスを収集します。これらのメトリクスは Prometheus 形式で利用できるようになっています。したがって、コレクターは Prometheus サーバーのドロップイン置換として [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) のインスタンスを使用し、これらのメトリクスを Kubernetes API サーバーエンドポイントからスクレイピングします。Kubernetes のサービスディスカバリを使用すると、レシーバーは EKS クラスター内のすべてのワーカーノードを検出できます。したがって、ADOT Collector のインスタンスが複数あれば、クラスター内のすべてのノードからリソースメトリクスを収集するのに十分です。単一の ADOT コレクターインスタンスでは、高負荷時に圧倒される可能性があるため、常に複数のコレクターをデプロイすることをお勧めします。
 
-The metrics then go through a series of processors that perform filtering, renaming, data aggregation and conversion, and so on. The following is the list of processors used in the pipeline of an ADOT Collector instance for Amazon EKS illustrated above.
+メトリクスは、フィルタリング、名前の変更、データ集計と変換などを実行する一連のプロセッサを経由します。上記の Amazon EKS 用に示されている ADOT Collector インスタンスのパイプラインで使用されているプロセッサのリストは次のとおりです。
 
-* [Filter Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) is part of the AWS OpenTelemetry distribution to include or exclude metrics based on their name. It can be used as part of the metrics collection pipeline to filter out unwanted metrics. For example, suppose that you want Container Insights to only collect pod-level metrics (with name prefix `pod_`) excluding those for networking, with name prefix `pod_network`.
+* [Filter Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) は、AWS OpenTelemetry ディストリビューションの一部で、名前に基づいてメトリクスを含めたり除外したりします。メトリクス収集パイプラインの一部として使用して、不要なメトリクスをフィルタリングできます。たとえば、Container Insights がネットワーク関連のプレフィックス `pod_network` を除く、プレフィックス `pod_` を持つ Pod レベルのメトリクスのみを収集する場合を想定します。
 
 ```
       # filter out only renamed metrics which we care about
@@ -62,7 +62,7 @@ The metrics then go through a series of processors that perform filtering, renam
               - pod_.*
 ```
 
-* [Metrics Transform Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) can be used to rename metrics, and add, rename or delete label keys and values. It can also be used to perform scaling and aggregations on metrics across labels or label values. 
+* [Metrics Transform Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) を使用して、メトリクスの名前を変更したり、ラベルキーと値を追加、名前変更、削除したりできます。ラベルやラベル値にわたってメトリクスのスケーリングと集計を実行するためにも使用できます。
 
 ```
      metricstransform/rename:
@@ -74,7 +74,7 @@ The metrics then go through a series of processors that perform filtering, renam
             experimental_match_labels: {"container": "\\S"}
 ```
 
-* [Cumulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor) converts monotonic, cumulative sum and histogram metrics to monotonic, delta metrics. Non-monotonic sums and exponential histograms are excluded.
+* [Cumulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor) は、単調増加の累積和とヒストグラムメトリクスを単調増加のデルタメトリクスに変換します。非単調和と指数ヒストグラムは除外されます。
 
 ```
 ` # convert cumulative sum datapoints to delta
@@ -84,7 +84,7 @@ The metrics then go through a series of processors that perform filtering, renam
         - pod_network_rx_errors`
 ```
 
-* [Delta to Rate Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatorateprocessor) to convert delta sum metrics to rate metrics. This rate is a gauge.
+* [Delta to Rate Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/deltatorateprocessor) は、デルタ和メトリクスをレートメトリクスに変換します。このレートはゲージです。
 
 ```
 ` # convert delta to rate
@@ -103,7 +103,7 @@ The metrics then go through a series of processors that perform filtering, renam
             - new_container_memory_hierarchical_pgmajfault`
 ```
 
-* [Metrics Generation Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricsgenerationprocessor) can be used to create new metrics using existing metrics following a given rule. 
+* [Metrics Generation Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricsgenerationprocessor) を使用すると、既存のメトリクスに従って指定されたルールで新しいメトリクスを作成できます。
 
 ```
       experimental_metricsgeneration/1:
@@ -116,10 +116,10 @@ The metrics then go through a series of processors that perform filtering, renam
             operation: percent
 ```
 
-The final component in the pipeline is [AWS CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter), which converts the metrics to embedded metric format (EMF) and then sends them directly to CloudWatch Logs using the [PutLogEvents](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html) API. The following list of metrics is sent to CloudWatch by the ADOT Collector for each of the workloads running on Amazon EKS.
+パイプラインの最終コンポーネントは、[AWS CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) で、メトリクスを埋め込みメトリクス形式 (EMF) に変換してから、[PutLogEvents](https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_PutLogEvents.html) API を使用して直接 CloudWatch Logs に送信します。ADOT Collector によって Amazon EKS 上で実行されている各ワークロードの CloudWatch に送信されるメトリクスのリストは次のとおりです。
 
 * pod_cpu_utilization_over_pod_limit
-* pod_cpu_usage_total
+* pod_cpu_usage_total  
 * pod_cpu_limit
 * pod_memory_utilization_over_pod_limit
 * pod_memory_working_set
@@ -127,43 +127,43 @@ The final component in the pipeline is [AWS CloudWatch EMF Exporter](https://git
 * pod_network_rx_bytes
 * pod_network_tx_bytes
 
-Each metric will be associated with the following dimension sets and collected under the CloudWatch namespace named *ContainerInsights*.
+各メトリクスは、次のディメンションセットに関連付けられ、*ContainerInsights* という名前の CloudWatch ネームスペースで収集されます。
 
-* ClusterName, LaunchType
-* ClusterName, Namespace, LaunchType
-* ClusterName, Namespace, PodName, LaunchType
+* ClusterName、LaunchType
+* ClusterName、Namespace、LaunchType  
+* ClusterName、Namespace、PodName、LaunchType
 
-Further, Please learn about [Container Insights Prometheus support for ADOT](https://aws.amazon.com/blogs/containers/introducing-cloudwatch-container-insights-prometheus-support-with-aws-distro-for-opentelemetry-on-amazon-ecs-and-amazon-eks/) and [deploying ADOT collector on Amazon EKS to visualize Amazon EKS resource metrics using CloudWatch Container Insights](https://aws.amazon.com/blogs/containers/introducing-amazon-cloudwatch-container-insights-for-amazon-eks-fargate-using-aws-distro-for-opentelemetry/) to setup ADOT collector pipeline in your Amazon EKS cluster and how to visualize your Amazon EKS resource metrics in CloudWatch Container Insights.
+さらに、[ADOT 用の CloudWatch Container Insights Prometheus サポート](https://aws.amazon.com/blogs/containers/introducing-cloudwatch-container-insights-prometheus-support-with-aws-distro-for-opentelemetry-on-amazon-ecs-and-amazon-eks/) と [Amazon EKS リソースメトリクスを CloudWatch Container Insights で視覚化するための Amazon EKS への ADOT コレクターのデプロイ](https://aws.amazon.com/blogs/containers/introducing-amazon-cloudwatch-container-insights-for-amazon-eks-fargate-using-aws-distro-for-opentelemetry/) について学習し、Amazon EKS クラスターに ADOT コレクターパイプラインを設定し、Amazon EKS リソースメトリクスを CloudWatch Container Insights でどのように視覚化できるかを確認してください。
 
-### Fluent Bit Integration in CloudWatch Container Insights for Amazon EKS
+### Amazon EKS の CloudWatch Container Insights との Fluent Bit インテグレーション
 
-[Fluent Bit](https://fluentbit.io/) is an open source and multi-platform log processor and forwarder that allows you to collect data and logs from different sources, and unify and send them to different destinations including CloudWatch Logs. It’s also fully compatible with [Docker](https://www.docker.com/) and [Kubernetes](https://kubernetes.io/) environments. Using the newly launched Fluent Bit daemonset, you can send container logs from your EKS clusters to CloudWatch logs for logs storage and analytics.
+[Fluent Bit](https://fluentbit.io/) は、オープンソースのマルチプラットフォームなログ処理および転送ツールで、さまざまなソースからデータとログを収集し、CloudWatch Logs を含むさまざまなデスティネーションに統合して送信できます。また、[Docker](https://www.docker.com/) および [Kubernetes](https://kubernetes.io/) 環境と完全に互換性があります。新しくリリースされた Fluent Bit デーモンセットを使用することで、EKS クラスターからのコンテナーログを CloudWatch Logs に送信し、ログの保存と分析ができます。
 
-Due to its lightweight nature, using Fluent Bit as the default log forwarder in Container Insights on EKS worker nodes will allow you to stream application logs into CloudWatch logs efficiently and reliably. With Fluent Bit, Container Insights is able to deliver thousands of business critical logs at scale in a resource efficient manner, especially in terms of CPU and memory utilization at the pod level. In other words, compared to FluentD, which was the log forwarder used prior, Fluent Bit has a smaller resource footprint and, as a result, is more resource efficient for memory and CPU. On the other hand, [AWS for Fluent Bit image](https://github.com/aws/aws-for-fluent-bit), which includes Fluent Bit and related plugins, gives Fluent Bit an additional flexibility of adopting new AWS features faster as the image aims to provide a unified experience within AWS ecosystem.
+軽量な性質のため、EKS ワーカーノードの Container Insights でデフォルトのログ転送として Fluent Bit を使用することで、アプリケーションログを効率的かつ信頼性高く CloudWatch Logs にストリーミングできます。Fluent Bit を使うことで、Container Insights は Pod レベルの CPU やメモリ利用効率の点でリソース効率的な方法で、大規模にビジネスクリティカルなログを数千件提供できます。つまり、以前使用されていたログ転送ツールである FluentD と比較して、Fluent Bit はリソースフットプリントが小さく、結果としてメモリや CPU の点でよりリソース効率的です。一方、Fluent Bit と関連プラグインを含む [AWS for Fluent Bit イメージ](https://github.com/aws/aws-for-fluent-bit) は、イメージが AWS エコシステム内で統一されたエクスペリエンスを提供することを目的としているため、Fluent Bit に新しい AWS 機能をより迅速に採用する柔軟性を追加します。
 
-The architecture below shows individual components used by CloudWatch Container Insights for EKS:
+以下のアーキテクチャは、EKS 用の CloudWatch Container Insights で使用される個々のコンポーネントを示しています。
 
-![CW-COMPONENTS](../../../../../images/Containers/aws-native/eks/cw-components.jpg)
+![CW-COMPONENTS](../../../../../images/Containers/aws-native/eks/cw-components.jpg)  
 
-*Figure: Individual components used by CloudWatch Container Insights for EKS.*
+*図: EKS 用の CloudWatch Container Insights で使用される個々のコンポーネント*
 
-While working with containers, it is recommended to push all the logs, including application logs, through the standard output (stdout) and standard error output (stderr) methods whenever possible using the Docker JSON logging driver. For this reason, in EKS, the logging driver is configured by default and everything that a containerized application writes to `stdout` or `stderr` is streamed into a JSON file under `“/var/log/containers"` on the worker node. Container Insights classifies those logs into three different categories by default and creates dedicated input streams for each category within Fluent Bit and independent log groups within CloudWatch Logs. Those categories are:
+コンテナーを操作する際には、可能な限り Docker JSON ロギングドライバーを使用して、アプリケーションログを含むすべてのログを標準出力(stdout)と標準エラー出力(stderr)を介してプッシュすることをお勧めします。このため、EKS ではロギングドライバーがデフォルトで構成されており、コンテナ化されたアプリケーションが `stdout` または `stderr` に書き込むすべてが JSON ファイルにストリーミングされ、ワーカーノードの `“/var/log/containers"` の下に保存されます。Container Insights はこれらのログをデフォルトで 3 つのカテゴリに分類し、Fluent Bit 内と CloudWatch Logs 内のそれぞれのカテゴリ用に専用の入力ストリームと独立したロググループを作成します。これらのカテゴリは以下のとおりです。
 
-* Application logs: All applications logs stored under `“/var/log/containers/*.log"` are streamed into the dedicated `/aws/containerinsights/Cluster_Name/application` log group. All non-application logs such as kube-proxy and aws-node logs are excluded by default. However, additional Kubernetes add-on logs, such as CoreDNS logs, are also processed and streamed into this log group.
-* Host logs: system logs for each EKS worker node are streamed into the `/aws/containerinsights/Cluster_Name/host` log group. These system logs include the contents of `“/var/log/messages,/var/log/dmesg,/var/log/secure”` files. Considering the stateless and dynamic nature of containerized workloads, where EKS worker nodes are often being terminated during scaling activities, streaming those logs in real time with Fluent Bit and having those logs available in CloudWatch logs, even after the node is terminated, are critical in terms of observability and monitoring health of EKS worker nodes. It also enables you to debug or troubleshoot cluster issues without logging into worker nodes in many cases and analyze these logs in more systematic way.
-* Data plane logs: EKS already provides [control plane logs](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html). With Fluent Bit integration in Container Insights, the logs generated by EKS data plane components, which run on every worker node and are responsible for maintaining running pods are captured as data plane logs. These logs are also streamed into a dedicated CloudWatch log group under `‘ /aws/containerinsights/Cluster_Name/dataplane`. kube-proxy, aws-node, and Docker runtime logs are saved into this log group. In addition to control plane logs, having data plane logs stored in CloudWatch Logs helps to provide a complete picture of your EKS clusters.
+* アプリケーションログ: `“/var/log/containers/*.log"` の下に保存されているすべてのアプリケーションログは、専用の `/aws/containerinsights/Cluster_Name/application` ロググループにストリーミングされます。kube-proxy や aws-node ログなどのアプリケーション以外のログはデフォルトで除外されます。ただし、CoreDNS ログなどの追加の Kubernetes アドオンログも処理され、このロググループにストリーミングされます。  
+* ホストログ: 各 EKS ワーカーノードのシステムログが `/aws/containerinsights/Cluster_Name/host` ロググループにストリーミングされます。これらのシステムログには、`“/var/log/messages,/var/log/dmesg,/var/log/secure”` ファイルの内容が含まれます。コンテナ化されたワークロードのステートレスで動的な性質を考えると、EKS ワーカーノードはスケーリングアクティビティ中に頻繁に終了されるため、Fluent Bit でこれらのログをリアルタイムにストリーミングし、ノードが終了した後も CloudWatch Logs でこれらのログを利用できるようにすることが、EKS ワーカーノードの正常性とヘルスモニタリングの観点から重要です。また、多くの場合ワーカーノードにログインすることなくクラスターの問題をデバッグまたはトラブルシューティングできるようになり、これらのログをより体系的な方法で分析できます。
+* データプレーンログ: EKS はすでに [コントロールプレーンログ](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) を提供しています。Container Insights との Fluent Bit インテグレーションにより、実行中の Pod を維持管理する責任があるすべてのワーカーノード上で実行される EKS データプレーンコンポーネントによって生成されるログがデータプレーンログとしてキャプチャされます。これらのログも `‘/aws/containerinsights/Cluster_Name/dataplane` の下に専用の CloudWatch ロググループにストリーミングされます。kube-proxy、aws-node、Docker ランタイムのログがこのロググループに保存されます。コントロールプレーンログに加えて、データプレーンログを CloudWatch Logs に保存することで、EKS クラスターの完全な画像を提供できます。
 
-Further, Please learn more on topics such as Fluent Bit Configurations, Fluent Bit Monitoring and Log analysis from [Fluent Bit Integration with Amazon EKS](https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/).
+さらに、Fluent Bit 構成、Fluent Bit モニタリング、ログ分析などのトピックについては、[Amazon EKS との Fluent Bit インテグレーション](https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/) を参照してください。
 
-### Cost savings with Container Insights on Amazon EKS
+### Amazon EKS でのコンテナインサイトによるコスト削減
 
-With the default configuration, the Container Insights receiver collects the complete set of metrics as defined by the [receiver documentation](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver#available-metrics-and-resource-attributes). The number of metrics and dimensions collected is high, and for large clusters this will significantly increase the costs for metric ingestion and storage. We are going to demonstrate two different approaches that you can use to configure the ADOT Collector to send only metrics that bring value and saves cost.
+デフォルトの構成では、Container Insights レシーバーは [レシーバーのドキュメント](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver#available-metrics-and-resource-attributes) で定義されているメトリクスの完全なセットを収集します。収集されるメトリクスとディメンションの数は多く、大規模なクラスタの場合、メトリクスの取り込みとストレージのコストが大幅に増加します。 ここでは、ADOT Collector を構成して価値のあるメトリクスのみを送信し、コストを節約する2つの異なるアプローチをデモンストレーションします。
 
-#### Using processors
+#### プロセッサの使用
 
-This approach involves the introduction of OpenTelemetry processors as discussed above to filter out metrics or attributes to reduce the size of [EMF logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html). We will demonstrate the basic usage of two processors namely *Filter* and *Resource.*
+前述のように OpenTelemetry プロセッサを導入して、[EMF ログ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html) のサイズを減らすためにメトリクスや属性をフィルタリングするアプローチです。 *Filter* と *Resource* という 2 つのプロセッサの基本的な使用法をデモンストレーションします。
 
-[Filter processors](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/filterprocessor/README.md) can be included in the `ConfigMap` named `otel-agent-conf`:
+[Filter プロセッサ](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/filterprocessor/README.md) は、`otel-agent-conf` という名前の `ConfigMap` に含めることができます。
 
 ```
 processors:
@@ -185,7 +185,7 @@ processors:
           - ^pod_network.*
 ```
 
-[Resource processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourceprocessor/README.md) is also built into the AWS OpenTelemetry Distro and can be used to remove unwanted metric attributes. For example, if you want to remove the `Kubernetes` and `Sources` fields from the EMF logs, you can add the resource processor to the pipeline:
+[Resource プロセッサ](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/processor/resourceprocessor/README.md) も AWS OpenTelemetry Distro に組み込まれており、不要なメトリクス属性を削除するために使用できます。 たとえば、EMF ログから `Kubernetes` と `Sources` フィールドを削除したい場合は、次のようにリソースプロセッサをパイプラインに追加できます。
 
 ```
   # resource processors example
@@ -197,9 +197,9 @@ processors:
       action: delete
 ```
 
-#### Customize Metrics and Dimensions
+#### メトリクスとディメンションのカスタマイズ
 
-In this approach, you will configure the CloudWatch EMF exporter to generate only the set of metrics that you want to send to CloudWatch Logs. The [metric_declaration](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/5ccdbe08c6a2a43b7c6c7f9c0031a4b0348394a9/exporter/awsemfexporter/README.md#metric_declaration) section of CloudWatch EMF exporter configuration can be used to define the set of metrics and dimensions that you want to export. For example, you can keep only pod metrics from the default configuration. This `metric_declaration` section will look like the following and to reduce the number of metrics, you can keep the dimension set only `[PodName, Namespace, ClusterName]` if you do not care about others:
+このアプローチでは、CloudWatch EMF エクスポーターを設定して、CloudWatch Logs に送信したいメトリクスのセットのみを生成するようにします。CloudWatch EMF エクスポーターの構成の [metric_declaration](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/5ccdbe08c6a2a43b7c6c7f9c0031a4b0348394a9/exporter/awsemfexporter/README.md#metric_declaration) セクションを使用して、エクスポートしたいメトリクスとディメンションのセットを定義できます。 たとえば、デフォルトの構成から Pod のメトリクスのみを保持できます。 この `metric_declaration` セクションは次のようになり、メトリクス数を減らすには、他のディメンションを気にしない場合はディメンションセットを `[PodName, Namespace, ClusterName]` のみにすることができます。
 
 ```
   awsemf:
@@ -221,30 +221,31 @@ In this approach, you will configure the CloudWatch EMF exporter to generate onl
           - pod_memory_utilization_over_pod_limit
 ```
 
-This configuration will produce and stream the following four metrics within single dimension `[PodName, Namespace, ClusterName]` rather than 55 different metrics for multiple dimensions in the default configuration:
+この構成では、デフォルトの構成である複数のディメンションに対して 55 種類の異なるメトリクスを生成・ストリーミングするのではなく、単一のディメンション `[PodName, Namespace, ClusterName]` 内の以下の 4 つのメトリクスが生成されます。
 
 * pod_cpu_utilization
-* pod_memory_utilization
+* pod_memory_utilization 
 * pod_cpu_utilization_over_pod_limit
 * pod_memory_utilization_over_pod_limit
 
-With this configuration, you will only send the metrics that you are interested in rather than all the metrics configured by default. As a result, you will be able to decrease metric ingestion cost for Container Insights considerably. Having this flexibility will provide Container Insights costumers with high level of control over metrics being exported. Customizing metrics by modifying the `awsemf` exporter configuration is also highly flexible, and you can customize both the metrics that you want to send and their dimensions. Note that this is only applicable to logs that are sent to CloudWatch.
+この構成では、デフォルトで構成されているすべてのメトリクスではなく、関心のあるメトリクスのみを送信します。 その結果、Container Insights のメトリクス取り込みコストを大幅に削減できます。 この柔軟性により、Container Insights のお客様はエクスポートされるメトリクスを高度に制御できるようになります。 `awsemf` エクスポーター構成を変更してメトリクスをカスタマイズすることは非常に柔軟であり、送信したいメトリクスとそのディメンションの両方をカスタマイズできます。 これは、CloudWatch に送信されるログにのみ適用できることに注意してください。
 
-The two approaches demonstrated discussed above are not mutually exclusive with each other. In fact, they both can be combined for a high degree of flexibility in customizing metrics that we want ingested into our monitoring system. We use this approach to decrease costs associated with metric storage and processing, as show in following graph.
+上記で説明した 2 つのアプローチは相互に排他的ではありません。 実際、モニタリングシステムに取り込みたいメトリクスをカスタマイズするための高い柔軟性を実現するために、両方を組み合わせることができます。 以下のグラフに示すように、このアプローチを使用して、メトリクスの保存と処理に関連するコストを削減します。
 
 ![CW-COST-EXPLORER](../../../../../images/Containers/aws-native/eks/cw-cost-explorer.jpg)
 
-*Figure: AWS Cost Explorer*
+*図: AWS Cost Explorer*
 
-In the preceding AWS Cost Explorer graph, we can see daily cost associated with CloudWatch using different configurations on the ADOT Collector in a small EKS cluster (20 Worker nodes, 220 pods). *Aug 15th* shows CloudWatch bill using ADOT Collector with the default configuration. On *Aug 16th*, we have used the [Customize EMF exporter](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#customize-emf-exporter) approach and can see about 30% cost savings. On *Aug 17th*, we used the [Processors](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#processors) approach, which achieves about 45% costs saving.
-You must consider the trade-offs of customizing metrics sent by Container Insights as you will be able to decrease monitoring costs by sacrificing visibility of the monitored cluster. But also, the built-in dashboard provided by Container Insights within the AWS Console can be impacted by customized metrics as you can select not sending metrics and dimensions used by the dashboard. For further learning please check on [Cost savings by customizing metrics sent by Container Insights in Amazon EKS](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/).
+前の AWS Cost Explorer グラフでは、小規模な EKS クラスター(20 個のワーカーノード、220 個の Pod)で異なる構成の ADOT Collector を使用した場合の CloudWatch 関連の日次コストを確認できます。 *Aug 15th* は、デフォルトの構成で ADOT Collector を使用した場合の CloudWatch の請求を示しています。 *Aug 16th* では、[Customize EMF exporter](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#customize-emf-exporter) アプローチを使用し、約 30% のコスト削減が見られます。 *Aug 17th* では、[Processors](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/#processors) アプローチを使用し、約 45% のコスト削減を実現しています。
 
-### Using EKS Blueprints to setup Container Insights
+Container Insights によって送信されるメトリクスをカスタマイズすることのトレードオフを考慮する必要があります。メトリクスの可視性を犠牲にすることでモニタリングコストを削減できますが、AWS コンソール内の Container Insights によって提供される組み込みダッシュボードも、ダッシュボードで使用されているメトリクスやディメンションの送信を選択しない場合に影響を受ける可能性があります。 さらに学習するには、 [Amazon EKS の Container Insights によって送信されるメトリクスをカスタマイズすることによるコスト削減](https://aws.amazon.com/blogs/containers/cost-savings-by-customizing-metrics-sent-by-container-insights-in-amazon-eks/) をご確認ください。
 
-[EKS Blueprints](https://aws.amazon.com/blogs/containers/bootstrapping-clusters-with-eks-blueprints/) is a collection of Infrastructure as Code (IaC) modules that will help you configure and deploy consistent, batteries-included EKS clusters across accounts and regions. You can use EKS Blueprints to easily bootstrap an EKS cluster with [Amazon EKS add-ons](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) as well as a wide range of popular open-source add-ons, including Prometheus, Karpenter, Nginx, Traefik, AWS Load Balancer Controller, Container Insights, Fluent Bit, Keda, Argo CD, and more. EKS Blueprints is implemented in two popular IaC frameworks, [HashiCorp Terraform](https://github.com/aws-ia/terraform-aws-eks-blueprints) and [AWS Cloud Development Kit (AWS CDK)](https://github.com/aws-quickstart/cdk-eks-blueprints), which help you automate infrastructure deployments. 
+### EKS Blueprints を使用した Container Insights の設定
 
-As part of your Amazon EKS Cluster creation process using EKS Blueprints, you can setup Container Container Insights as a Day 2 operational tooling to collect, aggregate, and summarize metrics and logs from containerized applications and micro-services to Amazon CloudWatch console.
+[EKS Blueprints](https://aws.amazon.com/blogs/containers/bootstrapping-clusters-with-eks-blueprints/) は、アカウントとリージョン間で一貫性のある、バッテリー同梱の EKS クラスターを構成およびデプロイするのに役立つ Infrastructure as Code (IaC) モジュールのコレクションです。EKS Blueprints を使用すると、[Amazon EKS アドオン](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)と Prometheus、Karpenter、Nginx、Traefik、AWS Load Balancer Controller、Container Insights、Fluent Bit、Keda、Argo CD など、さまざまな一般的なオープンソース アドオンを備えた EKS クラスターを簡単にブートストラップできます。EKS Blueprints は、インフラストラクチャの自動化に役立つ 2 つの一般的な IaC フレームワークである [HashiCorp Terraform](https://github.com/aws-ia/terraform-aws-eks-blueprints) と [AWS Cloud Development Kit (AWS CDK)](https://github.com/aws-quickstart/cdk-eks-blueprints) で実装されています。
 
-### Conclusion
+EKS Blueprints を使用した Amazon EKS クラスターの作成プロセスの一環として、コンテナ化されたアプリケーションとマイクロサービスからメトリクスとログを収集、集約、要約する Day 2 運用ツールとして Container Insights を設定できます。これにより、Amazon CloudWatch コンソールに出力できます。
 
-In this section of Observability best practices guide, we covered lot of deeper details around CloudWatch Container insights which included a introduction to Amazon CloudWatch Container Insights and how it can help you to observe your containerized workloads on Amazon EKS. We covered deeper grounds on using Amazon CloudWatch Container Insights  with AWS Distro for Open Telemetry to enable collection fo Container insight metrics to visualize the metrics our your containerzied workloads on Amazon CloudWatch console. Next, we covered lot of depth around Fluent Bit Integration in CloudWatch Container Insights for Amazon EKS to create dedicated input streams within Fluent Bit and independent log groups within CloudWatch Logs for Application, Host and Data Plane logs. Next, we talked about two different approaches such as processors, metrics dimensions to achieve cost savings with CloudWatch Container insights. Finally we talked in brief about how use EKS Blueprints as a vehicle to setup Container Insights during the Amazon EKS cluster creation process. You can get hands-on experience with the [CloudWatch Container Insights module](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights) with in the[One Observability Workshop](https://catalog.workshops.aws/observability/en-US).
+### まとめ
+
+オブザーバビリティのベストプラクティスガイドのこのセクションでは、Amazon EKS 上のコンテナ化ワークロードを観察するのに役立つ、CloudWatch Container Insights のより深い詳細を多数カバーしました。Amazon CloudWatch Container Insights と AWS Distro for Open Telemetry を使用して、コンテナ化されたワークロードのメトリクスを Amazon CloudWatch コンソール上で視覚化するために、Container Insight メトリクスの収集を有効にするより深い内容をカバーしました。次に、Amazon EKS の CloudWatch Container Insights での Fluent Bit インテグレーションについて、アプリケーション、ホスト、データプレーンログのために CloudWatch Logs 内に専用の入力ストリームと独立したロググループを作成する深さを多数カバーしました。次に、プロセッサやメトリクスディメンションなどの 2 つの異なるアプローチについて説明し、CloudWatch Container Insights でコスト削減を達成する方法を説明しました。最後に、Amazon EKS クラスター作成プロセス中に Container Insights を設定するための車両として EKS ブループリントを使用する方法について簡単に説明しました。[ワンオブザーバビリティワークショップ](https://catalog.workshops.aws/observability/ja-JP) 内の [CloudWatch Container Insights モジュール](https://catalog.workshops.aws/observability/ja-JP/aws-native/insights/containerinsights) で、これらをハンズオンで体験できます。

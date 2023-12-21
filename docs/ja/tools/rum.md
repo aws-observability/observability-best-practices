@@ -1,108 +1,102 @@
-# Real User Monitoring
+# リアルユーザーモニタリング
 
-With CloudWatch RUM, you can perform real user monitoring to collect and view client-side data about your web application performance from actual user sessions in near real time. The data that you can visualize and analyze includes page load times, client-side errors, and user behavior. When you view this data, you can see it all aggregated together, and also see breakdowns by the browsers and devices that your customers use.
+CloudWatch RUM を使用すると、リアルユーザーモニタリングを実行して、実際のユーザーセッションからのウェブアプリケーションのパフォーマンスに関するクライアントサイドのデータをほぼリアルタイムで収集および表示できます。可視化および分析できるデータには、ページの読み込み時間、クライアントサイドのエラー、ユーザーの行動が含まれます。このデータを表示すると、すべて集計されて表示されるだけでなく、お客様が使用しているブラウザやデバイスごとの内訳でも表示されます。
 
-![RUM application monitor dashboard showing device breakdown](../images/rum2.png)
+![デバイスの内訳を示す RUM アプリケーションモニターダッシュボード](../images/rum2.png)
 
-## Web client
+## Web クライアント
 
-The CloudWatch RUM web client is developed and built using Node.js version 16 or higher. The code is [publicly available](https://github.com/aws-observability/aws-rum-web) on GitHub. You can use the client with [Angular](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_angular.md) and [React](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_react.md) applications.
+CloudWatch RUM Web クライアントは、Node.js バージョン 16 以降を使用して開発およびビルドされています。コードは [GitHub で公開](https://github.com/aws-observability/aws-rum-web) されています。[Angular](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_angular.md) および [React](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_react.md) アプリケーションでクライアントを使用できます。
 
-CloudWatch RUM is designed to create no perceptible impact to your application’s load time, performance, and unload time.
+CloudWatch RUM は、アプリケーションのロード時間、パフォーマンス、アンロード時間に知覚できる影響を与えないように設計されています。  
 
 !!! note
-    End user data that you collect for CloudWatch RUM is retained for 30 days and then automatically deleted. If you want to keep the RUM events for a longer time, you can choose to have the app monitor send copies of the events to CloudWatch Logs in your account.
+    CloudWatch RUM 用に収集するエンドユーザーデータは 30 日間保持され、その後自動的に削除されます。RUM イベントをより長期間保持したい場合は、アプリモニターにイベントのコピーをアカウントの CloudWatch Logs に送信するよう選択できます。
+    
+!!! tip
+    Web アプリケーションで広告ブロッカーによる潜在的な中断を避けることが重要な場合は、Web クライアントを独自のコンテンツデリバリーネットワークでホストするか、Web サイト内にホストすることをお勧めします。独自のオリジンドメインから Web クライアントをホストするためのガイダンスは、GitHub の[ドキュメント](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_installation.md) をご覧ください。
+
+## アプリケーションの認証
+
+CloudWatch RUM を使用するには、3 つのオプションのいずれかを通じてアプリケーションの認証が必要です。
+
+1. すでに設定した既存の ID プロバイダーからの認証を使用します。
+2. 既存の Amazon Cognito ID プールを使用します。 
+3. CloudWatch RUM にアプリケーションの新しい Amazon Cognito ID プールを作成させます。
+
+!!! success
+    アプリケーションの新しい Amazon Cognito ID プールを CloudWatch RUM に作成させることは、設定の労力が最も少なくて済みます。これがデフォルトのオプションです。
 
 !!! tip
-    If avoiding potential interruption by ad blockers is a concern for your web application then you may wish to host the web client on your own content delivery network, or even inside your own web site. Our [documentation on GitHub](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_installation.md) provides guidance on hosting the web client from your own origin domain.
+    CloudWatch RUM は、認証されていないユーザーと認証されたユーザーを分離するように構成できます。 詳細は、[このブログ投稿](https://aws.amazon.com/blogs/mt/how-to-isolate-signed-in-users-from-guest-users-within-amazon-cloudwatch-rum/)を参照してください。
 
-## Authorize Your Application
+## データ保護とプライバシー
 
-To use CloudWatch RUM, your application must have authorization through one of three options.
-
-1. Use authentication from an existing identity provider that you have already set up.
-1. Use an existing Amazon Cognito identity pool
-1. Let CloudWatch RUM create a new Amazon Cognito identity pool for the application
-
-!!! success
-    Letting CloudWatch RUM create a new Amazon Cognito identity pool for the application requires the least effort to set up. It's the default option.
+CloudWatch RUM クライアントは、エンドユーザーデータの収集を支援するために Cookie を使用できます。これはユーザージャーニー機能に役立ちますが、必須ではありません。[プライバシー関連の詳細なドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-privacy.html) をご覧ください。[^1] 
 
 !!! tip
-    CloudWatch RUM can configured to separate unauthenticated users from authenticated users. See [this blog post](https://aws.amazon.com/blogs/mt/how-to-isolate-signed-in-users-from-guest-users-within-amazon-cloudwatch-rum/) for details. 
+    RUM を使用した Web アプリケーションテレメトリの収集は安全であり、コンソールや CloudWatch ログを通じて個人を特定できる情報 (PII) を公開することはありませんが、[カスタム属性](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html) を Web クライアント経由で収集できることに注意してください。このメカニズムを使用して機密データを公開しないように注意してください。
 
-## Data Protection & Privacy
+## クライアントコードスニペット
 
-The CloudWatch RUM client can use cookies to help collect end user data. This is useful for the user journey feature, but is not required. See [our detailed documentation for privacy related information](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-privacy.html).[^1]
-
-!!! tip
-    While the collection of web application telemetry using RUM is safe and does not expose personally identifiable information (PII) to you through the console or CloudWatch Logs, be mindful that you can collect [custom attribute](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html) through the web client. Be careful not to expose sensitive data using this mechanism.
-
-## Client Code Snippet
-
-While the code snippet for the CloudWatch RUM web client will be automatically generated, you can also manually modify the code snippet to configure the client to your requirements. 
+CloudWatch RUM Web クライアントのコードスニペットは自動生成されますが、必要に応じてクライアントを構成するためにコードスニペットを手動で変更することもできます。
 
 !!! success
-    Use a cookie consent mechanism to dynamically enable cookie creation in singe page applications. See [this blog post](https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/) for more information.
+    シングルページアプリケーションでクッキーの作成を動的に有効にするには、クッキーコンセントメカニズムを使用します。詳細については、[このブログ記事](https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/) を参照してください。
 
-### Disable URL Collection 
+### URL 収集の無効化
 
-Prevent the collection of resource URLs that might contain personal information.
-
-!!! success
-    If your application uses URLs that contain personally identifiable information (PII), we strongly recommend that you disable the collection of resource URLs by setting `recordResourceUrl: false` in the code snippet configuration, before inserting it into your application.
-
-### Enable Active Tracing
-
-Enable end-to-end tracing by setting `addXRayTraceIdHeader: true` in the web client. This causes the CloudWatch RUM web client to add an X-Ray trace header to HTTP requests.
-
-If you enable this optional setting, XMLHttpRequest and fetch requests made during user sessions sampled by the app monitor are traced. You can then see traces and segments from these user sessions in the RUM dashboard, the CloudWatch ServiceLens console, and the X-Ray console. 
-
-Click the checkbox to enable active tracing when setting up your application monitor in the AWS Console to have the setting automatically enabled in your code snippet.
-
-![Active tracing setup for RUM application monitor](../images/rum1.png)
-
-### Inserting the Snippet
-
-Insert the code snippet that you copied or downloaded in the previous section inside the `<head>` element of your application. Insert it before the `<body>` element or any other `<script>` tags.
+個人情報が含まれる可能性のあるリソース URL の収集を防ぎます。
 
 !!! success
-    If your application has multiple pages, insert the code snippet in a shared header component that is included in all pages.
+    アプリケーションで個人を特定できる情報(PII)を含む URL を使用している場合は、コードスニペットの設定で `recordResourceUrl: false` を設定して、アプリケーションに挿入する前にリソース URL の収集を無効にすることを強くおすすめします。
 
-!!! warning
-    It is critical that the web client be as early in the `<head>` element as possible! Unlike passive web trackers that are loaded near the bottom of a page's HTML, for RUM to capture the most performance data requires it be instantiated early in the page render process.
+### アクティブトレースを有効にする
 
-## Use Custom Metadata
+Web クライアントで `addXRayTraceIdHeader: true` を設定することで、エンドツーエンドのトレーシングを有効にします。これにより、CloudWatch RUM Web クライアントが HTTP リクエストに X-Ray トレースヘッダーを追加します。
 
-You can add custom metadata to the CloudWatch RUM events default [event metadata](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-datacollected.html#CloudWatch-RUM-datacollected-metadata). Session attributes are added to all events in a user's session. Page attributes are added only to the pages specified.
+このオプションの設定を有効にすると、アプリモニターによってサンプリングされたユーザーセッション中に行われた XMLHttpRequest および fetch リクエストがトレースされます。その後、これらのユーザーセッションのトレースとセグメントが、RUM ダッシュボード、CloudWatch ServiceLens コンソール、および X-Ray コンソールで確認できます。
+
+AWS コンソールでアプリケーションモニターを設定するときにアクティブトレースのチェックボックスをオンにすると、コードスニペットでこの設定が自動的に有効になります。
+
+![RUM アプリケーションモニターのアクティブトレースの設定](../images/rum1.png)
+
+### スニペットの挿入
+
+前のセクションでコピーまたはダウンロードしたコードスニペットを、アプリケーションの `<head>` 要素の中に挿入します。`<body>` 要素やその他の `<script></script></body></head>
+
+## カスタムメタデータの使用
+
+CloudWatch RUM イベントのデフォルトの[イベントメタデータ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-datacollected.html#CloudWatch-RUM-datacollected-metadata)にカスタムメタデータを追加できます。セッション属性は、ユーザーのセッション内のすべてのイベントに追加されます。ページ属性は、指定されたページにのみ追加されます。
 
 !!! success
-    Avoid using reserved keywords noted on [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html#CloudWatch-RUM-custom-metadata-syntax) as key names for your custom attributes
+    カスタム属性のキー名として、[このページ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html#CloudWatch-RUM-custom-metadata-syntax)で注記されている予約語を使用しないでください。
 
-## Use Page Groups
+## ページグループの使用
 
 !!! success
-    Use page groups to associate different pages in your application with each other so that you can see aggregated analytics for groups of pages. For example, you might want to see the aggregated page load times of all of your pages by type and language.
+    ページグループを使用すると、アプリケーション内の異なるページを相互に関連付けることができるため、ページグループに集計されたアナリティクスを確認できます。たとえば、言語や種類ごとにすべてのページの集計ページロード時間を確認したい場合があります。
 
     ```
     awsRum.recordPageView({ pageId: '/home', pageTags: ['en', 'landing']})
     ```
 
-## Use Extended Metrics
+## 拡張メトリックを使用する
 
-There is a [default set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html) automatically collected by CloudWatch RUM that are published in the metric namespace named `AWS/RUM`. These are free, [vended metrics](../../tools/metrics/#vended-metrics) that RUM creates on your behalf.
+CloudWatch RUM によって自動的に収集され、`AWS/RUM` というメトリック名前空間に公開される[デフォルトのメトリックセット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html)があります。これらは無料の[ベンダーメトリック](../../tools/metrics/#vended-metrics)で、RUM があなたに代わって作成します。 
 
 !!! success
-    Send any of the CloudWatch RUM metrics to CloudWatch with additional dimensions so that the metrics give you a more fine-grained view.
+    CloudWatch RUM メトリックのいずれかを、メトリックをより細かく表示できるように、追加のディメンションとともに CloudWatch に送信します。
 
-The following dimensions are supported for extended metrics:
+拡張メトリックでサポートされているディメンションは以下のとおりです。
 
 - BrowserName
-- CountryCode - ISO-3166 format (two-letter code)
+- CountryCode - ISO-3166 フォーマット (2 文字のコード)  
 - DeviceType
 - FileType
 - OSName
 - PageId
 
-However, you can create your own metrics and alarms based on them using our [guidance from this page](https://aws.amazon.com/blogs/mt/create-metrics-and-alarms-for-specific-web-pages-amazon-cloudwatch-rum/). This approach allows you to monitor performance for any datapoint, URI, or other component that you need.
+ただし、この[ページのガイダンス](https://aws.amazon.com/blogs/mt/create-metrics-and-alarms-for-specific-web-pages-amazon-cloudwatch-rum/)を使用して、独自のメトリックとアラームを作成できます。このアプローチにより、必要なデータポイント、URI、その他のコンポーネントのパフォーマンスを監視できます。
 
-[^1]: See our [blog post](https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/) discussing the considerations when using cookies with CloudWatch RUM.
+[^1]: CloudWatch RUM で Cookie を使用する際の考慮事項については、[ブログ記事](https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/)を参照してください。

@@ -1,10 +1,11 @@
-# Collecting service metrics in an ECS cluster using AWS Distro for OpenTelemetry 
-## Deploying ADOT Collector with default configuration
-The ADOT collector can be deployed using a task definition as shown below, using the sidecar pattern. The container image used for the collector is bundled with two collector pipeline configurations which can be specified in the *command* section of the container defintion. Seting this value `--config=/etc/ecs/ecs-default-config.yaml`
-will result in the use of a [pipeline configuration](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml) that will collect application metrics and traces from other containers running within the same task as the collector and send them to Amazon CloudWatch and AWS X-Ray. Specifically, the collector uses an [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) to receive metrics sent by applications that have been instrumented with OpenTelemetry SDKs as well as a [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) to collect StatsD metrics. Additionally, it uses an [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) to collect traces from applications that have been instrumented with AWS X-Ray SDK.
+# ECS クラスター内のサービスメトリクスを AWS Distro for OpenTelemetry を使用して収集する
+
+## ADOT Collector のデフォルト設定でのデプロイ
+
+ADOT Collector は、サイドカーパターンを使用して、以下のタスク定義を使ってデプロイできます。Collector に使用されるコンテナイメージには、コンテナ定義の *command* セクションで指定できる 2 つの Collector パイプライン設定がバンドルされています。この値を `--config=/etc/ecs/ecs-default-config.yaml` に設定すると、Collector と同じタスク内の他のコンテナからのアプリケーションメトリクスとトレースを収集し、Amazon CloudWatch と AWS X-Ray に送信する[パイプライン設定](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml) が使用されます。具体的には、Collector は OpenTelemetry SDK で計装されたアプリケーションから送信されたメトリクスを受信する [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) と、StatsD メトリクスを収集する [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) を使用します。さらに、AWS X-Ray SDK で計装されたアプリケーションからトレースを収集する [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) を使用します。
 
 !!! info
-    Refer to the [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html) for details about setting up the IAM task role and task execution role that the ADOT collector will use when deployed on an Amazon ECS cluster.
+    Amazon ECS クラスター上にデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定の詳細については、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html) を参照してください。
 
 ```javascript
 {
@@ -41,8 +42,10 @@ will result in the use of a [pipeline configuration](https://github.com/aws-obse
     "memory":"2048"
  }
 ```
-## Deploying ADOT Collector for Prometheus metrics collection
-To deploy ADOT with the central collector pattern, with a pipeline that is different from the default configuration, the task definition shown below can be used. Here, the configuration of the collector pipeline is loaded from a parameter named *otel-collector-config* in AWS SSM Parameter Store. The collector is launched using REPLICA service scheduler strategy. 
+
+## Prometheus メトリクス収集のための ADOT Collector のデプロイ
+
+デフォルトの構成とは異なるパイプラインで、セントラルコレクターパターンで ADOT をデプロイするには、以下に示すタスク定義を使用できます。ここでは、AWS SSM パラメータストアの *otel-collector-config* という名前のパラメータからコレクターパイプラインの構成が読み込まれます。コレクターは REPLICA サービススケジューラー戦略を使用して起動されます。
 
 ```javascript
 {
@@ -80,17 +83,18 @@ To deploy ADOT with the central collector pattern, with a pipeline that is diffe
 ```
 
 !!! important
-    The SSM Parameter Store parameter name must be exposed to the collector using an environment variable named AOT_CONFIG_CONTENT.
-
+    SSM パラメータストアのパラメータ名は、AOT_CONFIG_CONTENT という名前の環境変数を使用してコレクターに公開する必要があります。
+    
 !!! important
-    When using the ADOT collector for Prometheus metrics collection from applications and deploying it with REPLICA service scheduler startegy, make sure that you set the replica count to 1. Deploying more than 1 replica of the collector will result in an incorrect representation of metrics data in the target destination.
+    アプリケーションからの Prometheus メトリクスの収集に ADOT コレクターを使用し、REPLICA サービススケジューラー戦略でデプロイする場合は、レプリカの数を 1 に設定する必要があります。コレクターのレプリカを 2 つ以上デプロイすると、ターゲットの宛先でメトリクスデータが誤って表されることになります。
+    
+以下に示す構成では、[Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) を使用して、クラスター内のサービスから Prometheus メトリクスを収集するように ADOT コレクターを有効にします。このレシーバーは、最小限に Prometheus サーバーのドロップイン置換を意図しています。このレシーバーでメトリクスを収集するには、スクレイプするターゲットサービスのセットを検出するメカニズムが必要です。レシーバーは、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイピングターゲットの静的および動的検出をサポートしています。
 
-The configuration shown below enables the ADOT collector to collect Prometheus metrics from services in the cluster using a [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver). The receiver is meant to minimally be a drop-in replacement for Prometheus server. To collect metrics with this receiver, you need a mechanism for discovering the set of target services to be scraped. The receiver supports both static and dynamic discovery of scraping targets using one of the dozens of supported [service-discovery mechanisms](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). 
+Amazon ECS には組み込みのサービス検出メカニズムがないため、コレクターはファイルベースのターゲット検出をサポートする Prometheus に依存しています。ファイルベースのターゲット検出のために Prometheus レシーバーを設定するには、コレクターは [Amazon ECS Observer](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/observer/ecsobserver/README.md) 拡張機能を利用します。この拡張機能は ECS/EC2 API を使用して、実行中のすべてのタスクから Prometheus スクレイプターゲットを検出し、構成の *ecs_observer/task_definitions* セクションでリストされているサービス名、タスク定義、コンテナラベルに基づいてフィルタリングします。検出されたすべてのターゲットは、*result_file* フィールドで指定されたファイルに書き込まれます。このファイルは、ADOT コレクターコンテナにマウントされたファイルシステム上に存在します。その後、Prometheus レシーバーはこのファイルにリストされているターゲットからメトリクスをスクレイプします。
 
-As Amazon ECS does not have any built-in service discovery mechanism, the collector relies on Prometheus' support for file-based discovery of targets. To setup the Prometheus receiver for file-based discovery of targets, the collector makes use of the [Amazon ECS Observer](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/observer/ecsobserver/README.md) extension. The extension uses ECS/EC2 API to discover Prometheus scrape targets from all running tasks and filter them based on service names, task definitions and container labels listed under the *ecs_observer/task_definitions* section in the configuration. All discovered targets are written into the file specified by the *result_file* field, which resides on the file system mounted to ADOT collector container. Subequently, the Prometheus receiver scrapes metrics from the targets listed in this file. 
+### メトリクスデータを Amazon Managed Prometheus ワークスペースに送信する
 
-### Sending metrics data to Amazon Managed Prometheus workspace
-The metrics collected by the Prometheus Receiver can be sent to an Amazon Managed Prometheus workspace using a [Prometheus Remote Write Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusremotewriteexporter) in the collector pipeline, as shown in the *exporters* section of the configuration below. The exporter is configured with the remote write URL of the workspace and it sends the metrics data using HTTP POST requests. It makes use of the built-in AWS Signature Version 4 authenticator to sign the requests sent to the workspace. 
+Prometheus Receiver によって収集されたメトリクスは、コレクターパイプラインの [Prometheus Remote Write Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusremotewriteexporter) を使用して Amazon Managed Prometheus ワークスペースに送信できます。これは、以下の構成の *exporters* セクションで示されているようになっています。エクスポーターはワークスペースのリモートライト URL で構成されており、HTTP POST リクエストを使用してメトリクスデータを送信します。これは、ワークスペースに送信されるリクエストに署名するために、組み込みの AWS Signature Version 4 認証機能を利用しています。
 
 ```yaml
 extensions:
@@ -164,10 +168,11 @@ service:
     traces:
       receivers: [awsxray]
       exporters: [awsxray]       
-```    
+```
 
-### Sending metrics data to Amazon CloudWatch
-Alternatively, the metrics data can be sent to Amazon CloudWatch by using the [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) in the collector pipeline, as shown in the *exporters* section of the configuration below. This exporter sends metrics data to CloudWatch as performance log events. The *metric_declaration* field in the exporter is used to specify the array of logs with embedded metric format to be generated. The configurtion below will generate log events only for a metric named *http_requests_total*. Using this data, CloudWatch will create the metric *http_requests_total* under the CloudWatch namespace *ECS/ContainerInsights/Prometheus* with the dimensions *ClusterName*, *ServiceName* and *TaskDefinitionFamily*.
+### メトリクスデータを Amazon CloudWatch に送信する
+
+あるいは、以下の構成の *exporters* セクションに示すように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用して、メトリクスデータを Amazon CloudWatch に送信できます。このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。エクスポーターの *metric_declaration* フィールドは、生成される埋め込みメトリック形式のログ配列を指定するために使用されます。以下の構成は、*http_requests_total* という名前のメトリクスに対してのみログイベントを生成します。このデータを使用すると、CloudWatch は *ClusterName*、*ServiceName*、*TaskDefinitionFamily* のディメンションを使用して、*ECS/ContainerInsights/Prometheus* 名前空間の下にメトリクス *http_requests_total* を作成します。
 
 
 ```yaml

@@ -1,27 +1,31 @@
-# Collecting service metrics with Container Insights
-Service metrics are applicaton-level metrics that are captured by adding instrumentation to your code. These metrics can be captured from an application using two different approaches. 
+# Container Insights でのサービスメトリクスの収集
 
-1. Push approach: Here, an application sends the metrics data directly to a destination. For example, using the CloudWatch PutMetricData API, an application can publish metric data points to CloudWatch. An application may also send the data via gRPC or HTTP using the OpenTelemetry Protocol (OTLP) to an agent such as the OpenTelemetry Collector. The latter will then send the data the metrics data to the final destination.
-2. Pull approach: Here, the application exposes the metrics data at an HTTP endpoint in a pre-defined format. The data are then scraped by an agent that has access to this endpoint and then sent to the destination.
+サービスメトリクスは、コードに計測を追加することでキャプチャされるアプリケーションレベルのメトリクスです。これらのメトリクスは、2つの異なるアプローチでアプリケーションからキャプチャできます。
 
-![Push approach for metric collection](../../../../images/PushPullApproach.png)
+1. プッシュアプローチ: ここでは、アプリケーションがメトリクスデータを直接送信先に送信します。たとえば、CloudWatch PutMetricData API を使用すると、アプリケーションは CloudWatch にメトリクスデータポイントを発行できます。アプリケーションは、OpenTelemetry Collector などのエージェントに対して gRPC または HTTP を使用して OTLP(OpenTelemetry Protocol)経由でデータを送信することもできます。後者はその後、メトリクスデータを最終送信先に送信します。
 
-## CloudWatch Container Insights monitoring for Prometheus
-[Prometheus](https://prometheus.io/docs/introduction/overview/) is a popular open-source systems monitoring and alerting toolkit. It has emerged as the de facto standard for collecting metrics using the pull approach from containerized applications. To capture metrics using Prometheus, you will have to first instrument your application code using the Prometheus [client library](https://prometheus.io/docs/instrumenting/clientlibs/) which is available in all the major programming languages. Metrics are usually exposed by the application over HTTP, to be read by the Prometheus server.
-When Prometheus server scrapes your applications's HTTP endpoint, the client library sends the current state of all tracked metrics to the server. The server can either store the metrics in a local storage that it manages or send the metrics data to a remote destination such as CloudWatch.
+2. プルアプローチ: ここでは、アプリケーションが事前定義された形式で HTTP エンドポイントにメトリクスデータを公開します。その後、そのエンドポイントにアクセスできるエージェントによってデータがスクレイプされ、送信先に送信されます。
 
-[CloudWatch Container Insights monitoring for Prometheus](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) enables you to leverage the capabilities of Prometheus in an Amazon ECS cluster. It is available for Amazon ECS clusters deployed on EC2 and Fargate The CloudWatch agent can be used as a drop-in replacement for a Prometheus server, reducing the number of monitoring tools required to improve observability. It automates the discovery of Prometheus metrics from containerized applications deployed to Amazon ECS and sends the metrics data to CloudWatch as performance log events. 
+![メトリクス収集のプッシュアプローチ](../../../../images/PushPullApproach.png)
+
+## CloudWatch Container Insights による Prometheus のモニタリング
+[Prometheus](https://prometheus.io/docs/introduction/overview/) は、コンテナ化されたアプリケーションからプル アプローチを使用してメトリクスを収集するためのデファクトスタンダードとして浮上した一般的なオープンソースのシステムモニタリングおよびアラート ツールキットです。Prometheus を使用してメトリクスをキャプチャするには、まずメジャーなすべてのプログラミング言語で利用できる Prometheus の[クライアント ライブラリ](https://prometheus.io/docs/instrumenting/clientlibs/)を使用してアプリケーション コードにインスツルメンテーションする必要があります。メトリクスは通常、Prometheus サーバーで読み取るために、アプリケーションから HTTP 経由で公開されます。 
+
+Prometheus サーバーがアプリケーションの HTTP エンドポイントをスクレイプすると、クライアントライブラリは、追跡されているすべてのメトリクスの現在の状態をサーバーに送信します。サーバーはメトリクスを管理するローカル ストレージにメトリクスを保存したり、CloudWatch などのリモート宛先にメトリクス データを送信したりできます。
+
+[CloudWatch Container Insights による Prometheus のモニタリング](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 と Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは Prometheus サーバーのドロップイン置換として使用できるため、可観測性を向上させるために必要なモニタリング ツールの数を減らすことができます。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、メトリクス データをパフォーマンス ログ イベントとして CloudWatch に送信します。
 
 !!! info
-    Steps to deploy the CloudWatch agent with Prometheus metrics collection on an Amazon ECS cluster are documented in the [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)
-
+    Amazon ECS クラスターで Prometheus メトリクス収集用に CloudWatch エージェントをデプロイする手順は、[Amazon CloudWatch ユーザーガイド](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)に記載されています。
+    
 !!! warning
-    Metrics collected by Container Insights monitoring for Prometheus are charged as custom metrics. For more information about CloudWatch pricing, see [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/)
+    Container Insights による Prometheus のモニタリングによって収集されたメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、[Amazon CloudWatch 料金](https://aws.amazon.com/cloudwatch/pricing/) を参照してください。
 
-### Autodiscovery of targets on Amazon ECS clusters
-The CloudWatch agent supports the standard Prometheus scrape configurations under the [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) section in the Prometheus documentation. Prometheus supports both static and dynamic discovery of scraping targets using one of the dozens of supported [service-discovery mechanisms](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). . As Amazon ECS does not have any built-in service discovery mechanism, the agent relies on Prometheus' support for file-based discovery of targets. To setup the agent for file-based discovery of targets, the agent needs two [configuration parameters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html), which are both defined in the task definition used for launching the agent. You can customize these parameters to have granular control over the metrics collected by the agent.
+### Amazon ECS クラスター上のターゲットの自動検出
 
-The first parameter contains Prometheus global configuration that looks like the following sample:
+CloudWatch エージェントは、Prometheus ドキュメントの [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) セクションで定義されている標準の Prometheus スクレイプ設定をサポートしています。Prometheus は、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプターゲットの静的および動的検出の両方をサポートしています。Amazon ECS には組み込みのサービス検出メカニズムがないため、エージェントは Prometheus のファイルベースのターゲット検出のサポートに依存しています。エージェントをファイルベースのターゲット検出のために設定するには、エージェントを起動するために使用されるタスク定義で定義されている 2 つの [設定パラメータ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html) が必要です。これらのパラメータをカスタマイズして、エージェントによって収集されるメトリクスを細かく制御できます。
+
+最初のパラメータには、次のサンプルのような Prometheus グローバル設定が含まれます。
 
 ```
 global:
@@ -34,7 +38,7 @@ scrape_configs:
       - files: [ "/tmp/cwagent_ecs_auto_sd.yaml" ] 
 ```
 
-The second parameter contains configuration that helps the agent discover scraping targets. The agent periodically makes API calls to Amazon ECS to retrieve the metadata of the running ECS tasks that match the task definition patterns defined in the *ecs_service_discovery* section of this configurtion. All discovered targets are written into the result file */tmp/cwagent_ecs_auto_sd.yaml* that resides on the file system mounted to CloudWatch agent container. The sample configuration below will result in the agent scraping metrics from all tasks that are named with the prefix *BackendTask*. Refer to the [detaild guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-autodiscovery-ecs.html) for autodiscovery of targets in an Amazon ECS Cluster.
+2番目のパラメータには、エージェントがスクレイピングターゲットを検出するのに役立つ設定が含まれています。エージェントは定期的に Amazon ECS API を呼び出して、この設定の *ecs_service_discovery* セクションで定義されたタスク定義パターンに一致する実行中の ECS タスクのメタデータを取得します。検出されたすべてのターゲットは、CloudWatch エージェントコンテナにマウントされたファイルシステム上の結果ファイル */tmp/cwagent_ecs_auto_sd.yaml* に書き込まれます。次のサンプル設定は、プレフィックスが *BackendTask* で始まる名前のタスクからのメトリクスのスクレイプをエージェントが行うことになります。Amazon ECS クラスター内のターゲットの自動検出の詳細なガイドは[こちら](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-autodiscovery-ecs.html)を参照してください。
 
 ```
 {
@@ -81,8 +85,10 @@ The second parameter contains configuration that helps the agent discover scrapi
 }
 ```
 
-### Importing Prometheus metrics into CloudWatch
-The metrics collected by the agent are sent to CloudWatch as performance log events based on the filtering rules specified in *metric_declaration* section of the configuration. This section is also used to specify the array of logs with embedded metric format to be generated. The sample configuration above will generate log events, as shown below, only for a metric named *http_requests_total* with the label *job:backends*. Using this data, CloudWatch will create the metric *http_requests_total* under the CloudWatch namespace *ECS/ContainerInsights/Prometheus* with the dimensions *ClusterName* and *TaskGroup*.
+### CloudWatch への Prometheus メトリクスのインポート
+
+エージェントによって収集されたメトリクスは、構成の *metric_declaration* セクションで指定されたフィルタリングルールに基づいて、パフォーマンスログイベントとして CloudWatch に送信されます。このセクションは、生成する必要がある埋め込みメトリック形式のログ配列を指定するためにも使用されます。上記のサンプル構成は、*job:backends* というラベルが付いた *http_requests_total* というメトリクスに対してのみ、次のようなログイベントを生成します。このデータを使用することで、CloudWatch は *ClusterName* と *TaskGroup* のディメンションを使用して、*ECS/ContainerInsights/Prometheus* という CloudWatch ネームスペースの下に *http_requests_total* メトリクスを作成します。
+
 ```
 {
    "CloudWatchMetrics":[

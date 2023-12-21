@@ -1,66 +1,56 @@
-# Using AWS Distro for OpenTelemetry in EKS on Fargate with AWS X-Ray
+# Fargate 上の EKS で AWS X-Ray とともに AWS Distro for OpenTelemetry を使用する
 
-In this recipe we show you how to instrument a sample Go application
-and use [AWS Distro for OpenTelemetry (ADOT)](https://aws.amazon.com/otel) to 
-ingest traces into [AWS X-Ray](https://aws.amazon.com/xray/) and visualize
-the traces in [Amazon Managed Grafana](https://aws.amazon.com/grafana/).
+このレシピでは、サンプルの Go アプリケーションにインスツルメンテーションを適用し、[AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel) を使用してトレースを [AWS X-Ray](https://aws.amazon.com/xray/) にインジェストし、トレースを [Amazon Managed Grafana](https://aws.amazon.com/grafana/) で可視化する方法を示します。
 
-We will be setting up an [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)
-on [AWS Fargate](https://aws.amazon.com/fargate/) cluster and use an
-[Amazon Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/) repository
-to demonstrate a complete scenario.
+[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) クラスターを [AWS Fargate](https://aws.amazon.com/fargate/) 上にセットアップし、完全なシナリオを示すために [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) リポジトリを使用します。
 
 !!! note
-    This guide will take approximately 1 hour to complete.
+    このガイドの完了には約 1 時間かかります。
 
-## Infrastructure
-In the following section we will be setting up the infrastructure for this recipe. 
+## インフラストラクチャ
+このレシピのインフラストラクチャを設定します。
 
-### Architecture
+### アーキテクチャ
 
-The ADOT pipeline enables us to use the 
-[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) to 
-collect traces from an instrumented app and ingest them into X-Ray:
+ADOT パイプラインを使用することで、
+[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) を利用して、
+インスツルメンテーションされたアプリケーションからトレースを収集し、
+X-Ray にインジェストすることができます。
 
-![ADOT default pipeline](../images/adot-default-pipeline.png)
+![ADOT デフォルトパイプライン](../images/adot-default-pipeline.png)
 
+### 前提条件
 
-### Prerequisites
+* AWS CLI がインストールされ、環境に構成されています。
+* eksctl コマンドを環境にインストールする必要があります。
+* kubectl を環境にインストールする必要があります。
+* Docker が環境にインストールされています。 
+* aws-observability/aws-o11y-recipes リポジトリがローカル環境にクローンされています。
 
-* The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
-* You need to install the [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) command in your environment.
-* You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment. 
-* You have [Docker](https://docs.docker.com/get-docker/) installed into your environment.
-* You have the [aws-observability/aws-o11y-recipes](https://github.com/aws-observability/aws-o11y-recipes/)
-  repo cloned into your local environment.
+### Fargate 上に EKS クラスターを作成する
 
-### Create EKS on Fargate cluster
+デモアプリケーションは、Fargate 上の EKS クラスターで実行する Kubernetes アプリケーションです。
+そのため、まず最初に提供されている [cluster_config.yaml](./fargate-eks-xray-go-adot-amg/cluster-config.yaml) を使用して EKS クラスターを作成します。
 
-Our demo application is a Kubernetes app that we will run in an EKS on Fargate
-cluster. So, first create an EKS cluster using the
-provided [cluster_config.yaml](./fargate-eks-xray-go-adot-amg/cluster-config.yaml).
-
-Create your cluster using the following command:
+次のコマンドを使用してクラスターを作成します。
 
 ```
 eksctl create cluster -f cluster-config.yaml
 ```
 
-### Create ECR repository
+### ECR リポジトリの作成
 
-In order to deploy our application to EKS we need a container repository. We
-will use the private ECR registry, but you can also use ECR Public, if you
-want to share the container image.
+アプリケーションを EKS にデプロイするには、コンテナリポジトリが必要です。
+プライベートな ECR レジストリを使用しますが、コンテナイメージを共有したい場合は ECR Public も使用できます。
 
-First, set the environment variables, such as shown here (substitute for your
-region):
+まず、次のように環境変数を設定します(リージョンはご自身のものに置き換えてください)。
 
 ```
 export REGION="eu-west-1"
 export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 ```
 
-You can use the following command to create a new ECR repository in your account: 
+次のコマンドを使用して、アカウントに新しい ECR リポジトリを作成できます。
 
 ```
 aws ecr create-repository \
@@ -69,55 +59,49 @@ aws ecr create-repository \
     --region $REGION
 ```
 
-### Set up ADOT Collector
+### ADOT Collector のセットアップ
 
-Download [adot-collector-fargate.yaml](./fargate-eks-xray-go-adot-amg/adot-collector-fargate.yaml) 
-and edit this YAML doc with the parameters described in the next steps.
+[adot-collector-fargate.yaml](./fargate-eks-xray-go-adot-amg/adot-collector-fargate.yaml) をダウンロードし、次のステップで説明するパラメータを使用してこの YAML ドキュメントを編集します。
 
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
 ```
 
-### Set up Managed Grafana
+### Managed Grafanaのセットアップ
 
-Set up a new workspace using the 
-[Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) guide
-and add [X-Ray as a data source](https://docs.aws.amazon.com/grafana/latest/userguide/x-ray-data-source.html).
+[Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) ガイドを使用して新しいワークスペースをセットアップし、[X-Ray をデータソースとして追加](https://docs.aws.amazon.com/grafana/latest/userguide/x-ray-data-source.html)します。
 
-## Signal generator
+## シグナルジェネレーター
 
-We will be using `ho11y`, a synthetic signal generator available
-via the [sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y)
-of the recipes repository. So, if you haven't cloned the repo into your local
-environment, do now:
+レシピリポジトリの[sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y) で利用できる合成シグナルジェネレーターである `ho11y` を使用します。
+したがって、まだローカル環境にリポジトリをクローンしていない場合は、次のようにクローンしてください。
 
 ```
 git clone https://github.com/aws-observability/aws-o11y-recipes.git
 ```
 
-### Build container image
-Make sure that your `ACCOUNTID` and `REGION` environment variables are set, 
-for example:
+### コンテナイメージのビルド
+`ACCOUNTID` と `REGION` の環境変数が設定されていることを確認してください。
+例:
 
 ```
 export REGION="eu-west-1"
 export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 ```
-To build the `ho11y` container image, first change into the `./sandbox/ho11y/`
-directory and build the container image :
+
+`ho11y` コンテナイメージをビルドするには、まず `./sandbox/ho11y/` ディレクトリに移動し、コンテナイメージをビルドします。
 
 !!! note
-    The following build step assumes that the Docker daemon or an equivalent OCI image 
-    build tool is running.
+    次のビルド手順は、Docker デーモンまたは同等の OCI イメージビルドツールが実行されていることを前提としています。
 
 ```
 docker build . -t "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest"
 ```
 
-### Push container image
-Next, you can push the container image to the ECR repo you created earlier on.
-For that, first log in to the default ECR registry:
+### コンテナイメージのプッシュ
+次に、前述の作成した ECR リポジトリにコンテナイメージをプッシュできます。
+そのために、まずデフォルトの ECR レジストリにログインします。
 
 ```
 aws ecr get-login-password --region $REGION | \
@@ -125,49 +109,42 @@ aws ecr get-login-password --region $REGION | \
     "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com"
 ```
 
-And finally, push the container image to the ECR repository you created, above:
+そして最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。
 
 ```
 docker push "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest"
 ```
 
-### Deploy signal generator
+### シグナルジェネレーターのデプロイ
 
-Edit [x-ray-sample-app.yaml](./fargate-eks-xray-go-adot-amg/x-ray-sample-app.yaml)
-to contain your ECR image path. That is, replace `ACCOUNTID` and `REGION` in the
-file with your own values (overall, in three locations):
+ECR イメージパスを含むように [x-ray-sample-app.yaml](./fargate-eks-xray-go-adot-amg/x-ray-sample-app.yaml) を編集してください。つまり、ファイル内の `ACCOUNTID` と `REGION` を自分の値に置き換えてください(全体で 3 か所)。
 
 ``` 
     # change the following to your container image:
     image: "ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest"
 ```
 
-Now you can deploy the sample app to your cluster using:
+次のコマンドを使用して、サンプルアプリをクラスタにデプロイできます。
 
 ```
 kubectl -n example-app apply -f x-ray-sample-app.yaml
 ```
 
-## End-to-end
+## エンドツーエンド
 
-Now that you have the infrastructure and the application in place, we will
-test out the setup, sending traces from `ho11y` running in EKS to X-Ray and
-visualize it in AMG.
+インフラとアプリケーションが整ったので、EKS で実行している `ho11y` から X-Ray へトレースを送信し、AMG で可視化することでセットアップをテストします。
 
-### Verify pipeline
+### パイプラインの検証
 
-To verify if the ADOT collector is ingesting traces from `ho11y`, we make
-one of the services available locally and invoke it.
+`ho11y` からのトレースが ADOT コレクタにインジェストされていることを確認するには、サービスの1つをローカルで利用可能にして呼び出します。
 
-First, let's forward traffic as so:
+まず、トラフィックを次のように転送します。
 
 ```
 kubectl -n example-app port-forward svc/frontend 8765:80
 ```
 
-With above command, the `frontend` microservice (a `ho11y` instance configured
-to talk to two other `ho11y` instances) is available in your local environment
-and you can invoke it as follows (triggering the creation of traces):
+上記のコマンドで、`frontend` マイクロサービス(`ho11y` インスタンスで構成され、他の2つの `ho11y` インスタンスと通信するように構成されている)がローカル環境で利用できるようになり、次のように呼び出すことができます(トレースの作成をトリガーします)。
 
 ```
 $ curl localhost:8765/
@@ -175,45 +152,38 @@ $ curl localhost:8765/
 ```
 
 !!! tip
-    If you want to automate the invocation, you can wrap the `curl` call into
-    a `while true` loop.
+    呼び出しを自動化したい場合は、`curl` 呼び出しを `while true` ループでラップできます。
 
-To verify our setup, visit the [X-Ray view in CloudWatch](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/)
-where you should see something like shown below:
+セットアップを確認するには、[CloudWatch の X-Ray ビュー](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/) を参照してください。以下のように表示されるはずです。
 
-![Screen shot of the X-Ray console in CW](../images/x-ray-cw-ho11y.png)
+![CW の X-Ray コンソールのスクリーンショット](../images/x-ray-cw-ho11y.png)
 
-Now that we have the signal generator set up and active and the OpenTelemetry
-pipeline set up, let's see how to consume the traces in Grafana.
+シグナルジェネレータのセットアップとアクティブ化、OpenTelemetry パイプラインのセットアップが完了したので、Grafana でトレースを消費する方法を見ていきましょう。
 
-### Grafana dashboard
+### Grafana ダッシュボード
 
-You can import an example dashboard, available via
-[x-ray-sample-dashboard.json](./fargate-eks-xray-go-adot-amg/x-ray-sample-dashboard.json)
-that looks as follows:
+[x-ray-sample-dashboard.json](./fargate-eks-xray-go-adot-amg/x-ray-sample-dashboard.json) からインポートできるサンプルダッシュボードがあり、次のように表示されます。
 
-![Screen shot of the X-Ray dashboard in AMG](../images/x-ray-amg-ho11y-dashboard.png)
+![AMG の X-Ray ダッシュボードのスクリーンショット](../images/x-ray-amg-ho11y-dashboard.png)
 
-Further, when you click on any of the traces in the lower `downstreams` panel,
-you can dive into it and view it in the "Explore" tab like so:
+さらに、下部の `downstreams` パネルのトレースをクリックすると、次のようにそれを掘り下げて「Explore」タブで表示できます。
 
-![Screen shot of the X-Ray dashboard in AMG](../images/x-ray-amg-ho11y-explore.png)
+![AMG の X-Ray ダッシュボードのスクリーンショット](../images/x-ray-amg-ho11y-explore.png)
 
-From here, you can use the following guides to create your own dashboard in
-Amazon Managed Grafana:
+ここから、以下のガイドを使用して Amazon Managed Grafana で独自のダッシュボードを作成できます。
 
-* [User Guide: Dashboards](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [Best practices for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [ユーザーガイド: ダッシュボード](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
+* [ダッシュボード作成のベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
-That's it, congratulations you've learned how to use ADOT in EKS on Fargate to 
-ingest traces.
+おめでとうございます。Fargate 上の EKS で ADOT を使用してトレースを取り込む方法を学び終えました。
 
-## Cleanup
+## クリーンアップ
 
-First remove the Kubernetes resources and destroy the EKS cluster:
+まず、Kubernetes リソースを削除し、EKS クラスターを破壊します。
 
 ```
 kubectl delete all --all && \
 eksctl delete cluster --name xray-eks-fargate
 ```
-Finally, remove the Amazon Managed Grafana workspace by removing it via the AWS console. 
+
+最後に、AWS コンソールから Amazon Managed Grafana ワークスペースを削除してください。

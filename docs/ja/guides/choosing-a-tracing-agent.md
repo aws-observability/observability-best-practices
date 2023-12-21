@@ -1,32 +1,32 @@
-# Choosing a tracing agent
+# トレーシングエージェントの選択
 
-## Choose the right agent
+## 正しいエージェントを選択する
 
-AWS directly supports two toolsets for [trace](../../signals/traces/) collection (plus our wealth of [observability partners](https://aws.amazon.com/products/management-and-governance/partners/): 
+AWS は、[トレース](../../signals/traces/) 収集のために 2 つのツールセットを直接サポートしています(さらに、豊富な[オブザーバビリティ パートナー](https://aws.amazon.com/products/management-and-governance/partners/)もあります)。
 
-* The [AWS Distro for OpenTelemetry](https://aws-otel.github.io/), commonly called ADOT
-* The X-Ray [SDKs](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) and [daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)
+* [AWS Distro for OpenTelemetry](https://aws-otel.github.io/) (一般的に ADOT と呼ばれる)
+* X-Ray の [SDK](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) と [デーモン](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)
 
-The selection of which tool or tools to use is a principal decision you must make as you evolve your observability solution. These tools are not mutually-exclusive, and you can mix them together as necessary. And there is a best practice for making this selection. However, first you should understand the current state of [OpenTelemetry (OTEL)](https://opentelemetry.io/).
+どのツールまたはツールを使用するかの選択は、オブザーバビリティ ソリューションを進化させるにつれて行わなければならない主要な決定です。これらのツールは相互に排他的ではなく、必要に応じて一緒に混在させることができます。そして、この選択を行うためのベスト プラクティスがあります。ただし、まずは [OpenTelemetry (OTEL)](https://opentelemetry.io/) の現状を理解する必要があります。
 
-OTEL is the current industry standard specification for observabillity signalling, and contains definitions for each of the three core signal types: [metrics](../../signals/metrics/), [traces](../../signals/traces/), and [logs](../../signals/logs). However, OTEL has not always existed and has evolved out of earlier specifications such as [OpenMetrics](https://openmetrics.io) and [OpenTracing](https://opentracing.io). Observability vendors began openly supporting OpenTelemetry Line Protocol (OTLP) in recent years. 
+OTEL は、現在の業界標準のオブザーバビリティ シグナリングの仕様であり、3 つのコア シグナル タイプ([メトリクス](../../signals/metrics/)、[トレース](../../signals/traces/)、[ログ](../../signals/logs))のそれぞれの定義が含まれています。ただし、OTEL は常に存在したわけではなく、[OpenMetrics](https://openmetrics.io) や [OpenTracing](https://opentracing.io) などの以前の仕様から進化してきました。オブザーバビリティ ベンダーは、最近年になって OpenTelemetry Line Protocol (OTLP) を公開サポートし始めました。
 
-AWS X-Ray and CloudWatch pre-date the OTEL specification, as do other leading observability solutions. However, the AWS X-Ray service readily accepts OTEL traces using ADOT. ADOT has the integrations already built into it to emit telemetry into X-Ray directly, as well as to other ISV solutions.
+X-Ray と CloudWatch は OTEL 仕様よりも前に存在しており、他の主要なオブザーバビリティ ソリューションも同様です。ただし、X-Ray サービスは、ADOT を使用した OTEL トレースを容易に受け入れます。ADOT には、X-Ray や他の ISV ソリューションに直接テレメトリをエミットするための統合がすでに組み込まれています。
 
-Any transaction tracing solution requires an agent and an integration into the underlying application in order to collect signals. And this, in turn, creates [technical debt](../../faq/#what-is-technical-debt) in the form of libraries that must be tested, maintained, and upgraded, as well as possibly retooling if you choose to change your solution in the future.
+トランザクション トレーシング ソリューションには、シグナルを収集するためにエージェントと基盤アプリケーションへの統合が必要です。これにより、テスト、メンテナンス、アップグレードを行う必要があるライブラリの形での [技術的負債](../../faq/#what-is-technical-debt) が発生し、将来的にソリューションの変更を選択した場合に再構築が必要になる可能性があります。 
 
-The SDKs included with X-Ray are part of a tightly integrated instrumentation solution offered by AWS. ADOT is part of a broader industry solution in which X-Ray is only one of many tracing solutions. You can implement end-to-end tracing in X-Ray using either approach, but it’s important to understand the differences in order to determine the most useful approach for you.
-
-!!! success
-	We recommend instrumenting your application with the AWS Distro for OpenTelemetry if you need the following:
-
-    * The ability to send traces to multiple different tracing backends without having to re-instrument your code. For example, of you wish to shift from using the X-Ray console to [Zipkin](https://zipkin.io), then only configuration of the collector would change, leaving your applicaiton code untouched.
-
-    * Support for a large number of library instrumentations for each language, maintained by the OpenTelemetry community. 
+X-Ray に含まれる SDK は、AWS が提供する緊密に統合されたインスツルメンテーション ソリューションの一部です。ADOT は、X-Ray がトレーシング ソリューションのひとつに過ぎない、より広範な業界ソリューションの一部です。いずれのアプローチでも X-Ray でエンドツーエンドのトレーシングを実装できますが、最も有用なアプローチを決定するためには違いを理解することが重要です。
 
 !!! success
-	We recommend choosing an X-Ray SDK for instrumenting your application if you need the following:
+	次の機能が必要な場合は、アプリケーションに AWS Distro for OpenTelemetry をインスツルメンテーションすることをおすすめします。
 
-    * A tightly integrated single-vendor solution.
+    * コードを再インスツルメンテーションすることなく、複数の異なるトレーシング バックエンドにトレースを送信できる機能。たとえば、X-Ray コンソールの使用から [Zipkin](https://zipkin.io) への移行を希望する場合、コレクターの構成のみが変更され、アプリケーション コードは変更されません。
 
-    * Integration with X-Ray centralized sampling rules, including the ability to configure sampling rules from the X-Ray console and automatically use them across multiple hosts, when using Node.js, Python, Ruby, or .NET
+    * OpenTelemetry コミュニティによってメンテナンスされている、各言語の多数のライブラリ インスツルメンテーションのサポート。
+
+!!! success
+	アプリケーションへのインスツルメンテーションに X-Ray SDK を選択する必要がある場合は、次のとおりです。 
+  
+    * 緊密に統合されたシングル ベンダー ソリューション。
+
+    * Node.js、Python、Ruby、.NET を使用している場合、X-Ray コンソールからサンプリング ルールを構成し、複数のホストで自動的に使用する機能を含む、X-Ray 集中サンプリング ルールとの統合。

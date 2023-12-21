@@ -1,3 +1,3 @@
-# Containers
+# コンテナ
 
-## Choosing a tracing agent
+## トレーシングエージェントの選択

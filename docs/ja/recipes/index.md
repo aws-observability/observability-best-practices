@@ -1,88 +1,73 @@
-# Recipes
+# レシピ
 
-In here you will find curated guidance, how-to's, and links to other resources that help with the application of observability (o11y) to various use cases. This includes managed services such as [Amazon Managed Service for Prometheus][amp]
-and [Amazon Managed Grafana][amg] as well as agents, for example [OpenTelemetry][otel]
-and [Fluent Bit][fluentbit]. Content here is not resitricted to AWS tools alone though, and many open source projects are referenced here. 
+ここでは、さまざまなユースケースに対するオブザーバビリティ (o11y) の適用を支援するためのキュレーションされたガイダンス、ハウツー、その他のリソースへのリンクを見つけることができます。これには、[Amazon Managed Service for Prometheus][amp] や [Amazon Managed Grafana][amg] などのマネージドサービスと、[OpenTelemetry][otel] や [Fluent Bit][fluentbit] などのエージェントが含まれます。ただし、コンテンツは AWS ツールに限定されているわけではなく、多くのオープンソースプロジェクトがここで参照されています。
 
-We want to address the needs of both developers and infrastructure folks equally, so many of the recipes "cast a wide net". We encourge you to explore and find the solutions that work best for what you are seeking to accomplish.
+開発者とインフラ担当者のニーズに均等に対応するために、多くのレシピが「幅広い対象をカバーしています」。探索して、あなたが達成しようとしていることに最適なソリューションを見つけることをお勧めします。 
 
 !!! info
-    The content here is derived from actual customer engagement by our Solutions Architects, Professional Services, and feedback from other customers. Everything you will find here has been implemented by our actual customers in their own environments.
+    ここにあるコンテンツは、ソリューションアーキテクト、プロフェッショナルサービス、および他のお客様からのフィードバックに基づいて実際の顧客とのエンゲージメントから派生しています。ここで見つけることができるすべてのものは、お客様自身の環境で実際に実装されたものです。
 
-The way we think about the o11y space is as follows: we decompose it into
-[six dimensions][dimensions] you can then combine to arrive at a specific solution:
+o11y スペースについての考え方は次のとおりです。[6 つの次元][dimensions]に分解し、特定のソリューションに到達するために組み合わせます。
 
-| dimension | examples |
+| 次元 | 例 |
 |---------------|--------------|
-| Destinations  | [Prometheus][amp] &middot; [Grafana][amg] &middot; [OpenSearch][aes] &middot; [CloudWatch][cw] &middot; [Jaeger][jaeger] |
-| Agents        | [ADOT][adot] &middot; [Fluent Bit][fluentbit] &middot; CW agent &middot; X-Ray agent |
-| Languages     | [Java][java] &middot; Python &middot; .NET &middot; [JavaScript][nodejs] &middot; Go &middot; Rust |
-| Infra & databases  |  [RDS][rds] &middot; [DynamoDB][dynamodb] &middot; [MSK][msk] |
-| Compute unit | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
-| Compute engine | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
+| 送信先 | [Prometheus][amp] · [Grafana][amg] · [OpenSearch][aes] · [CloudWatch][cw] · [Jaeger][jaeger] |  
+| エージェント | [ADOT][adot] · [Fluent Bit][fluentbit] · CW エージェント · X-Ray エージェント |
+| 言語 | [Java][java] · Python · .NET · [JavaScript][nodejs] · Go · Rust |
+| インフラとデータベース | [RDS][rds] · [DynamoDB][dynamodb] · [MSK][msk] |
+| コンピューティングユニット | [Batch][batch] · [ECS][ecs] · [EKS][eks] · [AEB][beans] · [Lambda][lambda] · [AppRunner][apprunner] |  
+| コンピューティングエンジン | [Fargate][fargate] · [EC2][ec2] · [Lightsail][lightsail] |
 
-!!! question "Example solution requirement"
-    I need a logging solution for a Python app I'm running on EKS on Fargate
-    with the goal to store the logs in an S3 bucket for further consumption
+!!! question "例としてのソリューション要件"
+    Fargate 上の EKS で実行している Python アプリのロギングソリューションが必要です。ログを S3 バケットに格納してさらに消費することが目的です。
 
-One stack that would fit this need is the following:
+このニーズに対応するスタックの 1 つは、次のとおりです。
 
-1. *Destination*: An S3 bucket for further consumption of data
-1. *Agent*: FluentBit to emit log data from EKS
-1. *Language*: Python
-1. *Infra & DB*: N/A
-1. *Compute unit*: Kubernetes (EKS)
-1. *Compute engine*: EC2
+1. *送信先*: データのさらなる消費用の S3 バケット
+1. *エージェント*: EKS からログデータを出力する FluentBit
+1. *言語*: Python
+1. *インフラとデータベース*: 該当なし
+1. *コンピューティングユニット*: Kubernetes (EKS)  
+1. *コンピューティングエンジン*: EC2
 
-Not every dimension needs to be specified and sometimes it's hard to decide where
-to start. Try different paths and compare the pros and cons of certain recipes.
+すべての次元を指定する必要はなく、時にはどこから始めればいいか判断しにくいこともあります。さまざまなパスを試し、特定のレシピの長所と短所を比較してください。
 
-To simplify navigation, we're grouping the six dimension into the following
-categories:
+ナビゲーションを簡単にするために、6つの次元を以下のカテゴリにグループ化しています。
 
-- **By Compute**: covering compute engines and units
-- **By Infra & Data**: covering infrastructure and databases
-- **By Language**: covering languages
-- **By Destination**: covering telemetry and analytics
-- **Tasks**: covering anomaly detection, alerting, troubleshooting, and more
+- **コンピューティング別**: コンピューティングエンジンとユニットをカバー
+- **インフラとデータ別**: インフラとデータベースをカバー
+- **言語別**: 言語をカバー
+- **送信先別**: テレメトリと分析をカバー
+- **タスク**: 異常検知、アラート、トラブルシューティングなどをカバー
 
-[Learn more about dimensions …](dimensions/)
+[次元の詳細を見る... ](dimensions/)
 
-## How to use
+## 使い方
 
-You can either use the top navigation menu to browse to a specific index page,
-starting with a rough selection. For example, `By Compute` -> `EKS` ->
-`Fargate` -> `Logs`.
+トップナビゲーションメニューを使用して、概略的な選択から特定のインデックスページを参照できます。
+例えば、「By Compute」->「EKS」->「Fargate」->「Logs」です。
 
-Alternatively, you can search the site pressing `/` or the `s` key:
+あるいは、`/` キーまたは `s` キーを押してサイト内を検索できます。
 
 ![o11y space](images/search.png)
 
-!!! info "License"
-    All recipes published on this site are available via the 
-	[MIT-0][mit0] license, a modification to the usual MIT license 
-	that removes the requirement for attribution.
+!!! info "ライセンス" 
+	このサイトに公開されているすべてのレシピは、[MIT-0][mit0]ライセンスを介して利用できます。これは、帰属の要件を削除した通常のMITライセンスの変更です。
 
-## How to contribute
+## 貢献の仕方
 
-Start a [discussion][discussion] on what you plan to do and we take it from there.
+計画していることについて [discussion][discussion] を開始し、そこから始めましょう。
 
-## Learn more
+## 詳細を知る
 
-The recipes on this site are a good practices collection. In addition, there 
-are a number of places where you can learn more about the status of open source
-projects we use as well as about the managed services from the recipes, so 
-check out:
+このサイトのレシピは、ベストプラクティスのコレクションです。さらに、レシピで使用しているオープンソースプロジェクトのステータスや、マネージドサービスについて学べる場所がいくつかあります。以下をチェックしてください。
 
-- [observability @ aws][o11yataws], a playlist of AWS folks talking about 
-  their projects and services.
-- [AWS observability workshops](workshops/), to try out the offerings in a
-  structured manner.
-- The [AWS monitoring and observability][o11yhome] homepage with pointers
-  to case studies and partners.
+- [observability @ aws][o11yataws] AWS の方々がプロジェクトやサービスについて語るプレイリストです。  
+- [AWS オブザーバビリティ ワークショップ][workshops] 提供されているものを体系的に試すことができます。
+- [AWS モニタリングとオブザーバビリティ][o11yhome] ホームページ。ケーススタディやパートナーへのリンクがあります。
 
 [aes]: aes.md "Amazon Elasticsearch Service"
-[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
+[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"  
 [amg]: amg.md "Amazon Managed Grafana"
 [amp]: amp.md "Amazon Managed Service for Prometheus"
 [batch]: https://aws.amazon.com/batch/ "AWS Batch"
@@ -96,7 +81,7 @@ check out:
 [fargate]: https://aws.amazon.com/fargate/ "AWS Fargate"
 [fluentbit]: https://fluentbit.io/ "Fluent Bit"
 [jaeger]: https://www.jaegertracing.io/ "Jaeger"
-[kafka]: https://kafka.apache.org/ "Apache Kafka"
+[kafka]: https://kafka.apache.org/ "Apache Kafka"  
 [apprunner]: apprunner.md "AWS App Runner"
 [lambda]: lambda.md "AWS Lambda"
 [lightsail]: https://aws.amazon.com/lightsail/ "Amazon Lightsail"
@@ -107,5 +92,5 @@ check out:
 [msk]: msk.md "Amazon Managed Streaming for Apache Kafka"
 [mit0]: https://github.com/aws/mit-0 "MIT-0"
 [discussion]: https://github.com/aws-observability/observability-best-practices/discussions "Discussions"
-[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube playlist"
-[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS Observability home"
+[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube プレイリスト"
+[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS オブザーバビリティ ホームページ"

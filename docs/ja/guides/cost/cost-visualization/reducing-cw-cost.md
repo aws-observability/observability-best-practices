@@ -1,22 +1,22 @@
-# Reducing CloudWatch cost
+# CloudWatch コストの削減
 
 ## GetMetricData
 
-Typically `GetMetricData` is caused by calls from 3rd party Observability tools and/or cloud financial tools using the CloudWatch Metrics in their platform. 
+通常、`GetMetricData` は、プラットフォームで CloudWatch メトリクスを使用しているサードパーティのオブザーバビリティツールやクラウド財務ツールからの呼び出しによって発生します。
 
-- Consider reducing the frequency with which the 3rd party tool is making requests. For example, reducing frequency from 1 min to 5 mins should result in a 1/5 (20%) of the cost.
-- To identify the trend, consider turning off any data collection from 3rd party tools for a short while.
+- サードパーティのツールがリクエストを行う頻度を減らすことを検討してください。 たとえば、頻度を 1 分から 5 分に減らすと、コストは 1/5 (20%) になります。
+- 傾向を特定するには、短期間、サードパーティのツールからのデータ収集をオフにすることを検討してください。
 
-## CloudWatch Logs 
+## CloudWatch Logs
 
-- Find the top contributors using this [knowledge center document][log-article].
-- Reduce the logging level of top contributors unless deemed necessary.
-- Find out if you are using 3rd party tooling for logging in addition to Cloud Watch.
-- VPC Flow Log costs can add up quick if you have enabled it on every VPC and has a lot of traffic. If you still need it, consider delivering it to Amazon S3.
-- See if logging is necessary on all AWS Lambda functions. If it’s not, deny “logs:PutLogEvents” permissions in the Lambda role.
-- CloudTrail logs are often a top contributor. Sending them to Amazon S3 and using Amazon Athena to query and Amazon EventBridge for alarms/notifications is cheaper.
+- この[ナレッジセンターのドキュメント][log-article]を使用して、トップコントリビューターを特定します。
+- 必要とされない限り、トップコントリビューターのログレベルを下げます。
+- CloudWatch に加えて、サードパーティのツールをログに使用しているかどうかを確認します。
+- すべての VPC で有効になっており、トラフィックが多い場合、VPC フローログのコストはすぐに上がります。まだ必要な場合は、Amazon S3 に配信することを検討してください。
+- すべての AWS Lambda 関数でログが必要かどうかを確認します。必要ない場合は、Lambda ロールで「logs:PutLogEvents」アクセス許可を拒否します。  
+- CloudTrail ログはしばしばトップコントリビューターです。Amazon S3 に送信し、Amazon Athena でクエリと Amazon EventBridge でアラーム/通知を使用するほうが安上がりです。
 
-Refer this [knowledge center article][article] for further details.
+詳細については、この[ナレッジセンターの記事][article]を参照してください。
 
 
 [article]: https://aws.amazon.com/premiumsupport/knowledge-center/cloudwatch-understand-and-reduce-charges/

@@ -1,34 +1,34 @@
-# Internet Monitor
+# インターネットモニター
 
 !!! warning
-	As of this writing, [Internet Monitor](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) is available in **preview** in the CloudWatch console. The scope of features for general availability may change from what you experience today.
+	この記事を書いている時点では、[インターネットモニター](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) は CloudWatch コンソールの**プレビュー**版で利用できます。 一般提供される機能の範囲は、今日体験しているものから変更される可能性があります。
 
-[Collecting telemetry from all tiers of your workload](../../guides/#collect-telemetry-from-all-tiers-of-your-workload) is a best practice, and one that can be a challenge. But what are the tiers of your workload? For some it may be web, application, and database servers. Other people might view their workload as front end and back end. And those operating web applications can use [Real User Monitoring](../../tools/rum)(RUM) to observe the health of these apps as experienced by end users. 
+[ワークロードのすべてのティアからテレメトリを収集する](../../guides/#collect-telemetry-from-all-tiers-of-your-workload) ことはベストプラクティスであり、課題となりえます。 しかし、ワークロードのティアとは何でしょうか? ある人にとっては、Web、アプリケーション、データベースサーバーである可能性があります。 他の人は、ワークロードをフロントエンドとバックエンドとして見る可能性があります。 Webアプリケーションを運用している人は、[リアルユーザーモニタリング](../../tools/rum)(RUM)を使用して、エンドユーザーが経験するこれらのアプリの正常性を観察できます。
 
-But what about the traffic between the client and the datacenter or cloud services provider? And for applications that are not served as web pages and therefore cannot use RUM?
+しかし、クライアントとデータセンターまたはクラウドサービスプロバイダー間のトラフィックはどうでしょうか? Webページとして提供されないアプリケーションの場合、RUMを使用できません。
 
-![Network telemetry from Internet-traversing applications](../images/internet_monitor.png)
+![インターネットを介したアプリケーションのネットワークテレメトリ](../images/internet_monitor.png)
 
-Internet Monitor works at the networking level and evaluates the health of observed traffic, correlated against [AWS existing knowledge](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html) of known Internet issues. In short, if there is an Internet Service Provider (ISP) that has a performance or availability issue **and** if your application has traffic that uses this ISP for client/server communication, then Internet Monitor can proactively inform you about this impact to your workload. Additionally, it can make recommendations to you based on your selected hosting region and use of [CloudFront](https://aws.amazon.com/cloudfront/) as a Content Delivery Network[^1].
+インターネットモニターはネットワークレベルで機能し、観測されたトラフィックの正常性を [AWS の既存の知識](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html) と相関させて評価します。 要するに、パフォーマンスまたは可用性の問題が発生しているインターネットサービスプロバイダー (ISP) が **あり**、アプリケーションのトラフィックがクライアント/サーバー通信にこの ISP を使用している場合、インターネットモニターはこのワークロードへの影響を事前に通知できます。 さらに、選択したホスティングリージョンと [CloudFront](https://aws.amazon.com/cloudfront/) のコンテンツデリバリーネットワーク[^1] としての使用に基づいて推奨事項を行うことができます。
 
-!!! tip
-	Internet Monitor only evaluates traffic from networks that your workloads traverse. For example, if an ISP in another country is impacted, but your users do not use that carrier, then you will not have visibility into that issue.
+!!! tip 
+	インターネットモニターは、ワークロードが通過するネットワークからのトラフィックのみを評価します。 たとえば、別の国の ISP に問題が発生していても、ユーザーがそのキャリアを使用していない場合、その問題の可視性はありません。
 
-## Create monitors for applications that traverse the Internet
+## インターネットを介して通信するアプリケーションのモニターを作成する
 
-The way that Internet Monitor operates is by watching for traffic that comes either into your CloudFront distributions or to your VPCs from impacted ISPs. This allows you to make decisions about application behaviour, routing, or user notification that helps offset business issues that arise as a result of network problems that are outside of your control.
+Internet Monitor の動作は、CloudFront ディストリビューションや VPC への影響を受けた ISP からのトラフィックを監視することです。これにより、制御できないネットワークの問題が原因で発生するビジネスの問題を緩和するために、アプリケーションの動作、ルーティング、ユーザーへの通知に関する判断を下すことができます。
 
-![Intersection of your workload and ISP issues](../images/internet_monitor_2.png)
-
-!!! success
-	Only create monitors that watch traffic which traverses the Internet. Private traffic, such as between two hosts in a private network ([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/)) cannot be monitored using Internet Monitor.
+![ワークロードと ISP の問題の交点](../images/internet_monitor_2.png)
 
 !!! success
-	Prioritize traffic from mobile applications where applicable. Customers roaming between providers, or in remote geographical locations, may have different or unexpected experiences that you should be aware of.
+	インターネットを介して通信するトラフィックのみを監視するモニターを作成してください。プライベートネットワーク([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/))内の 2 つのホスト間などのプライベートトラフィックは、Internet Monitor を使用して監視できません。
+	
+!!! success
+	該当する場合は、プロバイダ間をローミングしたり、地理的に離れた場所にいるユーザーからのモバイルアプリケーションのトラフィックを優先してください。予期しない体験をしている可能性があるため、認識しておく必要があります。
 
-## Enable actions through EventBridge and CloudWatch
+## EventBridge と CloudWatch を通じたアクションの有効化
 
-Observed issues will be published through [EventBridge](https://aws.amazon.com/eventbridge/) using a [schema](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html) that contains the souce identified as `aws.internetmonitor`. EventBridge can be used to automatically create issues in your ticket management system, page your support teams, or even trigger automation that can alter your workload to mitigate some scenarios.
+検知された問題は、ソースが `aws.internetmonitor` として識別される[スキーマ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html)を使用して [EventBridge](https://aws.amazon.com/eventbridge/) を介して公開されます。EventBridge を使用すると、チケット管理システムで自動的に問題を作成したり、サポートチームに通知したり、ワークロードを変更して特定のシナリオを緩和する自動化をトリガーしたりすることができます。
 
 ```json
 {
@@ -36,7 +36,7 @@ Observed issues will be published through [EventBridge](https://aws.amazon.com/e
 }
 ```
 
-Likewise, extensive details of traffic are available in [CloudWatch Logs](../../tools/logs) for observed cities, countries, metros, and subdivisions. This allows you to create highly-targeted actions which can notify impacted customers proactively about issues local to them. Here is an example of a country-level observation about a single provider:
+同様に、監視対象の都市、国、メトロ、サブディビジョンのトラフィックの詳細が [CloudWatch Logs](../../tools/logs) で利用できます。これにより、影響を受ける顧客に地域的な問題について事前に通知するなど、高度にターゲットを絞ったアクションを作成できます。単一プロバイダーの国レベルの観測の例を次に示します。
 
 ```json
 {
@@ -94,21 +94,21 @@ Likewise, extensive details of traffic are available in [CloudWatch Logs](../../
 ```
 
 !!! success
-	Values such as `percentageOfTotalTraffic` can reveal powerful insights about where your customers access your workloads from and can be used for advanced analytics.
+	`percentageOfTotalTraffic` などの値から、顧客がワークロードにアクセスする場所に関する強力な洞察を得ることができ、高度な分析に使用できます。
 
 !!! warning
-	Note that log groups created by Internet Monitor will have a default retention period set to *never expire*. AWS does not delete your data without your consent, so be sure to set a retention period that makes sense for your needs.
+	Internet Monitor によって作成されたロググループには、デフォルトで期限切れにならない保持期間が設定されていることに注意してください。AWS は顧客の同意なくデータを削除しないため、ニーズに合った保持期間を設定する必要があります。
 
 !!! success
-	Each monitor will create at least 10 discrete CloudWatch metrics. These should be used for creating [alarms](../../tools/alarms) just as you would with any other operational metric.
+	各モニターは少なくとも 10 個の個別の CloudWatch メトリクスを作成します。これらは、他の運用メトリクスと同様に[アラーム](../../tools/alarms)の作成に使用する必要があります。
 
-## Utilize traffic optimization suggestions
+## トラフィック最適化の提案を利用する
 
-Internet Monitor features traffic optimization recommendations that can advise you on where to best place your workloads so as to have the best customer experiences. For those workloads that are global, or have global customers, this feature is particularly valuable. 
+Internet Monitor には、お客様に最高のエクスペリエンスを提供するためにワークロードを最適な場所に配置する助言を行うトラフィック最適化の提案機能があります。グローバルなワークロードやグローバルなお客様を持つワークロードの場合、この機能は特に価値があります。
 
-![Internet Monitor console](../images/internet_monitor_3.png)
+![Internet Monitor コンソール](../images/internet_monitor_3.png)
 
 !!! success
-	Pay close attention to the current, predicted, and lowest time-to-first-byte (TTFB) values in the traffic optimization suggestions view as these can indicate potentially poor end-user experiences that are otherwise difficult to observe.
-
-[^1]: See [https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) for our launch blog about this new feature.
+	トラフィック最適化の提案ビューの現在の TTFB 値、予測 TTFB 値、最低 TTFB 値に注意を払ってください。これらの値は、そうでない場合観測が難しい、潜在的にエンドユーザーエクスペリエンスが悪いことを示している可能性があります。
+	
+[^1]: この新機能についてのローンチブログは [https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) を参照してください。

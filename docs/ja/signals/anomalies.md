@@ -1,3 +1,3 @@
-# Anomalies
+# 異常
 
 WIP

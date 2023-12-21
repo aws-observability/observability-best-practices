@@ -1,88 +1,90 @@
-# Metrics
+# メトリクス
 
-Metrics are data about the performance of your system. Having all the metrics related to system or the resources available in a centralised place grants you the ability to compare metrics, analyse performance, and make better strategic decisions like scaling-up or scaling-in resources. Metrics are also important for the knowing the health of the resources and take proactive measures.
+メトリクスとは、システムのパフォーマンスに関するデータです。 
+システムやリソースに関連するすべてのメトリクスを集中管理することで、メトリクスを比較したりパフォーマンスを分析したり、リソースのスケールアップやスケールインなどの戦略的な意思決定を行うことができます。 
+メトリクスは、リソースの健全性を知り、予防措置を取るうえでも重要です。
 
-Metric data is foundational and used to drive [alarms](../../signals/alarms/), anomaly detection, [events](../../signals/events/), [dashboards](../../tools/dashboards) and more.
+メトリクスデータは基礎的なものであり、[アラーム](../../signals/alarms/)、異常検知、[イベント](../../signals/events/)、[ダッシュボード](../../tools/dashboards)などを駆動するために使用されます。
 
-## Vended metrics
+## 販売メトリクス
 
-[CloudWatch metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html) collects data about the performance of your systems. By default, most AWS services provide free metrics for their resources. This includes  [Amazon EC2](https://aws.amazon.com/ec2/) instances, [Amazon RDS](https://aws.amazon.com/rds/), [Amazon S3](https://aws.amazon.com/s3/?p=pm&c=s3&z=4) buckets, and many more. 
+[CloudWatch メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/working_with_metrics.html) は、システムのパフォーマンスに関するデータを収集します。デフォルトでは、ほとんどの AWS サービスがそれぞれのリソースの無料のメトリクスを提供します。これには [Amazon EC2](https://aws.amazon.com/jp/ec2/) インスタンス、[Amazon RDS](https://aws.amazon.com/jp/rds/)、[Amazon S3](https://aws.amazon.com/jp/s3/?p=pm&c=s3&z=4) バケットなどが含まれます。
 
-We refer to these metrics as *vended metrics*. There is no charge for the collection of vended metrics in your AWS account.
+これらのメトリクスを *販売メトリクス* と呼びます。AWS アカウントでの販売メトリクスの収集には料金がかかりません。  
 
 !!! info
-	For a complete list of AWS services that emit metrics to CloudWatch see [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html).
+	CloudWatch にメトリクスを送信する AWS サービスの完全なリストは、[このページ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html)を参照してください。
 
-## Querying metrics
+## メトリクスのクエリ
 
-You can utilise the [metric math](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html) feature in CloudWatch to query multiple metrics and use math expressions to analyse the metrics for more granularity. For example, you can write a metric math expression to find out the Lambda error rate by query as:
+CloudWatch の [メトリクス数式](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html) 機能を利用して、複数のメトリクスをクエリし、メトリクスをより詳細に分析するために数式を使用できます。 たとえば、次のようにクエリを書いて Lambda のエラーレートを調べることができます。
 
 	Errors/Requests
 
-Below you see an example of how this can appear in the CloudWatch console:
+以下は、これが CloudWatch コンソールにどのように表示されるかの例です。
 
-![Metric math example](../images/metrics1.png)
+![メトリクス数式の例](../images/metrics1.png)
 
 !!! success
-	Use metric math to get the most value from your data and derive values from the performance of separate data sources.
+	メトリクス数式を使用して、データから最大限の価値を引き出し、個別のデータソースのパフォーマンスから値を導出してください。
 
-CloudWatch also supports conditional statements. For example, to return a value of `1` for each timeseries where latency is over a specific threshold, and `0` for all other data points, a query would resemble this:
+CloudWatch は条件文もサポートしています。 たとえば、レイテンシが特定のしきい値を超える各タイムシリーズの値を `1` にし、その他のすべてのデータポイントを `0` にするには、次のようなクエリになります。
 
 	IF(latency>threshold, 1, 0)
 
-In the CloudWatch console we can use this logic to create boolean values, which in turn can trigger [CloudWatch alarms](../../tools/alarms) or other actions. This can enable automatic actions from derived datapoints. An example from the CloudWatch console is below:
+CloudWatch コンソールでは、このロジックを使用してブール値を作成できます。これにより、[CloudWatch アラーム](../../tools/alarms) やその他のアクションをトリガーできます。 これにより、導出されたデータポイントからの自動アクションが可能になります。 CloudWatch コンソールからの例を以下に示します。
 
-![Alarm creation from a derived value](../images/metrics2.png)
+![導出値からのアラーム作成](../images/metrics2.png)
 
 !!! success
-	Use conditional statements to trigger alarms and notifications when performance exceeds thresholds for derived values. 
+	条件文を使用して、導出値のパフォーマンスがしきい値を超えたときに、アラームと通知をトリガーしてください。
 
-You can also use a `SEARCH` function to show the top `n` for any metric. When visualizing the best or worst performing metrics across a large number timeseries (e.g. thousands of servers) this approach allows you to see only the data that matters most. Here is an example of a search returning the top two CPU-consuming EC2 instances, averaged over the last five minutes:
+`SEARCH` 関数を使用して、メトリクスの上位 `n` 件を表示することもできます。 大量のタイムシリーズ (何千ものサーバーなど) 全体で最もパフォーマンスの良い、または最も悪いメトリクスを可視化する場合、このアプローチにより、最も重要なデータのみを表示できます。 以下は、過去 5 分間の平均で、CPU 使用量が最も高い上位 2 つの EC2 インスタンスを返す検索の例です。
 
 	SLICE(SORT(SEARCH('{AWS/EC2,InstanceId} MetricName="CPUUtilization"', 'Average', 300), MAX, DESC),0, 2)
 
-And a view of the same in the CloudWatch console:
+CloudWatch メトリクスのコンソールでの同じ検索クエリの表示は次のとおりです。
 
-![Search query in CloudWatch metrics](../images/metrics3.png)
-
-!!! success
-	Use the `SEARCH` approach to rapidly display the valuable or worst performing resources in your environment, and then display these in [dashboards](../../tools/dashboards).
-
-## Collecting metrics
-
-If you would like to have additional metrics like memory or disk space utilization for your EC2 instances, you use the [CloudWatch agent](../../tools/cloudwatch_agent/) to push this data to CloudWatch on your behalf. Or if you have custom processing data which needs to be visualised in graphical manner, and you want this data to be present as CloudWatch metric, then you can use [`PutMetricData` API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) to publish custom metrics to CloudWatch.
+![CloudWatch メトリクスでの検索クエリ](../images/metrics3.png)
 
 !!! success
-	Use one of the [AWS SDKs](https://aws.amazon.com/developer/tools/) to push metric data to CloudWatch rather than the bare API.
+	`SEARCH` を使用して、環境内の価値の高い、または最もパフォーマンスが低いリソースをすばやく表示し、[ダッシュボード](../../tools/dashboards) に表示してください。
 
-`PutMetricData` API calls are charges on number of queries. The best practise to use the `PutMetricData` API optimally. Using the Values and Counts method in this API, enables you to publish up to 150 values per metric with one `PutMetricData` request, and supports retrieving percentile statistics on this data. Thus, instead of making separate API calls for each of the datapoint, you should group all your datapoints together and then push to CloudWatch in a single `PutMetricData` API call. This approach benefits the user in two ways:
+## メトリクスの収集
 
-1. CloudWatch pricing
-1. `PutMetricData` API throttling can be prevented
-
-!!! success
-	When using `PutMetricData`, the best practice is to batch your data into single `PUT` operations whenever possible.
+EC2 インスタンスのメモリやディスクスペースの利用率など、追加のメトリクスが必要な場合は、[CloudWatch エージェント](../../tools/cloudwatch_agent/) を使用して、このデータを代わりに CloudWatch にプッシュできます。または、グラフィカルな方法で視覚化する必要があるカスタム処理データがあり、このデータを CloudWatch メトリクスとして存在させたい場合は、[`PutMetricData` API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) を使用して、カスタムメトリクスを CloudWatch に公開できます。
 
 !!! success
-	If large volumes of metrics are emitted into CloudWatch then consider using [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) as an alternative approach. Note that Embedded Metric Format does not use, nor charge, for the use of `PutMetricData`, though it does incur billing from the use of [CloudWatch Logs](../../tools/logs/).
+	素の API ではなく、[AWS SDK](https://aws.amazon.com/developer/tools/) の 1 つを使用して、メトリクスデータを CloudWatch にプッシュすることをお勧めします。
 
-## Anomaly detection
+`PutMetricData` API 呼び出しはクエリの数に基づいて課金されます。この API を最適に使用するにはベストプラクティスに従うことが大切です。この API の Values and Counts メソッドを使用すると、1 つの `PutMetricData` リクエストで最大 150 個の値を 1 つのメトリクスに公開でき、このデータのパーセンタイル統計を取得できます。したがって、各データポイントごとに個別の API 呼び出しを行う代わりに、すべてのデータポイントをグループ化してから、単一の `PutMetricData` API 呼び出しで CloudWatch にプッシュする必要があります。このアプローチは、次の 2 つの点でユーザーに利点をもたらします。
 
-CloudWatch has an [anomaly detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) feature that augments your observability strategy by learning what *normal* is based on recorded metrics. The use of anomaly detection is a [best practice](../../signals/metrics/#use-anomaly-detection-algorithms) for any metric signal collection system.
+1. CloudWatch の料金
+2. `PutMetricData` API のスロットリングを防ぐことができる
 
-Anomaly detection builds a model over a two-week period of time. 
+!!! success
+	`PutMetricData` を使用する場合、可能な限りデータを単一の `PUT` 操作にバッチ処理するのがベストプラクティスです。
+	
+!!! success
+	大量のメトリクスが CloudWatch に発行される場合は、[Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) を代替アプローチとして検討してください。Embedded Metric Format は `PutMetricData` を使用せず、使用料も課金されませんが、[CloudWatch Logs](../../tools/logs/) の使用からの課金は発生します。
+
+## 異常検知
+
+CloudWatch には、記録されたメトリクスに基づいて「通常」が何であるかを学習することによってオブザーバビリティ戦略を拡張する[異常検知](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html)機能があります。異常検知の利用は、メトリクス シグナル収集システムにおける[ベスト プラクティス](../../signals/metrics/#use-anomaly-detection-algorithms)です。
+
+異常検知は、2 週間の期間にわたってモデルを構築します。
 
 !!! warning
-	Anomaly detection only builds its model from the time of creation forward. It does not project backwards in time to find previous outliers.
-
-!!! warning
-	Anomaly detection does not know what *good* is for a metric, only what *normal* is based on standard deviation.
-
+	異常検知は、作成時から先の期間についてのみそのモデルを構築します。過去に遡って以前の外れ値を見つけることはありません。
+	
+!!! warning 
+	異常検知は、メトリクスについて「適切な状態」が何であるかは知りません。標準偏差に基づいて「通常の状態」が何であるかのみを知っています。
+	
 !!! success
-	The best practice is to train your anomaly detection models to only analyze the times of day that normal behaviour is expected. You can define time periods to exclude from training (such as nights, weekends, or holidays). 
+	ベスト プラクティスは、異常検知モデルを通常の動作が期待される一日のうちの時間帯のみを分析するように訓練することです。 訓練から除外する時間帯 (夜間、週末、休日など) を定義できます。
 
-An example of an anomaly detection band can be seen here, with the band in grey.
+異常検知帯の例をここに示します。帯はグレーで表示されています。
 
 ![Anomaly detection band](../images/metrics4.png)
 
-Setting exclusion windows for anomaly detection can be done with the CloudWatch console, [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudwatch-anomalydetector-configuration.html), or using one of the AWS SDKs.
+異常検知の除外ウィンドウの設定は、CloudWatch コンソール、 [CloudFormation](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-properties-cloudwatch-anomalydetector-configuration.html)、または AWS SDK のいずれかを使用して行うことができます。

@@ -1,12 +1,12 @@
-# Percentiles are important
+# パーセンタイルが重要な理由
 
-Percentiles are important in monitoring and reporting because they provide a more detailed and accurate view of data distribution compared to just relying on averages. An average can sometimes hide important information, such as outliers or variations in the data, that can significantly impact performance and user experience. Percentiles, on the other hand, can reveal these hidden details and give a better understanding of how the data is distributed.
+パーセンタイルは、平均値だけに依存するのではなく、データ分布のより詳細かつ正確な視点を提供するため、モニタリングとレポートでは重要です。平均値は時に、パフォーマンスやユーザーエクスペリエンスに大きな影響を与える可能性のある、外れ値やデータの変動などの重要な情報を隠してしまうことがあります。一方、パーセンタイルはこれらの隠された詳細を明らかにし、データがどのように分布しているかをよりよく理解するのに役立ちます。 
 
-In [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/), percentiles can be used to monitor and report on various metrics, such as response times, latency, and error rates, across your applications and infrastructure. By setting up alarms on percentiles, you can get alerted when specific percentile values exceed thresholds, allowing you to take action before they impact more customers.
+[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) では、パーセンタイルを使用して、アプリケーションやインフラストラクチャ全体のレスポンスタイム、レイテンシー、エラーレートなど、さまざまなメトリクスをモニタリングおよびレポートできます。パーセンタイルにアラームを設定することで、特定のパーセンタイル値がしきい値を超えたときにアラートを取得できるため、より多くの顧客に影響を与える前にアクションを実行できます。
 
-To use [percentiles in CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles), choose your metric in **All metrics** in the CloudWatch console and use an existing metric and set the **statistic** to **p99**, you can then edit the value after the p to whichever percentile you would like. You can then view percentile graphs, add them to [CloudWatch dashboards](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) and set alarms on these metrics. For example, you could set an alarm to notify you when the 95th percentile of response times exceeds a certain threshold, indicating that a significant percentage of users are experiencing slow response times.
+[CloudWatch でパーセンタイルを使用する](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles) には、CloudWatch コンソールの **All metrics** でメトリクスを選択し、既存のメトリクスを使用して **statistic** を **p99** に設定します。その後、p の後の値を編集して目的のパーセンタイルに変更できます。次に、パーセンタイルグラフを表示したり、[CloudWatch ダッシュボード](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) に追加したり、これらのメトリクスにアラームを設定したりできます。たとえば、レスポンスタイムの 95 パーセンタイルが特定のしきい値を超えたときに通知するアラームを設定できます。これは、多数のユーザーが遅いレスポンスタイムを経験していることを示しています。
 
-The histogram below was created in [Amazon Managed Grafana](https://aws.amazon.com/grafana/) using a [CloudWath Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) query from [CloudWatch RUM](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html) logs. The query used was:
+以下のヒストグラムは、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) で作成されており、[CloudWath Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) クエリを使用して [CloudWatch RUM](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html) ログからデータを取得しています。使用したクエリは以下のとおりです。
 
 ```
 fields @timestamp, event_details.duration
@@ -14,23 +14,20 @@ fields @timestamp, event_details.duration
 | sort @timestamp desc
 ```
 
-The histogram plots the page load time in milliseconds. With this view, it's possible to clearly see the outliers. This data is hidden if average is used.
+ヒストグラムはページロード時間をミリ秒単位でプロットしています。この表示では、外れ値を明確に確認できます。平均を使用すると、このデータは隠されてしまいます。
 
-![Histogram](../../../../images/percentiles-histogram.png)
+![ヒストグラム](../../../../images/percentiles-histogram.png)
 
-The same data shown in CloudWatch using the average value indicates that pages are taking under two seconds to load. You can see from the histogram above, that most pages are actually taking less than a second and we have outliers.
+同じデータを平均値で CloudWatch に表示すると、ページロードに 2 秒未満かかっていることを示しています。上のヒストグラムから、ほとんどのページが実際には 1 秒未満でロードされており、外れ値が存在することがわかります。
 
-![Histogram](../../../../images/percentiles-average.png)
+![平均](../../../../images/percentiles-average.png)
 
-Using the same data again with a percentile (p99) indicates that there is an issue, the CloudWatch graph now shows that 99 percent of page loads are taking less than 23 seconds.
+同じデータをパーセンタイル(p99)で再表示すると、問題があることが示されます。CloudWatch のグラフは現在、ページロードの 99%が 23 秒未満であることを示しています。
 
-![Histogram](../../../../images/percentiles-p99.png)
+![p99](../../../../images/percentiles-p99.png)
 
-To make this easier to visualize, the graphs below compare the average value to the 99th percentile. In this case, the target page load time is two seconds, it is possible to use alternative [CloudWatch statistics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean) and [metric math](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html) to make other calculations. In this case Percentile rank (PR) is used with the statistic **PR(:2000)** to show that 92.7% of page loads are happening within the target of 2000ms.
+これをより視覚的に表すために、以下のグラフは平均値と 99 パーセンタイルを比較したものです。この場合、ターゲットのページロード時間は 2 秒です。代替の [CloudWatch 統計](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean) と [メトリック数式](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html)を使用して、他の計算を行うことができます。この例では、パーセンタイルランク(PR)を統計量 **PR(:2000)** で使用して、ページロードの 92.7%が 2000ms というターゲット内で発生していることを示しています。
 
-![Histogram](../../../../images/percentiles-comparison.png)
+![比較](../../../../images/percentiles-comparison.png)
 
-Using percentiles in CloudWatch can help you gain deeper insights into your system's performance, detect issues early, and improve your customer's experience by identifying outliers that would otherwise be hidden.
-
-
-
+CloudWatch でパーセンタイルを使用することで、システムのパフォーマンスをより深く洞察し、早期に問題を検出し、そうでなければ隠されてしまう外れ値を特定することで、顧客のエクスペリエンスを改善できます。

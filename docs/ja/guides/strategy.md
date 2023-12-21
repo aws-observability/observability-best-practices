@@ -1,2 +1,1 @@
-# Creating an observability strategy
-
+# オブザーバビリティ戦略の作成

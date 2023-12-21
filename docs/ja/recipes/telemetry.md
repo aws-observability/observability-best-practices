@@ -1,41 +1,30 @@
-# Telemetry
+# テレメトリ
 
-Telemetry is all about how the signals are collected from various sources,
-including your own app and infrastructure and routed to destinations where
-they are consumed:
+テレメトリは、自身のアプリやインフラを含むさまざまなソースから信号が収集され、
+それらが消費される場所にルーティングされる方法についてです。
 
-![telemetry concept](images/telemetry.png)
+![テレメトリの概念](images/telemetry.png)
 
 !!! success
-    See the [Data types](../signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
+    各種テレメトリデータのベストプラクティスの詳細な内訳については、[データタイプ](../signals/logs)のセクションを参照してください。
 
-Let's further dive into the concepts introduced in above figure.
+上記の図で紹介した概念についてさらに掘り下げていきましょう。
 
-## Sources
+## ソース
 
-We consider sources as something where signals come from. There are two types of sources:
+ソースとは、シグナルが発生するものです。ソースには次の2つのタイプがあります。
 
-1. Things under your control, that is, the application source code, via instrumentation.
-1. Everything else you may use, such as managed services, not under your (direct) control.
-   These types of sources are typically provided by AWS, exposing signals via an API.
+1. 自分で制御できるもの、つまりアプリケーションのソースコードをインスツルメンテーションによって。
+2. 直接制御できないマネージドサービスなど、自分が利用できるすべてのもの。
+   このタイプのソースは通常 AWS によって提供され、API 経由でシグナルを公開します。
 
-## Agents
+## エージェント
 
-In order to transport signals from the sources to the destinations, you need
-some sort of intermediary we call agent. These agents receive or pull signals 
-from the sources and, typically via configuration, determine where signals 
-shoud go, optionally supporting filtering and aggregation.
+ソースからデスティネーションにシグナルを輸送するには、エージェントと呼ばれる中間的なものが必要です。これらのエージェントは、ソースからシグナルを受信またはプルし、通常は構成を介して、シグナルがどこに行くべきかを判断し、オプションでフィルタリングと集約をサポートします。
 
-!!! question "Agents? Routing? Shipping? Ingesting?"
-    There are many terms out there people use to refer to the process of
-    getting the signals from sources to destinations including routing,
-    shipping, aggregation, ingesting etc. and while they may mean slightly 
-    different things, we will use them here interchangeably. Canonically, 
-	we will refer to those intermediary transport components as agents.
+!!! question "エージェント? ルーティング? 配信? インジェスト?"
+    ソースからデスティネーションへのシグナルの取得プロセスを参照するために人々が使用している用語は、ルーティング、配信、集約、インジェストなど多数ありますが、それらは少し異なる意味を持つ可能性がありますが、ここでは互換性があるものとして使用します。正式には、それらの中間トランスポートコンポーネントをエージェントと呼びます。
 
-## Destinations
+## デスティネーション
 
-Where signals end up, for consumption. No matter if you want to store signals
-for later consumption, if you want to dashboard them, set an alert if a certain
-condition is true, or correlate signals. All of those components that serve
-you as the end-user are destinations.
+シグナルが最終的にたどり着く場所です。後で消費するためにシグナルを保存したい場合でも、ダッシュボード化したい場合でも、特定の条件が真の場合にアラートを設定したい場合でも、シグナルを相関付けたい場合でも、エンドユーザーとして役立つすべてのコンポーネントがデスティネーションです。

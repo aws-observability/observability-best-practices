@@ -1,48 +1,49 @@
-# Metrics
+# メトリクス
 
-Metrics are a series of numerical values that are kept in order with the time that they are created. They are used to track everything from the number of servers in your environment, their disk usage, number of requests they handle per second, or the latency in completing these requests.
+メトリクスとは、作成された時刻とともに順序付けて保持される一連の数値です。これらは、環境内のサーバー数、ディスク使用量、1 秒間に処理するリクエスト数、リクエストの完了にかかるレイテンシなど、あらゆるものを追跡するために使用されます。
 
-But metrics are not limited to infrastructure or application monitoring. Rather, they can be used for any kind of business or workload to track sales, call queues, and customer satisfaction. In fact, metrics are most useful when combining both operational data and business metrics, giving a well-rounded view and observable system.
+しかし、メトリクスはインフラストラクチャやアプリケーションの監視に限定されるものではありません。むしろ、販売、コールキュー、顧客満足度など、ビジネスやワークロードの種類を追跡するために使用できます。実際、運用データとビジネスメトリクスの両方を組み合わせることで、包括的な視点と観測可能なシステムを実現できるため、メトリクスは最も有用です。
 
-It might be worth looking into [the OpenTelemetry documentation page](https://opentelemetry.io/docs/concepts/signals/metrics/) that provides some additional context on Metrics.
+メトリクスに関する追加のコンテキストを提供している [OpenTelemetry のドキュメンテーションページ](https://opentelemetry.io/docs/concepts/signals/metrics/)を参照することをおすすめします。
 
-## Know your Key Performance Indicators(KPIs), and measure them!
+## 重要業績評価指標(KPI)を知り、それを測定しましょう!
 
-The *most* important thing with metrics is to *measure the right things*. And what those are will be different for everyone. An e-commerce application may have sales per hour as a critical KPI, whereas a bakery would like be more interested in the number of croissants made per day.
+メトリクスにおいて*最も*重要なことは、*正しいものを測定する*ことです。そしてそれらは誰にとっても異なるものになります。
+電子商取引アプリケーションでは、時間당売上高が重要な KPI となる一方で、ベーカリーでは1日当たりのクロワッサン製造数により関心がある可能性が高いでしょう。 
 
 !!! warning
-	There is no singular, entirely complete, and comprehensive source for your business KPIs. You must understand your project or application well enough to know what your *output goals* are. 
+	ビジネス KPI の完全で包括的なソースは1つではありません。プロジェクトやアプリケーションを十分に理解して、*目標とするアウトプット*が何かを知る必要があります。
 
-Your first step is to name your high-level goals, and most likely those goals are not expressed as a single metric that comes from your infrastructure alone. In the e-commerce example above, once you identify the *meta* goal which is measuring *sales per hour*, you then can backtrack to detailed metrics such as time spent to search a product before purchase, time taken to complete the checkout process, latency of product search results and so on. This will guide us to be intentional about collecting relevant information to observe the system.
-
-!!! success
-	Having identified your KPIs, you can now *work backwards* to see what metrics in your workload impact them.
-
-## Correlate with operational metric data
-
-If high CPU utilization on your web server causes slow response times, which in turn makes for dissatisfied customers and ultimately lower revenue, then measuring your CPU utilization has a direct impact on your business outcomes and should *absolutely* be measured!
-
-Or conversely, if you have an application that performs batch processing on ephemeral cloud resources (such as an Amazon EC2 fleet, or similar in other cloud provider environments), then you may *want* to have CPU as utilized as possible in order to accomplish the most cost-effective means of completing the batch. 
-
-In either case, you need to have your operational data (e.g. CPU utilization) be in the same system as your business metrics so you can correlate the two. 
+最初のステップは、上位目標を明確にします。ほとんどの場合、それらの目標はインフラからの単一のメトリクスだけで表されるものではありません。上記の電子商取引の例では、*時間当たりの売上高*を測定するという*メタ*目標を特定したら、購入前の商品検索に費やした時間、チェックアウトプロセスの完了に要した時間、商品検索結果のレイテンシなど、より詳細なメトリクスに立ち返ることができます。これにより、システムを観察するための関連情報の収集について意図的になるでしょう。 
 
 !!! success
-	Store your business metrics and operational metrics in a system where you can correlate them together and draw conclusions based on observed impacts to both.
+	KPI を特定したら、ワークロード内のどのメトリクスがそれらに影響を与えるかを*逆から*確認できます。
 
-## Know what good looks like!
+## 運用メトリクスデータとの相関
 
-Understanding what a healthy baseline is can be challenging. Many people have to stress test their workloads to understand what healthy metrics look like. However, depending on your needs you may be able to observe existing operational metrics to draw safe conclusions about healthy thresholds.
+Web サーバーの高い CPU 使用率が遅いレスポンスタイムを引き起こし、それが顧客満足度の低下と最終的には収益の低下につながる場合、CPU 使用率の測定はビジネス成果に直接影響を与えるため、*絶対に*測定する必要があります!
 
-A healthy workload is one that has a balance of meeting your KPI objectives while remaining resilient, available, and cost-effective.
+または逆に、一時的なクラウドリソース(Amazon EC2 フリートなど)でバッチ処理を実行するアプリケーションの場合、バッチ処理を最もコスト効果的に完了するために、CPU を可能な限り利用したいと*考える*場合があります。
 
-!!! success
-	Your KPIs *must* have an identified healthy range so you can create [alarms](../../signals/alarms/) when performance falls below, or above, what is required.
-
-## Use anomaly detection algorithms
-
-The challenge with [knowing what good looks like](#know-what-good-looks-like) is that it may be impractical to know the healthy thresholds for *every* metric in your system. A Relational Database Management System(RDBMS) can emit dozens of performance metrics, and when coupled with a microservices architecture you can potentially have hundreds of metrics that can impact your KPIs.
-
-Watching such a large number of datapoints and individually identifying their upper and lower thresholds may not always be practical for humans to do. But machine learning is *very* good at this sort of repetitive task. Leverage automation and machine learning wherever possible as it can help identify issues that you would otherwise not even know about!
+いずれにしても、運用データ(CPU 使用率など)をビジネスメトリクスと同じシステムに入れて、両者を相関付ける必要があります。
 
 !!! success
-	Use machine learning algorithms and anomaly detection models to automatically calculate your workload's performance thresholds. 
+	ビジネスメトリクスと運用メトリクスを、相関付けて結論を導き出せるシステムに保存しましょう。
+
+## 望ましい状態がどういう状態かを知る
+
+健全なベースラインが何を意味するのかを理解するのは難しい場合があります。多くの人は、健全なメトリクスがどのようなものかを理解するために、ワークロードのストレステストを行う必要があります。ただし、ニーズに応じて、既存の運用メトリクスを観察することで、健全なしきい値について安全な結論を導き出すことができます。
+
+健全なワークロードとは、KPI 目標を満たしながら回復力が高く、可用性が高く、コスト効果の高いものです。
+
+!!! success
+	KPI には*必ず*健全な範囲を特定する必要があります。そうすることで、パフォーマンスが必要なレベルを下回ったり超えたりした場合に[アラーム](../../signals/alarms/)を作成できます。
+
+## 異常検知アルゴリズムを利用する
+
+[正常な状態がどういう状態なのかを知る](#know-what-good-looks-like)ことの課題は、システム内の*すべての*メトリクスについて正常なしきい値を知ることが現実的でない場合があることです。リレーショナル・データベース・マネジメント・システム (RDBMS) は数十ものパフォーマンス・メトリクスを発行する可能性があり、マイクロサービス・アーキテクチャと組み合わせると、KPI に影響を与える可能性のあるメトリクスが潜在的に数百個になるでしょう。
+
+このような大量のデータポイントを監視し、個々の上限値と下限値を特定することは、人間にとって常に実用的というわけではありません。しかし、機械学習はこの種の反復的なタスクについて*非常に*得意です。可能な限り自動化と機械学習を活用しましょう。そうすることで、そうでなければ気づかない問題を特定するのに役立ちます。
+
+!!! success
+	機械学習アルゴリズムと異常検知モデルを使用して、ワークロードのパフォーマンスしきい値を自動的に計算します。

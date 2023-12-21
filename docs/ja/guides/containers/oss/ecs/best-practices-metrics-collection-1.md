@@ -1,21 +1,24 @@
-# Collecting system metrics in an ECS cluster using AWS Distro for OpenTelemetry 
-[AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/introduction) (ADOT) is a secure, AWS-supported distribution of the [OpenTelemetry](https://opentelemetry.io/) project. Using ADOT, you can collect telemetry data from multiple sources and send correlated metrics, traces and logs to multiple monitoring solutions. ADOT may be deployed on Amazon ECS cluster in two difference patterns. 
+# AWS Distro for OpenTelemetry を使用した ECS クラスターのシステムメトリクスの収集
+[AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/introduction)(ADOT) は、[OpenTelemetry](https://opentelemetry.io/) プロジェクトの安全な AWS 対応ディストリビューションです。ADOT を使用すると、複数のソースからテレメトリデータを収集し、相関するメトリクス、トレース、ログを複数のモニタリングソリューションに送信できます。ADOT は、Amazon ECS クラスターに 2 つの異なるパターンでデプロイできます。
 
-## Deployment patterns for ADOT Collector 
-1. In the sidecar pattern, the ADOT collector runs inside each task in the cluster and it processes telemetry data collected from application containers only within that task. This deployment pattern is required only when you need the collector to read task metadata from Amazon ECS [Task Metadata Endpoint](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint.html), and generate resource usage metrics (such as CPU, memory, network, and disk) from them. 
-![ADOT architecture](../../../../images/ADOT-sidecar.png)
+## ADOT Collector のデプロイメントパターン
 
-2. In the central collector pattern, a single instance of ADOT collector is deployed on the cluster and it processes telemetry data from all the tasks running on the cluster. This is the most commonly used deployment pattern. The collector is deployed using either REPLICA or DAEMON service scheduler strategy.
-![ADOT architecture](../../../../images/ADOT-central.png)
+1. サイドカーパターンでは、ADOT Collector がクラスタ内の各タスク内で実行され、そのタスク内のアプリケーションコンテナから収集したテレメトリデータのみを処理します。 このデプロイメントパターンは、コレクターが Amazon ECS の [Task Metadata Endpoint](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint.html) からタスクメタデータを読み取り、そこからリソース使用量メトリクス(CPU、メモリ、ネットワーク、ディスクなど)を生成する必要がある場合にのみ必要です。
 
-The ADOT collector architecture has the concept of a pipeline. A single collector can contain more than one pipeline. Each pipeline is dedicated to processing one of the three types of telemetry data, namely, metrics, traces and logs. You can configure multiple pipelines for each type of telemetry data. This versatile architecture thus allows a single collector to perform the role of multiple observability agents that would otherwise have to be deployed on the cluster. It significantly reduces the deployment footprint of obsevrability agents on the cluster. The primary components of a collector that make up a pipeline are grouped into three categories, namely, Receiver, Processor, and Exporter. There are secondary components called Extensions which provide capabilities that can be added to the collector, but which are not part of pipelines. 
+![ADOT アーキテクチャ](../../../../images/ADOT-sidecar.png)
+
+2. セントラルコレクターパターンでは、ADOT コレクターのシングルインスタンスがクラスター上にデプロイされ、クラスター上で実行されているすべてのタスクからのテレメトリデータを処理します。 これが最も一般的に使用されるデプロイメントパターンです。 コレクターは、REPLICA または DAEMON サービススケジューラー戦略を使用してデプロイされます。
+
+![ADOT アーキテクチャ](../../../../images/ADOT-central.png)
+
+ADOT Collector アーキテクチャにはパイプラインの概念があります。 単一のコレクターに複数のパイプラインを含めることができます。 各パイプラインは、メトリクス、トレース、ログの 3 つのテレメトリデータの種類のいずれかを処理するために専用されています。 各種テレメトリデータについて複数のパイプラインを構成できます。 この汎用性の高いアーキテクチャにより、複数の可観測性エージェントの役割を実行する単一のコレクターを配置できるため、そうでない場合はクラスター上にデプロイする必要があります。 これにより、クラスター上の可観測性エージェントのデプロイメントフットプリントが大幅に削減されます。 パイプラインを構成するコレクターの主要コンポーネントは、Receiver、Processor、Exporter の 3 つのカテゴリにグループ化されます。 拡張機能と呼ばれる二次コンポーネントは、コレクターに追加できる機能を提供しますが、パイプラインの一部ではありません。
 
 !!! info
-    Refer to the OpenTelemetry [documentaton](https://opentelemetry.io/docs/collector/configuration/#basics) for a detailed explanation of Receivers, Processors, Exporters and Extensions.
+    Receiver、Processor、Exporter、Extensions の詳細な説明については、OpenTelemetry の [ドキュメント](https://opentelemetry.io/docs/collector/configuration/#basics) を参照してください。
 
-## Deploying ADOT Collector for ECS task metrics collection
+## ECS タスクメトリクス収集のための ADOT Collector のデプロイ
 
-To collect resource utilization metrics at the ECS task level, the ADOT collector should be deployed using the sidecar pattern, using a task definition as shown below. The container image used for the collector is bundled with several pipeline configurations. You can choose one of them based on your requirments and specify the configuration file path in the *command* section of the container defintion. Setting this value to `--config=/etc/ecs/container-insights/otel-task-metrics-config.yaml` will result in the use of a [pipeline configuration](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml) that collects resource utilization metrics and traces from other containers running within the same task as the collector and send them to Amazon CloudWatch and AWS X-Ray. Specifically, the collector uses an [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) that reads task metadata and docker stats from [Amazon ECS Task Metadata Endpoint](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4.html), and generates resource usage metrics (such as CPU, memory, network, and disk) from them. 
+ECS タスクレベルでリソース利用メトリクスを収集するには、以下に示すタスク定義を使用してサイドカー パターンで ADOT Collector をデプロイする必要があります。Collector に使用されるコンテナイメージには、いくつかのパイプライン構成がバンドルされています。要件に基づいてそれらのいずれかを選択し、コンテナ定義の *command* セクションで構成ファイルパスを指定できます。この値を `--config=/etc/ecs/container-insights/otel-task-metrics-config.yaml` に設定すると、Collector と同じタスク内の他のコンテナからリソース利用メトリクスとトレースを収集し、それらを Amazon CloudWatch と AWS X-Ray に送信する[パイプライン構成](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml) が使用されます。具体的には、Collector は [Amazon ECS Task Metadata Endpoint](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4.html) からタスクメタデータと docker 統計を読み取る [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) を使用し、そこからリソース使用メトリクス(CPU、メモリ、ネットワーク、ディスクなど)を生成します。
 
 ```javascript
 {
@@ -53,31 +56,31 @@ To collect resource utilization metrics at the ECS task level, the ADOT collecto
  }
 ```
 !!! info
-    Refer to the [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html) for details about setting up the IAM task role and task execution role that the ADOT collector will use when deployed on an Amazon ECS cluster.
+    Amazon ECS クラスターにデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定についての詳細は、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html)を参照してください。
+    
+!!! info 
+    [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) は、ECS Task Metadata Endpoint V4 でのみ機能します。Fargate 上のバージョン 1.4.0 以降のプラットフォームを使用している Amazon ECS タスクと、バージョン 1.39.0 以降の Amazon ECS コンテナエージェントを実行している Amazon EC2 上の Amazon ECS タスクは、このレシーバーを利用できます。詳細については、[Amazon ECS Container Agent Versions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-versions.html) を参照してください。
 
-!!! info
-    The [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) works only for ECS Task Metadata Endpoint V4. Amazon ECS tasks on Fargate that use platform version 1.4.0 or later and Amazon ECS tasks on Amazon EC2 that are running at least version 1.39.0 of the Amazon ECS container agent can utilize this receiver. For more information, see [Amazon ECS Container Agent Versions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-versions.html)
-
-As seen in the default [pipeline configuration](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml), the collector's pipeline first uses the [Filter Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) which filters out a [subset of metrics](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L25) pertaining to CPU, memory, network, and disk usage. Then it uses the [Metrics Transform Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) that performs a set of [transformations](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L39) to change the names of these metrics as well as update their attributes. Finally, the metrics are sent to CloudWatch as performance log events using the [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter). Using this default configuration will result in collection of the following resource usage metrics under the CloudWatch namespace *ECS/ContainerInsights*.
+デフォルトの[パイプライン構成](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml)で見られるように、Collector のパイプラインは最初に CPU、メモリ、ネットワーク、ディスク使用量に関連する[一部のメトリクス](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L25)をフィルタリングする [Filter Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) を使用します。次に、これらのメトリクスの名前を変更し、その属性を更新する一連の [変換](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L39) を実行する [Metrics Transform Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) を使用します。最後に、メトリクスは [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用してパフォーマンスログイベントとして CloudWatch に送信されます。このデフォルトの構成を使用すると、CloudWatch 名前空間 *ECS/ContainerInsights* の下に次のリソース使用メトリクスが収集されます。
 
 - MemoryUtilized
-- MemoryReserved
+- MemoryReserved 
 - CpuUtilized
 - CpuReserved
 - NetworkRxBytes
 - NetworkTxBytes
-- StorageReadBytes
+- StorageReadBytes  
 - StorageWriteBytes
 
 !!! info
-    Note that these are the same [metrics collected by Container Insights for Amazon ECS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html) and are made readily available in CloudWatch when you enable Container Insights at the cluster or account level. Hence, enabling Container Insights is the recommended approach for collecting ECS resource usage metrics in CloudWatch.
+    これらは [Container Insights for Amazon ECS によって収集されるメトリクス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)と同じであり、クラスターまたはアカウントレベルでコンテナインサイトを有効にすると CloudWatch で簡単に利用できるようになります。したがって、CloudWatch で ECS リソース使用メトリクスを収集するための推奨アプローチは、コンテナインサイトを有効にすることです。
 
-The AWS ECS Container Metrics Receiver emits 52 unique metrics which it reads from the Amazon ECS Task Metadata Endpoint. The complete list of metrics collected by the receiver is [documented here](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics). You may not want to send all of them to your preferred destination. If you want more explicit control over the ECS resource usage metrics, then you can create a custom pipeline configuration, filtering and transforming the available metrics with your choice of processors/transfomers and send them to a destination based on your choice of exporters. Refer to the documentation for [additional examples](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples) of pipeline configurations to capture ECS task level metrics.
+AWS ECS Container Metrics Receiver は、Amazon ECS Task Metadata Endpoint から読み取った 52 の一意のメトリクスを発行します。レシーバーによって収集されるメトリクスの完全なリストは、[ここで文書化されています](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics)。すべてを希望の宛先に送信したくない場合があります。ECS リソース使用メトリクスをより明示的に制御したい場合は、使用可能なメトリクスを選択したプロセッサ/トランスフォーマーでフィルタリングおよび変換するカスタムパイプライン構成を作成し、エクスポーターの選択に基づいて宛先に送信できます。ECS タスクレベルのメトリクスをキャプチャするパイプライン構成の[追加の例](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples)については、ドキュメントを参照してください。
 
-If you want to use a custom pipeline configuration, then you can use the task definition shown below and deploy the collector using the sidecar pattern. Here, the configuration of the collector pipeline is loaded from a parameter named *otel-collector-config* in AWS SSM Parameter Store. 
+カスタムパイプライン構成を使用する場合は、以下に示すタスク定義を使用して Collector をサイドカー パターンでデプロイできます。ここでは、Collector パイプラインの構成は、AWS SSM パラメータストアの *otel-collector-config* という名前のパラメータからロードされます。
 
 !!! important
-    The SSM Parameter Store parameter name must be exposed to the collector using an environment variable named AOT_CONFIG_CONTENT.
+    SSM パラメータストアパラメータ名は、AOT_CONFIG_CONTENT という名前の環境変数を使用して Collector に公開する必要があります。
 
 
 ```javascript
@@ -119,12 +122,12 @@ If you want to use a custom pipeline configuration, then you can use the task de
  }
 ```
 
-## Deploying ADOT Collector for ECS container instance metrics collection
+## ECS コンテナインスタンスメトリクス収集のための ADOT Collector のデプロイ
 
-To collect EC2 instance-level metrics from your ECS cluster, the ADOT collector can be deployed using a task definition as shown below. It should be deployed with the daemon service scheduler strategy. You can choose a pipeline configuration bundled into the container image. The configuration file path in the *command* section of the container defintion should be set to `--config=/etc/ecs/otel-instance-metrics-config.yaml`. The collector uses the [AWS Container Insights Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver#aws-container-insights-receiver) to collect EC2 instance-level infrastructure metrics for many resources such as such as CPU, memory, disk, and network. the metrics are sent to CloudWatch as performance log events using the [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter). The functionality of the collector with this configuration is equivalent to that of deploying the CloudWatch agent to an Amazon ECS cluster hosted on EC2,
+ECS クラスターから EC2 インスタンスレベルのメトリクスを収集するには、以下のようにタスク定義を使用して ADOT Collector をデプロイできます。デーモンサービススケジューラー戦略を使用してデプロイする必要があります。コンテナイメージにバンドルされているパイプライン構成を選択できます。コンテナ定義の *command* セクション内の構成ファイルパスは、`--config=/etc/ecs/otel-instance-metrics-config.yaml` に設定する必要があります。Collector は [AWS Container Insights Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awscontainerinsightreceiver#aws-container-insights-receiver) を使用して、CPU、メモリ、ディスク、ネットワークなどのリソースの EC2 インスタンスレベルのインフラストラクチャメトリクスを収集します。メトリクスは、[Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用してパフォーマンスログイベントとして CloudWatch に送信されます。この構成での Collector の機能は、EC2 でホストされる Amazon ECS クラスターに CloudWatch エージェントをデプロイすることと同等です。
 
 !!! info
-    The ADOT Collector deployment for collecting EC2 instance-level metrics is not supported on ECS clusters running on AWS Fargate
+    EC2 インスタンスレベルのメトリクスの収集のための ADOT Collector のデプロイは、AWS Fargate で実行されている ECS クラスターではサポートされていません。
 
 ```javascript
 {

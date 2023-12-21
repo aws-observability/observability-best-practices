@@ -1,38 +1,36 @@
 # Amazon Elastic Container Service
 
-[Amazon Elastic Container Service][ecs-main] (ECS) is a fully managed container
-orchestration service that helps you easily deploy, manage, and scale 
-containerized applications, deeply integrating with the rest of AWS.
+[Amazon Elastic Container Service][ecs-main](ECS) は、AWS の他のサービスと深く統合された、コンテナ化されたアプリケーションを簡単にデプロイ、管理、スケールできる、完全マネージドなコンテナオーケストレーションサービスです。
 
-Check out the following recipes, grouped by compute engine:
+コンピュートエンジン別にグループ化された以下のレシピをご覧ください。
 
-## General
+## 全般
 
-- [Deployment patterns for the AWS Distro for OpenTelemetry Collector with ECS][adot-patterns-ecs]
-- [Simplifying Amazon ECS monitoring set up with AWS Distro for OpenTelemetry][ecs-adot-integration]
+- [ECS での AWS Distro for OpenTelemetry Collector のデプロイメントパターン][adot-patterns-ecs]
+- [AWS Distro for OpenTelemetry による Amazon ECS モニタリングのセットアップの簡素化][ecs-adot-integration]
 
 ## ECS on EC2
 
-### Logs
+### ログ
 
-- [Under the hood: FireLens for Amazon ECS Tasks][firelens-uth]
+- [内部構造: Amazon ECS タスクの FireLens][firelens-uth]
 
-### Metrics
+### メトリクス
 
-- [Using AWS Distro for OpenTelemetry collector for cross-account metrics collection on Amazon ECS][adot-xaccount-metrics]
-- [Metrics collection from ECS using Amazon Managed Service for Prometheus][ecs-amp]
-- [Sending Envoy metrics from AWS App Mesh to Amazon CloudWatch][ecs-appmesh-cw]
+- [Amazon ECS でのクロスアカウント メトリクス収集のための AWS Distro for OpenTelemetry コレクターの使用][adot-xaccount-metrics]
+- [Amazon Managed Service for Prometheus を使用した ECS からのメトリクス収集][ecs-amp]
+- [AWS App Mesh から Amazon CloudWatch への Envoy メトリクスの送信][ecs-appmesh-cw]
 
 ## ECS on Fargate
 
-### Logs
+### ログ
 
-- [Sample logging architectures for FireLens on Amazon ECS and AWS Fargate using Fluent Bit][firelens-fb]
+- [Fluent Bitを使用したAmazon ECSおよびAWS FargateのFireLensのサンプルロギングアーキテクチャ][firelens-fb]
 
 
 [ecs-main]: https://aws.amazon.com/ecs/
 [adot-patterns-ecs]: https://aws.amazon.com/blogs/opensource/deployment-patterns-for-the-aws-distro-for-opentelemetry-collector-with-amazon-elastic-container-service/
-[firelens-uth]: https://aws.amazon.com/blogs/containers/under-the-hood-firelens-for-amazon-ecs-tasks/
+[firelens-uth]: https://aws.amazon.com/blogs/containers/under-the-hood-firelens-for-amazon-ecs-tasks/  
 [adot-xaccount-metrics]: https://aws.amazon.com/blogs/opensource/using-aws-distro-for-opentelemetry-collector-for-cross-account-metrics-collection-on-amazon-ecs/
 [ecs-amp]: https://aws.amazon.com/blogs/opensource/metrics-collection-from-amazon-ecs-using-amazon-managed-service-for-prometheus/
 [firelens-fb]: https://github.com/aws-samples/amazon-ecs-firelens-examples#fluent-bit-examples

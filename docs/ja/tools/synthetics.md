@@ -1,96 +1,99 @@
-# Synthetic testing
+# シンセティックテスト
 
-Amazon CloudWatch Synthetics allows you to monitor applications from the perspective of your customer, even in the absence of actual users. By continuously testing your APIs and website experiences, you can gain visibility into intermittent issues that occur even when there is no user traffic.
+Amazon CloudWatch Synthetics を使用すると、実際のユーザーがいなくても、お客様の視点からアプリケーションを監視できます。API とウェブサイトのエクスペリエンスを継続的にテストすることで、ユーザートラフィックがない場合でも発生する間欠的な問題の可視化が可能になります。
 
-Canaries are configurable scripts, that you can run on a schedule to continually test your APIs and website experiences 24x7. They follow the same code paths and network routes as real-users, and can notify you of unexpected behavior including latency, page load errors, broken or dead links, and broken user workflows.
+Canary は設定可能なスクリプトで、API とウェブサイトのエクスペリエンスを 24 時間 365 日テストし続けるためにスケジュールで実行できます。実際のユーザーと同じコードパスとネットワークルートに従い、レイテンシ、ページロードエラー、壊れたリンクやデッドリンク、壊れたユーザーワークフローなど、予期しない動作を通知します。
 
-![CloudWatch Synthetics architecture](../images/synthetics0.png)
+![CloudWatch Synthetics アーキテクチャ](../images/synthetics0.png)
 
 !!! important
-    Ensure that you use Synthetics canaries to monitor only endpoints and APIs where you have ownership or permissions. Depending on the canary frequency settings, these endpoints might experience increased traffic.
+    Synthetics Canaries を使用して、所有権またはアクセス許可があるエンドポイントと API のみを監視するようにしてください。Canary の頻度設定によって、これらのエンドポイントはトラフィックが増加する可能性があります。
 
-## Getting Started
+## はじめに
 
-### Full Coverage
+### 完全なカバレッジ
 
 !!! tip
-    When developing your testing strategy, consider both public and [private internal endpoints](https://aws.amazon.com/blogs/mt/monitor-your-private-endpoints-using-cloudwatch-synthetics/) within your Amazon VPC.
+    テスト戦略を立てる際は、Amazon VPC 内のパブリックエンドポイントと[プライベート内部エンドポイント](https://aws.amazon.com/blogs/mt/monitor-your-private-endpoints-using-cloudwatch-synthetics/)の両方を考慮してください。
 
-### Recording New Canaries
+### 新しい Canary の記録
 
-The [CloudWatch Synthetics Recorder](https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome browser plugin allows you to quickly build new canary test scripts with complex workflows from scratch. The type and click actions taken during recording are converted into a Node.js script that you can use to create a canary. The known limitations of the CloudWatch Synthetics Recorder are noted on [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations).
+[CloudWatch Synthetics Recorder](https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome ブラウザプラグインを使用すると、スクラッチから複雑なワークフローを含む新しい Canary テストスクリプトをすばやく構築できます。
+記録中に実行したタイプとクリックのアクションは、Canary を作成するために使用できる Node.js スクリプトに変換されます。 
+CloudWatch Synthetics Recorder の既知の制限事項は、[このページ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations)で注記されています。
 
-### Viewing Aggregate Metrics
+### 集計メトリクスの表示
 
-Take advantage of the out-of-the-box reporting on aggregate metrics collected from your fleet of canary scripts. CloudWatch Automatic Dashboard
+Canary スクリプトのフリートから収集された集計メトリクスの既製のレポートを利用しましょう。CloudWatch オートダッシュボード
 
 ![The CloudWatch Dashboard for Synthetics](../images/synthetics1.png)
 
-## Building Canaries
+## Canary の構築
 
-### Blueprints
+### ブループリント
 
-Use [canary blueprints](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Blueprints.html) to simplify the setup process for multiple canary types.
+複数のタイプの Canary を設定するプロセスを簡略化するために、[Canary ブループリント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Blueprints.html)を使用します。
 
-![Multiple ways to create a synthetics canary](../images/synthetics2.png)
+![複数の方法で Synthetics Canary を作成する](../images/synthetics2.png)
 
 !!! info
-    Blueprints are a convenient way to start writing canaries and simple use cases can be covered with no code.
+    ブループリントは、Canary の記述を開始するための便利な方法であり、シンプルなユースケースはコードなしでカバーできます。
 
-### Maintainability
+### 保守性
 
-When you write your own canaries, they are tied to a *runtime version*. This will be a specific version of either Python with Selenium, or JavaScript with Puppeteer. See [this page] for a list of our currently-supported runtime versions and those that are deprecated. 
-
-!!! success
-    Improve the maintainability of your scripts by [using environment variables](https://aws.amazon.com/blogs/mt/using-environment-variables-with-amazon-cloudwatch-synthetics/) to share data that can be accessed during the canary's execution.
+独自の Canaries を作成すると、それらは *ランタイムバージョン*に結び付けられます。これは、Python と Selenium、または JavaScript と Puppeteer の特定のバージョンのいずれかになります。現在サポートされているランタイムバージョンと廃止予定のバージョンのリストについては、[このページ]を参照してください。
 
 !!! success
-    Upgrade your canaries to the latest runtime version when available. 
-
-### String Secrets
-
-You can code your canaries to pull secrets (such as login credentials) from a secure system outside of your canary or its environment variables. Any system that can be reached by AWS Lambda can potentially provide secrets to your canaries at runtime.
+    Canary の実行中にアクセスできるデータを共有するために、[環境変数を使用する](https://aws.amazon.com/blogs/mt/using-environment-variables-with-amazon-cloudwatch-synthetics/)ことでスクリプトの保守性を向上させてください。
 
 !!! success
-    Execute your tests and [secure sensitive data](https://aws.amazon.com/blogs/mt/secure-monitoring-of-user-workflow-experience-using-amazon-cloudwatch-synthetics-and-aws-secrets-manager/) by storing secrets like database connection details, API keys, and application credentials using AWS Secrets Manager.
+    新しいランタイムバージョンが利用可能になったら、Canaries を最新バージョンにアップグレードしてください。
 
-## Managing Canaries at Scale
+### 文字列シークレット
 
-### Check for Broken Links
-
-!!! success
-    If your website contains a high-volume of dynamic content and links, you can use CloudWatch Synthetics to crawl your website, [detect broken links](https://aws.amazon.com/blogs/mt/cloudwatch-synthetics-to-find-broken-links-on-your-website/), and find the reason for failure. Then use a failure threshold to optionally create a [CloudWatch Alarm](../../toosl/alarms/) when a failure threshold has been violated.
-
-### Multiple Heartbeat URLs
+Canary をコーディングして、Canary やその環境変数の外部のセキュアなシステムからシークレット(ログイン資格情報など)をプルできます。 
+AWS Lambda からアクセスできるシステムであれば、実行時に Canary にシークレットを提供できる可能性があります。
 
 !!! success
-    Simplify your testing and optimize costs by [batching multiple URLs](https://aws.amazon.com/blogs/mt/simplify-your-canary-by-batching-multiple-urls-in-amazon-cloudwatch-synthetics/) in a single heartbeat monitoring canary test. You can then see the status, duration, associated screenshots, and failure reason for each URL in the step summary of the canary run report.
+    テストを実行し、データベースの接続詳細、API キー、アプリケーション資格情報などのシークレットを AWS Secrets Manager を使用して保存することで、[機密データを保護](https://aws.amazon.com/blogs/mt/secure-monitoring-of-user-workflow-experience-using-amazon-cloudwatch-synthetics-and-aws-secrets-manager/)します。
 
-### Organize in Groups
+## 大規模な Canaries の管理
+
+### 壊れたリンクの確認
 
 !!! success
-    Organize and track your canaries in [groups](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Groups.html) to view aggregated metrics and more easily isolate and drill in to failures.
+    ウェブサイトに大量の動的コンテンツとリンクが含まれている場合は、CloudWatch Synthetics を使用してウェブサイトをクロールし、[壊れたリンクを検出](https://aws.amazon.com/blogs/mt/cloudwatch-synthetics-to-find-broken-links-on-your-website/)し、障害の理由を特定できます。次に、障害のしきい値を使用して、障害のしきい値が違反したときにオプションで [CloudWatch アラーム](../../toosl/alarms/) を作成します。
 
-![Organize and track canaries in groups](../images/synthetics3.png)
+### 複数のハートビート URL
+
+!!! success
+    テストを簡略化し、コストを最適化するには、単一のハートビート監視 Canary テストで[複数の URL をバッチ処理](https://aws.amazon.com/blogs/mt/simplify-your-canary-by-batching-multiple-urls-in-amazon-cloudwatch-synthetics/)します。そうすると、Canary 実行レポートのステップサマリで、各 URL のステータス、期間、関連するスクリーンショット、失敗の理由を確認できます。
+
+### グループで整理する
+
+!!! success
+    [グループ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Groups.html)でキャナリーを整理し、トラッキングすることで、集計メトリクスを表示したり、障害をより簡単に分離およびドリルダウンしたりできます。
+
+![Organize and track canaries in groups](../images/synthetics3.png)  
 
 !!! warning
-    Note that groups will require the *exact* name of the canary if you are creating a cross-region group.
+    リージョン間グループを作成する場合、キャナリーの*正確な*名前が必要になることに注意してください。
 
-## Runtime Options
+## ランタイムオプション
 
-### Versions and Support
+### バージョンとサポート
 
-CloudWatch Synthetics currently supports runtimes that use Node.js for scripts and the [Puppeteer](https://github.com/puppeteer/puppeteer) framework, and runtimes that use Python for scripting and [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) for the framework.
+CloudWatch Synthetics は現在、スクリプトに Node.js を、フレームワークに [Puppeteer](https://github.com/puppeteer/puppeteer) を使用するランタイムと、スクリプトに Python を、フレームワークに [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) を使用するランタイムをサポートしています。
 
 !!! success
-    Always use the most recent runtime version for your canaries, to be able to use the latest features and updates made to the Synthetics library.
+    Canary で最新のランタイム バージョンを常に使用することで、Synthetics ライブラリへの最新の機能追加や更新を利用できます。
 
-CloudWatch Synthetics notifies you by email if you have canaries that use [runtimes that are scheduled to be deprecated](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Library.html#CloudWatch_Synthetics_Canaries_runtime_support) in the next 60 days.
+CloudWatch Synthetics は、[今後 60 日以内に廃止予定のランタイム](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Library.html#CloudWatch_Synthetics_Canaries_runtime_support) を使用している Canary がある場合はメールで通知します。
 
-### Code Samples
+### コードサンプル
 
-Get started with code samples for both [Node.js and Puppeteer](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Samples.html#CloudWatch_Synthetics_Canaries_Samples_nodejspup) and [Python and Selenium](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Samples.html#CloudWatch_Synthetics_Canaries_Samples_pythonsel).
+[Node.js と Puppeteer](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Samples.html#CloudWatch_Synthetics_Canaries_Samples_nodejspup) と [Python と Selenium](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Samples.html#CloudWatch_Synthetics_Canaries_Samples_pythonsel) のコードサンプルから始めましょう。
 
-### Import for Selenium
+### Selenium 用のインポート
 
-Create canaries in [Python and Selenium](https://aws.amazon.com/blogs/mt/create-canaries-in-python-and-selenium-using-amazon-cloudwatch-synthetics/) from scratch or by importing existing scripts with minimal changes.
+[Python と Selenium](https://aws.amazon.com/blogs/mt/create-canaries-in-python-and-selenium-using-amazon-cloudwatch-synthetics/) を使用して、ゼロから Canary を作成するか、最小限の変更で既存のスクリプトをインポートできます。

@@ -1,68 +1,56 @@
-# Using Terraform for Amazon Managed Grafana automation
+# Terraform を使用した Amazon Managed Grafana の自動化
 
-In this recipe we show you how use Terraform to automate [Amazon Managed Grafana](../../amg/), 
-for example to add datasources or dashboards consistently across a number of workspaces.
+このレシピでは、Terraform を使用して [Amazon Managed Grafana](../../amg/) を自動化する方法を示します。
+たとえば、複数のワークスペースにわたってデータソースやダッシュボードを一貫して追加するなどです。
 
 !!! note
-    This guide will take approximately 30 minutes to complete.
+    このガイドの完了には約 30 分かかります。
 
-## Prerequisites
+## 前提条件
 
-* The [AWS command line][aws-cli] is installed and [configured][aws-cli-conf] in your local environment.
-* You have the [Terraform][tf] command line installed in your local environment.
-* You have an [Amazon Managed Service for Prometheus](../../amp/) workspace ready to use.
-* You have an [Amazon Managed Grafana](../../amg/) workspace ready to use.
+* [AWS コマンドライン][aws-cli] がインストールされ、ローカル環境で[設定][aws-cli-conf]されていること。
+* ローカル環境に [Terraform][tf] コマンドラインがインストールされていること。
+* 使用できる [Amazon Managed Service for Prometheus](../../amp/) ワークスペースがあること。 
+* 使用できる [Amazon Managed Grafana](../../amg/) ワークスペースがあること。
 
-## Set up Amazon Managed Grafana
+## Amazon Managed Grafanaの設定
 
-In order for Terraform to [authenticate][grafana-authn] against Grafana, we are 
-using an API Key, which acts as a kind of password. 
+Terraformが[Grafanaに対して認証][grafana-authn]するために、パスワードのような役割を果たすAPIキーを使用しています。
 
 !!! info
-    The API key is an [RFC 6750][rfc6750] HTTP Bearer header
-    with a 51 character long alpha-numeric value authenticating the caller with
-    every request against the Grafana API.
+    APIキーは、Grafana APIに対する呼び出しごとに呼び出し元を認証する51文字の英数字値を持つ[RFC 6750][rfc6750] HTTPベアラーヘッダーです。
 
-So, before we can set up the Terraform manifest, we first need to create an
-API key. You do this via the Grafana UI as follows.
+したがって、Terraformマニフェストを設定する前に、まずAPIキーを作成する必要があります。これは、Grafana UIで次のように行います。
 
-First, select from the left-hand side menu in the `Configuration` section
-the `API keys` menu item:
+まず、`Configuration`セクションの左側のメニューから`API keys`メニュー項目を選択します。
 
-![Configuration, API keys menu item](../images/api-keys-menu-item.png)
+![Configuration、API keys メニュー項目](../images/api-keys-menu-item.png)
 
-Now create a new API key, give it a name that makes sense for your task at
-hand, assign it `Admin` role and set the duration time to, for example, one day:
+次に、新しいAPIキーを作成し、現在のタスクに対して意味のある名前を付け、`Admin` ロールを割り当て、期間を例えば1日に設定します。
 
-![API key creation](../images/api-key-creation.png)
+![APIキーの作成](../images/api-key-creation.png)
 
 !!! note
-    The API key is valid for a limited time, in AMG you can use values up to 30 days.
+    APIキーの有効期間は限定されています。AMGでは30日までの値を使用できます。
 
-Once you hit the `Add` button you should see a pop-up dialog that contains the
-API key:
+`Add`ボタンをクリックすると、APIキーが含まれているポップアップダイアログが表示されます。
 
-![API key result](../images/api-key-result.png)
+![APIキーの結果](../images/api-key-result.png) 
 
 !!! warning
-    This is the only time you will see the API key, so store it from here
-    in a safe place, we will need it in the Terraform manifest later.
+    これがAPIキーを確認できる唯一の機会なので、ここから安全な場所に保存しておきます。後でTerraformマニフェストで必要になります。
 
-With this we've set up everything we need in Amazon Managed Grafana in order to
-use Terraform for automation, so let's move on to this step.
+これで、Terraformによる自動化のためにAmazon Managed Grafanaで必要なすべての設定が完了しました。次はその手順に進みましょう。
 
-## Automation with Terraform
+## Terraform による自動化
 
-### Preparing Terraform
+### Terraform の準備
 
-For Terraform to be able to interact with Grafana, we're using the official
-[Grafana provider][tf-grafana-provider] in version 1.13.3 or above.
+Terraform が Grafana と対話できるようにするために、バージョン 1.13.3 以上の公式 [Grafana プロバイダー][tf-grafana-provider] を使用しています。
 
-In the following, we want to automate the creation of a data source, in our
-case we want to add a Prometheus [data source][tf-ds], to be exact, an
-AMP workspace.
+以下では、データソースの自動作成を行いたいと考えています。具体的には、Prometheus の [データソース][tf-ds]、つまり AMP ワークスペースを追加したいと考えています。
 
-First, create a file called `main.tf` with the following content:
+まず、次のコンテンツを含む `main.tf` というファイルを作成します。
 
 ```
 terraform {
@@ -92,24 +80,21 @@ resource "grafana_data_source" "prometheus" {
   }
 }
 ```
-In above file you need to insert three values that depend on your environment.
+上記のファイルでは、環境に依存する 3 つの値を挿入する必要があります。
 
-In the Grafana provider section:
+Grafana プロバイダーのセクションで:
 
-* `url` … the Grafana workspace URL which looks something like the following:
-      `https://xxxxxxxx.grafana-workspace.eu-west-1.amazonaws.com`.
-* `auth` … the API key you have created in the previous step.
+* `url` ... 次のような形式の Grafana ワークスペースの URL: 
+      `https://xxxxxxxx.grafana-workspace.eu-west-1.amazonaws.com`
+* `auth` ... 前のステップで作成した API キー
 
-In the Prometheus resource section, insert the `url` which is the AMP 
-workspace URL in the form of 
-`https://aps-workspaces.eu-west-1.amazonaws.com/workspaces/ws-xxxxxxxxx`.
+Prometheus リソースのセクションでは、次の形式の AMP ワークスペースの URL を挿入します:
+`https://aps-workspaces.eu-west-1.amazonaws.com/workspaces/ws-xxxxxxxxx`
 
 !!! note
-    If you're using Amazon Managed Grafana in a different region than the one
-    shown in the file, you will have to, in addition to above, also set the
-    `sigv4_region` to your region.
+    ファイルに示されているリージョンとは異なるリージョンで Amazon Managed Grafana を使用している場合は、上記に加えて、 `sigv4_region` をご利用のリージョンに設定する必要があります。
 
-To wrap up the preparation phase, let's now initialize Terraform:
+準備フェーズの締めくくりとして、次に Terraform を初期化しましょう:
 
 ```
 $ terraform init
@@ -140,12 +125,11 @@ rerun this command to reinitialize your working directory. If you forget, other
 commands will detect it and remind you to do so if necessary.
 ```
 
-With that, we're all set and can use Terraform to automate the data source
-creation as explained in the following.
+これで準備が整い、以下で説明するデータソースの作成を Terraform で自動化できるようになりました。
 
-### Using Terraform
+### Terraform の使用
 
-Usually, you would first have a look what Terraform's plan is, like so:
+通常、Terraform のプランを次のように確認します。
 
 ```
 $ terraform plan
@@ -182,7 +166,7 @@ Note: You didn't use the -out option to save this plan, so Terraform can't guara
 
 ```
 
-If you're happy with what you see there, you can apply the plan:
+表示内容に問題がなければ、プランを適用できます。
 
 ```
 $ terraform apply
@@ -226,19 +210,16 @@ Apply complete! Resources: 1 added, 0 changed, 0 destroyed.
 
 ```
 
-When you now go to the data source list in Grafana you should see something
-like the following:
+Grafana のデータソースリストを確認すると、次のような内容が表示されるはずです。
 
 ![AMP as data source in AMG](../images/amg-prom-ds-with-tf.png)
 
-To verify if your newly created data source works, you can hit the blue `Save &
-test` button at the bottom and you should see a `Data source is working`
-confirmation message as a result here.
+新しく作成したデータソースが機能するかどうかを確認するには、下部の青い `Save & test` ボタンをクリックします。
+結果として「Data source is working」の確認メッセージが表示されるはずです。
 
-You can use Terraform also to automate other things, for example, the [Grafana 
-provider][tf-grafana-provider] supports managing folders and dashboards.
+Terraform は他の自動化にも使用できます。例えば、[Grafana プロバイダー][tf-grafana-provider] はフォルダやダッシュボードの管理をサポートしています。
 
-Let's say you want to create a folder to organize your dashboards, for example:
+ダッシュボードを整理するためのフォルダを作成したいとします。例:
 
 ```
 resource "grafana_folder" "examplefolder" {
@@ -246,8 +227,7 @@ resource "grafana_folder" "examplefolder" {
 }
 ```
 
-Further, say you have a dashboard called `example-dashboard.json`, and you want
-to create it in the folder from above, then you would use the following snippet:
+さらに、`example-dashboard.json` というダッシュボードがあり、上記のフォルダに作成したい場合は、次のスニペットを使用します。
 
 ```
 resource "grafana_dashboard" "exampledashboard" {
@@ -256,21 +236,18 @@ resource "grafana_dashboard" "exampledashboard" {
 }
 ```
 
-Terraform is a powerful tool for automation and you can use it as shown here
-to manage your Grafana resources. 
+Terraform は自動化のための強力なツールであり、ここで示したように Grafana リソースを管理するために使用できます。
 
 !!! note
-    Keep in mind, though, that the [state in Terraform][tf-state] is, by default,
-    managed locally. This means, if you plan to collaboratively work with Terraform,
-    you need to pick one of the options available that allow you to share the state across a team.
+    ただし、[Terraform の状態][tf-state] はデフォルトでローカルに管理されていることに注意してください。これは、Terraform で共同作業を行う場合、状態をチーム全体で共有できるオプションの 1 つを選択する必要があることを意味します。
 
-## Cleanup
+## クリーンアップ
 
-Remove the Amazon Managed Grafana workspace by removing it from the console.
+コンソールから Amazon Managed Grafana ワークスペースを削除してください。
 
 [aws-cli]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html
 [aws-cli-conf]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
-[tf]: https://www.terraform.io/downloads.html
+[tf]: https://www.terraform.io/downloads.html  
 [grafana-authn]: https://grafana.com/docs/grafana/latest/http_api/auth/
 [rfc6750]: https://datatracker.ietf.org/doc/html/rfc6750
 [tf-grafana-provider]: https://registry.terraform.io/providers/grafana/grafana/latest/docs

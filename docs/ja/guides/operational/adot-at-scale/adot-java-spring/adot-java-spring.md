@@ -1,47 +1,47 @@
-# Instrumenting Java Spring Integration Applications
+# Java Spring Integration アプリケーションの計装
 
-This article describes an approach for manually instrumenting [Spring-Integration](https://docs.spring.io/spring-integration/reference/html/overview.html) applications utilizing [Open Telemetry](https://opentelemetry.io/) and [X-ray](https://aws.amazon.com/xray/).
+この記事では、[Open Telemetry](https://opentelemetry.io/) と [X-ray](https://aws.amazon.com/xray/) を利用した [Spring Integration](https://docs.spring.io/spring-integration/reference/html/overview.html) アプリケーションの手動計装のアプローチについて説明します。
 
-The Spring-Integration framework is designed to enable the development of integration solutions typical of event-driven architectures and messaging-centric architectures. On the other hand, OpenTelemetry tends to be more focused on micro services architectures, in which services communicate and coordinate with each other using HTTP requests. Therefore this guide will provide an example of how to instrument Spring-Integration applications using manual instrumentation with the OpenTelemetry API.
+Spring Integration フレームワークは、イベント駆動アーキテクチャやメッセージ指向アーキテクチャの統合ソリューションの開発を可能にするように設計されています。一方、OpenTelemetry は HTTP リクエストを使用してサービス間で通信と調整を行うマイクロサービスアーキテクチャに焦点を当てる傾向があります。したがって、このガイドでは OpenTelemetry API を使用した手動計装による Spring Integration アプリケーションの計装方法の例を提供します。
 
-## Background Information
+## 背景情報
 
-### What is tracing?
+### トレーシングとは
 
-The following quote from the [OpenTelemetry documentation](https://opentelemetry.io/docs/concepts/signals/traces/) gives a good overview of what a trace's purpose is:
+[OpenTelemetry のドキュメント](https://opentelemetry.io/docs/concepts/signals/traces/)からの以下の引用は、トレースの目的について良い概要を示しています。
 
 !!! quote
-    Traces give us the big picture of what happens when a request is made to an application. Whether your application is a monolith with a single database or a sophisticated mesh of services, traces are essential to understanding the full “path” a request takes in your application.
+    トレースにより、アプリケーションへのリクエストが行われたときに何が起こるかの全体像がわかります。アプリケーションが単一のデータベースを持つモノリスアプリケーションであれ、サービスの複雑なメッシュであれ、アプリケーション内のリクエストの完全な「パス」を理解するうえでトレースは不可欠です。
 
-Given that one of the main benefits of tracing is end-to-end visibility of a request, it is important for traces to link properly all the way from the request origin to the backend. A common way of doing this in OpenTelemetry is to utilize [nested spans](https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans). This works in a microservices architecture where the spans are passed from service to service until they reach the final destination. In a Spring Integration application, we need to create parent/child relationships between spans created both remotely AND locally.
+エンドツーエンドのリクエスト可視性がトレーシングの主なメリットの 1 つであることを考えると、リクエストの発信元からバックエンドまでトレースを適切にリンクすることが重要です。OpenTelemetry でこれを実現する一般的な方法は、[ネストされたスパン](https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans) を利用することです。これは、スパンがサービスからサービスへと渡され、最終的な宛先に到達するまでのマイクロサービスアーキテクチャで機能します。Spring Integration アプリケーションでは、リモートおよびローカルの両方で作成されたスパン間の親子関係を作成する必要があります。
 
-## Tracing Utilizing Context Propagation
+## コンテキスト伝播を利用したトレーシング
 
-We will demonstrate an approach using context propagation. Although this approach is traditionally used when you need to create parent/child relationship between spans created locally and in remote locations, it will be used for the case of the Spring Integration Application because it simplifies the code and will allow the application to scale: it will be possible to process messages in parallel in multiple threads and it will also be possible to scale horizontally in case we need to process messages in different hosts.
+コンテキスト伝播を利用したアプローチをデモンストレーションします。このアプローチは通常、ローカルおよびリモートの場所で作成されたスパン間の親/子関係を作成する必要がある場合に使用されますが、Spring Integration アプリケーションの場合に使用されます。なぜならコードを簡素化し、アプリケーションのスケールアウトを可能にするからです。メッセージを複数のスレッドで並列処理したり、異なるホストでメッセージを処理するために水平方向にスケールアウトしたりすることが可能になります。
 
-Here is an overview of what is necessary to achieve this:
+これを実現するために必要なことの概要は次のとおりです。
 
-- Create a ```ChannelInterceptor``` and register it as a ```GlobalChannelInterceptor``` so that it can capture messages being sent across all channels.
+- ```ChannelInterceptor``` を作成し、```GlobalChannelInterceptor``` として登録することで、すべてのチャネルを介して送信されるメッセージをキャプチャできるようにする。
 
-- In the ```ChannelInterceptor```:
-  - In the ```preSend``` method:
-    - try to read the context from the previous message that is being generated upstream.This is where we are able to connect spans from upstream messages. If no context exists, a new trace is started (this is done by the OpenTelemetry SDK). 
-    - Create a Span with a unique name that identifies that operation. This can be the name of the channel where this message is being processed.
-    - Save current context in the message.
-    - Store the context and scope in thread.local so that they can be closed afterwards.
-    - inject context in the message being sent downstream.
-  - In the ```afterSendCompletion```:
-    - Restore the context and scope from thread.local
-    - Recreate the span from the context.
-    - Register any exceptions raised while processing the message.
-    - Close Scope.
-    - End Span.
+- ```ChannelInterceptor``` で:
+  - ```preSend``` メソッドで:
+    - 上流で生成された前のメッセージからコンテキストを読み取ることを試みる。これは上流のメッセージからスパンを接続できる場所です。コンテキストが存在しない場合、新しいトレースが開始されます(これは OpenTelemetry SDK によって行われます)。
+    - その操作を識別する一意の名前を持つ Span を作成する。これは、このメッセージが処理されているチャネルの名前にできます。 
+    - 現在のコンテキストをメッセージに保存する。
+    - コンテキストとスコープを thread.local に保存して、後で閉じることができるようにする。
+    - ダウンストリームに送信されるメッセージにコンテキストを挿入する。
+  - ```afterSendCompletion``` で:
+    - thread.local からコンテキストとスコープを復元する。 
+    - コンテキストからスパンを再作成する。
+    - メッセージ処理中に発生した例外を登録する。
+    - スコープを閉じる。
+    - スパンを終了する。
 
-This is a simplified description of what needs to be done. We are providing a functional sample application that uses the Spring-Integration framework. The code for this application can be found [here](https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp).
+これは必要なことの簡略化された説明です。Spring Integration フレームワークを使用した機能サンプルアプリケーションを提供しています。このアプリケーションのコードは[こちら](https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp) にあります。
 
-To view only the changes that were put in place to instrument the application, view this [diff](https://github.com/rapphil/spring-integration-samples/compare/30e01ce9eefd8dae288eca44013810afa8c1a585..6f056a76350340a9658db0cad7fc12dbda505437).
+アプリケーションへの計装のために実施された変更のみを表示するには、この [diff](https://github.com/rapphil/spring-integration-samples/compare/30e01ce9eefd8dae288eca44013810afa8c1a585..6f056a76350340a9658db0cad7fc12dbda505437) をご覧ください。
 
-### To run this sample application use:
+### このサンプルアプリケーションを実行するには次を使用します:
 
 ``` bash
 # build and run
@@ -50,7 +50,7 @@ mvn spring-boot:run
 echo 'testcontent\nline2content\nlastline' > /tmp/in/testfile.txt
 ```
 
-To experiment with this sample application, you will need to have the [ADOT collector](https://aws-otel.github.io/docs/getting-started/collector) running in the same machine as the application with a configuration similar to the following one:
+このサンプルアプリケーションを試すには、アプリケーションと同じマシンで次のような構成の [ADOT コレクター](https://aws-otel.github.io/docs/getting-started/collector) を実行する必要があります:
 
 ``` yaml
 receivers:
@@ -82,28 +82,27 @@ service:
       exporters: [awsemf]
 ```
 
-## Results
+## 結果
 
-If we run the sample application and then run the following command, this is what we get:
+サンプルアプリケーションを実行してから、次のコマンドを実行すると、次のような結果が得られます。
 
 ``` bash
 echo 'foo123\nbar123\nfoo1234' > /tmp/in/testfile.txt
 ```
 
-![X-ray Results](x-ray-results.png)
+![X-Ray の結果](x-ray-results.png)
 
-We can see that the segments above match the workflow described in the sample application. Exceptions are expected when some of the messages were processed, therefore we can see that they are being properly registered and will allow us to troubleshoot them in X-Ray.
+上記のセグメントが、サンプルアプリケーションで説明されているワークフローと一致していることがわかります。一部のメッセージの処理時に例外が発生することが予想されるため、適切に登録されており、X-Ray でトラブルシューティングできることがわかります。
 
+## よくある質問
 
-## FAQ
+### ネストされたスパンはどのように作成しますか?
 
-### How do we create nested spans?
+OpenTelemetryには、スパンを接続するために使用できる3つのメカニズムがあります。
 
-There are three mechanisms in OpenTelemetry that can be used to connect spans:
+##### 明示的に
 
-##### Explicitly
-
-You need to pass the parent span to the place where the child span is created and link both of them using:
+親スパンを子スパンが作成される場所に渡す必要があり、次のように両方をリンクさせます。
 
 ``` java
     Span childSpan = tracer.spanBuilder("child")
@@ -111,10 +110,10 @@ You need to pass the parent span to the place where the child span is created an
     .startSpan();
 ```
 
-##### Implicitly
+##### 暗黙的に
 
-The span context will be stored in thread.local under the hood.
-This method is indicated when you are sure that you are creating spans in the same thread.
+スパンコンテキストは内部的に thread.local に保存されます。
+スパンを同じスレッドで作成していることが確実な場合にこの方法が適しています。
 
 ``` java
     void parentTwo() {
@@ -138,14 +137,11 @@ This method is indicated when you are sure that you are creating spans in the sa
     }
 ```
 
-##### Context Propagation  
+##### コンテキストの伝播
 
-This method will store the context somewhere (HTTP headers or in a message) so that it can be transported to a remote location where the child span is created. It is not a strict requirement to be a remote location. This can be used in the same process as well.
+この方法では、コンテキストをどこか(HTTP ヘッダやメッセージなど)に保存することで、それをリモートの場所に転送し、そこで子スパンを作成できます。
+リモートの場所である必要はありません。同じプロセス内でも使用できます。
 
-### How are OpenTelemetry properties translated into X-Ray properties?
+### OpenTelemetry のプロパティは X-Ray のプロパティにどのように変換されるのか
 
-Please see the following [guide](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation) to view the relationship.
-
-
-
-  
+関係を見るには、次の[ガイド](https://opentelemetry.io/docs/instrumentation/java/manual/#context-propagation)を参照してください。

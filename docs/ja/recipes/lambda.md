@@ -1,24 +1,22 @@
 # AWS Lambda
 
-[AWS Lambda][lambda-main] is a serverless compute service that lets you run
-code without provisioning or managing servers, creating workload-aware cluster 
-scaling logic, maintaining event integrations, or managing runtimes.
+[AWS Lambda][lambda-main] は、サーバーのプロビジョニングや管理、ワークロード対応のクラスタースケーリングロジックの作成、イベントインテグレーションの維持、ランタイムの管理を行うことなく、コードを実行できるサーバーレスコンピューティングサービスです。
 
-Check out the following recipes:
+以下のレシピをご確認ください:
 
-## Logs
+## ログ
 
-- [Deploy and Monitor a Serverless Application][aes-ws]
+- [サーバーレスアプリケーションのデプロイとモニタリング][aes-ws]
 
-## Metrics
+## メトリクス
 
-- [Introducing CloudWatch Lambda Insights][lambda-cwi]
-- [Exporting Cloudwatch Metric Streams via Firehose and AWS Lambda to Amazon Managed Service for Prometheus](recipes/lambda-cw-metrics-go-amp.md)
+- [CloudWatch Lambda Insights のご紹介][lambda-cwi]
+- [Firehose と AWS Lambda を使用した Cloudwatch メトリックストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
 
-## Traces
+## トレース
 
-- [Auto-instrumenting a Python application with an AWS Distro for OpenTelemetry Lambda layer][lambda-layer-python-xray-adot]
-- [Tracing AWS Lambda functions in AWS X-Ray with OpenTelemetry][lambda-xray-adot]
+- [AWS Distro for OpenTelemetry Lambda レイヤーで Python アプリケーションを自動計装][lambda-layer-python-xray-adot]
+- [OpenTelemetry で AWS X-Ray で AWS Lambda 関数をトレーシング][lambda-xray-adot]
 
 [lambda-main]: https://aws.amazon.com/lambda/
 [aes-ws]: https://bookstore.aesworkshops.com/

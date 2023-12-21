@@ -1,204 +1,214 @@
-# Amazon EKS API Server Monitoring
+# Amazon EKS API サーバーのモニタリング
 
-In this section of Observability best practices guide, we will deep dive on to following topics related to API Server Monitoring:
+このオブザーバビリティのベストプラクティスガイドのセクションでは、API サーバーモニタリングに関連する次のトピックを深掘りします。
 
-* Introduction to Amazon EKS API Server Monitoring
-* Setting up an API Server Troubleshooter Dashboard
-* Using API Troubleshooter Dashboard to Understand API Server Problems
-* Understanding Unbounded list calls to API Server
-* Stopping bad behavior to API Server
-* API Priority and Fairness
-* Identifying slowest API calls and API Server Latency Issues
+* Amazon EKS API サーバーモニタリングの概要
+* API サーバートラブルシューティングダッシュボードの設定
+* API トラブルシューティングダッシュボードを使用した API サーバーの問題の理解
+* API サーバーへの無制限なリストコールの理解  
+* API サーバーへの悪影響を及ぼす動作の停止
+* API の優先順位と公平性
+* 最も遅い API 呼び出しと API サーバーレイテンシの問題の特定
 
-### Introduction
+### はじめに
 
-Monitoring your Amazon EKS managed control plane is a very important Day 2 operational activity to proactively identity issues with health of your EKS cluster. Amazon EKS Control plane monitoring helps you to take proactive measures based on the collected metrics. These metrics would helps us to troubleshoot the API servers and pin point the problem under the hood. 
+Amazon EKS で管理されるコントロールプレーンのモニタリングは、EKS クラスターの正常性に関する問題を事前に特定するための非常に重要な Day 2 運用アクティビティです。Amazon EKS コントロールプレーンモニタリングにより、収集されたメトリクスに基づいて予防措置を講じることができます。これらのメトリクスは、API サーバーのトラブルシューティングと、内部的な問題の特定に役立ちます。
 
-We will be using Amazon Managed Service for Prometheus (AMP) for our demonstration in this section for Amazon EKS API server monitoring and Amazon Managed Grafana (AMG) for visualization of metrics. Prometheus is a popular open source monitoring tool that provides powerful querying features and has wide support for a variety of workloads. Amazon Managed Service for Prometheus is a fully managed Prometheus-compatible service that makes it easier to monitor environments, such as Amazon EKS, [Amazon Elastic Container Service (Amazon ECS)](http://aws.amazon.com/ecs), and [Amazon Elastic Compute Cloud (Amazon EC2)](http://aws.amazon.com/ec2), securely and reliably. [Amazon Managed Grafana](https://aws.amazon.com/grafana/) is a fully managed and secure data visualization service for open source Grafana that enables customers to instantly query, correlate, and visualize operational metrics, logs, and traces for their applications from multiple data sources
+このセクションでは、Amazon EKS API サーバーモニタリングのデモンストレーションに Amazon Managed Service for Prometheus(AMP)を使用し、メトリクスの可視化には Amazon Managed Grafana(AMG)を使用します。Prometheus は、強力なクエリ機能を備え、さまざまなワークロードで広くサポートされている一般的なオープンソースのモニタリングツールです。Amazon Managed Service for Prometheus は、Amazon EKS、[Amazon Elastic Container Service(Amazon ECS)](http://aws.amazon.com/ecs)、[Amazon Elastic Compute Cloud(Amazon EC2)](http://aws.amazon.com/ec2)などの環境を安全かつ信頼性高くモニタリングするのに役立つ、完全マネージドの Prometheus 互換サービスです。[Amazon Managed Grafana](https://aws.amazon.com/grafana/) は、複数のデータソースからアプリケーションの運用メトリクス、ログ、トレースを即座にクエリ、相関分析、可視化できるようにする、オープンソースの Grafana の完全マネージドかつセキュアなデータ可視化サービスです。
 
-We will first setup a starter dashboard using Amazon Managed Service for Prometheus and Amazon Managed Grafana to help you with troubleshooting [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks) API Servers with Prometheus. We will diving deep in up coming sections around understanding problems while troubleshooting the EKS API Servers, API priority and fairness, stopping bad behaviours. Finally we will deep dive in indentifying API calls that are slowest and API server latency issues which helps us to take actions to keep state of our Amazon EKS cluster healthy.
+はじめに、Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用して、Prometheus で [Amazon Elastic Kubernetes Service(Amazon EKS)](https://aws.amazon.com/eks) API サーバーのトラブルシューティングを支援するスターターダッシュボードを設定します。次のセクションでは、EKS API サーバーのトラブルシューティング時に発生する問題の理解、API の優先順位と公平性、悪い動作の停止などについて詳しく説明します。最後に、アクションを実行して Amazon EKS クラスターの状態を正常に保つのに役立つ、最も遅い API 呼び出しと API サーバーレイテンシの問題を特定することについて詳しく説明します。
 
-### Setting up an API Server Troubleshooter Dashboard
+### API サーバー障害対応ダッシュボードの設定
 
-We will setup a starter dashboard to help you with troubleshooting [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks) API Servers with AMP. We will use this to help you understand the metrics while troubleshooting your production EKS clusters. We will further focus deep on the collected metrics to understand its importance while troubleshooting your Amazon EKS clusters.
+[Amazon Elastic Kubernetes Service(Amazon EKS)](https://aws.amazon.com/eks) API サーバーの障害対応を支援するためのスターターダッシュボードを設定します。 これを使用して、実稼働 EKS クラスターの障害対応中にメトリクスを理解するのに役立ちます。 収集されたメトリクスに焦点を当て、Amazon EKS クラスターの障害対応中にその重要性を理解します。
 
-First, setup an [ADOT collector to collect metrics from your Amazon EKS cluster to Amazon Manager Service for Prometheus](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/). In this setup you will be using EKS ADOT Addon which  allows users to enable ADOT as an add-on at any time after the EKS cluster is up and running. The ADOT add-on includes the latest security patches and bug fixes and is validated by AWS to work with Amazon EKS. This setup will show you how to install the ADOT add-on in an EKS cluster and then use it to collect metrics from your cluster.
+まず、[Amazon EKS クラスターからメトリクスを収集し、Amazon Managed Service for Prometheus に送信するための ADOT コレクターを設定します](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)。 この設定では、EKS ADOT アドオンを使用します。これにより、EKS クラスターがアップおよび実行された後いつでも ADOT をアドオンとして有効にできます。 ADOT アドオンには、最新のセキュリティパッチとバグ修正が含まれており、Amazon EKS で機能することが AWS によって検証されています。 この設定では、EKS クラスターに ADOT アドオンをインストールする方法と、クラスターからメトリクスを収集するためにそれを使用する方法を示します。
 
-Next, [setup your Amazon Managed Grafana workspace to visualize metrics using AMP](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) as a data source which you have setup in the first step. Finally download the [API troubleshooter dashboard](https://github.com/RiskyAdventure/Troubleshooting-Dashboards/blob/main/api-troubleshooter.json), navigate to Amazon Managed Grafana to upload the API troubleshooter dashboard json to visualize the metrics for further troubleshooting.
+次に、最初のステップで設定した AMP をデータソースとして使用して、[Amazon Managed Grafana ワークスペースを設定し、メトリクスを視覚化します](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/)。 最後に、[API 障害対応ダッシュボード](https://github.com/RiskyAdventure/Troubleshooting-Dashboards/blob/main/api-troubleshooter.json) をダウンロードし、Amazon Managed Grafana に移動して、さらなる障害対応のためにメトリクスを視覚化する API 障害対応ダッシュボード json をアップロードします。
 
-### Using API Troubleshooter Dashboard to Understand Problems
+### API トラブルシューティングダッシュボードを使用して問題を理解する
 
-Let’s say you found an interesting open-source project that you wanted to install in your cluster. That operator deploys a DaemonSet to your cluster that might be using malformed requests, a needlessly high volume of LIST calls, or maybe each of its DaemonSets across all your 1,000 nodes are requesting status of all 50,000 pods on your cluster every minute!
-Does this really happen often? Yes, it does! Let’s take a quick detour on how that happens.
+クラスタにインストールしたい興味深いオープンソースプロジェクトが見つかったとします。そのオペレータは、不正なリクエストを使用したり、必要以上に高頻度の LIST 呼び出しを行ったり、場合によっては 1,000 ノードのすべてにわたってデーモンセットをデプロイし、クラスタの 50,000 ポッドのステータスを毎分確認しているかもしれません。
 
-#### Understanding LIST vs. WATCH
+こうしたことが本当に頻繁に起こるのでしょうか。はい、そうなのです! なぜそうなるのか、ちょっとしたヒントを紹介します。
 
-Some applications need to understand the state of the objects in your cluster. For example, your machine learning (ML) application wants to know the job status by understanding how many pods are not in the *Completed* status. In Kubernetes, there are well-behaved ways to do this with something called a WATCH, and some not-so-well-behaved ways that list every object on the cluster to find the latest status on those pods.
+#### LIST と WATCH の違いを理解する
 
-#### A well-behaved WATCH 
+クラスタ内のオブジェクトの状態を理解する必要があるアプリケーションがあります。 たとえば、マシンラーニング(ML)アプリケーションは、*Completed* ステータスでない Pod の数を理解することによってジョブのステータスを知りたいとします。 Kubernetes では、WATCH と呼ばれるものでこれを上手く行う方法があります。また、クラスタ上のすべてのオブジェクトをリストアップして、それらの Pod の最新のステータスを見つけるというあまり望ましくない方法もあります。
 
-Using a WATCH or a single, long-lived connection to receive updates via a push model is the most scalable way to do updates in Kubernetes. To oversimplify, we ask for the full state of the system, then only update the object in a cache when changes are received for that object, periodically running a re-sync to ensure that no updates were missed.
+#### 適切に動作するWATCH
 
-In the below image we use the `apiserver_longrunning_gauge` to get an idea of the number of these long-lived connections across both API servers.
+Kubernetesでプッシュモデルを使って更新を受信するためにWATCHや長期間生存する単一の接続を使うことが、最もスケーラブルな更新の方法です。
+少し単純化して説明すると、システムの完全な状態を要求し、そのオブジェクトの変更が受信されたときにのみキャッシュ内のオブジェクトを更新し、更新を見逃していないことを確認するために定期的に再同期を実行します。
+
+下の画像では、`apiserver_longrunning_gauge`を使用して、両方のAPIサーバー全体でこれらの長期間生存する接続の数を取得しています。
 
 ![API-MON-1](../../../../../images/Containers/aws-native/eks/api-mon-1.jpg)
 
-*Figure: `apiserver_longrunning_gauge` metric*
+*図: `apiserver_longrunning_gauge` メトリック*
 
-Even with this efficient system, we can still have too much of a good thing. For example, if we use many very small nodes, each using two or more DaemonSets that need to talk to the API server, it is quite easy to dramatically increase the number of WATCH calls on the system unnecessarily. For example, let’s look at the difference between eight xlarge nodes vs. a single 8xlarge. Here we see an 8x increase of WATCH calls on the system.
+この効率的なシステムであっても、良いことが過ぎることがあります。 
+たとえば、多くの非常に小さなノードを使用し、APIサーバーと通信する必要がある2つ以上のデーモンセットを使用している場合、システムのWATCHコールの数を不必要に劇的に増加させることが非常に簡単です。 
+たとえば、8つのxlargeノードと1つの8xlargeノードの違いを見てみましょう。 
+ここでは、システムのWATCHコールが8倍に増加しているのがわかります。
 
 ![API-MON-2](../../../../../images/Containers/aws-native/eks/api-mon-2.jpg)
 
-*Figure: WATCH calls between 8 xlarge nodes.*
+*図: 8つのxlargeノードのWATCHコール*
 
-Now these are efficient calls, but what if instead they were the ill-behaved calls we alluded to earlier? Imagine if one of the above DaemonSets on each of the 1,000 nodes is requesting updates on each of the total 50,000 pods in the cluster. We will explore this idea of an unbounded list call in next section.
+これらは効率的な呼び出しですが、前述の不適切な呼び出しであった場合はどうでしょうか?
+上記の1,000ノードのそれぞれにあるデーモンセットの1つが、クラスター内の合計50,000のPodのそれぞれに対する更新を要求していることを想像してみてください。
+次のセクションでは、この無制限のリストコールのアイデアを探求します。
 
-A quick word of caution before continuing, the type of consolidation in the above example must be done with great care, and has many other factors to consider. Everything from the delay of the number of threads competing for a limited number of CPUs on the system, Pod churn rate, to the maximum number of volume attachments a node can handle safely. However, our focus will be on the metrics that lead us to actionable steps that can prevent issues from happening—and maybe give us new insight into our designs.
+続ける前に、上記の例のような統合は細心の注意を払って行わなければならず、考慮しなければならない他の多くの要因があることを注意深く警告しておきます。
+システムのCPUの限られた数に対して競合するスレッドの遅延の数から、Podのチャーンレート、ノードが安全に処理できる最大ボリュームアタッチメント数に至るまで、すべてがそうです。
+しかし、私たちの焦点は、問題が発生するのを防ぐ実行可能なステップにつながるメトリックにあるでしょう。そして、設計に対する新しい洞察を与えてくれるかもしれません。
 
-The WATCH metric is a simple one, but it can be used to track and reduce the number of watches, if that is a problem for you. Here are a few options you could consider to reduce this number:
+WATCHメトリックはシンプルなものですが、WATCHの数を追跡および削減するために使用できます(これがあなたにとっての問題である場合)。 
+この数を減らすために考慮できるいくつかのオプションがあります:
 
-* Limit the number of ConfigMaps Helm creates to track History
-* Use Immutable ConfigMaps and Secrets which do not use a WATCH
-* Sensible node sizing and consolidation
+* 履歴を追跡するためにHelmが作成するConfigMapの数を制限する  
+* 不変のConfigMapとSecretを使用する(WATCHを使用しない)
+* 賢明なノードサイジングと統合
 
-### Understanding Unbounded list calls to API Server
+### API サーバーへの無制限なリストコールの理解
 
-Now for the LIST call we have been talking about. A list call is pulling the full history on our Kubernetes objects each time we need to understand an object’s state, nothing is being saved in a cache this time.
+話題にしていたリストコールについてです。リストコールは、オブジェクトの状態を理解するたびに、Kubernetes オブジェクトの全履歴をプルすることです。このとき、キャッシュには何も保存されません。
 
-How impactful is all this? That will vary depending on how many agents are requesting data, how often they are doing so, and how much data they are requesting. Are they asking for everything on the cluster, or just a single namespace? Does that happen every minute, on very node? Let’s use an example of a logging agent that is appending Kubernetes metadata on every log sent from a node. This could be an overwhelming amount of data in larger clusters. There are many ways for the agent to get that data via a list call, so let’s look at a few.
+これがどの程度の影響を与えるかは、エージェントのリクエスト数、リクエストの頻度、リクエストデータ量によって異なります。クラスター全体のすべてを要求しているのか、単一の名前空間のみを要求しているのか。それが毎分、すべてのノードで発生しているのか。例として、ノードから送信されるすべてのログに Kubernetes のメタデータを追加しているロギングエージェントがあります。これは、大規模なクラスターでは膨大なデータ量になる可能性があります。エージェントがリストコールを介してそのデータを取得する方法は多数ありますので、いくつかを見ていきましょう。
 
-The below request is asking for pods from a specific namespace.
+以下のリクエストは、特定の名前空間から Pod を要求しています。
 
 `/api/v1/namespaces/my-namespace/pods`
 
-Next, we request all 50,000 pods on the cluster, but in chunks of 500 pods at a time.
+次に、クラスター上のすべての 50,000 個の Pod を要求しますが、500 個の Pod ずつのチャンクで取得します。 
 
 `/api/v1/pods?limit=500`
 
-The next call is the most disruptive. Fetching all 50,000 pods on the entire cluster at the same time.
+次のコールが最も破壊的です。クラスター全体のすべての 50,000 個の Pod を一度に取得することです。
 
 `/api/v1/pods`
 
-This happens quite commonly in the field and can be seen in the logs.
+これは現場でかなり一般的に発生しており、ログで確認できます。
 
-### Stopping bad behavior to API Server
+### API サーバーへの悪い動作の停止
 
-How can we protect our cluster from such bad behavior? Before Kubernetes 1.20, the API server would protect itself by limiting the number of *inflight* requests processed per second. Since etcd can only handle so many requests at one time in a performant way, we need to ensure the number of requests is limited to a value per second that keeps etcd reads and writes in a reasonable latency band. Unfortunately, at the time of this writing, there is no dynamic way to do this.
+このような悪い動作からクラスターをどのように保護できるでしょうか。Kubernetes 1.20 より前は、API サーバーが 1 秒間に処理される *inflight* リクエストの数を制限することによって自身を保護していました。etcd は一度に特定のパフォーマンスでリクエストを処理できる数に限界があるため、etcd の読み取りと書き込みのレイテンシを許容範囲に保つ 1 秒間当たりのリクエスト数に制限する必要があります。残念ながら、この記事を書いている時点では、これを動的に行う方法はありません。
 
-In the below chart we see a breakdown of read requests, which has a default maximum of 400 inflight request per API server and a default max of 200 concurrent write requests. In a default EKS cluster you will see two API servers for a total of 800 reads and 400 writes. However, caution is advised as these servers can have asymmetric loads on them at different times like right after an upgrade, etc.
+下のチャートでは、デフォルトの最大 400 の inflight リクエスト/ API サーバー、デフォルトの最大 200 の同時書き込みリクエストの内訳を読み取るリクエストを確認できます。デフォルトの EKS クラスターでは、合計 800 の読み取りと 400 の書き込みの 2 つの API サーバーがあります。ただし、アップグレード後など、サーバーに非対称な負荷がかかる場合があるため、注意が必要です。
 
 ![API-MON-3](../../../../../images/Containers/aws-native/eks/api-mon-3.jpg)
 
-*Figure: Grafana chart with breakdown of read requests.*
+*図: 読み取りリクエストの内訳を示す Grafana チャート。*
 
-It turns out that the above was not a perfect scheme. For example, how could we keep this badly behaving new operator we just installed from taking up all the inflight write requests on the API server and potentially delaying important requests such as node keepalive messages?
+上記のスキームは完璧なものではなかったことが判明しました。たとえば、API サーバーのすべての inflight 書き込みリクエストを使い切って、ノードのキープアライブメッセージなどの重要なリクエストを遅延させる可能性のある、今インストールしたこのひどい動作の新しいオペレーターをどのようにして阻止できるでしょうか。
 
-### API Priority and Fairness
+### API の優先順位と公平性
 
-Instead of worrying about how many read/write requests were open per second, what if we treated the capacity as one total number, and each application on the cluster got a fair percentage or share of that total maximum number?
+1 秒間に読み取り/書き込みリクエストがいくつ開いているかを心配する代わりに、容量を 1 つの総数として扱い、クラスター上の各アプリケーションがその最大数の公平な割合またはシェアを得ることができたらどうでしょうか。
 
-To do that that effectively, we would need to identify who sent the request to the API server, then give that request a name tag of sorts. With this new name tag, we could then see all these requests are coming from a new agent we will call “Chatty.” Now we can group all of Chatty’s requests into something called a *flow*, that identifies those requests are coming from the same DaemonSet. This concept now gives us the ability to restrict this bad agent and ensure it does not consume the whole cluster.
+それを効果的に行うには、API サーバーにリクエストを送信したものを特定し、そのリクエストにある種の名前タグを付ける必要があります。この新しい名前タグを使用することで、これらのリクエストはすべて、「Chatty」と呼ぶ新しいエージェントからのものであることがわかります。これで、Chatty のすべてのリクエストを、それらのリクエストが同じ DaemonSet から来ていることを識別する *フロー* と呼ばれるものにグループ化できるようになります。この概念により、この悪いエージェントを制限し、クラスター全体を消費しないようにすることができます。
 
-However, not all requests are created equal. The control plane traffic that is needed to keep the cluster operational should be a higher priority than our new operator. This is where the idea of priority levels comes into play. What if, by default, we had a several “buckets” or queues for critical, high, and low priority traffic? We do not want the chatty agent flow getting a fair share of traffic in the critical traffic queue. We can however put that traffic in a low priority queue so that flow is competing with perhaps other chatty agents. We then would want to ensure that each priority level had the right number of shares or percentage of the overall maximum the API server can handle to ensure the requests were not too delayed.
+ただし、すべてのリクエストが平等に作成されているわけではありません。クラスターを操作可能な状態に保つために必要なコントロールプレーントラフィックは、新しいオペレーターよりも優先度が高くする必要があります。ここで優先レベルの概念が登場します。重要度の高いトラフィック、高優先度トラフィック、低優先度トラフィックのための「バケット」またはキューをデフォルトでいくつか用意しておき、重要なトラフィックキューで多弁なエージェントフローが公平なシェアを取得することがないようにすることはできないでしょうか。ただし、そのトラフィックを低優先度キューに入れることができます。その場合、そのフローはおそらく他の多弁なエージェントと競合することになります。次に、API サーバーが処理できる最大数の適切な数のシェアまたは割合を、各優先レベルが持つようにする必要があります。これにより、リクエストの遅延が大きくなりすぎないようにできます。
 
-#### Priority and fairness in action
+#### 優先順位と公平性の実践
 
-Since this is a relatively new feature, many existing dashboards will use the older model of maximum inflight reads and maximum inflight writes. Why this can be problematic?
+これは比較的新しい機能なので、多くの既存のダッシュボードは、最大インフライト読み取りと最大インフライト書き込みの古いモデルを使用しています。なぜこれが問題になるのでしょうか。
 
-What if we were giving high priority name tags to everything in the kube-system namespace, but we then installed that bad agent into that important namespace, or even simply deployed too many applications in that namespace? We could end up having the same problem we were trying to avoid! So best to keep a close eye on such situations.
+kube-system 名前空間のすべてに高い優先順位のタグを付けていたとします。しかし、その重要な名前空間に不適切なエージェントをインストールしたり、単純にその名前空間に過剰にアプリケーションをデプロイした場合はどうでしょう。回避しようとしたのと同じ問題が発生する可能性があります。したがって、このような状況を注意深く監視する必要があります。
 
-I have broken out for you some of the metrics I find most interesting to track these kinds of issues.
+この種の問題を追跡するのに最も興味深いメトリクスをいくつか抽出しました。
 
 
-* What percentage of a priority group’s shares are used?
-* What is the longest time a request waited in a queue?
-* Which flow is using the most shares?
-* Are there unexpected delays on the system?
+* 優先度グループのシェアのうち、何パーセントが使用されているか?
+* リクエストがキューで待機した最長時間はどれくらいか?  
+* どのフローが最も多くのシェアを使用しているか?
+* システムに予期しない遅延があるか?
 
-#### Percent in use
+#### 使用率のパーセント
 
-Here we see the different default priority groups on the cluster and what percentage of the max is used.
+ここでは、クラスター上のさまざまなデフォルトの優先度グループと、最大値の何パーセントが使用されているかを示しています。
 
 ![API-MON-4](../../../../../images/Containers/aws-native/eks/api-mon-4.jpg)
 
-*Figure: Priority groups on the cluster.*
+*図: クラスター上の優先度グループ。*
 
-#### Time request was in queue
+#### キュー内のリクエスト時間
 
-How long in seconds the request sat in the priority queue before being processed.
+優先キュー内で処理されるまでリクエストが待機した秒数です。
 
 ![API-MON-5](../../../../../images/Containers/aws-native/eks/api-mon-5.jpg)
 
-*Figure: Time the request was in priority queue.*
+*図: 優先キュー内のリクエスト時間*
 
-#### Top executed requests by flow
+#### フロー別の実行回数上位
 
-Which flow is taking up the most shares?
+どのフローが最も大きなシェアを占めているでしょうか。
 
 ![API-MON-6](../../../../../images/Containers/aws-native/eks/api-mon-6.jpg)
 
-*Figure: Top executing requests by flow.*
+*図: フロー別の実行回数上位*
 
-#### Request Execution Time
+#### リクエスト実行時間
 
-Are there any unexpected delays in processing?
+処理に意外な遅延はありませんか?
 
 ![API-MON-7](../../../../../images/Containers/aws-native/eks/api-mon-7.jpg)
 
-*Figure: Flow control request execution time.*
+*図: フロー制御リクエスト実行時間。*
 
-### Identifying slowest API calls and API Server Latency Issues
+### 最も遅い API 呼び出しと API サーバーのレイテンシ問題の特定
 
-Now that we understand the nature of the things that cause API latency, we can take a step back and look at the big picture. It’s important to remember that our dashboard designs are simply trying to get a quick snapshot if there is a problem we should be investigating. For detailed analysis, we would use ad-hoc queries with PromQL—or better yet, logging queries.
+API のレイテンシを引き起こす要因の性質を理解したので、一歩下がって全体像を見渡すことができます。ダッシュボードのデザインは単に、調査すべき問題があるかどうかのスナップショットを取得しようとしていることを忘れてはいけません。詳細な分析には、PromQL を使用したアドホッククエリー、あるいはログクエリーを使用します。
 
-What are some ideas for the high-level metrics we would want to look at?
+高レベルのメトリクスとして確認したいアイデアは何でしょうか?
 
-* What API call is taking the most time to complete?
-    * What is the call doing? (Listing objects, deleting them, etc.)
-    * What objects is it trying to do that operation on? (Pods, Secrets, ConfigMaps, etc.)
-* Is there a latency problem on the API server itself?
-    * Is there a delay in one of my priority queues causing a backup in requests?
-* Does it just look like API server is slow because the etcd server is experiencing latency?
+* 完了に最も時間がかかっている API 呼び出しは何ですか?
+    * その呼び出しは何をしているのですか? (オブジェクトの一覧表示、削除など)
+    * その操作の対象となっているオブジェクトは何ですか? (Pod、Secret、ConfigMap など)
+* API サーバー自体にレイテンシの問題がありますか?
+    * 優先キューの 1 つでリクエストのバックアップを引き起こす遅延がありますか?
+* etcd サーバーがレイテンシを経験しているために、API サーバーが遅いように見えるだけですか?
 
-#### Slowest API call
+#### 最も遅い API 呼び出し
 
-In the below chart we are looking for the API calls that took the most time to complete for that period. In this case we see a custom resource definition (CRD) is calling a LIST function that is the most latent call during the 05:40 time frame. Armed with this data we can use CloudWatch Insights to pull LIST requests from the audit log in that timeframe to see which application this might be.
+以下のチャートでは、その期間で最も時間がかかった API 呼び出しを探しています。この場合、05:40 の時間帯で最も待ち時間の長い呼び出しである LIST 関数を呼び出しているカスタムリソース定義(CRD)が見られます。このデータを使って、その時間帯の監査ログから LIST リクエストを CloudWatch Insights でプルすることができ、どのアプリケーションかを確認できます。
 
 ![API-MON-8](../../../../../images/Containers/aws-native/eks/api-mon-8.jpg)
 
-*Figure: Top 5 slowest API calls.*
+*図: 上位5つの最も遅い API 呼び出し。*
 
-#### API Request Duration
+#### API リクエスト期間
 
-This API latency chart helps us to understand if any requests are approaching the timeout value of one minute. I like the histogram over time format below as I can see outliers in the data that a line graph would hide.
+この API レイテンシーチャートは、1 分のタイムアウト値に近づいているリクエストがあるかどうかを理解するのに役立ちます。下の時系列のヒストグラム形式が好きです。なぜなら、線グラフでは隠れてしまうデータの外れ値が見えるからです。
 
 ![API-MON-9](../../../../../images/Containers/aws-native/eks/api-mon-9.jpg)
 
-*Figure: API Request duration heatmap.*
+*図: API リクエスト期間のヒートマップ。*
 
-Simply hovering over a bucket shows us the exact number of calls that took around 25 milliseconds.
-[Image: Image.jpg]*Figure: Calls over 25 milliseconds.*
+バケットの上にカーソルを置くだけで、約 25 ミリ秒かかった呼び出しの正確な数がわかります。  
+[Image: Image.jpg]*図: 25 ミリ秒以上かかった呼び出し。*
 
-This concept is important when we are working with other systems that cache requests. Cache requests will be fast; we do not want to merge those request latencies with slower requests. Here we can see two distinct bands of latency, requests that have been cached, and those that have not.
+この概念は、リクエストをキャッシュする他のシステムで動作しているときに重要です。キャッシュリクエストは高速です。これらのリクエストレイテンシを、より遅いリクエストとマージしたくありません。ここでは、キャッシュされたリクエストとキャッシュされていないリクエストの2つの明確なレイテンシバンドが見えます。
 
-![API-MON-10](../../../../../images/Containers/aws-native/eks/api-mon-10.jpg)
+![API-MON-10](../../../../../images/Containers/aws-native/eks/api-mon-10.jpg)  
 
-*Figure: Latency, requests cached.*
+*図: レイテンシ、キャッシュされたリクエスト。*
 
-#### ETCD Request Duration
+#### ETCD リクエスト期間
 
-ETCD latency is one of the most important factors in Kubernetes performance. Amazon EKS allows you see this performance from the API server’s perspective by looking at the `request_duration_seconds_bucket` metric.
+ETCD のレイテンシは、Kubernetes のパフォーマンスにおいて最も重要な要因の 1 つです。Amazon EKS では、`request_duration_seconds_bucket` メトリクスを見ることで、API サーバーの視点からこのパフォーマンスを確認できます。
 
 ![API-MON-11](../../../../../images/Containers/aws-native/eks/api-mon-11.jpg)
 
-*Figure : `request_duration_seconds_bucket` metric.*
+*図 : `request_duration_seconds_bucket` メトリクス。*
 
-We can now start to put the things we learned together by seeing if certain events are correlated. In the below chart we see API server latency, but we also see much of this latency is coming from the etcd server. Being able to quickly move to the right problem area with just a glance is what makes a dashboard powerful.
+これで、特定のイベントが相関しているかどうかを確認することにより、学んだことを組み合わせ始めることができます。下のチャートでは、API サーバーのレイテンシを確認できますが、このレイテンシの多くが etcd サーバーから発生していることもわかります。ひと目で正しい問題領域にすばやく移動できることが、ダッシュボードを強力にすることです。
 
 ![API-MON-12](../../../../../images/Containers/aws-native/eks/api-mon-12.jpg)
 
-*Figure: Etcd Requests*
+*図: Etcd リクエスト*
 
-## Conclusion
+## まとめ
 
-In this section of Observability best practices guide, We used a [starter dashboard](https://github.com/RiskyAdventure/Troubleshooting-Dashboards/blob/main/api-troubleshooter.json) using Amazon Managed Service for Prometheus and Amazon Managed Grafana to help you with troubleshooting [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks) API Servers. Further, we deep dived around understanding problems while troubleshooting the EKS API Servers, API priority and fairness, stopping bad behaviours. Finally deep dived  in indentifying API calls that are slowest and API server latency issues which helps us to take actions to keep state of our Amazon EKS cluster healthy. For further deep dive, we would highly recommend you to practice Application Monitoring module under AWS native Observability category of AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US).
+オブザーバビリティのベストプラクティスガイドのこのセクションでは、Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した[スターターダッシュボード](https://github.com/RiskyAdventure/Troubleshooting-Dashboards/blob/main/api-troubleshooter.json)を利用して、[Amazon Elastic Kubernetes Service(Amazon EKS)](https://aws.amazon.com/eks) API サーバのトラブルシューティングを支援しました。さらに、EKS API サーバのトラブルシューティング中に発生する問題の理解を深め、API の優先順位と公平性、悪い動作の停止について検討しました。最後に、最も遅い API 呼び出しと API サーバのレイテンシの問題を特定することで、Amazon EKS クラスタの状態を健全に保つためのアクションを取るのに役立ちました。さらなる深堀りは、AWS の [One Observability ワークショップ](https://catalog.workshops.aws/observability/en-US) の AWS ネイティブ オブザーバビリティ カテゴリのアプリケーションモニタリング モジュールを実践することを強くおすすめします。

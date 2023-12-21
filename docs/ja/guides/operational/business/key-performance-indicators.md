@@ -1,287 +1,277 @@
-## 1.0 Understanding KPIs ("Golden Signals")
-Organizations utilize key performance indicators (KPIs) a.k.a 'Golden Signals' that provide insight into the health or risk of the business and operations. Different parts of an organization would have unique KPIs that cater to measurement of their respective outcomes. For example, the product team of an eCommerce application would track the ability to process cart orders successfully as its KPI. An on-call operations team would measure their KPI as mean-time to detect (MTTD) an incident. For the financial team a KPI for cost of resources under budget is important. 
+## 1.0 KPI(重要業績評価指標) の理解
 
-Service Level Indicators (SLIs), Service Level Objectives (SLOs), and Service Level Agreements (SLAs) are essential components of service reliability management. This guide outlines best practices for using Amazon CloudWatch and its features to calculate and monitor SLIs, SLOs, and SLAs, with clear and concise examples.
+組織では、ビジネスと運用の健全性やリスクに関する洞察を提供する重要業績評価指標(KPI) あるいは「ゴールデンシグナル」を利用しています。組織の異なる部門は、それぞれのアウトカムの測定に対応した独自の KPI を持っています。たとえば、eコマースアプリケーションの製品チームは、カート注文を正常に処理できる能力をその KPI として追跡します。オンコール運用チームは、インシデントを検出する平均時間(MTTD) を KPI として測定します。財務チームにとって、予算内のリソースコストは重要な KPI です。
 
-- **SLI (Service Level Indicator):** A quantitative measure of a service's performance.
-- **SLO (Service Level Objective):** The target value for an SLI, representing the desired performance level.
-- **SLA (Service Level Agreement):** A contract between a service provider and its users specifying the expected level of service.
+サービスレベルインジケーター(SLI)、サービスレベルオブジェクティブ(SLO)、サービスレベルアグリーメント(SLA) は、サービスの信頼性管理に不可欠な要素です。このガイドでは、Amazon CloudWatch とその機能を使用して SLI、SLO、SLA を計算および監視するためのベストプラクティスを、明確かつ簡潔な例を用いて概説します。
 
-Examples of common SLIs:
+- **SLI(サービスレベルインジケーター):** サービスのパフォーマンスを定量的に測定するもの。 
+- **SLO(サービスレベルオブジェクティブ):** SLI の目標値であり、望ましいパフォーマンスレベルを表す。
+- **SLA(サービスレベルアグリーメント):** サービスプロバイダとそのユーザー間の契約で、期待されるサービスレベルを規定する。
 
-- Availability: Percentage of time a service is operational
-- Latency: Time taken to fulfill a request
-- Error rate: Percentage of failed requests
+一般的な SLI の例:
 
-## 2.0 Discover customer and stakeholder requirements (using template as suggested below)
+- 可用性: サービスが操作可能な時間の割合
+- レイテンシ: リクエストを処理するのにかかる時間  
+- エラーレート: 失敗したリクエストの割合
 
-1. Start with the top question: “What is the business value or business problem in scope for the given workload (ex. Payment portal, eCommerce order placement, User registration, Data reports, Support portal etc)
-2. Break down the business value into categories such as User-Experience (UX); Business-Experience (BX); Operational-Experience (OpsX); Security-Experience(SecX); Developer-Experience (DevX)
-3. Derive core signals aka “Golden Signals” for each category; the top signals around UX & BX will typically construe the business metrics
+## 2.0 顧客およびステークホルダーの要件を発見する(以下のテンプレートを使用)
 
-| ID	| Initials	| Customer	| Business Needs	| Measurements	| Information Sources	| What does good look like?	| Alerts	| Dashboards	| Reports	|
-| ---	| ---	| ---	| ---	| ---	| ---	| ---	| ---	| ---	| --- |		
-|M1	|Example	|External End User	|User Experience	|Response time (Page latency)	|Logs / Traces	|< 5s for 99.9%	|No	|Yes	|No	|
-|M2	|Example	|Business	|Availability	|Successful RPS (Requests per second)	|Health Check	|>85% in 5 min window	|Yes	|Yes	|Yes	|
-|M3	|Example	|Security	|Compliance	|Critical non-compliant resources	|Config data	|<10 under 15 days	|No	|Yes	|Yes	|
-|M4	|Example	|Developers	|Agility	|Deployment time	|Deployment logs	|Always < 10 min	|Yes	|No	|Yes	|
-|M5	|Example	|Operators	|Capacity	|Queue Depth	|App logs/metrics	|Always < 10	|Yes	|Yes	|Yes	|
+1. 最初の質問から始めます。「与えられたワークロード(支払いポータル、eコマース注文、ユーザー登録、データレポート、サポートポータルなど)のビジネス価値またはビジネス上の問題は何か」
+2. ビジネス価値をユーザーエクスペリエンス(UX)、ビジネスエクスペリエンス(BX)、運用エクスペリエンス(OpsX)、セキュリティエクスペリエンス(SecX)、開発者エクスペリエンス(DevX)などのカテゴリーに分解する
+3. 各カテゴリーのコアシグナル(ゴールデンシグナルとも呼ばれる)を導出する。UXとBX周りの上位シグナルが通常、ビジネスメトリクスを構成する
 
-### 2.1 Golden Signals
+| ID | イニシャル | 顧客 | ビジネスニーズ | 測定 | 情報ソース | 望ましい状態とは | アラート | ダッシュボード | レポート |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| M1 | 例 | 外部エンドユーザー | ユーザーエクスペリエンス | レスポンス時間(ページレイテンシ) | ログ/トレース | 99.9% で&lt;5秒 | いいえ | はい | いいえ |
+| M2 | 例 | ビジネス | 可用性 | 成功した RPS(1 秒あたりのリクエスト数) | ヘルスチェック | 5 分のウィンドウで>85% | はい | はい | はい |
+| M3 | 例 | セキュリティ | コンプライアンス | 重要な非準拠リソース | 設定データ | 15 日以内に&lt;10 | いいえ | はい | はい |
+| M4 | 例 | 開発者 | 敏捷性 | デプロイ時間 | デプロイログ | 常に&lt;10分 | はい | いいえ | はい | 
+| M5 | 例 | オペレーター | キャパシティ | キューの深さ | アプリのログ/メトリクス | 常に&lt;10 | はい | はい | はい |
 
-|Category	|Signal	|Notes	|References	|
+### 2.1 ゴールデンシグナル
+
+|カテゴリ	|シグナル	|備考	|参照先	|
 |---	|---	|---	|---	|
-|UX	|Performance (Latency)	|See M1 in template	|Whitepaper: [Availability and Beyond (Measuring latency)](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html#latency)	|
-|BX	|Availability	|See M2 in template	|Whitepaper: [Avaiability and Beyond (Measuring availability)](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html)	|
-|BX	|Business Continuity Plan (BCP)	|Amazon Resilience Hub (ARH) resilience score against defined RTO/RPO	|Docs: [ARH user guide (Understanding resilience scores)](https://docs.aws.amazon.com/resilience-hub/latest/userguide/resil-score.html)	|
-|SecX	|(Non)-Compliance	|See M3 in template	|Docs: [AWS Control Tower user guide (Compliance status in the console)](https://docs.aws.amazon.com/controltower/latest/userguide/compliance-statuses.html)	|
-|DevX	|Agility	|See M4 in template	|Docs: [DevOps Monitoring Dashboard on AWS (DevOps metrics list)](https://docs.aws.amazon.com/solutions/latest/devops-monitoring-dashboard-on-aws/devops-metrics-list.html)	|
-|OpsX	|Capacity (Quotas)	|See M5 in template	|Docs: [Amazon CloudWatch user guide (Visualizing your service quotas and setting alarms)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Quotas-Visualize-Alarms.html)	|
-|OpsX	|Budget Anomalies	|	|Docs:<br> 1. [AWS Billing and Cost Management (AWS Cost Anomaly Detection)](https://docs.aws.amazon.com/cost-management/latest/userguide/getting-started-ad.html) <br> 2. [AWS Budgets](https://aws.amazon.com/aws-cost-management/aws-budgets/)	|
+|UX	|パフォーマンス(レイテンシ)	|テンプレートの M1 を参照	|ホワイトペーパー: [可用性を超えて(レイテンシの測定)](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html#latency)	|
+|BX	|可用性	|テンプレートの M2 を参照	|ホワイトペーパー: [Availability and Beyond (Measuring availability)](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html)	|
+|BX	|事業継続計画(BCP)	|定義された RTO/RPO に対する Amazon Resilience Hub (ARH) のレジリエンススコア	|ドキュメント: [ARH ユーザーガイド(レジリエンススコアの理解)](https://docs.aws.amazon.com/resilience-hub/latest/userguide/resil-score.html)	|
+|SecX	|(非)コンプライアンス	|テンプレートの M3 を参照	|ドキュメント: [AWS Control Tower ユーザーガイド(コンソールのコンプライアンスステータス)](https://docs.aws.amazon.com/controltower/latest/userguide/compliance-statuses.html)	|
+|DevX	|アジリティ	|テンプレートの M4 を参照	|ドキュメント: [AWS 上の DevOps モニタリングダッシュボード(DevOps メトリクスリスト)](https://docs.aws.amazon.com/solutions/latest/devops-monitoring-dashboard-on-aws/devops-metrics-list.html)	| 
+|OpsX	|キャパシティ(クォータ)	|テンプレートの M5 を参照	|ドキュメント: [Amazon CloudWatch ユーザーガイド(サービスクォータの視覚化とアラームの設定)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Quotas-Visualize-Alarms.html)	|
+|OpsX	|予算の異常	|	|ドキュメント:<br/>1. [AWS 課金とコスト管理(AWS Cost Anomaly Detection)](https://docs.aws.amazon.com/cost-management/latest/userguide/getting-started-ad.html)<br/>2. [AWS Budgets](https://aws.amazon.com/aws-cost-management/aws-budgets/)	|
 
+## 3.0 トップレベルガイダンス(TLG)
 
+### 3.1 TLG 一般
 
-## 3.0 Top Level Guidance ‘TLG’
+1. ビジネス、アーキテクチャ、セキュリティのチームと協力して、ビジネス、コンプライアンス、ガバナンスの要件を明確化し、それらがビジネスニーズを正確に反映していることを確認してください。これには、[回復時間と回復地点の目標値を設定](https://aws.amazon.com/blogs/mt/establishing-rpo-and-rto-targets-for-cloud-applications/)することが含まれます(RTO、RPO)。[可用性の測定](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html)やレイテンシーの測定(例: アップタイムでは、5 分間のウィンドウで少数の障害を許容できる)などの要件を測定する方法を策定します。
 
+2. さまざまなビジネス機能の結果に合わせた、目的を持ったスキーマを使用した効果的な[タグ付け戦略](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/defining-and-publishing-a-tagging-schema.html)を構築します。これには特に、[運用可観測性](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/operational-observability.html)と[インシデント管理](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/incident-management.html)をカバーする必要があります。
 
-### 3.1 TLG General
+3. 可能な限り、基準 KPI のないメトリクスのアラームには[CloudWatch 異常検知](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html)(ベースラインを確立するための機械学習アルゴリズムを提供)を使用した動的しきい値を利用します。CW メトリクス(または Prometheus メトリクスなどの他のソース)を公開する AWS 利用可能サービスを設定する際にアラームを構成する場合は、[複合アラーム](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Create_Composite_Alarm.html)の作成を検討して、アラームノイズを減らします。例: 可用性を示すビジネスメトリクス(成功したリクエストで追跡)とレイテンシーからなる複合アラームを、両方がデプロイ中に重要なしきい値を下回った場合にアラームが発生するように構成すると、デプロイのバグを決定づける指標になります。
 
-1. Work with business, architecture and security teams to help refine the business, compliance and governance requirements and ensure they accurately reflect the business needs. This includes [establishing recovery-time and recovery-point targets](https://aws.amazon.com/blogs/mt/establishing-rpo-and-rto-targets-for-cloud-applications/) (RTOs, RPOs). Formulate methods to measure requirements such as [measuring availability](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html) and latency (ex. Uptime could allow a small percentage of faults over a 5 min window).
-
-2. Build an effective [tagging strategy](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/defining-and-publishing-a-tagging-schema.html) with purpose built schema that aligns to various business functional outcomes. This should especially cover [operational observability](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/operational-observability.html) and [incident management](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/incident-management.html).
-
-3. Where possible leverage dynamic thresholds for alarms (esp. for metrics that do not have baseline KPIs) using [CloudWatch anomaly detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) which provides machine learning algorithms to establish the baselines. When utilizing  AWS available services that publish CW metrics (or other sources like prometheus metrics) to configure alarms consider creating [composite alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Create_Composite_Alarm.html) to reduce alarm noise. Example: a composite alarm that comprises of a business metric indicative of availability (tracked by successful requests) and latency when configured to alarm when both drop below a critical threshold during deployments could be deterministic indicator of deployment bug.
-
-4. (NOTE: Requires AWS Business support or higher) AWS publishes events of interest using AWS Health service related to your resources in Personal Health Dashboard. Leverage [AWS Health Aware (AHA)](https://aws.amazon.com/blogs/mt/aws-health-aware-customize-aws-health-alerts-for-organizational-and-personal-aws-accounts/) framework (that uses AWS Health) to ingest proactive and real-time alerts aggregated across your AWS Organization from a central account (such as a management account). These alerts can be sent to preferred communication platforms such as Slack and integrates with ITSM tools like ServiceNow and Jira.
+4. (注)AWS ビジネスサポート以上が必要です) AWS は、Personal Health Dashboard のリソースに関連するイベントを AWS Health サービスを使用して公開しています。[AWS Health Aware(AHA)](https://aws.amazon.com/blogs/mt/aws-health-aware-customize-aws-health-alerts-for-organizational-and-personal-aws-accounts/) フレームワーク(AWS Health を使用)を利用して、中央アカウント(管理アカウントなど)から AWS Organization 全体のプロアクティブかつリアルタイムのアラートを取り込みます。これらのアラートは、Slack などの優先コミュニケーションプラットフォームや、ServiceNow、Jiraなどの ITSM ツールに送信できます。
 ![Image: AWS Health Aware 'AHA'](../../../images/AHA-Integration.jpg)
 
-5. Leverage Amazon CloudWatch [Application Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-application-insights.html) to setup best monitors for resources and continuously analyze data for signs of problems with your applications. It also provides automated dashboards that show potential problems with monitored applications to quickly isolate/troubleshoot application/infrastructure issues. Leverage [Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) to aggregate metrics and logs from containers and can be integrated seamlessly with CloudWatch Application Insights.
+5. Amazon CloudWatch [Application Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-application-insights.html) を利用して、リソースのための最適なモニターを設定し、アプリケーションの問題の兆候を継続的に分析します。また、モニタリング対象のアプリケーションの潜在的な問題をすばやく特定/トラブルシューティングできる自動ダッシュボードを提供します。[Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) を利用して、コンテナからのメトリクスとログを集計し、CloudWatch Application Insights とシームレスに統合できます。
 ![Image: CW Application Insights](../../../images/CW-ApplicationInsights.jpg)
 
-6. Leverage [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) to analyze applications against defined RTOs and RPOs. Validate if the availability, latency and business continuity requirements are met by using controlled experiments using tools like [AWS Fault Injection Simulator](https://aws.amazon.com/fis/). Conduct additional Well-Architected reviews and service specific deep-dives to ensure workloads are designed to meet business requirements following AWS best practices.
+6. [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) を利用して、定義された RTO と RPO に対してアプリケーションを分析します。[AWS Fault Injection Simulator](https://aws.amazon.com/fis/) などのツールを使用した制御実験によって、可用性、レイテンシー、ビジネス継続性の要件が満たされていることを検証します。追加の Well-Architected レビューやサービス固有の深掘り分析を実施して、ワークロードが AWS のベストプラクティスに従ってビジネス要件を満たすように設計されていることを確認します。
 
-7. For further details refer to other sections of [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) guidance, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) whitepaper and AWS Well-Architected Framework Operational Excellence Pillar whitepaper content on '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)'.
-    
+7. 詳細については、[AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) ガイダンスの他のセクション、AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) ホワイトペーパー、AWS Well-Architected フレームワークの運用上の優位性の柱のホワイトペーパーコンテンツの「[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」を参照してください。
 
-### 3.2 TLG by Domain (emphasis on business metrics i.e. UX, BX)
+### 3.2 ドメイン別 TLG(ビジネスメトリクス、つまり UX、BX に重点)
 
-Suitable examples are provided below using services such as CloudWatch (CW) (Ref: AWS Services that publish [CloudWatch metrics documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html))
+CloudWatch(CW)などのサービスを使用した適切な例が以下に示されています(参考:[CloudWatch メトリクスを公開する AWS サービスのドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-services-cloudwatch-metrics.html))
 
-#### 3.2.1 Canaries (aka Synthetic transactions) and Real-User Monitoring (RUM)
+#### 3.2.1 キャナリー(エイリアス シンセティックトランザクション)とリアルユーザーモニタリング(RUM)
 
-* TLG: One of the easiest and most effective ways to understand client/customer experience is to simulate customer traffic with Canaries (Synthetic transactions) which regularly probes your services and records metrics.
+* TLG: クライアント/顧客のエクスペリエンスを理解する最も簡単で効果的な方法の1つは、キャナリー(シンセティックトランザクション)を使用して顧客トラフィックをシミュレートすることです。これによりサービスを定期的にプローブし、メトリクスを記録します。
 
-|AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
-|---	|---	|---	|---	|---	|---	|
-|CW	|Synthetics	|Availability	|**SuccessPercent**	|(Ex. SuccessPercent > 90 or CW Anomaly Detection for 1min Period)<br>**[Metric Math where m1 is SuccessPercent if Canaries run each weekday 7a-8a (CloudWatchSynthetics): ** <br>`IF(((DAY(m1)<6) AND (HOUR(m1)>7 AND HOUR(m1)<8)),m1)]`	|	|
-|	|	|	|	|	|	|
-|CW	|Synthetics	|Availability	|VisualMonitoringSuccessPercent	|(Ex. VisualMonitoringSuccessPercent > 90 for 5 min Period for UI screenshot comparisons)<br>**[Metric Math where m1 is SuccessPercent if Canaries run each weekday 7a-8a (CloudWatchSynthetics): ** <br>`IF(((DAY(m1)<6) AND (HOUR(m1)>7 AND HOUR(m1)<8)),m1)`	|If customer expects canary to match predetermined UI screenshot	|
-|	|	|	|	|	|	|
-|CW	|RUM	|Response Time	|Apdex Score	|(Ex. Apdex score: <br> NavigationFrustratedCount < ‘N’ expected value)	|	|
-|	|	|	|	|	|	|
+|AWS サービス | 機能 | 測定 | メトリクス | 例 | ノート |
+| --- | --- | --- | --- | --- | --- |
+|CW | Synthetics | 可用性 | **SuccessPercent** | (例: SuccessPercent > 90 または 1 分間の CW アノマリ検出)<br/>**[平日の午前7時から8時の間にキャナリーが実行される場合のメトリック数式で、m1 が SuccessPercent の場合:** <br/>`IF(((DAY(m1)&lt;6) AND (HOUR(m1)>7 AND HOUR(m1)&lt;8)),m1)` |  |
+| | | | | | |
+|CW | Synthetics | 可用性 | VisualMonitoringSuccessPercent | (例: UI スクリーンショット比較のための 5 分間の VisualMonitoringSuccessPercent > 90)<br/>**[平日の午前7時から8時の間にキャナリーが実行される場合のメトリック数式で、m1 が SuccessPercent の場合:** <br/>`IF(((DAY(m1)&lt;6) AND (HOUR(m1)>7 AND HOUR(m1)&lt;8)),m1)` | 顧客がキャナリーを事前決定された UI スクリーンショットと一致させることを期待している場合 |
+| | | | | | | 
+|CW | RUM | レスポンスタイム | Apdex スコア | (例: Apdex スコア:<br/>NavigationFrustratedCount &lt; 'N' の期待値) | |
+| | | | | | |
 
+#### 3.2.2 API フロントエンド
 
-#### 3.2.2 API Frontend
+|AWS サービス | 機能 | 測定 | メトリクス | 例 | ノート |
+|---|---|---|---|---|---|
+|CloudFront| | 可用性 | 総エラーレート | (例: [総エラーレート] &lt; 10 または 1 分間隔の CW 異常検知) | エラーレートとしての可用性 |
+| | | | | | |
+|CloudFront| (追加メトリクスをオンにする必要があります) | パフォーマンス | キャッシュヒット率 | (例: キャッシュヒット率 &lt; 10、1 分間隔の CW 異常検知) | |
+| | | | | | |
+|Route53| ヘルスチェック | (クロスリージョン) 可用性 | HealthCheckPercentageHealthy | (例: [HealthCheckPercentageHealthy の最小値] > 90 または 1 分間隔の CW 異常検知) | |  
+| | | | | | |
+|Route53| ヘルスチェック | レイテンシー | TimeToFirstByte | (例: [p99 TimeToFirstByte] &lt; 100 ms または 1 分間隔の CW 異常検知) | |
+| | | | | | |  
+|API Gateway| | 可用性 | カウント | (例: [(4XXError + 5XXError) / Count) * 100] &lt; 10 または 1 分間隔の CW 異常検知) | 「放棄」されたリクエストの測定としての可用性 |
+| | | | | | |
+|API Gateway| | レイテンシー | レイテンシー (またはバックエンドレイテンシーを表す IntegrationLatency) | (例: p99 レイテンシー &lt; 1 秒または 1 分間隔の CW 異常検知) | p99 は p90 などの下位パーセンタイルよりも許容度が高い。(p50 は平均と同じ) |  
+| | | | | | |
+|API Gateway| | パフォーマンス | CacheHitCount (および Misses) | (例: [CacheMissCount / (CacheHitCount + CacheMissCount) * 100] &lt; 10 または 1 分間隔の CW 異常検知) | キャッシュのミスを測定したパフォーマンス |
+| | | | | | |
+|Application Load Balancer (ALB)| | 可用性 | RejectedConnectionCount | (例: [RejectedConnectionCount/(RejectedConnectionCount + RequestCount) * 100] &lt; 10、1 分間隔の CW 異常検知) | 最大接続数の超過による拒否されたリクエストの測定としての可用性 | 
+| | | | | | |
+|Application Load Balancer (ALB)| | レイテンシー | TargetResponseTime | (例: p99 TargetResponseTime &lt; 1 秒または 1 分間隔の CW 異常検知) | p99 は p90 などの下位パーセンタイルよりも許容度が高い。(p50 は平均と同じ) |
 
-|AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
-|---	|---	|---	|---	|---	|---	|
-|CloudFront	|	|Availability	|Total error rate	|(Ex. [Total error rate] < 10 or CW Anomaly Detection for 1min Period)	|Availability as a measure of error rate	|
-|	|	|	|	|	|	|
-|CloudFront	|(Requires turning on additional metrics)	|Peformance	|Cache hit rate	|(Ex.Cache hit rate < 10 CW Anomaly Detection for 1min Period)	|	|
-|	|	|	|	|	|	|
-|Route53	|Health checks	|(Cross region) Availability	|HealthCheckPercentageHealthy	|(Ex. [Minimum of HealthCheckPercentageHealthy] > 90 or CW Anomaly Detection for 1min Period)	|	|
-|	|	|	|	|	|	|
-|Route53	|Health checks	|Latency	|TimeToFirstByte	|(Ex. [p99 TimeToFirstByte] < 100 ms or CW Anomaly Detection for 1min Period)	|	|
-|	|	|	|	|	|	|
-|API Gateway	|	|Availability	|Count	|(Ex. [(4XXError + 5XXError) / Count) * 100] < 10 or CW Anomaly Detection for 1min Period)	|Availability as a measure of "abandoned" requests	|
-|	|	|	|	|	|	|
-|API Gateway	|	|Latency	|Latency (or IntegrationLatency i.e. backend latency)	|(Ex. p99 Latency < 1 sec or CW Anomaly Detection for 1min Period)	|p99 will have greater tolerance than lower percentile like p90. (p50 is same as average)	|
-|	|	|	|	|	|	|
-|API Gateway	|	|Performance	|CacheHitCount (and Misses)	|(Ex. [CacheMissCount / (CacheHitCount + CacheMissCount)  * 100] < 10 or CW Anomaly Detection for 1min Period)	|Performance as a measure of Cache (Misses)	|
-|	|	|	|	|	|	|
-|Application Load Balancer (ALB)	|	|Availability	|RejectedConnectionCount	|(Ex.[RejectedConnectionCount/(RejectedConnectionCount + RequestCount) * 100] < 10 CW Anomaly Detection for 1min Period)	|Availability as a measure of rejected requests due to max connections breached	|
-|	|	|	|	|	|	|
-|Application Load Balancer (ALB)	|	|Latency	|TargetResponseTime	|(Ex. p99 TargetResponseTime < 1 sec or CW Anomaly Detection for 1min Period)	|p99 will have greater tolerance than lower percentile like p90. (p50 is same as average)	|
-|	|	|	|	|	|	|
+#### 3.2.3 サーバーレス
 
+|AWS サービス | 機能 | 測定 | メトリクス | 例 | 備考 |
+|---|---|---|---|---|---|
+| S3 | リクエストメトリクス | 可用性 | AllRequests | (例: [(4XXErrors + 5XXErrors) / AllRequests) * 100] &lt; 10 または1分間の期間のCW異常検知) | 「放棄」されたリクエストの可用性として |
+| | | | | | | 
+| S3 | リクエストメトリクス | (全体的な) レイテンシー | TotalRequestLatency | (例: [p99 TotalRequestLatency] &lt; 100 ms または1分間の期間のCW異常検知) | |
+| | | | | | |
+| DynamoDB (DDB) | | 可用性 | ThrottledRequests | (例: [ThrottledRequests] &lt; 100 または1分間の期間のCW異常検知) | 「スロットリング」されたリクエストの可用性として |  
+| | | | | | |
+| DynamoDB (DDB) | | レイテンシー | SuccessfulRequestLatency | (例: [p99 SuccessfulRequestLatency] &lt; 100 ms または1分間の期間のCW異常検知) | |
+| | | | | | | 
+| Step Functions | | 可用性 | ExecutionsFailed | (例: ExecutionsFailed = 0)<br/>**[例: メトリック数式で m1 は ExecutionsFailed (ステップ関数の実行) UTC 時間: `IF(((DAY(m1)&lt;6 OR ** ** DAY(m1)==7) AND (HOUR(m1)>21 AND HOUR(m1)&lt;7)),m1)]` | 平日は1日の業務(日中の業務開始)の間にステップ関数の完了を要求するビジネスフローを想定 |
+| | | | | | |
 
-#### 3.2.3 Serverless
+#### 3.2.4 コンピューティングとコンテナー
 
-|AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
-|---	|---	|---	|---	|---	|---	|
-|S3	|Request metrics	|Availability	|AllRequests	|(Ex. [(4XXErrors + 5XXErrors) / AllRequests) * 100] < 10 or CW Anomaly Detection for 1min Period)	|Availability as a measure of "abandoned" requests	|
-|	|	|	|	|	|	|
-|S3	|Request metrics	|(Overall) Latency	|TotalRequestLatency	|(Ex. [p99 TotalRequestLatency] < 100 ms or CW Anomaly Detection for 1min Period)	|	|
-|	|	|	|	|	|	|
-|DynamoDB (DDB)	|	|Availability	|ThrottledRequests	|(Ex. [ThrottledRequests] < 100 or CW Anomaly Detection for 1min Period)	|Availability as a measure of "throttled" requests	|
-|	|	|	|	|	|	|
-|DynamoDB (DDB)	|	|Latency	|SuccessfulRequestLatency	|(Ex. [p99 SuccessfulRequestLatency] < 100 ms or CW Anomaly Detection for 1min Period)	|	|
-|	|	|	|	|	|	|
-|Step Functions	|	|Availability	|ExecutionsFailed	|(Ex. ExecutionsFailed = 0)<br>**[ex. Metric Math where m1 is ExecutionsFailed (Step function Execution) UTC time: `IF(((DAY(m1)<6 OR ** ** DAY(m1)==7) AND (HOUR(m1)>21 AND HOUR(m1)<7)),m1)]`	|Assuming business flow that requests completion of step functions as a daily operation 9p-7a during weekdays (start of day business operations)	|
-|	|	|	|	|	|	|
+|AWS サービス |機能 |測定 |メトリクス |例 |備考 |
+|--- |--- |--- |--- |--- |--- |
+|EKS |Prometheus メトリクス |可用性 |APIServer リクエスト成功率 |(例: [APIServer リクエスト成功率](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/sample_cloudwatch_dashboards/kubernetes_api_server/cw_dashboard_kubernetes_api_server.json) のような Prometheus メトリクス) |詳細は EKS コントロールプレーンメトリクスの[ベストプラクティス](https://aws.github.io/aws-eks-best-practices/reliability/docs/controlplane/#monitor-control-plane-metrics) と [EKS のオブザーバビリティ](https://docs.aws.amazon.com/eks/latest/userguide/eks-observe.html) を参照してください。 |
+| | | | | | |
+|EKS |Prometheus メトリクス |パフォーマンス |apiserver_request_duration_seconds, etcd_request_duration_seconds |apiserver_request_duration_seconds, etcd_request_duration_seconds | |
+| | | | | | |  
+|ECS | |可用性 |実行中タスク数 |実行中タスク数 |ECS CloudWatch メトリクスの[ドキュメント](https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/cloudwatch-metrics.html#cw_running_task_count) を参照してください。 |
+| | | | | | |
+|ECS | |パフォーマンス |TargetResponseTime |(例: [p99 TargetResponseTime] &lt; 100 ms または 1 分間隔の CW アノマリ検出) |ECS CloudWatch メトリクスの[ドキュメント](https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/cloudwatch-metrics.html#cw_running_task_count) を参照してください。 |  
+| | | | | | |
+|EC2 (.NET Core) |CW エージェント パフォーマンス カウンター |可用性 |(例: [ASP.NET アプリケーション エラーの総数/秒](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in) &lt; 'N') |(例: [ASP.NET アプリケーション エラーの総数/秒](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in) &lt; 'N') |EC2 CW Application Insights の[ドキュメント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in) を参照してください。 |
+| | | | | | |
 
+#### 3.2.5 データベース (RDS)
 
-#### 3.2.4 Compute and Containers
+|AWS サービス |機能 |測定 |メトリクス |例 |備考 |
+|--- |--- |--- |--- |--- |--- |
+|RDS Aurora |Performance Insights(PI) |可用性 |平均アクティブセッション数 |(例: 1 分間の期間で CW アノマリ検出を使用した平均アクティブセッション数) |RDS Aurora CW PI の[ドキュメント](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.Overview.ActiveSessions.html#USER_PerfInsights.Overview.ActiveSessions.AAS)を参照 |  
+| | | | | | |
+|RDS Aurora | |ディザスタリカバリ(DR) |AuroraGlobalDBRPOLag |(例: 1 分間の期間で AuroraGlobalDBRPOLag &lt; 30000 ms) |RDS Aurora CW の[ドキュメント](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.AuroraMonitoring.Metrics.html)を参照 |
+| | | | | | |
+|RDS Aurora | |パフォーマンス |コミットレイテンシ、バッファキャッシュヒット比率、DDL レイテンシ、DML レイテンシ |(例: 1 分間の期間で CW アノマリ検出を使用したコミットレイテンシ) |RDS Aurora CW PI の[ドキュメント](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.Overview.ActiveSessions.html#USER_PerfInsights.Overview.ActiveSessions.AAS)を参照 |
+| | | | | | |  
+|RDS (MSSQL) |PI |パフォーマンス |SQL コンパイル数 |(例: <br/>5 分間の期間で SQL コンパイル数 > 'M') |RDS CW PI の[ドキュメント](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights_Counters.html#USER_PerfInsights_Counters.SQLServer)を参照 |
+| | | | | | |
 
-|AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
-|---	|---	|---	|---	|---	|---	|
-|EKS	|Prometheus metrics	|Availability	|APIServer Request Success Ratio	|(ex. Prometheus metric like  [APIServer Request Success Ratio](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/sample_cloudwatch_dashboards/kubernetes_api_server/cw_dashboard_kubernetes_api_server.json))	|See [best practices for monitoring EKS control plane metrics](https://aws.github.io/aws-eks-best-practices/reliability/docs/controlplane/#monitor-control-plane-metrics) and [EKS observability](https://docs.aws.amazon.com/eks/latest/userguide/eks-observe.html) for details.	|
-|	|	|	|	|	|	|
-|EKS	|Prometheus metrics	|Performance	|apiserver_request_duration_seconds, etcd_request_duration_seconds	|apiserver_request_duration_seconds, etcd_request_duration_seconds	|	|
-|	|	|	|	|	|	|
-|ECS	|	|Availability	|Service RUNNING task count	|Service RUNNING task count	|See ECS CW metrics [documentation](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-metrics.html#cw_running_task_count)	|
-|	|	|	|	|	|	|
-|ECS	|	|Performance	|TargetResponseTime	|(ex.  [p99 TargetResponseTime] < 100 ms or CW Anomaly Detection for 1min Period)	|See ECS CW metrics [documentation](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-metrics.html#cw_running_task_count)	|
-|	|	|	|	|	|	|
-|EC2 (.NET Core)	|CW Agent Performance Counters	|Availability	|(ex. [ASP.NET Application Errors Total/Sec](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in) < 'N')	|(ex. [ASP.NET Application Errors Total/Sec](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in) < 'N')	|See EC2 CW Application Insights [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/appinsights-metrics-ec2.html#appinsights-metrics-ec2-built-in)	|
-|	|	|	|	|	|	|
+## 4.0 Amazon CloudWatch とメトリック数式を使用した SLI、SLO、SLA の計算
 
+### 4.1 Amazon CloudWatch とメトリック数式
 
-#### 3.2.5 Databases (RDS)
+Amazon CloudWatch は、AWS リソースのためのモニタリングとオブザーバビリティ サービスを提供します。
+メトリック数式を使用すると、CloudWatch メトリクスデータを使用した計算を実行できるため、SLI、SLO、SLA の計算に理想的なツールです。
 
-|AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
-|---	|---	|---	|---	|---	|---	|
-|RDS Aurora	|Performance Insights (PI)	|Availability	|Average active sessions	|(Ex. Average active serssions with CW Anomaly Detection for 1min Period)	|See RDS Aurora CW PI [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.Overview.ActiveSessions.html#USER_PerfInsights.Overview.ActiveSessions.AAS)	|
-|	|	|	|	|	|	|
-|RDS Aurora	|	|Disaster Recovery (DR)	|AuroraGlobalDBRPOLag	|(Ex. AuroraGlobalDBRPOLag < 30000 ms for 1min Period)	|See RDS Aurora CW [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.AuroraMonitoring.Metrics.html)	|
-|	|	|	|	|	|	|
-|RDS Aurora	|	|Performance	|Commit Latency, Buffer Cache Hit Ratio, DDL Latency, DML Latency	|(Ex. Commit Latency with CW Anomaly Detection for 1min Period)	|See RDS Aurora CW PI [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/USER_PerfInsights.Overview.ActiveSessions.html#USER_PerfInsights.Overview.ActiveSessions.AAS)	|
-|	|	|	|	|	|	|
-|RDS (MSSQL)	|PI	|Performance	|SQL Compilations	|(Ex. <br>SQL Compliations > 'M' for 5 min Period)	|See RDS CW PI [documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/USER_PerfInsights_Counters.html#USER_PerfInsights_Counters.SQLServer)	|
-|	|	|	|	|	|	|
+#### 4.1.1 詳細モニタリングの有効化
 
+AWS リソースの詳細モニタリングを有効にすると、1 分間隔のデータを取得できるため、SLI の計算がより正確になります。
 
-## 4.0 Using Amazon CloudWatch and Metric Math for Calculating SLIs, SLOs, and SLAs
+#### 4.1.2 名前空間とディメンションを使用したメトリクスの整理
 
-### 4.1 Amazon CloudWatch and Metric Math
+名前空間とディメンションを使用して、メトリクスをカテゴリ化し、分析を容易にするためにフィルタリングします。 
+例えば、名前空間を使用して特定のサービスに関連するメトリクスをグループ化し、ディメンションを使用してそのサービスのさまざまなインスタンスを区別します。
 
-Amazon CloudWatch provides monitoring and observability services for AWS resources. Metric Math allows you to perform calculations using CloudWatch metric data, making it an ideal tool for calculating SLIs, SLOs, and SLAs.
+### 4.2 メトリック数式を使用した SLI の計算
 
-#### 4.1.1 Enabling Detailed Monitoring
+#### 4.2.1 可用性
 
-Enable Detailed Monitoring for your AWS resources to get 1-minute data granularity, allowing for more accurate SLI calculations.
-
-#### 4.1.2 Organizing Metrics with Namespaces and Dimensions
-
-Use Namespaces and Dimensions to categorize and filter metrics for easier analysis. For example, use Namespaces to group metrics related to a specific service, and Dimensions to differentiate between various instances of that service.
-
-### 4.2 Calculating SLIs with Metric Math
-
-#### 4.2.1 Availability
-
-To calculate availability, divide the number of successful requests by the total number of requests:
+可用性を計算するには、成功したリクエストの数を総リクエスト数で割ります。
 
 ```
 availability = 100 * (successful_requests / total_requests)
 ```
 
 
-**Example:**
+**例:**
 
-Suppose you have an API Gateway with the following metrics:
-- `4XXError`: Number of 4xx client errors
-- `5XXError`: Number of 5xx server errors
-- `Count`: Total number of requests
+次のメトリクスを持つ API Gateway があるとします。
 
-Use Metric Math to calculate the availability:
+- `4XXError`: 4xx クライアントエラーの数
+- `5XXError`: 5xx サーバーエラーの数  
+- `Count`: 総リクエスト数
+
+メトリックマスを使用して可用性を計算します。
 
 ```
 availability = 100 * ((Count - 4XXError - 5XXError) / Count)
 ```
 
+#### 4.2.2 レイテンシ
 
-#### 4.2.2 Latency
-
-To calculate average latency, use the `SampleCount` and `Sum` statistics provided by CloudWatch:
+平均レイテンシを計算するには、CloudWatch が提供する `SampleCount` と `Sum` の統計を使用します。
 
 ```
 average_latency = Sum / SampleCount
 ```
 
 
-**Example:**
+**例:**
 
-Suppose you have a Lambda function with the following metric:
-- `Duration`: Time taken to execute the function
+次のメトリクスを持つ Lambda 関数があるとします。
+- `Duration`: 関数の実行にかかった時間
 
-Use Metric Math to calculate the average latency:
+メトリックマスを使用して平均レイテンシを計算します。
 
 ```
 average_latency = Duration.Sum / Duration.SampleCount
 ```
 
+#### 4.2.3 エラーレート
 
-#### 4.2.3 Error Rate
-
-To calculate the error rate, divide the number of failed requests by the total number of requests:
+エラーレートを計算するには、失敗したリクエスト数をリクエスト総数で割ります。
 
 ```
 error_rate = 100 * (failed_requests / total_requests)
 ```
 
+**例:**
 
-**Example:**
-
-Using the API Gateway example from before:
+前の API Gateway の例を使用:
 
 ```
 error_rate = 100 * ((4XXError + 5XXError) / Count)
 ```
 
+### 4.4 SLO の定義とモニタリング
 
-### 4.4 Defining and Monitoring SLOs
+#### 4.4.1 現実的な目標の設定
 
-#### 4.4.1 Setting Realistic Targets
+ユーザーの期待と過去のパフォーマンスデータに基づいてSLOの目標を定義します。 サービスの信頼性とリソース利用のバランスをとるために、達成可能な目標を設定します。
 
-Define SLO targets based on user expectations and historical performance data. Set achievable targets to ensure a balance between service reliability and resource utilization.
+#### 4.4.2 CloudWatch を使用した SLO のモニタリング
 
-#### 4.4.2 Monitoring SLOs with CloudWatch
+SLO のターゲットに接近または違反したときに通知を受け取るように、SLI をモニタリングする CloudWatch アラームを作成します。これにより、問題に先手を打ってサービスの信頼性を維持できます。
 
-Create CloudWatch Alarms to monitor your SLIs and notify you when they approach or breach SLO targets. This enables you to proactively address issues and maintain service reliability.
+#### 4.4.3 SLOのレビューと調整
 
-#### 4.4.3 Reviewing and Adjusting SLOs
+SLOがサービスの進化に伴って関連性を保つよう、定期的にレビューしてください。必要に応じて目標を調整し、ステークホルダーに変更を伝えてください。
 
-Periodically review your SLOs to ensure they remain relevant as your service evolves. Adjust targets if necessary and communicate any changes to stakeholders.
+### 4.5 SLAs の定義と測定
 
-### 4.5 Defining and Measuring SLAs
+#### 4.5.1 現実的な目標の設定
 
-#### 4.5.1 Setting Realistic Targets
+歴史的なパフォーマンスデータとユーザーの期待に基づいて、SLA の目標を定義します。
+サービスの信頼性とリソース利用のバランスをとるために、達成可能な目標を設定します。
 
-Define SLA targets based on historical performance data and user expectations. Set achievable targets to ensure a balance between service reliability and resource utilization.
+#### 4.5.2 モニタリングとアラート
 
-#### 4.5.2 Monitoring and Alerting
+SLA のターゲットに近づいたり、侵害したときに通知を受け取るように、SLI を監視する CloudWatch アラームを設定します。これにより、問題に先手を打ってサービスの信頼性を維持できます。
 
-Set up CloudWatch Alarms to monitor SLIs and notify you when they approach or breach SLA targets. This enables you to proactively address issues and maintain service reliability.
+#### 4.5.3 SLAの定期的な見直し
 
-#### 4.5.3 Regularly Reviewing SLAs
+サービスが進化するにつれて、SLAが関連性を保つように定期的に見直してください。必要に応じて目標を調整し、ステークホルダーに変更を伝えてください。
 
-Periodically review SLAs to ensure they remain relevant as your service evolves. Adjust targets if necessary and communicate any changes to stakeholders.
+### 4.6 特定期間における SLA または SLO パフォーマンスの測定
 
-### 4.6 Measuring SLA or SLO Performance Over a Set Period
+カレンダー月などの特定期間における SLA または SLO パフォーマンスを測定するには、カスタムの時間範囲を使用した CloudWatch メトリクスデータを利用します。
 
-To measure SLA or SLO performance over a set period, such as a calendar month, use CloudWatch metric data with custom time ranges.
+**例:**
 
-**Example:**
-
-Suppose you have an API Gateway with an SLO target of 99.9% availability. To measure the availability for the month of April, use the following Metric Math expression:
+99.9%の可用性を SLO ターゲットとする API Gateway があるとします。4月の可用性を測定するために、次の Metric Math 式を使用します。
 
 ```
 availability = 100 * ((Count - 4XXError - 5XXError) / Count)
 ```
 
+次に、カスタムの時間範囲を使用して、CloudWatch メトリクスデータクエリを構成します。
 
-Then, configure the CloudWatch metric data query with a custom time range:
+- **開始時間:** `2023-04-01T00:00:00Z`
+- **終了時間:** `2023-04-30T23:59:59Z`  
+- **期間:** `2592000` (秒単位の 30 日)
 
-- **Start Time:** `2023-04-01T00:00:00Z`
-- **End Time:** `2023-04-30T23:59:59Z`
-- **Period:** `2592000` (30 days in seconds)
+最後に、 `AVG` 統計を使用して、その月の平均可用性を計算します。 平均可用性が SLO ターゲット以上であれば、目標を達成したことになります。
 
-Finally, use the `AVG` statistic to calculate the average availability over the month. If the average availability is equal to or greater than the SLO target, you have met your objective.
+## 5.0 まとめ
 
-## 5.0 Summary
-
-Key Performance Indicators (KPIs) a.k.a 'Golden Signals' must align to business and stake-holder requirements. Calculating SLIs, SLOs, and SLAs using Amazon CloudWatch and Metric Math is crucial for managing service reliability. Follow the best practices outlined in this guide to effectively monitor and maintain the performance of your AWS resources. Remember to enable Detailed Monitoring, organize metrics with Namespaces and Dimensions, use Metric Math for SLI calculations, set realistic SLO and SLA targets, and establish monitoring and alerting systems with CloudWatch Alarms. By applying these best practices, you can ensure optimal service reliability, better resource utilization, and improved customer satisfaction.
-
-
-
-
+Key Performance Indicators (KPIs) こと「ゴールデンシグナル」は、ビジネスとステークホルダーの要件に合わせる必要があります。 
+Amazon CloudWatch とメトリックマスを使用して、SLI、SLO、SLA を計算することは、サービスの信頼性を管理するうえで不可欠です。 
+このガイドで概説されているベストプラクティスに従うことで、AWS リソースのパフォーマンスを効果的に監視および維持できます。 
+Detailed Monitoring を有効にし、Namespace と Dimension でメトリクスを整理し、SLI 計算にはメトリックマスを使用し、現実的な SLO と SLA の目標を設定し、CloudWatch Alarm で監視とアラートのシステムを確立することを忘れないでください。
+これらのベストプラクティスを適用することで、最適なサービスの信頼性、より良いリソース利用率、顧客満足度の向上を確保できます。

@@ -1,52 +1,42 @@
-# Using Amazon Managed Service for Prometheus to monitor App Mesh environment configured on EKS
+# Amazon Managed Service for Prometheus を使用した EKS 上に構成された App Mesh 環境の監視
 
-In this recipe we show you how to ingest [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy 
-metrics in an [Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) cluster 
-to [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP)
-and create a custom dashboard on [Amazon Managed Grafana](https://aws.amazon.com/grafana/) 
-(AMG) to monitor the health and performance of microservices.
+このレシピでは、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) クラスター上の [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy メトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP) に取り込み、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) (AMG) でカスタムダッシュボードを作成して、マイクロサービスの健全性とパフォーマンスを監視する方法を示します。
 
-As part of the implementation, we will create an AMP workspace, install the App Mesh 
-Controller for Kubernetes and inject the Envoy container into the pods. We will be 
-collecting the Envoy metrics using [Grafana Agent](https://github.com/grafana/agent) 
-configured in the EKS cluster and write them to AMP. Finally, we will be creating
-an AMG workspace and configure the AMP as the datasource and create a custom dashboard.
+実装の一環として、AMP ワークスペースを作成し、Kubernetes 用 App Mesh コントローラーをインストールして、Envoy コンテナを Pod に注入します。EKS クラスターに構成された [Grafana Agent](https://github.com/grafana/agent) を使用して Envoy メトリクスを収集し、AMP に書き込みます。最後に、AMG ワークスペースを作成し、データソースとして AMP を構成し、カスタムダッシュボードを作成します。
 
-!!! note
-    This guide will take approximately 45 minutes to complete.
+!!! 注意
+    このガイドの完了には約 45 分かかります。
 
-## Infrastructure
-In the following section we will be setting up the infrastructure for this recipe. 
+## インフラストラクチャ
+このレシピのインフラストラクチャを設定します。
 
-### Architecture
+### アーキテクチャ
 
+![アーキテクチャ](../images/monitoring-appmesh-environment.png)
 
-![Architecture](../images/monitoring-appmesh-environment.png)
+Grafana エージェントは、Envoy メトリクスをスクレイプし、AMP のリモートライトエンドポイントを介してそれらを AMP にインジェストするように構成されています。
 
-The Grafana agent is configured to scrape the Envoy metrics and ingest them to AMP through the AMP remote write endpoint 
+!!! info
+    AMP 用の Prometheus リモートライトエクスポータの詳細については、
+    [Prometheus Remote Write Exporter for AMP の概要](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)をご覧ください。
 
-!!! info 
-    For more information on Prometheus Remote Write Exporter check out
-    [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter).
+### 前提条件
 
+* AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
+* 環境に [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) コマンドをインストールする必要があります。
+* 環境に [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
+* [Docker](https://docs.docker.com/get-docker/) が環境にインストールされている必要があります。
+* AWS アカウントに AMP ワークスペースが構成されている必要があります。
+* [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html) をインストールする必要があります。 
+* [AWS SSO](https://docs.aws.amazon.com/singlesignon/latest/userguide/step1.html) を有効にする必要があります。
 
-### Prerequisites
+### EKS クラスターのセットアップ
 
-* The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
-* You need to install the [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) command in your environment.
-* You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment. 
-* You have [Docker](https://docs.docker.com/get-docker/) installed into your environment.
-* You need AMP workspace configured in your AWS account.
-* You need to install [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html).
-* You need to enable [AWS-SSO](https://docs.aws.amazon.com/singlesignon/latest/userguide/step1.html).
+まず、サンプルアプリケーションを実行するために App Mesh で有効化された EKS クラスターを作成します。
+`eksctl` CLI を使用して、[eks-cluster-config.yaml](./servicemesh-monitoring-ampamg/eks-cluster-config.yaml) を使ってクラスターをデプロイします。
+このテンプレートは、EKS で新しいクラスターを作成します。
 
-### Setup an EKS cluster
-
-First, create an EKS cluster that will be enabled with App Mesh for running the sample application. 
-The `eksctl` CLI will be used to deploy the cluster using the [eks-cluster-config.yaml](./servicemesh-monitoring-ampamg/eks-cluster-config.yaml).
-This template will create a new cluster with EKS.
-
-Edit the template file and set your region to one of the available regions for AMP:
+テンプレートファイルを編集し、AMP で利用できるリージョンのいずれかを設定してください:
 
 * `us-east-1`
 * `us-east-2`
@@ -54,25 +44,22 @@ Edit the template file and set your region to one of the available regions for A
 * `eu-central-1`
 * `eu-west-1`
 
-Make sure to overwrite this region in your session, for example, in the Bash
-shell:
+セッションでこのリージョンを上書きするようにしてください。例えば、Bash シェルで次のように実行します:
 
 ```
 export AWS_REGION=eu-west-1
 ```
 
-Create your cluster using the following command:
+次のコマンドを使用してクラスターを作成します: 
 
 ```
 eksctl create cluster -f eks-cluster-config.yaml
 ```
-This creates an EKS cluster named `AMP-EKS-CLUSTER` and a service account 
-named `appmesh-controller` that will be used by the App Mesh controller for EKS.
+これにより、`AMP-EKS-CLUSTER` という名前の EKS クラスターと、EKS 用 App Mesh コントローラーが使用する `appmesh-controller` という名前のサービスアカウントが作成されます。
 
-### Install App Mesh Controller
+### App Mesh Controller のインストール
 
-Next, we will run the below commands to install the [App Mesh Controller](https://docs.aws.amazon.com/app-mesh/latest/userguide/getting-started-kubernetes.html) 
-and configure the Custom Resource Definitions (CRDs): 
+次に、以下のコマンドを実行して [App Mesh Controller](https://docs.aws.amazon.com/app-mesh/latest/userguide/getting-started-kubernetes.html) をインストールし、Custom Resource Definitions (CRDs) を設定します。
 
 ```
 helm repo add eks https://aws.github.io/eks-charts
@@ -86,56 +73,50 @@ helm upgrade -i appmesh-controller eks/appmesh-controller \
      --set serviceAccount.name=appmesh-controller
 ```
 
-### Set up AMP 
-The AMP workspace is used to ingest the Prometheus metrics collected from Envoy. 
-A workspace is a logical Cortex server dedicated to a tenant. A workspace supports
-fine-grained access control for authorizing its management such as update, list, 
-describe, and delete, and the ingestion and querying of metrics.
+### AMP のセットアップ
+AMP ワークスペースは、Envoy から収集された Prometheus メトリクスを取り込むために使用されます。
+ワークスペースは、テナント専用の論理 Cortex サーバーです。ワークスペースは、更新、一覧表示、
+説明、削除などの管理へのアクセス制御と、メトリクスの取り込みとクエリを細かく制御することができます。
 
-Create a workspace using the AWS CLI:
+AWS CLI を使用してワークスペースを作成します。
 
 ```
 aws amp create-workspace --alias AMP-APPMESH --region $AWS_REGION
 ```
 
-Add the necessary Helm repositories:
+必要な Helm リポジトリを追加します。
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
 helm repo add kube-state-metrics https://kubernetes.github.io/kube-state-metrics 
 ```
 
-For more details on AMP check out the [AMP Getting started](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) guide.
+AMP の詳細については、[AMP の概要](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) ガイドをご覧ください。
 
-### Scraping & ingesting metrics
+### メトリクスのスクレイピングと取り込み
 
-AMP does not directly scrape operational metrics from containerized workloads in a Kubernetes cluster. 
-You must deploy and manage a Prometheus server or an OpenTelemetry agent such as the
+AMP は、Kubernetes クラスター内のコンテナ化ワークロードから直接運用メトリクスをスクレイピングしません。
+このタスクを実行するには、Prometheus サーバーまたは 
 [AWS Distro for OpenTelemetry Collector](https://github.com/aws-observability/aws-otel-collector)
-or the Grafana Agent to perform this task. In this receipe, we walk you through the 
-process of configuring the Grafana Agent to scrape the Envoy metrics and analyze them using AMP and AMG.
+や Grafana エージェントなどの OpenTelemetry エージェントをデプロイおよび管理する必要があります。
+このレシピでは、Grafana エージェントを設定して Envoy メトリクスをスクレイプし、AMP と AMG を使用して分析するプロセスを紹介します。
 
-#### Configure Grafana Agent
+#### Grafana Agent の設定
 
-The Grafana Agent is a lightweight alternative to running a full Prometheus server. 
-It keeps the necessary parts for discovering and scraping Prometheus exporters and 
-sending metrics to a Prometheus-compatible backend. The Grafana Agent also includes 
-native support for AWS Signature Version 4 (Sigv4) for AWS Identity and Access Management (IAM) 
-authentication.
+Grafana Agent は、完全な Prometheus サーバーを実行する軽量な代替手段です。
+Prometheus Exporter の検出とスクレイピング、およびメトリクスの Prometheus 互換バックエンドへの送信に必要な部分を保持します。
+Grafana Agent には、AWS Identity and Access Management(IAM)認証の AWS Signature Version 4(Sigv4)のネイティブサポートも含まれています。
 
-We now walk you through the steps to configure an IAM role to send Prometheus metrics to AMP. 
-We install the Grafana Agent on the EKS cluster and forward metrics to AMP.
+ここでは、Prometheus メトリクスを AMP に送信するための IAM ロールを設定する手順を説明します。
+EKS クラスターに Grafana Agent をインストールし、メトリクスを AMP に転送します。
 
-#### Configure permissions
-The Grafana Agent scrapes operational metrics from containerized workloads running in the 
-EKS cluster and sends them to AMP. Data sent to AMP must be signed with valid AWS credentials
-using Sigv4 to authenticate and authorize each client request for the managed service.
+#### アクセス許可の設定
+Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、マネージドサービスの各クライアントリクエストを認証および認可するために、Sigv4 を使用して有効な AWS 資格情報で署名する必要があります。
 
-The Grafana Agent can be deployed to an EKS cluster to run under the identity of a Kubernetes service account. 
-With IAM roles for service accounts (IRSA), you can associate an IAM role with a Kubernetes service account
-and thus provide IAM permissions to any pod that uses the service account. 
+Grafana Agent は、Kubernetes のサービスアカウントの ID で実行するために EKS クラスターにデプロイできます。
+サービスアカウントの IAM ロール (IRSA) を使用すると、Kubernetes のサービスアカウントに IAM ロールを関連付けて、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。
 
-Prepare the IRSA setup as follows:
+IRSA の設定を次のように準備します。
 
 ```
 kubectl create namespace grafana-agent
@@ -146,53 +127,44 @@ export NAMESPACE="grafana-agent"
 export REMOTE_WRITE_URL="https://aps-workspaces.$AWS_REGION.amazonaws.com/workspaces/$WORKSPACE/api/v1/remote_write"
 ```
 
-You can use the [gca-permissions.sh](./servicemesh-monitoring-ampamg/gca-permissions.sh) 
-shell script to automate the following steps (note to replace the placeholder variable 
-`YOUR_EKS_CLUSTER_NAME` with the name of your EKS cluster):
+次の手順を自動化するために、[gca-permissions.sh](./servicemesh-monitoring-ampamg/gca-permissions.sh) シェルスクリプトを使用できます(プレースホルダー変数 `YOUR_EKS_CLUSTER_NAME` を EKS クラスターの名前に置き換えてください)。
 
-* Creates an IAM role named `EKS-GrafanaAgent-AMP-ServiceAccount-Rol`e with an IAM policy that has permissions to remote-write into an AMP workspace.
-* Creates a Kubernetes service account named `grafana-agent` under the `grafana-agent` namespace that is associated with the IAM role.
-* Creates a trust relationship between the IAM role and the OIDC provider hosted in your Amazon EKS cluster.
+* AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを使用して、`EKS-GrafanaAgent-AMP-ServiceAccount-Role` という名前の IAM ロールを作成します。
+* `grafana-agent` 名前空間の下に、IAM ロールに関連付けられた `grafana-agent` という名前の Kubernetes サービスアカウントを作成します。
+* IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダーの間に信頼関係を作成します。
 
-You need `kubectl` and `eksctl` CLI tools to run the `gca-permissions.sh` script. 
-They must be configured to access your Amazon EKS cluster.
+`gca-permissions.sh` スクリプトを実行するには、`kubectl` と `eksctl` の CLI ツールが必要です。
+これらは Amazon EKS クラスターにアクセスするように設定する必要があります。
 
-Now create a manifest file, [grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml), 
-with the scrape configuration to extract Envoy metrics and deploy the Grafana Agent. 
+次に、Envoy メトリクスを抽出するスクレイプ設定を含むマニフェストファイル [grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml) を作成し、Grafana Agent をデプロイします。
 
-!!! note
-    At time of writing, this solution will not work for EKS on Fargate
-    due to the lack of support for daemon sets there.
+!!! 注意
+    記事作成時点では、このソリューションはデーモンセットのサポートがない Fargate 上の EKS では機能しません。
 
-The example deploys a daemon set named `grafana-agent` and a deployment named 
-`grafana-agent-deployment`. The `grafana-agent` daemon set collects metrics 
-from pods on the cluster and the `grafana-agent-deployment` deployment collects
-metrics from services that do not live on the cluster, such as the EKS control plane.
+この例では、`grafana-agent` という名前のデーモンセットと、`grafana-agent-deployment` という名前のデプロイメントをデプロイします。 `grafana-agent` デーモンセットは、クラスター上のポッドからメトリクスを収集し、`grafana-agent-deployment` デプロイメントは、EKS コントロールプレーンなど、クラスター外に存在するサービスからメトリクスを収集します。
 
 ```
 kubectl apply -f grafana-agent.yaml
 ```
-After the `grafana-agent` is deployed, it will collect the metrics and ingest 
-them into the specified AMP workspace. Now deploy a sample application on the 
-EKS cluster and start analyzing the metrics.
+`grafana-agent` がデプロイされると、メトリクスを収集して、指定された AMP ワークスペースにインジェストします。次に、EKS クラスターにサンプルアプリケーションをデプロイして、メトリクスの分析を開始します。
 
-## Sample application
+## サンプルアプリケーション
 
-To install an application and inject an Envoy container, we use the AppMesh controller for Kubernetes.
+アプリケーションをインストールし、Envoy コンテナを注入するには、Kubernetes 用の AppMesh コントローラーを使用します。
 
-First, install the base application by cloning the examples repo:
+まず、例のリポジトリをクローンしてベースアプリケーションをインストールします。
 
 ```
 git clone https://github.com/aws/aws-app-mesh-examples.git
 ```
 
-And now apply the resources to your cluster:
+次にリソースをクラスタに適用します。
 
 ```
 kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/1_base_application
 ```
 
-Check the pod status and make sure it is running:
+ポッドのステータスを確認し、実行されていることを確認します。
 
 ```
 $ kubectl -n prod get all
@@ -203,14 +175,14 @@ pod/jazz-v1-6b6b6dd4fc-xxj9s    1/1     Running   0          6m8s
 pod/metal-v1-584b9ccd88-kj7kf   1/1     Running   0          6m8s
 ```
 
-Next, install the App Mesh controller and meshify the deployment:
+次に App Mesh コントローラーをインストールし、デプロイメントをメッシュ化します。
 
 ```
 kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/2_meshed_application/
 kubectl rollout restart deployment -n prod dj jazz-v1 metal-v1
 ```
 
-Now we should see two containers running in each pod:
+これで、各 Pod で 2 つのコンテナが実行されているはずです。
 
 ```
 $ kubectl -n prod get all
@@ -220,7 +192,7 @@ jazz-v1-7cdc4fc4fc-wzc5d    2/2     Running   0          57s
 metal-v1-7f499bb988-qtx7k   2/2     Running   0          57s
 ```
 
-Generate the traffic for 5 mins and we will visualize it AMG later:
+5 分間トラフィックを生成し、後で AMG で可視化します。
 
 ```
 dj_pod=`kubectl get pod -n prod --no-headers -l app=dj -o jsonpath='{.items[*].metadata.name}'`
@@ -232,54 +204,51 @@ kubectl exec -n prod -it $dj_pod  -c dj \
 done
 ```
 
-### Create an AMG workspace
+### AMG ワークスペースの作成
 
-To create an AMG workspace follow the steps in the [Getting Started with AMG](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) blog post. 
-To grant users access to the dashboard, you must enable AWS SSO. After you create the workspace, you can assign access to the Grafana workspace to an individual user or a user group. 
-By default, the user has a user type of viewer. Change the user type based on the user role. Add the AMP workspace as the data source and then start creating the dashboard.
+AMG ワークスペースの作成については、[Getting Started with AMG](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) ブログ記事の手順に従ってください。
+ダッシュボードへのユーザーアクセスを許可するには、AWS SSO を有効にする必要があります。ワークスペースの作成後、Grafana ワークスペースへのアクセスを個々のユーザーまたはユーザーグループに割り当てることができます。
+デフォルトでは、ユーザーのユーザータイプは viewer です。ユーザーロールに基づいてユーザータイプを変更します。データソースとして AMP ワークスペースを追加し、ダッシュボードの作成を開始します。
 
-In this example, the user name is `grafana-admin` and the user type is `Admin`.
-Select the required data source. Review the configuration, and then choose `Create workspace`.
+この例では、ユーザー名は `grafana-admin` で、ユーザータイプは `Admin` です。
+必要なデータソースを選択します。構成を確認し、`Create workspace` を選択します。
 
 ![Creating AMP Workspace](../images/workspace-creation.png)
 
-### Configure AMG datasource 
-To configure AMP as a data source in AMG, in the `Data sources` section, choose 
-`Configure in Grafana`, which will launch a Grafana workspace in the browser. 
-You can also manually launch the Grafana workspace URL in the browser.
+### AMG のデータソースを設定する
+AMP を AMG のデータソースとして設定するには、`Data sources` セクションで `Configure in Grafana` を選択します。これにより、ブラウザで Grafana ワークスペースが起動します。
+ブラウザで Grafana ワークスペースの URL を手動で起動することもできます。
 
-![Configuring Datasource](../images/configuring-amp-datasource.png)
+![データソースの設定](../images/configuring-amp-datasource.png)
 
-As you can see from the screenshots, you can view Envoy metrics like downstream 
-latency, connections, response code, and more. You can use the filters shown to 
-drill down to the envoy metrics of a particular application.
+スクリーンショットからわかるように、ダウンストリームレイテンシ、接続、レスポンスコードなどの Envoy メトリクスを表示できます。
+示されているフィルタを使用して、特定のアプリケーションの Envoy メトリクスをドリルダウンできます。
 
-### Configure AMG dashboard
+### AMG ダッシュボードの設定
 
-After the data source is configured, import a custom dashboard to analyze the Envoy metrics. 
-For this we use a pre-defined dashboard, so choose `Import` (shown below), and 
-then enter the ID `11022`. This will import the Envoy Global dashboard so you can 
-start analyzing the Envoy metrics.
+データソースが設定されたら、Envoy メトリクスを分析するためにカスタムダッシュボードをインポートします。
+これには事前定義されたダッシュボードを使用するので、以下に示すように `Import` を選択し、
+ID `11022` を入力します。これにより、Envoy Global ダッシュボードがインポートされるので、
+Envoy メトリクスの分析を開始できます。
 
 ![Custom Dashboard](../images/import-dashboard.png)
 
-### Configure alerts on AMG
-You can configure Grafana alerts when the metric increases beyond the intended threshold. 
-With AMG, you can configure how often the alert must be evaluated in the dashboard and send the notification. 
-Before you create alert rules, you must create a notification channel.
+### AMG でアラートを設定する
 
-In this example, configure Amazon SNS as a notification channel. The SNS topic must be 
-prefixed with `grafana` for notifications to be successfully published to the topic
-if you use the defaults, that is, the [service-managed permissions](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account).
+メトリクスが意図したしきい値を超えたときに、Grafana アラートを設定できます。
+AMG では、ダッシュボードでアラートを評価する頻度と通知を送信する方法を設定できます。
+アラートルールを作成する前に、通知チャネルを作成する必要があります。
 
-Use the following command to create an SNS topic named `grafana-notification`:
+この例では、通知チャネルとして Amazon SNS を設定します。
+SNS トピックには `grafana` というプレフィックスが必要です。これは、デフォルトの [サービス管理権限](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account) を使用している場合、通知がトピックに正常に発行されるためです。
+
+`grafana-notification` という名前の SNS トピックを作成するには、次のコマンドを使用します:
 
 ```
 aws sns create-topic --name grafana-notification
 ```
 
-And subscribe to it via an email address. Make sure you specify the region and Account ID in the 
-below command:
+メールアドレスを介してサブスクライブします。以下のコマンドで、リージョンとアカウント ID を指定することを確認してください: 
 
 ```
 aws sns subscribe \
@@ -288,36 +257,37 @@ aws sns subscribe \
 	--notification-endpoint <email-id>
 ```
 
-Now, add a new notification channel from the Grafana dashboard.
-Configure the new notification channel named grafana-notification. For Type, 
-use AWS SNS from the drop down. For Topic, use the ARN of the SNS topic you just created. 
-For Auth provider, choose AWS SDK Default.
+次に、Grafana ダッシュボードから新しい通知チャネルを追加します。
+grafana-notification という名前の新しい通知チャネルを設定します。
+Type にはドロップダウンから AWS SNS を使用します。
+Topic には、作成した SNS トピックの ARN を使用します。
+Auth provider は AWS SDK Default を選択します。
 
 ![Creating Notification Channel](../images/alert-configuration.png)
 
-Now configure an alert if downstream latency exceeds five milliseconds in a one-minute period.
-In the dashboard, choose Downstream latency from the dropdown, and then choose Edit. 
-On the Alert tab of the graph panel, configure how often the alert rule should be evaluated 
-and the conditions that must be met for the alert to change state and initiate its notifications.
+次に、ダウンストリームレイテンシが 1 分間で 5 ミリ秒を超えた場合のアラートを設定します。
+ダッシュボードで、ドロップダウンから Downstream latency を選択し、Edit を選択します。
+グラフパネルの Alert タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始する条件を設定します。
 
-In the following configuration, an alert is created if the downstream latency exceeds the 
-threshold and notification will be sent through the configured grafana-alert-notification channel to the SNS topic.
+次の設定では、ダウンストリームレイテンシがしきい値を超えた場合にアラートが作成され、設定された grafana-alert-notification チャネルを介して SNS トピックに通知が送信されます。
 
 ![Alert Configuration](../images/downstream-latency.png)
 
-## Cleanup
+</email-id></account-id></region>
 
-1. Remove the resources and cluster:
+## クリーンアップ
+
+1. リソースとクラスタを削除します。
 ```
 kubectl delete all --all
 eksctl delete cluster --name AMP-EKS-CLUSTER
 ```
-2. Remove the AMP workspace:
+2. AMP ワークスペースを削除します。 
 ```
 aws amp delete-workspace --workspace-id `aws amp list-workspaces --alias prometheus-sample-app --query 'workspaces[0].workspaceId' --output text`
 ```
-3. Remove the amp-iamproxy-ingest-role IAM role:
+3. amp-iamproxy-ingest-role IAM ロールを削除します。
 ```
 aws delete-role --role-name amp-iamproxy-ingest-role
 ```
-4. Remove the AMG workspace by removing it from the console. 
+4. コンソールから AMG ワークスペースを削除します。

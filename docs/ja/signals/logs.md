@@ -1,132 +1,134 @@
-# Logs
+# ログ
 
-Logs are a series of messages that are sent by an application, or an appliance, that are represented by one or more lines of details about an event, or sometimes about the health of that application. Typically, logs are delivered to a file, though sometimes they are sent to a collector that performs analysis and aggregation. There are many full-featured log aggregators, frameworks, and products that aim to make the task of generating, ingesting, and managing log data at any volume – from megabytes per day to terabytes per hour.
+ログは、1 行以上のイベントまたはアプリケーションの正常性に関する詳細を表す、アプリケーションまたはアプライアンスによって送信される一連のメッセージです。通常、ログはファイルに配信されますが、時に分析や集計を実行するコレクタに送信されることもあります。ログデータをメガバイト/日からテラバイト/時間までのあらゆるボリュームで生成、取り込み、管理することを目的とした、多機能のログアグリゲーター、フレームワーク、製品がたくさんあります。
 
-Logs are emitted by a single application at a time and usually pertain to the scope of that *one application* - though developers are free to have logs be as complex and nuanced as they desire. For our purposes we consider logs to be a fundamentally different signal from [traces](../../signals/traces), which are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters etc.
+ログは一度に 1 つのアプリケーションから発行され、通常その *1 つのアプリケーション* の範囲に関連しています。ただし、開発者はログを任意の複雑さとニュアンスを持たせることができます。ここでは、複数のアプリケーションやサービスからのイベントで構成され、サービス間のレスポンス待ち時間、サービス障害、リクエストパラメータなどのコンテキストを含む[トレース](../../signals/traces)とは基本的に異なるシグナルとしてログを考えます。
 
-Data in logs can also be aggregate over a period of time. For example, they may be statistical (e.g. number of requests served over the previous minute). They can be structured, free-form, verbose, and in any written language. 
+ログデータは一定期間にわたって集計することもできます。たとえば、統計情報(過去 1 分間に処理されたリクエスト数など)の形式にすることができます。構造化されているか非構造化であるかに関わらず、冗長であったり、任意の言語で書かれていることがあります。
 
-The primary use cases for logging are describing,
+ログの主なユースケースは次のとおりです。
 
-* an event, including its status and duration, and other vital statistics
-* errors or warnings related to that event (e.g. stack traces, timeouts)
-* application launches, start-up and shutdown messages
+* イベントのステータスと期間などの詳細を記述する
+* そのイベントに関連するエラーや警告(スタックトレース、タイムアウトなど) 
+* アプリケーションの起動、開始、シャットダウンメッセージ
 
 !!! note
-	Logs are intended to be *immutable*, and many log management systems include mechanisms to protect against, and detect attempts, to modify log data. 
+	ログは不変であることを目的としており、多くのログ管理システムにはログデータの変更を防止し、変更の試みを検出するメカニズムが含まれています。
 
-Regardless of your requirements for logging, these are the best practices that we have identified. 
+ログの要件に関わらず、特定したベストプラクティスは次のとおりです。
 
-## Structured logging is key to success
+## 構造化ログが成功の鍵
 
-Many systems will emit logs in a semi-structured format. For example, an Apache web server may write logs like this, with each line pertaining to a single web request:
+多くのシステムは、半構造化形式でログを出力します。 たとえば、Apache Web サーバーは、各行が単一の Web リクエストに関連する次のようなログを書き込む場合があります。
 
 	192.168.2.20 - - [28/Jul/2006:10:27:10 -0300] "GET /cgi-bin/try/ HTTP/1.0" 200 3395
 	127.0.0.1 - - [28/Jul/2006:10:22:04 -0300] "GET / HTTP/1.0" 200 2216
 
-Whereas a Java stack trace may be a single event that spans multiple lines and is less structured:
+一方、Java のスタックトレースは、複数行にまたがり、構造化されていない単一のイベントである可能性があります。
 
 	Exception in thread "main" java.lang.NullPointerException
         at com.example.myproject.Book.getTitle(Book.java:16)
         at com.example.myproject.Author.getBookTitles(Author.java:25)
         at com.example.myproject.Bootstrap.main(Bootstrap.java:14)
 
-And a Python error log event may look like this:
+Python のエラーログイベントは次のようになる場合があります。
 
 	Traceback (most recent call last):
 	  File "e.py", line 7, in <module>
 	    raise TypeError("Again !?!")
 	TypeError: Again !?!
 
-Of these three examples, only the first one is easily parsed by both humans *and* a log aggregation system. Using structured logs makes it easy to process log data quickly and effectively, giving both humans and machines the data they need to immediately find what they are looking for.
+これら 3 つの例のうち、人間とログ集計システムの両方で簡単に解析できるのは最初の例のみです。 構造化ログを使用することで、ログデータを迅速かつ効果的に処理し、人間とマシンの両方に即座に必要なデータを提供することができます。
 
-The most commonly understood log format is JSON, wherein each component to an event is represented as a key/value pair. In JSON, the python example above may be rewritten to look like this:
+最も一般的に理解されているログ形式は JSON であり、イベントの各コンポーネントがキー/値のペアとして表されます。 JSON では、上記の Python の例は次のように書き換えることができます。
 
 	{
-		"level", "ERROR"
+		"level": "ERROR",
 		"file": "e.py",
 		"line": 7,
 		"error": "TypeError(\"Again !?!\")"
 	}
 
-The use of structured logs makes your data transportable from one log system to another, simplifies development, and make operational diagnosis faster (with less errors). Also, using JSON embeds the schema of the log message along with the actual data, which enables sophisticated log analysis systems to index your messages automatically.
+構造化ログを使用することで、データをあるログシステムから別のログシステムに簡単に転送できるようになり、開発が簡素化され、運用上の診断がより迅速に(エラーも少なく)行えるようになります。 また、JSON を使用することで、実際のデータとともにログメッセージのスキーマが埋め込まれるため、高度なログ分析システムがメッセージを自動的にインデックスできるようになります。
 
-## Use log levels appropriately
+</module>
 
-There are two types of logs: those that have a *level* and those that are a series of events. For those that have a level, these are a critical component to a successful logging strategy. Log levels vary slightly from one framework to another, but generally they follow this structure:
+## ログレベルを適切に使用する
 
-| Level | Description |
+ログには、*レベル* を持つものと、一連のイベントから成るものの 2 種類があります。レベルを持つものでは、これらは成功したログ戦略にとって極めて重要なコンポーネントです。ログレベルはフレームワークによって若干異なりますが、概して次の構造に従います。
+
+| レベル | 説明 |
 | ----- | ----------- |
-| `DEBUG` | Fine-grained informational events that are most useful to debug an application. These are usually of value to devlopers and are very verbose. |
-| `INFO` | Informational messages that highlight the progress of the application at coarse-grained level. |
-| `WARN` | Potentially harmful situations that indicate a risk to an application. These can trigger an alarm in an applicaiton. |
-| `ERROR` | Error events that might still allow the application to continue running. These are likely to trigger an alarm that requires attention. |
-| `FATAL` | Very severe error events that will presumably cause an application to abort. |
+| `DEBUG` | アプリケーションのデバッグに最も役立つ詳細な情報イベント。これらは通常、開発者にとって価値があり、非常に詳細です。 |
+| `INFO` | アプリケーションの進捗を粗く示す情報メッセージ。 |
+| `WARN` | アプリケーションへのリスクを示す、潜在的に有害な状況。これらはアプリケーションでアラームをトリガーできます。 | 
+| `ERROR` | アプリケーションの実行を継続できる可能性のあるエラーイベント。これらは注意が必要なアラームをトリガーする可能性が高いです。 |
+| `FATAL` | おそらくアプリケーションの異常終了を引き起こすであろう非常に重大なエラーイベント。 |
 
 !!! info
-	Implicitly logs that have no explicit level may be considered as `INFO`, though this behaviour may vary between applications.
+	明示的なレベルがない暗黙的なログは、`INFO` と見なされる可能性がありますが、この動作はアプリケーションによって異なる場合があります。
 
-Other common log levels are `CRITICAL` and `NONE`, depending on your needs, programming language, and framework. `ALL` and `NONE` are also common, though not found in every application stack.
+その他の一般的なログレベルには、ニーズ、プログラミング言語、フレームワークに応じて、`CRITICAL` と `NONE` があります。`ALL` と `NONE` も一般的ですが、すべてのアプリケーションスタックで見つかるわけではありません。
 
-Log levels are crucial for informing your monitoring and observability solution about the health of your environment, and log data should easily express this data using a logical value. 
+ログレベルは、環境の健全性について監視および可観測性ソリューションに通知するための重要な要素であり、ログデータは論理値を使用してこのデータを簡単に表現できる必要があります。
 
 !!! tip
-	Logging too much data at `WARN` will fill your monitoring system with data that is of limited value, and then you may lose important data in the sheer volume of messages.  
+	`WARN` で大量のデータをログに記録すると、価値の低いデータで監視システムが溢れ、メッセージの大量に紛れ込んで重要なデータが失われてしまう可能性があります。
 
-![Logs flowchart](./images/logs1.png)
+![ログフローチャート](./images/logs1.png)
 
 !!! success
-	Using a standardized log level strategy makes automation easier, and helps developers get to the root cause of issues quickly.
+	標準化されたログレベル戦略を使用することで、自動化が容易になり、開発者が問題の根本原因をすばやく特定できるようになります。 
 
 !!! warning
-	Without a standard approach to log levels, [filtering your logs](#filter-logs-close-to-the-source) is a major challenge.
+	ログレベルの標準的なアプローチがないと、[ログのフィルタリング](#filter-logs-close-to-the-source)は大きな課題となります。
 
-## Filter logs close to the source
+## ログをできるだけソース近くでフィルタリングする
 
-Wherever possible, reduce the volume of logs as close to the source as possible. There are many reasons to follow this best practice:
+可能であれば、ログのボリュームをできるだけソース近くで減らしてください。このベストプラクティスを守る理由は次のとおりです。
 
-* Ingesting logs always costs time, money, and resources.
-* Filtering sensitive data (e.g. personally identifiable data) from downstream systems reduces risk exposure from data leakage.
-* Downstream systems may not have the same operational concerns as the sources of data. For example, `INFO` logs from an application may be of no interest to a monitoring and alerting system that watches for `CRITCAL` or `FATAL` messages.
-* Log systems, and networks, need not be placed under undue stress and traffic.
-
-!!! success
-	Filter your log close to the source to keep your costs down, decrease risk of data exposure, and focus each component on the [things that matter](../../guides/#monitor-what-matters).
-
-!!! tip
-	Depending on your architecture, you may wish to use infrastructure as code (IaC) to deploy changes to your application *and* environment in one operation. This approach allows you to deploy your log filter patterns along with applications, giving them the same rigor and treatment.
-
-## Avoid double-ingestion antipatterns
-
-A common pattern that administrators pursue is copying all of their logging data into a single system with the goal querying all of their logs all from a single location. There are some manual workflow advantages to doing so, however this pattern introduces additional cost, complexity, points of failure, and operational overhead.
-
-![Double log ingestion](./images/logs2.png)
+* ログの取り込みには常に時間、コスト、リソースがかかります。
+* ダウンストリームのシステムから機密データ(個人を特定できるデータなど)をフィルタリングすることで、データ漏洩からのリスクエクスポージャーを減らすことができます。
+* ダウンストリームのシステムは、データのソースと同じ運用上の関心事を持っているとは限りません。たとえば、アプリケーションからの `INFO` ログは、`CRITICAL` や `FATAL` メッセージを監視する監視・アラートシステムにとっては興味のないものである可能性があります。
+* ログシステムやネットワークが不要なストレスやトラフィックにさらされる必要はありません。  
 
 !!! success
-	Where possible, use a combination of [log levels](#use-log-levels-appropriately) and [log filtering](#filter-logs-close-to-the-source) to avoid a wholesale propagation of log data from your environments.
-
-!!! info
-	Some organizations or workloads require [log shipping](https://en.wikipedia.org/wiki/Log_shipping) in order to meet regulatory requirements, store logs in a secure location, provide non-reputability, or achieve other objectives. This is a common use case for re-ingesting log data. Note that a proper application of [log levels](#use-log-levels-appropriately) and [log filtering](#filter-logs-close-to-the-source) is still appropriate to reduce the volume of superfluous data entering these log archives.
-
-## Collect metric data from your logs
-
-Your logs contain [metrics](../../signals/metrics/) that are just waiting to be collected! Even ISV solutions or applications that you have not written yourself will emit valuable data into their logs that you can extract meaningful insights into overall workload health from. Common examples include:
-
-* Slow query time from databases
-* Uptime from web servers
-* Transaction processing time
-* Counts of `ERROR` or `WARNING` events over time
-* Raw count of packages that are available for upgrade
+	ソース近くでログをフィルタリングすることでコストを下げ、データ露出のリスクを減らし、各コンポーネントを[重要事項](../../guides/#monitor-what-matters)に集中させることができます。
 
 !!! tip
-	This data is less useful when locked in a static log file. The best practice is to identify key metric data and then publish it into your metric system where it can be correlated with other signals.
+	アーキテクチャによっては、インフラストラクチャ as コード(IaC)を使用して、アプリケーションと環境の両方への変更を1つの操作でデプロイすることをお勧めします。このアプローチにより、アプリケーションと同じ厳格さと扱いでログフィルタパターンをデプロイできます。
 
-## Log to `stdout`
+## 二重インジェストのアンチパターンを避ける
 
-Where possible, applications shouould log to `stdout` rather than to a fixed location such as a file or socket. This enables log agents to collect and route your log events based on rules that make sense for your own observability solution. While not possible for all applications, this is the best practice for containerized workloads.
+管理者がしばしば追求するパターンは、すべてのログデータを1つのシステムにコピーし、すべてのログを1つの場所からクエリできるようにすることです。これにはいくつかの手動ワークフロー上の利点がありますが、このパターンはコスト、複雑さ、障害点、運用上のオーバーヘッドを増やします。
+
+![二重のログインジェスト](./images/logs2.png)
+
+!!! success
+	可能な限り、[ログレベル](#use-log-levels-appropriately)と[ログフィルタリング](#filter-logs-close-to-the-source)の組み合わせを使用して、環境からのログデータの大量伝播を避けてください。
+
+!!! info 
+	規制要件を満たしたり、ログを安全な場所に保存したり、否認防止をしたり、その他の目的を達成するために、[ログ出荷](https://en.wikipedia.org/wiki/Log_shipping)が必要な組織やワークロードがあります。これはログデータを再インジェストする一般的なユースケースです。[ログレベル](#use-log-levels-appropriately)と[ログフィルタリング](#filter-logs-close-to-the-source) を適切に適用することで、これらのログアーカイブに入る不要なデータ量を減らすことができることに注意してください。
+
+## ログからメトリックデータを収集する
+
+ログには収集を待っている[メトリクス](../../signals/metrics/)が含まれています。自分で書いていない ISV ソリューションやアプリケーションでさえ、全体的なワークロードの健全性について意味のある洞察を抽出できる貴重なデータをログに出力します。一般的な例としては以下があります。
+
+* データベースの遅いクエリ時間
+* Web サーバーのアップタイム  
+* トランザクション処理時間
+* 時間経過とともに`ERROR` または `WARNING` イベントのカウント
+* アップグレード可能なパッケージの生のカウント
+
+!!! tip
+	このデータは、静的なログファイルにロックされているとあまり役に立ちません。ベストプラクティスは、キーメトリックデータを特定し、それをメトリックシステムにパブリッシュすることで、他のシグナルと相関付けることができます。
+
+## `stdout` にログを記録する
+
+可能であれば、アプリケーションはファイルやソケットなどの固定された場所ではなく、`stdout` にログを記録する必要があります。これにより、ログエージェントが自身のオブザーバビリティソリューションに適したルールに基づいてログイベントを収集およびルーティングできるようになります。すべてのアプリケーションで実現できるわけではありませんが、これがコンテナ化ワークロードにおけるベストプラクティスです。 
 
 !!! note
-	While applications should be generic and simple in their logging practices, remaining loosely coupled from logging solutions, the transmission of log data does still require a [log collector](../../tools/logs/) to send data from `stdout` to a file. The important concept is to avoid application and business logic being dependant on your logging infrastructure - in other words, you should work to separate your concerns.
+	アプリケーションはロギングの慣行において汎用的でシンプルである必要があり、ロギングソリューションとの結合度を低く保つ必要がありますが、ログデータの送信には依然として `stdout` からファイルへのデータ送信に [ログコレクター](../../tools/logs/) が必要です。重要な概念は、アプリケーションとビジネスロジックがロギングインフラストラクチャに依存しないようにすることです。つまり、懸念事項を分離するように努める必要があります。
 
 !!! success
-	Decoupling your application from your log management lets you adapt and evolve your solution without code changes, thereby minimizing the potential [blast radius](../../faq/#what-is-a-blast-radius) of changes made to your environment.
+	アプリケーションとログ管理をデカップリングすることで、コード変更を必要とせずにソリューションの適応と進化が可能になり、環境への変更による[ブラスト半径](../../faq/#what-is-a-blast-radius)の最小化が実現します。

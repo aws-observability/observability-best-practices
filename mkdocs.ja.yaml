@@ -1,8 +1,9 @@
 site_name: AWS Observability Best Practices
-docs_dir: "docs/en"
+docs_dir: "docs/ja"
+site_dir: "site/ja"
 copyright: "Copyright &copy; Amazon 2023"
 site_author: "AWS"
-site_url: "https://aws-observability.github.io/observability-best-practices/"
+site_url: "https://aws-observability.github.io/observability-best-practices/ja/"
 repo_name: "aws-observability/observability-best-practices"
 repo_url: "https://github.com/aws-observability/observability-best-practices"
 

@@ -1,0 +1,256 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 2,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Source",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://aws.amazon.com/blogs/big-data/querying-openstreetmap-with-amazon-athena/"
+    }
+  ],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 42,
+        "w": 9,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "basemap": {
+          "config": {},
+          "type": "default"
+        },
+        "controls": {
+          "mouseWheelZoom": true,
+          "showAttribution": true,
+          "showDebug": false,
+          "showScale": false,
+          "showZoom": true
+        },
+        "layers": [
+          {
+            "config": {
+              "color": {
+                "fixed": "red"
+              },
+              "fillOpacity": 0.4,
+              "shape": "circle",
+              "showLegend": true,
+              "size": {
+                "fixed": 5,
+                "max": 15,
+                "min": 2
+              }
+            },
+            "location": {
+              "mode": "auto"
+            },
+            "type": "markers"
+          }
+        ],
+        "view": {
+          "id": "coords",
+          "lat": 36.186461,
+          "lon": -115.223865,
+          "zoom": 10.5
+        }
+      },
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "sampledb",
+            "region": "__default"
+          },
+          "format": 1,
+          "rawSQL": "SELECT tags['amenity'] as amenity, tags['name'] as name, tags['website'] as website, lat, lon from planet\nWHERE type = 'node'\n  AND tags['amenity'] IN ('bar', 'pub', 'fast_food', 'restaurant')\n  AND lon BETWEEN -115.5 AND -114.5\n  AND lat BETWEEN 36.1 AND 36.3\nLIMIT 500;",
+          "refId": "A",
+          "table": "planet"
+        }
+      ],
+      "title": "OpenStreetMap",
+      "type": "geomap"
+    },
+    {
+      "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "address"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 484
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "tags"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 1076
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 257
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "amenity"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 178
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 42,
+        "w": 11,
+        "x": 9,
+        "y": 0
+      },
+      "id": 3,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "website"
+          }
+        ]
+      },
+      "pluginVersion": "8.2.2",
+      "targets": [
+        {
+          "connectionArgs": {
+            "catalog": "__default",
+            "database": "sampledb",
+            "region": "__default"
+          },
+          "format": 1,
+          "rawSQL": "SELECT tags['amenity'] as amenity, tags['name'] as name, concat(tags['addr:housenumber'], ', ', tags['addr:street']) as address, tags['website'] as website from planet\nWHERE type = 'node'\n  AND tags['amenity'] IN ('bar', 'pub', 'fast_food', 'restaurant')\n  AND lon BETWEEN -115.5 AND -114.5\n  AND lat BETWEEN 36.1 AND 36.3\nLIMIT 500;\n",
+          "refId": "A",
+          "table": "planet"
+        }
+      ],
+      "title": "OpenStreetMap",
+      "type": "table"
+    }
+  ],
+  "schemaVersion": 31,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1y",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Athena: OpenStreetMap about Las Vegas",
+  "uid": "Tja0ElF7k",
+  "version": 14
+}

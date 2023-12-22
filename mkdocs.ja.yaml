@@ -8,20 +8,19 @@ repo_name: "aws-observability/observability-best-practices"
 repo_url: "https://github.com/aws-observability/observability-best-practices"
 
 theme:
-  logo: ../images/aws-logo.png
-  favicon: ../images/aws-logo.png
+  logo: ./images/aws-logo.png
+  favicon: ./images/aws-logo.png
   name: material
   custom_dir: overrides
   icon:
     repo: fontawesome/brands/github
   features:
     - navigation.tabs.sticky
+  language: ja
 
   palette:
     primary: grey
     accent: red
-
-  language: ja
 
 extra_css:
   - stylesheets/extra.css
@@ -39,6 +38,7 @@ nav:
               - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
               - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
               - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+              - Amazon Prometheus real-time cost monitoring: guides/cost/cost-visualization/AmazonManagedServiceforPrometheus.md
               - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
         #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
 
@@ -62,6 +62,9 @@ nav:
               - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
           - Open Source:
               - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+      - Serverless best practices:
+          - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
+          - Open Source: guides/serverless/oss/lambda-based-observability-adot.md
 
       - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
 
@@ -76,6 +79,8 @@ nav:
               - Prometheus Alert Manager: guides/operational/alerting/amp-alertmgr.md
           - GitOps:
               - Grafana Operator with Amazon Managed Grafana: guides/operational/gitops-with-amg/gitops-with-amg.md
+          - Dashboards:
+              - CloudWatch Dashboard: tools/cloudwatch-dashboard.md
 
       - Signal collection:
           - Embedded Metric Format: guides/signal-collection/emf.md
@@ -83,11 +88,28 @@ nav:
       - Partners:
           - Databricks: guides/partners/databricks.md
 
-    # - APM: guides/apm.md
-    # - Containers: guides/containers.md
-    # - Dashboards: guides/dashboards.md
-    # - Full-stack: guides/full-stack.md
+          # - APM: guides/apm.md
+          # - Containers: guides/containers.md
+          # - Dashboards: guides/dashboards.md
+          # - Full-stack: guides/full-stack.md
 
+          # - APM: guides/apm.md
+          # - Containers: guides/containers.md
+          # - Dashboards: guides/dashboards.md
+          # - Full-stack: guides/full-stack.md
+          - Databases:
+              - Aurora and RDS: guides/databases/rds-and-aurora.md
+          # - Creating an observability strategy: guides/strategy.md
+          - Cost:
+              - Using Kubecost: guides/cost/kubecost.md
+              - Visualizing costs:
+                  - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
+                  - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+                  - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+                  - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+                  - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+            #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
+      - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
       - Logs: signals/logs.md
       - Metrics: signals/metrics.md
@@ -97,6 +119,7 @@ nav:
     # - Anomalies: signals/anomalies.md
 
   - Tools:
+      - AWS Observability Accelerator: tools/observability_accelerator.md
       - CloudWatch Agent: tools/cloudwatch_agent.md
       # - Amazon Managed Prometheus: tools/amp.md
       - Alarms: tools/alarms.md
@@ -107,9 +130,12 @@ nav:
       - Logs:
           - Logs: tools/logs/index.md
           - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
+          - Data Protection:
+              - CloudWatch Logs Data Protection Policies for SLG/EDU: tools/logs/dataprotection/data-protection-policies.md
       - Metrics: tools/metrics.md
       - Real User Monitoring: tools/rum.md
       - Synthetic Testing: tools/synthetics.md
+      - Service Level Objectives (SLOs): tools/slos.md
       # - Tracing with ADOT: tools/adot-traces.md
       - Tracing with AWS X-Ray: tools/xray.md
 

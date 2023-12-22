@@ -14,17 +14,17 @@
 
 # メトリクスの収集
 
-EKS クラスタからのメトリクス収集は、[3 つのコンポーネント](https://aws-observability.github.io/observability-best-practices/recipes/telemetry/)で構成されています。
+EKS クラスタからのメトリクス収集は、[3 つのコンポーネント](/observability-best-practices/ja/recipes/telemetry/)で構成されています。
 
 1. ソース: このガイドにリストされているもののようなメトリクスの発生源です。
-2. エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクスモニタリングデータを収集し、2 番目のコンポーネントにプッシュします。このコンポーネントの例として、[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/) と [CloudWatch エージェント](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)があります。
-3. デスティネーション: モニタリングデータのストレージと分析ソリューションです。このコンポーネントは通常、[時系列形式のデータ](https://aws-observability.github.io/observability-best-practices/signals/metrics/)に最適化されたデータサービスです。このコンポーネントの例として、[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) と [AWS Cloudwatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
+2. エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクスモニタリングデータを収集し、2 番目のコンポーネントにプッシュします。このコンポーネントの例として、[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/) と [CloudWatch エージェント](/observability-best-practices/ja/tools/cloudwatch_agent/)があります。
+3. デスティネーション: モニタリングデータのストレージと分析ソリューションです。このコンポーネントは通常、[時系列形式のデータ](/observability-best-practices/ja/signals/metrics/)に最適化されたデータサービスです。このコンポーネントの例として、[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) と [AWS Cloudwatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
 
 注: このセクションでは、構成の例が EKS メトリクス収集実装の最新のガイダンスと例を確実に入手できるように、[AWS Observability Accelerator](https://aws-observability.github.io/terraform-aws-observability-accelerator/) の関連セクションへのリンクです。
 
 ## マネージドオープンソースソリューション
 
-[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/) は、[OpenTelemetry](https://opentelemetry.io/) プロジェクトのサポートされたバージョンであり、ユーザーが [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) や [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) などの様々なモニタリングデータ収集ソリューションに相関するメトリクスとトレースを送信できるようにします。ADOT は EKS クラスターにインストールされた [EKS マネージドアドオン](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) を介してインストールでき、このページにリストされているメトリクス(やワークロードトレース)を収集するように構成できます。AWS は、ADOT アドオンが Amazon EKS と互換性があることを検証しており、最新のバグ修正とセキュリティパッチで定期的に更新されます。[ADOT のベストプラクティスとその他の情報。](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector/)
+[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/) は、[OpenTelemetry](https://opentelemetry.io/) プロジェクトのサポートされたバージョンであり、ユーザーが [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) や [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) などの様々なモニタリングデータ収集ソリューションに相関するメトリクスとトレースを送信できるようにします。ADOT は EKS クラスターにインストールされた [EKS マネージドアドオン](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html) を介してインストールでき、このページにリストされているメトリクス(やワークロードトレース)を収集するように構成できます。AWS は、ADOT アドオンが Amazon EKS と互換性があることを検証しており、最新のバグ修正とセキュリティパッチで定期的に更新されます。[ADOT のベストプラクティスとその他の情報。](/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector/)
 
 ## ADOT + AMP
 
@@ -147,7 +147,7 @@ ADOT コレクターパイプラインは、メトリクスを AMP インスタ�
 
 完全なベストプラクティスコレクター構成、ADOT パイプライン構成、Prometheus スクレイプ構成は、[Observability Accelerator の Helm チャートとしてここで見つけることができます](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml)。
 
-AMP 構成と使用法のベストプラクティスは[こちら](https://aws-observability.github.io/observability-best-practices/recipes/amp/)にあります。
+AMP 構成と使用法のベストプラクティスは[こちら](/observability-best-practices/ja/recipes/amp/)にあります。
 
 # 関連するメトリクスとは何ですか?
 

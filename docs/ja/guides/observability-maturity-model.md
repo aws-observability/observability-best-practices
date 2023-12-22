@@ -42,7 +42,7 @@
 
 ほとんどのケースでモニタリングはうまく機能しているようですが、組織は問題のデバッグに時間を費やすことが多く、結果として全体的な平均故障時間(MTTR)が一定期間にわたって一貫性がなく、実質的に改善されていません。また、問題をデバッグするための認知的な時間と労力が予想以上にかかっており、インシデント対応に長時間を要しています。運用を圧倒するデータオーバーロードの状況も多いです。ほとんどのエンタープライズが、次のステップがどこにあるかを認識せずに、このステージに捕らわれていることがわかります。組織を次のレベルに移行するために取ることができる具体的なアクションは以下のとおりです。
 1) システムアーキテクチャの設計を定期的にレビューし、インパクトやダウンタイムを減らし、アラートを削減するためのポリシーやプラクティスを展開する。
-2) アクション可能な[KPI](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators/)を定義し、アラート結果に価値のあるコンテキストを追加し、重要度/緊急度で分類し、エンジニアがより速く問題を解決できるように異なるツールとチームに送信することで、アラート疲労を防ぐ。
+2) アクション可能な[KPI](/observability-best-practices/ja/guides/operational/business/key-performance-indicators/)を定義し、アラート結果に価値のあるコンテキストを追加し、重要度/緊急度で分類し、エンジニアがより速く問題を解決できるように異なるツールとチームに送信することで、アラート疲労を防ぐ。
 
 これらのアラートを定期的に分析し、一般的な繰り返しアラートの修復を自動化する。アラート結果を関連チームと共有し、運用とプロセス改善のフィードバックを提供する。
 
@@ -110,7 +110,7 @@ AWS Well-Architected と Cloud Adoption Framework for オブザーバビリテ�
 
 ## 役立つリソース
 
-- [AWS Observability ベストプラクティス](https://aws-observability.github.io/observability-best-practices/)
+- [AWS Observability ベストプラクティス](/observability-best-practices/ja/)
 - [オブザーバビリティとは何か、なぜそれが重要なのか](https://aws.amazon.com/blogs/mt/what-is-observability-and-why-does-it-matter-part-1/)
 - [オブザーバビリティ戦略の開発方法](https://aws.amazon.com/blogs/mt/how-to-develop-an-observability-strategy/)
 - [AWS におけるアプリケーションの深層オブザーバビリティのためのガイダンス](https://aws.amazon.com/solutions/guidance/deep-application-observability-on-aws/)

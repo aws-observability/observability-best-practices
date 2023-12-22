@@ -58,7 +58,7 @@
 
 6. [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) を利用して、定義された RTO と RPO に対してアプリケーションを分析します。[AWS Fault Injection Simulator](https://aws.amazon.com/fis/) などのツールを使用した制御された実験によって、可用性、レイテンシ、ビジネス継続性の要件が満たされていることを検証します。追加の Well-Architected レビューとサービス固有の深掘り分析を実施して、ワークロードが AWS のベストプラクティスに従ってビジネス要件を満たすように設計されていることを確認します。
 
-7. 詳細については、[AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) ガイダンスの他のセクション、AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) ホワイトペーパー、AWS Well-Architected フレームワークの運用上の優位性の柱のホワイトペーパーコンテンツの「[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」を参照してください。
+7. 詳細については、[AWS Observability Best Practices](/observability-best-practices/ja/) ガイダンスの他のセクション、AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) ホワイトペーパー、AWS Well-Architected フレームワークの運用上の優位性の柱のホワイトペーパーコンテンツの「[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」を参照してください。
 
 ### 3.2 ドメイン別 TLG(ビジネスメトリクス、つまり UX、BX に重点)
 

@@ -35,7 +35,7 @@ Amazon Managed Grafanaは、[AWS CloudFormationと統合](https://docs.aws.amazo
 > 関連ブログ: [Amazon Managed GrafanaのプライベートVPCデータソースサポートの発表](https://aws.amazon.com/blogs/mt/announcing-private-vpc-data-source-support-for-amazon-managed-grafana/)
 
 **組織ではTerraformを自動化に使用しています。Amazon Managed GrafanaはTerraformをサポートしていますか?**
-はい、[Amazon Managed Grafanaは](https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-automation-tf/) Terraformによる[自動化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)をサポートしています
+はい、[Amazon Managed Grafanaは](/observability-best-practices/ja/recipes/recipes/amg-automation-tf/) Terraformによる[自動化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)をサポートしています
 
 > 例: [Terraformサポートのリファレンス実装](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/examples/managed-grafana-workspace)
 

@@ -18,7 +18,7 @@
    Amazon Managed Service for Prometheus にインジェストされるサンプル数を減らすために、お客様はスクレイプインターバルを延長できます(例: 30秒から1分に変更)。または、スクレイプしている時系列の数を減らすこともできます。スクレイプインターバルを変更するほうが、時系列数を減らすよりもインジェストされるサンプル数に劇的な影響を与えます。スクレイプインターバルを2倍にすると、インジェストされるサンプル数が半分になります。
 
 1. **CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するにはどうすればよいですか?**
-   [CloudWatch メトリクスストリームを利用して、CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信することをおすすめします](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/)。この統合には次のような短所がある可能性があります。
+   [CloudWatch メトリクスストリームを利用して、CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信することをおすすめします](/observability-best-practices/ja/recipes/recipes/lambda-cw-metrics-go-amp/)。この統合には次のような短所がある可能性があります。
 
    1. Amazon Managed Service for Prometheus API を呼び出すために Lambda 関数が必要
    1. CloudWatch メトリクスにメタデータ(AWS タグなど)を付加してから Amazon Managed Service for Prometheus にインジェストする機能がない

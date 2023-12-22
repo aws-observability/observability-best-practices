@@ -108,7 +108,7 @@ scrape_configs:
 
 デプロイメントとしてコレクターを実行すると、コレクターの高可用性も提供できるという点で特に便利です。ターゲットの数、スクレイプできるメトリクスなどに応じて、コレクターのリソースを調整して、コレクターがスタービングせず、信号収集に問題が発生しないようにする必要があります。
 
-[このトピックの詳細は、こちらのガイドをご覧ください。](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
+[このトピックの詳細は、こちらのガイドをご覧ください。](/observability-best-practices/ja/guides/containers/oss/eks/best-practices-metrics-collection)
 
 次のアーキテクチャは、コレクターがワークロードノードとは別のノードでデプロイされ、メトリクスとトレースを収集する方法を示しています。
 

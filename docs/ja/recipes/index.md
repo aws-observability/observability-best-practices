@@ -41,7 +41,7 @@ o11y スペースについての考え方は次のとおりです。[6 つの次
 - **送信先別**: テレメトリと分析をカバー
 - **タスク**: 異常検知、アラート、トラブルシューティングなどをカバー
 
-[次元の詳細を見る... ](https://aws-observability.github.io/observability-best-practices/recipes/dimensions/)
+[次元の詳細を見る... ](/observability-best-practices/ja/recipes/dimensions/)
 
 ## 使い方
 
@@ -64,7 +64,7 @@ o11y スペースについての考え方は次のとおりです。[6 つの次
 このサイトのレシピは、ベストプラクティスのコレクションです。さらに、レシピで使用しているオープンソースプロジェクトのステータスや、マネージドサービスの詳細を学べる場所がいくつかあるので、以下をチェックしてください。
 
 - [observability @ aws][o11yataws] AWS の方々がプロジェクトやサービスについて語るプレイリストです。  
-- [AWS オブザーバビリティ ワークショップ](https://aws-observability.github.io/observability-best-practices/recipes/workshops/) 体系的な学習ができるワークショップです。
+- [AWS オブザーバビリティ ワークショップ](/observability-best-practices/ja/recipes/workshops/) 体系的な学習ができるワークショップです。
 - [AWS モニタリングとオブザーバビリティ][o11yhome] ケーススタディやパートナーへのリンクがあるホームページです。
 
 [aes]: aes.md "Amazon Elasticsearch Service"  

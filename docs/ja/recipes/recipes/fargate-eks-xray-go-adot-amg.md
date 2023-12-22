@@ -154,7 +154,7 @@ $ curl localhost:8765/
 !!! tip
     呼び出しを自動化したい場合は、`curl` 呼び出しを `while true` ループでラップできます。
 
-セットアップを確認するには、[CloudWatch の X-Ray ビュー](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/) を参照してください。以下のように表示されるはずです。
+セットアップを確認するには、[CloudWatch の X-Ray ビュー](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/) を参照してください。次のような画面が表示されるはずです。
 
 ![CW の X-Ray コンソールのスクリーンショット](../images/x-ray-cw-ho11y.png)
 
@@ -173,7 +173,7 @@ $ curl localhost:8765/
 ここから、以下のガイドを使用して Amazon Managed Grafana で独自のダッシュボードを作成できます。
 
 * [ユーザーガイド: ダッシュボード](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [ダッシュボード作成のベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [ダッシュボードの作成に関するベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
 おめでとうございます。Fargate 上の EKS で ADOT を使用してトレースを取り込む方法を学び終えました。
 

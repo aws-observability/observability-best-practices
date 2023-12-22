@@ -7,7 +7,7 @@
 ## はじめに
 
 お客様は、Grafana をオープンソースの分析および監視ソリューションのためのオブザーバビリティプラットフォームとして使用しています。 
-Amazon EKS でワークロードを実行しているお客様は、ワークロード重力に焦点を当て、Kubernetes ネイティブのコントローラーに依存して、Cloud リソースなどの外部リソースのデプロイとライフサイクル管理を委ねたいと考えていることがわかりました。 
+Amazon EKS でワークロードを実行しているお客様は、ワークロード重力に焦点を当て、Kubernetes ネイティブのコントローラーに頼って、Cloud リソースなどの外部リソースのデプロイとライフサイクル管理を行いたいと考えていることがわかりました。 
 お客様は、[Kubernetes 用 AWS コントローラー (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/) をインストールして、AWS サービスの作成、デプロイ、管理を行っていることがわかりました。 
 最近では、多くのお客様が Prometheus と Grafana の実装をマネージドサービスに任せることを選択しており、AWS の場合、これらのサービスはワークロードの監視に [Amazon Managed Service for Prometheus](https://docs.aws.amazon.com/prometheus/?icmpid=docs_homepage_mgmtgov) と [Amazon Managed Grafana](https://docs.aws.amazon.com/grafana/?icmpid=docs_homepage_mgmtgov) です。
 
@@ -22,21 +22,21 @@ Grafana を使用する際にお客様が直面する一般的な課題の 1 つ
 
 ## Grafana Operator の概要
 
-[grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) は、Kubernetes 内の Grafana インスタンスを管理するのに役立つ Kubernetes Operator です。Grafana Operator を使用すると、Grafana ダッシュボード、データソースなどを複数のインスタンス間で宣言的に管理および作成できるようになります。Grafana Operator は現在、Amazon Managed Grafana などの外部環境でホストされているダッシュボード、データソースなどのリソースの管理をサポートしています。これにより、[Flux](https://fluxcd.io/) などの CNCF プロジェクトを使用した GitOps メカニズムを利用して、Amazon EKS クラスタから Amazon Managed Grafana のリソースのライフサイクルを作成および管理できるようになります。
+[grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) は、Kubernetes 内の Grafana インスタンスを管理するのに役立つ Kubernetes Operator です。Grafana Operator を使用すると、Grafana ダッシュボード、データソースなどを複数のインスタンス間で宣言的に管理および作成できるようになります。Grafana Operator は現在、Amazon Managed Grafana のような外部環境でホストされているダッシュボード、データソースなどのリソースの管理をサポートしています。これにより、[Flux](https://fluxcd.io/) などの CNCF プロジェクトを使用した GitOps メカニズムを利用して、Amazon EKS クラスタから Amazon Managed Grafana のリソースのライフサイクルを作成および管理できるようになります。
 
 ## GitOps の概要
 
 ### GitOps と Flux とは
 
-GitOps は、デプロイ設定の真実の情報源として Git を利用するソフトウェア開発と運用の方法論です。アプリケーションやインフラストラクチャの目的の状態を Git リポジトリに保持し、変更を管理およびデプロイするために Git ベースのワークフローを利用することを含みます。GitOps は、システム全体を Git リポジトリで宣言的に記述するアプリケーションおよびインフラストラクチャのデプロイを管理する方法です。バージョン管理のベストプラクティス、イミュータブルなアーティファクト、自動化を活用して、複数の Kubernetes クラスタの状態を管理する能力を提供する運用モデルです。
+GitOps は、デプロイ設定の真実の情報源として Git を利用するソフトウェア開発と運用の方法論です。アプリケーションやインフラストラクチャの目的の状態を Git リポジトリに保持し、変更を管理およびデプロイするために Git ベースのワークフローを利用することを含みます。GitOps は、システム全体を Git リポジトリで宣言的に記述するアプリケーションとインフラストラクチャのデプロイを管理する方法です。バージョン管理のベストプラクティス、イミュータブルなアーティファクト、自動化を活用して、複数の Kubernetes クラスタの状態を管理する能力を提供する運用モデルです。
 
 Flux は、Kubernetes 上でのアプリケーションの自動デプロイを実現する GitOps ツールです。Git リポジトリの状態を継続的に監視し、変更をクラスタに適用することで機能します。Flux は、GitHub、GitLab、Bitbucket などの様々な Git プロバイダと統合されています。リポジトリに変更が加えられると、Flux がそれを自動的に検出し、クラスタを適切に更新します。
 
 ### Flux を使用するメリット
 
 * **自動デプロイ**: Flux はデプロイプロセスを自動化し、手動のエラーを減らし、開発者が他のタスクに集中できるようにします。
-* **Git ベースのワークフロー**: Flux は Git を真実の情報源として利用し、変更の追跡と巻き戻しを容易にします。
-* **宣言的な構成**: Flux は Kubernetes のマニフェストを使用して、クラスタの望ましい状態を定義し、管理と変更の追跡を容易にします。
+* **Git ベースのワークフロー**: Flux は Git を真実の情報源として利用することで、変更の追跡と巻き戻しが容易になります。
+* **宣言的な構成**: Flux は Kubernetes のマニフェストを使用して、クラスタの望ましい状態を定義することで、管理と変更の追跡が容易になります。
 
 ### Flux の採用における課題
 

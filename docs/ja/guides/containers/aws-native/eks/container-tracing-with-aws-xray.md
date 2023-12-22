@@ -12,7 +12,7 @@
 
 アプリケーションの計装には、着信および発信リクエストとアプリケーション内の他のイベントのトレースデータを、各リクエストに関するメタデータとともに送信することが含まれます。多くの計装シナリオでは、構成変更のみが必要です。 たとえば、Java アプリケーションが行うすべての着信 HTTP リクエストとダウンストリームの AWS サービス呼び出しを計装できます。 アプリケーションを X-Ray トレースのために計装するために使用できるいくつかの SDK、エージェント、ツールがあります。 詳細については、[アプリケーションの計装](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) を参照してください。
 
-AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用して Amazon EKS クラスタからトレースを収集することによるコンテナ化アプリケーションのトレーシングについて学習します。
+AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用して Amazon EKS クラスタからトレースを収集することによるコンテナ化アプリケーションのトレースについて学習します。
 
 ### Amazon EKS アドオン for AWS Distro for OpenTelemetry を使用したトレースの収集
 
@@ -138,7 +138,7 @@ UDP ポート 2000 でのトラフィックをリッスンするように設定�
 この設定に従って、トレースデータをこの Receiver に送信したいワークロードは、環境変数 `AWS_XRAY_DAEMON_ADDRESS` を `observability-collector.aws-otel-eks:2000` に設定する必要があります。
 エクスポーターは、これらのセグメントを [PutTraceSegments](https://docs.aws.amazon.com/xray/latest/api/API_PutTraceSegments.html) API を使用して直接 X-Ray に送信します。
 
-ADOT Collector は、`aws-otel-collector` という名前の Kubernetes サービスアカウントの ID で起動するように設定されています。これには、[設定](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) でも示されている ClusterRoleBinding と ClusterRole を使用してこれらのアクセス許可が付与されます。
+ADOT Collector は、`aws-otel-collector` という名前の Kubernetes サービスアカウントの ID で起動するように設定されています。これには、[設定](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) でも示されている ClusterRoleBinding と ClusterRole を使用してこれらのアクセス許可が付与されています。
 エクスポーターは、データを X-Ray に送信するための IAM アクセス許可が必要です。
 これは、EKS でサポートされている [IAM roles for service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 機能を使用して、サービスアカウントを IAM ロールに関連付けることによって実現されます。
 IAM ロールには、AWSXRayDaemonWriteAccess などの AWS マネージドポリシーを関連付ける必要があります。

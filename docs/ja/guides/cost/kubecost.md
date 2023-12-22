@@ -43,7 +43,7 @@ Pod のリソース効率性は、特定の時間ウィンドウでのリソー�
 ここで、CPU 使用量 = 時間ウィンドウにおける rate(container_cpu_usage_seconds_total)
 RAM 使用量 = 時間ウィンドウにおける avg(container_memory_working_set_bytes)
 
-AWS では明示的な RAM、CPU、GPU の価格が提供されていないため、Kubecost モデルは入力された基本的な CPU、GPU、RAM 価格の比率にフォールバックします。これらのパラメータのデフォルト値は、クラウドプロバイダの限界リソースレートに基づいていますが、Kubecost 内でカスタマイズすることができます。これらの基本的なリソース(RAM/CPU/GPU)価格は、プロバイダーからの課金レートに基づいてプロビジョニングされたノードの総価格が各コンポーネントの合計と等しくなるように正規化されます。
+AWS では明示的な RAM、CPU、GPU の価格が提供されていないため、Kubecost モデルは入力された基本的な CPU、GPU、RAM 価格の比率にフォールバックします。これらのパラメータのデフォルト値は、クラウドプロバイダの限界リソースレートに基づいていますが、Kubecost 内でカスタマイズすることができます。これらの基本リソース(RAM/CPU/GPU)価格は、プロバイダーからの課金レートに基づいてプロビジョニングされたノードの総価格の合計が等しくなるように正規化されます。
 
 各サービスチームは、最大限の効率性を目指し、ワークロードを調整して目標を達成する責任があります。
 
@@ -59,7 +59,7 @@ idle_cost = sum(node_cost) - (cpu_allocation_cost + ram_allocation_cost + gpu_al
 
 ### ネットワークコスト
 
-Kubecost はベストエフォートで、これらのコストを発生させているワークロードにネットワーク転送コストを割り当てます。
+Kubecost はベストエフォートで、ネットワーク転送コストをそれらのコストを発生させるワークロードに割り当てます。
 ネットワークコストを正確に判断するには、[AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations) と [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration) の組み合わせを使用します。
 
 効率スコアとアイドルコストを考慮に入れ、クラスターの完全なポテンシャルを利用することを確認するために、ワークロードを微調整する必要があります。
@@ -79,9 +79,9 @@ Kubecost は以下の最適化を推奨できます:
 * 未使用の容量に対する過剰支出を停止するために、クラスターノードの数とサイズを調整
 * 有意なレートのトラフィックを送受信しない Pod をスケールダウン、削除、リサイズ
 * スポットノードに対応可能なワークロードの特定 
-* Pod で使用されていないボリュームの特定
+* どの Pod からも使用されていないボリュームの特定
 
-Kubecost には、Cluster Controller コンポーネントが有効化されている場合、コンテナリソースリクエストの推奨を自動的に実装できるプレリリース機能もあります。 自動リクエストの最適化を使用すると、複雑な YAML のテストや kubectl コマンドを使用することなく、クラスタ全体でリソース割り当てを即座に最適化できます。 クラスタのリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化とその他の最適化によって大幅なコスト削減の道が開かれます。
+Kubecost には、Cluster Controller コンポーネントが有効になっている場合、コンテナリソースリクエストの推奨を自動的に実装できるプレリリース機能もあります。自動リクエストの最適化を使用すると、複雑な YAML のテストや kubectl コマンドを使用することなく、クラスタ全体でリソース割り当てを即座に最適化できます。クラスタのリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化やその他の最適化による大幅なコスト削減の道が開かれます。
 
 ### Kubecost と Amazon Managed Service for Prometheus の統合
 
@@ -129,9 +129,9 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 
 ### Kubecost UI へのアクセス
 
-Kubecost は、kubectl port-forward、ingress、ロードバランサーを介してアクセスできる Web ダッシュボードを提供します。Kubecost のエンタープライズ版では、[SSO/SAML](http://docs.kubecost.com/user-management.html) を使用してダッシュボードへのアクセスを制限し、異なるレベルのアクセスを提供することもサポートしています。たとえば、チームの表示を彼らが担当している製品に制限するなどです。
+Kubecost は、kubectl port-forward、ingress、ロードバランサーを介してアクセスできる Web ダッシュボードを提供します。Kubecost のエンタープライズ版では、[SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) を使用したダッシュボードへのアクセス制限や、異なるレベルのアクセス権限の付与もサポートしています。たとえば、チームの表示をそのチームが担当する製品に限定する、といったことができます。
 
-AWS 環境では、Kubecost を公開するために [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) の使用を検討し、認証、認可、ユーザー管理には [Amazon Cognito](https://aws.amazon.com/cognito/) を使用することをおすすめします。こちらの [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/) で詳細を確認できます。
+AWS 環境では、Kubecost を公開するために [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) の使用を検討し、認証、認可、ユーザー管理には [Amazon Cognito](https://aws.amazon.com/cognito/) を使用することをおすすめします。こちらの記事 [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/) で、より詳しく学ぶことができます。
 
 ### マルチクラスタービュー
 

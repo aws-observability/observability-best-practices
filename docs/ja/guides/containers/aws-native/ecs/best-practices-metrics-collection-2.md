@@ -13,7 +13,7 @@
 
 Prometheus サーバーがアプリケーションの HTTP エンドポイントをスクレイプすると、クライアントライブラリは、追跡されているすべてのメトリクスの現在の状態をサーバーに送信します。サーバーはメトリクスを管理するローカル ストレージにメトリクスを保存したり、CloudWatch などのリモート宛先にメトリクス データを送信したりできます。
 
-[CloudWatch Container Insights による Prometheus のモニタリング](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 と Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは Prometheus サーバーのドロップイン置換として使用できるため、可観測性を向上させるために必要なモニタリング ツールの数を減らすことができます。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、メトリクス データをパフォーマンス ログ イベントとして CloudWatch に送信します。
+[CloudWatch Container Insights による Prometheus のモニタリング](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 および Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは Prometheus サーバーのドロップイン置換として使用できるため、可観測性を向上させるために必要なモニタリング ツールの数を減らすことができます。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、パフォーマンス ログ イベントとしてメトリクス データを CloudWatch に送信します。
 
 !!! info
     Amazon ECS クラスターで Prometheus メトリクス収集用に CloudWatch エージェントをデプロイする手順は、[Amazon CloudWatch ユーザーガイド](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)に記載されています。

@@ -2,7 +2,7 @@
 
 このレシピでは、Azure Cloud 環境からのメトリクスを [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) (AMG) で可視化し、AMG でアラート通知を作成して [Amazon Simple Notification Service](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) と Slack に送信する方法を示します。
 
-実装の一環として、AMG ワークスペースを作成し、データ ソースとして Azure Monitor プラグインを構成し、Grafana ダッシュボードを構成します。Amazon SNS と Slack の 2 つの通知チャネルを作成します。また、ダッシュボードのアラートを通知チャネルに送信するように構成します。
+実装の一環として、AMG ワークスペースを作成し、データ ソースとして Azure Monitor プラグインを構成し、Grafana ダッシュボードを構成します。Amazon SNS と Slack の 2 つの通知チャネルを作成します。また、AMG ダッシュボードでアラートを構成して、通知チャネルに送信します。
 
 !!! note
     このガイドの完了には約 30 分かかります。
@@ -24,7 +24,7 @@
 !!! 注意
     ワークスペース内の少なくとも 1 人のユーザーに Admin ロールを割り当てる必要があります。
 
-図 1 では、ユーザー名が grafana-admin です。ユーザータイプは Admin です。[Data sources] タブで、必要なデータソースを選択します。構成を確認して、[Create workspace] を選択します。
+図 1 では、ユーザー名が grafana-admin です。ユーザータイプは Admin です。[Data sources] タブで、必要なデータソースを選択します。構成を確認し、[Create workspace] を選択します。
 ![azure-monitor-grafana-demo](../images/azure-monitor-grafana.png)
 
 ### データソースとカスタムダッシュボードの構成
@@ -64,14 +64,14 @@ aws sns subscribe --topic-arn arn:aws:sns:<region>:<account-id>:grafana-notifica
 左側のパネルで、新しい通知チャネルを追加するためにベルのアイコンを選択します。
 grafana-notification 通知チャネルを設定します。[通知チャネルの編集] で、[タイプ] に AWS SNS を選択します。[トピック] には、作成した SNS トピックの ARN を使用します。[認証プロバイダー] にはワークスペースの IAM ロールを選択します。
 
-![通知チャネル](../images/notification-channels.png)
+![Notification Channels](../images/notification-channels.png)
 
 </email-id></account-id></region>
 
 ### Slack 通知チャネル
-Slack 通知チャネルを設定するには、Slack ワークスペースを新規作成するか、既存のワークスペースを使用します。[Incoming Webhooks を使用したメッセージ送信](https://api.slack.com/messaging/webhooks) に記載されているように Incoming Webhooks を有効にします。
+Slack 通知チャネルを設定するには、Slack ワークスペースを新規作成するか、既存のものを使用します。[Incoming Webhooks を使用したメッセージの送信](https://api.slack.com/messaging/webhooks) に記載されているように Incoming Webhooks を有効にします。
 
-ワークスペースの設定が完了したら、Grafana ダッシュボードで使用する webhook URL が取得できるはずです。
+ワークスペースの設定が完了したら、Grafana ダッシュボードで使用される webhook URL が取得できるはずです。
 
 ![Slack 通知チャネル](../images/slack-notification.png)
 
@@ -85,9 +85,9 @@ Slack 通知チャネルを設定するには、Slack ワークスペースを�
 
 ![Azure VM 編集パネル](../images/alert-config.png)
 
-ここで、Azure仮想マシンにサインインし、ストレスなどのツールを使用してストレステストを開始できます。 CPU使用率がしきい値を超えると、両方のチャネルで通知を受信します。
+これで、Azure仮想マシンにサインインして、stressなどのツールを使用してストレステストを開始できます。 CPU使用率がしきい値を超えると、両方のチャネルで通知を受信します。
 
-適切なしきい値でCPU使用率のアラートを設定し、Slackチャネルに送信されるアラートをシミュレートします。
+適切なしきい値でCPU使用率のアラートを設定して、Slackチャネルに送信されるアラートをシミュレートします。
 
 ## まとめ
 

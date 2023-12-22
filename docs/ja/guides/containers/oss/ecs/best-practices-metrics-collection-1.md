@@ -11,7 +11,7 @@
 
 ![ADOT アーキテクチャ](../../../../images/ADOT-central.png)
 
-ADOT Collector アーキテクチャにはパイプラインの概念があります。 単一のコレクターに複数のパイプラインを含めることができます。 各パイプラインは、メトリクス、トレース、ログの 3 つのテレメトリデータの種類のいずれかを処理するために専用されています。 各種テレメトリデータについて複数のパイプラインを構成できます。 この汎用性の高いアーキテクチャにより、複数の可観測性エージェントの役割を実行する単一のコレクターを配置できるため、そうでない場合はクラスター上にデプロイする必要があります。 これにより、クラスター上の可観測性エージェントのデプロイメントフットプリントが大幅に削減されます。 パイプラインを構成するコレクターの主要コンポーネントは、Receiver、Processor、Exporter の 3 つのカテゴリにグループ化されます。 拡張機能と呼ばれる二次コンポーネントは、コレクターに追加できる機能を提供しますが、パイプラインの一部ではありません。
+ADOT Collector アーキテクチャにはパイプラインの概念があります。 1 つのコレクターに複数のパイプラインを含めることができます。 各パイプラインは、メトリクス、トレース、ログの 3 つのテレメトリデータの種類の 1 つを処理するために専用されています。 各種テレメトリデータについて複数のパイプラインを構成できます。 この汎用性の高いアーキテクチャにより、クラスター上にデプロイする必要があるであろう複数の可観測性エージェントの役割を単一のコレクターが果たすことができます。 これにより、クラスター上の可観測性エージェントのデプロイメントフットプリントが大幅に削減されます。 パイプラインを構成するコレクターの主要コンポーネントは、Receiver、Processor、Exporter の 3 つのカテゴリにグループ化されます。 拡張機能と呼ばれる二次コンポーネントは、パイプラインの一部ではないがコレクターに追加できる機能を提供します。
 
 !!! info
     Receiver、Processor、Exporter、Extensions の詳細な説明については、OpenTelemetry の [ドキュメント](https://opentelemetry.io/docs/collector/configuration/#basics) を参照してください。
@@ -58,8 +58,8 @@ ECS タスクレベルでリソース利用メトリクスを収集するには�
 !!! info
     Amazon ECS クラスターにデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定についての詳細は、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html)を参照してください。
     
-!!! info 
-    [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) は、ECS Task Metadata Endpoint V4 でのみ機能します。Fargate 上のバージョン 1.4.0 以降のプラットフォームを使用している Amazon ECS タスクと、バージョン 1.39.0 以降の Amazon ECS コンテナエージェントを実行している Amazon EC2 上の Amazon ECS タスクは、このレシーバーを利用できます。詳細については、[Amazon ECS Container Agent Versions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-versions.html) を参照してください。
+!!! info
+    [AWS ECS Container Metrics Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver) は、ECS Task Metadata Endpoint V4 でのみ機能します。プラットフォームバージョン 1.4.0 以降を使用する Fargate 上の Amazon ECS タスクと、Amazon ECS コンテナエージェントのバージョン 1.39.0 以降を実行している Amazon EC2 上の Amazon ECS タスクは、このレシーバーを利用できます。詳細については、[Amazon ECS Container Agent Versions](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-versions.html) を参照してください。
 
 デフォルトの[パイプライン構成](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml)で見られるように、Collector のパイプラインは最初に CPU、メモリ、ネットワーク、ディスク使用量に関連する[一部のメトリクス](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L25)をフィルタリングする [Filter Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) を使用します。次に、これらのメトリクスの名前を変更し、その属性を更新する一連の [変換](https://github.com/aws-observability/aws-otel-collector/blob/09d59966404c2928aaaf6920f27967a84d898254/config/ecs/container-insights/otel-task-metrics-config.yaml#L39) を実行する [Metrics Transform Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/metricstransformprocessor) を使用します。最後に、メトリクスは [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用してパフォーマンスログイベントとして CloudWatch に送信されます。このデフォルトの構成を使用すると、CloudWatch 名前空間 *ECS/ContainerInsights* の下に次のリソース使用メトリクスが収集されます。
 
@@ -73,13 +73,13 @@ ECS タスクレベルでリソース利用メトリクスを収集するには�
 - StorageWriteBytes
 
 !!! info
-    これらは [Container Insights for Amazon ECS によって収集されるメトリクス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)と同じであり、クラスターまたはアカウントレベルでコンテナインサイトを有効にすると CloudWatch で簡単に利用できるようになります。したがって、CloudWatch で ECS リソース使用メトリクスを収集するための推奨アプローチは、コンテナインサイトを有効にすることです。
+    これらは [Container Insights for Amazon ECS によって収集されるメトリクス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)と同じであり、クラスターまたはアカウントレベルでコンテナインサイトを有効にすると CloudWatch ですぐに利用できるようになります。したがって、ECS リソース使用メトリクスを CloudWatch で収集する推奨アプローチは、Container Insights を有効にすることです。
 
-AWS ECS Container Metrics Receiver は、Amazon ECS Task Metadata Endpoint から読み取った 52 の一意のメトリクスを発行します。レシーバーによって収集されるメトリクスの完全なリストは、[ここで文書化されています](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics)。すべてを希望の宛先に送信したくない場合があります。ECS リソース使用メトリクスをより明示的に制御したい場合は、使用可能なメトリクスを選択したプロセッサ/トランスフォーマーでフィルタリングおよび変換するカスタムパイプライン構成を作成し、エクスポーターの選択に基づいて宛先に送信できます。ECS タスクレベルのメトリクスをキャプチャするパイプライン構成の[追加の例](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples)については、ドキュメントを参照してください。
+AWS ECS Container Metrics Receiver は、Amazon ECS Task Metadata Endpoint から読み取った 52 の一意のメトリクスを発行します。レシーバーによって収集されるメトリクスの完全なリストは、[ここで文書化されています](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics)。すべてを希望の宛先に送信したくない場合があります。ECS リソース使用メトリクスをより明示的に制御したい場合は、使用可能なメトリクスを選択したプロセッサ/トランスフォーマーでフィルタリングおよび変換するカスタムパイプライン構成を作成し、エクスポーターの選択に基づいて宛先に送信できます。ECS タスクレベルのメトリクスをキャプチャするパイプライン構成の[追加の例](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples)へのドキュメントを参照してください。
 
 カスタムパイプライン構成を使用する場合は、以下に示すタスク定義を使用して Collector をサイドカー パターンでデプロイできます。ここでは、Collector パイプラインの構成は、AWS SSM パラメータストアの *otel-collector-config* という名前のパラメータからロードされます。
 
-!!! important
+!!! important 
     SSM パラメータストアパラメータ名は、AOT_CONFIG_CONTENT という名前の環境変数を使用して Collector に公開する必要があります。
 
 

@@ -38,7 +38,7 @@ Terraformが[Grafanaに対して認証][grafana-authn]するために、パス�
 ![APIキーの結果](../images/api-key-result.png) 
 
 !!! warning
-    これがAPIキーを確認できる唯一の機会なので、ここから安全な場所に保存しておきます。後でTerraformマニフェストで必要になります。
+    これがAPIキーを確認できる唯一のタイミングなので、ここから安全な場所に保存しておきます。後でTerraformマニフェストで必要になります。
 
 これで、Terraformによる自動化のためにAmazon Managed Grafanaで必要なすべての設定が完了しました。次はその手順に進みましょう。
 
@@ -82,14 +82,13 @@ resource "grafana_data_source" "prometheus" {
 ```
 上記のファイルでは、環境に依存する 3 つの値を挿入する必要があります。
 
-Grafana プロバイダーのセクションで:
+Grafana プロバイダー セクションで:
 
-* `url` ... 次のような形式の Grafana ワークスペースの URL: 
-      `https://xxxxxxxx.grafana-workspace.eu-west-1.amazonaws.com`
-* `auth` ... 前のステップで作成した API キー
+* `url` ... 次のような形式の Grafana ワークスペース URL: 
+      `https://xxxxxxxx.grafana-workspace.eu-west-1.amazonaws.com`。
+* `auth` ... 前のステップで作成した API キー。
 
-Prometheus リソースのセクションでは、次の形式の AMP ワークスペースの URL を挿入します:
-`https://aps-workspaces.eu-west-1.amazonaws.com/workspaces/ws-xxxxxxxxx`
+Prometheus リソース セクションでは、`https://aps-workspaces.eu-west-1.amazonaws.com/workspaces/ws-xxxxxxxxx` のような形式の AMP ワークスペース URL を挿入します。
 
 !!! note
     ファイルに示されているリージョンとは異なるリージョンで Amazon Managed Grafana を使用している場合は、上記に加えて、 `sigv4_region` をご利用のリージョンに設定する必要があります。
@@ -217,7 +216,7 @@ Grafana のデータソースリストを確認すると、次のような内容
 新しく作成したデータソースが機能するかどうかを確認するには、下部の青い `Save & test` ボタンをクリックします。
 結果として「Data source is working」の確認メッセージが表示されるはずです。
 
-Terraform は他の自動化にも使用できます。例えば、[Grafana プロバイダー][tf-grafana-provider] はフォルダやダッシュボードの管理をサポートしています。
+Terraform は他の自動化にも使用できます。例えば、[Grafana プロバイダー][tf-grafana-provider]は、フォルダやダッシュボードの管理をサポートしています。
 
 ダッシュボードを整理するためのフォルダを作成したいとします。例:
 
@@ -239,7 +238,7 @@ resource "grafana_dashboard" "exampledashboard" {
 Terraform は自動化のための強力なツールであり、ここで示したように Grafana リソースを管理するために使用できます。
 
 !!! note
-    ただし、[Terraform の状態][tf-state] はデフォルトでローカルに管理されていることに注意してください。これは、Terraform で共同作業を行う場合、状態をチーム全体で共有できるオプションの 1 つを選択する必要があることを意味します。
+    ただし、[Terraform の状態][tf-state]は、デフォルトでローカルに管理されていることに注意してください。つまり、Terraform で共同作業を行う場合は、状態をチーム全体で共有できるオプションのいずれかを選択する必要があります。
 
 ## クリーンアップ
 

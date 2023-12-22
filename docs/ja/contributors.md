@@ -1,22 +1,25 @@
-# コントリビューター
+# Contributors
 
-このサイトのコンテンツは、ソリューションアーキテクト、AWS Observability サービスチームのメンバー、その他組織全体からのボランティアによってメンテナンスされています。私たちの目標は、AWS サービスとオブザーバビリティスペースのオープンソースプロジェクトを設定および使用するための関連するベストプラクティスの発見を改善することです。
+The content on this site is maintained by Solution Architects, AWS Observability service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
 
-これまでのレシピとコンテンツへの貢献は、概ね次の人々からのものです:
+Recipes and content contributions in general so far are from the following
+people:
 
-| 著者 | 著者 | 著者 | 著者 |
+| Authors      | Authors                          | Authors               | Authors |
 | ----------- | ------------------------------------ |--------------------|---------|
-| Alolita Sharma | Aly Shah Imtiaz|Helen Ashton | Elamaran Shanmugam |
-Dinesh Boddula | Imaya Kumar Jagannathan| Dieter Adant| Eric Hsueh |  
-| Jason Derrett|Kevin Lewin|Mahesh Biradar|Michael Hausenblas|
-| Munish Dabra|Rich McDonough|Rob Sable|Rodrigue Koffi|
-| Sheetal Joshi|Tomasz Wrzonski|Tyler Lynch|Vijayan Sarathy|  
-| Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
+|   Alolita Sharma     |  Aly Shah Imtiaz|Helen Ashton | Elamaran Shanmugam |
+ Dinesh Boddula | Imaya Kumar Jagannathan| Dieter Adant|  Eric Hsueh |
+ |Jason Derrett|Kevin Lewin|Mahesh Biradar|Michael Hausenblas|
+|Munish Dabra|Rich McDonough|Rob Sable|Rodrigue Koffi|
+|Sheetal Joshi|Tomasz Wrzonski|Tyler Lynch|Vijayan Sarathy|
+|Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
 | Kiran Prakash| Bobby Hallahan| Toshal Dudhwala| Franklin Aguinaldo|
 | Nirmal Mehta| Lucas Vieira Souza da Silva| William Armiros| Abhi Khanna|
-| Arvind Raghunathan|
+| Arvind Raghunathan| Doyita Mitra | Rahul Popat|
 
 
-このサイトで公開されているすべてのレシピは、[MIT-0][mit0] ライセンスを経由して利用できます。これは、通常の MIT ライセンスの変更版で、帰属の必要性が除かれています。
+Note that all recipes published on this site are available via the
+[MIT-0][mit0] license, a modification to the usual MIT license
+that removes the requirement for attribution.
 
 [mit0]: https://github.com/aws/mit-0

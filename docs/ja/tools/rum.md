@@ -57,7 +57,7 @@ Web クライアントで `addXRayTraceIdHeader: true` を設定することで�
 
 このオプションの設定を有効にすると、アプリモニターによってサンプリングされたユーザーセッション中に行われた XMLHttpRequest および fetch リクエストがトレースされます。その後、これらのユーザーセッションのトレースとセグメントが、RUM ダッシュボード、CloudWatch ServiceLens コンソール、および X-Ray コンソールで確認できます。
 
-AWS コンソールでアプリケーションモニターを設定するときにアクティブトレースのチェックボックスをオンにすると、コードスニペットでこの設定が自動的に有効になります。
+AWS コンソールでアプリケーションモニターを設定するときに、アクティブトレースのチェックボックスをオンにすると、コードスニペットでこの設定が自動的に有効になります。
 
 ![RUM アプリケーションモニターのアクティブトレースの設定](../images/rum1.png)
 
@@ -75,7 +75,7 @@ CloudWatch RUM イベントのデフォルトの[イベントメタデータ](ht
 ## ページグループの使用
 
 !!! success
-    ページグループを使用すると、アプリケーション内の異なるページを相互に関連付けることができるため、ページグループに集計されたアナリティクスを確認できます。たとえば、言語や種類ごとにすべてのページの集計ページロード時間を確認したい場合があります。
+    ページグループを使用すると、アプリケーションの異なるページを相互に関連付けることができるため、ページグループに集計されたアナリティクスを確認できます。たとえば、言語や種類ごとにすべてのページの集計ページロード時間を確認したい場合があります。
 
     ```
     awsRum.recordPageView({ pageId: '/home', pageTags: ['en', 'landing']})
@@ -83,15 +83,15 @@ CloudWatch RUM イベントのデフォルトの[イベントメタデータ](ht
 
 ## 拡張メトリックを使用する
 
-CloudWatch RUM によって自動的に収集され、`AWS/RUM` というメトリック名前空間に公開される[デフォルトのメトリックセット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html)があります。これらは無料の[ベンダーメトリック](../../tools/metrics/#vended-metrics)で、RUM があなたに代わって作成します。 
+CloudWatch RUM によって自動的に収集され、`AWS/RUM` というメトリック名前空間に公開される[デフォルトのメトリックセット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html)があります。これらは無料の、RUM があなたに代わって作成する[ベンダーメトリック](../../tools/metrics/#vended-metrics)です。
 
 !!! success
-    CloudWatch RUM メトリックのいずれかを、メトリックをより細かく表示できるように、追加のディメンションとともに CloudWatch に送信します。
+    CloudWatch RUM メトリックのいずれかを、メトリックをより細かく表示できるように追加のディメンションとともに CloudWatch に送信します。
 
-拡張メトリックでサポートされているディメンションは以下のとおりです。
+拡張メトリックでサポートされているディメンションは次のとおりです:
 
 - BrowserName
-- CountryCode - ISO-3166 フォーマット (2 文字のコード)  
+- CountryCode - ISO-3166 形式 (2 文字のコード)  
 - DeviceType
 - FileType
 - OSName

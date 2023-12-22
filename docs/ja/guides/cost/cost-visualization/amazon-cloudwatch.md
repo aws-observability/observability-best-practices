@@ -2,7 +2,7 @@
 
 Amazon CloudWatch のコストと使用量のビジュアルにより、個々の AWS アカウント、AWS リージョン、GetMetricData、PutLogEvents、GetMetricStream、ListMetrics、MetricStorage、HourlyStorageMetering などのすべての CloudWatch オペレーションのコストの洞察を得ることができます。
 
-CloudWatch のコストと使用量データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。Amazon Athena [ビュー][view]は論理テーブルであり、元の CUR テーブルから列のサブセットを作成して、データのクエリを簡素化します。
+CloudWatch のコストと使用量データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。Amazon Athena [ビュー][view]は論理テーブルであり、元の CUR テーブルから列のサブセットを作成し、データのクエリを簡素化します。
 
 1.  [実装の概要][cid-implement] で言及されている CUR (ステップ #1) を作成し、AWS 準拠テンプレート (ステップ #2) をデプロイしたことを確認してください。
 

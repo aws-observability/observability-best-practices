@@ -6,14 +6,14 @@ Prometheus mixin プロジェクトは、Prometheus Operator を介して Promet
 
 ## 前提条件
 
-* EKS クラスター - 開始場所: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons)
+* EKS クラスター - 開始場所: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/)
 * Cloud9 環境
-* EKS クラスターを管理するように構成された Cloud9 の kubectl
+* EKS クラスターを管理するように設定された Cloud9 の kubectl
 * EKS の IAM 資格情報
 * AMP のインスタンス
 * Amazon Managed Grafana のインスタンス
 
-## ミックスイン ダッシュボードのインストール
+## ミックスイン・ダッシュボードのインストール
 
 
 Cloud9 インスタンスを新規作成し、Terraform による完全なアドオンの例として EKS クラスターを対象に前提条件でリンクした AWS ブループリントを使用します。
@@ -48,14 +48,13 @@ export PATH="$PATH:~/go/bin"
 
 kubernetes-mixin プロジェクトの jsonnet ライブラリをダウンロードしてインストールします。
 
-
 ```
 git clone https://github.com/kubernetes-monitoring/kubernetes-mixincd kubernetes-mixin/
 jb install
 ```
 
 
-Prometheus ジョブ名と一致するように、config.libsonnet を編集し、「selectors」セクションを以下のように置き換えます。
+config.libsonnet を編集し、prometheus ジョブ名と一致するように「selectors」セクションを以下のように置き換えます。
 
 ```
  // Selectors are inserted between {} in Prometheus queries.
@@ -94,6 +93,6 @@ aws amp create-rule-groups-namespace --data file://prometheus_rules.b64 --name k
 
 
 
-Cloud9 環境から 「dashboard_out」フォルダーの内容をダウンロードし、Grafana Web UI を使用してアップロードします。
+Cloud9 環境から「dashboard_out」フォルダーの内容をダウンロードし、Grafana Web UI を使用してアップロードします。
 
 </region></workspace-id></region></workspace-id>

@@ -17,7 +17,7 @@ CloudWatch メトリックストリームを使用すると、ストリーミン
 * AWS CLI がインストールされ、環境に構成されています。
 * AWS CDK TypeScript がインストールされています。  
 * Node.js と Go がインストールされています。
-* リポジトリがローカルマシンにクローンされています。
+* リポジトリがローカルマシンにクローンされています。このプロジェクトのコードは `/sandbox/CWMetricStreamExporter` の下にあります。
 
 ### AMP ワークスペースの作成
 
@@ -35,7 +35,7 @@ aws amp list-workspaces
 ```
 
 !!! info
-    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) をご確認ください。
+    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) をご覧ください。
 
 ### 依存関係のインストール
 
@@ -65,7 +65,7 @@ npm install
 cd lambda
 ```
 
-`/lambda` フォルダ内で、次のコマンドを使用して Go の依存関係をインストールします。
+`/lambda` フォルダに入ったら、次のコマンドを使用して Go の依存関係をインストールします。
 
 ```
 go get
@@ -122,7 +122,7 @@ CDK によって作成された既存の Firehose を使用して、メトリッ
 
 ![Cloudwatch メトリックストリーム構成のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
 
-Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。`Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
+Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、`KinesisMessageHandler` 関数をクリックします。`Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
 !!! note
     呼び出しが Monitor タブに表示されるまでに最大 5 分かかる場合があります。

@@ -29,4 +29,4 @@ CloudWatch 組み込みメトリックフォーマット(EMF)は、構造化さ�
 	  "requestId": "989ffbf8-9ace-4817-a57c-e4dd734019ee"
 	}
 
-したがって、EMF の助けにより、手動で PutMetricData API 呼び出しを行う必要なく、高カーディナリティメトリクスを送信できます。
+したがって、EMF の助けを借りることで、PutMetricData API 呼び出しを手動で行う必要なく、高カーディナリティメトリクスを送信できます。

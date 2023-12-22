@@ -1,6 +1,6 @@
 # SAMLを使用したAmazon Managed GrafanaでのGoogle Workspace認証の設定
 
-このガイドでは、SAML 2.0プロトコルを使用して、Google WorkspaceをAmazon Managed GrafanaのIDプロバイダー(IdP)として設定する方法を説明します。
+このガイドでは、SAML 2.0プロトコルを使用して、Google WorkspaceをAmazon Managed GrafanaのIDプロバイダ(IdP)として設定する方法を説明します。
 
 このガイドに従うには、[Amazon Managed Grafanaワークスペース][amg-ws]の作成に加えて、有料の[Google Workspace][google-workspaces]アカウントを作成する必要があります。
 
@@ -51,7 +51,7 @@ Google ワークスペースにスーパーアドミンのアクセス許可で�
 
 ![Google ワークスペース - カスタム SAML アプリの追加 - 属性マッピング](../images/amg-saml-google-auth/10.png)
 
-Google 認証経由でログインするユーザーが **Amazon Managed Grafana** で **Admin** 権限を持つためには、**部署** フィールドの値を ***monitoring*** に設定します。 これには任意のフィールドと値を選択できます。Google ワークスペース側で使用するものは何でも、Amazon Managed Grafana の SAML 設定でそれを反映するマッピングを行うことを確認してください。
+Google 認証経由でログインするユーザーが **Amazon Managed Grafana** で **管理者** 権限を持つためには、**部署** フィールドの値を ***monitoring*** に設定します。 これには任意のフィールドと値を選択できます。Google ワークスペース側で使用するものは何でも、Amazon Managed Grafana の SAML 設定でそれを反映するマッピングを行うことを確認してください。
 
 ### Amazon Managed Grafana に SAML メタデータをアップロードする
 

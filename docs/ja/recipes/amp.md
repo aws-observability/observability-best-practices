@@ -10,10 +10,10 @@
 - [AMP を使用した ECS からのメトリクス収集][amp-ecs-metrics]
 - [AMP 用 Grafana Cloud エージェントの設定][amp-gcwa]
 - [AMP ワークスペースのクロスリージョン メトリクス収集の設定][amp-xregion-metrics]
-- [EKS 上のセルフホストされた Prometheus から AMP への移行に関するベストプラクティス][amp-migration]
+- [EKS 上のセルフホスティングされた Prometheus から AMP への移行に関するベストプラクティス][amp-migration]
 - [AMP の概要ワークショップ][amp-oow]
 - [Firehose と AWS Lambda を介した Cloudwatch メトリクス ストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
-- [Terraform によるインフラストラクチャー アズ コードを使用した Amazon Managed Service for Prometheus および Alert manager のデプロイ](recipes/amp-alertmanager-terraform.md)
+- [Terraform によるインフラストラクチャー アズ コードを使用した Amazon Managed Service for Prometheus およびアラートマネージャーのデプロイ](recipes/amp-alertmanager-terraform.md)
 - [Amazon Managed Prometheus と Amazon Managed Grafana を使用した EKS 上の Istio の監視][amp-istio-monitoring]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere の監視][amp-anywhere-monitoring]
 - [Amazon EKS Observability Accelerator のご紹介][eks-accelerator]
@@ -29,4 +29,4 @@
 [amp-istio-monitoring]: https://aws.amazon.com/jp/blogs/mt/monitor-istio-on-eks-using-amazon-managed-prometheus-and-amazon-managed-grafana/
 [amp-anywhere-monitoring]: https://aws.amazon.com/jp/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [eks-accelerator]: recipes/eks-observability-accelerator.md
-- [Amazon Managed Service for Prometheus と alert manager を使用した Amazon EC2 の自動スケーリング](recipes/as-ec2-using-amp-and-alertmanager.md)
+- [Amazon Managed Service for Prometheus とアラートマネージャーを使用した Amazon EC2 の自動スケーリング](recipes/as-ec2-using-amp-and-alertmanager.md)

@@ -6,7 +6,7 @@ AWS X-Ray のコストと使用状況のビジュアルにより、個々の AWS
 
 1. 進める前に、[実装の概要][cid-implement] で言及されている CUR (ステップ #1) と AWS 準拠テンプレート (ステップ #2) を作成したことを確認してください。
 
-2. 次に、以下のクエリを使用して、新しい Amazon Athena [ビュー][view] を作成します。このクエリは、Organization 内のすべての AWS アカウントにわたる Amazon Managed Grafana のコストと使用状況を取得します。
+2. 次に、以下のクエリを使用して、新しい Amazon Athena [ビュー][view] を作成します。 このクエリは、Organization 内のすべての AWS アカウントにわたる Amazon Managed Grafana のコストと使用状況を取得します。
 
         CREATE OR REPLACE VIEW "xray_cost" AS
         SELECT
@@ -22,7 +22,7 @@ AWS X-Ray のコストと使用状況のビジュアルにより、個々の AWS
         WHERE ("line_item_product_code" = 'AWSXRay')
         GROUP BY 1, 2, 3, 4, 5
 
-Athena をデータソースとして使用することで、ビジネス要件に合わせて Amazon Managed Grafana または Amazon QuickSight でダッシュボードを構築できます。また、作成した Athena ビューに対して直接 [SQL クエリ][sql-query] を実行することもできます。
+Athena をデータソースとして使用することで、ビジネス要件に合わせて Amazon Managed Grafana または Amazon QuickSight でダッシュボードを構築できます。 また、作成した Athena ビューに対して直接 [SQL クエリ][sql-query] を実行することもできます。
 
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html
 [sql-query]: https://docs.aws.amazon.com/athena/latest/ug/querying-athena-tables.html

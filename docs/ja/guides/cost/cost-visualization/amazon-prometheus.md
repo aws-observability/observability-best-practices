@@ -1,6 +1,6 @@
 # Amazon Managed Service for Prometheus
 
-Amazon Managed Service for Prometheus のコストと使用状況のビジュアルにより、個々の AWS アカウント、AWS リージョン、RemoteWrite、Query、HourlyStorageMetering などの特定の Prometheus ワークスペースインスタンスとその操作のコストの洞察を得ることができます。
+Amazon Managed Service for Prometheus のコストと使用状況のビジュアルにより、個々の AWS アカウント、AWS リージョン、RemoteWrite、Query、HourlyStorageMetering などの特定の Prometheus ワークスペースインスタンスと操作のコストの洞察を得ることができます。
 
 コストと使用状況データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。
 
@@ -34,7 +34,7 @@ Amazon Managed Grafana を使用すると、Grafana ワークスペースコン�
 
 Grafana のダッシュボードは JSON オブジェクトで表され、ダッシュボードのメタデータが格納されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記のダッシュボードの JSON テンプレートにアクセスするには、[こちら](AmazonPrometheus.json) を参照してください。
 
-上記のダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana [ダッシュボードパネル][panels] を使用できます。
+上記のダッシュボードを使用することで、組織内の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana [ダッシュボードパネル][panels] を使用できます。
 
 [前提条件]: https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html

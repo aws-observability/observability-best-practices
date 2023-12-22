@@ -29,9 +29,9 @@ Athenaを2つの異なるシナリオで使用する方法を見ていきまし�
 具体的には、地理データをモチベーションとしたユースケースのために Athena プラグインの使用法を示すために、[OpenStreetMap][osm](OSM) を使用します。
 そのためには、まず OSM データを Athena に取り込む必要があります。
 
-そこで、まず Athena で新しいデータベースを作成します。 [Athena コンソール][athena-console] にアクセスし、以下の 3つの SQL クエリを使用して、OSM データをデータベースにインポートします。
+そこで、まず Athena で新しいデータベースを作成します。 [Athena コンソール][athena-console] にアクセスし、次の 3 つの SQL クエリを使用して OSM データをデータベースにインポートします。
 
-クエリ1:
+クエリ 1:
 
 ```sql
 CREATE EXTERNAL TABLE planet (
@@ -52,7 +52,7 @@ STORED AS ORCFILE
 LOCATION 's3://osm-pds/planet/';
 ```
 
-クエリ2:  
+クエリ 2:  
 
 ```sql
 CREATE EXTERNAL TABLE planet_history (
@@ -74,7 +74,7 @@ STORED AS ORCFILE
 LOCATION 's3://osm-pds/planet-history/';
 ```
 
-クエリ3:
+クエリ 3:   
 
 ```sql
 CREATE EXTERNAL TABLE changesets (
@@ -162,16 +162,16 @@ s3://allmyflowlogs/AWSLogs/12345678901/vpcflowlogs/eu-west-1/2021/
 
 Athena でデータセットが利用可能になったので、Grafana に進みましょう。
 
-### Grafanaの設定
+### Grafanaのセットアップ
 
-Grafanaインスタンスが必要なので、たとえば[Getting Started][amg-getting-started]ガイドを使用して、新しい[Amazon Managed Grafanaワークスペース][amg-workspace]を設定するか、既存のものを使用します。
+Grafanaインスタンスが必要なので、たとえば[Getting Started][amg-getting-started]ガイドを使用して、新しい[Amazon Managed Grafanaワークスペース][amg-workspace]をセットアップするか、既存のものを使用します。
 
 !!! warning
     AWSデータソース構成を使用するには、まずAmazon Managed Grafanaコンソールに移動して、Athenaリソースを読み取るために必要なIAMポリシーをワークスペースに付与するサービス管理IAMロールを有効にします。
     さらに、次の点に注意してください。
 
 	1. 使用する予定のAthenaワークグループは、キー`GrafanaDataSource`と値`true`でタグ付けする必要があります。これは、サービス管理されたアクセス許可でワークグループを使用できるようにするためです。
-	1. サービス管理されたIAMポリシーは、`grafana-athena-query-results-`で始まるクエリ結果バケットへのアクセスのみを許可するので、その他のバケットの場合はアクセス許可を手動で追加する必要があります。
+	1. サービス管理されたIAMポリシーは、`grafana-athena-query-results-`で始まるクエリ結果バケットへのアクセスのみを許可するので、その他のバケットの場合はアクセス許可を手動で追加する必要があります。 
 	1. クエリ対象の基礎となるデータソースへの`s3:Get*`および`s3:List*`アクセス許可は手動で追加する必要があります。
 
 
@@ -245,6 +245,7 @@ ORDER BY start ASC;
 
 受け入れられたバイトと拒否されたバイトの時系列ビューを取得:
 
+
 ```sql
 SELECT
 from_unixtime(start), sum(bytes), action
@@ -262,14 +263,12 @@ ORDER BY start ASC;
     `$__timeFilter` マクロを使用することを検討してください。
 
 VPC フローログデータを視覚化するには、
-[vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json) 
-からインポートできるサンプルダッシュボードを使用できます。
+[vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json) からインポートできるサンプルダッシュボードを使用できます。
 そのダッシュボードは次のようになります:
 
 ![AMG の VPC フローログダッシュボードのスクリーンショット](../images/amg-vpcfl-dashboard.png)
 
-ここから、Amazon Managed Grafana で独自のダッシュボードを作成するために、
-次のガイドを使用できます:
+ここから、Amazon Managed Grafana で独自のダッシュボードを作成するために、次のガイドを使用できます:
 
 * [ユーザーガイド: ダッシュボード](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
 * [ダッシュボード作成のベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)

@@ -2,11 +2,11 @@
 
 [Amazon Elastic Container Service][ecs-main](ECS) は、AWS の他のサービスと深く統合された、コンテナ化されたアプリケーションを簡単にデプロイ、管理、スケールできる、完全マネージドなコンテナオーケストレーションサービスです。
 
-コンピュートエンジン別にグループ化された以下のレシピをご覧ください。
+コンピュートエンジン別にグループ化された以下のレシピをご確認ください。
 
 ## 全般
 
-- [ECS での AWS Distro for OpenTelemetry Collector のデプロイメントパターン][adot-patterns-ecs]
+- [ECS での AWS Distro for OpenTelemetry Collector のデプロイパターン][adot-patterns-ecs]
 - [AWS Distro for OpenTelemetry による Amazon ECS モニタリングのセットアップの簡素化][ecs-adot-integration]
 
 ## ECS on EC2

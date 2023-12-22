@@ -5,7 +5,7 @@
 以下のレシピをご確認ください。
 
 ## 全般
-- [Container Day - Docker Con | 開発者がスケール可能な本番ウェブアプリケーションを簡単に構築する方法](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
+- [Container Day - Docker Con | 開発者がスケール可能な本番ウェブアプリケーションを簡単に構築できる方法](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
 - [AWS ブログ | AWS App Runner サービスの集中化されたオブザーバビリティ](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
 - [AWS ブログ | AWS App Runner VPC ネットワーキングのためのオブザーバビリティ](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
 - [AWS ブログ | Amazon EventBridge による AWS App Runner アプリケーションの制御とモニタリング](https://aws.amazon.com/blogs/containers/controlling-and-monitoring-aws-app-runner-applications-with-amazon-eventbridge/)

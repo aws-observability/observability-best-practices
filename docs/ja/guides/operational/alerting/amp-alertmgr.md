@@ -86,13 +86,13 @@ alertmanager_config: |
 
 Amazon Managed Service for Prometheus [Alert Manager 設定ファイル](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alert-manager.html) を作成する際に認識しておく必要がある 3 つの重要な側面があります。
 
-- **グルーピング**: これにより、障害や停止の影響範囲が大きく、多くのシステムに影響し、複数のアラートが同時に発生した場合に、類似のアラートを 1 つの通知にまとめることができます。これはカテゴリー別(例: ノードアラート、Pod アラート)にグループ化するためにも使用できます。アラートマネージャーの設定ファイルの [route](https://prometheus.io/docs/alerting/latest/configuration/#route) ブロックを使用して、このグルーピングを設定できます。
-- **抑制**: これは、すでにアクティブで発生した類似のアラートをスパムするのを避けるために、特定の通知を抑制する方法です。[inhibit_rules](https://prometheus.io/docs/alerting/latest/configuration/#inhibit_rule) ブロックを使用して抑制ルールを記述できます。
-- **サイレンシング**: アラートをメンテナンスウィンドウや計画停止などの指定期間ミュートできます。サイレンシングする前に、入ってくるアラートがすべての等価性または正規表現と一致するかどうかが検証されます。[PutAlertManagerSilences](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-APIReference.html#AMP-APIReference-PutAlertManagerSilences) API を使用してサイレンシングを作成できます。
+- **グルーピング**: これにより、障害や停止の影響範囲が大きく、多くのシステムに影響し、複数のアラートが同時に発生した場合に、類似のアラートを 1 つの通知にまとめることができます。これはカテゴリー別 (ノードアラート、Pod アラートなど) にグループ化するためにも使用できます。アラートマネージャーの設定ファイルの [route](https://prometheus.io/docs/alerting/latest/configuration/#route) ブロックを使用して、このグルーピングを設定できます。
+- **抑制**: これは、すでにアクティブで発生した類似のアラートをスパムするのを避けるために、特定の通知を抑制する方法です。 [inhibit_rules](https://prometheus.io/docs/alerting/latest/configuration/#inhibit_rule) ブロックを使用して抑制ルールを記述できます。
+- **サイレンシング**: アラートは、メンテナンスウィンドウや計画停止などの指定期間中にミュートできます。着信アラートは、アラートをサイレンシングする前に、等価性や正規表現の一致をすべて検証されます。 [PutAlertManagerSilences](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-APIReference.html#AMP-APIReference-PutAlertManagerSilences) API を使用してサイレンシングを作成できます。
 
 ## Amazon Simple Notification Service(SNS)を通じたアラートのルーティング
 
-現在、[Amazon Managed Service for Prometheus の Alert Manager は Amazon SNS のみをサポートしています](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-AMPpermission.html)。alertmanager_config ブロックでキーとなるセクションは receivers で、これによりお客様は [Amazon SNS へのアラートの受信を設定](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-config.html) できます。以下のセクションは、receivers ブロックのテンプレートとして使用できます。
+現在、[Amazon Managed Service for Prometheus の Alert Manager は Amazon SNS](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-AMPpermission.html) のみをレシーバとしてサポートしています。alertmanager_config ブロックでキーとなるセクションはレシーバで、これによりお客様は [Amazon SNS へのアラートの受信](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-config.html) を設定できます。以下のセクションは、レシーバブロックのテンプレートとして使用できます。
 
 ```
 - name: name_of_receiver
@@ -123,21 +123,19 @@ Amazon SNS 設定は、明示的に上書きされない限り、次のテンプ
 
 追加リファレンス: [通知テンプレートの例](https://prometheus.io/docs/alerting/latest/notification_examples/)
 
-</somevalue></somekey></sns_topic_の_arn></aws_region>
+</sns></aws>
 
-## Amazon SNS を介して E メール、Webhook、Slack などの宛先にアラートをルーティング
+## Amazon SNS を介して E メール、Webhook、Slack、PagerDuty、OpsGenie などの宛先にアラートをルーティング
 
-Amazon Managed Service for Prometheus の Alert Manager は、[Amazon SNS を使用して E メール、Webhook(HTTP)、Slack、PageDuty、OpsGenie などの他の宛先に接続できます](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-SNS-otherdestinations.html)。
+Amazon Managed Service for Prometheus の Alert Manager は、[Amazon SNS を使用して E メール、Webhook(HTTP)、Slack、PagerDuty、OpsGenie などの他の宛先に接続できます](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-SNS-otherdestinations.html)。
 
 - **E メール** 通知が成功すると、Amazon SNS トピックを介して Amazon Managed Service for Prometheus Alert Manager からアラートの詳細が含まれた E メールがターゲットの 1 つとして受信されます。
-- Amazon Managed Service for Prometheus Alert Manager は、[アラートを JSON 形式で送信できる](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-JSON.html)ため、Amazon SNS からダウンストリームの AWS Lambda や Webhook 受信エンドポイントで処理できます。 
+- Amazon Managed Service for Prometheus Alert Manager は、[アラートを JSON 形式で送信できる](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-JSON.html)ため、Amazon SNS からダウンストリームの AWS Lambda や Webhook 受信エンドポイントで処理できます。
 - **Webhook** 既存の Amazon SNS トピックを設定して、メッセージを Webhook エンドポイントに出力できます。Webhook は、イベント駆動型のトリガーに基づいてアプリケーション間で HTTP 経由で交換される、直列化された形式でエンコードされた JSON または XML 形式のメッセージです。これを使用して、アラート、チケット、インシデント管理システムのための既存の [SIEM やコラボレーションツールにフックできます](https://repost.aws/knowledge-center/sns-lambda-webhooks-chime-slack-teams)。
-
 - **Slack** お客様は、Slack が E メールを受け入れて Slack チャネルに転送できる E メールからチャネルへの統合を使用するか、Lambda 関数を使用して SNS 通知を Slack に書き換えることができます。
-
 - **PagerDuty** `alertmanager_config` 定義の `template_files` ブロックで使用されているテンプレートをカスタマイズして、ペイロードを [PagerDuty](https://aws.amazon.com/blogs/mt/using-amazon-managed-service-for-prometheus-alert-manager-to-receive-alerts-with-pagerduty/) に送信できます。
 
-追加リファレンス: [カスタムアラートマネージャーテンプレート](https://prometheus.io/blog/2016/03/03/custom-alertmanager-templates/)
+参考資料: [カスタムアラートマネージャーテンプレート](https://prometheus.io/blog/2016/03/03/custom-alertmanager-templates/)
 
 ## アラートのステータス
 
@@ -155,9 +153,9 @@ rules:
 
 - **Pending**: しきい値の超過から経過した時間が記録間隔よりも短い
 - **Firing**: しきい値の超過から経過した時間が記録間隔よりも長く、Alert Manager がアラートをルーティングしている
-- **Resolved**: しきい値がもう超過されていないため、アラートが発生していない
+- **Resolved**: しきい値がもう超過していないため、アラートが発生していない
 
-これは、[ListAlerts](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-APIReference.html#AMP-APIReference-ListAlerts) API を使用して Amazon Managed Service for Prometheus Alert Manager エンドポイントにクエリを発行することで手動で確認できます。[awscurl](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-compatible-APIs.html) コマンドを使用します。サンプルリクエストを以下に示します。
+これは、[ListAlerts](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-APIReference.html#AMP-APIReference-ListAlerts) API を使用して Amazon Managed Service for Prometheus Alert Manager エンドポイントにクエリを発行し、手動で検証できます。[awscurl](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-compatible-APIs.html) コマンドを使用します。サンプルリクエストを以下に示します。
 
 ```
 awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/alertmanager/api/v2/alerts --service="aps" -H "Content-Type: application/json"
@@ -165,7 +163,7 @@ awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/
 
 ## Amazon Managed Grafana での Amazon Managed Service for Prometheus アラートマネージャー ルール
 
-Amazon Managed Grafana(AMG) のアラート機能を使用すると、Amazon Managed Service for Prometheus のアラートマネージャーアラートを自分の Amazon Managed Grafana ワークスペースから確認できます。Prometheus メトリクスを収集するために Amazon Managed Service for Prometheus ワークスペースを使用しているユーザーは、サービス内の完全マネージドのアラートマネージャーとルーラー機能を利用して、アラートと記録ルールを設定しています。この機能を使用することで、Amazon Managed Service for Prometheus ワークスペースで設定されたすべてのアラートと記録ルールを可視化できます。Prometheus アラートビューは、ワークスペースの構成オプションタブの Grafana アラートチェックボックスをオンにすることで、Amazon Managed Grafana(AMG) コンソールで確認できます。有効にすると、以前 Grafana ダッシュボードで作成されたネイティブの Grafana アラートも、Grafana ワークスペースの新しい [アラート] ページに移行されます。
+Amazon Managed Grafana(AMG) のアラート機能を使用すると、Amazon Managed Service for Prometheus のアラートマネージャーアラートを自分の Amazon Managed Grafana ワークスペースから確認できます。Prometheus メトリクスを収集するために Amazon Managed Service for Prometheus ワークスペースを使用しているユーザーは、サービス内の完全マネージドのアラートマネージャーとルーラー機能を利用して、アラートと記録ルールを設定します。この機能を使用することで、Amazon Managed Service for Prometheus ワークスペースで設定されたすべてのアラートと記録ルールを可視化できます。Prometheus アラートビューは、ワークスペースの構成オプションタブの Grafana アラートチェックボックスをオンにすることで、Amazon Managed Grafana(AMG) コンソールで確認できます。有効にすると、以前 Grafana ダッシュボードで作成されたネイティブの Grafana アラートも、Grafana ワークスペースの新しい [アラート] ページに移行されます。
 
 参考: [Amazon Managed Grafana での Prometheus アラートマネージャー ルールの発表](https://aws.amazon.com/jp/blogs/news/announcing-prometheus-alertmanager-rules-in-amazon-managed-grafana/)
 

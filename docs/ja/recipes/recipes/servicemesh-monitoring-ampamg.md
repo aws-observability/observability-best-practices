@@ -1,6 +1,6 @@
 # Amazon Managed Service for Prometheus を使用した EKS 上に構成された App Mesh 環境の監視
 
-このレシピでは、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) クラスター上の [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy メトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP) に取り込み、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) (AMG) でカスタムダッシュボードを作成して、マイクロサービスの健全性とパフォーマンスを監視する方法を示します。
+このレシピでは、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) クラスター内の [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy メトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP) に取り込み、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) (AMG) でカスタムダッシュボードを作成して、マイクロサービスの健全性とパフォーマンスを監視する方法を示します。
 
 実装の一環として、AMP ワークスペースを作成し、Kubernetes 用 App Mesh コントローラーをインストールして、Envoy コンテナを Pod に注入します。EKS クラスターに構成された [Grafana Agent](https://github.com/grafana/agent) を使用して Envoy メトリクスを収集し、AMP に書き込みます。最後に、AMG ワークスペースを作成し、データソースとして AMP を構成し、カスタムダッシュボードを作成します。
 
@@ -8,7 +8,7 @@
     このガイドの完了には約 45 分かかります。
 
 ## インフラストラクチャ
-このレシピのインフラストラクチャを設定します。
+このレシピのインフラストラクチャを設定するセクションです。
 
 ### アーキテクチャ
 
@@ -27,7 +27,7 @@ Grafana エージェントは、Envoy メトリクスをスクレイプし、AMP
 * 環境に [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
 * [Docker](https://docs.docker.com/get-docker/) が環境にインストールされている必要があります。
 * AWS アカウントに AMP ワークスペースが構成されている必要があります。
-* [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html) をインストールする必要があります。 
+* [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html) をインストールする必要があります。
 * [AWS SSO](https://docs.aws.amazon.com/singlesignon/latest/userguide/step1.html) を有効にする必要があります。
 
 ### EKS クラスターのセットアップ
@@ -110,11 +110,11 @@ Grafana Agent には、AWS Identity and Access Management(IAM)認証の AWS Sign
 ここでは、Prometheus メトリクスを AMP に送信するための IAM ロールを設定する手順を説明します。
 EKS クラスターに Grafana Agent をインストールし、メトリクスを AMP に転送します。
 
-#### アクセス許可の設定
+#### 権限の設定
 Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、マネージドサービスの各クライアントリクエストを認証および認可するために、Sigv4 を使用して有効な AWS 資格情報で署名する必要があります。
 
 Grafana Agent は、Kubernetes のサービスアカウントの ID で実行するために EKS クラスターにデプロイできます。
-サービスアカウントの IAM ロール (IRSA) を使用すると、Kubernetes のサービスアカウントに IAM ロールを関連付けて、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。
+サービスアカウントの IAM ロール (IRSA) を使用すると、Kubernetes のサービスアカウントに IAM ロールを関連付けることができるため、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。
 
 IRSA の設定を次のように準備します。
 
@@ -129,9 +129,9 @@ export REMOTE_WRITE_URL="https://aps-workspaces.$AWS_REGION.amazonaws.com/worksp
 
 次の手順を自動化するために、[gca-permissions.sh](./servicemesh-monitoring-ampamg/gca-permissions.sh) シェルスクリプトを使用できます(プレースホルダー変数 `YOUR_EKS_CLUSTER_NAME` を EKS クラスターの名前に置き換えてください)。
 
-* AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを使用して、`EKS-GrafanaAgent-AMP-ServiceAccount-Role` という名前の IAM ロールを作成します。
+* AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを持つ `EKS-GrafanaAgent-AMP-ServiceAccount-Role` という名前の IAM ロールを作成します。
 * `grafana-agent` 名前空間の下に、IAM ロールに関連付けられた `grafana-agent` という名前の Kubernetes サービスアカウントを作成します。
-* IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダーの間に信頼関係を作成します。
+* IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダーの間の信頼関係を作成します。
 
 `gca-permissions.sh` スクリプトを実行するには、`kubectl` と `eksctl` の CLI ツールが必要です。
 これらは Amazon EKS クラスターにアクセスするように設定する必要があります。
@@ -242,13 +242,13 @@ AMG では、ダッシュボードでアラートを評価する頻度と通知�
 この例では、通知チャネルとして Amazon SNS を設定します。
 SNS トピックには `grafana` というプレフィックスが必要です。これは、デフォルトの [サービス管理権限](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account) を使用している場合、通知がトピックに正常に発行されるためです。
 
-`grafana-notification` という名前の SNS トピックを作成するには、次のコマンドを使用します:
+`grafana-notification` という名前の SNS トピックを作成するには、次のコマンドを使用します。
 
 ```
 aws sns create-topic --name grafana-notification
 ```
 
-メールアドレスを介してサブスクライブします。以下のコマンドで、リージョンとアカウント ID を指定することを確認してください: 
+メールアドレスを使ってサブスクライブします。以下のコマンドで、リージョンとアカウント ID を指定することを忘れないでください。
 
 ```
 aws sns subscribe \
@@ -259,17 +259,17 @@ aws sns subscribe \
 
 次に、Grafana ダッシュボードから新しい通知チャネルを追加します。
 grafana-notification という名前の新しい通知チャネルを設定します。
-Type にはドロップダウンから AWS SNS を使用します。
-Topic には、作成した SNS トピックの ARN を使用します。
-Auth provider は AWS SDK Default を選択します。
+タイプは AWS SNS をドロップダウンから選択します。
+トピックには、作成した SNS トピックの ARN を使用します。
+認証プロバイダーは、AWS SDK のデフォルトを選択します。
 
 ![Creating Notification Channel](../images/alert-configuration.png)
 
-次に、ダウンストリームレイテンシが 1 分間で 5 ミリ秒を超えた場合のアラートを設定します。
-ダッシュボードで、ドロップダウンから Downstream latency を選択し、Edit を選択します。
-グラフパネルの Alert タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始する条件を設定します。
+次に、下流のレイテンシが 1 分間で 5 ミリ秒を超えた場合のアラートを設定します。
+ダッシュボードで下流のレイテンシをドロップダウンから選択し、編集を選択します。
+グラフパネルの [アラート] タブで、アラートルールを評価する頻度と、アラートの状態を変更して通知を開始する条件を設定します。
 
-次の設定では、ダウンストリームレイテンシがしきい値を超えた場合にアラートが作成され、設定された grafana-alert-notification チャネルを介して SNS トピックに通知が送信されます。
+次の設定では、下流のレイテンシがしきい値を超えた場合にアラートが作成され、設定された grafana-alert-notification チャネルを介して SNS トピックに通知が送信されます。
 
 ![Alert Configuration](../images/downstream-latency.png)
 

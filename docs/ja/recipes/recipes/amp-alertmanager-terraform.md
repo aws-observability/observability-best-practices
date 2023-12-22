@@ -1,10 +1,10 @@
-# Terraform を Infrastructure as Code として使用し、Amazon Managed Service for Prometheus をデプロイおよび Alert Manager を設定する
+# Terraform を使って Amazon Managed Service for Prometheus をデプロイし、アラートマネージャーを設定する
 
-このレシピでは、[Terraform](https://www.terraform.io/) を使用して [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) をプロビジョニングし、ルール管理とアラートマネージャーを設定して、特定の条件が満たされた場合に [SNS](https://docs.aws.amazon.com/sns/) トピックに通知を送信する方法を示します。
+このレシピでは、[Terraform](https://www.terraform.io/) を使用して [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) をプロビジョニングし、特定の条件が満たされた場合に [SNS](https://docs.aws.amazon.com/sns/) トピックに通知を送信するために、ルール管理とアラートマネージャーを設定する方法を示します。
 
 
 !!! note
-    このガイドの完了には約 30 分かかります。
+    このガイドを完了するのに約 30 分かかります。
 
 ## 前提条件
 
@@ -21,9 +21,9 @@
 * [SNS トピック](https://docs.aws.amazon.com/ja_jp/sns/latest/dg/sns-create-topic.html)
 * [awscurl](https://github.com/okigan/awscurl)
 
-このレシピでは、サンプルアプリケーションを使用して、ADOT を使用したメトリック スクレイピングと Amazon Managed Service for Prometheus ワークスペースへのリモートライトをデモンストレーションします。サンプルアプリを [aws-otel-community](https://github.com/aws-observability/aws-otel-community) のリポジトリからフォークしてクローンしてください。
+このレシピでは、サンプルアプリケーションを使用して、ADOT を使用したメトリクス スクレイピングと Amazon Managed Service for Prometheus ワークスペースへのリモートライトをデモンストレーションします。サンプルアプリを [aws-otel-community](https://github.com/aws-observability/aws-otel-community) のリポジトリからフォークしてクローンしてください。
 
-この Prometheus サンプルアプリは、すべての 4 つの Prometheus メトリックタイプ(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、/metrics エンドポイントで公開します。
+この Prometheus サンプルアプリは、すべての 4 つの Prometheus メトリクスタイプ(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、/metrics エンドポイントで公開します。
 
 ヘルスチェックエンドポイントも / に存在します。
 
@@ -31,12 +31,12 @@
 
 listen_address: (デフォルト = 0.0.0.0:8080) サンプルアプリが公開されるアドレスとポートを定義します。これは主にテストフレームワークの要件に準拠するためです。
 
-metric_count: (デフォルト=1) 生成する各タイプのメトリックの量。メトリックタイプごとに常に同じ量のメトリックが生成されます。
+metric_count: (デフォルト=1) 生成する各タイプのメトリクスの量。メトリクスタイプごとに常に同じ量のメトリクスが生成されます。
 
-label_count: (デフォルト=1) メトリックごとに生成するラベルの量。
+label_count: (デフォルト=1) 生成するメトリクスごとのラベルの量。
 
 
-datapoint_count: (デフォルト=1) メトリックごとに生成するデータポイントの数。
+datapoint_count: (デフォルト=1) 生成するメトリクスごとのデータポイントの数。
 
 ### AWS Distro for OpenTelemetry を使用したメトリクス収集の有効化
 1. aws-otel-community のリポジトリからサンプルアプリをフォークしてクローンします。
@@ -79,9 +79,9 @@ kubectl apply -f eks-prometheus-daemonset.yaml
 
 ### Terraform でワークスペースを設定する
 
-ここで、Amazon Managed Service for Prometheus ワークスペースをプロビジョニングし、特定の条件(```expr```で定義)が指定された期間(```for```)真である場合に、Alert Manager が通知を送信するようにアラートルールを定義します。Terraform 言語のコードは、.tf 拡張子のプレーンテキストファイルに保存されます。.tf.json ファイル拡張子で名前が付けられている JSON ベースの言語バリアントもあります。
+ここで、Amazon Managed Service for Prometheus ワークスペースをプロビジョニングし、特定の条件 (```expr``` で定義) が指定された期間 (```for```) 満たされた場合に、Alert Manager が通知を送信するようにアラートルールを定義します。Terraform 言語のコードは、.tf 拡張子のプレーンテキストファイルに保存されます。.tf.json ファイル拡張子で名前が付けられている JSON ベースのバリアントもあります。
 
-ここで、[main.tf](./amp-alertmanager-terraform/main.tf) を使用して、Terraform を使用してリソースをデプロイします。Terraform コマンドを実行する前に、`region` と `sns_topic` 変数をエクスポートします。
+ここで、[main.tf](./amp-alertmanager-terraform/main.tf) を使用して、Terraform でリソースをデプロイします。Terraform コマンドを実行する前に、`region` と `sns_topic` 変数をエクスポートします。
 
 ```
 export TF_VAR_region=<your region>
@@ -98,7 +98,7 @@ terraform apply
 
 上記の手順が完了したら、awscurl を使用してエンドポイントをクエリすることで、セットアップをエンドツーエンドで検証します。`WORKSPACE_ID` 変数が適切な Amazon Managed Service for Prometheus ワークスペース ID に置き換えられていることを確認してください。
 
-次のコマンドを実行すると、「metric:recording_rule」メトリクスを探し、メトリクスを正常に見つけた場合は、記録ルールの作成に成功したことを意味します:
+次のコマンドを実行すると、「metric:recording_rule」メトリクスを探し、メトリクスを正常に見つけた場合は recording rule の作成に成功したことを意味します:
 
 ```
 awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/api/v1/rules  --service="aps"
@@ -110,6 +110,7 @@ awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/
 ```
 
 さらに、アラートがトリガーされ、SNS Receiver 経由で SNS に送信されたことを確認するために、alertmanager エンドポイントをクエリできます。
+
 ```
 awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/alertmanager/api/v2/alerts --service="aps" -H "Content-Type: application/json"
 ```

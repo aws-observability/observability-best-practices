@@ -27,13 +27,13 @@ Kubernetes でコンテナログを集中ログ集約システムに送信する
 
 ### Amazon EKS コントロールプレーンログ
 
-Amazon EKS クラスターは、Kubernetes クラスターの高可用性のシングルテナントコントロールプレーンと、コンテナを実行する Amazon EKS ノードで構成されます。 コントロールプレーンノードは、AWS によって管理されるアカウントで実行されます。 Amazon EKS クラスターコントロールプレーンノードは CloudWatch と統合されており、特定のコントロールプレーンコンポーネントのログをオンにすることができます。 ログは、各 Kubernetes コントロールプレーンコンポーネントインスタンスについて提供されます。 AWS はコントロールプレーンノードのヘルスを管理し、[Kubernetes エンドポイントのサービスレベルアグリーメント(SLA)](http://aws.amazon.com/eks/sla/)を提供します。
+Amazon EKS クラスターは、Kubernetes クラスターの高可用性のシングルテナントコントロールプレーンと、コンテナを実行する Amazon EKS ノードで構成されます。 コントロールプレーンノードは、AWS によって管理されるアカウントで実行されます。 Amazon EKS クラスターコントロールプレーンノードは CloudWatch と統合されており、特定のコントロールプレーンコンポーネントのログをオンにすることができます。 ログは、各 Kubernetes コントロールプレーンコンポーネントインスタンスについて提供されます。 AWS はコントロールプレーンノードの健全性を管理し、[Kubernetes エンドポイントのサービスレベルアグリーメント(SLA)](http://aws.amazon.com/eks/sla/)を提供します。
 
 [Amazon EKS コントロールプレーンログ](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) は、次のクラスターコントロールプレーンログタイプで構成されています。 各ログタイプは、Kubernetes コントロールプレーンのコンポーネントに対応しています。 これらのコンポーネントの詳細については、Kubernetes のドキュメントの [Kubernetes コンポーネント](https://kubernetes.io/docs/concepts/overview/components/) を参照してください。
 
 * **API サーバー (`api`)** – クラスターの API サーバーは、Kubernetes API を公開するコントロールプレーンコンポーネントです。 クラスターの起動時またはすぐ後に API サーバーログを有効にすると、ログには API サーバーの起動に使用された API サーバーフラグが含まれます。 詳細については、Kubernetes ドキュメントの [`kube-apiserver`](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-apiserver/) および [audit ポリシー](https://github.com/kubernetes/kubernetes/blob/master/cluster/gce/gci/configure-helper.sh#L1129-L1255) を参照してください。
 * **Audit (`audit`)** – Kubernetes の監査ログは、クラスターに影響を与えた個々のユーザー、管理者、またはシステムコンポーネントの記録を提供します。 詳細については、Kubernetes ドキュメントの [Auditing](https://kubernetes.io/docs/tasks/debug-application-cluster/audit/) を参照してください。
-* **Authenticator (`authenticator`)** – Authenticator ログは Amazon EKS 固有のものです。 これらのログは、IAM 資格情報を使用した Kubernetes の [Role Based Access Control](https://kubernetes.io/docs/admin/authorization/rbac/) (RBAC) 認証に Amazon EKS が使用するコントロールプレーンコンポーネントを表しています。 詳細については、[クラスター管理](https://docs.aws.amazon.com/eks/latest/userguide/eks-managing.html) を参照してください。
+* **Authenticator (`authenticator`)** – Authenticator ログは Amazon EKS 固有のものです。 これらのログは、IAM 資格情報を使用した Kubernetes の [Role Based Access Control](https://kubernetes.io/docs/reference/access-authn-authz/rbac/) (RBAC) 認証に Amazon EKS が使用するコントロールプレーンコンポーネントを表しています。 詳細については、[Cluster management](https://docs.aws.amazon.com/eks/latest/userguide/eks-managing.html) を参照してください。
 * **Controller manager (`controllerManager`)** – コントローラーマネージャーは、Kubernetes と共に出荷されるコアコントロールループを管理します。 詳細については、Kubernetes ドキュメントの [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) を参照してください。
 * **Scheduler (`scheduler`)** – スケジューラーコンポーネントは、クラスター内のポッドの実行時期と場所を管理します。 詳細については、Kubernetes ドキュメントの [kube-scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/) を参照してください。
 
@@ -292,7 +292,7 @@ fields @logStream, @timestamp, @message| filter @logStream like /^kube-apiserver
 
 ### Amazon EKS データプレーンログ
 
-Amazon EKS のログとメトリクスをキャプチャするには、[CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html) の使用をおすすめします。[Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) は、CloudWatch エージェントを使用してクラスター、ノード、Pod レベルのメトリクスを実装し、CloudWatch へのログキャプチャに [Fluent Bit](https://fluentbit.io/) または [Fluentd](https://www.fluentd.org/) を使用します。Container Insights は、キャプチャされた CloudWatch メトリクスの階層ビューを備えた自動ダッシュボードも提供します。Container Insights は CloudWatch DaemonSet としてデプロイされ、Amazon EKS の各ノードで実行される Fluent Bit DaemonSet です。Fargate ノードは AWS によって管理され、DaemonSet をサポートしていないため、Container Insights ではサポートされていません。Amazon EKS の Fargate ロギングは、このガイドで個別にカバーされています。
+Amazon EKS のログとメトリクスをキャプチャするには、[CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs.html) の使用をおすすめします。[Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) は、CloudWatch エージェントを使用してクラスター、ノード、Pod レベルのメトリクスを実装し、CloudWatch へのログキャプチャに [Fluent Bit](https://fluentbit.io/) または [Fluentd](https://www.fluentd.org/) を使用します。Container Insights は、キャプチャされた CloudWatch メトリクスの階層ビューを備えた自動ダッシュボードも提供します。Container Insights は CloudWatch DaemonSet としてデプロイされ、Amazon EKS の各ノードで実行される Fluent Bit DaemonSet です。Fargate ノードは DaemonSet をサポートしていない AWS 管理ノードであるため、Container Insights ではサポートされていません。Amazon EKS の Fargate ロギングは、このガイドで個別にカバーされています。
 
 次の表は、Amazon EKS 用の[デフォルトの Fluentd または Fluent Bit ログキャプチャ構成](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-setup-logs-FluentBit.html)によってキャプチャされる CloudWatch ロググループとログを示しています。
 
@@ -300,7 +300,7 @@ Amazon EKS のログとメトリクスをキャプチャするには、[CloudWat
 |---	|---	|
 |`/aws/containerinsights/Cluster_Name/dataplane`	|`kubelet.service`、`kubeproxy.service`、`docker.service` の `/var/log/journal` のログ。	|
 
-ロギングに Fluent Bit または Fluentd を使用しない Container Insights を使用したくない場合は、Amazon EKS ノードにインストールされた CloudWatch エージェントを使用してノードとコンテナのログをキャプチャできます。Amazon EKS ノードは EC2 インスタンスであるため、Amazon EC2 の標準的なシステムレベルのロギングアプローチに含める必要があります。Distributor と State Manager を使用して CloudWatch エージェントをインストールすると、Amazon EKS ノードも CloudWatch エージェントのインストール、構成、更新に含まれます。次の表は、ロギングに Fluent Bit または Fluentd を使用しない Container Insights 固有の Kubernetes ログで、キャプチャする必要があるものを示しています。
+ロギングに Fluent Bit または Fluentd を使用しない Container Insights を使用したくない場合は、Amazon EKS ノードにインストールされた CloudWatch エージェントを使用して、ノードとコンテナのログをキャプチャできます。Amazon EKS ノードは EC2 インスタンスであるため、Amazon EC2 の標準的なシステムレベルのロギングアプローチに含める必要があります。Distributor と State Manager を使用して CloudWatch エージェントをインストールする場合、Amazon EKS ノードも CloudWatch エージェントのインストール、構成、更新に含まれます。次の表は、ロギングに Fluent Bit または Fluentd を使用しない Container Insights 固有の Kubernetes ログで、キャプチャする必要があるものを示しています。
 
 
 |`var/log/aws-routed-eni/ipamd.log``/var/log/aws-routed-eni/plugin.log`	|L-IPAM デーモンのログはここにあります。	|
@@ -322,21 +322,21 @@ Kubernetes 環境で大規模にアプリケーションを実行する際、Ama
 
 図は、Amazon EKS クラスタからのアプリケーションログが Amazon OpenSearch Service にストリーミングされるときのワークフローを示しています。Amazon EKS クラスタ内の Fluent Bit サービスはログを CloudWatch にプッシュします。AWS Lambda 関数は、サブスクリプションフィルタを使用してログを Amazon OpenSearch Service にストリーミングします。その後、Kibana を使用して、構成されたインデックス内のログを視覚化できます。また、Amazon Kinesis Data Firehose を使用してログをストリーミングし、[Amazon Athena](https://docs.aws.amazon.com/athena/latest/ug/what-is.html) で分析およびクエリできるように S3 バケットに保存することもできます。
 
-ほとんどのクラスタでは、ログ集約に Fluentd または Fluent Bit を使用するだけでほとんど最適化の必要はありません。これは、数千の Pod とノードを持つ大規模なクラスタを扱う場合に変わってきます。 私たちは、[数千の Pod を持つクラスタにおける Fluentd と Fluent Bit の影響](https://aws.amazon.com/blogs/containers/fluentd-considerations-and-actions-required-at-scale-in-amazon-eks/) の調査結果を公開しています。さらに学習する場合は、Kubernetes API サーバーへの API 呼び出しの量を減らすように設計された [Fluent Bit の拡張](https://aws.amazon.com/blogs/containers/capturing-logs-at-scale-with-fluent-bit-and-amazon-eks/) をチェックすることをお勧めします。*Use_Kubelet* オプションを使用します。 この Fluent Bit の `Use_Kubelet` 機能により、ホスト上の kubelet から Pod メタデータを取得できます。Amazon EKS のお客様は、この機能を有効にすることで、Fluent Bit を使用して、数万の Pod を実行するクラスタでログをキャプチャできます。大規模な Kubernetes クラスタを実行していなくても、この機能を有効にすることをお勧めします。
+ほとんどのクラスタでは、ログ集約に Fluentd または Fluent Bit を使用する必要はほとんどありません。これは、数千の Pod とノードを持つ大規模なクラスタを扱う場合に変わってきます。 私たちは、[数千の Pod を持つクラスタにおける Fluentd と Fluent Bit の影響](https://aws.amazon.com/blogs/containers/fluentd-considerations-and-actions-required-at-scale-in-amazon-eks/) を調査した結果を公開しています。さらに学習する場合は、Kubernetes API サーバへの API 呼び出しの量を減らすように設計された [Fluent Bit の拡張](https://aws.amazon.com/blogs/containers/capturing-logs-at-scale-with-fluent-bit-and-amazon-eks/) をチェックすることをお勧めします。*Use_Kubelet* オプションを使用します。 この Fluent Bit の `Use_Kubelet` 機能により、ホスト上の kubelet から Pod メタデータを取得できます。Amazon EKS のお客様は、この機能を有効にすることで、Kubernetes API サーバを過負荷にすることなく、数万の Pod を実行する大規模なクラスタで Fluent Bit を使用してログをキャプチャできます。大規模な Kubernetes クラスタを実行していなくても、この機能を有効にすることをお勧めします。
 
 #### Amazon EKS on Fargate のログ記録
 
 Amazon EKS on Fargate を使用すると、Kubernetes ノードの割り当てや管理を行わずに Pod をデプロイできます。これにより、Kubernetes ノードのシステムレベルのログをキャプチャする必要がなくなります。Fargate Pod からのログをキャプチャするには、ログを直接 CloudWatch に転送するために Fluent Bit を使用できます。これにより、Amazon EKS Pod の Fargate に対して、さらなる設定やサイドカーコンテナなしでログを CloudWatch に自動的にルーティングできます。これについての詳細は、Amazon EKS ドキュメントの [Fargate ログ記録](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html) および AWS ブログの [Amazon EKS 用 Fluent Bit](http://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/) を参照してください。このソリューションは、Fargate 上の Amazon EKS クラスタに対して確立された Fluent Bit 設定に基づいて、コンテナからの入力/出力 (I/O) ストリーム `STDOUT` および `STDERR` をキャプチャし、それらを Fluent Bit を介して CloudWatch に送信します。
 
-Amazon EKS 用の Fluent Bit サポートにより、Fargate 上で実行されている Amazon EKS Pod からコンテナログをルーティングするためのサイドカーを実行する必要がなくなりました。新しい組み込みのログサポートで、レコードを送信する宛先を選択できます。Amazon EKS on Fargate は、AWS が管理する Fluent Bit の準拠分布のバージョンを使用します。
+Amazon EKS 用の Fluent Bit サポートにより、Fargate 上で実行されている Amazon EKS Pod からコンテナログをルーティングするためのサイドカーを実行する必要がなくなりました。新しい組み込みのログサポートで、レコードを送信先として選択できます。Amazon EKS on Fargate は、AWS が管理する Fluent Bit の準拠分布のバージョンを使用します。
 
 ![LOG-AGGREG-3](../../../../../images/Containers/aws-native/eks/log-aggreg-3.jpg)
 
 *図: Amazon EKS on Fargate のログ記録*
 
-Fluent Bit による Amazon EKS のサポートの詳細については、Amazon EKS ドキュメントの [Fargate ログ記録](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html) を参照してください。
+Amazon EKS 用の Fluent Bit サポートの詳細については、Amazon EKS ドキュメントの [Fargate ログ記録](https://docs.aws.amazon.com/eks/latest/userguide/fargate-logging.html) を参照してください。
 
-何らかの理由で、AWS Fargate 上で実行されている Pod でサイドカーパターンを使用する必要がある場合があります。Fluentd (または [Fluent Bit](http://fluentbit.io/)) サイドカーコンテナを実行して、アプリケーションによって生成されたログをキャプチャできます。このオプションでは、アプリケーションがログを `stdout` または `stderr` ではなくファイルシステムに書き込む必要があります。このアプローチの結果として、`kubectl` ログを使用してコンテナログを表示できなくなります。ログを `kubectl logs` に表示するには、`stdout` とファイルシステムの両方に同時にアプリケーションログを書き込むことができます。
+何らかの理由で、AWS Fargate 上で実行されている Pod でサイドカーパターンを使用する必要がある場合があります。Fluentd (または [Fluent Bit](http://fluentbit.io/)) のサイドカーコンテナを実行して、アプリケーションによって生成されたログをキャプチャできます。このオプションでは、アプリケーションがログを `stdout` や `stderr` ではなくファイルシステムに書き込む必要があります。このアプローチの結果として、`kubectl` ログを使用してコンテナログを表示できなくなります。ログを `kubectl logs` に表示するには、`stdout` とファイルシステムの両方に同時にアプリケーションログを書き込むことができます。
 
 [Fargate の Pod は 20GB の短期ストレージ](https://docs.aws.amazon.com/eks/latest/userguide/fargate-pod-configuration.html) を取得し、これは Pod に属するすべてのコンテナで利用できます。アプリケーションを設定してローカルファイルシステムにログを書き込み、Fluentd にログディレクトリ(またはファイル)を監視するように指示できます。Fluentd はログファイルの末尾からイベントを読み取り、CloudWatch などの宛先にイベントを送信してストレージに保存します。ログが全体のボリュームを奪わないように、定期的にログをローテーションすることを確認してください。
 
@@ -360,7 +360,7 @@ AWS Fargate でスケールアウトした Kubernetes アプリケーション�
 
 このアーキテクチャは、ログ エージェント、ログ ルーター、Lambda 拡張などのさまざまなログ集計ツールを使用して、複数のコンピュート プラットフォームからログを収集し、Kinesis Data Firehose に配信します。Kinesis Data Firehose はログを Amazon OpenSearch Service にストリーミングします。Amazon OpenSearch サービスに永続化できなかったログレコードは、AWS S3 に書き込まれます。このアーキテクチャをスケールするには、これらのコンピュート プラットフォームのそれぞれがログを個別の Firehose 配信ストリームにストリーミングし、個別のインデックスとして追加され、24 時間ごとにローテーションされます。
 
-Kinesis Data Firehose と Amazon OpenSearch Service を使用して、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (Amazon EKS)、[Amazon Elastic Compute Cloud](https://aws.amazon.com/ec2/) (Amazon EC2)、[Amazon Elastic Container Service](https://aws.amazon.com/ecs/) (Amazon ECS)、[AWS Lambda](https://aws.amazon.com/lambda/) などの異なるコンピュート プラットフォーム間でログを統一および集中化する方法の詳細については、[こちら](https://aws.amazon.com/blogs/big-data/unify-log-aggregation-and-analytics-across-compute-platforms/)をご覧ください。このアプローチにより、異なるサービスについて異なるプラットフォームを使用するのではなく、単一のプラットフォームを使用してログをすばやく分析し、障害の根本原因を特定できます。
+Kinesis Data Firehose と Amazon OpenSearch Service を使用して、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (Amazon EKS)、[Amazon Elastic Compute Cloud](https://aws.amazon.com/ec2/) (Amazon EC2)、[Amazon Elastic Container Service](https://aws.amazon.com/ecs/) (Amazon ECS)、[AWS Lambda](https://aws.amazon.com/lambda/) などの異なるコンピュート プラットフォーム間でログの集計と分析を統一する方法の詳細は、[こちら](https://aws.amazon.com/blogs/big-data/unify-log-aggregation-and-analytics-across-compute-platforms/)をご覧ください。このアプローチにより、異なるサービスについて異なるプラットフォームを使用するのではなく、単一のプラットフォームを使用してログをすばやく分析し、障害の根本原因を特定できます。
 
 ## まとめ
 

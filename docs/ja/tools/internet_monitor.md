@@ -21,14 +21,14 @@ Internet Monitor の動作は、CloudFront ディストリビューションや 
 ![ワークロードと ISP の問題の交点](../images/internet_monitor_2.png)
 
 !!! success
-	インターネットを介して通信するトラフィックのみを監視するモニターを作成してください。プライベートネットワーク([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/))内の 2 つのホスト間などのプライベートトラフィックは、Internet Monitor を使用して監視できません。
+	インターネットを介して通信するトラフィックを監視するモニターのみを作成してください。プライベートネットワーク([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/))内の 2 つのホスト間などのプライベートトラフィックは、Internet Monitor を使用して監視できません。
 	
 !!! success
-	該当する場合は、プロバイダ間をローミングしたり、地理的に離れた場所にいるユーザーからのモバイルアプリケーションのトラフィックを優先してください。予期しない体験をしている可能性があるため、認識しておく必要があります。
+	該当する場合は、モバイルアプリケーションからのトラフィックを優先してください。プロバイダー間をローミングしている顧客や、遠隔地にいる顧客は、異なるエクスペリエンスや予期しないエクスペリエンスを受ける可能性があり、そのことを認識しておく必要があります。
 
 ## EventBridge と CloudWatch を通じたアクションの有効化
 
-検知された問題は、ソースが `aws.internetmonitor` として識別される[スキーマ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html)を使用して [EventBridge](https://aws.amazon.com/eventbridge/) を介して公開されます。EventBridge を使用すると、チケット管理システムで自動的に問題を作成したり、サポートチームに通知したり、ワークロードを変更して特定のシナリオを緩和する自動化をトリガーしたりすることができます。
+観測された問題は、ソースが `aws.internetmonitor` として識別される[スキーマ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html)を使用して [EventBridge](https://aws.amazon.com/eventbridge/) を介して公開されます。EventBridge を使用すると、チケット管理システムで自動的に問題を作成したり、サポートチームに通知したり、ワークロードを変更して特定のシナリオを緩和する自動化をトリガーしたりすることができます。
 
 ```json
 {
@@ -36,7 +36,7 @@ Internet Monitor の動作は、CloudFront ディストリビューションや 
 }
 ```
 
-同様に、監視対象の都市、国、メトロ、サブディビジョンのトラフィックの詳細が [CloudWatch Logs](../../tools/logs) で利用できます。これにより、影響を受ける顧客に地域的な問題について事前に通知するなど、高度にターゲットを絞ったアクションを作成できます。単一プロバイダーの国レベルの観測の例を次に示します。
+同様に、観測された都市、国、メトロ、サブディビジョンのトラフィックの詳細が [CloudWatch Logs](../../tools/logs) で利用できます。これにより、影響を受ける顧客に地域の問題について事前に通知するなど、高度にターゲットを絞ったアクションを作成できます。単一のプロバイダーの国レベルの観測の例を次に示します。
 
 ```json
 {

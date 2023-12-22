@@ -17,7 +17,7 @@
 
 ## メトリクスのクエリ
 
-CloudWatch の [メトリクス数式](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html) 機能を利用して、複数のメトリクスをクエリし、メトリクスをより詳細に分析するために数式を使用できます。 たとえば、次のようにクエリを書いて Lambda のエラーレートを調べることができます。
+CloudWatch の [メトリクス数式](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html) 機能を利用して、複数のメトリクスをクエリし、メトリクスをより詳細に分析するための数式を使用できます。 たとえば、次のようにクエリを書いて Lambda のエラーレートを調べることができます。
 
 	Errors/Requests
 
@@ -28,7 +28,7 @@ CloudWatch の [メトリクス数式](https://docs.aws.amazon.com/ja_jp/AmazonC
 !!! success
 	メトリクス数式を使用して、データから最大限の価値を引き出し、個別のデータソースのパフォーマンスから値を導出してください。
 
-CloudWatch は条件文もサポートしています。 たとえば、レイテンシが特定のしきい値を超える各タイムシリーズの値を `1` にし、その他のすべてのデータポイントを `0` にするには、次のようなクエリになります。
+CloudWatch は条件文もサポートしています。 たとえば、レイテンシが特定のしきい値を超えている各タイムシリーズの値を `1` にし、その他のすべてのデータポイントを `0` にするには、次のようなクエリになります。
 
 	IF(latency>threshold, 1, 0)
 
@@ -37,15 +37,15 @@ CloudWatch コンソールでは、このロジックを使用してブール値
 ![導出値からのアラーム作成](../images/metrics2.png)
 
 !!! success
-	条件文を使用して、導出値のパフォーマンスがしきい値を超えたときに、アラームと通知をトリガーしてください。
+	条件文を使用して、導出値のしきい値を超えたときにアラームと通知をトリガーしてください。
 
-`SEARCH` 関数を使用して、メトリクスの上位 `n` 件を表示することもできます。 大量のタイムシリーズ (何千ものサーバーなど) 全体で最もパフォーマンスの良い、または最も悪いメトリクスを可視化する場合、このアプローチにより、最も重要なデータのみを表示できます。 以下は、過去 5 分間の平均で、CPU 使用量が最も高い上位 2 つの EC2 インスタンスを返す検索の例です。
+`SEARCH` 関数を使用して、メトリクスの上位 `n` 件を表示することもできます。 大量のタイムシリーズ (たとえば、数千のサーバー) 全体で最もパフォーマンスの高い、または最も低いメトリクスを可視化する場合、このアプローチにより、最も重要なデータのみを表示できます。 以下は、過去 5 分間の平均で、CPU 使用量が最も高い上位 2 つの EC2 インスタンスを返す検索の例です。
 
 	SLICE(SORT(SEARCH('{AWS/EC2,InstanceId} MetricName="CPUUtilization"', 'Average', 300), MAX, DESC),0, 2)
 
-CloudWatch メトリクスのコンソールでの同じ検索クエリの表示は次のとおりです。
+CloudWatch メトリクスのコンソールでの同じ表示は次のとおりです。
 
-![CloudWatch メトリクスでの検索クエリ](../images/metrics3.png)
+![CloudWatch メトリクスの検索クエリ](../images/metrics3.png)
 
 !!! success
 	`SEARCH` を使用して、環境内の価値の高い、または最もパフォーマンスが低いリソースをすばやく表示し、[ダッシュボード](../../tools/dashboards) に表示してください。
@@ -66,7 +66,7 @@ EC2 インスタンスのメモリやディスクスペースの利用率など�
 	`PutMetricData` を使用する場合、可能な限りデータを単一の `PUT` 操作にバッチ処理するのがベストプラクティスです。
 	
 !!! success
-	大量のメトリクスが CloudWatch に発行される場合は、[Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) を代替アプローチとして検討してください。Embedded Metric Format は `PutMetricData` を使用せず、使用料も課金されませんが、[CloudWatch Logs](../../tools/logs/) の使用からの課金は発生します。
+	大量のメトリクスが CloudWatch に発行される場合は、[Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) を代替アプローチとして検討してください。Embedded Metric Format は `PutMetricData` の使用や課金を行いませんが、[CloudWatch Logs](../../tools/logs/) の使用からの課金は発生します。
 
 ## 異常検知
 

@@ -18,9 +18,7 @@ Canary は設定可能なスクリプトで、API とウェブサイトのエク
 
 ### 新しい Canary の記録
 
-[CloudWatch Synthetics Recorder](https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome ブラウザプラグインを使用すると、スクラッチから複雑なワークフローを含む新しい Canary テストスクリプトをすばやく構築できます。
-記録中に実行したタイプとクリックのアクションは、Canary を作成するために使用できる Node.js スクリプトに変換されます。 
-CloudWatch Synthetics Recorder の既知の制限事項は、[このページ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations)で注記されています。
+[CloudWatch Synthetics Recorder](https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome ブラウザプラグインを使用すると、複雑なワークフローからスクラッチで新しい Canary テストスクリプトをすばやく構築できます。記録中に取られたタイプとクリックのアクションは、Canary を作成するために使用できる Node.js スクリプトに変換されます。CloudWatch Synthetics Recorder の既知の制限事項は、[このページ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations)で注記されています。
 
 ### 集計メトリクスの表示
 
@@ -96,4 +94,4 @@ CloudWatch Synthetics は、[今後 60 日以内に廃止予定のランタイ�
 
 ### Selenium 用のインポート
 
-[Python と Selenium](https://aws.amazon.com/blogs/mt/create-canaries-in-python-and-selenium-using-amazon-cloudwatch-synthetics/) を使用して、ゼロから Canary を作成するか、最小限の変更で既存のスクリプトをインポートできます。
+[Python と Selenium](https://aws.amazon.com/blogs/mt/create-canaries-in-python-and-selenium-using-amazon-cloudwatch-synthetics/) を使用して、ゼロから Canary を作成するか、最小限の変更で既存のスクリプトをインポートします。

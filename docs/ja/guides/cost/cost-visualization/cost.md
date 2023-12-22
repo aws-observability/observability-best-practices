@@ -19,7 +19,7 @@ Amazon Managed Grafana または Amazon QuickSight で、AWS のコストと使�
 
 ## クラウドインテリジェンスダッシュボード
 
-[Cloud Intelligence Dashboards][cid] は、AWS のコストと使用状況レポート (CUR) を基に構築された [Amazon QuickSight][quicksight] ダッシュボードのコレクションです。これらのダッシュボードは、自身のコスト管理と最適化 (FinOps) ツールとして機能します。AWS の使用状況とコストの詳細なビューを取得できる、詳細で細かい推奨駆動型のダッシュボードが用意されています。
+[Cloud Intelligence Dashboards][cid] は、AWS コストと使用状況レポート (CUR) をベースに構築された [Amazon QuickSight][quicksight] ダッシュボードのコレクションです。これらのダッシュボードは、自身のコスト管理と最適化 (FinOps) ツールとして機能します。AWS の使用状況とコストの詳細なビューを取得できる、詳細で粒度の細かい、推奨駆動型のダッシュボードが用意されています。
 
 ### 実装
 
@@ -27,16 +27,16 @@ Amazon Managed Grafana または Amazon QuickSight で、AWS のコストと使�
 *初期設定時に、AWS が Amazon S3 バケットにレポートを配信し始めるまでに最大 24 時間かかる場合があります。レポートは 1 日に 1 度配信されます。Athena との統合のために設定したレポートとともに、Cost and Usage レポートを Athena との統合を合理化および自動化するためのいくつかの主要なリソースを含む AWS CloudFormation テンプレートを AWS は提供しています。*
 
 2. [AWS CloudFormation テンプレート][cloudformation] をデプロイします。
-*このテンプレートには、AWS Glue クローラー、AWS Glue データベース、AWS Lambda イベントが含まれています。この時点で、Athena のテーブルを介して CUR データが利用できるようになります。クエリを実行できます。*
+*このテンプレートには、AWS Glue Crawler、AWS Glue データベース、AWS Lambda イベントが含まれています。この時点で、Athena のテーブルを介して CUR データが利用できるようになります。クエリを実行できます。*
 
-    - CUR データに直接 [Amazon Athena][athena-query] クエリを実行します。  
+    - CUR データに直接 [Amazon Athena][athena-query] クエリを実行します。
 *データに対して Athena クエリを実行するには、まず Athena コンソールを使用して AWS がデータを更新しているかどうかを確認し、次に Athena コンソールでクエリを実行します。*
 
 3. Cloud Intelligence ダッシュボードをデプロイします。
     - マニュアルデプロイの場合は、AWS Well-Architected の **[Cost Optimization ラボ][cost-optimization-lab]** を参照してください。
     - 自動デプロイの場合は、[GitHub リポジトリ][GitHub-repo] を参照してください。
 
-Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって非常に便利です。しかし、お客様からよくいただくご質問の 1 つが、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS Observability 製品の組織全体のコストに関する洞察の得方です。  
+Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって非常に便利です。しかし、お客様からよくいただくご質問の 1 つが、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS Observability 製品の組織全体のコストに関する洞察の得方です。
 
 次のセクションでは、これらの製品のコストと使用状況を深く掘り下げます。 あらゆる規模の企業がこの積極的なアプローチを採用してクラウドコスト最適化戦略を採用し、パフォーマンスへの影響や運用オーバーヘッドなしに、クラウドコスト分析とデータドリブンの意思決定を通じてビジネス効率を向上させることができます。
 

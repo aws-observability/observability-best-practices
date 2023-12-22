@@ -1,15 +1,14 @@
-# EC2 上の EKS で Amazon Managed Service for Prometheus と共に AWS Distro for OpenTelemetry を使用する
+# EKS on EC2 で Amazon Managed Service for Prometheus を使用した AWS Distro for OpenTelemetry の利用
 
-このレシピでは、[サンプル Go アプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus) にインスツルメンテーションを施し、
+このレシピでは、[サンプルの Go アプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app)にインスツルメンテーションを適用し、
 [AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel) を使用してメトリクスを 
 [Amazon Managed Service for Prometheus(AMP)](https://aws.amazon.com/prometheus/)にインジェストする方法を示します。
-その後、[Amazon Managed Grafana(AMG)](https://aws.amazon.com/grafana/) を使用してメトリクスを可視化します。
+そして、[Amazon Managed Grafana(AMG)](https://aws.amazon.com/grafana/) を使用してそれらのメトリクスを可視化します。
 
-デモンストレーションのために、[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) 
-on EC2 クラスターと [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/)
-リポジトリを設定します。
+デモのために、[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) on EC2 クラスタと
+[Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) レポジトリのセットアップを行います。
 
-!!! 注意
+!!! note
     このガイドの完了には約 1 時間かかります。
 
 ## インフラストラクチャ
@@ -17,7 +16,7 @@ on EC2 クラスターと [Amazon Elastic Container Registry(ECR)](https://aws.a
 
 ### アーキテクチャ
 
-ADOT パイプラインを使用すると、[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) で Prometheus インスツルメンテーションされたアプリケーションをスクレイプし、スクレイプされたメトリクスを Amazon Managed Service for Prometheus にインジェストできます。
+ADOT パイプラインを使用すると、[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) で Prometheus インスツルメンテーションされたアプリケーションをスクレイプし、スクレイプしたメトリクスを Amazon Managed Service for Prometheus にインジェストできます。
 
 ![アーキテクチャ](../images/adot-metrics-pipeline.png)
 
@@ -32,21 +31,22 @@ ADOT Collector には、Prometheus 固有の 2 つのコンポーネントが含
 
 ### 前提条件
 
-* AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
+* AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)されている必要があります。 
 * 環境に [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) コマンドをインストールする必要があります。
 * 環境に [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
 * [docker](https://docs.docker.com/get-docker/) が環境にインストールされている必要があります。
 
-### EC2 上に EKS クラスターを作成する
+### EKS on EC2 クラスターの作成
 
 このレシピのデモアプリケーションは、EKS の上で実行されます。
 既存の EKS クラスターを使用するか、[cluster-config.yaml](./ec2-eks-metrics-go-adot-ampamg/cluster-config.yaml) を使用してクラスターを作成できます。
 
-このテンプレートは、EC2 `t2.large` ノード 2 つを持つ新しいクラスターを作成します。
+このテンプレートは、`t2.large` の EC2 2 ノードで新しいクラスターを作成します。
 
-テンプレートファイルを編集し、`<your_region>` を [AMP でサポートされているリージョン](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions) のいずれかに設定します。
+テンプレートファイルを編集し、`<your_region>` を 
+[AMP でサポートされているリージョン](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions)のいずれかに設定します。
 
-セッションで `<your_region>` を上書きするようにしてください。たとえば、bash では次のようにします。
+bash などのセッションで `<your_region>` を上書きするようにしてください。
 
 ```
 export AWS_DEFAULT_REGION=<YOUR_REGION>
@@ -77,13 +77,12 @@ aws ecr create-repository \
 
 ### AMPのセットアップ
 
-
 AWS CLIを使用してワークスペースを作成する
 ```
 aws amp create-workspace --alias prometheus-sample-app
 ```
 
-次のコマンドを使用してワークスペースが作成されたことを確認する:
+次のコマンドでワークスペースが作成されたことを確認する:
 ```
 aws amp list-workspaces
 ```
@@ -93,10 +92,10 @@ aws amp list-workspaces
 
 ### ADOT Collectorのセットアップ
 
-[adot-collector-ec2.yaml](./ec2-eks-metrics-go-adot-ampamg/adot-collector-ec2.yaml)をダウンロードし、次のステップで説明するパラメータを使用してこのYAMLドキュメントを編集します。
+[adot-collector-ec2.yaml](./ec2-eks-metrics-go-adot-ampamg/adot-collector-ec2.yaml) をダウンロードし、次のステップで説明するパラメータを使用してこのYAMLドキュメントを編集します。
 
-この例では、ADOT Collectorの構成では `(scrape = true)` というアノテーションを使用して、スクレイプする対象のエンドポイントを指示しています。 これにより、ADOT Collectorはクラスタ内のサンプルアプリのエンドポイントと `kube-system` エンドポイントを区別できます。
-別のサンプルアプリをスクレイプしたい場合は、このリラベル構成を削除できます。
+この例では、ADOT Collectorの構成ではアノテーション `(scrape=true)` を使用して、スクレイプする対象エンドポイントを指示しています。 これにより、ADOT Collectorはクラスタ内の`kube-system` エンドポイントとサンプルアプリケーションのエンドポイントを区別できます。
+別のサンプルアプリケーションをスクレイプしたい場合は、このリラベル構成を削除できます。
 
 環境に対してダウンロードしたファイルを編集するには、次のステップに従ってください:
 
@@ -106,7 +105,7 @@ aws amp list-workspaces
 
 次のクエリを実行することでAMPリモートライトURLエンドポイントを取得できます。
 
-まず、次のようにワークスペース ID を取得します:
+まず、次のようにワークスペースIDを取得します:
 
 ```
 YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
@@ -133,7 +132,7 @@ kubectl apply -f adot-collector-ec2.yaml
 ```
 
 !!! info
-    詳細は、[AWS Distro for OpenTelemetry(ADOT)Collectorのセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup)をご覧ください。
+    詳細は、[AWS Distro for OpenTelemetry(ADOT) Collectorのセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup)をご覧ください。
 
 </your_endpoint></your_region>
 
@@ -151,8 +150,7 @@ kubectl apply -f adot-collector-ec2.yaml
 [サンプルアプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)
 を使用します。
 
-この Prometheus のサンプルアプリケーションは、4 つの Prometheus メトリクスタイプ
-(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、`/metrics` エンドポイントで公開します。
+この Prometheus のサンプルアプリケーションは、Prometheus のメトリクスの 4 つのタイプ(カウンター、ゲージ、ヒストグラム、サマリー)をすべて生成し、それらを `/metrics` エンドポイントで公開します。
 
 ### コンテナイメージのビルド
 
@@ -176,12 +174,12 @@ export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 
 ```
 docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
-```
+```  
 
 !!! note
     プロキシ golang.or のタイムアウトが原因で `go mod` が失敗する場合は、
     Dockerfile を編集して go mod プロキシをバイパスできます。
-    
+
     Dockerfile の次の行を変更します。
     ```
     RUN GO111MODULE=on go mod download
@@ -201,7 +199,7 @@ aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
     "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 ```
 
-最後に、前に作成した ECR リポジトリにコンテナイメージをプッシュします。
+最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。
 
 ```
 docker push "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
@@ -218,7 +216,7 @@ docker push "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sam
     image: "ACCOUNTID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-これで次のコマンドを使用して、サンプルアプリをクラスタにデプロイできます。
+これで次のコマンドを使用してサンプルアプリをクラスタにデプロイできます。
 
 ```
 kubectl apply -f prometheus-sample-app.yaml
@@ -230,7 +228,7 @@ kubectl apply -f prometheus-sample-app.yaml
 
 ### パイプラインが機能していることを確認する
 
-サンプルアプリの Pod から ADOT コレクターがメトリクスをスクレイピングし、それを AMP に取り込んでいることを確認するには、コレクターログを確認します。
+サンプルアプリのポッドから ADOT コレクターがスクレイピングしてメトリクスを AMP に取り込んでいることを確認するには、コレクターログを確認します。
 
 ADOT コレクターログをフォローするために、次のコマンドを入力します。
 
@@ -252,23 +250,23 @@ Metric #0
 Descriptor:
      -> Name: test_gauge0
      -> Description: This is my gauge
-     -> Unit: 
+     -> Unit:
      -> DataType: DoubleGauge
 DoubleDataPoints #0
 StartTime: 0
 Timestamp: 1606511460471000000
 Value: 0.000000
 ...
-```  
+```
 
 !!! tip
     AMP がメトリクスを受信したかどうかを確認するには、[awscurl](https://github.com/okigan/awscurl) を使用できます。
     このツールを使用すると、AWS Sigv4 認証を使用してコマンドラインから HTTP リクエストを送信できるため、
     AMP からクエリするための適切なアクセス許可を持つ AWS 資格情報をローカルに設定する必要があります。
-    次のコマンドで、$AMP_ENDPOINT を AMP ワークスペースのエンドポイントに置き換えます。
+    次のコマンドでは、$AMP_ENDPOINT を AMP ワークスペースのエンドポイントに置き換えます。
 
     ```
-    $ awscurl --service="aps" \ 
+    $ awscurl --service="aps" \
             --region="$AWS_DEFAULT_REGION" "https://$AMP_ENDPOINT/api/v1/query?query=adot_test_gauge0"
     {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"adot_test_gauge0"},"value":[1606512592.493,"16.87214000011479"]}]}}
     ```

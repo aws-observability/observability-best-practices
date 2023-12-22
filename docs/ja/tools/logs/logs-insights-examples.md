@@ -76,7 +76,7 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 
 ## VPC フローログ
 
-### 選択した送信元 IP アドレスのフローログをアクションが REJECT であるものにフィルタリング
+### 選択したソース IP アドレスのフローログをアクションが REJECT であるものにフィルタリング
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP' and action = 'REJECT'

@@ -1,25 +1,22 @@
-# Contributors
+# コントリビューター
 
-The content on this site is maintained by Solution Architects, AWS Observability service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
+このサイトのコンテンツは、ソリューションアーキテクト、AWS Observability サービス チーム メンバー、および組織全体からのその他のボランティアによってメンテナンスされています。私たちの目標は、AWS サービスとオブザーバビリティ スペースのオープンソース プロジェクトを設定および使用するための関連するベスト プラクティスの発見を改善することです。
 
-Recipes and content contributions in general so far are from the following
-people:
+これまでのレシピとコンテンツへの貢献は、概ね次の人々からのものです:
 
-| Authors      | Authors                          | Authors               | Authors |
+| 著者 | 著者 | 著者 | 著者 |
 | ----------- | ------------------------------------ |--------------------|---------|
-|   Alolita Sharma     |  Aly Shah Imtiaz|Helen Ashton | Elamaran Shanmugam |
- Dinesh Boddula | Imaya Kumar Jagannathan| Dieter Adant|  Eric Hsueh |
- |Jason Derrett|Kevin Lewin|Mahesh Biradar|Michael Hausenblas|
-|Munish Dabra|Rich McDonough|Rob Sable|Rodrigue Koffi|
-|Sheetal Joshi|Tomasz Wrzonski|Tyler Lynch|Vijayan Sarathy|
-|Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
+| Alolita Sharma | Aly Shah Imtiaz|Helen Ashton | Elamaran Shanmugam |
+Dinesh Boddula | Imaya Kumar Jagannathan| Dieter Adant| Eric Hsueh |  
+| Jason Derrett|Kevin Lewin|Mahesh Biradar|Michael Hausenblas|
+| Munish Dabra|Rich McDonough|Rob Sable|Rodrigue Koffi|
+| Sheetal Joshi|Tomasz Wrzonski|Tyler Lynch|Vijayan Sarathy|
+| Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
 | Kiran Prakash| Bobby Hallahan| Toshal Dudhwala| Franklin Aguinaldo|
 | Nirmal Mehta| Lucas Vieira Souza da Silva| William Armiros| Abhi Khanna|
 | Arvind Raghunathan| Doyita Mitra | Rahul Popat|
 
 
-Note that all recipes published on this site are available via the
-[MIT-0][mit0] license, a modification to the usual MIT license
-that removes the requirement for attribution.
+このサイトで公開されているすべてのレシピは、[MIT-0][mit0] ライセンスを介して利用できることに注意してください。これは、帰属の要件を削除した通常の MIT ライセンスの変更です。
 
 [mit0]: https://github.com/aws/mit-0

@@ -95,11 +95,12 @@ RDS delivers the metrics from Enhanced Monitoring into your Amazon CloudWatch Lo
 ![db_enhanced_monitoring_loggroup.png](../../images/db_enhanced_monitoring_loggroup.png)
 
 Enhanced monitoring also include the OS level process list. Currently, Enhanced Monitoring is available for the following database engines:
-*MariaDB
-*Microsoft SQL Server
-*MySQL
-*Oracle
-*PostgreSQL
+
+* MariaDB
+* Microsoft SQL Server
+* MySQL
+* Oracle
+* PostgreSQL
 
 **Different between CloudWatch and Enhanced Monitoring**
 CloudWatch gathers metrics about CPU utilization from the hypervisor for a DB instance. In contrast, Enhanced Monitoring gathers its metrics from an agent on the DB instance. A hypervisor creates and runs virtual machines (VMs). Using a hypervisor, an instance can support multiple guest VMs by virtually sharing memory and CPU. You might find differences between the CloudWatch and Enhanced Monitoring measurements, because the hypervisor layer performs a small amount of work. The differences can be greater if your DB instances use smaller instance classes. In this scenario, more virtual machines (VMs) are probably managed by the hypervisor layer on a single physical instance.
@@ -205,6 +206,6 @@ For more information, refer [Monitoring Amazon RDS API calls in AWS CloudTrail](
 
 [Official Doc - Amazon Aurora Monitoring Guide](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/MonitoringOverview.html)
 
-[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://awsauroralabsmy.com/provisioned/perf-observability/)
+[Hands-on Workshop - Observe and Identify SQL Performance Issues in Amazon Aurora](https://catalog.workshops.aws/awsauroramysql/en-US/provisioned/perfobserve)
 
 

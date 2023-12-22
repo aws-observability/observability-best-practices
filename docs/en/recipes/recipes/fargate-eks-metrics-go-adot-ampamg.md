@@ -1,6 +1,6 @@
 # Using AWS Distro for OpenTelemetry in EKS on Fargate with Amazon Managed Service for Prometheus
 
-In this recipe we show you how to instrument a [sample Go application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus) and
+In this recipe we show you how to instrument a [sample Go application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app) and
 use [AWS Distro for OpenTelemetry (ADOT)](https://aws.amazon.com/otel) to ingest metrics into
 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) .
 Then we're using [Amazon Managed Grafana](https://aws.amazon.com/grafana/) to visualize the metrics.
@@ -14,23 +14,23 @@ to demonstrate a complete scenario.
     This guide will take approximately 1 hour to complete.
 
 ## Infrastructure
-In the following section we will be setting up the infrastructure for this recipe. 
+In the following section we will be setting up the infrastructure for this recipe.
 
 ### Architecture
 
-The ADOT pipeline enables us to use the 
-[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) to 
+The ADOT pipeline enables us to use the
+[ADOT Collector](https://github.com/aws-observability/aws-otel-collector) to
 scrape a Prometheus-instrumented application, and ingest the scraped metrics to
-Amazon Managed Service for Prometheus. 
+Amazon Managed Service for Prometheus.
 
 ![Architecture](../images/adot-metrics-pipeline.png)
 
-The ADOT Collector includes two components specific to Prometheus: 
+The ADOT Collector includes two components specific to Prometheus:
 
-* the Prometheus Receiver, and 
+* the Prometheus Receiver, and
 * the AWS Prometheus Remote Write Exporter.
 
-!!! info 
+!!! info
     For more information on Prometheus Remote Write Exporter check out:
     [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter).
 
@@ -39,7 +39,7 @@ The ADOT Collector includes two components specific to Prometheus:
 
 * The AWS CLI is [installed](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) and [configured](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) in your environment.
 * You need to install the [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) command in your environment.
-* You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment. 
+* You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment.
 * You have [Docker](https://docs.docker.com/get-docker/) installed into your environment.
 
 ### Create EKS on Fargate cluster
@@ -64,7 +64,7 @@ eksctl create cluster -f cluster-config.yaml
 
 ### Create ECR repository
 
-In order to deploy our application to EKS we need a container repository. 
+In order to deploy our application to EKS we need a container repository.
 You can use the following command to create a new ECR repository in your account.
 Make sure to set `<YOUR_REGION>` as well.
 
@@ -95,21 +95,21 @@ aws amp list-workspaces
 
 ### Set up ADOT Collector
 
-Download [adot-collector-fargate.yaml](./fargate-eks-metrics-go-adot-ampamg/adot-collector-fargate.yaml) 
+Download [adot-collector-fargate.yaml](./fargate-eks-metrics-go-adot-ampamg/adot-collector-fargate.yaml)
 and edit this YAML doc with the parameters described in the next steps.
 
-In this example, the ADOT Collector configuration uses an annotation `(scrape=true)` 
-to tell which target endpoints to scrape. This allows the ADOT Collector to distinguish 
+In this example, the ADOT Collector configuration uses an annotation `(scrape=true)`
+to tell which target endpoints to scrape. This allows the ADOT Collector to distinguish
 the sample app endpoint from `kube-system` endpoints in your cluster.
-You can remove this from the re-label configurations if you want to scrape a different sample app. 
+You can remove this from the re-label configurations if you want to scrape a different sample app.
 
 Use the following steps to edit the downloaded file for your environment:
 
-1\. Replace `<YOUR_REGION>` with your current region. 
+1\. Replace `<YOUR_REGION>` with your current region.
 
 2\. Replace `<YOUR_ENDPOINT>` with the remote write URL of your workspace.
 
-Get your AMP remote write URL endpoint by executing the following queries. 
+Get your AMP remote write URL endpoint by executing the following queries.
 
 First, get the workspace ID like so:
 
@@ -128,22 +128,22 @@ YOUR_ENDPOINT=$(aws amp describe-workspace \
 ```
 
 !!! warning
-    Make sure that `YOUR_ENDPOINT` is in fact the remote write URL, that is, 
+    Make sure that `YOUR_ENDPOINT` is in fact the remote write URL, that is,
     the URL should end in `/api/v1/remote_write`.
 
-After creating deployment file we can now apply this to our cluster by using the following command: 
+After creating deployment file we can now apply this to our cluster by using the following command:
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
 ```
 
 !!! info
-    For more information check out the [AWS Distro for OpenTelemetry (ADOT) 
+    For more information check out the [AWS Distro for OpenTelemetry (ADOT)
     Collector Setup](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup).
 
 ### Set up AMG
 
-Set up a new AMG workspace using the 
+Set up a new AMG workspace using the
 [Amazon Managed Grafana – Getting Started](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) guide.
 
 Make sure to add "Amazon Managed Service for Prometheus" as a datasource during creation.
@@ -153,10 +153,10 @@ Make sure to add "Amazon Managed Service for Prometheus" as a datasource during 
 ## Application
 
 In this recipe we will be using a
-[sample application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus) 
+[sample application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app)
 from the AWS Observability repository.
 
-This Prometheus sample app generates all four Prometheus metric types 
+This Prometheus sample app generates all four Prometheus metric types
 (counter, gauge, histogram, summary) and exposes them at the `/metrics` endpoint.
 
 ### Build container image
@@ -169,7 +169,7 @@ git clone https://github.com/aws-observability/aws-otel-community.git && \
 cd ./aws-otel-community/sample-apps/prometheus
 ```
 
-First, set the region (if not already done above) and account ID to what is applicable in your case. 
+First, set the region (if not already done above) and account ID to what is applicable in your case.
 Replace `<YOUR_REGION>` with your current region. For
 example, in the Bash shell this would look as follows:
 
@@ -219,7 +219,7 @@ Edit [prometheus-sample-app.yaml](./fargate-eks-metrics-go-adot-ampamg/prometheu
 to contain your ECR image path. That is, replace `ACCOUNTID` and `AWS_DEFAULT_REGION` in the
 file with your own values:
 
-``` 
+```
     # change the following to your container image:
     image: "ACCOUNTID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
@@ -236,7 +236,7 @@ Now that you have the infrastructure and the application in place, we will
 test out the setup, sending metrics from the Go app running in EKS to AMP and
 visualize it in AMG.
 
-### Verify your pipeline is working 
+### Verify your pipeline is working
 
 To verify if the ADOT collector is scraping the pod of the sample app and
 ingests the metrics into AMP, we look at the collector logs.
@@ -247,7 +247,7 @@ Enter the following command to follow the ADOT collector logs:
 kubectl -n adot-col logs adot-collector -f
 ```
 
-One example output in the logs of the scraped metrics from the sample app 
+One example output in the logs of the scraped metrics from the sample app
 should look like the following:
 
 ```
@@ -262,7 +262,7 @@ Metric #0
 Descriptor:
      -> Name: test_gauge0
      -> Description: This is my gauge
-     -> Unit: 
+     -> Unit:
      -> DataType: DoubleGauge
 DoubleDataPoints #0
 StartTime: 0
@@ -278,7 +278,7 @@ Value: 0.000000
     In the following command replace `$AMP_ENDPOINT` with the endpoint for your AMP workspace:
 
     ```
-    $ awscurl --service="aps" \ 
+    $ awscurl --service="aps" \
             --region="$AWS_DEFAULT_REGION" "https://$AMP_ENDPOINT/api/v1/query?query=adot_test_gauge0"
     {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"adot_test_gauge0"},"value":[1606512592.493,"16.87214000011479"]}]}}
     ```
@@ -296,7 +296,7 @@ Further, use the following guides to create your own dashboard in Amazon Managed
 * [User Guide: Dashboards](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
 * [Best practices for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
-That's it, congratulations you've learned how to use ADOT in EKS on Fargate to 
+That's it, congratulations you've learned how to use ADOT in EKS on Fargate to
 ingest metrics.
 
 ## Cleanup
@@ -321,4 +321,4 @@ Remove the  IAM role:
 aws delete-role --role-name adot-collector-role
 ```
 
-Finally, remove the Amazon Managed Grafana  workspace by removing it via the AWS console. 
+Finally, remove the Amazon Managed Grafana  workspace by removing it via the AWS console.

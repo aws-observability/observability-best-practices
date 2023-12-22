@@ -134,3 +134,10 @@ func TestCreateDimensionsLabel(t *testing.T) {
 		}
 	}
 }
+
+func TestCreateCustomLabels(t *testing.T) {
+	output := createExtraLabels("env:prod,aws_account:1234567")
+	if len(output) != 2 {
+		t.Errorf("Environment custom labels not well generated")
+	}
+}

@@ -1,0 +1,17 @@
+{
+"Version": "2012-10-17",
+"Statement": [
+{
+"Effect": "Allow",
+"Principal": {
+"AWS": [
+"arn:aws:iam::1234567890:role/EKS-Kubecost-cost-role",
+"arn:aws:iam::1234567890:role/EKS-Kubecost-prom-role"
+]
+},
+"Action": "sts:AssumeRole",
+"Condition": {}
+}
+]
+}
+

@@ -29,6 +29,11 @@ For more details or assistance setting up, see:
 mkdocs serve
 ```
 
+If you want to Build and run Japanese content
+```
+mkdocs serve -f mkdocs.ja.yaml
+```
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.

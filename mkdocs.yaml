@@ -1,10 +1,10 @@
 site_name: AWS Observability Best Practices
-docs_dir: "docs/en"
-copyright: "Copyright &copy; Amazon 2023"
-site_author: "AWS"
-site_url: "https://aws-observability.github.io/observability-best-practices/"
-repo_name: "aws-observability/observability-best-practices"
-repo_url: "https://github.com/aws-observability/observability-best-practices"
+docs_dir: 'docs/en'
+copyright: 'Copyright &copy; Amazon 2023'
+site_author: 'AWS'
+site_url: 'https://aws-observability.github.io/observability-best-practices/'
+repo_name: 'aws-observability/observability-best-practices'
+repo_url: 'https://github.com/aws-observability/observability-best-practices'
 
 theme:
   logo: ./images/aws-logo.png
@@ -26,9 +26,79 @@ extra_css:
 nav:
   - Home: index.md
   - Guides:
-      - Best practices overview: guides/index.md
-      - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
+    - Best practices overview: guides/index.md
+    - Choosing a tracing agent: guides/choosing-a-tracing-agent.md
 
+    - Cost:
+      - Using Kubecost: guides/cost/kubecost.md
+      - Visualizing costs:
+        - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
+        - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
+        - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
+        - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
+        - Amazon Prometheus real-time cost monitoring : guides/cost/cost-visualization/AmazonManagedServiceforPrometheus.md
+        - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
+      #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
+
+    - Databases:
+      - Aurora and RDS: guides/databases/rds-and-aurora.md
+    # - Creating an observability strategy: guides/strategy.md
+
+    - EC2 Monitoring: guides/ec2/ec2-monitoring.md
+    - ECS best practices:
+      - AWS Native:
+        - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
+      - Open Source:
+        - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
+        - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
+    - EKS best practices:
+      - AWS Native:
+        - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
+        - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
+        - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
+        - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
+      - Open Source:
+        - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
+    - Serverless best practices:
+      - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
+      - Open Source: guides/serverless/oss/lambda-based-observability-adot.md
+
+    - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
+
+    - Operational:
+      - ADOT Collector:
+        - Operating At Scale: guides/operational/adot-at-scale/operating-adot-collector.md
+        - Manually Instrumenting Spring Integration Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
+      - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
+      - Percentiles: guides/operational/business/sla-percentile.md
+      - Key Performance Indicators: guides/operational/business/key-performance-indicators.md
+      - Alerting:
+        - Prometheus Alert Manager: guides/operational/alerting/amp-alertmgr.md
+      - GitOps:
+        - Grafana Operator with Amazon Managed Grafana: guides/operational/gitops-with-amg/gitops-with-amg.md
+      - Dashboards:
+        - CloudWatch Dashboard: tools/cloudwatch-dashboard.md
+
+    - Signal collection:
+      - Embedded Metric Format: guides/signal-collection/emf.md
+
+
+    - Partners:
+      - Databricks: guides/partners/databricks.md
+
+    # - APM: guides/apm.md
+    # - Containers: guides/containers.md
+    # - Dashboards: guides/dashboards.md
+    # - Full-stack: guides/full-stack.md
+
+      # - APM: guides/apm.md
+      # - Containers: guides/containers.md
+      # - Dashboards: guides/dashboards.md
+      # - Full-stack: guides/full-stack.md
+      - Databases:
+          - Aurora and RDS: guides/databases/rds-and-aurora.md
+      # - Creating an observability strategy: guides/strategy.md
       - Cost:
           - Using Kubecost: guides/cost/kubecost.md
           - Visualizing costs:
@@ -36,78 +106,9 @@ nav:
               - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
               - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
               - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
-              - Amazon Prometheus real-time cost monitoring: guides/cost/cost-visualization/AmazonManagedServiceforPrometheus.md
               - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
         #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
-
-      - Databases:
-          - Aurora and RDS: guides/databases/rds-and-aurora.md
-      # - Creating an observability strategy: guides/strategy.md
-
-      - EC2 Monitoring: guides/ec2/ec2-monitoring.md
-      - ECS best practices:
-          - AWS Native:
-              - Collecting system metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-1.md
-              - Collecting service metrics: guides/containers/aws-native/ecs/best-practices-metrics-collection-2.md
-          - Open Source:
-              - Collecting system metrics: guides/containers/oss/ecs/best-practices-metrics-collection-1.md
-              - Collecting service metrics: guides/containers/oss/ecs/best-practices-metrics-collection-2.md
-      - EKS best practices:
-          - AWS Native:
-              - CloudWatch Container Insights: guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md
-              - Log aggregation: guides/containers/aws-native/eks/log-aggregation.md
-              - API server monitoring: guides/containers/aws-native/eks/eks-api-server-monitoring.md
-              - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
-          - Open Source:
-              - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
-      - Serverless best practices:
-          - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
-          - Open Source: guides/serverless/oss/lambda-based-observability-adot.md
-
-      - Hybrid and Multicloud: guides/hybrid-and-multicloud.md
-
-      - Operational:
-          - ADOT Collector:
-              - Operating At Scale: guides/operational/adot-at-scale/operating-adot-collector.md
-              - Manually Instrumenting Spring Integration Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
-          - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
-          - Percentiles: guides/operational/business/sla-percentile.md
-          - Key Performance Indicators: guides/operational/business/key-performance-indicators.md
-          - Alerting:
-              - Prometheus Alert Manager: guides/operational/alerting/amp-alertmgr.md
-          - GitOps:
-              - Grafana Operator with Amazon Managed Grafana: guides/operational/gitops-with-amg/gitops-with-amg.md
-          - Dashboards:
-              - CloudWatch Dashboard: tools/cloudwatch-dashboard.md
-
-      - Signal collection:
-          - Embedded Metric Format: guides/signal-collection/emf.md
-
-      - Partners:
-          - Databricks: guides/partners/databricks.md
-
-          # - APM: guides/apm.md
-          # - Containers: guides/containers.md
-          # - Dashboards: guides/dashboards.md
-          # - Full-stack: guides/full-stack.md
-
-          # - APM: guides/apm.md
-          # - Containers: guides/containers.md
-          # - Dashboards: guides/dashboards.md
-          # - Full-stack: guides/full-stack.md
-          - Databases:
-              - Aurora and RDS: guides/databases/rds-and-aurora.md
-          # - Creating an observability strategy: guides/strategy.md
-          - Cost:
-              - Using Kubecost: guides/cost/kubecost.md
-              - Visualizing costs:
-                  - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
-                  - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
-                  - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
-                  - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
-                  - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
-            #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
-      - Observability Maturity Model: guides/observability-maturity-model.md
+    - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
       - Logs: signals/logs.md
       - Metrics: signals/metrics.md
@@ -117,25 +118,25 @@ nav:
     # - Anomalies: signals/anomalies.md
 
   - Tools:
-      - AWS Observability Accelerator: tools/observability_accelerator.md
-      - CloudWatch Agent: tools/cloudwatch_agent.md
-      # - Amazon Managed Prometheus: tools/amp.md
-      - Alarms: tools/alarms.md
-      # - Alerting and Incident Management: tools/alerting_and_incident_management.md
-      - Dashboards: tools/dashboards.md
-      # - Embedded Metric Format: tools/emf.md
-      - Internet Monitor: tools/internet_monitor.md
-      - Logs:
-          - Logs: tools/logs/index.md
-          - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
-          - Data Protection:
-              - CloudWatch Logs Data Protection Policies for SLG/EDU: tools/logs/dataprotection/data-protection-policies.md
-      - Metrics: tools/metrics.md
-      - Real User Monitoring: tools/rum.md
-      - Synthetic Testing: tools/synthetics.md
-      - Service Level Objectives (SLOs): tools/slos.md
-      # - Tracing with ADOT: tools/adot-traces.md
-      - Tracing with AWS X-Ray: tools/xray.md
+    - AWS Observability Accelerator: tools/observability_accelerator.md
+    - CloudWatch Agent: tools/cloudwatch_agent.md
+    # - Amazon Managed Prometheus: tools/amp.md
+    - Alarms: tools/alarms.md
+    # - Alerting and Incident Management: tools/alerting_and_incident_management.md
+    - Dashboards: tools/dashboards.md
+    # - Embedded Metric Format: tools/emf.md
+    - Internet Monitor: tools/internet_monitor.md
+    - Logs:
+      - Logs: tools/logs/index.md
+      - CloudWatch Logs Insights Example Queries: tools/logs/logs-insights-examples.md
+      - Data Protection:
+        - CloudWatch Logs Data Protection Policies for SLG/EDU: tools/logs/dataprotection/data-protection-policies.md
+    - Metrics: tools/metrics.md
+    - Real User Monitoring: tools/rum.md
+    - Synthetic Testing: tools/synthetics.md
+    - Service Level Objectives (SLOs): tools/slos.md
+    # - Tracing with ADOT: tools/adot-traces.md
+    - Tracing with AWS X-Ray: tools/xray.md
 
   - Curated recipes:
       - Recipes: recipes/index.md
@@ -185,19 +186,20 @@ extra:
       lang: ja
 
 markdown_extensions:
-  - toc:
-      permalink: true
-  - admonition
-  - codehilite
-  - footnotes
-  - pymdownx.critic
-  - pymdownx.highlight:
-      anchor_linenums: true
-      line_spans: __span
-      pygments_lang_class: true
-  - pymdownx.inlinehilite
-  - pymdownx.snippets
-  - pymdownx.superfences
+    - toc:
+        permalink: true
+    - admonition
+    - codehilite
+    - footnotes
+    - pymdownx.critic
+    - pymdownx.highlight:
+        anchor_linenums: true
+        line_spans: __span
+        pygments_lang_class: true
+    - pymdownx.inlinehilite
+    - pymdownx.snippets
+    - pymdownx.superfences
+
 
 plugins:
   - search

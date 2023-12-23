@@ -1,6 +1,6 @@
 # Amazon Managed Grafana
 
-[Amazon Managed Grafana][amg-main] はオープンソースの Grafana をベースにしたフルマネージドサービスで、サーバーのプロビジョニング、ソフトウェアの構成と更新、運用環境における Grafana のセキュリティ確保とスケーリングといった手間をかけることなく、メトリクス、ログ、トレースを分析できます。チームと可視化ダッシュボードを作成し、複数のデータソースに接続して共有できます。
+[Amazon Managed Grafana][amg-main] は、オープンソースの Grafana をベースにした、フルマネージドなサービスです。これにより、サーバーのプロビジョニング、ソフトウェアの構成と更新、Grafana を運用環境でセキュアにスケーリングするための重労働を行うことなく、メトリクス、ログ、トレースを分析できます。チームと可視化ダッシュボードを作成、探索、共有でき、複数のデータソースに接続できます。
 
 以下のレシピをご確認ください。
 
@@ -11,24 +11,24 @@
 
 ## 認証とアクセスコントロール
 
-- [アイデンティティプロバイダとのダイレクト SAML インテグレーション][amg-saml]
-- [アイデンティティプロバイダ(OneLogin、Ping Identity、Okta、Azure AD) を SSO とインテグレート][amg-idps]
-- [SAMLv2 を介した Google 認証のインテグレーション][amg-google-idps] 
-- [カスタマーマネージド IAM ロールを使用したクロスアカウント データソースの Amazon Managed Grafana の設定][amg-cross-account-access]
-- [Grafana Teams を使用した Amazon Managed Grafana での細かいアクセスコントロール][amg-grafana-teams]
+- [アイデンティティプロバイダとの直接的な SAML 統合][amg-saml]
+- [シングルサインオンのためのアイデンティティプロバイダ(OneLogin、Ping Identity、Okta、Azure AD)の統合][amg-idps] 
+- [SAMLv2 を介した Google 認証の統合][amg-google-idps]
+- [カスタマーマネージド IAM ロールを使用したクロスアカウント Amazon Managed Grafana データソースの設定][amg-cross-account-access]
+- [Grafana Teams を使用した Amazon Managed Grafana でのきめ細かいアクセスコントロール][amg-grafana-teams]
 
 ## データソースとビジュアライゼーション
 
 - [Amazon Managed Grafana での Athena の使用][amg-plugin-athena]
-- [Amazon Managed Grafana での Redshift の使用][amg-plugin-redshift] 
+- [Amazon Managed Grafana での Redshift の使用][amg-plugin-redshift]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した statsd からのカスタムメトリクスの表示][amg-amp-statsd]
-- [カスタマーマネージド IAM ロールを使用したクロスアカウントデータソースの設定][amg-xacc-ds]
+- [顧客管理 IAM ロールを使用したクロスアカウント データソースの設定][amg-xacc-ds]
 
-## その他のリソース
+## その他の資料
 - [ハイブリッド環境のモニタリング][amg-hybridenvs]
-- [規制対象のマルチテナント環境でのGrafanaとLokiの管理][grafana-loki-regenv]
-- [Amazon Managed Service for PrometheusとAmazon Managed Grafanaを使用したAmazon EKS Anywhereのモニタリング][amg-anywhere-monitoring]
-- [Amazon Managed Grafana のワークショップ][amg-oow]
+- [規制対象のマルチテナント環境での Grafana と Loki の管理][grafana-loki-regenv]
+- [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere のモニタリング][amg-anywhere-monitoring]
+- [Getting Started ワークショップ][amg-oow]
 
 
 [amg-main]: https://aws.amazon.com/grafana/

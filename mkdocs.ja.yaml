@@ -92,23 +92,6 @@ nav:
           # - Containers: guides/containers.md
           # - Dashboards: guides/dashboards.md
           # - Full-stack: guides/full-stack.md
-
-          # - APM: guides/apm.md
-          # - Containers: guides/containers.md
-          # - Dashboards: guides/dashboards.md
-          # - Full-stack: guides/full-stack.md
-          - Databases:
-              - Aurora and RDS: guides/databases/rds-and-aurora.md
-          # - Creating an observability strategy: guides/strategy.md
-          - Cost:
-              - Using Kubecost: guides/cost/kubecost.md
-              - Visualizing costs:
-                  - AWS Observability services and Cost: guides/cost/cost-visualization/cost.md
-                  - Amazon CloudWatch: guides/cost/cost-visualization/amazon-cloudwatch.md
-                  - Amazon Grafana: guides/cost/cost-visualization/amazon-grafana.md
-                  - Amazon Prometheus: guides/cost/cost-visualization/amazon-prometheus.md
-                  - AWS X-Ray: guides/cost/cost-visualization/aws-xray.md
-            #- Optimizing CloudWatch cost: guides/cost/reducing-cw-cost.md
       - Observability Maturity Model: guides/observability-maturity-model.md
   - Data types:
       - Logs: signals/logs.md

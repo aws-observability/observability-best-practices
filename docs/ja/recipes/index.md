@@ -1,84 +1,84 @@
 # レシピ
 
-ここでは、カリキュラムガイダンス、ハウツー、その他のリソースへのリンクを掲載しています。これらは、[Amazon Managed Service for Prometheus][amp] や [Amazon Managed Grafana][amg] などのマネージドサービス、[OpenTelemetry][otel] や [Fluent Bit][fluentbit] などのエージェントを含む、さまざまなユースケースへのオブザーバビリティ (o11y) の適用を支援します。ここでのコンテンツは AWS ツールに限定されているわけではなく、多くのオープンソースプロジェクトが参照されています。
+ここでは、[Amazon Managed Service for Prometheus][amp]や[Amazon Managed Grafana][amg]といったマネージドサービス、[OpenTelemetry][otel]や[Fluent Bit][fluentbit]といったエージェントなど、さまざまなユースケースにおけるオブザーバビリティの適用に役立つ、厳選されたガイダンス、ハウツー、その他のリソースへのリンクを紹介しています。コンテンツは AWS ツールに限定されているわけではなく、多くのオープンソースプロジェクトが参照されています。
 
-開発者とインフラ担当者のニーズに均等に対応するために、レシピの多くが「幅広い対象」となっています。探索して、あなたが実現しようとしていることに最適なソリューションを見つけてください。
+開発者とインフラ担当者の両方のニーズに対応するために、レシピの多くが「幅広い対象」となっています。探索して、あなたが達成しようとしていることに最適なソリューションを見つけることをおすすめします。 
 
 !!! info
-    ここにあるコンテンツは、ソリューションアーキテクト、プロフェッショナルサービス、および他のお客様からのフィードバックに基づいて実際の顧客とのエンゲージメントから派生しています。ここで見つけることができるものはすべて、お客様自身の環境で実装されたものです。
+    ここにあるコンテンツは、ソリューションアーキテクト、プロフェッショナルサービス、およびその他のお客様からのフィードバックによって導き出されたものです。ここで紹介されているものはすべて、お客様自身の環境で実際に実装されたものです。
 
-o11y スペースについての考え方は次のとおりです。[6 つの次元][dimensions]に分解し、それらを組み合わせて特定のソリューションに到達できます。
+オブザーバビリティ領域を次のように考えています: 
+[6つのディメンション][dimensions]に分解し、それらを組み合わせることで、特定のソリューションに到達できます:
 
-| 次元 | 例 |
+| ディメンション | 例 |
 |---------------|--------------|
-| 送信先 | [Prometheus][amp] · [Grafana][amg] · [OpenSearch][aes] · [CloudWatch][cw] · [Jaeger][jaeger] |  
+| デスティネーション | [Prometheus][amp] · [Grafana][amg] · [OpenSearch][aes] · [CloudWatch][cw] · [Jaeger][jaeger] |  
 | エージェント | [ADOT][adot] · [Fluent Bit][fluentbit] · CW エージェント · X-Ray エージェント |
 | 言語 | [Java][java] · Python · .NET · [JavaScript][nodejs] · Go · Rust |
 | インフラとデータベース | [RDS][rds] · [DynamoDB][dynamodb] · [MSK][msk] |
-| コンピューティングユニット | [Batch][batch] · [ECS][ecs] · [EKS][eks] · [AEB][beans] · [Lambda][lambda] · [AppRunner][apprunner] |  
-| コンピューティングエンジン | [Fargate][fargate] · [EC2][ec2] · [Lightsail][lightsail] |
+| コンピュートユニット | [Batch][batch] · [ECS][ecs] · [EKS][eks] · [AEB][beans] · [Lambda][lambda] · [AppRunner][apprunner] |  
+| コンピュートエンジン | [Fargate][fargate] · [EC2][ec2] · [Lightsail][lightsail] |
 
-!!! question "例としてのソリューション要件"
-    EKS 上の Fargate で実行している Python アプリのロギングソリューションが必要です。ログを S3 バケットに格納してさらに消費することが目的です。
+!!! question "ソリューション要件の例"
+    Fargate 上の EKS で実行している Python アプリのログソリューションが必要です。ログを S3 バケットに格納してさらに消費することが目標です。
 
-このニーズに適合するスタックの 1 つは、次のとおりです。
+このニーズを満たすスタックの一例は、次のとおりです:
 
-1. *送信先*: データのさらなる消費用の S3 バケット
-1. *エージェント*: EKS からログデータを出力する FluentBit  
+1. *デスティネーション*: データのさらなる消費のための S3 バケット
+1. *エージェント*: EKS からログデータを出力する FluentBit
 1. *言語*: Python
 1. *インフラとデータベース*: 該当なし
-1. *コンピューティングユニット*: Kubernetes (EKS)
-1. *コンピューティングエンジン*: EC2
+1. *コンピュートユニット*: Kubernetes (EKS)  
+1. *コンピュートエンジン*: EC2
 
-すべての次元を特定する必要はなく、時にはどこから始めればいいか判断しにくいこともあります。
-さまざまなパスを試して、特定のレシピの長所と短所を比較してください。
+すべてのディメンションを指定する必要はなく、どこから始めればいいか判断しにくいこともあります。さまざまなパスを試し、特定のレシピの長所と短所を比較してください。
 
-ナビゲーションを簡素化するために、6つの次元を以下のカテゴリにグループ化しています:
+ナビゲーションを簡略化するために、6つのディメンションを次のカテゴリにグループ化しています:
 
-- **コンピューティング別**: コンピューティングエンジンとユニットをカバー
-- **インフラとデータ別**: インフラとデータベースをカバー  
-- **言語別**: 言語をカバー
-- **送信先別**: テレメトリと分析をカバー
-- **タスク**: 異常検知、アラート、トラブルシューティングなどをカバー
+- **By Compute**: コンピュートエンジンとユニットをカバー
+- **By Infra & Data**: インフラとデータベースをカバー  
+- **By Language**: 言語をカバー
+- **By Destination**: テレメトリと分析をカバー
+- **Tasks**: 異常検知、アラート、トラブルシューティングなどをカバー
 
-[次元の詳細を見る... ](/observability-best-practices/ja/recipes/dimensions/)
+[ディメンションの詳細を見る...](/observability-best-practices/ja/recipes/dimensions/)
 
 ## 使い方
 
-トップナビゲーションメニューを使用して、概略的な選択から特定のインデックスページを参照できます。
-例えば、「By Compute」->「EKS」->「Fargate」->「Logs」です。
+トップナビゲーションメニューを使用して、特定のインデックスページを参照できます。
+たとえば、`By Compute` -> `EKS` ->`Fargate` -> `Logs` のように選択していきます。
 
-あるいは、`/` キーまたは `s` キーを押してサイト内を検索できます。
+または、`/` キーまたは `s` キーを押してサイト内検索ができます。
 
 ![o11y space](images/search.png)  
 
-!!! info "ライセンス"  
-    このサイトに公開されているすべてのレシピは、[MIT-0][mit0]ライセンスを介して利用できます。これは、帰属の要件を削除した通常のMITライセンスの変更です。
+!!! info "ライセンス"
+    このサイトで公開されているすべてのレシピは、[MIT-0][mit0]ライセンスを介して利用できます。これは、通常の MIT ライセンスを変更したもので、帰属表示の必要性がなくなっています。
 
 ## 貢献の仕方
 
-計画していることについて [discussion][discussion] を開始し、そこから始めましょう。
+計画していることについて[ディスカッション][discussion]を開始し、そこから始めましょう。
 
 ## 詳細を知る
 
-このサイトのレシピは、ベストプラクティスのコレクションです。さらに、レシピで使用しているオープンソースプロジェクトのステータスや、マネージドサービスの詳細を学べる場所がいくつかあるので、以下をチェックしてください。
+このサイトのレシピは、ベストプラクティスのコレクションです。さらに、レシピで使用しているオープンソースプロジェクトやマネージドサービスのステータスを知ることができる場所がいくつかあるので、以下をチェックしてください。
 
-- [observability @ aws][o11yataws] AWS の方々がプロジェクトやサービスについて語るプレイリストです。  
-- [AWS オブザーバビリティ ワークショップ](/observability-best-practices/ja/recipes/workshops/) 体系的な学習ができるワークショップです。
-- [AWS モニタリングとオブザーバビリティ][o11yhome] ケーススタディやパートナーへのリンクがあるホームページです。
+- [observability @ aws][o11yataws] - AWS の人々がプロジェクトやサービスについて語るプレイリストです。
+- [AWS オブザーバビリティ ワークショップ](/observability-best-practices/ja/recipes/workshops/) - 提供されているものを体系的に試すことができます。  
+- [AWS モニタリングとオブザーバビリティ][o11yhome] ホームページ - ケーススタディやパートナーへのリンクがあります。
 
-[aes]: aes.md "Amazon Elasticsearch Service"  
-[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
+[aes]: aes.md "Amazon Elasticsearch Service"
+[adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"  
 [amg]: amg.md "Amazon Managed Grafana"
-[amp]: amp.md "Amazon Managed Service for Prometheus"  
+[amp]: amp.md "Amazon Managed Service for Prometheus"
 [batch]: https://aws.amazon.com/batch/ "AWS Batch"
 [beans]: https://aws.amazon.com/elasticbeanstalk/ "AWS Elastic Beanstalk"
 [cw]: cw.md "Amazon CloudWatch"
 [dimensions]: dimensions.md
-[dynamodb]: dynamodb.md "Amazon DynamoDB"  
+[dynamodb]: dynamodb.md "Amazon DynamoDB"
 [ec2]: https://aws.amazon.com/ec2/ "Amazon EC2"
 [ecs]: ecs.md "Amazon Elastic Container Service"
-[eks]: eks.md "Amazon Elastic Kubernetes Service"
+[eks]: eks.md "Amazon Elastic Kubernetes Service" 
 [fargate]: https://aws.amazon.com/fargate/ "AWS Fargate"
 [fluentbit]: https://fluentbit.io/ "Fluent Bit"
 [jaeger]: https://www.jaegertracing.io/ "Jaeger"
@@ -93,5 +93,5 @@ o11y スペースについての考え方は次のとおりです。[6 つの次
 [msk]: msk.md "Amazon Managed Streaming for Apache Kafka"
 [mit0]: https://github.com/aws/mit-0 "MIT-0"
 [discussion]: https://github.com/aws-observability/observability-best-practices/discussions "Discussions"
-[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube playlist"
-[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS Observability home"
+[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube プレイリスト"
+[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS オブザーバビリティ ホームページ"

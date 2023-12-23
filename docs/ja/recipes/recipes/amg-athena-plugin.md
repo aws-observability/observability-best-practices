@@ -1,6 +1,6 @@
-# Amazon Managed GrafanaでAthenaを使用する
+# Amazon Managed Grafana で Athena を使用する
 
-このレシピでは、[Amazon Athena][athena]を[Amazon Managed Grafana][amg]で使用する方法を示します。Athena は、Amazon S3 のデータを標準 SQL を使用して分析できる、サーバーレスかつインタラクティブなクエリサービスです。この統合は、[Grafana 用 Athena データソース][athena-ds]によって実現されています。これはオープンソースのプラグインで、DIY Grafana インスタンスや Amazon Managed Grafana にプリインストールされています。
+このレシピでは、[Amazon Athena][athena] を [Amazon Managed Grafana][amg] で使用する方法を紹介します。Athena は、Amazon S3 のデータを標準 SQL を使用して分析できるサーバーレスの対話型クエリサービスです。この統合は、[Grafana 用 Athena データソース][athena-ds] によって実現されています。これはオープンソースのプラグインで、DIY Grafana インスタンスで使用できるだけでなく、Amazon Managed Grafana にもプリインストールされています。
 
 !!! note
     このガイドの完了には約 20 分かかります。
@@ -12,26 +12,27 @@
 
 ## インフラストラクチャ
 
-まず、必要なインフラストラクチャをセットアップしましょう。
+まず、必要なインフラストラクチャを設定しましょう。
 
-### Amazon Athenaの設定
+### Amazon Athena の設定
 
-Athenaを2つの異なるシナリオで使用する方法を見ていきましょう: 1つはGeomapプラグインを使用した地理データに関するシナリオ、もう1つはVPCフローログに関連するセキュリティの高いシナリオです。
+Athena を 2 つの異なるシナリオで使用する方法を確認したいと考えています。1 つは Geomap プラグインとともに地理データを使用したシナリオで、もう 1 つは VPC フローログを使用したセキュリティ関連のシナリオです。
 
-まず、Athenaが設定され、データセットがロードされていることを確認しましょう。
+まず、Athena が設定され、データセットがロードされていることを確認しましょう。 
 
 !!! warning
-    これらのクエリを実行するには、Amazon Athenaコンソールを使用する必要があります。Grafanaはデータソースへの読み取り専用アクセス権しかないため、データの作成や更新には使用できません。
+    これらのクエリを実行するには、Amazon Athena コンソールを使用する必要があります。
+	一般に、Grafana はデータソースへの読み取り専用アクセス権を持っているため、データの作成や更新に使用できません。
 
 #### 地理データの読み込み
 
-この最初のユースケースでは、[AWS のオープンデータレジストリ][awsod] からデータセットを使用します。
-具体的には、地理データをモチベーションとしたユースケースのために Athena プラグインの使用法を示すために、[OpenStreetMap][osm](OSM) を使用します。
+この最初のユースケースでは、[Registry of Open Data on AWS][awsod] からのデータセットを使用します。
+より具体的には、地理データをモチベーションとしたユースケースのために Athena プラグインの使用法を示すために、[OpenStreetMap][osm](OSM)を使用します。
 そのためには、まず OSM データを Athena に取り込む必要があります。
 
-そこで、まず Athena で新しいデータベースを作成します。 [Athena コンソール][athena-console] にアクセスし、次の 3 つの SQL クエリを使用して OSM データをデータベースにインポートします。
+そこで、まず Athena で新しいデータベースを作成します。[Athena コンソール][athena-console]にアクセスし、以下の 3つの SQL クエリを使用して、OSM データをデータベースにインポートします。
 
-クエリ 1:
+クエリ1:
 
 ```sql
 CREATE EXTERNAL TABLE planet (
@@ -52,7 +53,7 @@ STORED AS ORCFILE
 LOCATION 's3://osm-pds/planet/';
 ```
 
-クエリ 2:  
+クエリ2: 
 
 ```sql
 CREATE EXTERNAL TABLE planet_history (
@@ -74,7 +75,7 @@ STORED AS ORCFILE
 LOCATION 's3://osm-pds/planet-history/';
 ```
 
-クエリ 3:   
+クエリ3:
 
 ```sql
 CREATE EXTERNAL TABLE changesets (
@@ -100,22 +101,21 @@ LOCATION 's3://osm-pds/changesets/';
 
 #### VPC フローログデータの読み込み
 
-2つ目のユースケースは、セキュリティを目的としたものです。[VPC Flow Logs][vpcflowlogs] を使用したネットワークトラフィックの分析です。
+2 つ目のユースケースは、セキュリティを目的としたものです。[VPC フローログ][vpcflowlogs] を使用してネットワークトラフィックを分析します。
 
 まず、EC2 に VPC フローログを生成させる必要があります。
-したがって、まだ行っていない場合は、ネットワークインターフェイスレベル、サブネットレベル、VPC レベルのいずれかで [VPC フローログを作成][createvpcfl] します。
+したがって、まだ行っていない場合は、ネットワークインターフェイスレベル、サブネットレベル、VPC レベルのいずれかで [VPC フローログを作成][createvpcfl] します。  
 
 !!! note
-    クエリパフォーマンスを向上させ、ストレージフットプリントを最小限に抑えるために、VPC フローログを [Parquet][parquet] というネストされたデータをサポートする列指向のストレージフォーマットに格納します。
+    クエリパフォーマンスを向上させ、ストレージフットプリントを最小限に抑えるために、VPC フローログを列指向のストレージフォーマットである [Parquet][parquet] に格納します。Parquet はネストされたデータをサポートしています。
 
-当社のセットアップでは、ネットワークインターフェイス、サブネット、VPC のどのオプションを選択しても問題ありません。
-下図のように Parquet 形式で S3 バケットにパブリッシュする限りです。
+当社の設定では、(ネットワークインターフェース、サブネット、VPC) を選択するかは関係ありません。下記のように Parquet 形式で S3 バケットに公開するだけで構いません。
 
 ![EC2 コンソールの「フローログの作成」パネルのスクリーンショット](../images/ec2-vpc-flowlogs-creation.png)
 
-次に、[Athena コンソール][athena-console] を介して、OSM データをインポートしたのと同じデータベース、または必要に応じて新しいデータベースに、VPC フローログデータのテーブルを作成します。
+次に、[Athena コンソール][athena-console] から、OSM データをインポートしたのと同じデータベース、または必要に応じて新しいデータベースに、VPC フローログデータのテーブルを作成します。
 
-次の SQL クエリを使用し、`VPC_FLOW_LOGS_LOCATION_IN_S3` を独自のバケット/フォルダに置き換えていることを確認してください。
+次の SQL クエリを使用し、`VPC_FLOW_LOGS_LOCATION_IN_S3` を独自のバケット/フォルダに置き換えてください。
 
 
 ```sql
@@ -160,31 +160,31 @@ LOCATION 'VPC_FLOW_LOGS_LOCATION_IN_S3'
 s3://allmyflowlogs/AWSLogs/12345678901/vpcflowlogs/eu-west-1/2021/
 ```
 
-Athena でデータセットが利用可能になったので、Grafana に進みましょう。
+これで Athena でデータセットが利用可能になったので、Grafana に進みましょう。
 
-### Grafanaのセットアップ
+### Grafanaの設定
 
-Grafanaインスタンスが必要なので、たとえば[Getting Started][amg-getting-started]ガイドを使用して、新しい[Amazon Managed Grafanaワークスペース][amg-workspace]をセットアップするか、既存のものを使用します。
+Grafanaインスタンスが必要なので、[Amazon Managed Grafanaワークスペース][amg-workspace]を新規作成するか、既存のものを使用します。 新規作成する場合は、[Getting Started][amg-getting-started]ガイドを参考にしてください。
 
 !!! warning
-    AWSデータソース構成を使用するには、まずAmazon Managed Grafanaコンソールに移動して、Athenaリソースを読み取るために必要なIAMポリシーをワークスペースに付与するサービス管理IAMロールを有効にします。
+    AWSデータソースの構成を使用するには、まずAmazon Managed Grafanaコンソールに移動し、Athenaリソースを読み取るために必要なIAMポリシーをワークスペースに付与する、サービスマネージドIAMロールを有効にしてください。
     さらに、次の点に注意してください。
 
-	1. 使用する予定のAthenaワークグループは、キー`GrafanaDataSource`と値`true`でタグ付けする必要があります。これは、サービス管理されたアクセス許可でワークグループを使用できるようにするためです。
-	1. サービス管理されたIAMポリシーは、`grafana-athena-query-results-`で始まるクエリ結果バケットへのアクセスのみを許可するので、その他のバケットの場合はアクセス許可を手動で追加する必要があります。 
-	1. クエリ対象の基礎となるデータソースへの`s3:Get*`および`s3:List*`アクセス許可は手動で追加する必要があります。
+	1. 使用する予定のAthenaワークグループは、キー`GrafanaDataSource`と値`true`というタグが付いている必要があります。これにより、サービスマネージドアクセス許可でそのワークグループを使用できるようになります。
+	1. サービスマネージドIAMポリシーは、`grafana-athena-query-results-`で始まるクエリ結果バケットへのアクセスのみを許可するので、他のバケットを使用する場合はアクセス許可を手動で追加する必要があります。 
+	1. クエリ対象の基礎となるデータソースへの`s3:Get*`および`s3:List*`アクセス許可を手動で追加する必要があります。
 
 
-Athenaデータソースの設定には、左側のツールバーから下のAWSアイコンを選択し、「Athena」を選択します。プラグインがAthenaデータソースの検出に使用するデフォルトリージョンを選択し、使用したいアカウントを選択して、最後に「データソースの追加」を選択します。
+Athenaデータソースの設定では、左側のツールバーから下のAWSアイコンを選択し、「Athena」を選択します。プラグインがデータソース検出に使用するデフォルトリージョンを選択し、アカウントを選択した後、「Add data source」を選択します。
 
-あるいは、次の手順に従ってAthenaデータソースを手動で追加および構成できます。
+あるいは、次の手順でAthenaデータソースを手動で追加および構成できます。
 
-1. 左側のツールバーの「構成」アイコンをクリックし、「データソースの追加」をクリックします。 
+1. 左側のツールバーの「Configurations」アイコンをクリックし、「Add data source」をクリックします。  
 1. 「Athena」と入力します。
-1. [オプション] 認証プロバイダーの構成(推奨: ワークスペースIAMロール)
-1. ターゲットのAthenaデータソース、データベース、ワークグループを選択します。 
-1. ワークグループに出力ロケーションがまだ構成されていない場合は、クエリ結果に使用するS3バケットとフォルダを指定します。 サービス管理ポリシーからメリットを得るには、バケット名が `grafana-athena-query-results-` で始まる必要があることに注意してください。
-1. 「保存してテスト」をクリックします。
+1. [オプション] 認証プロバイダーの構成 (推奨: ワークスペースIAMロール)。
+1. 対象のAthenaデータソース、データベース、ワークグループを選択します。  
+1. ワークグループに出力場所がまだ構成されていない場合は、クエリ結果に使用するS3バケットとフォルダを指定します。 サービスマネージドポリシーの恩恵を受けるには、バケット名が `grafana-athena-query-results-` で始まる必要があることに注意してください。
+1. 「Save & test」をクリックします。
 
 次のような画面が表示されるはずです。
 
@@ -192,9 +192,9 @@ Athenaデータソースの設定には、左側のツールバーから下のAW
 
 ## 使い方
 
-次に、Grafana から Athena データセットを使う方法を見ていきましょう。
+次に、Grafana から Athena データセットを使用する方法を見ていきましょう。
 
-### 地理データの利用
+### 地理データを使用する
 
 Athena の [OpenStreetMap][osm](OSM) データを使用すると、「ある施設がどこにあるか」など、さまざまな質問に答えることができます。その実際の使用例を見ていきましょう。
 
@@ -215,19 +215,19 @@ LIMIT 500;
 ```
 
 !!!info
-    上記のクエリでは、ラスベガス地域は緯度が `36.1` から `36.3` の間、経度が `-115.5` から `-114.5` の間の領域として定義されています。
-	これを変数のセット(各コーナーごとに 1 つ)に変換し、Geomap プラグインを他の地域に適応させることができます。
+    上記クエリのラスベガス地域は、緯度が `36.1` から `36.3` の間、経度が `-115.5` から `-114.5` の間と定義されています。
+	これを各コーナーの変数セットに変換し、Geomap プラグインを他の地域に適応させることができます。
 
-上記のクエリを使用して OSM データを可視化するには、次のような [osm-sample-dashboard.json](./amg-athena-plugin/osm-sample-dashboard.json) からサンプルダッシュボードをインポートできます。
+上記のクエリを使用して OSM データを可視化するには、[osm-sample-dashboard.json](./amg-athena-plugin/osm-sample-dashboard.json) からサンプルダッシュボードをインポートできます。そのダッシュボードは次のようになります。
 
-![AMG の OSM ダッシュボードのスクリーンショット](../images/amg-osm-dashboard.png)
+![AMG の OSM ダッシュボードのスクリーンショット](../images/amg-osm-dashboard.png)  
 
 !!!note
-    上記のスクリーンショットでは、左パネルの Geomap 可視化を使用してデータポイントをプロットしています。
+    上記のスクリーンショットでは、データポイントをプロットするために左パネルの Geomap 可視化を使用しています。
 
-### VPC フローログデータの利用
+### VPC フローログデータの使用
 
-VPC フローログデータを分析し、SSH と RDP のトラフィックを検出するには、
+VPC フローログデータを分析し、SSH と RDP トラフィックを検出するには、
 次の SQL クエリを使用します。
 
 SSH/RDP トラフィックの表形式の概要を取得:
@@ -243,7 +243,7 @@ dstport IN (22, 3389)
 ORDER BY start ASC;
 ```
 
-受け入れられたバイトと拒否されたバイトの時系列ビューを取得:
+受け入れたバイト数と拒否したバイト数の時系列ビューを取得:
 
 
 ```sql
@@ -260,24 +260,25 @@ ORDER BY start ASC;
 
 !!! tip
     Athena でクエリするデータ量を制限する場合は、
-    `$__timeFilter` マクロを使用することを検討してください。
+	`$__timeFilter` マクロを使用することを検討してください。
 
-VPC フローログデータを視覚化するには、
-[vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json) からインポートできるサンプルダッシュボードを使用できます。
-そのダッシュボードは次のようになります:
+VPC フローログデータを視覚化するには、[vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json) 
+からサンプルダッシュボードをインポートできます。
+ダッシュボードの表示は次のとおりです:
 
 ![AMG の VPC フローログダッシュボードのスクリーンショット](../images/amg-vpcfl-dashboard.png)
 
-ここから、Amazon Managed Grafana で独自のダッシュボードを作成するために、次のガイドを使用できます:
+ここから、Amazon Managed Grafana で独自のダッシュボードを作成するために、
+次のガイドを使用できます:
 
 * [ユーザーガイド: ダッシュボード](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
 * [ダッシュボード作成のベストプラクティス](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
-以上で、Grafana から Athena を使用する方法を学ぶことができました。お疲れさまでした。
+以上で、Grafana から Athena を使用する方法を学習することができました。お疲れ様でした。
 
 ## クリーンアップ
 
-使用していた Athena データベースから OSM データを削除し、コンソールから Amazon Managed Grafana ワークスペースを削除します。
+使用していた Athena データベースから OSM データを削除し、コンソールから Amazon Managed Grafana ワークスペースを削除してください。
 
 [athena]: https://aws.amazon.com/athena/
 [amg]: https://aws.amazon.com/grafana/  
@@ -286,9 +287,9 @@ VPC フローログデータを視覚化するには、
 [aws-cli-conf]: https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html
 [amg-getting-started]: https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/
 [awsod]: https://registry.opendata.aws/
-[osm]: https://aws.amazon.com/blogs/big-data/querying-openstreetmap-with-amazon-athena/  
+[osm]: https://aws.amazon.com/blogs/big-data/querying-openstreetmap-with-amazon-athena/
 [vpcflowlogs]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
-[createvpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html#flow-logs-s3-create-flow-log
+[createvpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs-s3.html#flow-logs-s3-create-flow-log  
 [athena-console]: https://console.aws.amazon.com/athena/
 [amg-workspace]: https://console.aws.amazon.com/grafana/home#/workspaces
 [parquet]: https://github.com/apache/parquet-format

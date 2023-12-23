@@ -1,11 +1,11 @@
 # Amazon DynamoDB
 
-[Amazon DynamoDB][ddb-main] は、どの規模でもミリ秒単位のパフォーマンスを実現するキーバリューとドキュメントのデータベースです。これは、完全マネージドのマルチリージョン、マルチアクティブ、耐障害性の高いデータベースで、組み込みのセキュリティ、バックアップとリストア、インターネットスケールのアプリケーションのためのインメモリキャッシングがあります。
+[Amazon DynamoDB][ddb-main] は、あらゆる規模で1桁ミリ秒のパフォーマンスを実現するキーバリューとドキュメントのデータベースです。これは、ビルトインのセキュリティ、バックアップとリストア、インターネットスケールのアプリケーションのためのインメモリキャッシングを備えた、完全マネージドのマルチリージョン、マルチアクティブ、耐障害性の高いデータベースです。
 
-以下のレシピをチェックしてください:
+以下のレシピをご確認ください:
 
-- [運用認識のために Amazon DynamoDB を監視][ddb-opawa]
-- [Amazon Elasticsearch Service で DynamoDB データを検索][ddb-aes-ws]  
+- [オペレーショナルアウェアネスのための Amazon DynamoDB のモニタリング][ddb-opawa]
+- [Amazon Elasticsearch Service での DynamoDB データの検索][ddb-aes-ws]  
 - [DynamoDB Contributor Insights][cwci-oow]
 
 [ddb-main]: https://aws.amazon.com/dynamodb/

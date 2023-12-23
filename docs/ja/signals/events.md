@@ -1,64 +1,74 @@
-# Events
+# イベント
 
-## What do we mean by events?
-Many architectures are event driven these days. In event driven architectures, events are signals from different systems which we capture and pass onto other systems. An event is typically a change in state, or an update.
+## イベントとは何を意味しているのでしょうか
 
-For example, in an eCommerce system you may have an event when an item is added to the cart. This event could be captured and passed on to the shopping cart part of the system to update the number of items and cost of the cart, along with the item details.
+現在、多くのアーキテクチャがイベント駆動型です。イベント駆動型アーキテクチャでは、イベントは異なるシステムからの信号であり、これをキャプチャして他のシステムに渡します。イベントは通常、状態の変化や更新を表します。
 
-!!! info
-	For some customers an event may be a *milestone*, such as a the completion of a purchase. There is a case to be made for treating the aggregate moment of a workflow conclusion as an event, but for our purposes we do not consider a milestone itself to be an event.
-
-## Why are events useful?
-There are two main ways in which events can be useful in your Observability solution. One is to visualize events in the context of other data, and the other is to enable you to take action based on an event. 
-
-!!! success
-	Events are intended to give valuable information, either to people or machines, about changes and actions in your workload.
-
-## Visualizing events
-There are many event signals which are not directly from your application, but may have an impact on your application performance, or provide additional insight into root cause. Dashboards are the most common mechanism for visualizing your events, though some analytics or business intelligence tools also work in this context. Even email or instant messaging applications can receive visualizations readily.
-
-
-Consider a timechart of application performance, such as time to place an order on your web front end. The time chart lets you see there has been a step change in the response time a few days ago. It might be useful to know if there have been any recent deployments. Consider being able to see a timechart of recent deployments alongside, or superimposed on the same chart?
-
-![Visualizing events](images/visualizing_events.png)
-
-!!! tip
-	Consider which events might be useful to you to understand the wider context. The events that are important to you might be code deployments, infrastructure change events, adding new data (such as publishing new items for sale, or bulk adding new users), or modifying or adding functionality (such as changing the way people add items to their cart).
-
-!!! success
-	Visualize events along with other important metric data so you can [correlate events](../../signals/metrics/#correlate-with-operational-metric-data).
-
-## Taking action on events
-In the Observability world, a triggered alarm is a common event. This event would likely contain an identifier for the alarm, the alarm state (such as `IN ALARM`, or `OK`), and details of what triggered this. In many cases this alarm event will be detected and an email notification sent. This is an example of an action on an alarm. 
-
-Alarm notification is critical in observability. This is how we let the right people know there is an issue. However, when action on events mature in your observability solution, it can automatically remediate the issue without human intervention. 
-
-
-### But what action to take?
-We cannot automate action without first understanding what action will ease the detected issue. At the start of your Observability journey, this may often not be obvious. However, the more experience you have remediating issues, the more you can fine tune your alarms to catch areas where there is a known action. There may be built in actions in the alarm service you have, or you may need to capture the alarm event yourself and script the resolution.
+例えば、eコマースシステムでは、アイテムがカートに追加されたときにイベントが発生する場合があります。このイベントはキャプチャされ、システムのショッピングカート部分に渡され、アイテムの詳細とともに、カート内のアイテム数とコストが更新されます。
 
 !!! info
-	Auto-scaling systems, such as a [horizontal pod autoscaling](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/) are just an implementation of this principal. Kubernetes simply abstracts this automation for you.
+	一部のお客様にとって、イベントは購入の完了などの「マイルストーン」である可能性があります。ワークフローの結論をまとめてイベントとして扱うことには一理あるでしょうが、今回の目的では、マイルストーン自体をイベントとは考えません。
 
-Having access to data on alarm frequency and resolution will help you decide if there is a possibility for automation. Whilst wider scope alarms based on issue symptoms are great at capturing issues, you may find you need more specific criteria to link to auto remediation.
-
-As you do this, consider integrating this with your incident management/ticketing/ITSM tool. Many organizations track incidents, and associated resolutions and metrics such as Mean Time to Resolve (MTTR). If you do this, consider also capturing your *automated* resolutions in a similar manner. This lets you understand the type and proportion of issues which are automatically remediated, but also allows you to look for underlying patterns and issues. 
-
-!!! tip
-	Just because someone didn't have to manually fix an issue, doesn't mean you shouldn't be looking at the underlying cause. 
-
-For example, consider a server restart every time it becomes unresponsive. The restart allows the system to continue functioning, but what is causing the unresponsiveness. How often this happens, and if there is a pattern (for example that matches with report generation, or high users, or system backups), will determine the priority and resources you put into understanding and fixing the root cause.
+## イベントが役立つ理由
+イベントがオブザーバビリティソリューションで役立つ主な2つの方法があります。1つは他のデータとのコンテキストでイベントを視覚化すること、もう1つはイベントに基づいてアクションを実行できることです。
 
 !!! success
-	Consider delivery of *every* event related to your [key performance indicators](../../signals/metrics/#know-your-key-performance-indicatorskpis-and-measure-them) into a message bus for consumption. And note that some observability solutions do this transparently without explicit configuration requirements.
+	イベントは、ワークロードの変更やアクションについて、人やマシンのいずれかに価値のある情報を提供することを目的としています。
 
-## Getting your events into your Observability platform
-Once you have identified the events which are important to you, you'll need to consider how best to get them into your Observability platform. 
-Your platform may have a specific way to capture events, or you may have to bring them in as logs or metric data. 
+## イベントの可視化
+アプリケーションから直接発生しているものではないが、アプリケーションのパフォーマンスに影響を与えたり、根本原因の洞察を提供したりする可能性のある多くのイベントシグナルがあります。ダッシュボードはイベントを可視化するための最も一般的なメカニズムですが、分析やビジネスインテリジェンスのツールでもこのコンテキストで機能します。電子メールやインスタントメッセージングアプリケーションでも可視化を容易に受信できます。
+
+たとえば、Web フロントエンドで注文を処理する時間など、アプリケーションのパフォーマンスの時系列を考えてみましょう。時系列から、応答時間が数日前に大きく変化したことがわかります。最近のデプロイがあったかどうかを知ることが役立つかもしれません。最近のデプロイの時系列を並べて表示したり、同じチャートに重ねて表示したりできると便利です。
+
+![イベントの可視化](images/visualizing_events.png)
+
+!!! tip
+	より広いコンテキストを理解するのに役立つイベントを考えてみてください。コードのデプロイ、インフラストラクチャの変更イベント、新しいデータの追加(新しい商品の公開やユーザーの一括追加など)、機能の変更や追加(カートに商品を追加する方法の変更など)など、自分にとって重要なイベントがあるかもしれません。
+
+!!! success
+	他の重要なメトリクスデータとともにイベントを可視化することで、[イベントと運用メトリクスを相関付ける](../../signals/metrics/#correlate-with-operational-metric-data)ことができます。
+
+## イベントへの対応
+オブザーバビリティの世界では、アラームの発報は一般的なイベントです。このイベントには、通常、アラームの識別子、アラームの状態(``IN ALARM`` や ``OK`` など)、発報のトリガーとなった詳細が含まれます。多くの場合、このアラームイベントが検知され、E メール通知が送信されます。これは、アラームへのアクションの例です。
+
+アラーム通知は、オブザーバビリティにとって極めて重要です。これは、問題が発生したことを適切な人に知らせる方法なのです。ただし、イベントへの対応がオブザーバビリティソリューションで成熟するにつれて、人為的な介入なしに問題を自動的に修復できるようになります。
+
+### どのようなアクションを取るべきか?
+
+まず問題の緩和に役立つアクションを理解することなく、アクションを自動化することはできません。
+Observability の旅の始まりでは、これがしばしば明白でない場合があります。
+ただし、問題の修復経験が豊富になるほど、既知のアクションがある領域をキャッチするようアラームを微調整できるようになります。
+使用しているアラームサービスに組み込みのアクションがある場合もあれば、アラームイベントを自分でキャプチャして解決策をスクリプト化する必要がある場合もあります。
+
+!!! info
+	[水平 Pod オートスケーリング](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/)などの自動スケーリングシステムは、この原則の実装です。Kubernetes はこの自動化を抽象化しているだけです。
+
+アラームの頻度と解決に関するデータへのアクセスは、自動化の可能性を判断するのに役立ちます。
+問題の兆候に基づく広い範囲のアラームは問題のキャプチャには優れていますが、自動修復にリンクするためにはより具体的な基準が必要になることがあります。
+
+これを行う際は、インシデント管理/チケット/ITSM ツールとの統合を検討してください。
+多くの組織では、インシデントと、関連する解決策や平均修復時間 (MTTR) などのメトリクスを追跡しています。
+これを行っている場合は、*自動化された* 解決策も同様の方法でキャプチャすることを検討してください。
+これにより、自動的に修復された問題の種類と割合を理解できるだけでなく、基礎となるパターンと問題を探すこともできます。
+
+!!! tip 
+	誰かが手動で問題を修正する必要がなかったからといって、根本原因を探るべきではないということではありません。
+
+たとえば、サーバーが応答しなくなったときに再起動する場合を考えてみましょう。
+再起動によりシステムの機能が維持されますが、応答しなくなる原因は何でしょうか。
+これがどのくらいの頻度で発生するか、パターンがあるかどうか(たとえばレポート生成や高負荷時、システムバックアップと一致するなど)を確認することで、根本原因の理解と修正に注力し、優先順位とリソースを決定することができます。 
+
+!!! success
+	[key performance indicators](../../signals/metrics/#know-your-key-performance-indicatorskpis-and-measure-them) に関連するイベントを消費のためにメッセージバスに*すべて*配信することを検討してください。
+明示的な構成要件なしにこれを透過的に行う Observability ソリューションもあることに注意してください。
+
+## オブザーバビリティプラットフォームへのイベントの取り込み
+重要なイベントを特定したら、次にそれらをオブザーバビリティプラットフォームに取り込む最適な方法を検討する必要があります。
+プラットフォームにはイベントをキャプチャする特定の方法がある場合があります。それ以外の場合は、ログやメトリクスデータとして取り込む必要があります。
 
 !!! note
-	One simple way to get the information in is to write the events to a log file and ingest them in the same way as you do your other log events.
+	シンプルな取り込み方法の 1 つは、イベントをログファイルに書き込み、他のログイベントと同じ方法でインジェストすることです。
 
-Explore how your system will let you visualize these. Can you identify events which are related to your application? Can you combine data onto a single chart? Even if there is nothing specific, you should at least be able to create a timechart alongside your other data to visually correlate. Keep the time axis the same, and consider stacking these vertically for easy comparison.
+これらのイベントをどのように視覚化できるかを調べてください。アプリケーションに関連するイベントを特定できますか? データを 1 つのチャートに組み合わせることができますか? 特定のものがなくても、少なくとも他のデータと時間軸を合わせたタイムチャートを作成し、視覚的に相関付けることができるはずです。時間軸は同じに保ち、簡単に比較できるように垂直に重ねてプロットすることを検討してください。
 
-![Visualizing events as stacked charts](images/visualizing_events_stacked.png)
+![イベントの視覚化を積み上げたチャートとして](images/visualizing_events_stacked.png)

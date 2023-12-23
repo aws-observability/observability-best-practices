@@ -1,10 +1,10 @@
-# Amazon Managed Service for Prometheus を使用した EKS 上に構成された App Mesh 環境の監視
+# App Mesh 環境を EKS 上に構成し、Amazon Managed Service for Prometheus で監視する
 
-このレシピでは、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) クラスター内の [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy メトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP) に取り込み、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) (AMG) でカスタムダッシュボードを作成して、マイクロサービスの健全性とパフォーマンスを監視する方法を示します。
+このレシピでは、[Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) クラスター内の [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy メトリクスを [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) (AMP) に取り込み、[Amazon Managed Grafana](https://aws.amazon.com/grafana/) (AMG) 上にカスタムダッシュボードを作成して、マイクロサービスの正常性とパフォーマンスを監視する方法を示します。
 
-実装の一環として、AMP ワークスペースを作成し、Kubernetes 用 App Mesh コントローラーをインストールして、Envoy コンテナを Pod に注入します。EKS クラスターに構成された [Grafana Agent](https://github.com/grafana/agent) を使用して Envoy メトリクスを収集し、AMP に書き込みます。最後に、AMG ワークスペースを作成し、データソースとして AMP を構成し、カスタムダッシュボードを作成します。
+実装の一環として、AMP ワークスペースを作成し、Kubernetes 用 App Mesh コントローラーをインストールして、Envoy コンテナを Pod に挿入します。EKS クラスターに構成された [Grafana Agent](https://github.com/grafana/agent) を使用して Envoy メトリクスを収集し、AMP に書き込みます。最後に、AMG ワークスペースを作成し、データソースとして AMP を構成し、カスタムダッシュボードを作成します。  
 
-!!! 注意
+!!! note
     このガイドの完了には約 45 分かかります。
 
 ## インフラストラクチャ
@@ -12,31 +12,32 @@
 
 ### アーキテクチャ
 
+
 ![アーキテクチャ](../images/monitoring-appmesh-environment.png)
 
-Grafana エージェントは、Envoy メトリクスをスクレイプし、AMP のリモートライトエンドポイントを介してそれらを AMP にインジェストするように構成されています。
+Grafana エージェントは Envoy メトリクスをスクレイプし、AMP のリモートライトエンドポイントを介して AMP に取り込むように構成されています。
 
 !!! info
     AMP 用の Prometheus リモートライトエクスポータの詳細については、
-    [Prometheus Remote Write Exporter for AMP の概要](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)をご覧ください。
+    [AMP 用 Prometheus リモートライトエクスポータの概要](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)をご覧ください。
 
 ### 前提条件
 
-* AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
-* 環境に [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) コマンドをインストールする必要があります。
-* 環境に [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
-* [Docker](https://docs.docker.com/get-docker/) が環境にインストールされている必要があります。
-* AWS アカウントに AMP ワークスペースが構成されている必要があります。
-* [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html) をインストールする必要があります。
-* [AWS SSO](https://docs.aws.amazon.com/singlesignon/latest/userguide/step1.html) を有効にする必要があります。
+* AWS CLI が[インストール](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-install.html)され、[設定](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html)されていること。
+* [eksctl](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/eksctl.html) コマンドがインストールされていること。  
+* [kubectl](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/install-kubectl.html) がインストールされていること。
+* [Docker](https://www.docker.com/get-started/) がインストールされていること。
+* AMP ワークスペースが AWS アカウントに設定されていること。  
+* [Helm](https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html) がインストールされていること。
+* [AWS SSO](https://docs.aws.amazon.com/ja_jp/singlesignon/latest/userguide/step1.html) が有効化されていること。
 
 ### EKS クラスターのセットアップ
 
-まず、サンプルアプリケーションを実行するために App Mesh で有効化された EKS クラスターを作成します。
+まず、サンプルアプリケーションを実行するために App Mesh が有効になった EKS クラスターを作成します。
 `eksctl` CLI を使用して、[eks-cluster-config.yaml](./servicemesh-monitoring-ampamg/eks-cluster-config.yaml) を使ってクラスターをデプロイします。
 このテンプレートは、EKS で新しいクラスターを作成します。
 
-テンプレートファイルを編集し、AMP で利用できるリージョンのいずれかを設定してください:
+テンプレートファイルを編集し、AMP で利用できるリージョンのいずれかにリージョンを設定します:
 
 * `us-east-1`
 * `us-east-2`
@@ -44,18 +45,18 @@ Grafana エージェントは、Envoy メトリクスをスクレイプし、AMP
 * `eu-central-1`
 * `eu-west-1`
 
-セッションでこのリージョンを上書きするようにしてください。例えば、Bash シェルで次のように実行します:
+セッションでこのリージョンを上書きするようにしてください。たとえば、Bash シェルで次のように実行します:
 
 ```
 export AWS_REGION=eu-west-1
 ```
 
-次のコマンドを使用してクラスターを作成します: 
+次のコマンドを使用してクラスターを作成します:
 
 ```
 eksctl create cluster -f eks-cluster-config.yaml
 ```
-これにより、`AMP-EKS-CLUSTER` という名前の EKS クラスターと、EKS 用 App Mesh コントローラーが使用する `appmesh-controller` という名前のサービスアカウントが作成されます。
+これにより、`AMP-EKS-CLUSTER` という名前の EKS クラスターと、App Mesh コントローラー for EKS が使用する `appmesh-controller` という名前のサービスアカウントが作成されます。
 
 ### App Mesh Controller のインストール
 
@@ -73,18 +74,18 @@ helm upgrade -i appmesh-controller eks/appmesh-controller \
      --set serviceAccount.name=appmesh-controller
 ```
 
-### AMP のセットアップ
+### AMP の設定
 AMP ワークスペースは、Envoy から収集された Prometheus メトリクスを取り込むために使用されます。
-ワークスペースは、テナント専用の論理 Cortex サーバーです。ワークスペースは、更新、一覧表示、
-説明、削除などの管理へのアクセス制御と、メトリクスの取り込みとクエリを細かく制御することができます。
+ワークスペースは、テナントに専用の論理 Cortex サーバーです。ワークスペースは、更新、一覧表示、
+説明、削除などの管理を承認するための細かいアクセス制御をサポートし、メトリクスの取り込みとクエリを行います。
 
-AWS CLI を使用してワークスペースを作成します。
+AWS CLI を使用してワークスペースを作成します:
 
 ```
 aws amp create-workspace --alias AMP-APPMESH --region $AWS_REGION
 ```
 
-必要な Helm リポジトリを追加します。
+必要な Helm リポジトリを追加します:
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts && \
@@ -95,26 +96,25 @@ AMP の詳細については、[AMP の概要](https://docs.aws.amazon.com/prome
 
 ### メトリクスのスクレイピングと取り込み
 
-AMP は、Kubernetes クラスター内のコンテナ化ワークロードから直接運用メトリクスをスクレイピングしません。
+AMP は、Kubernetes クラスター内のコンテナ化されたワークロードから直接運用メトリクスをスクレイプしません。
 このタスクを実行するには、Prometheus サーバーまたは 
 [AWS Distro for OpenTelemetry Collector](https://github.com/aws-observability/aws-otel-collector)
-や Grafana エージェントなどの OpenTelemetry エージェントをデプロイおよび管理する必要があります。
-このレシピでは、Grafana エージェントを設定して Envoy メトリクスをスクレイプし、AMP と AMG を使用して分析するプロセスを紹介します。
+のような OpenTelemetry エージェントをデプロイして管理する必要があります。
+このレシピでは、Envoy メトリクスをスクレイプし、AMP と AMG を使用して分析するための Grafana エージェントの構成プロセスを紹介します。
 
-#### Grafana Agent の設定
+#### Grafana エージェントの設定
 
-Grafana Agent は、完全な Prometheus サーバーを実行する軽量な代替手段です。
-Prometheus Exporter の検出とスクレイピング、およびメトリクスの Prometheus 互換バックエンドへの送信に必要な部分を保持します。
-Grafana Agent には、AWS Identity and Access Management(IAM)認証の AWS Signature Version 4(Sigv4)のネイティブサポートも含まれています。
+Grafana エージェントは、完全な Prometheus サーバーを実行する軽量な代替手段です。
+Prometheus エクスポーターの検出とスクレイピング、およびメトリクスの Prometheus 互換バックエンドへの送信に必要な部分を保持します。
+Grafana エージェントには、AWS Identity and Access Management (IAM) 認証のための AWS Signature Version 4 (Sigv4) のネイティブサポートも含まれます。
 
-ここでは、Prometheus メトリクスを AMP に送信するための IAM ロールを設定する手順を説明します。
-EKS クラスターに Grafana Agent をインストールし、メトリクスを AMP に転送します。
+ここから、Prometheus メトリクスを AMP に送信するための IAM ロールの設定手順を説明します。 
+EKS クラスターに Grafana エージェントをインストールし、メトリクスを AMP に転送します。
 
-#### 権限の設定
-Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、マネージドサービスの各クライアントリクエストを認証および認可するために、Sigv4 を使用して有効な AWS 資格情報で署名する必要があります。
+#### アクセス許可の設定
+Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、Sigv4 を使用して有効な AWS 資格情報で署名する必要があり、これにより、マネージドサービスの各クライアントリクエストを認証および承認します。
 
-Grafana Agent は、Kubernetes のサービスアカウントの ID で実行するために EKS クラスターにデプロイできます。
-サービスアカウントの IAM ロール (IRSA) を使用すると、Kubernetes のサービスアカウントに IAM ロールを関連付けることができるため、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。
+Grafana Agent は、Kubernetes サービスアカウントの ID で実行するように EKS クラスターにデプロイできます。IAM ロールを使用したサービスアカウント (IRSA) では、IAM ロールを Kubernetes サービスアカウントに関連付けることができます。これにより、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。
 
 IRSA の設定を次のように準備します。
 
@@ -129,28 +129,27 @@ export REMOTE_WRITE_URL="https://aps-workspaces.$AWS_REGION.amazonaws.com/worksp
 
 次の手順を自動化するために、[gca-permissions.sh](./servicemesh-monitoring-ampamg/gca-permissions.sh) シェルスクリプトを使用できます(プレースホルダー変数 `YOUR_EKS_CLUSTER_NAME` を EKS クラスターの名前に置き換えてください)。
 
-* AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを持つ `EKS-GrafanaAgent-AMP-ServiceAccount-Role` という名前の IAM ロールを作成します。
-* `grafana-agent` 名前空間の下に、IAM ロールに関連付けられた `grafana-agent` という名前の Kubernetes サービスアカウントを作成します。
-* IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダーの間の信頼関係を作成します。
+* AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを使用して、`EKS-GrafanaAgent-AMP-ServiceAccount-Role` という名前の IAM ロールを作成します。
+* `grafana-agent` 名前空間の下に `grafana-agent` という名前の Kubernetes サービスアカウントを作成し、それを IAM ロールに関連付けます。 
+* IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダー間の信頼関係を作成します。
 
-`gca-permissions.sh` スクリプトを実行するには、`kubectl` と `eksctl` の CLI ツールが必要です。
-これらは Amazon EKS クラスターにアクセスするように設定する必要があります。
+`gca-permissions.sh` スクリプトを実行するには、`kubectl` と `eksctl` CLI ツールが必要です。これらは Amazon EKS クラスターにアクセスするように構成する必要があります。
 
-次に、Envoy メトリクスを抽出するスクレイプ設定を含むマニフェストファイル [grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml) を作成し、Grafana Agent をデプロイします。
+次に、[grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml) というマニフェストファイルを作成し、Envoy メトリクスを抽出するスクレイプ構成を記述し、Grafana Agent をデプロイします。
 
 !!! 注意
-    記事作成時点では、このソリューションはデーモンセットのサポートがない Fargate 上の EKS では機能しません。
+    記事作成時点では、このソリューションはデーモンセットのサポートがない EKS on Fargate では機能しません。
 
-この例では、`grafana-agent` という名前のデーモンセットと、`grafana-agent-deployment` という名前のデプロイメントをデプロイします。 `grafana-agent` デーモンセットは、クラスター上のポッドからメトリクスを収集し、`grafana-agent-deployment` デプロイメントは、EKS コントロールプレーンなど、クラスター外に存在するサービスからメトリクスを収集します。
+この例では、`grafana-agent` という名前のデーモンセットと `grafana-agent-deployment` という名前のデプロイメントをデプロイします。`grafana-agent` デーモンセットはクラスター上の Pod からメトリクスを収集し、`grafana-agent-deployment` デプロイメントは、クラスター外に存在する EKS コントロールプレーンなどのサービスからメトリクスを収集します。
 
 ```
 kubectl apply -f grafana-agent.yaml
 ```
-`grafana-agent` がデプロイされると、メトリクスを収集して、指定された AMP ワークスペースにインジェストします。次に、EKS クラスターにサンプルアプリケーションをデプロイして、メトリクスの分析を開始します。
+`grafana-agent` がデプロイされると、メトリクスを収集して指定された AMP ワークスペースにインジェストします。次に、EKS クラスターにサンプルアプリケーションをデプロイして、メトリクスの分析を開始します。
 
 ## サンプルアプリケーション
 
-アプリケーションをインストールし、Envoy コンテナを注入するには、Kubernetes 用の AppMesh コントローラーを使用します。
+アプリケーションをインストールし、Envoy コンテナを注入するために、Kubernetes 用の AppMesh コントローラーを使用します。
 
 まず、例のリポジトリをクローンしてベースアプリケーションをインストールします。
 
@@ -164,7 +163,7 @@ git clone https://github.com/aws/aws-app-mesh-examples.git
 kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/1_base_application
 ```
 
-ポッドのステータスを確認し、実行されていることを確認します。
+ポッドのステータスを確認し、実行中であることを確認します。
 
 ```
 $ kubectl -n prod get all
@@ -182,7 +181,7 @@ kubectl apply -f aws-app-mesh-examples/examples/apps/djapp/2_meshed_application/
 kubectl rollout restart deployment -n prod dj jazz-v1 metal-v1
 ```
 
-これで、各 Pod で 2 つのコンテナが実行されているはずです。
+これで、各 Pod で 2 つのコンテナが実行されていることがわかります。
 
 ```
 $ kubectl -n prod get all
@@ -206,7 +205,7 @@ done
 
 ### AMG ワークスペースの作成
 
-AMG ワークスペースの作成については、[Getting Started with AMG](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) ブログ記事の手順に従ってください。
+AMG ワークスペースを作成するには、[AMG の概要](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) ブログ記事の手順に従ってください。
 ダッシュボードへのユーザーアクセスを許可するには、AWS SSO を有効にする必要があります。ワークスペースの作成後、Grafana ワークスペースへのアクセスを個々のユーザーまたはユーザーグループに割り当てることができます。
 デフォルトでは、ユーザーのユーザータイプは viewer です。ユーザーロールに基づいてユーザータイプを変更します。データソースとして AMP ワークスペースを追加し、ダッシュボードの作成を開始します。
 
@@ -215,8 +214,8 @@ AMG ワークスペースの作成については、[Getting Started with AMG](h
 
 ![Creating AMP Workspace](../images/workspace-creation.png)
 
-### AMG のデータソースを設定する
-AMP を AMG のデータソースとして設定するには、`Data sources` セクションで `Configure in Grafana` を選択します。これにより、ブラウザで Grafana ワークスペースが起動します。
+### AMG のデータソースとして AMP を設定する
+AMG でデータソースとして AMP を設定するには、`Data sources` セクションで `Configure in Grafana` を選択します。これにより、ブラウザで Grafana ワークスペースが起動します。
 ブラウザで Grafana ワークスペースの URL を手動で起動することもできます。
 
 ![データソースの設定](../images/configuring-amp-datasource.png)
@@ -227,28 +226,28 @@ AMP を AMG のデータソースとして設定するには、`Data sources` �
 ### AMG ダッシュボードの設定
 
 データソースが設定されたら、Envoy メトリクスを分析するためにカスタムダッシュボードをインポートします。
-これには事前定義されたダッシュボードを使用するので、以下に示すように `Import` を選択し、
-ID `11022` を入力します。これにより、Envoy Global ダッシュボードがインポートされるので、
+ここでは事前に定義されたダッシュボードを使用するので、`Import` (下図参照) を選択し、
+ID `11022` を入力します。これにより Envoy Global ダッシュボードがインポートされるので、
 Envoy メトリクスの分析を開始できます。
 
 ![Custom Dashboard](../images/import-dashboard.png)
 
-### AMG でアラートを設定する
+### AMGでアラートを設定する
 
-メトリクスが意図したしきい値を超えたときに、Grafana アラートを設定できます。
-AMG では、ダッシュボードでアラートを評価する頻度と通知を送信する方法を設定できます。
+メトリクスが意図したしきい値を超えた場合に、Grafanaアラートを設定できます。
+AMGを使用すると、ダッシュボードでアラートを評価する頻度と通知を送信する方法を設定できます。
 アラートルールを作成する前に、通知チャネルを作成する必要があります。
 
-この例では、通知チャネルとして Amazon SNS を設定します。
-SNS トピックには `grafana` というプレフィックスが必要です。これは、デフォルトの [サービス管理権限](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account) を使用している場合、通知がトピックに正常に発行されるためです。
+この例では、Amazon SNSを通知チャネルとして設定します。
+デフォルトを使用している場合、つまり[サービス管理権限](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account)の場合、トピックに正常に通知を発行するには、SNSトピックに`grafana`接頭辞を付ける必要があります。
 
-`grafana-notification` という名前の SNS トピックを作成するには、次のコマンドを使用します。
+次のコマンドを使用して、`grafana-notification`という名前のSNSトピックを作成します。
 
 ```
 aws sns create-topic --name grafana-notification
 ```
 
-メールアドレスを使ってサブスクライブします。以下のコマンドで、リージョンとアカウント ID を指定することを忘れないでください。
+メールアドレスを介してサブスクライブします。以下のコマンドで、リージョンとアカウントIDを指定することを確認してください。
 
 ```
 aws sns subscribe \
@@ -257,21 +256,21 @@ aws sns subscribe \
 	--notification-endpoint <email-id>
 ```
 
-次に、Grafana ダッシュボードから新しい通知チャネルを追加します。
-grafana-notification という名前の新しい通知チャネルを設定します。
-タイプは AWS SNS をドロップダウンから選択します。
-トピックには、作成した SNS トピックの ARN を使用します。
-認証プロバイダーは、AWS SDK のデフォルトを選択します。
+次に、Grafanaダッシュボードから新しい通知チャネルを追加します。
+grafana-notificationという名前の新しい通知チャネルを設定します。
+タイプの場合、ドロップダウンからAWS SNSを使用します。
+トピックの場合、作成したSNSトピックのARNを使用します。
+認証プロバイダーとして、AWS SDK Defaultを選択します。
 
-![Creating Notification Channel](../images/alert-configuration.png)
+![通知チャネルの作成](../images/alert-configuration.png)
 
-次に、下流のレイテンシが 1 分間で 5 ミリ秒を超えた場合のアラートを設定します。
-ダッシュボードで下流のレイテンシをドロップダウンから選択し、編集を選択します。
-グラフパネルの [アラート] タブで、アラートルールを評価する頻度と、アラートの状態を変更して通知を開始する条件を設定します。
+次に、1分間の期間でダウンストリームレイテンシが5ミリ秒を超えた場合にアラートを設定します。
+ダッシュボードで、ドロップダウンからダウンストリームレイテンシを選択し、編集を選択します。
+グラフパネルの[アラート]タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始する条件を設定します。
 
-次の設定では、下流のレイテンシがしきい値を超えた場合にアラートが作成され、設定された grafana-alert-notification チャネルを介して SNS トピックに通知が送信されます。
+次の設定では、ダウンストリームレイテンシがしきい値を超えるとアラートが作成され、設定されたgrafana-alert-notificationチャネルを介してSNSトピックに通知が送信されます。
 
-![Alert Configuration](../images/downstream-latency.png)
+![アラート設定](../images/downstream-latency.png)
 
 </email-id></account-id></region>
 
@@ -290,4 +289,4 @@ aws amp delete-workspace --workspace-id `aws amp list-workspaces --alias prometh
 ```
 aws delete-role --role-name amp-iamproxy-ingest-role
 ```
-4. コンソールから AMG ワークスペースを削除します。
+4. コンソールからワークスペースを削除することで、AMG ワークスペースを削除します。

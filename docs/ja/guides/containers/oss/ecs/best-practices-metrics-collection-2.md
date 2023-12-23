@@ -1,11 +1,11 @@
-# ECS クラスター内のサービスメトリクスを AWS Distro for OpenTelemetry を使用して収集する
+# ECS クラスターで AWS Distro for OpenTelemetry を使用したサービスメトリクスの収集
 
 ## ADOT Collector のデフォルト設定でのデプロイ
 
-ADOT Collector は、サイドカーパターンを使用して、以下のタスク定義を使ってデプロイできます。Collector に使用されるコンテナイメージには、コンテナ定義の *command* セクションで指定できる 2 つの Collector パイプライン設定がバンドルされています。この値を `--config=/etc/ecs/ecs-default-config.yaml` に設定すると、Collector と同じタスク内の他のコンテナからのアプリケーションメトリクスとトレースを収集し、Amazon CloudWatch と AWS X-Ray に送信する[パイプライン設定](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml) が使用されます。具体的には、Collector は OpenTelemetry SDK で計装されたアプリケーションから送信されたメトリクスを受信する [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) と、StatsD メトリクスを収集する [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) を使用します。さらに、AWS X-Ray SDK で計装されたアプリケーションからトレースを収集する [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) を使用します。
+ADOT Collector は、以下のタスク定義を使用してサイドカーパターンでデプロイできます。Collector に使用されるコンテナイメージには、コンテナ定義の *command* セクションで指定できる 2 つの Collector パイプライン構成がバンドルされています。この値を `--config=/etc/ecs/ecs-default-config.yaml` に設定すると、Collector と同じタスク内で実行されている他のコンテナからのアプリケーションメトリクスとトレースを収集し、Amazon CloudWatch と AWS X-Ray に送信する[パイプライン構成](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml)が使用されます。具体的には、Collector は OpenTelemetry SDK で計装されたアプリケーションから送信されたメトリクスを受信するために [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) と、StatsD メトリクスを収集するための [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) を使用します。さらに、AWS X-Ray SDK で計装されたアプリケーションからトレースを収集する [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) を使用します。
 
 !!! info
-    Amazon ECS クラスター上にデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定の詳細については、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html) を参照してください。
+    Amazon ECS クラスターにデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定についての詳細は、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html)を参照してください。
 
 ```javascript
 {
@@ -45,7 +45,7 @@ ADOT Collector は、サイドカーパターンを使用して、以下のタ�
 
 ## Prometheus メトリクス収集のための ADOT Collector のデプロイ
 
-デフォルトの構成とは異なるパイプラインで、セントラルコレクターパターンで ADOT をデプロイするには、以下に示すタスク定義を使用できます。ここでは、AWS SSM パラメータストアの *otel-collector-config* という名前のパラメータからコレクターパイプラインの構成が読み込まれます。コレクターは REPLICA サービススケジューラー戦略を使用して起動されます。
+デフォルトの構成とは異なるパイプラインを使用して、セントラルコレクターパターンで ADOT をデプロイするには、以下に示すタスク定義を使用できます。ここでは、コレクターパイプラインの構成は、AWS SSM パラメータストアの *otel-collector-config* という名前のパラメータからロードされます。コレクターは REPLICA サービススケジューラー戦略を使用して起動されます。
 
 ```javascript
 {
@@ -86,15 +86,15 @@ ADOT Collector は、サイドカーパターンを使用して、以下のタ�
     SSM パラメータストアのパラメータ名は、AOT_CONFIG_CONTENT という名前の環境変数を使用してコレクターに公開する必要があります。
     
 !!! important
-    アプリケーションからの Prometheus メトリクスの収集に ADOT コレクターを使用し、REPLICA サービススケジューラー戦略でデプロイする場合は、レプリカの数を 1 に設定する必要があります。コレクターのレプリカを 2 つ以上デプロイすると、ターゲットの宛先でメトリクスデータが誤って表されることになります。
-    
-以下に示す構成では、[Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) を使用して、クラスター内のサービスから Prometheus メトリクスを収集するように ADOT コレクターを有効にします。このレシーバーは、最小限に Prometheus サーバーのドロップイン置換を意図しています。このレシーバーでメトリクスを収集するには、スクレイプするターゲットサービスのセットを検出するメカニズムが必要です。レシーバーは、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイピングターゲットの静的および動的検出の両方をサポートしています。
+    アプリケーションからの Prometheus メトリクスの収集のために ADOT コレクターを使用し、REPLICA サービススケジューラー戦略でデプロイする場合は、レプリカの数を 1 に設定する必要があります。コレクターのレプリカを 2 つ以上デプロイすると、ターゲットの宛先でメトリクスデータの不正な表現が発生します。
 
-Amazon ECS には組み込みのサービス検出メカニズムがないため、コレクターはファイルベースのターゲット検出をサポートする Prometheus に依存しています。ファイルベースのターゲット検出のために Prometheus レシーバーを設定するには、コレクターは [Amazon ECS Observer](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/observer/ecsobserver/README.md) 拡張機能を利用します。この拡張機能は ECS/EC2 API を使用して、実行中のすべてのタスクから Prometheus スクレイプターゲットを検出し、構成の *ecs_observer/task_definitions* セクションでリストされているサービス名、タスク定義、コンテナラベルに基づいてフィルタリングします。検出されたすべてのターゲットは、*result_file* フィールドで指定されたファイルに書き込まれます。このファイルは、ADOT コレクターコンテナにマウントされたファイルシステム上に存在します。その後、Prometheus レシーバーは、このファイルにリストされているターゲットからメトリクスをスクレイプします。
+以下に示す構成では、ADOT コレクターがクラスタ内のサービスから [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) を使用して Prometheus メトリクスを収集できるようになります。このレシーバーは、最小限 Prometheus サーバーのドロップイン置換を意図しています。このレシーバーを使用してメトリクスを収集するには、スクレイプするターゲットサービスのセットを検出するメカニズムが必要です。このレシーバーは、サポートされている数十の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプターゲットの静的および動的検出の両方をサポートしています。
 
-### メトリクスデータを Amazon Managed Prometheus ワークスペースに送信する
+Amazon ECS には組み込みのサービス検出メカニズムがないため、コレクターは Prometheus のファイルベースのターゲット検出のサポートに依存しています。Prometheus レシーバーをターゲットのファイルベースの検出のために設定するには、コレクターは [Amazon ECS Observer](https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/extension/observer/ecsobserver/README.md) 拡張機能を利用します。この拡張機能は ECS/EC2 API を使用して、実行中のすべてのタスクから Prometheus スクレイプターゲットを検出し、構成の *ecs_observer/task_definitions* セクションにリストされているサービス名、タスク定義、コンテナラベルに基づいてフィルタリングします。検出されたすべてのターゲットは、ADOT コレクターコンテナにマウントされたファイルシステム上に存在する *result_file* フィールドで指定されたファイルに書き込まれます。その後、Prometheus レシーバーはこのファイルにリストされているターゲットからメトリクスをスクレイプします。
 
-Prometheus Receiver によって収集されたメトリクスは、コレクターパイプラインの [Prometheus Remote Write Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusremotewriteexporter) を使用して Amazon Managed Prometheus ワークスペースに送信できます。これは、以下の構成の *exporters* セクションで示されているようになっています。エクスポーターはワークスペースのリモートライト URL で構成されており、HTTP POST リクエストを使用してメトリクスデータを送信します。これは、ワークスペースに送信されるリクエストに署名するために、組み込みの AWS Signature Version 4 認証機能を利用しています。
+### Amazon Managed Prometheus ワークスペースへのメトリクスデータの送信
+
+Prometheus Receiver によって収集されたメトリクスは、以下の構成の *exporters* セクションで示されているように、コレクターパイプライン内の [Prometheus Remote Write Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/prometheusremotewriteexporter) を使用して、Amazon Managed Prometheus ワークスペースに送信できます。エクスポーターはワークスペースのリモートライト URL で構成され、メトリクスデータを HTTP POST リクエストを使用して送信します。リクエストに AWS Signature Version 4 認証を適用するために、組み込みの AWS Signature Version 4 認証機を利用します。
 
 ```yaml
 extensions:
@@ -170,9 +170,9 @@ service:
       exporters: [awsxray]       
 ```
 
-### メトリクスデータを Amazon CloudWatch に送信する
+### Amazon CloudWatch へのメトリクスデータの送信
 
-あるいは、以下の構成の *exporters* セクションに示すように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用して、メトリクスデータを Amazon CloudWatch に送信できます。このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。エクスポーターの *metric_declaration* フィールドは、生成される埋め込みメトリック形式のログ配列を指定するために使用されます。以下の構成は、*http_requests_total* という名前のメトリクスに対してのみログイベントを生成します。このデータを使用すると、CloudWatch は *ClusterName*、*ServiceName*、*TaskDefinitionFamily* のディメンションを使用して、*ECS/ContainerInsights/Prometheus* 名前空間の下にメトリクス *http_requests_total* を作成します。
+あるいは、以下の構成の *exporters* セクションで示されているように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用して、メトリクスデータを Amazon CloudWatch に送信することもできます。このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。エクスポーターの *metric_declaration* フィールドは、生成する必要がある埋め込みメトリック形式のログの配列を指定するために使用されます。以下の構成では、*http_requests_total* という名前のメトリクスのログイベントのみが生成されます。このデータを使用すると、CloudWatch は *ClusterName*、*ServiceName*、*TaskDefinitionFamily* のディメンションを使用して、CloudWatch 名前空間 *ECS/ContainerInsights/Prometheus* の下にメトリクス *http_requests_total* を作成します。
 
 
 ```yaml

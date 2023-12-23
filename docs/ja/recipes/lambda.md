@@ -1,8 +1,8 @@
 # AWS Lambda
 
-[AWS Lambda][lambda-main] は、サーバーのプロビジョニングや管理、ワークロード対応のクラスタースケーリングロジックの作成、イベントインテグレーションの維持、ランタイムの管理を行うことなく、コードを実行できるサーバーレスコンピューティングサービスです。
+[AWS Lambda][lambda-main] は、サーバーのプロビジョニングや管理、ワークロード対応のクラスタースケーリングロジックの作成、イベントインテグレーションの維持、ランタイムの管理なしでコードを実行できるサーバーレスコンピューティングサービスです。
 
-以下のレシピをご確認ください:
+以下のレシピをご確認ください。
 
 ## ログ
 
@@ -16,7 +16,7 @@
 ## トレース
 
 - [AWS Distro for OpenTelemetry Lambda レイヤーで Python アプリケーションを自動計装][lambda-layer-python-xray-adot]
-- [OpenTelemetry で AWS X-Ray で AWS Lambda 関数をトレーシング][lambda-xray-adot]
+- [OpenTelemetry で AWS X-Ray で AWS Lambda 関数をトレース][lambda-xray-adot]
 
 [lambda-main]: https://aws.amazon.com/lambda/
 [aes-ws]: https://bookstore.aesworkshops.com/

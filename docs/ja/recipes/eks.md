@@ -1,6 +1,6 @@
 # Amazon Elastic Kubernetes Service
 
-[Amazon Elastic Kubernetes Service][eks-main](EKS) は、AWS クラウドまたはオンプレミスで Kubernetes アプリケーションを開始、実行、スケールできる柔軟性を提供します。
+[Amazon Elastic Kubernetes Service][eks-main](EKS) は、AWS クラウドまたはオンプレミスで Kubernetes アプリケーションを開始、実行、スケーリングする柔軟性を提供します。
 
 コンピュートエンジン別にグループ化された以下のレシピをご覧ください。
 
@@ -15,10 +15,10 @@
 ### メトリクス
 
 - [Amazon Managed Service for Prometheus の概要][amp-gettingstarted]
-- [EC2 上の EKS で ADOT を使用してメトリクスを AMP に取り込み、AMG で可視化][ec2-eks-metrics-go-adot-ampamg]
-- [Grafana Cloud Agent の Amazon Managed Service for Prometheus 用設定][gcwa-amp]
+- [EC2 上の EKS で ADOT を使用して AMP にメトリクスを取り込み、AMG で可視化][ec2-eks-metrics-go-adot-ampamg]
+- [Amazon Managed Service for Prometheus 用 Grafana Cloud エージェントの設定][gcwa-amp]
 - [Prometheus と Grafana を使用したクラスターのモニタリング][eks-ws-prom-grafana]
-- [Managed Prometheus と Managed Grafana によるモニタリング][eks-ws-amp-amg] 
+- [Managed Prometheus と Managed Grafana によるモニタリング][eks-ws-amp-amg]
 - [CloudWatch Container Insights][eks-ws-cw-ci]
 - [AMP ワークスペースのクロスリージョンメトリクス収集の設定][amp-xregion]
 - [Amazon Managed Service for Prometheus を使用した EKS 上の App Mesh 環境のモニタリング][eks-am-amp-amg]
@@ -35,19 +35,19 @@
 
 ### ログ
 
-- [Fluent Bit for Amazon EKS on AWS Fargate が登場][eks-fargate-logging]
+- [AWS Fargate 上の Amazon EKS 用 Fluent Bit が登場][eks-fargate-logging]
 - [EKS 上の Fluent Bit と FluentD のサンプルロギングアーキテクチャ][eks-fb-example]
 
 ### メトリクス
 
-- [Fargate 上の EKS で ADOT を使用して AMP にメトリクスを取り込み、AMG で可視化][fargate-eks-metrics-go-adot-ampamg]
+- [Fargate 上の EKS で ADOT を使用して AMP にメトリクスを取り込み、AMG で可視化する][fargate-eks-metrics-go-adot-ampamg]
 - [CloudWatch Container Insights][eks-ws-cw-ci]
 - [AMP ワークスペースのクロスリージョンメトリクス収集の設定][amp-xregion]
 
 ### トレース
 
-- [Fargate 上の EKS で ADOT と AWS X-Ray を使用][fargate-eks-xray-go-adot-amg]
-- [X-Ray でのトレーシング][eks-ws-xray]
+- [AWS X-Ray を使用した Fargate 上の EKS での ADOT の利用][fargate-eks-xray-go-adot-amg]
+- [X-Ray によるトレーシング][eks-ws-xray]
 
 
 [eks-main]: https://aws.amazon.com/eks/

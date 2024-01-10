@@ -1,0 +1,4076 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="AWS">
+      
+      
+        <link rel="canonical" href="https://aws-observability.github.io/observability-best-practices/ja/tools/cloudwatch-dashboard/">
+      
+      
+        <link rel="prev" href="../../guides/operational/gitops-with-amg/gitops-with-amg/">
+      
+      
+        <link rel="next" href="../../guides/signal-collection/emf/">
+      
+      
+      <link rel="icon" href="../../images/aws-logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>CloudWatch Dashboard - AWS Observability Best Practices</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+
+<style>
+@import url('https://fonts.cdnfonts.com/css/amazon-ember');
+</style>
+
+
+<script>
+  (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
+    'cwr',
+    'f8caa971-67c8-4cdf-8fc3-ebf4f4efcb51',
+    '1.0.0',
+    'us-west-2',
+    'https://client.rum.us-east-1.amazonaws.com/1.12.0/cwr.js',
+    {
+      sessionSampleRate: 1,
+      guestRoleArn: "arn:aws:iam::913180151358:role/RUM-Monitor-us-west-2-913180151358-8942296448661-Unauth",
+      identityPoolId: "us-west-2:04333e6f-a1c6-49a4-88e6-93f652142cc0",
+      endpoint: "https://dataplane.rum.us-west-2.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    }
+  );
+</script>
+
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="grey" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#cloudwatch" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="AWS Observability Best Practices" class="md-header__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../images/aws-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AWS Observability Best Practices
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              CloudWatch Dashboard
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices/ja" hreflang="ja" class="md-select__link">
+              Japanese
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AWS Observability Best Practices" class="md-nav__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../images/aws-logo.png" alt="logo">
+
+    </a>
+    AWS Observability Best Practices
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guides
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best practices overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/choosing-a-tracing-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Choosing a tracing agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Cost
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Cost
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/kubecost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Kubecost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Visualizing costs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Visualizing costs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/cost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability services and Cost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/AmazonManagedServiceforPrometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus real-time cost monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/databases/rds-and-aurora/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aurora and RDS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/ec2/ec2-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EC2 Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ECS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            ECS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EKS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            EKS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_1" id="__nav_2_7_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/amazon-cloudwatch-container-insights/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Container Insights
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/log-aggregation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log aggregation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/eks-api-server-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API server monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/container-tracing-with-aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_2" id="__nav_2_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/eks/best-practices-metrics-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Essential Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Serverless best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Serverless best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/serverless/aws-native/lambda-based-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/serverless/oss/lambda-based-observability-adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/hybrid-and-multicloud/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hybrid and Multicloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Operational
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10">
+            <span class="md-nav__icon md-icon"></span>
+            Operational
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_1" id="__nav_2_10_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ADOT Collector
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_1">
+            <span class="md-nav__icon md-icon"></span>
+            ADOT Collector
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/adot-at-scale/operating-adot-collector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operating At Scale
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/adot-at-scale/adot-java-spring/adot-java-spring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manually Instrumenting Spring Integration Applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/monitoring-for-business-outcomes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitoring for business outcomes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/sla-percentile/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentiles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/key-performance-indicators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key Performance Indicators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_5" id="__nav_2_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Alerting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/alerting/amp-alertmgr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus Alert Manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_6" id="__nav_2_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    GitOps
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            GitOps
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/gitops-with-amg/gitops-with-amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana Operator with Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_7" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_7" id="__nav_2_10_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10_7">
+            <span class="md-nav__icon md-icon"></span>
+            Dashboards
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    CloudWatch Dashboard
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Dashboard
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      はじめに
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      ウィジェット
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ウィジェット">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      デフォルトウィジェット
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      カスタムウィジェット
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボード
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="自動ダッシュボード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボードのコンテナインサイト
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボードの Lambda Insights
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      カスタムダッシュボード
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="カスタムダッシュボード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-contributor-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへの Contributor Insights の追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-application-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへの Application Insights の追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへのサービスマップの追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへのメトリクスエクスプローラーの追加
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードを使用して可視化するもの
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CloudWatch ダッシュボードを使用して可視化するもの">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      メトリクスデータの可視化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      ログデータの視覚化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      アラームの視覚化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      クロスアカウントとクロスリージョン
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      ダッシュボードの共有
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      リアルタイムデータ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      アニメーションダッシュボード
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch-apicli" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードの API/CLI サポート
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードの自動化
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Signal collection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            Signal collection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/signal-collection/emf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Embedded Metric Format
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Partners
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Partners
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/partners/databricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/observability-maturity-model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Observability Maturity Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data types
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data types
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/traces/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Traces
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability_accelerator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability Accelerator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloudwatch_agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internet_monitor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Internet Monitor
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Logs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/logs-insights-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Insights Example Queries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6_3" id="__nav_4_6_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data Protection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data Protection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/dataprotection/data-protection-policies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Data Protection Policies for SLG/EDU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real User Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../slos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Service Level Objectives (SLOs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Curated recipes
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Curated recipes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Recipes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/telemetry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Telemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Compute
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            By Compute
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/apprunner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS App Runner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/eks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Kubernetes Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/ecs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Container Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/lambda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Lambda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Infra & Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            By Infra & Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/infra/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Infra
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5_2" id="__nav_5_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/rds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Relational Database Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/dynamodb/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon DynamoDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/msk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Streaming for Apache Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Language
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            By Language
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/nodejs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Node.js
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Destination
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            By Destination
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/cw/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/aes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon OpenSearch Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/anomaly-detection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anomaly Detection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/alerting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/workshops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Workshops
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            FAQ
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    General
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/x-ray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Distro for OpenTelemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      はじめに
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      ウィジェット
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="ウィジェット">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      デフォルトウィジェット
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      カスタムウィジェット
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボード
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="自動ダッシュボード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボードのコンテナインサイト
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#lambda-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      自動ダッシュボードの Lambda Insights
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      カスタムダッシュボード
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="カスタムダッシュボード">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-contributor-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへの Contributor Insights の追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch-application-insights" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへの Application Insights の追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへのサービスマップの追加
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cloudwatch_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードへのメトリクスエクスプローラーの追加
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードを使用して可視化するもの
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CloudWatch ダッシュボードを使用して可視化するもの">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      メトリクスデータの可視化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      ログデータの視覚化
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      アラームの視覚化
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      クロスアカウントとクロスリージョン
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      ダッシュボードの共有
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      リアルタイムデータ
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      アニメーションダッシュボード
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch-apicli" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードの API/CLI サポート
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cloudwatch_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      CloudWatch ダッシュボードの自動化
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="cloudwatch">CloudWatch ダッシュボード<a class="headerlink" href="#cloudwatch" title="Permanent link">&para;</a></h1>
+<h2 id="_1">はじめに<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>AWS アカウント内のリソースのインベントリの詳細、リソースのパフォーマンスとヘルスチェックを知ることは、安定したリソース管理にとって重要です。Amazon CloudWatch ダッシュボードは、CloudWatch コンソール内のカスタマイズ可能なホームページで、クロスアカウントまたは異なるリージョンに分散しているリソースであっても、1 つのビューでリソースを監視するために使用できます。</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html">Amazon CloudWatch ダッシュボード</a> を使用すると、お客様は再利用可能なグラフを作成し、統合されたビューでクラウドリソースとアプリケーションを可視化できます。CloudWatch ダッシュボードを通じて、お客様はメトリクスとログデータを統合ビューで並べてグラフ化し、素早くコンテキストを把握して、問題の診断から根本原因の理解へと移行できます。また、平均復旧時間 (MTTR) を短縮できます。たとえば、お客様は CPU 使用率やメモリなどの主要メトリクスの現在の利用状況を可視化し、割り当てられた容量と比較できます。お客様は、特定のメトリクスのログパターンを相関付け、パフォーマンスと運用上の問題をアラートできます。CloudWatch ダッシュボードは、アラームの現在のステータスも表示し、すばやく可視化して注意を促し、アクションを起こせます。CloudWatch ダッシュボードの共有により、組織内外のチームやステークホルダーと簡単に表示されるダッシュボード情報を共有できます。</p>
+<h2 id="_2">ウィジェット<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
+<h4 id="_3">デフォルトウィジェット<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
+<p>ウィジェットは、AWS 環境のリソースやアプリケーションメトリクス、ログの重要な情報やリアルタイムの詳細を表示する CloudWatch ダッシュボードの構成要素です。 お客様は、必要に応じてウィジェットを追加、削除、並べ替え、サイズ変更することで、ダッシュボードを希望の体験にカスタマイズできます。</p>
+<p>ダッシュボードに追加できるグラフの種類には、折れ線グラフ、数値、ゲージ、積み上げ面グラフ、棒グラフ、円グラフがあります。</p>
+<p><strong>Line、Number、Gauge、Stacked area、Bar、Pie</strong> のような<strong>グラフ</strong>タイプのデフォルト ウィジェットと、<strong>Text、Alarm Status、Logs table、Explorer</strong> のようなその他のウィジェットがあり、お客様はこれらを選択してメトリクスやログデータを追加し、ダッシュボードを構築できます。</p>
+<p><img alt="デフォルトウィジェット" src="../../images/cw_dashboards_widgets.png" /></p>
+<p><strong>その他の参考資料:</strong></p>
+<ul>
+<li>AWS Observability ワークショップの <a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/metrics-number">Metric Number Widgets</a></li>
+<li>AWS Observability ワークショップの <a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/text-widget">Text Widgets</a> </li>
+<li>AWS Observability ワークショップの <a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/alarm-widgets">Alarm Widgets</a></li>
+<li>ドキュメントの <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-and-work-with-widgets.html">Creating and working with widgets on CloudWatch dashboards</a></li>
+</ul>
+<h4 id="_4">カスタムウィジェット<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
+<p>お客様は、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create-and-work-with-widgets.html">カスタムウィジェットを追加</a>して、CloudWatch ダッシュボードでカスタムの視覚化、複数のソースからの情報の表示、ボタンなどのカスタムコントロールを追加し、CloudWatch ダッシュボードで直接アクションを実行することもできます。カスタムウィジェットは Lambda 関数で完全にサーバーレスで動作するため、コンテンツ、レイアウト、インタラクションを完全に制御できます。カスタムウィジェットは、ダッシュボード上にカスタムデータビューやツールを構築する簡単な方法であり、複雑な Web フレームワークを学習する必要はありません。Lambda でコードを記述し、HTML を作成できれば、便利なカスタムウィジェットを作成できます。</p>
+<p><img alt="Custom Widgets" src="../../images/cw_dashboards_custom-widgets.png" /></p>
+<p><strong>その他の参考資料:</strong></p>
+<ul>
+<li>AWS Observability ワークショップの<a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/custom-widgets">カスタムウィジェット</a></li>
+<li>GitHub の <a href="https://github.com/aws-samples/cloudwatch-custom-widgets-samples#what-are-custom-widgets">CloudWatch Custom Widgets Samples</a></li>
+<li>ブログ: <a href="https://aws.amazon.com/blogs/mt/introducing-amazon-cloudwatch-dashboards-custom-widgets/">Using Amazon CloudWatch dashboards custom widgets</a></li>
+</ul>
+<h2 id="_5">自動ダッシュボード<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
+<p>自動ダッシュボードは、Amazon CloudWatch の下にあるすべての AWS リソースの正常性とパフォーマンスの集約されたビューを提供する、すべての AWS パブリックリージョンで利用できます。これにより、お客様はモニタリングの開始、メトリクスとアラームのリソースベースのビュー、パフォーマンスの問題の根本原因を理解するためのドリルダウンが容易になります。自動ダッシュボードは、AWS サービス推奨の <a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html">ベストプラクティス</a> で事前構築されており、リソースを意識した状態を保ち、重要なパフォーマンスメトリクスの最新の状態を反映するように動的に更新されます。自動サービスダッシュボードは、サービスのすべての標準的な CloudWatch メトリクスを表示し、サービスメトリクスごとに使用されるすべてのリソースをグラフ化し、アカウント間で異常なリソースをすばやく特定してコストの最適化に役立つ高利用率または低利用率のリソースを特定するのに役立ちます。</p>
+<p><img alt="自動ダッシュボード" src="../../images/automatic-dashboard.png" /></p>
+<p><strong>その他の参考資料:</strong></p>
+<ul>
+<li>AWS Observability ワークショップの<a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/autogen-dashboard">自動ダッシュボード</a></li>
+<li>YouTube の <a href="https://www.youtube.com/watch?v=I7EFLChc07M">Amazon CloudWatch ダッシュボードを使用した AWS リソースのモニタリング</a></li>
+</ul>
+<h4 id="_6">自動ダッシュボードのコンテナインサイト<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h4>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html">CloudWatch Container Insights</a> は、コンテナ化されたアプリケーションやマイクロサービスからメトリクスとログを収集、集約、要約します。Container Insights は、Amazon Elastic Container Service(Amazon ECS)、Amazon Elastic Kubernetes Service(Amazon EKS)、および Amazon EC2 上の Kubernetes プラットフォームで利用できます。Container Insights は、Amazon ECS と Amazon EKS の両方で Fargate にデプロイされたクラスタからのメトリクスの収集をサポートしています。CloudWatch は CPU、メモリ、ディスク、ネットワークなど、多くのリソースのメトリクスを自動的に収集するとともに、コンテナの再起動失敗などの診断情報も提供し、問題を隔離して迅速に解決するのに役立ちます。</p>
+<p>CloudWatch は、<a href="/observability-best-practices/ja/guides/signal-collection/emf/">組み込みメトリックフォーマット</a>を使用した CloudWatch メトリクスとして、クラスター、ノード、Pod、タスク、サービスレベルで集約メトリクスを作成します。これは、構造化された JSON スキーマを使用するパフォーマンスログイベントで、高基数データを大規模にインジェストおよび保存できるようになります。Container Insights が収集するメトリクスは、<a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards">CloudWatch の自動ダッシュボード</a>で利用できるほか、CloudWatch コンソールのメトリクスセクションでも表示できます。</p>
+<p><img alt="Container Insights" src="../../images/Container_Insights_CW_Automatic_DB.png" /></p>
+<h4 id="lambda-insights">自動ダッシュボードの Lambda Insights<a class="headerlink" href="#lambda-insights" title="Permanent link">&para;</a></h4>
+<p><a href="https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html">CloudWatch Lambda Insights</a> は、AWS Lambda などのサーバレスアプリケーションの監視とトラブルシューティングのソリューションであり、Lambda 関数の<a href="https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards">自動ダッシュボード</a>を動的に作成します。また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスと、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約して、Lambda 関数の問題を隔離し、迅速に解決するのに役立ちます。 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html">Lambda Insights</a> は、関数レベルでレイヤーとして提供される Lambda 拡張機能で、有効にすると<a href="/observability-best-practices/ja/guides/signal-collection/emf/">埋め込みメトリックフォーマット</a>を使用してログイベントからメトリクスを抽出し、エージェントは必要ありません。</p>
+<p><img alt="Lambda Insights" src="../../images/Lambda_Insights_CW_Automatic_DB.png" /></p>
+<h2 id="_7">カスタムダッシュボード<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
+<p>お客様は、さまざまなウィジェットを使用して必要な数の追加のダッシュボードを<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create_dashboard.html">カスタムダッシュボード</a>として作成し、適宜カスタマイズすることもできます。ダッシュボードはクロスリージョンおよびクロスアカウントでの表示が可能で、お気に入りリストに追加することもできます。</p>
+<p><img alt="カスタムダッシュボード" src="../../images/CustomDashboard.png" /></p>
+<p>お客様は、CloudWatch コンソールのナビゲーションペインから簡単にアクセスできるように、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add-dashboard-to-favorites.html">お気に入りリスト</a>に自動またはカスタムのダッシュボードを追加することができます。</p>
+<p><strong>その他の参考資料:</strong></p>
+<ul>
+<li>AWS Observability ワークショップの <a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/create">CloudWatch ダッシュボード</a></li>
+<li>AWS Well-Architected ラボのパフォーマンス効率のための <a href="https://www.wellarchitectedlabs.com/performance-efficiency/100_labs/100_monitoring_windows_ec2_cloudwatch/">CloudWatch ダッシュボードを使用したモニタリング</a></li>
+</ul>
+<h4 id="cloudwatch-contributor-insights">CloudWatch ダッシュボードへの Contributor Insights の追加<a class="headerlink" href="#cloudwatch-contributor-insights" title="Permanent link">&para;</a></h4>
+<p>CloudWatch は、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html">Contributor Insights</a> を提供しており、これを使用するとログデータを分析し、トップ N のコントリビューター、ユニーク コントリビューターの総数、およびそれらの使用状況に関するメトリクスを表示する時系列を作成できます。これにより、トップトーカーを見つけ出し、システム パフォーマンスに影響を与えているものが何であるかを理解することができます。たとえば、顧客は不適切なホストを特定したり、最も重いネットワーク ユーザーを識別したり、最も多くのエラーを生成している URL を見つけることができます。</p>
+<p>Contributor Insights レポートは、CloudWatch コンソールの<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights-ViewReports.html">新しいダッシュボードまたは既存のダッシュボード</a> に追加できます。</p>
+<p><img alt="Contributor Insights" src="../../images/Contributor_Insights_CW_DB.png" /></p>
+<h4 id="cloudwatch-application-insights">CloudWatch ダッシュボードへの Application Insights の追加<a class="headerlink" href="#cloudwatch-application-insights" title="Permanent link">&para;</a></h4>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-application-insights.html">CloudWatch Application Insights</a> は、AWS でホストされているアプリケーションとその基盤となる AWS リソースの可観測性を容易にします。これにより、アプリケーションの正常性に関する可視性が向上し、アプリケーションの問題をトラブルシューティングするための平均修理時間 (MTTR) を短縮するのに役立ちます。Application Insights は、監視対象のアプリケーションで発生し得る問題を示す自動ダッシュボードを提供し、お客様がアプリケーションとインフラストラクチャの進行中の問題をすばやく特定できるよう支援します。</p>
+<p>以下に示す Application Insights 内の「Export to CloudWatch」オプションは、CloudWatch コンソールにダッシュボードを追加します。これにより、お客様は重要なアプリケーションを簡単に監視して洞察を得ることができます。</p>
+<p><img alt="Application Insights" src="../../images/Application_Insights_CW_DB.png" /></p>
+<h4 id="cloudwatch_1">CloudWatch ダッシュボードへのサービスマップの追加<a class="headerlink" href="#cloudwatch_1" title="Permanent link">&para;</a></h4>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceLens.html">CloudWatch ServiceLens</a> は、トレース、メトリクス、ログ、アラーム、その他のリソースヘルス情報を 1 か所に統合することで、サービスとアプリケーションの可観測性を向上させます。ServiceLens は CloudWatch と AWS X-Ray を統合して、パフォーマンスのボトルネックを効率的に特定し、影響を受けるユーザーを識別するのに役立つアプリケーションのエンドツーエンドビューを提供します。<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/servicelens_service_map.html">サービスマップ</a> は、サービスのエンドポイントとリソースをノードとして表示し、各ノードとその接続のトラフィック、レイテンシ、エラーを強調表示します。表示される各ノードは、そのサービスの部分に関連する相関メトリクス、ログ、トレースについて詳細な洞察を提供します。</p>
+<p>以下に示すように、サービスマップ内の「ダッシュボードに追加」オプションは、新しいダッシュボードを追加するか、CloudWatch コンソールの既存のダッシュボードに追加し、アプリケーションのトレースを簡単に行って洞察を得るのに役立ちます。</p>
+<p><img alt="Service Map" src="../../images/Service_Map_CW_DB.png" /></p>
+<h4 id="cloudwatch_2">CloudWatch ダッシュボードへのメトリクスエクスプローラーの追加<a class="headerlink" href="#cloudwatch_2" title="Permanent link">&para;</a></h4>
+<p>CloudWatch の<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Metrics-Explorer.html">メトリクスエクスプローラー</a> は、タグとリソースプロパティに基づいてメトリクスをフィルタリング、集計、可視化することで、AWS サービスの可観測性を強化するタグベースのツールです。メトリクスエクスプローラーは柔軟で動的なトラブルシューティング体験を提供します。これにより、お客様は複数のグラフを同時に作成し、これらのグラフを使用してアプリケーションのヘルスダッシュボードを構築できます。メトリクスエクスプローラーの可視化は動的なので、メトリクスエクスプローラーウィジェットを作成して CloudWatch ダッシュボードに追加した後に、マッチするリソースが作成されると、新しいリソースが自動的にエクスプローラーウィジェットに表示されます。</p>
+<p>以下に示すように、メトリクスエクスプローラー内の「<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add_metrics_explorer_dashboard.html">ダッシュボードに追加</a>」オプションは、新しいダッシュボードを追加するか、CloudWatch コンソールの既存のダッシュボードに追加します。これにより、お客様は AWS サービスとリソースのより多くのグラフインサイトを取得できるようになります。</p>
+<p><img alt="Metrics Explorer" src="../../images/Metrics_Explorer_CW_DB.png" /></p>
+<h2 id="cloudwatch_3">CloudWatch ダッシュボードを使用して可視化するもの<a class="headerlink" href="#cloudwatch_3" title="Permanent link">&para;</a></h2>
+<p>お客様は、リージョンとアカウントをまたいでワークロードとアプリケーションを監視するために、アカウントレベルとアプリケーションレベルのダッシュボードを作成できます。 お客様は、サービス固有のメトリクスで事前構成されたサービスレベルのダッシュボードである CloudWatch 自動ダッシュボードからすぐに開始できます。 本番環境のアプリケーションまたはワークロードに関連し重要なキーメトリクスとリソースに焦点を当てた、アプリケーションおよびワークロード固有のダッシュボードを作成することをおすすめします。</p>
+<h4 id="_8">メトリクスデータの可視化<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h4>
+<p>メトリクスデータは、<strong>Line、Number、Gauge、Stacked area、Bar、Pie</strong> などのグラフウィジェットを介して CloudWatch ダッシュボードに追加できます。これは、メトリクスの<strong>Average、Minimum、Maximum、Sum、SampleCount</strong> などの統計によってサポートされています。<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html">統計</a> は、指定された期間にわたるメトリクスデータの集計です。</p>
+<p><img alt="Metrics Data Visual" src="../../images/graph_widget_metrics.png" /></p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html">Metric Math</a> を使用すると、複数の CloudWatch メトリクスをクエリし、これらのメトリクスに基づいて数式を使用して新しい時系列を作成できます。 顧客は、結果の時系列を CloudWatch コンソールで視覚化し、ダッシュボードに追加できます。 また、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/APIReference/API_GetMetricData.html">GetMetricDataAPI</a> 操作を使用してプログラムでメトリクス数式を実行することもできます。</p>
+<p><strong>その他の参考資料:</strong> </p>
+<ul>
+<li><a href="https://aws.amazon.com/jp/blogs/iot/monitoring-your-iot-fleet-using-cloudwatch/">CloudWatch を使用した IoT フリートのモニタリング</a></li>
+</ul>
+<h4 id="_9">ログデータの視覚化<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<p>顧客は、CloudWatch ダッシュボードでバーチャート、折れ線グラフ、スタックエリアチャートを使用して、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html">ログデータの視覚化</a>を実現できます。これにより、パターンを効率的に特定できます。CloudWatch Logs Insights は、stats 関数と 1 つ以上の集計関数を使用したクエリの視覚化を生成し、バーチャートを作成できます。クエリが時間とともに 1 つのフィールドで<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html#CWL_Insights-Visualizing-ByFields">データをグループ化</a>する bin() 関数を使用している場合、折れ線グラフとスタックエリアチャートを使用して視覚化できます。</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html#CWL_Insights-Visualizing-TimeSeries">時系列データ</a> は、クエリにステータス関数の 1 つ以上の集計が含まれている場合、またはクエリが bin() 関数を使用して 1 つのフィールドでデータをグループ化している場合に、特性を使用して視覚化できます。</p>
+<p>stats 関数として count() を使用したサンプルクエリを以下に示します。</p>
+<div class="language-java highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">filter</span><span class="w"> </span><span class="nd">@message</span><span class="w"> </span><span class="n">like</span><span class="w"> </span><span class="o">/</span><span class="n">GET</span><span class="o">/</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="o">|</span><span class="w"> </span><span class="n">parse</span><span class="w"> </span><span class="nd">@message</span><span class="w"> </span><span class="err">&#39;</span><span class="n">_</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">_</span><span class="w"> </span><span class="s">&quot;GET _ HTTP/1.0&quot;</span><span class="w"> </span><span class="p">.</span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="err">&#39;</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">ip</span><span class="p">,</span><span class="w"> </span><span class="n">timestamp</span><span class="p">,</span><span class="w"> </span><span class="n">page</span><span class="p">,</span><span class="w"> </span><span class="n">status</span><span class="p">,</span><span class="w"> </span><span class="n">responseTime</span><span class="p">,</span><span class="w"> </span><span class="n">bytes</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="o">|</span><span class="w"> </span><span class="n">stats</span><span class="w"> </span><span class="nf">count</span><span class="p">()</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="n">request_count</span><span class="w"> </span><span class="n">by</span><span class="w"> </span><span class="n">status</span>
+</span></code></pre></div>
+<p>上記のクエリの場合、結果が以下の CloudWatch Logs Insights に示されています。</p>
+<p><img alt="CloudWatch Logs Insights" src="../../images/widget_logs_1.png" /></p>
+<p>クエリ結果のパイチャートとしての視覚化を以下に示します。</p>
+<p><img alt="CloudWatch Logs Insights Visualization" src="../../images/widget_logs_2.png" /></p>
+<p><strong>その他の参考資料:</strong></p>
+<ul>
+<li>CloudWatch ダッシュボードでの<a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/logs/logsinsights/displayformats">ログ結果の表示</a>に関する AWS Observability ワークショップ</li>
+<li><a href="https://aws.amazon.com/jp/blogs/news/visualize-aws-waf-logs-with-an-amazon-cloudwatch-dashboard/">Amazon CloudWatch ダッシュボードで AWS WAF ログを視覚化する</a></li>
+</ul>
+<h4 id="_10">アラームの視覚化<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p>CloudWatch のメトリックアラームは、1 つのメトリクスまたは CloudWatch メトリクスに基づく数式の結果を監視します。アラームは、期間におけるメトリクスまたは式の値をしきい値と比較した結果に基づいて、1つ以上のアクションを実行します。<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add_remove_alarm_dashboard.html">CloudWatch ダッシュボード</a> には、ウィジェット内の単一のアラームとともに追加できます。これは、アラームのメトリクスのグラフとアラームのステータスを表示します。また、CloudWatch ダッシュボードにアラームステータスウィジェットを追加して、グリッド内の複数のアラームのステータスを表示することもできます。アラーム名と現在のステータスのみが表示され、グラフは表示されません。</p>
+<p>CloudWatch ダッシュボード内のアラームウィジェットでキャプチャされたサンプルメトリックアラームステータスを以下に示します。</p>
+<p><img alt="CloudWatch アラーム" src="../../images/widget_alarms.png" /></p>
+<h2 id="_11">クロスアカウントとクロスリージョン<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h2>
+<p>複数の AWS アカウントを持つお客様は、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch_crossaccount_dashboard.html">クロスアカウント CloudWatch</a> オブザーバビリティを設定し、中央のモニタリングアカウントで、アカウントの境界線なしにメトリクス、ログ、トレースをシームレスに検索、可視化、分析できる、豊富なクロスアカウント ダッシュボードを作成できます。</p>
+<p>お客様はまた、複数の AWS アカウントとリージョンからの CloudWatch データを 1 つのダッシュボードに要約する、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch_xaxr_dashboard.html">クロスアカウント クロスリージョン</a> ダッシュボードも作成できます。この高レベルのダッシュボードから、お客様はアプリケーション全体の統合されたビューを取得でき、アカウントのサインイン/サインアウトやリージョンの切り替えを行うことなく、より具体的なダッシュボードにドリルダウンすることもできます。</p>
+<p><strong>その他の参考文献:</strong></p>
+<ul>
+<li><a href="https://aws.amazon.com/jp/blogs/news/how-to-auto-add-new-cross-account-amazon-ec2-instances-in-a-central-amazon-cloudwatch-dashboard/">中央の Amazon CloudWatch ダッシュボードで、新しいクロスアカウント Amazon EC2 インスタンスを自動的に追加する方法</a></li>
+<li><a href="https://aws.amazon.com/jp/blogs/news/deploy-multi-account-amazon-cloudwatch-dashboards/">マルチアカウント Amazon CloudWatch ダッシュボードのデプロイ</a></li>
+<li>YouTube の <a href="https://www.youtube.com/watch?v=eIUZdaqColg">クロスアカウントとクロスリージョン CloudWatch ダッシュボードの作成</a></li>
+</ul>
+<h2 id="_12">ダッシュボードの共有<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h2>
+<p>CloudWatch ダッシュボードは、チーム間の人々、ステークホルダー、および AWS アカウントへの直接アクセス権がない組織外の人と共有できます。これらの<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html">共有ダッシュボード</a>は、チームエリアの大画面、監視やネットワーク運用センター (NOC) で表示したり、Wiki や公開 Web ページに埋め込むことができます。</p>
+<p>ダッシュボードを共有して簡単かつ安全にするために、3 つの方法があります。</p>
+<ul>
+<li>ダッシュボードを<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboard-public">一般公開で共有</a>すると、リンクを持つ誰でもダッシュボードを表示できます。</li>
+<li>ダッシュボードを表示できる人の<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboard-email-addresses">特定のメールアドレスに共有</a>することができます。 これらのユーザーはそれぞれ、ダッシュボードを表示するために入力する独自のパスワードを作成します。</li>
+<li>ダッシュボードは、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboards-setup-SSO">シングルサインオン (SSO) プロバイダー</a> を介したアクセスで AWS アカウント内で共有できます。</li>
+</ul>
+<p><strong>ダッシュボードを一般公開で共有する際の注意点</strong></p>
+<p>ダッシュボードに機密情報や秘密情報が含まれている場合、CloudWatch ダッシュボードの一般公開共有は推奨されません。 ダッシュボードを共有する際は、可能な限りユーザー名/パスワードまたはシングルサインオン (SSO) を使用した認証を利用することをおすすめします。</p>
+<p>ダッシュボードが一般公開されると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 Web ページを表示している誰でも、一般公開で共有されたダッシュボードの内容を確認できます。 この Web ページは、共有するダッシュボード内のアラームとコントリビューターの洞察ルールをクエリする API を呼び出し、アカウント内のすべてのメトリクスとすべての EC2 インスタンスの名前とタグに一時的な資格情報を提供するリンクを提供します。これは、共有するダッシュボードには表示されていない場合でも同様です。 この情報を一般公開で利用できるようにすることが適切かどうかを検討することをおすすめします。</p>
+<p>Web ページへのダッシュボードの一般公開共有を有効にすると、アカウントに次の Amazon Cognito リソースが作成されることに注意してください: Cognito ユーザープール、Cognito アプリクライアント、Cognito ID プール、IAM ロール。</p>
+<p><strong>資格情報(ユーザー名とパスワードで保護されたダッシュボード)を使用してダッシュボードを共有する際の注意点</strong></p>
+<p>ダッシュボードに共有相手のユーザーと共有したくない機密情報または秘密情報が含まれている場合、CloudWatch ダッシュボードの共有は推奨されません。</p>
+<p>ダッシュボードの共有が有効になると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 上記で指定したユーザーには、共有するダッシュボード内のアラームとコントリビューターの洞察ルールへの CloudWatch 読み取り専用アクセス権限が付与されます。また、共有するダッシュボードに表示されていなくても、アカウント内のすべてのメトリクスとすべての EC2 インスタンスの名前とタグが付与されます。 この情報を共有しているユーザーが利用できるようにすることが適切かどうかを検討することをおすすめします。</p>
+<p>Web ページへのアクセスのために指定したユーザーのダッシュボード共有を有効にすると、アカウントに次の Amazon Cognito リソースが作成されることに注意してください: Cognito ユーザープール、Cognito ユーザー、Cognito アプリクライアント、Cognito ID プール、IAM ロール。</p>
+<p><strong>SSO プロバイダーを使用してダッシュボードを共有する際の注意点</strong></p>
+<p>シングルサインオン (SSO) を使用して CloudWatch ダッシュボードが共有されると、選択した SSO プロバイダーに登録されているユーザーに、共有されているアカウントのすべてのダッシュボードへのアクセス権限が付与されます。 また、この方法でのダッシュボードの共有が無効になると、すべてのダッシュボードが自動的に共有解除されます。</p>
+<p><strong>その他の参考文献:</strong></p>
+<ul>
+<li>AWS Observability ワークショップの<a href="https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/sharingdashboard">ダッシュボードの共有</a></li>
+<li>ブログ: <a href="https://aws.amazon.com/jp/blogs/news/share-your-amazon-cloudwatch-dashboards-with-anyone-using-aws-single-sign-on/">AWS Single Sign-On を使用して Amazon CloudWatch ダッシュボードを誰でも共有</a>  </li>
+<li>ブログ: <a href="https://aws.amazon.com/jp/blogs/news/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/">Amazon CloudWatch ダッシュボードの共有による監視情報の伝達</a></li>
+</ul>
+<h2 id="_13">リアルタイムデータ<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h2>
+<p>ダッシュボードには、ワークロードからのメトリクスが定期的に公開されている場合、メトリックウィジェットを介して<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-live-data.html">リアルタイムデータ</a>も表示されます。お客様はダッシュボード全体または個々のウィジェットでリアルタイムデータを有効に選択できます。</p>
+<p>リアルタイムデータが <strong>オフ</strong> になっている場合、少なくとも1分前の集計期間のデータポイントのみが表示されます。 たとえば、5分の期間を使用している場合、12:35のデータポイントは12:35から12:40に集計され、12:41に表示されます。</p>
+<p>リアルタイムデータが <strong>オン</strong> になっている場合、対応する集計インターバルでデータが公開されるとすぐに、最新のデータポイントが表示されます。 表示を更新するたびに、その集計期間内で新しいデータが公開されると、最新のデータポイントが変更される場合があります。</p>
+<h2 id="_14">アニメーションダッシュボード<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h2>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-animated-dashboard.html">アニメーションダッシュボード</a> は、時間経過とともにキャプチャされた CloudWatch メトリクスデータを再生します。これにより、トレンドの確認、プレゼンテーションの作成、問題発生後の分析が容易になります。アニメーション化されるダッシュボードウィジェットには、折れ線グラフウィジェット、積み上げ面グラフウィジェット、数値ウィジェット、メトリクスエクスプローラーウィジェットが含まれます。円グラフ、棒グラフ、テキストウィジェット、ログウィジェットはダッシュボードに表示されますが、アニメーション化されません。</p>
+<h2 id="cloudwatch-apicli">CloudWatch ダッシュボードの API/CLI サポート<a class="headerlink" href="#cloudwatch-apicli" title="Permanent link">&para;</a></h2>
+<p>AWS Management Console を通じて CloudWatch ダッシュボードにアクセスする以外に、お客様は API、AWS コマンドラインインターフェース(CLI)、AWS SDK を通じてもサービスにアクセスできます。ダッシュボードの CloudWatch API は、AWS CLI を通じて自動化したり、ソフトウェア/製品と統合するのに役立ちます。その結果、リソースとアプリケーションの管理や運用に費やす時間を短縮できます。</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_ListDashboards.html">ListDashboards</a>: アカウントのダッシュボードのリストを返します</li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_GetDashboard.html">GetDashboard</a>: 指定したダッシュボードの詳細を表示します</li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_DeleteDashboards.html">DeleteDashboards</a>: 指定したすべてのダッシュボードを削除します</li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutDashboard.html">PutDashboard</a>: ダッシュボードがまだ存在しない場合は作成し、既存のダッシュボードの場合は更新します。ダッシュボードを更新すると、内容全体がここで指定したものに置き換えられます</li>
+</ul>
+<p>ダッシュボード本体の構造と構文の CloudWatch API リファレンスは<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/CloudWatch-Dashboard-Body-Structure.html">こちら</a></p>
+<p>AWS Command Line Interface (AWS CLI) は、コマンドラインシェルで AWS サービスと対話できるオープンソースツールです。これは、ブラウザベースの AWS Management Console が提供する機能と同等の機能を実装しています。</p>
+<p>CLI サポート:</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/list-dashboards.html">list-dashboards</a></li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/get-dashboard.html">get-dashboard</a> </li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/delete-dashboards.html">delete-dashboards</a></li>
+<li><a href="https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/put-dashboard.html">put-dashboard</a></li>
+</ul>
+<p><strong>その他のリファレンス:</strong> AWS Observability ワークショップの <a href="https://catalog.workshops.aws/observability/en-US/aws-native/dashboards/createcli">CloudWatch ダッシュボードと AWS CLI</a></p>
+<h2 id="cloudwatch_4">CloudWatch ダッシュボードの自動化<a class="headerlink" href="#cloudwatch_4" title="Permanent link">&para;</a></h2>
+<p>CloudWatch ダッシュボードの自動作成のために、お客様は CloudFormation や Terraform のようなインフラストラクチャーアズコード(IaC)ツールを使用できます。これらのツールは、AWS で実行されるアプリケーションに集中できるように、それらのリソースの管理に費やす時間を短縮するのに役立ちます。</p>
+<p><a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-cloudwatch-dashboard.html">AWS CloudFormation</a> は、テンプレートを通じてダッシュボードの作成をサポートしています。AWS::CloudWatch::Dashboard リソースは、Amazon CloudWatch ダッシュボードを指定します。</p>
+<p><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_dashboard">Terraform</a> にも、IaC 自動化を通じて CloudWatch ダッシュボードを作成するためのモジュールがあります。</p>
+<p>必要なウィジェットを使用してダッシュボードを手動で作成することは簡単です。ただし、Auto Scaling グループのスケールアウトとスケールインイベント中に作成または削除される EC2 インスタンスなど、動的な情報に基づいているコンテンツの場合、リソースソースを更新するためのいくらかの労力が必要になる場合があります。 自動的に <a href="https://aws.amazon.com/blogs/mt/update-your-amazon-cloudwatch-dashboards-automatically-using-amazon-eventbridge-and-aws-lambda/">Amazon EventBridge と AWS Lambda を使用して Amazon CloudWatch ダッシュボードを作成および更新する方法</a> について知りたい場合は、ブログ記事を参照してください。</p>
+<p><strong>追加の参考ブログ:</strong></p>
+<ul>
+<li><a href="https://aws.amazon.com/blogs/storage/automating-amazon-cloudwatch-dashboard-creation-for-amazon-ebs-volume-kpis/">Automating Amazon CloudWatch dashboard creation for Amazon EBS volume KPIs</a></li>
+<li><a href="https://aws.amazon.com/blogs/mt/automate-creation-of-amazon-cloudwatch-alarms-and-dashboards-with-aws-systems-manager-and-ansible/">Automate creation of Amazon CloudWatch alarms and dashboards with AWS Systems Manager and Ansible</a></li>
+<li><a href="https://aws.amazon.com/blogs/compute/deploying-an-automated-amazon-cloudwatch-dashboard-for-aws-outposts-using-aws-cdk/">Deploying an automated Amazon CloudWatch dashboard for AWS Outposts using AWS CDK</a></li>
+</ul>
+<p>CloudWatch ダッシュボードに関する<a href="https://aws.amazon.com/cloudwatch/faqs/#Dashboards">製品 FAQ</a></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Amazon 2023
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>

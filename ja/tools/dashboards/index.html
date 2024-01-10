@@ -1,0 +1,3870 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="AWS">
+      
+      
+        <link rel="canonical" href="https://aws-observability.github.io/observability-best-practices/ja/tools/dashboards/">
+      
+      
+        <link rel="prev" href="../alarms/">
+      
+      
+        <link rel="next" href="../internet_monitor/">
+      
+      
+      <link rel="icon" href="../../images/aws-logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Dashboards - AWS Observability Best Practices</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+
+<style>
+@import url('https://fonts.cdnfonts.com/css/amazon-ember');
+</style>
+
+
+<script>
+  (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
+    'cwr',
+    'f8caa971-67c8-4cdf-8fc3-ebf4f4efcb51',
+    '1.0.0',
+    'us-west-2',
+    'https://client.rum.us-east-1.amazonaws.com/1.12.0/cwr.js',
+    {
+      sessionSampleRate: 1,
+      guestRoleArn: "arn:aws:iam::913180151358:role/RUM-Monitor-us-west-2-913180151358-8942296448661-Unauth",
+      identityPoolId: "us-west-2:04333e6f-a1c6-49a4-88e6-93f652142cc0",
+      endpoint: "https://dataplane.rum.us-west-2.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    }
+  );
+</script>
+
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="grey" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#_1" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../.." title="AWS Observability Best Practices" class="md-header__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../images/aws-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AWS Observability Best Practices
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dashboards
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices/ja" hreflang="ja" class="md-select__link">
+              Japanese
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="AWS Observability Best Practices" class="md-nav__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../images/aws-logo.png" alt="logo">
+
+    </a>
+    AWS Observability Best Practices
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guides
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best practices overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/choosing-a-tracing-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Choosing a tracing agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Cost
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Cost
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/kubecost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Kubecost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Visualizing costs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Visualizing costs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/cost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability services and Cost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/amazon-prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/AmazonManagedServiceforPrometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus real-time cost monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/cost/cost-visualization/aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/databases/rds-and-aurora/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aurora and RDS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/ec2/ec2-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EC2 Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ECS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            ECS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EKS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            EKS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_1" id="__nav_2_7_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/amazon-cloudwatch-container-insights/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Container Insights
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/log-aggregation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log aggregation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/eks-api-server-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API server monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/aws-native/eks/container-tracing-with-aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_2" id="__nav_2_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/containers/oss/eks/best-practices-metrics-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Essential Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Serverless best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Serverless best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/serverless/aws-native/lambda-based-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/serverless/oss/lambda-based-observability-adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/hybrid-and-multicloud/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hybrid and Multicloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Operational
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10">
+            <span class="md-nav__icon md-icon"></span>
+            Operational
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_1" id="__nav_2_10_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ADOT Collector
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_1">
+            <span class="md-nav__icon md-icon"></span>
+            ADOT Collector
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/adot-at-scale/operating-adot-collector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operating At Scale
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/adot-at-scale/adot-java-spring/adot-java-spring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manually Instrumenting Spring Integration Applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/monitoring-for-business-outcomes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitoring for business outcomes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/sla-percentile/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentiles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/business/key-performance-indicators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key Performance Indicators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_5" id="__nav_2_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Alerting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/alerting/amp-alertmgr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus Alert Manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_6" id="__nav_2_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    GitOps
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            GitOps
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/operational/gitops-with-amg/gitops-with-amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana Operator with Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_7" id="__nav_2_10_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_7">
+            <span class="md-nav__icon md-icon"></span>
+            Dashboards
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloudwatch-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Signal collection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            Signal collection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/signal-collection/emf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Embedded Metric Format
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Partners
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Partners
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/partners/databricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guides/observability-maturity-model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Observability Maturity Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data types
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data types
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/traces/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Traces
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../signals/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../observability_accelerator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability Accelerator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../cloudwatch_agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      実践的な例:高 CPU 用のアラームを考える
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実践的な例:高 CPU 用のアラームを考える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      データの履歴を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      ワークフローへの影響を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      アラームの履歴を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      コンテキストを追加する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      すべてを一度に可視化しようとしない
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="すべてを一度に可視化しようとしない">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kpi" class="md-nav__link">
+    <span class="md-ellipsis">
+      ダッシュボードの設計: KPI 主導
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      インシデント駆動のダッシュボード設計
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      レイアウト
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      動的なコンテンツの作成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      原因よりもまず症状を考える
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#n" class="md-nav__link">
+    <span class="md-ellipsis">
+      上位/下位 N を使用する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kpi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      閾値を使用した KPI の視覚的表示
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      コンテキストの重要性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../internet_monitor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Internet Monitor
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Logs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/logs-insights-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Insights Example Queries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6_3" id="__nav_4_6_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data Protection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data Protection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logs/dataprotection/data-protection-policies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Data Protection Policies for SLG/EDU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real User Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../synthetics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../slos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Service Level Objectives (SLOs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Curated recipes
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Curated recipes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Recipes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/telemetry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Telemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Compute
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            By Compute
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/apprunner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS App Runner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/eks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Kubernetes Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/ecs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Container Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/lambda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Lambda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Infra & Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            By Infra & Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/infra/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Infra
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5_2" id="__nav_5_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/rds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Relational Database Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/dynamodb/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon DynamoDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/msk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Streaming for Apache Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Language
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            By Language
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/nodejs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Node.js
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Destination
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            By Destination
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/cw/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/aes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon OpenSearch Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/anomaly-detection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anomaly Detection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/alerting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../recipes/workshops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Workshops
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            FAQ
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    General
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/x-ray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Distro for OpenTelemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#cpu" class="md-nav__link">
+    <span class="md-ellipsis">
+      実践的な例:高 CPU 用のアラームを考える
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="実践的な例:高 CPU 用のアラームを考える">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      データの履歴を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      ワークフローへの影響を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      アラームの履歴を確認する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      コンテキストを追加する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      すべてを一度に可視化しようとしない
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="すべてを一度に可視化しようとしない">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#kpi" class="md-nav__link">
+    <span class="md-ellipsis">
+      ダッシュボードの設計: KPI 主導
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      インシデント駆動のダッシュボード設計
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      レイアウト
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      動的なコンテンツの作成
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      原因よりもまず症状を考える
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#n" class="md-nav__link">
+    <span class="md-ellipsis">
+      上位/下位 N を使用する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kpi_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      閾値を使用した KPI の視覚的表示
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      コンテキストの重要性
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="_1">ダッシュボード<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>ダッシュボードは、オブザーバビリティソリューションの重要な部分です。データのキュレーションされたビジュアライゼーションを生成できます。データの履歴を確認し、関連する他のデータとともに表示できます。コンテキストを提供することもできます。全体像を理解するのに役立ちます。 </p>
+<p>多くの場合、人々はデータを収集し、アラームを作成して、そこで止まってしまいます。しかし、アラームはある時点のみを示すだけで、通常は単一のメトリクスまたは少量のデータに対してのみ機能します。ダッシュボードは時間経過とともに動作を確認するのに役立ちます。</p>
+<p><img alt="サンプルダッシュボード" src="../../images/dashboard1.png" /></p>
+<h2 id="cpu">実践的な例:高 CPU 用のアラームを考える<a class="headerlink" href="#cpu" title="Permanent link">&para;</a></h2>
+<p>インスタンスやアプリケーションの CPU 使用率が望ましい値よりも高いことがわかっています。
+対応が必要なのか、そしてその緊急性はどの程度なのかを判断するために、以下の点を確認することが役立ちます。</p>
+<ul>
+<li>このインスタンス/アプリケーションにとって正常な CPU 使用率とはどの程度か</li>
+<li>スパイクなのか、CPU 使用率が徐々に上昇しているトレンドなのか</li>
+<li>パフォーマンスに影響しているか。まだ影響が出ていないとして、いつごろ影響が出始めるか</li>
+<li>こうした高 CPU は定期的に発生するものなのか。そして通常は自動的に回復するのか</li>
+</ul>
+<h3 id="_2">データの履歴を確認する<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>ここで、CPU の時系列チャートを含むダッシュボードを考えてみましょう。この単一のメトリクスからでも、これがスパイクなのか、上昇傾向なのかがわかります。また、上昇の速度もわかるので、対応の優先順位を決定することができます。</p>
+<h3 id="_3">ワークフローへの影響を確認する<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>しかし、このマシンは何をしているのでしょうか? 全体的なコンテキストの中で、どの程度重要なのでしょうか? ここで、レスポンスタイム、スループット、エラー、その他の測定値など、ワークフローのパフォーマンスの視覚化を追加したとします。 これにより、高い CPU 使用率が、このインスタンスがサポートしているワークフローやユーザーに影響を与えているかどうかを確認できます。</p>
+<h3 id="_4">アラームの履歴を確認する<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>過去1ヶ月間にアラームが発生した頻度を示す視覚化を追加し、さらに過去を遡ってこの発生が定期的なものかどうかを確認することを検討してください。
+例えば、バックアップジョブがスパイクを引き起こしているのでしょうか。
+再発のパターンを知ることで、根本的な問題を理解し、アラームの再発を完全に停止するための長期的な判断を下すことができます。</p>
+<h3 id="_5">コンテキストを追加する<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
+<p>最後に、ダッシュボードにコンテキストを追加します。このダッシュボードが存在する理由、関連するワークフロー、問題が発生したときの対処法、ドキュメントへのリンク、連絡先などの簡単な説明を含めます。</p>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>これでダッシュボードのユーザーが状況を把握し、影響を理解し、データに基づいて何を行動し、その緊急性を判断するのに役立つ<em>ストーリー</em>ができました。</p>
+</div>
+<h3 id="_6">すべてを一度に可視化しようとしない<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
+<p>アラーム疲労についてよく話します。明確なアクションと優先順位がないアラームが多すぎると、チームが過負荷になり非効率を招くことがあります。アラームは、あなたにとって重要で実行可能なものにする必要があります。</p>
+<p>ダッシュボードはここでより柔軟です。同じように注意を要求するわけではないので、まだ重要かどうか確信が持てないものや、調査を支援するものを可視化する余地がより大きくなります。それでも、過剰は禁物です! 良いものでも過ぎたるは及ばざるがごとしです。</p>
+<p>ダッシュボードは、あなたにとって重要なものの全体像を提供する必要があります。インジェストするデータを決定するのと同様に、ダッシュボードにとって何が重要かを考える必要があります。
+ダッシュボードの場合、次のことを考えてください。</p>
+<ul>
+<li>誰がこれを見るのか<ul>
+<li>その人のバックグラウンドと知識は何か </li>
+<li>どの程度のコンテキストが必要か</li>
+</ul>
+</li>
+<li>どのような質問に答えようとしているのか</li>
+<li>このデータを見た結果として、どのようなアクションを取るのか</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>ダッシュボードのストーリーをどうするべきか、どの程度含めるべきか、判断しにくいことがよくあります。そこで、ダッシュボードの設計をどこから始めればいいでしょうか。<em>KPI駆動</em>と<em>インシデント駆動</em>の2つの方法を見ていきましょう。</p>
+</div>
+<h4 id="kpi">ダッシュボードの設計: KPI 主導<a class="headerlink" href="#kpi" title="Permanent link">&para;</a></h4>
+<p>これを理解する1つの方法は、KPI から逆算することです。これは通常、非常にユーザー主導のアプローチです。
+<a href="#layout">レイアウト</a> については、通常、トップダウンで作業を行い、ダッシュボードを下に移動したり、下位のダッシュボードに移動したりするにつれて、より詳細な情報が得られます。</p>
+<p>まず、<strong>KPI を理解する</strong>ことが重要です。それらの意味を理解することで、どのように可視化したいかを決定するのに役立ちます。 
+多くの KPI は単一の数字として示されます。たとえば、特定のワークフローを正常に完了した顧客の割合と、その完了に要した時間はどうか? しかし、どの程度の期間で考えるべきか? 1週間の平均であれば KPI を満たしていても、この期間内で基準を超える短い期間が存在する可能性があります。この超過は重要なのでしょうか? 顧客体験に影響を与えますか? そうであれば、異なる期間と時系列チャートを使用して KPI を確認することを検討するかもしれません。おそらく詳細はすべての人が必要としているわけではないので、KPI の内訳を別のダッシュボードに移動し、別の対象者用にすることもできます。</p>
+<p>次に、<strong>それらの KPI に影響を与えるものは何か</strong> を考えます。それらのアクションが発生するためには、どのようなワークフローが実行されている必要がありますか? これらを測定できますか?</p>
+<p>主要コンポーネントを特定し、それらのパフォーマンスの可視化を追加します。KPI が基準を超えたときに、ワークフロー内のどこで主な影響があるかをすぐに確認できる必要があります。</p>
+<p>さらに下のレベルまで掘り下げることもできます。これらのワークフローのパフォーマンスに影響を与えるものは何か? 深さのレベルを決定する際には、対象者を考慮してください。</p>
+<p>注文数を KPI とする電子商取引システムを例に考えてみましょう。
+注文を行うために、ユーザーは次のアクションを実行できる必要があります: 商品の検索、カートへの追加、配送詳細の入力、注文の支払い。
+これらの各ワークフローについて、主要コンポーネントが正常に機能していることを確認することを検討できます。たとえば、RUM や Synthetics を使用して、アクションの成功とユーザーが問題の影響を受けているかどうかのデータを取得します。スループット、レイテンシ、失敗したアクションの割合などの測定を行い、各アクションのパフォーマンスが期待どおりであるかを確認できます。基盤となるインフラストラクチャの測定を行い、パフォーマンスに影響を与えているものを確認することもできます。</p>
+<p>ただし、すべての情報を同じダッシュボードに置く必要はありません。ここでも、対象者を考慮してください。 </p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>ドリルダウンを可能にし、適切なコンテキストを適切なユーザーに提供するダッシュボードのレイヤーを作成します。</p>
+</div>
+<h4 id="_7">インシデント駆動のダッシュボード設計<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h4>
+<p>多くの人にとって、インシデントの解決はオブザーバビリティの主要なドライバーです。ユーザーやオブザーバビリティアラームによって問題が通知され、迅速に修正を見つけ、潜在的な問題の根本原因を特定する必要があります。</p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>最近のインシデントから始めましょう。共通のパターンはありますか? 会社にとって最も影響力のあるものはどれですか? 繰り返し発生するものはどれですか?</p>
+</div>
+<p>この場合、重要度を理解し、根本原因を特定し、インシデントを修正しようとしている人々のためのダッシュボードを設計しています。</p>
+<p>特定のインシデントを思い出してください。</p>
+<ul>
+<li>インシデントが報告されたとおりに検証するにはどうしましたか?<ul>
+<li>何をチェックしましたか? エンドポイント? エラー?</li>
+</ul>
+</li>
+<li>影響と優先順位を理解するにはどうしましたか?</li>
+<li>問題の原因を調べるために何を見ましたか?</li>
+</ul>
+<p>Application Performance Monitoring (APM) は、エンドポイントとワークフローの定期的なベースラインとテストのための <a href="../../tools/synthetics/">Synthetics</a>、実際の顧客体験のための <a href="../../tools/rum/">RUM</a> でここで役立ちます。 このデータを使用して、どのワークフローが影響を受け、どの程度影響を受けているかをすばやく視覚化できます。</p>
+<p>時間経過に伴うエラー数と上位 # エラーを示す視覚化により、正しい領域に焦点を当て、エラーの詳細を示すことができます。 ここではログデータを頻繁に使用しており、エラーコードと理由の動的な視覚化を行っています。</p>
+<p>可能な限り早く詳細に迫るためのフィルタリングやドリルダウンがあると非常に便利です。 あまりオーバーヘッドをかけずにこれを実装する方法を考えてください。 たとえば、詳細に迫るためにフィルタリングできる単一のダッシュボードを用意するなどです。</p>
+<h3 id="_8">レイアウト<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>ダッシュボードのレイアウトも重要です。</p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>通常、ユーザーが最も重要だと考える視覚化は、ページの左上、あるいはページ移動の自然な<em>始点</em>に配置するのがよいでしょう。</p>
+</div>
+<p>レイアウトを使用してストーリーを伝えることができます。 たとえば、上から下にスクロールするにつれて、より詳細な情報が表示されるトップダウンレイアウトを使用できます。 または、左側に上位サービス、右側に依存関係を配置する左右のレイアウトが役立つ場合もあります。</p>
+<h3 id="_9">動的なコンテンツの作成<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p>需要に応じて成長したり縮小したりするように設計されているワークロードが多数あります。ダッシュボードはこれを考慮する必要があります。 
+たとえば、インスタンスをオートスケーリンググループに置いている場合、特定の負荷に達すると追加のインスタンスが追加されます。</p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>特定のインスタンスからのデータを示すダッシュボードは、それらの新しいインスタンスからのデータが表示されることはありません。 
+リソースとデータにメタデータを追加することで、特定のメタデータ値を持つすべてのインスタンスをキャプチャする視覚化を作成できます。 
+この方法では、実際の状態が反映されます。</p>
+</div>
+<p>動的な視覚化の別の例は、現在発生している上位10のエラーと、最近の履歴でのそれらの動作を見つけることができることです。 
+どのエラーが発生するかを知らずに、テーブルやチャートを見ることができます。</p>
+<h3 id="_10">原因よりもまず症状を考える<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>症状を観察するとき、ユーザーやシステムへの影響について考えています。多くの根本原因が同じ症状を引き起こす可能性があります。これにより、未知の問題を含む、より多くの問題を把握できます。原因を理解するにつれて、下位レベルのダッシュボードは、これらの問題を迅速に診断および修正するのに役立つように、より具体的なものになる可能性があります。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>先週ユーザーに影響を与えた特定の JavaScript エラーを記録するのではなく、<em>ワークフローへの影響</em>や、最近の履歴での JavaScript エラーの上位カウント、または最近の履歴で劇的に増加したものを記録します。</p>
+</div>
+<h3 id="n">上位/下位 N を使用する<a class="headerlink" href="#n" title="Permanent link">&para;</a></h3>
+<p>ほとんどの場合、同時に<em>すべての</em>運用メトリクスを可視化する必要はありません。 多数の EC2 インスタンスのフリートは、この良い例です。 数百台のサーバーから成るファーム全体のディスク IOPS や CPU 使用率を同時に表示する必要や価値はありません。 これは、メトリクスを掘り下げようとする時間を、最高(または最低)のパフォーマンスのリソースを見る時間よりも多く費やすことになるアンチパターンを作り出します。  </p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>ダッシュボードを使用して、あらゆるメトリクスの上位10個または20個を表示し、これが明らかにする<a href="#think-about-symptoms-first-over-causes">症状</a>に焦点を当ててください。</p>
+</div>
+<p><a href="../../tools/metrics/">CloudWatch メトリクス</a> を使用すると、任意の時系列の上位 N を検索できます。 たとえば、このクエリは CPU 使用率が最も高い 20 個の EC2 インスタンスを返します。</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>SORT(SEARCH(&#39;{AWS/EC2,InstanceId} MetricName=&quot;CPUUtilization&quot;&#39;, &#39;Average&#39;, 300), SUM, DESC, 10)
+</span></code></pre></div>
+<p>このアプローチ、または<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/query_with_cloudwatch-metrics-insights.html">CloudWatch Metric Insights</a> を使用して、ダッシュボードのパフォーマンスの最も高いまたは最も低いメトリクスを特定します。</p>
+<h3 id="kpi_1">閾値を使用した KPI の視覚的表示<a class="headerlink" href="#kpi_1" title="Permanent link">&para;</a></h3>
+<p>KPI には警告やエラーの閾値を設定する必要があり、ダッシュボードではこれを水平アノテーションを使用して表示できます。これはウィジェット上に高水位マークとして表示されます。これを視覚的に表示することで、ビジネスの成果やインフラストラクチャが危険な状態にある場合に、人間のオペレーターに事前警告を出すことができます。</p>
+<p><img alt="水平アノテーションの画像" src="../../images/horizontal-annotation.png" /></p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>水平アノテーションは、完成度の高いダッシュボードの重要な部分です。</p>
+</div>
+<h3 id="_11">コンテキストの重要性<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h3>
+<p>人々はデータを誤解しやすいものです。背景や現在のコンテキストが、データの見方に影響を与えます。</p>
+<p>だから、ダッシュボード内に<em>テキスト</em>を含めることが大切です。このデータは何のためのものなのか、誰のためのものなのか。それは何を意味しているのか。アプリケーションのドキュメントへのリンク、サポート担当者、トラブルシューティングドキュメントへのリンクを含めてください。テキストディスプレイを使用して、ダッシュボードディスプレイを分割することもできます。左側に配置して左右のコンテキストを設定できます。完全な水平ディスプレイとして使用して、ダッシュボードを垂直に分割することもできます。 </p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>IT サポート、オンコール運用、ビジネスオーナーへのリンクを用意することで、発生した問題に対して支援を受けられるように、チームに迅速な連絡パスを提供できます。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>ダッシュボードへのチケットシステムへのハイパーリンクの追加も、非常に有用な機能です。</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Amazon 2023
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.tabs.sticky"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>

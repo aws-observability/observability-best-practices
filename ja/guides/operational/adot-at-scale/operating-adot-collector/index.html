@@ -1,0 +1,4263 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+        <meta name="author" content="AWS">
+      
+      
+        <link rel="canonical" href="https://aws-observability.github.io/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector/">
+      
+      
+        <link rel="prev" href="../../../hybrid-and-multicloud/">
+      
+      
+        <link rel="next" href="../adot-java-spring/adot-java-spring/">
+      
+      
+      <link rel="icon" href="../../../../images/aws-logo.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.3">
+    
+    
+      
+        <title>Operating At Scale - AWS Observability Best Practices</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.50c56a3b.min.css">
+      
+        
+        <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+
+<style>
+@import url('https://fonts.cdnfonts.com/css/amazon-ember');
+</style>
+
+
+<script>
+  (function(n,i,v,r,s,c,x,z){x=window.AwsRumClient={q:[],n:n,i:i,v:v,r:r,c:c};window[n]=function(c,p){x.q.push({c:c,p:p});};z=document.createElement('script');z.async=true;z.src=s;document.head.insertBefore(z,document.head.getElementsByTagName('script')[0]);})(
+    'cwr',
+    'f8caa971-67c8-4cdf-8fc3-ebf4f4efcb51',
+    '1.0.0',
+    'us-west-2',
+    'https://client.rum.us-east-1.amazonaws.com/1.12.0/cwr.js',
+    {
+      sessionSampleRate: 1,
+      guestRoleArn: "arn:aws:iam::913180151358:role/RUM-Monitor-us-west-2-913180151358-8942296448661-Unauth",
+      identityPoolId: "us-west-2:04333e6f-a1c6-49a4-88e6-93f652142cc0",
+      endpoint: "https://dataplane.rum.us-west-2.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    }
+  );
+</script>
+
+
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="grey" data-md-color-accent="red">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#aws-distro-for-opentelemetry-adot-collector" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href="../../../.." title="AWS Observability Best Practices" class="md-header__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            AWS Observability Best Practices
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Operating At Scale
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+      <div class="md-header__option">
+  <div class="md-select">
+    
+    <button class="md-header__button md-icon" aria-label="言語切り替え">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12.87 15.07-2.54-2.51.03-.03A17.52 17.52 0 0 0 14.07 6H17V4h-7V2H8v2H1v2h11.17C11.5 7.92 10.44 9.75 9 11.35 8.07 10.32 7.3 9.19 6.69 8h-2c.73 1.63 1.73 3.17 2.98 4.56l-5.09 5.02L4 19l5-5 3.11 3.11.76-2.04M18.5 10h-2L12 22h2l1.12-3h4.75L21 22h2l-4.5-12m-2.62 7 1.62-4.33L19.12 17h-3.24Z"/></svg>
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices" hreflang="en" class="md-select__link">
+              English
+            </a>
+          </li>
+        
+          <li class="md-select__item">
+            <a href="/observability-best-practices/ja" hreflang="ja" class="md-select__link">
+              Japanese
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</div>
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="AWS Observability Best Practices" class="md-nav__button md-logo" aria-label="AWS Observability Best Practices" data-md-component="logo">
+      
+  <img src="../../../../images/aws-logo.png" alt="logo">
+
+    </a>
+    AWS Observability Best Practices
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/aws-observability/observability-best-practices" title="リポジトリへ" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    aws-observability/observability-best-practices
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Guides
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Guides
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best practices overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../choosing-a-tracing-agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Choosing a tracing agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Cost
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Cost
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/kubecost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using Kubecost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3_2" id="__nav_2_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Visualizing costs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Visualizing costs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/cost/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability services and Cost
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/amazon-cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/amazon-grafana/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/amazon-prometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/AmazonManagedServiceforPrometheus/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Prometheus real-time cost monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../cost/cost-visualization/aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../databases/rds-and-aurora/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aurora and RDS
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../ec2/ec2-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    EC2 Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ECS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            ECS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_2" id="__nav_2_6_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/oss/ecs/best-practices-metrics-collection-1/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting system metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/oss/ecs/best-practices-metrics-collection-2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Collecting service metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7" id="__nav_2_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    EKS best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7">
+            <span class="md-nav__icon md-icon"></span>
+            EKS best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_1" id="__nav_2_7_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_1">
+            <span class="md-nav__icon md-icon"></span>
+            AWS Native
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/eks/amazon-cloudwatch-container-insights/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Container Insights
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/eks/log-aggregation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Log aggregation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/eks/eks-api-server-monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API server monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/aws-native/eks/container-tracing-with-aws-xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_7_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_7_2" id="__nav_2_7_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_7_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_7_2">
+            <span class="md-nav__icon md-icon"></span>
+            Open Source
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../containers/oss/eks/best-practices-metrics-collection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Essential Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_8" id="__nav_2_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Serverless best practices
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_8">
+            <span class="md-nav__icon md-icon"></span>
+            Serverless best practices
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../serverless/aws-native/lambda-based-observability/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Native
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../serverless/oss/lambda-based-observability-adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open Source
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../hybrid-and-multicloud/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Hybrid and Multicloud
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_10" id="__nav_2_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Operational
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_10_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10">
+            <span class="md-nav__icon md-icon"></span>
+            Operational
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_1" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_1" id="__nav_2_10_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    ADOT Collector
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_1_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_10_1">
+            <span class="md-nav__icon md-icon"></span>
+            ADOT Collector
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Operating At Scale
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Operating At Scale
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      デプロイアーキテクチャ
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="デプロイアーキテクチャ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクタなし
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      エージェント
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="エージェント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      長所と短所
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-eks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EKS 上でコレクターをデーモンセットとして実行する
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon EKS 上でコレクターをデーモンセットとして実行する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      長所と短所
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EC2 でコレクターを実行する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-eks_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EKS 上でコレクターをデプロイメントとして実行する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-ecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon ECS でのメトリクス収集のためのコレクターを中心的なタスクとして実行する
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon ECS でのメトリクス収集のためのコレクターを中心的なタスクとして実行する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      メリットとデメリット
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      ゲートウェイ
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collector の健全性の管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collector の健全性の管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクターからのヘルスメトリクスの収集
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コレクターからのヘルスメトリクスの収集">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクターの健全性チェック
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      破滅的な障害を防ぐための制限の設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="破滅的な障害を防ぐための制限の設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      メモリ使用量の制限
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      バックプレッシャー管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="バックプレッシャー管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus メトリク収集における順不同サンプルの処理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus メトリク収集における順不同サンプルの処理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      順不同のサンプルエラーの解決方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-agent-management-protocol-opamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open Agent Management Protocol (OpAMP)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      水平スケーリング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      参考文献
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../adot-java-spring/adot-java-spring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manually Instrumenting Spring Integration Applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../business/monitoring-for-business-outcomes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitoring for business outcomes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../business/sla-percentile/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentiles
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../business/key-performance-indicators/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Key Performance Indicators
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_5" id="__nav_2_10_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_5">
+            <span class="md-nav__icon md-icon"></span>
+            Alerting
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../alerting/amp-alertmgr/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Prometheus Alert Manager
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_6" id="__nav_2_10_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    GitOps
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_6">
+            <span class="md-nav__icon md-icon"></span>
+            GitOps
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../gitops-with-amg/gitops-with-amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Grafana Operator with Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_10_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_10_7" id="__nav_2_10_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_10_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_10_7">
+            <span class="md-nav__icon md-icon"></span>
+            Dashboards
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/cloudwatch-dashboard/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_11" id="__nav_2_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Signal collection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_11">
+            <span class="md-nav__icon md-icon"></span>
+            Signal collection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../signal-collection/emf/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Embedded Metric Format
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_12" id="__nav_2_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Partners
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_12">
+            <span class="md-nav__icon md-icon"></span>
+            Partners
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../partners/databricks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Databricks
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../observability-maturity-model/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Observability Maturity Model
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data types
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data types
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../signals/logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../signals/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../signals/traces/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Traces
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../signals/alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../signals/events/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Events
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tools
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tools
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/observability_accelerator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Observability Accelerator
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/cloudwatch_agent/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Agent
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/alarms/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alarms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/dashboards/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dashboards
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/internet_monitor/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Internet Monitor
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6" id="__nav_4_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6">
+            <span class="md-nav__icon md-icon"></span>
+            Logs
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/logs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/logs/logs-insights-examples/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Insights Example Queries
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_6_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_6_3" id="__nav_4_6_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Data Protection
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_4_6_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_6_3">
+            <span class="md-nav__icon md-icon"></span>
+            Data Protection
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/logs/dataprotection/data-protection-policies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CloudWatch Logs Data Protection Policies for SLG/EDU
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/metrics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Metrics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/rum/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real User Monitoring
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/synthetics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Synthetic Testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/slos/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Service Level Objectives (SLOs)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tools/xray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tracing with AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Curated recipes
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Curated recipes
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Recipes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/dimensions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dimensions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/telemetry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Telemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_4" id="__nav_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Compute
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            By Compute
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/apprunner/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS App Runner
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/eks/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Kubernetes Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/ecs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Elastic Container Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/lambda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Lambda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5" id="__nav_5_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Infra & Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5">
+            <span class="md-nav__icon md-icon"></span>
+            By Infra & Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/infra/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Infra
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_5_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_5_2" id="__nav_5_5_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Databases
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_5_5_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_5_2">
+            <span class="md-nav__icon md-icon"></span>
+            Databases
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/rds/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Relational Database Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/dynamodb/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon DynamoDB
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/msk/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Streaming for Apache Kafka
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_6" id="__nav_5_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Language
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_6">
+            <span class="md-nav__icon md-icon"></span>
+            By Language
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/nodejs/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Node.js
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_7" id="__nav_5_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    By Destination
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_7">
+            <span class="md-nav__icon md-icon"></span>
+            By Destination
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/cw/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/aes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon OpenSearch Service
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_8" id="__nav_5_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Tasks
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_8">
+            <span class="md-nav__icon md-icon"></span>
+            Tasks
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/anomaly-detection/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Anomaly Detection
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/alerting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Alerting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../recipes/workshops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Workshops
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            FAQ
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    General
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/cloudwatch/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon CloudWatch
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/x-ray/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS X-Ray
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/amp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Service for Prometheus
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/amg/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Amazon Managed Grafana
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../faq/adot/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    AWS Distro for OpenTelemetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../contributors/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributors
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      デプロイアーキテクチャ
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="デプロイアーキテクチャ">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクタなし
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      エージェント
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="エージェント">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_4" class="md-nav__link">
+    <span class="md-ellipsis">
+      長所と短所
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-eks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EKS 上でコレクターをデーモンセットとして実行する
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon EKS 上でコレクターをデーモンセットとして実行する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_5" class="md-nav__link">
+    <span class="md-ellipsis">
+      長所と短所
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-ec2" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EC2 でコレクターを実行する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-eks_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon EKS 上でコレクターをデプロイメントとして実行する
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#amazon-ecs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon ECS でのメトリクス収集のためのコレクターを中心的なタスクとして実行する
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon ECS でのメトリクス収集のためのコレクターを中心的なタスクとして実行する">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_6" class="md-nav__link">
+    <span class="md-ellipsis">
+      メリットとデメリット
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      ゲートウェイ
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collector" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collector の健全性の管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Collector の健全性の管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_8" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクターからのヘルスメトリクスの収集
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="コレクターからのヘルスメトリクスの収集">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_9" class="md-nav__link">
+    <span class="md-ellipsis">
+      コレクターの健全性チェック
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      破滅的な障害を防ぐための制限の設定
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="破滅的な障害を防ぐための制限の設定">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_11" class="md-nav__link">
+    <span class="md-ellipsis">
+      メモリ使用量の制限
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_12" class="md-nav__link">
+    <span class="md-ellipsis">
+      バックプレッシャー管理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="バックプレッシャー管理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#prometheus" class="md-nav__link">
+    <span class="md-ellipsis">
+      Prometheus メトリク収集における順不同サンプルの処理
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Prometheus メトリク収集における順不同サンプルの処理">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#_13" class="md-nav__link">
+    <span class="md-ellipsis">
+      順不同のサンプルエラーの解決方法
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#open-agent-management-protocol-opamp" class="md-nav__link">
+    <span class="md-ellipsis">
+      Open Agent Management Protocol (OpAMP)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_14" class="md-nav__link">
+    <span class="md-ellipsis">
+      水平スケーリング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_15" class="md-nav__link">
+    <span class="md-ellipsis">
+      参考文献
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="aws-distro-for-opentelemetry-adot-collector">AWS Distro for OpenTelemetry (ADOT) Collector の運用<a class="headerlink" href="#aws-distro-for-opentelemetry-adot-collector" title="Permanent link">&para;</a></h1>
+<p><a href="https://aws-otel.github.io/">ADOT Collector</a> は、<a href="https://www.cncf.io/">CNCF</a> のオープンソースの <a href="https://opentelemetry.io/docs/collector/">OpenTelemetry Collector</a> のダウンストリームディストリビューションです。</p>
+<p>お客様は、ADOT Collector を使用して、オンプレミス、AWS、他のクラウド プロバイダーなど、さまざまな環境からメトリクスやトレースなどのシグナルを収集できます。</p>
+<p>実稼働環境で ADOT Collector を運用しスケールするには、オペレーターは Collector のヘルスを監視し、必要に応じてスケールする必要があります。このガイドでは、本番環境で ADOT Collector を運用するためのアクションについて学習します。</p>
+<h2 id="_1">デプロイアーキテクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
+<p>必要条件に応じて、検討したいデプロイオプションがいくつかあります。</p>
+<ul>
+<li>コレクターなし</li>
+<li>エージェント</li>
+<li>ゲートウェイ</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>これらの概念の詳細については、<a href="https://opentelemetry.io/docs/collector/deployment/">OpenTelemetry のドキュメント</a>をご確認ください。</p>
+</div>
+<h3 id="_2">コレクタなし<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<p>このオプションは、基本的にコレクタを方程式から完全に省略します。ご存知かもしれませんが、OTEL SDK から直接デスティネーション サービスへの API 呼び出しを行い、シグナルを送信することが可能です。たとえば、ADOT Collector などのアウトオブプロセス エージェントにスパンを送信する代わりに、アプリケーション プロセスから直接 AWS X-Ray の <a href="https://docs.aws.amazon.com/xray/latest/api/API_PutTraceSegments.html">PutTraceSegments</a> API を呼び出すことを考えてみてください。</p>
+<p>アプローチのガイダンスを変更する AWS 固有の側面はないため、詳細については上流のドキュメントの <a href="https://opentelemetry.io/docs/collector/deployment/no-collector/">セクション</a> を確認することを強くおすすめします。</p>
+<p><img alt="コレクタなしオプション" src="../../../../images/adot-collector-deployment-no-collector.png" /></p>
+<h3 id="_3">エージェント<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<p>このアプローチでは、コレクターを分散させてシグナルをデスティネーションに収集します。 
+<code>No Collector</code> オプションとは異なり、ここでは関心事を分離し、リモート API 呼び出しを行うためにリソースを使用する必要があるアプリケーションから分離します。代わりに、ローカルでアクセス可能なエージェントと通信します。</p>
+<p>基本的には、Amazon EKS 環境で <strong>Kubernetes の sidecar としてコレクターを実行する</strong>場合は、次のようになります。</p>
+<p><img alt="ADOT Collector Sidecar" src="../../../../images/adot-collector-eks-sidecar.png" /></p>
+<p>上記のアーキテクチャでは、コレクターがアプリケーションコンテナと同じ Pod で実行されるため、<code>localhost</code> からターゲットをスクレイプすることになるため、スクレイプ構成でサービス検出メカニズムを実際に使用する必要がほとんどありません。</p>
+<p>同じアーキテクチャは、トレースの収集にも適用されます。 単に、<a href="https://aws-otel.github.io/docs/getting-started/x-ray#sample-collector-configuration-putting-it-together">ここで示す</a> OTEL パイプラインを作成する必要があります。</p>
+<h5 id="_4">長所と短所<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h5>
+<ul>
+<li>
+<p>このデザインを推奨する1つの論拠は、コレクターが自身の仕事を行うために特別な量のリソース(CPU、メモリ)を割り当てる必要がないことです。ターゲットがローカルソースに限定されているためです。</p>
+</li>
+<li>
+<p>このアプローチを使用することの短所は、コレクターポッドの構成の変更点の数は、クラスターで実行しているアプリケーションの数に比例することです。
+これは、ポッドに期待されるワークロードに応じて、各ポッドの CPU、メモリ、その他のリソース割り当てを個別に管理する必要があることを意味します。これに注意を払わないと、コレクターポッドのリソースが過剰または不足し、パフォーマンスの低下や、ノード内の他のポッドで使用できるはずの CPU サイクルとメモリのロックアップが発生する可能性があります。</p>
+</li>
+</ul>
+<p>ニーズに応じて、コレクターをデプロイメント、デーモンセット、ステートフルセットなどの他のモデルでもデプロイできます。</p>
+<h4 id="amazon-eks">Amazon EKS 上でコレクターをデーモンセットとして実行する<a class="headerlink" href="#amazon-eks" title="Permanent link">&para;</a></h4>
+<p>コレクターの負荷(スクレイピングとメトリクスの Amazon Managed Service for Prometheus ワークスペースへの送信)を EKS ノード全体で均等に分散させたい場合は、コレクターを <a href="https://kubernetes.io/docs/concepts/workloads/controllers/daemonset/">デーモンセット</a>として実行することを選択できます。</p>
+<p><img alt="ADOT Collector Daemonset" src="../../../../images/adot-collector-eks-daemonset.png" /></p>
+<p>コレクターがホスト/ノードからのターゲットのみをスクレイプする <code>keep</code> アクションがあることを確認してください。</p>
+<p>参考のために以下のサンプルをご覧ください。その他の構成の詳細は<a href="https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced#daemonset-collector-configuration">こちら</a>をご覧ください。</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nt">scrape_configs</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">kubernetes-apiservers</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="nt">bearer_token_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/run/secrets/kubernetes.io/serviceaccount/token</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">kubernetes_sd_configs</span><span class="p">:</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">endpoints</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="nt">relabel_configs</span><span class="p">:</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keep</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">regex</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$K8S_NODE_NAME</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">        </span><span class="l l-Scalar l-Scalar-Plain">source_labels</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">__meta_kubernetes_endpoint_node_name</span><span class="p p-Indicator">]</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">scheme</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="nt">tls_config</span><span class="p">:</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="w">        </span><span class="nt">ca_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/run/secrets/kubernetes.io/serviceaccount/ca.crt</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">        </span><span class="nt">insecure_skip_verify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+</span></code></pre></div>
+<p>同じアーキテクチャをトレースの収集にも使用できます。この場合、コレクターが Prometheus メトリクスをスクレイプするエンドポイントに到達する代わりに、トレーススパンがアプリケーションポッドからコレクターに送信されます。</p>
+<h5 id="_5">長所と短所<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h5>
+<p><strong>長所</strong></p>
+<ul>
+<li>スケーリングに関する懸念が最小限</li>
+<li>高可用性の構成が難しい</li>
+<li>コレクターのコピーが多すぎる</li>
+<li>ログのサポートが容易</li>
+</ul>
+<p><strong>短所</strong></p>
+<ul>
+<li>リソース利用の最適化の観点から最適ではない</li>
+<li>リソース割り当てが均衡を欠く</li>
+</ul>
+<h4 id="amazon-ec2">Amazon EC2 でコレクターを実行する<a class="headerlink" href="#amazon-ec2" title="Permanent link">&para;</a></h4>
+<p>EC2 でコレクターを実行する際にサイドカー方式はないため、EC2 インスタンス上でエージェントとしてコレクターを実行します。以下のような静的スクレイプ設定を設定して、インスタンス内のターゲットを発見し、メトリクスをスクレイプできます。</p>
+<p>以下の設定は、localhost のポート <code>9090</code> と <code>8081</code> のエンドポイントをスクレイプします。</p>
+<p><a href="https://catalog.workshops.aws/observability/ja-JP/aws-managed-oss/ec2-monitoring">One Observability ワークショップの EC2 に焦点を当てたモジュール</a> を通じて、このトピックのハンズオン体験を深めましょう。</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nt">global</span><span class="p">:</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">scrape_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15s</span><span class="w"> </span><span class="c1"># By default, scrape targets every 15 seconds.</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nt">scrape_configs</span><span class="p">:</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;prometheus&#39;</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">  </span><span class="nt">static_configs</span><span class="p">:</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">targets</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;localhost:9090&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;localhost:8081&#39;</span><span class="p p-Indicator">]</span>
+</span></code></pre></div>
+<h4 id="amazon-eks_1">Amazon EKS 上でコレクターをデプロイメントとして実行する<a class="headerlink" href="#amazon-eks_1" title="Permanent link">&para;</a></h4>
+<p>コレクターをデプロイメントとして実行すると、コレクターの高可用性も提供できるので特に便利です。ターゲットの数、スクレイプできるメトリクスの可用性などに応じて、コレクターのリソースを調整して、コレクターが飢餓状態にならず、シグナル収集に問題が発生しないようにする必要があります。</p>
+<p><a href="/observability-best-practices/ja/guides/containers/oss/eks/best-practices-metrics-collection">このトピックの詳細は、こちらのガイドをご覧ください。</a></p>
+<p>次のアーキテクチャは、コレクターがワークロード ノードとは別のノードでデプロイされ、メトリクスとトレースを収集する方法を示しています。</p>
+<p><img alt="ADOT Collector Deployment" src="../../../../images/adot-collector-deployment-deployment.png" /></p>
+<p>メトリクス収集の高可用性を設定するには、<a href="https://docs.aws.amazon.com/prometheus/latest/userguide/Send-high-availability-prom-community.html">高可用性の設定方法を詳しく説明したドキュメント</a> をご覧ください。</p>
+<h4 id="amazon-ecs">Amazon ECS でのメトリクス収集のためのコレクターを中心的なタスクとして実行する<a class="headerlink" href="#amazon-ecs" title="Permanent link">&para;</a></h4>
+<p><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/observer/ecsobserver">ECS Observer 拡張機能</a> を使用して、ECS クラスター内のさまざまなタスクやクラスター間で Prometheus メトリクスを収集できます。</p>
+<p><img alt="ADOT Collector Deployment ECS" src="../../../../images/adot-collector-deployment-ecs.png" /></p>
+<p>拡張機能のコレクターの構成例:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nt">extensions</span><span class="p">:</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">ecs_observer</span><span class="p">:</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="nt">refresh_interval</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60s</span><span class="w"> </span><span class="c1"># format is https://golang.org/pkg/time/#ParseDuration</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">cluster_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Cluster-1&#39;</span><span class="w"> </span><span class="c1"># cluster name need manual config</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">cluster_region</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;us-west-2&#39;</span><span class="w"> </span><span class="c1"># region can be configured directly or use AWS_REGION env var</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="nt">result_file</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/etc/ecs_sd_targets.yaml&#39;</span><span class="w"> </span><span class="c1"># the directory for file must already exists</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">    </span><span class="nt">services</span><span class="p">:</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;^retail-.*$&#39;</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">    </span><span class="nt">docker_labels</span><span class="p">:</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">port_label</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ECS_PROMETHEUS_EXPORTER_PORT&#39;</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">task_definitions</span><span class="p">:</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">job_name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;task_def_1&#39;</span>
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">        </span><span class="nt">metrics_path</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;/metrics&#39;</span>
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">        </span><span class="nt">metrics_ports</span><span class="p">:</span>
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9113</span>
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">9090</span>
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">        </span><span class="nt">arn_pattern</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;.*:task-definition/nginx:[0-9]+&#39;</span>
+</span></code></pre></div>
+<h5 id="_6">メリットとデメリット<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h5>
+<ul>
+<li>このモデルの利点は、自分で管理しなければならないコレクターと構成が少ないことです。</li>
+<li>クラスターがかなり大きく、スクレイプするターゲットが数千個ある場合は、負荷がコレクター間でバランスよく分散されるようにアーキテクチャを慎重に設計する必要があります。HA の理由から同じコレクターの近似クローンを実行する必要があることを追加すると、運用上の問題を回避するために注意深く行う必要があります。</li>
+</ul>
+<h3 id="_7">ゲートウェイ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p><img alt="ADOT Collector ゲートウェイ" src="../../../../images/adot-collector-deployment-gateway.png" /></p>
+<h2 id="collector">Collector の健全性の管理<a class="headerlink" href="#collector" title="Permanent link">&para;</a></h2>
+<p>OTEL Collector は、健全性とパフォーマンスを把握するためのいくつかのシグナルを公開しています。Collector の健全性を密接に監視することは、次のような修正アクションを実行するために不可欠です。</p>
+<ul>
+<li>Collector を水平方向にスケールする</li>
+<li>Collector が望ましい機能を発揮できるように追加リソースをプロビジョニングする</li>
+</ul>
+<h3 id="_8">コレクターからのヘルスメトリクスの収集<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
+<p>OTEL コレクターは、<code>service</code> パイプラインに <code>telemetry</code> セクションを追加するだけで、Prometheus Exposition Format でメトリクスを公開するように構成できます。コレクターは、自身のログも stdout に公開できます。</p>
+<p>テレメトリ構成の詳細は、<a href="https://opentelemetry.io/docs/collector/configuration/#service">OpenTelemetry のドキュメント</a> で確認できます。</p>
+<p>コレクターのサンプルテレメトリ構成です。</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nt">service</span><span class="p">:</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="nt">telemetry</span><span class="p">:</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="nt">logs</span><span class="p">:</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">      </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">debug</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="nt">metrics</span><span class="p">:</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">      </span><span class="nt">level</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">detailed</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">      </span><span class="nt">address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0:8888</span>
+</span></code></pre></div>
+<p>構成後、コレクターは <code>http://localhost:8888/metrics</code> で次のようなメトリクスのエクスポートを開始します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># HELP otelcol_exporter_enqueue_failed_spans Number of spans failed to be added to the sending queue.</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># TYPE otelcol_exporter_enqueue_failed_spans counter</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>otelcol_exporter_enqueue_failed_spans<span class="o">{</span><span class="nv">exporter</span><span class="o">=</span><span class="s2">&quot;awsxray&quot;</span>,service_instance_id<span class="o">=</span><span class="s2">&quot;523a2182-539d-47f6-ba3c-13867b60092a&quot;</span>,service_name<span class="o">=</span><span class="s2">&quot;aws-otel-collector&quot;</span>,service_version<span class="o">=</span><span class="s2">&quot;v0.25.0&quot;</span><span class="o">}</span><span class="w"> </span><span class="m">0</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># HELP otelcol_process_runtime_total_sys_memory_bytes Total bytes of memory obtained from the OS (see &#39;go doc runtime.MemStats.Sys&#39;)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># TYPE otelcol_process_runtime_total_sys_memory_bytes gauge</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>otelcol_process_runtime_total_sys_memory_bytes<span class="o">{</span><span class="nv">service_instance_id</span><span class="o">=</span><span class="s2">&quot;523a2182-539d-47f6-ba3c-13867b60092a&quot;</span>,service_name<span class="o">=</span><span class="s2">&quot;aws-otel-collector&quot;</span>,service_version<span class="o">=</span><span class="s2">&quot;v0.25.0&quot;</span><span class="o">}</span><span class="w"> </span><span class="m">2</span>.4462344e+07
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># HELP otelcol_process_memory_rss Total physical memory (resident set size)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="c1"># TYPE otelcol_process_memory_rss gauge</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>otelcol_process_memory_rss<span class="o">{</span><span class="nv">service_instance_id</span><span class="o">=</span><span class="s2">&quot;523a2182-539d-47f6-ba3c-13867b60092a&quot;</span>,service_name<span class="o">=</span><span class="s2">&quot;aws-otel-collector&quot;</span>,service_version<span class="o">=</span><span class="s2">&quot;v0.25.0&quot;</span><span class="o">}</span><span class="w"> </span><span class="m">6</span>.5675264e+07
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="c1"># HELP otelcol_exporter_enqueue_failed_metric_points Number of metric points failed to be added to the sending queue.</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="c1"># TYPE otelcol_exporter_enqueue_failed_metric_points counter</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>otelcol_exporter_enqueue_failed_metric_points<span class="o">{</span><span class="nv">exporter</span><span class="o">=</span><span class="s2">&quot;awsxray&quot;</span>,service_instance_id<span class="o">=</span><span class="s2">&quot;d234b769-dc8a-4b20-8b2b-9c4f342466fe&quot;</span>,service_name<span class="o">=</span><span class="s2">&quot;aws-otel-collector&quot;</span>,service_version<span class="o">=</span><span class="s2">&quot;v0.25.0&quot;</span><span class="o">}</span><span class="w"> </span><span class="m">0</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>otelcol_exporter_enqueue_failed_metric_points<span class="o">{</span><span class="nv">exporter</span><span class="o">=</span><span class="s2">&quot;logging&quot;</span>,service_instance_id<span class="o">=</span><span class="s2">&quot;d234b769-dc8a-4b20-8b2b-9c4f342466fe&quot;</span>,service_name<span class="o">=</span><span class="s2">&quot;aws-otel-collector&quot;</span>,service_version<span class="o">=</span><span class="s2">&quot;v0.25.0&quot;</span><span class="o">}</span><span class="w"> </span><span class="m">0</span>
+</span></code></pre></div>
+<p>上記のサンプル出力では、送信キューへの追加に失敗したスパン数を示す <code>otelcol_exporter_enqueue_failed_spans</code> というメトリックがコレクターによって公開されていることがわかります。このメトリックは、コレクターがトレースデータの送信先への送信に問題があるかどうかを理解するために注意が必要です。この場合、<code>exporter</code> ラベルの値 <code>awsxray</code> は、使用中のトレースの送信先を示しています。</p>
+<p>もう一つのメトリック <code>otelcol_process_runtime_total_sys_memory_bytes</code> は、コレクターが使用しているメモリ量の指標です。このメモリが <code>otelcol_process_memory_rss</code> メトリックの値に非常に近づいた場合、プロセスに割り当てられたメモリが枯渇しつつあり、コレクターに問題が発生する可能性があることを示しています。この場合、コレクターにより多くのメモリを割り当てるなどのアクションを取る必要があるかもしれません。</p>
+<p>同様に、リモートの送信先に送信できなかったメトリクス数を示す <code>otelcol_exporter_enqueue_failed_metric_points</code> というカウンターメトリックがあることがわかります。</p>
+<h4 id="_9">コレクターの健全性チェック<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h4>
+<p>コレクターにはライブネスプローブがあり、コレクターが稼働しているかどうかを確認することができます。このエンドポイントを定期的にチェックして、コレクターの可用性を確認することをおすすめします。</p>
+<p><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/healthcheckextension"><code>healthcheck</code></a> 拡張機能を使用すると、コレクターがエンドポイントを公開できます。以下にサンプルの構成を示します。</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nt">extensions</span><span class="p">:</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span><span class="nt">health_check</span><span class="p">:</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="nt">endpoint</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.0.0.0:13133</span>
+</span></code></pre></div>
+<p>構成オプションの詳細は、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/extension/healthcheckextension">こちらの GitHub リポジトリ</a>を参照してください。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>❯<span class="w"> </span>curl<span class="w"> </span>-v<span class="w"> </span>http://localhost:13133
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>*<span class="w">   </span>Trying<span class="w"> </span><span class="m">127</span>.0.0.1:13133...
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>*<span class="w"> </span>Connected<span class="w"> </span>to<span class="w"> </span>localhost<span class="w"> </span><span class="o">(</span><span class="m">127</span>.0.0.1<span class="o">)</span><span class="w"> </span>port<span class="w"> </span><span class="m">13133</span><span class="w"> </span><span class="o">(</span><span class="c1">#0)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>&gt;<span class="w"> </span>GET<span class="w"> </span>/<span class="w"> </span>HTTP/1.1
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>&gt;<span class="w"> </span>Host:<span class="w"> </span>localhost:13133
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>&gt;<span class="w"> </span>User-Agent:<span class="w"> </span>curl/7.79.1
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>&gt;<span class="w"> </span>Accept:<span class="w"> </span>*/*
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>&gt;
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>*<span class="w"> </span>Mark<span class="w"> </span>bundle<span class="w"> </span>as<span class="w"> </span>not<span class="w"> </span>supporting<span class="w"> </span>multiuse
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>&lt;<span class="w"> </span>HTTP/1.1<span class="w"> </span><span class="m">200</span><span class="w"> </span>OK
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>&lt;<span class="w"> </span>Date:<span class="w"> </span>Fri,<span class="w"> </span><span class="m">24</span><span class="w"> </span>Feb<span class="w"> </span><span class="m">2023</span><span class="w"> </span><span class="m">19</span>:09:22<span class="w"> </span>GMT
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>&lt;<span class="w"> </span>Content-Length:<span class="w"> </span><span class="m">0</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>&lt;
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>*<span class="w"> </span>Connection<span class="w"> </span><span class="c1">#0 to host localhost left intact</span>
+</span></code></pre></div>
+<h4 id="_10">破滅的な障害を防ぐための制限の設定<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h4>
+<p>どのような環境でもリソース(CPU、メモリ)は有限であるため、予期しない状況による障害を避けるためにコレクタコンポーネントに制限を設定する必要があります。</p>
+<p>とくに重要なのは、Prometheus メトリクスを収集するために ADOT コレクターを運用している場合です。
+次のようなシナリオを考えてみましょう - あなたは DevOps チームに所属しており、Amazon EKS クラスター内で ADOT コレクターのデプロイと運用を担当しています。アプリケーションチームはいつでも自由にアプリケーション Pod をドロップでき、Pod から公開されるメトリクスが Amazon Managed Service for Prometheus ワークスペースに収集されることを期待しています。</p>
+<p>このパイプラインを問題なく機能させることがあなたの責任です。この問題を高レベルで解決する方法は 2 つあります。</p>
+<ul>
+<li>コレクターを無限にスケールして(必要に応じてクラスターにノードを追加して)この要件をサポートする</li>
+<li>メトリック収集に制限を設定し、アプリケーションチームに上限しきい値を通知する</li>
+</ul>
+<p>両方のアプローチには長所と短所があります。コストやもたらされるオーバーヘッドを考慮せずに、成長し続けるビジネスニーズを完全にサポートすることをコミットしている場合は、オプション 1 を選択すると主張できます。無限に成長し続けるビジネスニーズをサポートすることは、「クラウドは無限のスケーラビリティを実現する」という観点から見ると魅力的に聞こえますが、これは多大な運用上のオーバーヘッドをもたらし、無期限の時間と人的リソースを確保して継続的な中断のない運用を保証しない限り、はるかに大きな破滅的状況を招く可能性があります。ほとんどの場合これは現実的ではありません。</p>
+<p>はるかに実際的で節約できるアプローチは、オプション 2 を選択し、運用の境界線が明確になるよう、あらゆる時点で上限(および必要に応じて段階的に増加)を設定することです。</p>
+<p>ADOT コレクターの Prometheus レシーバーを使用してこれを実現する方法の例を以下に示します。</p>
+<p>Prometheus の <a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config">scrape_config</a> で、特定のスクレイプジョブに対していくつかの制限を設定できます。以下の制限を設定できます。</p>
+<ul>
+<li>スクレイプ本体の全体サイズ</li>
+<li>受け入れるラベルの数の制限(この制限を超えるとスクレイプは破棄され、コレクターログで確認できます)  </li>
+<li>スクレイプするターゲットの数の制限</li>
+<li>その他</li>
+</ul>
+<p>使用可能なすべてのオプションは、<a href="https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config">Prometheus のドキュメント</a>を参照してください。</p>
+<h5 id="_11">メモリ使用量の制限<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h5>
+<p>Collector パイプラインは、<a href="https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor"><code>memorylimiterprocessor</code></a> を使用して、プロセッサコンポーネントが使用するメモリ量を制限するように構成できます。 
+顧客が複雑な操作を Collector に要求し、多くのメモリと CPU リソースを必要とするのをよく見かけます。</p>
+<p><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor"><code>redactionprocessor</code></a> や <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor"><code>filterprocessor</code></a>、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor"><code>spanprocessor</code></a> などのプロセッサは魅力的で非常に便利ですが、プロセッサは一般にデータ変換タスクを扱うことと、タスクを完了するためにデータをメモリに保持する必要があることを忘れないでください。 
+これにより、特定のプロセッサが Collector 全体を壊したり、Collector 自身のヘルスメトリクスを公開するのに十分なメモリがなくなる可能性があります。</p>
+<p>これを回避するには、 <a href="https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor"><code>memorylimiterprocessor</code></a> を利用して、Collector が使用できるメモリ量を制限します。 
+これに対する推奨事項は、ヘルスメトリクスの公開やその他のタスクを実行するために Collector が利用できるバッファメモリを提供することです。これにより、プロセッサが割り当てられたすべてのメモリを使い切ることがなくなります。</p>
+<p>たとえば、EKS Pod のメモリ制限が <code>10Gi</code> の場合、<code>memorylimiterprocessor</code> を <code>10Gi</code> 未満の <code>9Gi</code> などに設定することで、ヘルスメトリクスの公開、レシーバやエクスポータタスクなど、他の操作を実行するために <code>1Gi</code> のバッファを使用できます。</p>
+<h4 id="_12">バックプレッシャー管理<a class="headerlink" href="#_12" title="Permanent link">&para;</a></h4>
+<p>以下に示すようなアーキテクチャパターン(ゲートウェイパターン)を使用して、信号データから機密データをフィルタリングしてコンプライアンス要件を満たすなどの運用タスクを集中管理できます。</p>
+<p><img alt="ADOT Collector Simple Gateway" src="../../../../images/adot-collector-deployment-simple-gateway.png" /></p>
+<p>ただし、ゲートウェイコレクターに過剰な <em>処理</em> タスクを課すと、問題が発生する可能性があります。推奨されるアプローチは、個々のコレクターとゲートウェイの間でプロセス/メモリ集中型のタスクを分散させ、ワークロードを共有することです。</p>
+<p>たとえば、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourceprocessor"><code>resourceprocessor</code></a> を使用してリソース属性を処理し、信号データの収集と同時に個々のコレクター内から <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/transformprocessor"><code>transformprocessor</code></a> を使用して信号データを変換できます。</p>
+<p>次に、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor"><code>filterprocessor</code></a> を使用して信号データの特定部分をフィルタリングし、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor"><code>redactionprocessor</code></a> を使用してクレジットカード番号などの機密情報を編集できます。</p>
+<p>高レベルのアーキテクチャ図は、次のようになります。</p>
+<p><img alt="ADOT Collector Simple Gateway with processors" src="../../../../images/adot-collector-deployment-simple-gateway-pressure.png" /></p>
+<p>すでにお気づきの通り、ゲートウェイコレクターはすぐに単一障害点になる可能性があります。ここで明白な選択肢は、<a href="https://aws.amazon.com/elasticloadbalancing/application-load-balancer/">AWS Application Load Balancer (ALB)</a> などのロードバランサーを介してリクエストをプロキシするために、複数のゲートウェイコレクターを起動することです。以下のようにです。</p>
+<p><img alt="ADOT Collector Gateway batching pressure" src="../../../../images/adot-collector-deployment-gateway-batching-pressure.png" /></p>
+<h5 id="prometheus">Prometheus メトリク収集における順不同サンプルの処理<a class="headerlink" href="#prometheus" title="Permanent link">&para;</a></h5>
+<p>以下のアーキテクチャのシナリオを考えてみましょう。</p>
+<p><img alt="ADOT Collector Gateway batching pressure" src="../../../../images/adot-collector-deployment-gateway-batching.png" /></p>
+<ol>
+<li>Amazon EKS クラスター内の <strong>ADOT Collector-1</strong> からのメトリクスがゲートウェイ クラスターに送信され、<strong>Gateway ADOT Collector-1</strong> にリダイレクトされているとします</li>
+<li>しばらくすると、同じ <strong>ADOT Collector-1</strong> (同じターゲットを収集しているため、処理されているメトリック サンプルは同じです) からのメトリクスが <strong>Gateway ADOT Collector-2</strong> に送信されます</li>
+<li>ここで、<strong>Gateway ADOT Collector-2</strong> がメトリクスを Amazon Managed Service for Prometheus ワークスペースに先に配信し、次に同じメトリック シリーズの古いサンプルを含む <strong>Gateway ADOT Collector-1</strong> が配信した場合、Amazon Managed Service for Prometheus から <code>順不同のサンプル</code> エラーが発生します。</li>
+</ol>
+<p>以下にエラーの例を示します。</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>Error<span class="w"> </span>message:
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w"> </span><span class="m">2023</span>-03-02T21:18:54.447Z<span class="w">        </span>error<span class="w">   </span>exporterhelper/queued_retry.go:394<span class="w">      </span>Exporting<span class="w"> </span>failed.<span class="w"> </span>The<span class="w"> </span>error<span class="w"> </span>is<span class="w"> </span>not<span class="w"> </span>retryable.<span class="w"> </span>Dropping<span class="w"> </span>data.<span class="w">    </span><span class="o">{</span><span class="s2">&quot;kind&quot;</span>:<span class="w"> </span><span class="s2">&quot;exporter&quot;</span>,<span class="w"> </span><span class="s2">&quot;data_type&quot;</span>:<span class="w"> </span><span class="s2">&quot;metrics&quot;</span>,<span class="w"> </span><span class="s2">&quot;name&quot;</span>:<span class="w"> </span><span class="s2">&quot;prometheusremotewrite&quot;</span>,<span class="w"> </span><span class="s2">&quot;error&quot;</span>:<span class="w"> </span><span class="s2">&quot;Permanent error: Permanent error: remote write returned HTTP status 400 Bad Request; err = %!w(&lt;nil&gt;): user=820326043460_ws-5f42c3b6-3268-4737-b215-1371b55a9ef2: err: out of order sample. timestamp=2023-03-02T21:17:59.782Z, series={__name__=\&quot;otelcol_exporter_send_failed_metric_points\&quot;, exporter=\&quot;logging\&quot;, http_scheme=\&quot;http\&quot;, instance=\&quot;10.195.158.91:28888\&quot;, &quot;</span>,<span class="w"> </span><span class="s2">&quot;dropped_items&quot;</span>:<span class="w"> </span><span class="m">6474</span><span class="o">}</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>go.opentelemetry.io/collector/exporter/exporterhelper.<span class="o">(</span>*retrySender<span class="o">)</span>.send
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">        </span>go.opentelemetry.io/collector@v0.66.0/exporter/exporterhelper/queued_retry.go:394
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>go.opentelemetry.io/collector/exporter/exporterhelper.<span class="o">(</span>*metricsSenderWithObservability<span class="o">)</span>.send
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">        </span>go.opentelemetry.io/collector@v0.66.0/exporter/exporterhelper/metrics.go:135
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>go.opentelemetry.io/collector/exporter/exporterhelper.<span class="o">(</span>*queuedRetrySender<span class="o">)</span>.start.func1
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="w">        </span>go.opentelemetry.io/collector@v0.66.0/exporter/exporterhelper/queued_retry.go:205
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>go.opentelemetry.io/collector/exporter/exporterhelper/internal.<span class="o">(</span>*boundedMemoryQueue<span class="o">)</span>.StartConsumers.func1
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a><span class="w">        </span>go.opentelemetry.io/collector@v0.66.0/exporter/exporterhelper/internal/bounded_memory_queue.go:61
+</span></code></pre></div>
+<p></nil></p>
+<h6 id="_13">順不同のサンプルエラーの解決方法<a class="headerlink" href="#_13" title="Permanent link">&para;</a></h6>
+<p>この特定のセットアップで順不同のサンプルエラーを解決する方法がいくつかあります。</p>
+<ul>
+<li>スティッキーロードバランサーを使用して、IP アドレスに基づいて特定のソースからのリクエストが同じターゲットにルーティングされるようにします。</li>
+</ul>
+<p>詳細は<a href="https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/">こちらのリンク</a>を参照してください。</p>
+<ul>
+<li>
+<p>別のオプションとして、ゲートウェイコレクターに外部ラベルを追加してメトリックシリーズを区別し、Amazon Managed Service for Prometheus がこれらのメトリクスを個別のメトリックシリーズとみなし、同じものではないと判断させることができます。</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>このソリューションを使用すると、セットアップ内のゲートウェイコレクターに比例してメトリックシリーズが増加する結果となります。これは、<a href="https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html"><code>アクティブな時系列の制限</code></a>などの制限を超えてしまう可能性があります。</p>
+</div>
+</li>
+<li>
+<p><strong>ADOT コレクターを Daemonset としてデプロイしている場合</strong>: 各 ADOT コレクターポッドが実行されているのと同じノードからのサンプルのみを保持するように <code>relabel_configs</code> を使用することを確認してください。詳細は以下のリンクを確認してください。</p>
+<ul>
+<li><a href="https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced">Amazon Managed Prometheus の高度なコレクター構成</a> - <em>Click to View</em> セクションを展開し、次のようなエントリを探してください。
+    <div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="w">    </span><span class="nt">relabel_configs</span><span class="p">:</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">keep</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">      </span><span class="nt">regex</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">$K8S_NODE_NAME</span>
+</span></code></pre></div></li>
+<li><a href="https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/add-on-configuration">ADOT アドオンの高度な構成</a> - ADOT アドオン for EKS の高度な構成を使用して ADOT コレクターをデプロイする方法を学びます。</li>
+<li><a href="https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/installation#deploy-the-adot-collector">ADOT コレクターのデプロイ戦略</a> - 大規模に ADOT コレクターをデプロイするためのさまざまな代替手段と、各アプローチの利点について学びます。</li>
+</ul>
+</li>
+</ul>
+<h4 id="open-agent-management-protocol-opamp">Open Agent Management Protocol (OpAMP)<a class="headerlink" href="#open-agent-management-protocol-opamp" title="Permanent link">&para;</a></h4>
+<p>OpAMP は、HTTP および WebSockets を介した通信をサポートするクライアント/サーバープロトコルです。OpAMP は OTel Collector に実装されているため、OTel Collector はコントロールプレーンの一部として、OTel Collector 自体のように OpAMP をサポートする他のエージェントを管理するためのサーバーとして使用できます。ここでの「管理」部分には、コレクターの構成を更新したり、ヘルスを監視したり、コレクターをアップグレードしたりする機能が含まれます。</p>
+<p>このプロトコルの詳細は、アップストリームの OpenTelemetry ウェブサイトで十分に<a href="https://opentelemetry.io/docs/collector/management/">文書化されています。</a></p>
+<h3 id="_14">水平スケーリング<a class="headerlink" href="#_14" title="Permanent link">&para;</a></h3>
+<p>ワークロードに応じて、ADOT Collector を水平方向にスケーリングする必要が生じる場合があります。
+水平方向にスケーリングする必要性は、使用例、Collector の構成、テレメトリスループットに完全に依存します。</p>
+<p>プラットフォーム固有の水平スケーリング手法は、状態を保持するコンポーネント、状態を保持しないコンポーネント、スクレイパーコレクターコンポーネントを認識しながら、他のアプリケーションと同様に Collector に適用できます。</p>
+<p>ほとんどの Collector コンポーネントは <code>状態を保持しない</code> ため、メモリに状態を保持せず、保持していてもスケーリング目的とは関係ありません。 状態を保持しない Collector の追加レプリカをアプリケーションロードバランサーの背後にスケールできます。</p>
+<p><code>状態を保持する</code> Collector コンポーネントは、そのコンポーネントの動作に不可欠な情報をメモリに保持する Collector コンポーネントです。</p>
+<p>ADOT Collector の状態を保持するコンポーネントの例には、以下が含まれますがこれらに限定されません。</p>
+<ul>
+<li><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor">Tail Sampling Processor</a> - 正確なサンプリング判断を下すには、トレースのすべてのスパンが必要です。 高度なサンプリングスケーリング手法は <a href="https://aws-otel.github.io/docs/getting-started/advanced-sampling">ADOT 開発者ポータルのドキュメント</a> に記載されています。</li>
+<li><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter">AWS EMF Exporter</a> - 一部のメトリクタイプの累積からデルタへの変換を実行します。 この変換には、前のメトリック値をメモリに格納する必要があります。</li>
+<li><a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor">Cummulative to Delta Processor</a> - 累積からデルタへの変換には、前のメトリック値をメモリに格納する必要があります。</li>
+</ul>
+<p><code>スクレイパー</code> の Collector コンポーネントは、テレメトリデータを受動的に受信するのではなく、能動的に取得します。 現在、ADOT Collector における唯一のスクレイパー型コンポーネントは、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver">Prometheus レシーバー</a> です。 Prometheus レシーバーを含む Collector 構成を水平方向にスケーリングするには、コレクターごとにスクレイピングジョブを分割して、2 つの Collector が同じエンドポイントをスクレイプしないようにする必要があります。 これを行わないと、Prometheus の順不同のサンプルエラーが発生する可能性があります。</p>
+<p>Collector のスケーリングプロセスと手法の詳細は、<a href="https://opentelemetry.io/docs/collector/scaling/">アップストリームの OpenTelemetry ウェブサイト</a> に記載されています。</p>
+<h3 id="_15">参考文献<a class="headerlink" href="#_15" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="">https://opentelemetry.io/docs/collector/deployment/</a></li>
+<li><a href="">https://opentelemetry.io/docs/collector/management/</a>  </li>
+<li><a href="">https://opentelemetry.io/docs/collector/scaling/</a></li>
+<li><a href="">https://github.com/aws-observability/aws-otel-collector</a></li>
+<li><a href="">https://aws-observability.github.io/terraform-aws-observability-accelerator/</a></li>
+<li><a href="">https://catalog.workshops.aws/observability/en-US/aws-managed-oss/adot</a></li>
+<li><a href="">https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/</a></li>
+<li><a href="">https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/</a></li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; Amazon 2023
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs.sticky"], "search": "../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.d7c377c4.min.js"></script>
+      
+    
+  </body>
+</html>

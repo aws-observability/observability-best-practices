@@ -1,0 +1,30 @@
+extensions:
+  health_check:
+  pprof:
+    endpoint: 0.0.0.0:1777
+
+receivers:
+  awsxray:
+    endpoint: 0.0.0.0:2000
+    transport: udp
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  batch:
+
+exporters:
+  logging:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [awsxray, otlp]
+      exporters: [logging]
+  extensions:  [pprof]
+  telemetry:
+    logs:
+      level: debug

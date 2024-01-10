@@ -70,6 +70,7 @@ nav:
       - ADOT Collector:
         - Operating At Scale: guides/operational/adot-at-scale/operating-adot-collector.md
         - Manually Instrumenting Spring Integration Applications: guides/operational/adot-at-scale/adot-java-spring/adot-java-spring.md
+        - Export X-Ray traces to ADOT Collector: guides/operational/adot-at-scale/xrayscrape/README.md
       - Monitoring for business outcomes: guides/operational/business/monitoring-for-business-outcomes.md
       - Percentiles: guides/operational/business/sla-percentile.md
       - Key Performance Indicators: guides/operational/business/key-performance-indicators.md

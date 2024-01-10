@@ -79,7 +79,7 @@ nav:
         - Grafana Operator with Amazon Managed Grafana: guides/operational/gitops-with-amg/gitops-with-amg.md
       - Dashboards:
         - CloudWatch Dashboard: tools/cloudwatch-dashboard.md
-    
+
     - Signal collection:
       - Embedded Metric Format: guides/signal-collection/emf.md
 
@@ -176,14 +176,14 @@ nav:
 
   - Contributors: contributors.md
 
-# extra:
-#   alternate:
-#     - name: English
-#       link: /en/
-#       lang: en
-#     - name: Français
-#       link: /fr/
-#       lang: fr
+extra:
+  alternate:
+    - name: English
+      link: /observability-best-practices
+      lang: en
+    - name: Japanese
+      link: /observability-best-practices/ja
+      lang: ja
 
 markdown_extensions:
     - toc:

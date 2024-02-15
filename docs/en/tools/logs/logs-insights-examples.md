@@ -76,6 +76,21 @@ This query allows you to see API throttling errors grouped by category and displ
     
     In order to use this query you would first need to ensure you are [sending CloudTrail logs to CloudWatch.](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)
 
+    
+### Root account activity in line graph
+
+```
+fields @timestamp, @message, userIdentity.type 
+| filter userIdentity.type='Root' 
+| stats count() as RootActivity by bin(5m)
+```
+
+With this query you can visualize root account activity in a line graph. This query aggregates the root activity over time, counting the occurrences of root activity within each 5-minute interval.
+
+!!! tip
+    
+     [Visualize log data in graphs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)
+
 ## VPC Flow Logs
 
 ### Filtering flow logs for selected source IP address with action as REJECT.
@@ -96,4 +111,34 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' 
 | sort @timestamp desc
 | limit 20
 ```
+
+### Grouping network traffic by Availability Zones
+
+```
+stats sum(bytes / 1048576) as Traffic_MB by azId as AZ_ID 
+| sort Traffic_MB desc
+```
+
+This query retrieves network traffic data grouped by Availability Zone (AZ). It calculates the total traffic in megabytes (MB) by summing the bytes and converting them to MB. The results are then sorted in descending order based on the traffic volume in each AZ.
+
+
+### Grouping network traffic by flow direction
+
+```
+stats sum(bytes / 1048576) as Traffic_MB by flowDirection as Flow_Direction 
+| sort by Bytes_MB desc
+```
+
+This query is designed to analyze network traffic grouped by flow direction. (Ingress or Egress) 
+
+
+### Top 10 data transfers by source and destination IP addresses
+
+```
+stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAddr as Destination_IP 
+| sort Data_Transferred_MB desc 
+| limit 10
+```
+
+This query retrieves the top 10 data transfers by source and destination IP addresses. This query allows for identifying the most significant data transfers between specific source and destination IP addresses.
 

@@ -5,7 +5,7 @@ The selection of logging tools is tied to your requirements for data transmissio
 Here we will expand on the best practices for implementing the CloudWatch agent for logging, and the use of CloudWatch Logs within the AWS console or APIs.
 
 !!! info
-	The CloudWatch agent can also be used for delivery of [metric data](../../signals/metrics/) to CloudWatch. See the [metrics](../../tools/metrics/) page for implementation details.
+	The CloudWatch agent can also be used for delivery of [metric data](../../signals/metrics/) to CloudWatch. See the [metrics](../../tools/metrics/) page for implementation details. It can also be used to collect [traces](../../signals/traces.md) from OpenTelemetry or X-Ray client SDKs, and send them to [AWS X-Ray](../../tools/xray.md).
 
 ## Collecting logs with the CloudWatch agent
 
@@ -92,6 +92,17 @@ The best practice for all logging is to use [structured logging](../../signals/l
 
 !!! success
 	Use the `multi_line_start_pattern` directive to ease the burden of ingesting muli-line logging into CloudWatch Logs.
+
+### Configuring logging class
+
+CloudWatch Logs offers two [classes](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html) of log groups:
+
+- The CloudWatch Logs Standard log class is a full-featured option for logs that require real-time monitoring or logs that you access frequently.
+
+- The CloudWatch Logs Infrequent Access log class is a new log class that you can use to cost-effectively consolidate your logs. This log class offers a subset of CloudWatch Logs capabilities including managed ingestion, storage, cross-account log analytics, and encryption with a lower ingestion price per GB. The Infrequent Access log class is ideal for ad-hoc querying and after-the-fact forensic analysis on infrequently accessed logs.
+
+!!! success
+	Use the `log_group_class` directive to specify which log group class to use for the new log group. Valid values are **STANDARD** and **INFREQUENT_ACCESS**. If you omit this field, the default of **STANDARD** is used by the agent.
 
 ## Search with CloudWatch Logs
 

@@ -42,21 +42,21 @@ This grouping is vital as it allows you to treat groups with the same retention 
 	Either approach lets you set the log retention period proactively, and aligned with your project's data retention requirements.
 
 !!! success
-	By default, your log groups will not be encrypted. The best practice is to set the encryption key at the time you create the log group, so as to prevent accidental leak of plaintext data. This can be done using infrastructure as code (CloudFormation, Cloud Development Kit, etc.).
+	Log group data is always encrypted in CloudWatch Logs. By default, CloudWatch Logs uses `server-side` encryption for the log data at rest. As an alternative, you can use AWS Key Management Service for this encryption. [Encryption using AWS KMS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) is enabled at the log group level, by associating a KMS key with a log group, either when you create the log group or after it exists. This can be configured using infrastructure as code (CloudFormation, Cloud Development Kit, etc.).
 
 	Using AWS Key Management Service to manage keys for CloudWatch Logs requires additional configuration and granting permissions to the keys for your users.[^1]
 
 ### Log formatting
 
-CloudWatch Logs has the ability to index JSON data on ingestion and use this index for ad hoc queries. While any kind of logging data can be delivered to CloudWatch Logs, the automatic indexing of this data will not take place unless it is so structured.
+CloudWatch Logs has the capability to automatically discover log fields and index JSON data upon ingestion. This feature facilitates ad hoc queries and filtering, enhancing the usability of log data. However, it's important to note that automatic indexing is only applicable to structured data. Unstructured logging data won't be automatically indexed but can still be delivered to CloudWatch Logs.
 
-Unstructured logs can still be search, though only using a regular expression.
+Unstructured logs can still be searched or queried using a regular expression with `parse` command.
 
 !!! success
-	There two best practices for log formats when using CloudWatch Logs:
+	The two best practices for log formats when using CloudWatch Logs:
 
 	1. Use a structured log formatter such as [Log4j](https://logging.apache.org/log4j/2.x/), [`python-json-logger`](https://pypi.org/project/python-json-logger/), or your framework's native JSON emitter.
-	1. Send a single line of logging per event to your log destination.
+	2. Send a single line of logging per event to your log destination.
 
 	Note that when sending multiple lines of JSON logging, each line will be interpreted as a single event.
 
@@ -121,14 +121,37 @@ With data delivered into CloudWatch Logs, you can now search through it as requi
 
 	![Preview of the CloudWatch Logs console](../../images/cwl1.png)
 
-### Share successful queries with others
+### Share Successful Queries with Others
 
-While the [CloudWatch Logs query syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html) is not complex (there are only seven commands), it can still be time consuming to write some queries from scratch. Sharing your well-written queries with other users in the same AWS account can be accomplished directly from [within the AWS console](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) or using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html). This helps reduce the amount of rework required if others need to investigate application logs.
+While the [CloudWatch Logs query syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html) is not complex, writing certain queries from scratch can still be time-consuming. Sharing well-written queries with other users within the same AWS account can streamline the investigation of application logs. This can be achieved directly from the [AWS Management Console](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) or programmatically using [CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html) or [AWS CDK](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.CfnQueryDefinition.html). Doing so reduces the amount of rework required for others who need to analyze log data.
 
 !!! success
 	Save queries that are often repeated into CloudWatch Logs so they can be prepopulated for your users.
 
 	![The CloudWatch Logs query editor page](../../images/cwl2.png)
 
+### Pattern analysis
+
+CloudWatch Logs Insights uses machine learning algorithms to find patterns when you query your logs. A pattern is a shared text structure that recurs among your log fields. Patterns are useful for analyzing large log sets because a large number of log events can often be compressed into a few patterns.[^2]
+
+!!! success
+	Use pattern to automatically cluster your log data into patterns.
+
+	![The CloudWatch Logs query pattern example](../../images/pattern_analysis.png)
+
+
+### Compare (diff) with previous time ranges
+
+CloudWatch Logs Insights enables comparison of log event changes over time, aiding in error detection and trend identification. Comparison queries reveal patterns, facilitating quick trend analysis, with the ability to examine sample raw log events for deeper investigation. Queries are analyzed against two time periods: the selected period and an equal-length comparison period.[^3]
+
+!!! success
+	Compare changes in your log events over time using `diff` command.
+
+	![The CloudWatch Logs query difference example](../../images/diff-query.png)
 
 [^1]: See [How to search through your AWS Systems Manager Session Manager console logs – Part 1](https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/) for a practical example of CloudWatch Logs log group encryption with access privileges.
+
+[^2]: See [CloudWatch Logs Insights Pattern Analysis](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html) for more detailed insights.
+
+[^3] See [CloudWatch Logs Insigts Compare(diff) with previous ranges](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html) for more information.
+

@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -2497,6 +2497,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#configuring-logging-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring logging class
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2524,7 +2533,25 @@
           <li class="md-nav__item">
   <a href="#share-successful-queries-with-others" class="md-nav__link">
     <span class="md-ellipsis">
-      Share successful queries with others
+      Share Successful Queries with Others
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-diff-with-previous-time-ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compare (diff) with previous time ranges
     </span>
   </a>
   
@@ -3768,6 +3795,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#configuring-logging-class" class="md-nav__link">
+    <span class="md-ellipsis">
+      Configuring logging class
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3795,7 +3831,25 @@
           <li class="md-nav__item">
   <a href="#share-successful-queries-with-others" class="md-nav__link">
     <span class="md-ellipsis">
-      Share successful queries with others
+      Share Successful Queries with Others
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pattern-analysis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Pattern analysis
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#compare-diff-with-previous-time-ranges" class="md-nav__link">
+    <span class="md-ellipsis">
+      Compare (diff) with previous time ranges
     </span>
   </a>
   
@@ -3829,7 +3883,7 @@
 <p>Here we will expand on the best practices for implementing the CloudWatch agent for logging, and the use of CloudWatch Logs within the AWS console or APIs.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>The CloudWatch agent can also be used for delivery of <a href="../../signals/metrics/">metric data</a> to CloudWatch. See the <a href="../../tools/metrics/">metrics</a> page for implementation details.</p>
+<p>The CloudWatch agent can also be used for delivery of <a href="../../signals/metrics/">metric data</a> to CloudWatch. See the <a href="../../tools/metrics/">metrics</a> page for implementation details. It can also be used to collect <a href="../../signals/traces/">traces</a> from OpenTelemetry or X-Ray client SDKs, and send them to <a href="../xray/">AWS X-Ray</a>.</p>
 </div>
 <h2 id="collecting-logs-with-the-cloudwatch-agent">Collecting logs with the CloudWatch agent<a class="headerlink" href="#collecting-logs-with-the-cloudwatch-agent" title="Permanent link">&para;</a></h2>
 <h3 id="forwarding">Forwarding<a class="headerlink" href="#forwarding" title="Permanent link">&para;</a></h3>
@@ -3860,15 +3914,15 @@
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>By default, your log groups will not be encrypted. The best practice is to set the encryption key at the time you create the log group, so as to prevent accidental leak of plaintext data. This can be done using infrastructure as code (CloudFormation, Cloud Development Kit, etc.).</p>
+<p>Log group data is always encrypted in CloudWatch Logs. By default, CloudWatch Logs uses <code>server-side</code> encryption for the log data at rest. As an alternative, you can use AWS Key Management Service for this encryption. <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html">Encryption using AWS KMS</a> is enabled at the log group level, by associating a KMS key with a log group, either when you create the log group or after it exists. This can be configured using infrastructure as code (CloudFormation, Cloud Development Kit, etc.).</p>
 <p>Using AWS Key Management Service to manage keys for CloudWatch Logs requires additional configuration and granting permissions to the keys for your users.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
 </div>
 <h3 id="log-formatting">Log formatting<a class="headerlink" href="#log-formatting" title="Permanent link">&para;</a></h3>
-<p>CloudWatch Logs has the ability to index JSON data on ingestion and use this index for ad hoc queries. While any kind of logging data can be delivered to CloudWatch Logs, the automatic indexing of this data will not take place unless it is so structured.</p>
-<p>Unstructured logs can still be search, though only using a regular expression.</p>
+<p>CloudWatch Logs has the capability to automatically discover log fields and index JSON data upon ingestion. This feature facilitates ad hoc queries and filtering, enhancing the usability of log data. However, it's important to note that automatic indexing is only applicable to structured data. Unstructured logging data won't be automatically indexed but can still be delivered to CloudWatch Logs.</p>
+<p>Unstructured logs can still be searched or queried using a regular expression with <code>parse</code> command.</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>There two best practices for log formats when using CloudWatch Logs:</p>
+<p>The two best practices for log formats when using CloudWatch Logs:</p>
 <ol>
 <li>Use a structured log formatter such as <a href="https://logging.apache.org/log4j/2.x/">Log4j</a>, <a href="https://pypi.org/project/python-json-logger/"><code>python-json-logger</code></a>, or your framework's native JSON emitter.</li>
 <li>Send a single line of logging per event to your log destination.</li>
@@ -3904,6 +3958,20 @@
 <p class="admonition-title">Success</p>
 <p>Use the <code>multi_line_start_pattern</code> directive to ease the burden of ingesting muli-line logging into CloudWatch Logs.</p>
 </div>
+<h3 id="configuring-logging-class">Configuring logging class<a class="headerlink" href="#configuring-logging-class" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs offers two <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html">classes</a> of log groups:</p>
+<ul>
+<li>
+<p>The CloudWatch Logs Standard log class is a full-featured option for logs that require real-time monitoring or logs that you access frequently.</p>
+</li>
+<li>
+<p>The CloudWatch Logs Infrequent Access log class is a new log class that you can use to cost-effectively consolidate your logs. This log class offers a subset of CloudWatch Logs capabilities including managed ingestion, storage, cross-account log analytics, and encryption with a lower ingestion price per GB. The Infrequent Access log class is ideal for ad-hoc querying and after-the-fact forensic analysis on infrequently accessed logs.</p>
+</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>Use the <code>log_group_class</code> directive to specify which log group class to use for the new log group. Valid values are <strong>STANDARD</strong> and <strong>INFREQUENT_ACCESS</strong>. If you omit this field, the default of <strong>STANDARD</strong> is used by the agent.</p>
+</div>
 <h2 id="search-with-cloudwatch-logs">Search with CloudWatch Logs<a class="headerlink" href="#search-with-cloudwatch-logs" title="Permanent link">&para;</a></h2>
 <h3 id="manage-costs-with-query-scoping">Manage costs with query scoping<a class="headerlink" href="#manage-costs-with-query-scoping" title="Permanent link">&para;</a></h3>
 <p>With data delivered into CloudWatch Logs, you can now search through it as required. Be aware that CloudWatch Logs charges per gigabyte of data scanned. There are strategies for keeping your query scope under control, which will result in reduced data scanned.</p>
@@ -3920,18 +3988,38 @@
 <p>You can see how much data each query actually scans directly from the CloudWatch console. This approach can help you create queries that are efficient.</p>
 <p><img alt="Preview of the CloudWatch Logs console" src="../../images/cwl1.png" /></p>
 </div>
-<h3 id="share-successful-queries-with-others">Share successful queries with others<a class="headerlink" href="#share-successful-queries-with-others" title="Permanent link">&para;</a></h3>
-<p>While the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html">CloudWatch Logs query syntax</a> is not complex (there are only seven commands), it can still be time consuming to write some queries from scratch. Sharing your well-written queries with other users in the same AWS account can be accomplished directly from <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html">within the AWS console</a> or using <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html">CloudFormation</a>. This helps reduce the amount of rework required if others need to investigate application logs.</p>
+<h3 id="share-successful-queries-with-others">Share Successful Queries with Others<a class="headerlink" href="#share-successful-queries-with-others" title="Permanent link">&para;</a></h3>
+<p>While the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html">CloudWatch Logs query syntax</a> is not complex, writing certain queries from scratch can still be time-consuming. Sharing well-written queries with other users within the same AWS account can streamline the investigation of application logs. This can be achieved directly from the <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html">AWS Management Console</a> or programmatically using <a href="https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html">CloudFormation</a> or <a href="https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_logs.CfnQueryDefinition.html">AWS CDK</a>. Doing so reduces the amount of rework required for others who need to analyze log data.</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
 <p>Save queries that are often repeated into CloudWatch Logs so they can be prepopulated for your users.</p>
 <p><img alt="The CloudWatch Logs query editor page" src="../../images/cwl2.png" /></p>
+</div>
+<h3 id="pattern-analysis">Pattern analysis<a class="headerlink" href="#pattern-analysis" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs Insights uses machine learning algorithms to find patterns when you query your logs. A pattern is a shared text structure that recurs among your log fields. Patterns are useful for analyzing large log sets because a large number of log events can often be compressed into a few patterns.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>Use pattern to automatically cluster your log data into patterns.</p>
+<p><img alt="The CloudWatch Logs query pattern example" src="../../images/pattern_analysis.png" /></p>
+</div>
+<h3 id="compare-diff-with-previous-time-ranges">Compare (diff) with previous time ranges<a class="headerlink" href="#compare-diff-with-previous-time-ranges" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs Insights enables comparison of log event changes over time, aiding in error detection and trend identification. Comparison queries reveal patterns, facilitating quick trend analysis, with the ability to examine sample raw log events for deeper investigation. Queries are analyzed against two time periods: the selected period and an equal-length comparison period.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>Compare changes in your log events over time using <code>diff</code> command.</p>
+<p><img alt="The CloudWatch Logs query difference example" src="../../images/diff-query.png" /></p>
 </div>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
 <p>See <a href="https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/">How to search through your AWS Systems Manager Session Manager console logs – Part 1</a> for a practical example of CloudWatch Logs log group encryption with access privileges.&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>See <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html">CloudWatch Logs Insights Pattern Analysis</a> for more detailed insights.&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>See <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html">CloudWatch Logs Insigts Compare(diff) with previous ranges</a> for more information.&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

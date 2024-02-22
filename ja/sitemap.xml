@@ -2,592 +2,592 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/contributors/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/adot/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/amg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/amp/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/cloudwatch/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/faq/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/faq/x-ray/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/apm/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/choosing-a-tracing-agent/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/dashboards/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/full-stack/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/hybrid-and-multicloud/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/observability-maturity-model/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/strategy/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/ecs/best-practices-metrics-collection-1/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/ecs/best-practices-metrics-collection-2/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/ecs/cost-optimization/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/ecs/resource-optimization/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/eks/amazon-cloudwatch-container-insights/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/eks/container-tracing-with-aws-xray/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/eks/eks-api-server-monitoring/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/aws-native/eks/log-aggregation/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection-1/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection-2/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/eks/best-practices-metrics-collection/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/eks/cost-optimization/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/containers/oss/eks/resource-optimization/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/kubecost/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/AmazonManagedServiceforPrometheus/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/amazon-cloudwatch/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/amazon-grafana/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/amazon-prometheus/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/aws-xray/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/cost/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/cost/cost-visualization/reducing-cw-cost/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/databases/rds-and-aurora/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/ec2/ec2-monitoring/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/observability-driven-dev/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/adot-at-scale/adot-java-spring/adot-java-spring/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/alerting/amp-alertmgr/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/alerts/amg-alerts/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/alerts/cw-alarms/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/alerts/prometheus-alerts/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/business/key-performance-indicators/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/business/monitoring-for-business-outcomes/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/business/sla-percentile/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/operational/gitops-with-amg/gitops-with-amg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/partners/databricks/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/serverless/aws-native/lambda-based-observability/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/serverless/oss/lambda-based-observability-adot/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/signal-collection/emf/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/guides/signal-correlation/how-does-it-work/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/aes/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/alerting/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/amg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/amp/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/anomaly-detection/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/apprunner/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/cw/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/dimensions/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/dynamodb/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/ecs/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/eks/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/infra/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/java/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/lambda/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/msk/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/nodejs/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/rds/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/telemetry/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/troubleshooting/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/workshops/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amg-athena-plugin/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amg-automation-tf/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amg-google-auth-saml/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amg-redshift-plugin/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amp-alertmanager-terraform/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/amp-mixin-dashboards/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/as-ec2-using-amp-and-alertmanager/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/ec2-eks-metrics-go-adot-ampamg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/fargate-eks-metrics-go-adot-ampamg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/fargate-eks-xray-go-adot-amg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/lambda-cw-metrics-go-amp/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/metrics-explorer-filter-by-tags/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/monitoring-hybridenv-amg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/servicemesh-monitoring-ampamg/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/recipes/recipes/Workspaces-Monitoring-AMP-AMG/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/alarms/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/anomalies/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/events/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/logs/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/metrics/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/signals/traces/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/adot-traces/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/alarms/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/alerting_and_incident_management/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/amp/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/cloudwatch-dashboard/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/cloudwatch_agent/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/collector-arch/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/dashboards/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/emf/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/internet_monitor/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/metrics/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/observability_accelerator/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/rum/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/slos/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/synthetics/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/xray/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/logs/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/logs/logs-insights-examples/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://aws-observability.github.io/observability-best-practices/ja/tools/logs/dataprotection/data-protection-policies/</loc>
-         <lastmod>2024-02-15</lastmod>
+         <lastmod>2024-02-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>

@@ -1,6 +1,6 @@
 # Java Spring Integration アプリケーションの計装
 
-この記事では、[Open Telemetry](https://opentelemetry.io/) と [X-Ray](https://aws.amazon.com/xray/) を利用した [Spring Integration](https://docs.spring.io/spring-integration/reference/html/overview.html) アプリケーションの手動計装のアプローチについて説明します。
+この記事では、[Open Telemetry](https://opentelemetry.io/) と [X-Ray](https://aws.amazon.com/xray/) を利用した [Spring Integration](https://docs.spring.io/spring-integration/reference/overview.html) アプリケーションの手動計装のアプローチについて説明します。
 
 Spring Integration フレームワークは、イベント駆動アーキテクチャやメッセージ指向アーキテクチャの統合ソリューションの開発を可能にするように設計されています。一方、OpenTelemetry は HTTP リクエストを使用してサービス間で通信と調整を行うマイクロサービスアーキテクチャに焦点を当てる傾向があります。したがって、このガイドでは OpenTelemetry API を使用した手動計装による Spring Integration アプリケーションの計装例を提供します。
 

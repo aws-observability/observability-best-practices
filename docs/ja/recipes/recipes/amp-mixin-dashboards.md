@@ -6,7 +6,7 @@ Prometheus mixin プロジェクトは Prometheus が Prometheus Operator 経由
 
 ## 前提条件
 
-* EKS クラスター - 開始場所: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/)
+* EKS クラスター - 開始場所: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/)
 * Cloud9 環境
 * EKS クラスターを管理するように設定された Cloud9 の kubectl
 * EKS の IAM 資格情報

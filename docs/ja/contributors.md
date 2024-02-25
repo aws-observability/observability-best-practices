@@ -18,8 +18,7 @@
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
 
 
-Note that all recipes published on this site are available via the
-[MIT-0][mit0] license, a modification to the usual MIT license
-that removes the requirement for attribution.
+このサイトで公開されているすべてのレシピは、次のURLから入手できることに注意してください。
+[MIT-0][mit0] ライセンスは、通常のMITライセンスを修正したもので、帰属表示の要件がなくなりました。
 
 [mit0]: https://github.com/aws/mit-0

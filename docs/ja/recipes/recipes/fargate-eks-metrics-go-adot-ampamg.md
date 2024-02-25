@@ -7,7 +7,7 @@
 
 [Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) の
 [AWS Fargate](https://aws.amazon.com/fargate/) 上にクラスタを設定し、
-[Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) リポジトリを使用して、
+[Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) レポジトリを使用して、
 完全なシナリオをデモンストレーションします。
 
 !!! note
@@ -36,15 +36,15 @@ ADOT Collector には、Prometheus 固有の 2 つのコンポーネントが含
 * AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
 * 環境に [eksctl](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/eksctl.html) コマンドをインストールする必要があります。
 * 環境に [kubectl](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/install-kubectl.html) をインストールする必要があります。
-* [Docker](https://docs.docker.com/get-docker/) がインストールされている必要があります。
+* 環境に [Docker](https://docs.docker.com/get-docker/) がインストールされている必要があります。
 
 ### Fargate 上の EKS クラスターの作成
 
 デモアプリケーションは、Fargate 上の EKS クラスターで実行する Kubernetes アプリケーションです。
-そのため、まず提供されている [cluster-config.yaml](./fargate-eks-metrics-go-adot-ampamg/cluster-config.yaml) テンプレートファイルを使用して EKS クラスターを作成します。
+そのため、まず [cluster-config.yaml](./fargate-eks-metrics-go-adot-ampamg/cluster-config.yaml) テンプレートファイルを使用して EKS クラスターを作成します。
 `<your_region>` を [AMP がサポートしているリージョン](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions) のいずれかに変更してください。
 
-シェルセッションで `<your_region>` を設定することを確認してください。たとえば、Bash の場合:
+`<your_region>` をシェルセッションで設定することを確認してください。たとえば、Bash の場合:
 
 ```
 export AWS_DEFAULT_REGION=<YOUR_REGION>
@@ -73,7 +73,7 @@ aws ecr create-repository \
 
 </your_region></your_region>
 
-### AMPの設定
+### AMPのセットアップ
 
 まず、AWS CLIを使用してAmazon Managed Service for Prometheusワークスペースを次のように作成します。
 
@@ -81,14 +81,14 @@ aws ecr create-repository \
 aws amp create-workspace --alias prometheus-sample-app
 ```
 
-次のコマンドでワークスペースが作成されたことを確認します。
+次のコマンドを使用して、ワークスペースが作成されたことを確認します。
 
 ```
 aws amp list-workspaces
 ```
 
 !!! info
-    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html)を参照してください。
+    詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html)をご確認ください。
 
 ### ADOT Collectorのセットアップ
 
@@ -97,7 +97,7 @@ aws amp list-workspaces
 この例では、ADOT Collectorの構成ではアノテーション `(scrape=true)` を使用して、スクレイプする対象のエンドポイントを指示しています。 これにより、ADOT Collectorはクラスタ内の`kube-system` エンドポイントとサンプルアプリケーションのエンドポイントを区別できます。
 別のサンプルアプリケーションをスクレイプしたい場合は、この再ラベル付け構成から削除できます。
 
-ダウンロードしたファイルを環境に合わせて編集するには、次のステップに従ってください。
+ダウンロードしたファイルを環境に合わせて編集するには、次のステップに従ってください:
 
 1\. `<your_region>` を現在のリージョンに置き換えます。
 
@@ -105,7 +105,7 @@ aws amp list-workspaces
 
 次のクエリを実行することで、AMP リモートライト URL エンドポイントを取得できます。
 
-まず、次のようにワークスペース ID を取得します。
+まず、次のようにワークスペース ID を取得します:
 
 ```
 YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
@@ -113,24 +113,22 @@ YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
                     --query 'workspaces[0].workspaceId' --output text)
 ```
 
-次に、ワークスペースのリモートライト URL エンドポイントを取得するには、次を使用します。
+次に、以下を使用してワークスペースのリモートライト URL エンドポイントを取得します:
 
 ```
 YOUR_ENDPOINT=$(aws amp describe-workspace \
                 --workspace-id $YOUR_WORKSPACE_ID  \
                 --query 'workspace.prometheusEndpoint' --output text)api/v1/remote_write
-```  
+```
 
 !!! warning
-    `YOUR_ENDPOINT` が実際にリモートライト URL であることを確認してください。つまり、
-    URL は `/api/v1/remote_write` で終わる必要があります。
+    `YOUR_ENDPOINT`が実際にリモートライトURLであること、つまりURLが`/api/v1/remote_write`で終わっていることを確認してください。
 
-
-デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます。
+デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます:
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
-```
+```  
 
 !!! info
     詳細については、 [AWS Distro for OpenTelemetry(ADOT) Collectorのセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup) をご覧ください。
@@ -157,7 +155,7 @@ kubectl apply -f adot-collector-fargate.yaml
 ### コンテナイメージのビルド
 
 コンテナイメージをビルドするには、まず Git リポジトリをクローンし、
-ディレクトリに移動します。
+次のようにディレクトリに移動します。
 
 ```
 git clone https://github.com/aws-observability/aws-otel-community.git && \
@@ -180,9 +178,9 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
 ```
 
 !!! note
-    proxy.golang.or i/o タイムアウトのため `go mod` が環境で失敗する場合は、
-    Dockerfile を編集することで go mod プロキシをバイパスできます。
-    
+    proxy.golang.or へのタイムアウトなどにより、ご自身の環境で `go mod` が失敗する場合があります。
+    この場合は Dockerfile を編集することで、go mod プロキシをバイパスできます。
+
     Dockerfile の次の行を変更します。
     ```
     RUN GO111MODULE=on go mod download
@@ -192,9 +190,9 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
     RUN GOPROXY=direct GO111MODULE=on go mod download
     ```
 
-これで、前に作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。
+これで、前述の手順で作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。
 
-そのために、まずデフォルトの ECR レジストリにログインします。
+そのためにまず、デフォルトの ECR レジストリにログインします。
 
 ```
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
@@ -202,7 +200,7 @@ aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
     "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
 ```
 
-そして最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。
+最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。
 
 ```
 docker push "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
@@ -227,7 +225,7 @@ kubectl apply -f prometheus-sample-app.yaml
 
 ## エンドツーエンド
 
-インフラストラクチャとアプリケーションが整ったので、設定をテストします。EKS で実行されている Go アプリからメトリクスを送信し、AMP に記録され、AMG で可視化します。
+インフラストラクチャとアプリケーションが整ったので、設定をテストします。EKS で実行されている Go アプリからメトリクスを送信し、AMP に記録し、AMG で可視化します。
 
 ### パイプラインが機能していることを確認する
 

@@ -111,17 +111,17 @@ aws cloudformation list-stacks
 
 ## CloudWatch ストリームの作成
 
-CloudWatch コンソール(例: `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList`)に移動し、「メトリックストリームの作成」をクリックします。
+例えば `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList` のように CloudWatch コンソールに移動し、「メトリックストリームの作成」をクリックします。
 
-必要なメトリクス(すべての名前空間のすべてのメトリクス、または選択した名前空間からのメトリクス)を選択します。
+必要なメトリクスを選択します。名前空間のすべてのメトリクスまたは選択した名前空間からのみを選択できます。 
 
 CDK によって作成された既存の Firehose を使用して、メトリックストリームを構成します。
-出力形式を OpenTelemetry 0.7 ではなく JSON に変更します。
-メトリックストリームの名前を好みに応じて変更し、「メトリックストリームの作成」をクリックします。
+出力形式を OpenTelemetry 0.7 の代わりに JSON に変更します。
+メトリックストリーム名を好みの名前に変更し、「メトリックストリームの作成」をクリックします。
 
 ![Cloudwatch メトリックストリーム構成のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
 
-Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。`Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数のトリガーのエントリが表示されている必要があります。
+Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。 `Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
 !!! note
     Monitor タブに呼び出しが表示されるまでに最大 5 分かかる場合があります。

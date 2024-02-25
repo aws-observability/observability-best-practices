@@ -47,7 +47,7 @@
 ### トレース
 
 - [AWS X-Ray を使用した Fargate 上の EKS での ADOT の利用][fargate-eks-xray-go-adot-amg]
-- [X-Ray によるトレーシング][eks-ws-xray]
+- [X-Ray によるトレース][eks-ws-xray]
 
 
 [eks-main]: https://aws.amazon.com/eks/

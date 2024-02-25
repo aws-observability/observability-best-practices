@@ -9,21 +9,21 @@
 ![メトリクス収集のプッシュアプローチ](../../../../images/PushPullApproach.png)
 
 ## CloudWatch Container Insights による Prometheus のモニタリング
-[Prometheus](https://prometheus.io/docs/introduction/overview/) は、人気のオープンソースのシステム監視およびアラートツールキットです。コンテナ化されたアプリケーションからプル アプローチを使用してメトリクスを収集するためのデファクトスタンダードとして浮上しています。Prometheus を使用してメトリクスをキャプチャするには、まずメジャーなすべてのプログラミング言語で利用できる Prometheus の[クライアント ライブラリ](https://prometheus.io/docs/instrumenting/clientlibs/) を使用してアプリケーション コードにインスツルメンテーションする必要があります。メトリクスは通常、Prometheus サーバーが読み取るために HTTP 経由でアプリケーションから公開されます。 
+[Prometheus](https://prometheus.io/docs/introduction/overview/) は、人気のオープンソースのシステムモニタリングおよびアラートツールキットです。コンテナ化されたアプリケーションから pull アプローチを使用してメトリクスを収集するためのデファクトスタンダードとして浮上しています。Prometheus を使用してメトリクスをキャプチャするには、まずメジャーなすべてのプログラミング言語で利用できる Prometheus の[クライアントライブラリ](https://prometheus.io/docs/instrumenting/clientlibs/) を使用してアプリケーションコードにインスツルメンテーションする必要があります。メトリクスは通常、Prometheus サーバーが読み取るために HTTP 経由でアプリケーションから公開されます。
 
-Prometheus サーバーがアプリケーションの HTTP エンドポイントをスクレイプすると、クライアントライブラリは追跡されているすべてのメトリクスの現在の状態をサーバーに送信します。サーバーはメトリクスをローカルストレージに格納したり、CloudWatch などのリモート先にメトリクス データを送信したりできます。
+Prometheus サーバーがアプリケーションの HTTP エンドポイントをスクレイプすると、クライアントライブラリは追跡されているすべてのメトリクスの現在の状態をサーバーに送信します。サーバーはメトリクスをローカルストレージに保存したり、CloudWatch などのリモート先にメトリクスデータを送信したりできます。
 
-[CloudWatch Container Insights による Prometheus のモニタリング](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 と Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは、Prometheus サーバーのドロップイン置換として使用でき、可観測性を向上させるために必要なモニタリングツールの数を削減します。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。
+[CloudWatch Container Insights による Prometheus モニタリング](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 と Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは、Prometheus サーバーのドロップイン置換として使用でき、可観測性を向上させるために必要なモニタリングツールの数を削減します。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、メトリクスデータがパフォーマンスログイベントとして CloudWatch に送信されます。
 
 !!! info
     Prometheus メトリクス収集用の CloudWatch エージェントを Amazon ECS クラスターにデプロイする手順は、[Amazon CloudWatch ユーザーガイド](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)に記載されています。
     
 !!! warning
-    Container Insights による Prometheus のモニタリングによって収集されたメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、[Amazon CloudWatch の料金](https://aws.amazon.com/jp/cloudwatch/pricing/) を参照してください。
+    Container Insights による Prometheus モニタリングで収集されるメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、[Amazon CloudWatch 料金](https://aws.amazon.com/jp/cloudwatch/pricing/) を参照してください。
 
 ### Amazon ECS クラスター上のターゲットの自動検出
 
-CloudWatch エージェントは、Prometheus ドキュメントの [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) セクションで定義されている標準の Prometheus スクレイプ構成をサポートしています。Prometheus は、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプ対象の静的および動的検出の両方をサポートしています。Amazon ECS には組み込みのサービス検出メカニズムがないため、エージェントはターゲットのファイルベースの検出をサポートする Prometheus に依存しています。ファイルベースのターゲット検出のためにエージェントを設定するには、エージェントの起動に使用されるタスク定義で定義されている 2 つの [構成パラメーター](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html) が必要です。これらのパラメーターをカスタマイズすることで、エージェントが収集するメトリクスを細かく制御できます。
+CloudWatch エージェントは、Prometheus ドキュメントの [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) セクションで定義されている標準の Prometheus スクレイプ構成をサポートしています。Prometheus は、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプ対象の静的および動的検出の両方をサポートしています。Amazon ECS には組み込みのサービス検出メカニズムがないため、エージェントはターゲットのファイルベースの検出をサポートする Prometheus に依存しています。ファイルベースのターゲット検出のためにエージェントを設定するには、エージェントの起動に使用されるタスク定義で定義されている 2 つの [構成パラメータ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html) が必要です。これらのパラメータをカスタマイズすることで、エージェントが収集するメトリクスを細かく制御できます。
 
 最初のパラメータには、次のサンプルのような Prometheus のグローバル構成が含まれています。
 

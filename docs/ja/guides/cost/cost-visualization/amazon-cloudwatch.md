@@ -41,7 +41,7 @@ CloudWatch のコストと使用量データを視覚化および分析するに
 ![cloudwatch-cost1](../../../images/cloudwatch-cost-1.PNG)
 ![cloudwatch-cost2](../../../images/cloudwatch-cost-2.PNG)
 
-このダッシュボードにより、Organization 内の AWS アカウントにおける Amazon CloudWatch のコストを特定できるようになりました。異なるダッシュボードを構築して要件を満たすために、他の QuickSight [ビジュアルタイプ][types] を使用できます。
+このダッシュボードにより、Organization 内の AWS アカウントにおける Amazon CloudWatch のコストを特定できるようになりました。異なるダッシュボードを構築して要件に対応するために、他の QuickSight [ビジュアルタイプ][types] を使用できます。
 
 
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html

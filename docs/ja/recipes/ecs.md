@@ -7,7 +7,7 @@
 ## 全般
 
 - [ECS での AWS Distro for OpenTelemetry Collector のデプロイメントパターン][adot-patterns-ecs]
-- [AWS Distro for OpenTelemetry での Amazon ECS モニタリングのセットアップを簡素化][ecs-adot-integration]
+- [AWS Distro for OpenTelemetry による Amazon ECS モニタリングのセットアップの簡素化][ecs-adot-integration]
 
 ## ECS on EC2
 

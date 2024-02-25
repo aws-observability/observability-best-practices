@@ -38,7 +38,7 @@ Amazon Managed Grafana または Amazon QuickSight で、AWS のコストと使�
 
 Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって大変便利です。しかし、お客様からよくいただくご質問の 1 つが、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS Observability 製品の組織全体のコストをどのように把握できるかという点です。
 
-次のセクションでは、これらの製品のコストと使用状況を深く掘り下げます。 あらゆる規模の企業がこの積極的なアプローチを採用し、クラウドコスト分析とデータドリブンの意思決定によってビジネス効率を向上させることができます。これにより、パフォーマンスへの影響や運用上のオーバーヘッドを伴うことなく、クラウドコスト最適化戦略を実現できます。
+次のセクションでは、これらの製品のコストと使用状況を深く掘り下げます。 あらゆる規模の企業がこの積極的なアプローチをクラウドコスト最適化戦略に採用し、クラウドコスト分析とデータドリブンの意思決定を通じて、パフォーマンスへの影響や運用上のオーバーヘッドなしにビジネス効率を向上させることができます。
 
 
 [cost-explorer]: https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html

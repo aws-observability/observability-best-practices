@@ -8,11 +8,11 @@
 
 ### はじめに
 
-[AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html) は、アプリケーションが処理するリクエストに関するデータを収集し、そのデータを表示、フィルタリング、洞察するためのツールを提供するサービスです。これにより、問題の特定と最適化の機会を見出すことができます。アプリケーションへのトレースされた任意のリクエストについて、リクエストとレスポンスに関する詳細な情報を確認するだけでなく、アプリケーションが下流の AWS リソース、マイクロサービス、データベース、Web API への呼び出しに関する情報も確認できます。
+[AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html) は、アプリケーションが処理するリクエストに関するデータを収集し、そのデータを表示、フィルタリング、洞察するためのツールを提供するサービスです。これにより、問題の特定と最適化の機会を見出すことができます。アプリケーションへのトレースされた任意のリクエストについて、リクエストとレスポンスに関する詳細な情報だけでなく、アプリケーションが下流の AWS リソース、マイクロサービス、データベース、Web API への呼び出しに関する情報も確認できます。
 
-アプリケーションへのインストルメンテーションには、入力および出力リクエストとアプリケーション内のその他のイベントのトレースデータを、各リクエストに関するメタデータとともに送信することが含まれます。多くのインストルメンテーション シナリオでは、構成変更のみが必要です。 たとえば、Java アプリケーションが行う、すべての入力 HTTP リクエストと AWS サービスへのダウンストリーム呼び出しをインストルメントできます。 アプリケーションを X-Ray トレースのためにインストルメントするために使用できるいくつかの SDK、エージェント、ツールがあります。 詳細については、[アプリケーションのインストルメンテーション](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) を参照してください。
+アプリケーションへのインストルメンテーションには、入力および出力リクエストとアプリケーション内のその他のイベントに関するトレースデータと、各リクエストに関するメタデータを送信することが含まれます。多くのインストルメンテーション シナリオでは、構成変更のみが必要です。 たとえば、Java アプリケーションが行う、すべての入力 HTTP リクエストと AWS サービスへのダウンストリーム呼び出しをインストルメントできます。 アプリケーションを X-Ray トレースのためにインストルメントするために使用できるいくつかの SDK、エージェント、ツールがあります。 詳細については、[アプリケーションのインストルメンテーション](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) を参照してください。
 
-AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用して Amazon EKS クラスターからトレースを収集することによるコンテナ化されたアプリケーションのトレースについて学習します。
+AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用して Amazon EKS クラスターからトレースを収集することによるコンテナ化されたアプリケーションのトレーシングについて学習します。
 
 ### AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用したトレースの収集
 
@@ -22,7 +22,7 @@ AWS Distro for OpenTelemetry 用の Amazon EKS アドオンを使用して Amazo
 
 ADOT アドオンは Kubernetes Operator の実装であり、カスタムリソースを使用してアプリケーションとそのコンポーネントを管理する Kubernetes のソフトウェア拡張機能です。このアドオンは OpenTelemetryCollector という名前のカスタムリソースを監視し、カスタムリソースで指定された構成設定に基づいて ADOT Collector のライフサイクルを管理します。
 
-ADOT Collector には、レシーバー、プロセッサー、エクスポーターという 3 つの主要なタイプのコンポーネントで構成されるパイプラインの概念があります。[レシーバー](https://opentelemetry.io/docs/collector/configuration/#receivers) は、Collector にデータが入る方法です。特定の形式のデータを受け入れ、内部形式に変換し、パイプラインで定義されている [プロセッサー](https://opentelemetry.io/docs/collector/configuration/#processors) と [エクスポーター](https://opentelemetry.io/docs/collector/configuration/#exporters) に渡します。プルベースまたはプッシュベースのいずれかです。プロセッサーは、受信とエクスポートの間でデータに対してバッチ処理、フィルタリング、変換などのタスクを実行するために使用されるオプションのコンポーネントです。エクスポーターは、メトリクス、ログ、またはトレースを送信する宛先を決定するために使用されます。Collector アーキテクチャでは、Kubernetes YAML マニフェストを介してそのようなパイプラインの複数のインスタンスを設定できます。
+ADOT Collector には、レシーバー、プロセッサー、エクスポーターという 3 つの主要なタイプのコンポーネントで構成されるパイプラインの概念があります。[レシーバー](https://opentelemetry.io/docs/collector/configuration/#receivers) は、Collector にデータが入る方法です。特定の形式のデータを受け入れ、内部形式に変換し、パイプラインで定義されている [プロセッサー](https://opentelemetry.io/docs/collector/configuration/#processors) と [エクスポーター](https://opentelemetry.io/docs/collector/configuration/#exporters) に渡します。プルベースまたはプッシュベースのいずれかです。プロセッサーは、受信とエクスポートの間でデータに対してバッチ処理、フィルタリング、変換などのタスクを実行するために使用されるオプションのコンポーネントです。エクスポーターは、メトリクス、ログ、またはトレースを送信する宛先を決定するために使用されます。Collector アーキテクチャでは、Kubernetes YAML マニフェストを介してこのようなパイプラインの複数のインスタンスを設定できます。
 
 次の図は、テレメトリデータを AWS X-Ray に送信するトレースパイプラインで構成された ADOT Collector を示しています。トレースパイプラインは、[AWS X-Ray レシーバー](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) と [AWS X-Ray エクスポーター](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsxrayexporter) のインスタンスで構成されており、トレースを AWS X-Ray に送信します。
 
@@ -34,13 +34,13 @@ EKS クラスターに ADOT アドオンをインストールする詳細と、�
 
 * Kubernetes バージョン 1.19 以降をサポートする EKS クラスター。EKS クラスターは、[こちらで概説されているアプローチ](https://docs.aws.amazon.com/eks/latest/userguide/create-cluster.html)のいずれかを使用して作成できます。
 * クラスターにまだインストールされていない場合は [Certificate Manager](https://cert-manager.io/)。[このドキュメント](https://cert-manager.io/docs/installation/) に従ってデフォルトの構成でインストールできます。
-* クラスターに ADOT アドオンをインストールするための EKS アドオン用の Kubernetes RBAC アクセス許可。これは、[この YAML](https://amazon-eks.s3.amazonaws.com/docs/addons-otel-permissions.yaml) ファイルの設定を kubectl などの CLI ツールを使用してクラスターに適用することによって実行できます。
+* EKS アドオンがクラスターに ADOT アドオンをインストールできるようにするための Kubernetes RBAC アクセス許可。これは、[この YAML](https://amazon-eks.s3.amazonaws.com/docs/addons-otel-permissions.yaml) ファイルの設定を kubectl などの CLI ツールを使用してクラスターに適用することによって実行できます。
 
 次のコマンドを使用して、EKS のさまざまなバージョンで有効になっているアドオンのリストを確認できます。
 
 `aws eks describe-addon-versions`
 
-JSON 出力には、以下に示すように、ADOT アドオンなどの他のアドオンがリストされる必要があります。EKS クラスターが作成されると、EKS アドオンはそのクラスターにアドオンをインストールしません。
+JSON 出力には、以下に示すように、ADOT アドオンなどのその他のアドオンがリストされる必要があります。EKS クラスターが作成されると、EKS アドオンはそのクラスターにアドオンをインストールしません。
 
 
 ```
@@ -124,11 +124,11 @@ ADOT アドオンは、カスタムリソースを利用してアプリケーシ
 
 *図: ADOT Collector のデプロイ*
 
-次に、ADOT Collector のデプロイ方法を見ていきましょう。[こちらの YAML 設定ファイル](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) は OpenTelemetryCollector カスタムリソースを定義しています。これを EKS クラスターにデプロイすると、上記の最初の図に示すように、トレースとメトリクスのパイプラインで構成される ADOT Collector をプロビジョニングするために ADOT アドオンがトリガーされます。Collector は `aws-otel-eks` 名前空間に Kubernetes デプロイメントとして `${custom-resource-name}-collector` という名前で起動されます。同じ名前の ClusterIP サービスも起動されます。この Collector のパイプラインを構成する個々のコンポーネントを見ていきましょう。
+次に、ADOT Collector のデプロイ方法を見ていきましょう。[こちらの YAML 設定ファイル](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) は OpenTelemetryCollector カスタムリソースを定義しています。これを EKS クラスターにデプロイすると、上記の最初の図に示すように、トレースとメトリクスのパイプラインで構成されたコンポーネントを含む ADOT Collector をプロビジョニングするために、ADOT アドオンがトリガーされます。Collector は `aws-otel-eks` 名前空間に Kubernetes デプロイメントとして `${custom-resource-name}-collector` という名前で起動されます。同じ名前の ClusterIP サービスも起動されます。この Collector のパイプラインを構成する個々のコンポーネントを見ていきましょう。
 
 トレースパイプラインの AWS X-Ray Receiver は、[X-Ray セグメントフォーマット](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-segmentdocuments.html)のセグメントまたはスパンを受け入れることができるため、X-Ray SDK で計装されたマイクロサービスによって送信されたセグメントを処理できます。これは UDP ポート 2000 でトラフィックをリッスンするように設定されており、Cluster IP サービスとして公開されています。この設定に従って、トレースデータをこの Receiver に送信したいワークロードは、環境変数 `AWS_XRAY_DAEMON_ADDRESS` を `observability-collector.aws-otel-eks:2000` に設定する必要があります。エクスポーターは、これらのセグメントを [PutTraceSegments](https://docs.aws.amazon.com/xray/latest/api/API_PutTraceSegments.html) API を使用して直接 X-Ray に送信します。
 
-ADOT Collector は、`aws-otel-collector` という名前の Kubernetes サービスアカウントの ID で起動するように構成されています。これには、[設定](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) でも示されている ClusterRoleBinding と ClusterRole を使用してこれらのアクセス許可が付与されます。エクスポーターは、X-Ray にデータを送信するための IAM アクセス許可が必要です。これは、EKS でサポートされている [IAM ロール for サービスアカウント](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 機能を使用して、サービスアカウントを IAM ロールに関連付けることによって実現されます。IAM ロールには、AWSXRayDaemonWriteAccess などの AWS マネージドポリシーを関連付ける必要があります。[こちらのヘルパースクリプト](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/adot-irsa.sh) は、CLUSTER_NAME と REGION の変数を設定した後、これらのアクセス許可を付与され、`aws-otel-collector` サービスアカウントに関連付けられた `EKS-ADOT-ServiceAccount-Role` という名前の IAM ロールを作成するために使用できます。
+ADOT Collector は、`aws-otel-collector` という名前の Kubernetes サービスアカウントの ID で起動するように構成されています。これには、[設定](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/otel-collector-xray-prometheus-complete.yaml) でも示されている ClusterRoleBinding と ClusterRole を使用してこれらのアクセス許可が付与されます。エクスポーターは、X-Ray にデータを送信するための IAM アクセス許可が必要です。これは、EKS でサポートされている [IAM ロール for サービスアカウント](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html) 機能を使用して、サービスアカウントを IAM ロールに関連付けることによって実現されます。IAM ロールには、AWSXRayDaemonWriteAccess などの AWS マネージドポリシーを関連付ける必要があります。[こちらのヘルパースクリプト](https://github.com/aws-observability/aws-o11y-recipes/blob/main/sandbox/eks-addon-adot/adot-irsa.sh) は、CLUSTER_NAME と REGION の変数を設定した後、これらのアクセス許可が付与され、`aws-otel-collector` サービスアカウントに関連付けられた `EKS-ADOT-ServiceAccount-Role` という名前の IAM ロールを作成するために使用できます。
 
 #### トレース収集のエンドツーエンドテスト
 
@@ -144,7 +144,7 @@ ADOT Collector は、`aws-otel-collector` という名前の Kubernetes サー�
 
 *図: CloudWatch サービスマップコンソール*
 
-OTLP Receiver および AWS X-Ray Exporter を使用したトレースパイプラインの構成については、[Traces pipeline with OTLP Receiver and AWS X-Ray Exporter sending traces to AWS X-Ray](https://github.com/aws-observability/aws-otel-community/blob/master/sample-configs/operator/collector-config-xray.yaml) を参照してください。AWS X-Ray と連携して ADOT Collector を使用したいお客様は、これらの構成テンプレートから始め、プレースホルダー変数をターゲット環境に基づいて値に置き換え、ADOT 用 EKS アドオンを使用してコレクターを Amazon EKS クラスターにすばやくデプロイできます。
+OTLP Receiver および AWS X-Ray Exporter を使用したトレースパイプラインの構成については、[Traces pipeline with OTLP Receiver and AWS X-Ray Exporter sending traces to AWS X-Ray](https://github.com/aws-observability/aws-otel-community/blob/master/sample-configs/operator/collector-config-xray.yaml) を参照してください。AWS X-Ray と連携して ADOT Collector を使用したいお客様は、これらの構成テンプレートから始め、プレースホルダー変数をターゲット環境に基づいて値に置き換え、ADOT の EKS アドオンを使用してコレクターを Amazon EKS クラスターにすばやくデプロイできます。
 
 ### EKS Blueprints を使用したコンテナートレースのための AWS X-Ray の設定
 

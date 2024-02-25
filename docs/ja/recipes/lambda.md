@@ -11,7 +11,7 @@
 ## メトリクス
 
 - [CloudWatch Lambda Insights のご紹介][lambda-cwi]
-- [Firehose と AWS Lambda を使用した Cloudwatch メトリックストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
+- [Firehose と AWS Lambda を使用した Cloudwatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
 
 ## トレース
 

@@ -49,27 +49,27 @@ Google ワークスペースにスーパーアドミンのアクセス許可で�
 
 ![Google ワークスペース - カスタム SAML アプリの追加 - 属性マッピング](../images/amg-saml-google-auth/10.png)
 
-Google 認証でログインするユーザーが **Amazon Managed Grafana** で **Admin** 権限を持つためには、**Department** フィールドの値を ***monitoring*** に設定します。これには任意のフィールドと値を選択できます。Google ワークスペース側で何を選択するかに関わらず、Amazon Managed Grafana の SAML 設定でそのマッピングを反映するようにしてください。
+Google 認証でログインするユーザーが **Amazon Managed Grafana** で **Admin** 権限を持つためには、**Department** フィールドの値を ***monitoring*** に設定します。 これには任意のフィールドと値を選択できます。 Google ワークスペース側で何を使用するかを選択した場合は、Amazon Managed Grafana の SAML 設定でそれを反映するマッピングを行う必要があります。
 
-### Amazon Managed Grafana への SAML メタデータのアップロード
+### Amazon Managed Grafana に SAML メタデータをアップロードする
 
-Amazon Managed Grafana コンソールで、**Upload or copy/paste** オプションをクリックし、前述の Google ワークスペースからダウンロードした SAML メタデータファイルを選択するために **Choose file** ボタンを選択します。
+Amazon Managed Grafana コンソールで、**Upload or copy/paste** オプションをクリックし、先ほど Google ワークスペースからダウンロードした SAML メタデータファイルを選択するために **Choose file** ボタンを選択します。
 
-**Assertion mapping** セクションで、**Assertion attribute role** フィールドに **Department**、**Admin role values** フィールドに **monitoring** と入力します。
-これにより、**Department** が **monitoring** としてログインしたユーザーは、Grafana で**管理者**権限を持ち、ダッシュボードやデータソースの作成などの管理者業務を実行できるようになります。
+**Assertion mapping** セクションで、**Assertion attribute role** フィールドに **Department** と入力し、**Admin role values** フィールドに **monitoring** と入力します。
+これにより、**Department** が **monitoring** としてログインするユーザーは、Grafana で **Admin** 権限を持ち、ダッシュボードやデータソースの作成などの管理者用のタスクを実行できるようになります。
 
 以下のスクリーンショットに示すように、**Additional settings - optional** セクションの値を設定します。**Save SAML configuration** をクリックします。
 
-![AMG SAML - アサーションマッピング](../images/amg-saml-google-auth/11.png)
+![AMG SAML - Assertion mapping](../images/amg-saml-google-auth/11.png)
 
 これで、Amazon Managed Grafana は Google ワークスペースを使用してユーザーを認証するように設定されました。
 
 ユーザーがログインすると、次のように Google ログインページにリダイレクトされます。
 
-![Google ワークスペース - Google サインイン](../images/amg-saml-google-auth/12.png)
+![Google Workspace - Google sign in](../images/amg-saml-google-auth/12.png)
 
 資格情報を入力すると、以下のスクリーンショットのように Grafana にログインされます。
-![AMG - Grafana ユーザー設定ページ](../images/amg-saml-google-auth/13.png)
+![AMG - Grafana user settings page](../images/amg-saml-google-auth/13.png)
 
 ご覧のとおり、ユーザーは Google ワークスペース認証を使用して Grafana に正常にログインできました。
 

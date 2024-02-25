@@ -13,7 +13,7 @@ AMP を使用すると、オペレーショナルメトリクスのインジェ�
 - [AMP ワークスペースのクロスリージョンメトリクス収集の設定][amp-xregion-metrics]
 - [EKS 上のセルフホストされた Prometheus から AMP への移行に関するベストプラクティス][amp-migration]
 - [AMP の概要ワークショップ][amp-oow]
-- [Firehose と AWS Lambda を使用した Cloudwatch メトリックストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
+- [Firehose と AWS Lambda を使用した Cloudwatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
 - [Terraform による Infrastructure as Code を使用した Amazon Managed Service for Prometheus および Alert Manager のデプロイ](recipes/amp-alertmanager-terraform.md)
 - [Amazon Managed Prometheus と Amazon Managed Grafana を使用した EKS 上の Istio のモニタリング][amp-istio-monitoring]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere のモニタリング][amp-anywhere-monitoring]

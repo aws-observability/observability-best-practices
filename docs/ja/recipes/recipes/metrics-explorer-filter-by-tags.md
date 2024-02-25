@@ -33,7 +33,7 @@
 
 ![Name タグの例のスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-teamx-name-tag.png)
 
-* **Aggregated by** の下で時系列を集計関数を使用して結合できることに注意してください。以下の例では、**TeamX** メトリクスが **Availability Zone** 別に集計されています。
+* **Aggregated by** の下の集計関数を使用して、タイムシリーズを組み合わせることができることに注意してください。以下の例では、**TeamX** メトリクスが **Availability Zone** 別に集計されています。
 
 ![Name タグでフィルタリングされた EC2 ダッシュボードのスクリーンショット](../images/metrics-explorer-filter-by-tags/metrics-explorer-ec2-by-tag-name-dashboard.png)
 
@@ -43,7 +43,7 @@
 
 ## 動的なビジュアライゼーション
 <b>From</b>、<b>Aggregated by</b>、<b>Split by</b> のオプションを使用することで、結果のビジュアライゼーションを簡単にカスタマイズできます。
-メトリックエクスプローラのビジュアライゼーションは動的なので、新しくタグ付けされたリソースは自動的にエクスプローラウィジェットに表示されます。
+メトリクスエクスプローラーのビジュアライゼーションは動的なので、新しくタグ付けされたリソースは自動的にエクスプローラーウィジェットに表示されます。
 
 ## 参考情報
 

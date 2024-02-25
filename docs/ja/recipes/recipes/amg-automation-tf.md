@@ -15,10 +15,10 @@
 
 ## Amazon Managed Grafanaの設定
 
-Terraformが[Grafanaに対して認証][grafana-authn]するために、APIキーを使用しています。これはパスワードのようなものです。
+Terraformが[Grafanaに対して認証][grafana-authn]するために、APIキーを使用しています。APIキーはパスワードのようなものです。
 
 !!! info
-    APIキーは、Grafana APIに対するすべてのリクエストで呼び出し元を認証する51文字の英数字値を持つ[RFC 6750][rfc6750] HTTPベアラーヘッダーです。
+    APIキーは、Grafana APIに対するすべてのリクエストで呼び出し元を認証するための51文字の英数字値を持つ[RFC 6750][rfc6750] HTTPベアラーヘッダーです。
 
 したがって、Terraformマニフェストを設定する前に、まずAPIキーを作成する必要があります。Grafana UIで次のように行います。
 

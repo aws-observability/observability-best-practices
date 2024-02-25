@@ -1,8 +1,8 @@
 # Fargate 上の EKS で AWS Distro for OpenTelemetry を AWS X-Ray と共に使用する
 
-このレシピでは、サンプルの Go アプリケーションにインスツルメンテーションを適用し、[AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel)を使用してトレースを [AWS X-Ray](https://aws.amazon.com/xray/) にインジェストし、トレースを [Amazon Managed Grafana](https://aws.amazon.com/grafana/) で可視化する方法を示します。
+このレシピでは、サンプルの Go アプリケーションにインスツルメンテーションを適用し、[AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel) を使用してトレースを [AWS X-Ray](https://aws.amazon.com/xray/) にインジェストし、トレースを [Amazon Managed Grafana](https://aws.amazon.com/grafana/) で可視化する方法を示します。
 
-[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) 上に [AWS Fargate](https://aws.amazon.com/fargate/) クラスターをセットアップし、デモンストレーションのために [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) リポジトリを使用します。
+[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) を [AWS Fargate](https://aws.amazon.com/fargate/) 上にセットアップし、デモンストレーションのために [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) リポジトリを使用します。
 
 !!! note
     このガイドの完了には約 1 時間かかります。
@@ -73,8 +73,8 @@ kubectl apply -f adot-collector-fargate.yaml
 
 ## シグナルジェネレーター
 
-シグナルジェネレーターの `ho11y` を [sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y) から使用します。
-レシピリポジトリをまだローカル環境にクローンしていない場合は、次のコマンドでクローンしてください:
+シグナルジェネレーターの `ho11y` を、レシピリポジトリの [sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y) から使用します。
+したがって、まだローカル環境にリポジトリをクローンしていない場合は、次のようにクローンしてください:
 
 ```
 git clone https://github.com/aws-observability/aws-o11y-recipes.git
@@ -116,14 +116,14 @@ docker push "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest"
 
 ### シグナルジェネレーターのデプロイ
 
-ECR イメージパスを含むように [x-ray-sample-app.yaml](./fargate-eks-xray-go-adot-amg/x-ray-sample-app.yaml) を編集してください。つまり、ファイル内の `ACCOUNTID` と `REGION` を自分の値に置き換えます(全体で 3 か所)。
+[x-ray-sample-app.yaml](./fargate-eks-xray-go-adot-amg/x-ray-sample-app.yaml) を編集して、ECR イメージパスを含めます。つまり、ファイル内の `ACCOUNTID` と `REGION` を自分の値に置き換えます(合計 3 か所)。
 
 ``` 
     # change the following to your container image:
     image: "ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest"
 ```
 
-これでサンプルアプリをクラスタにデプロイできます。
+これでサンプルアプリをクラスタに次のコマンドでデプロイできます。
 
 ```
 kubectl -n example-app apply -f x-ray-sample-app.yaml

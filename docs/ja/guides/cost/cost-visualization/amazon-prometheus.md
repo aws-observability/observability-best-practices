@@ -20,7 +20,7 @@ Amazon Managed Service for Prometheus のコストと使用状況のビジュア
         , "sum"(line_item_unblended_cost) cost
         FROM
         database.tablename #データベース名とテーブル名を置き換えてください
-        WHERE ("line_item_product_code" = 'AmazonPrometheus')
+        WHERE ("line_item_product_code" = 'AmazonPrometheus') 
         GROUP BY 1, 2, 3, 4, 5, 6
 
 ## Amazon Managed Grafana ダッシュボードの作成
@@ -32,9 +32,9 @@ Amazon Managed Grafana を使用すると、Grafana ワークスペースコン�
 
 ![prometheus-cost](../../../images/prometheus-cost.png)
 
-Grafana のダッシュボードは、ダッシュボードのメタデータを格納する JSON オブジェクトで表されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記ダッシュボードの JSON テンプレートにアクセスするには、[こちら](AmazonPrometheus.json) を参照してください。
+Grafana のダッシュボードは、ダッシュボードのメタデータを格納する JSON オブジェクトで表されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記のダッシュボードの JSON テンプレートにアクセスするには、[こちら](AmazonPrometheus.json) を参照してください。
 
-このダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana [ダッシュボードパネル][panels] を使用できます。
+このダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana の [ダッシュボードパネル][panels] を使用できます。
 
 [Prerequisites]: https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html
 [view]: https://athena-in-action.workshop.aws/30-basics/303-create-view.html

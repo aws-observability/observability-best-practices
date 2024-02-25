@@ -1,12 +1,13 @@
-# EKS on EC2 で Amazon Managed Service for Prometheus を使用した AWS Distro for OpenTelemetry
+# EKS on EC2 で AWS Distro for OpenTelemetry と Amazon Managed Service for Prometheus を使用する
 
-このレシピでは、[サンプルの Go アプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app) にインスツルメンテーションを適用し、
+このレシピでは、[サンプルの Go アプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app) を計装し、
 [AWS Distro for OpenTelemetry(ADOT)](https://aws.amazon.com/otel) を使用してメトリクスを 
-[Amazon Managed Service for Prometheus(AMP)](https://aws.amazon.com/prometheus/) にインジェストします。
-そして、[Amazon Managed Grafana(AMG)](https://aws.amazon.com/grafana/) を使用してそれらのメトリクスを可視化します。
+[Amazon Managed Service for Prometheus(AMP)](https://aws.amazon.com/prometheus/) にインジェストする方法を示します。
+そして、[Amazon Managed Grafana(AMG)](https://aws.amazon.com/grafana/) を使用してそのメトリクスを可視化します。
 
-デモとして、[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) on EC2 クラスタと 
-[Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) レポジトリのセットアップを行います。
+デモのために、[Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) on EC2 
+クラスターと [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/)
+リポジトリをセットアップします。
 
 !!! note
     このガイドの完了には約 1 時間かかります。
@@ -76,18 +77,18 @@ aws ecr create-repository \
 
 ### AMP の設定
 
-AWS CLI を使用してワークスペースを作成する
+AWS CLI を使用してワークスペースを作成します。
 ```
 aws amp create-workspace --alias prometheus-sample-app
 ```
 
-次のコマンドを使用してワークスペースが作成されたことを確認する:
+次のコマンドでワークスペースが作成されたことを確認します。
 ```
 aws amp list-workspaces
 ```
 
 !!! info
-    詳細は [AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) を参照してください。
+    詳細は [AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) をご覧ください。
 
 ### ADOT Collector のセットアップ
 
@@ -102,7 +103,7 @@ aws amp list-workspaces
 
 2\. `<your_endpoint>` をワークスペースのリモートライト URL に置き換えます。
 
-次のクエリを実行することで、AMP リモートライト URL エンドポイントを取得できます。
+次のクエリを実行して、AMP リモートライト URL エンドポイントを取得します。
 
 まず、次のようにワークスペース ID を取得します。
 
@@ -112,26 +113,25 @@ YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
                     --query 'workspaces[0].workspaceId' --output text)
 ```
 
-次に、次のコマンドを使用して、ワークスペースのリモートライト URL エンドポイントを取得します。
+次に、ワークスペースのリモートライト URL エンドポイントを取得するには、次を使用します。
 
 ```
 YOUR_ENDPOINT=$(aws amp describe-workspace \
                 --workspace-id $YOUR_WORKSPACE_ID  \
                 --query 'workspace.prometheusEndpoint' --output text)api/v1/remote_write
-```
+```  
 
 !!! warning
     `YOUR_ENDPOINT` が実際にリモートライト URL であること、つまり URL が `/api/v1/remote_write` で終わっていることを確認してください。
-
 
 デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます。
 
 ```
 kubectl apply -f adot-collector-ec2.yaml
-```  
+```
 
 !!! info
-    詳細は、[AWS Distro for OpenTelemetry(ADOT) Collector のセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup) をご覧ください。
+    詳細については、[AWS Distro for OpenTelemetry(ADOT) Collector のセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup) をご覧ください。
 
 
 </your_endpoint></your_region>
@@ -150,7 +150,7 @@ kubectl apply -f adot-collector-ec2.yaml
 [サンプルアプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)
 を使用します。
 
-この Prometheus のサンプルアプリは、4 つの Prometheus メトリックタイプ
+この Prometheus のサンプルアプリは、4 つの Prometheus メトリクスタイプ
 (カウンター、ゲージ、ヒストグラム、サマリー)を生成し、`/metrics` エンドポイントで公開します。
 
 ### コンテナイメージのビルド
@@ -180,7 +180,7 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
 
 !!! note
     proxy.golang.or へのタイムアウトなどにより、ご自身の環境で `go mod` が失敗する場合があります。
-    go mod プロキシを迂回するには、Dockerfile を編集できます。
+    この場合は Dockerfile を編集することで、go mod プロキシをバイパスできます。
 
     Dockerfile の次の行を変更します。
     ```
@@ -193,7 +193,7 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
 
 これで、前述の手順で作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。
 
-そのために、まずデフォルトの ECR レジストリにログインします。
+そのためにまず、デフォルトの ECR レジストリにログインします。
 
 ```
 aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
@@ -211,16 +211,14 @@ docker push "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sam
 
 ### サンプルアプリのデプロイ
 
-[prometheus-sample-app.yaml](./ec2-eks-metrics-go-adot-ampamg/prometheus-sample-app.yaml)を編集して、
-ECR イメージパスを含めます。つまり、ファイル内の `ACCOUNTID` と `AWS_DEFAULT_REGION` を
-自分の値に置き換えます。
+[prometheus-sample-app.yaml](./ec2-eks-metrics-go-adot-ampamg/prometheus-sample-app.yaml)を編集して、ECR イメージパスを含めます。つまり、ファイル内の `ACCOUNTID` と `AWS_DEFAULT_REGION` を自分の値に置き換えます。
 
 ```
     # change the following to your container image:
     image: "ACCOUNTID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-これで次のコマンドを使用してサンプルアプリをクラスタにデプロイできます。
+これで以下のコマンドを使用してサンプルアプリをクラスタにデプロイできます。
 
 ```
 kubectl apply -f prometheus-sample-app.yaml

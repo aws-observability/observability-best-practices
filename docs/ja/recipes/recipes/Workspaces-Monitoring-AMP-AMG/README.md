@@ -2,7 +2,7 @@
 
 Amazon Workspaces 環境でのマネージドモニタリングソリューションにより、以下のような組織的メリットが得られます。
 
-* サービスデスクスタッフは、Amazon Managed Service for Prometheus や Amazon Managed Grafana などのマネージドモニタリングサービスを活用することで、調査が必要な Amazon Workspace の問題をすぐに特定し、推測することなくドリルダウンできます。
+* サービスデスクスタッフは、Amazon Managed Service for Prometheus や Amazon Managed Grafana などのマネージドモニタリングサービスを利用することで、調査が必要な Amazon Workspace の問題をすぐに特定し、推測することなくドリルダウンできます。
 * サービスデスクスタッフは、Amazon Managed Service for Prometheus の履歴データを使用して、イベント発生後に Amazon Workspace の問題を調査できます。 
 * Amazon Workspaces の問題についてビジネスユーザーに時間のかかる質問をする必要がなくなり、時間の無駄がなくなります。
 

@@ -4,7 +4,7 @@
 
 AWS アカウント内のリソースのインベントリの詳細、リソースのパフォーマンスとヘルスチェックを知ることは、安定したリソース管理にとって重要です。Amazon CloudWatch ダッシュボードは、CloudWatch コンソール内のカスタマイズ可能なホームページで、クロスアカウントまたは異なるリージョンに分散しているリソースであっても、1 つのビューでリソースを監視するために使用できます。
 
-[Amazon CloudWatch ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) を使用すると、お客様は再利用可能なグラフを作成し、統合されたビューでクラウドリソースとアプリケーションを可視化できます。CloudWatch ダッシュボードを通じて、お客様はメトリクスとログデータを統合ビューで並べてグラフ化し、素早くコンテキストを把握して、問題の診断から根本原因の理解へと移行できます。また、平均復旧時間 (MTTR) を短縮できます。たとえば、お客様は CPU 使用率やメモリなどの主要メトリクスの現在の利用状況を可視化し、割り当てられた容量と比較できます。お客様は、特定のメトリクスのログパターンを相関付け、パフォーマンスと運用上の問題をアラートできます。CloudWatch ダッシュボードは、アラームの現在のステータスも表示し、すばやく可視化して注意を促し、アクションを起こせます。CloudWatch ダッシュボードの共有により、組織内外のチームやステークホルダーと簡単に表示されるダッシュボード情報を共有できます。
+[Amazon CloudWatch ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) を使用すると、お客様は再利用可能なグラフを作成し、統合されたビューでクラウドリソースとアプリケーションを視覚化できます。CloudWatch ダッシュボードを通じて、お客様はメトリクスとログデータを統合ビューで並べてグラフ化し、素早くコンテキストを把握して、問題の診断から根本原因の理解へと移行できます。また、平均復旧時間 (MTTR) を短縮できます。たとえば、お客様は CPU 使用率やメモリなどの主要メトリクスの現在の利用状況を可視化し、割り当てられた容量と比較できます。お客様はまた、特定のメトリクスのログパターンを相関付けて、パフォーマンスと運用上の問題をアラートできます。CloudWatch ダッシュボードは、アラームの現在のステータスを表示することで、すばやく視覚化して注意を促し、アクションを起こせます。CloudWatch ダッシュボードの共有により、ダッシュボードで表示される情報を組織内外のチームやステークホルダーと簡単に共有できます。
 
 ## ウィジェット
 
@@ -27,23 +27,23 @@ AWS アカウント内のリソースのインベントリの詳細、リソー�
 
 #### カスタムウィジェット
 
-お客様は、[カスタムウィジェットを追加](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create-and-work-with-widgets.html)して、CloudWatch ダッシュボードでカスタムの視覚化、複数のソースからの情報の表示、ボタンなどのカスタムコントロールを追加し、CloudWatch ダッシュボードで直接アクションを実行することもできます。カスタムウィジェットは Lambda 関数で完全にサーバーレスで動作するため、コンテンツ、レイアウト、インタラクションを完全に制御できます。カスタムウィジェットは、ダッシュボード上にカスタムデータビューやツールを構築する簡単な方法であり、複雑な Web フレームワークを学習する必要はありません。Lambda でコードを記述し、HTML を作成できれば、便利なカスタムウィジェットを作成できます。
+お客様は、[カスタムウィジェットを追加](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create-and-work-with-widgets.html)して、CloudWatch ダッシュボードでカスタムの視覚化、複数のソースからの情報の表示、ボタンなどのカスタムコントロールを追加し、CloudWatch ダッシュボードで直接アクションを実行することもできます。カスタムウィジェットは Lambda 関数で完全にサーバーレスで動作するため、コンテンツ、レイアウト、インタラクションを完全に制御できます。カスタムウィジェットは、ダッシュボード上にカスタムデータビューやツールを構築する簡単な方法であり、複雑な Web フレームワークを学習する必要はありません。Lambda でコードを記述し、HTML を作成できるのであれば、便利なカスタムウィジェットを作成できます。
 
 ![Custom Widgets](../images/cw_dashboards_custom-widgets.png)
 
 **その他の参考資料:**
 
-- AWS Observability ワークショップの[カスタムウィジェット](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/custom-widgets)
-- GitHub の [CloudWatch Custom Widgets Samples](https://github.com/aws-samples/cloudwatch-custom-widgets-samples#what-are-custom-widgets)
-- ブログ: [Using Amazon CloudWatch dashboards custom widgets](https://aws.amazon.com/blogs/mt/introducing-amazon-cloudwatch-dashboards-custom-widgets/)
+- オブザーバビリティワークショップの[カスタムウィジェット](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/custom-widgets)
+- GitHub の [CloudWatch カスタムウィジェットサンプル](https://github.com/aws-samples/cloudwatch-custom-widgets-samples#what-are-custom-widgets)
+- ブログ: [Amazon CloudWatch ダッシュボードのカスタムウィジェットの使用](https://aws.amazon.com/jp/blogs/news/introducing-amazon-cloudwatch-dashboards-custom-widgets/)
 
 ## 自動ダッシュボード
 
-自動ダッシュボードは、Amazon CloudWatch の下にあるすべての AWS リソースの正常性とパフォーマンスの集約されたビューを提供する、すべての AWS パブリックリージョンで利用できます。これにより、お客様はモニタリングの開始、メトリクスとアラームのリソースベースのビュー、パフォーマンスの問題の根本原因を理解するためのドリルダウンが容易になります。自動ダッシュボードは、AWS サービス推奨の [ベストプラクティス](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で事前構築されており、リソースを意識した状態を保ち、重要なパフォーマンスメトリクスの最新の状態を反映するように動的に更新されます。自動サービスダッシュボードは、サービスのすべての標準的な CloudWatch メトリクスを表示し、サービスメトリクスごとに使用されるすべてのリソースをグラフ化し、アカウント間で異常なリソースをすばやく特定してコストの最適化に役立つ高利用率または低利用率のリソースを特定するのに役立ちます。
+自動ダッシュボードは、Amazon CloudWatch の下にあるすべての AWS リソースの正常性とパフォーマンスの集約されたビューを提供する、すべての AWS パブリックリージョンで利用できます。これにより、お客様はモニタリングの開始、メトリクスとアラームのリソースベースのビュー、パフォーマンスの問題の根本原因を理解するためのドリルダウンが容易になります。自動ダッシュボードは、AWS サービス推奨の [ベストプラクティス](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で事前構築されており、リソースを意識したままで、重要なパフォーマンスメトリクスの最新の状態を反映するように動的に更新されます。自動サービスダッシュボードは、サービスのすべての標準的な CloudWatch メトリクスを表示し、サービスメトリクスごとに使用されるすべてのリソースをグラフ化し、アカウント間で異常なリソースをすばやく特定して、高いまたは低い利用率のリソースを特定し、コストの最適化に役立てることができます。
 
 ![自動ダッシュボード](../images/automatic-dashboard.png)
 
-**その他の参考資料:**
+**その他の参考資料:**  
 
 - AWS Observability ワークショップの[自動ダッシュボード](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/autogen-dashboard)
 - YouTube の [Amazon CloudWatch ダッシュボードを使用した AWS リソースのモニタリング](https://www.youtube.com/watch?v=I7EFLChc07M)
@@ -52,34 +52,34 @@ AWS アカウント内のリソースのインベントリの詳細、リソー�
 
 [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) は、コンテナ化されたアプリケーションやマイクロサービスからメトリクスとログを収集、集約、要約します。Container Insights は、Amazon Elastic Container Service(Amazon ECS)、Amazon Elastic Kubernetes Service(Amazon EKS)、および Amazon EC2 上の Kubernetes プラットフォームで利用できます。Container Insights は、Amazon ECS と Amazon EKS の両方で Fargate にデプロイされたクラスタからのメトリクスの収集をサポートしています。CloudWatch は CPU、メモリ、ディスク、ネットワークなど、多くのリソースのメトリクスを自動的に収集するとともに、コンテナの再起動失敗などの診断情報も提供し、問題を隔離して迅速に解決するのに役立ちます。
 
-CloudWatch は、[組み込みメトリックフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用した CloudWatch メトリクスとして、クラスター、ノード、Pod、タスク、サービスレベルで集約メトリクスを作成します。これは、構造化された JSON スキーマを使用するパフォーマンスログイベントで、高基数データを大規模にインジェストおよび保存できるようになります。Container Insights が収集するメトリクスは、[CloudWatch の自動ダッシュボード](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards)で利用できるほか、CloudWatch コンソールのメトリクスセクションでも表示できます。
+CloudWatch は、[組み込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用した CloudWatch メトリクスとして、クラスター、ノード、Pod、タスク、サービスレベルで集約メトリクスを作成します。これは、構造化された JSON スキーマを使用するパフォーマンスログイベントで、高基数データを大規模にインジェストおよび保存できるようになります。Container Insights が収集するメトリクスは、[CloudWatch の自動ダッシュボード](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards)で利用できるほか、CloudWatch コンソールのメトリクスセクションでも表示できます。
 
 ![Container Insights](../images/Container_Insights_CW_Automatic_DB.png)
 
-#### 自動ダッシュボードの Lambda Insights
+#### 自動ダッシュボードのLambda Insights
 
-[CloudWatch Lambda Insights](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html) は、AWS Lambda などのサーバレスアプリケーションの監視とトラブルシューティングのソリューションであり、Lambda 関数の[自動ダッシュボード](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards)を動的に作成します。また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスと、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約して、Lambda 関数の問題を隔離し、迅速に解決するのに役立ちます。 [Lambda Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能で、有効にすると[埋め込みメトリックフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントは必要ありません。
+[CloudWatch Lambda Insights](https://docs.aws.amazon.com/lambda/latest/dg/monitoring-insights.html) は、Lambda 関数などのサーバレスアプリケーションの監視とトラブルシューティングのソリューションであり、Lambda 関数の[自動ダッシュボード](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html#use-automatic-dashboards)を動的に作成します。また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスと、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約して、Lambda 関数の問題を隔離し、迅速に解決するのに役立ちます。 [Lambda Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能で、有効にすると[埋め込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントは必要ありません。
 
 ![Lambda Insights](../images/Lambda_Insights_CW_Automatic_DB.png)
 
 ## カスタムダッシュボード
 
-お客様は、さまざまなウィジェットを使用して必要な数の追加のダッシュボードを[カスタムダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create_dashboard.html)として作成し、適宜カスタマイズすることもできます。ダッシュボードはクロスリージョンおよびクロスアカウントでの表示が可能で、お気に入りリストに追加することもできます。
+お客様は、さまざまなウィジェットを使用して必要な数の追加のダッシュボードを[カスタムダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/create_dashboard.html)として作成し、カスタマイズすることもできます。ダッシュボードはクロスリージョンとクロスアカウントの表示に設定でき、お気に入りリストに追加できます。
 
 ![カスタムダッシュボード](../images/CustomDashboard.png)
 
-お客様は、CloudWatch コンソールのナビゲーションペインから簡単にアクセスできるように、[お気に入りリスト](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add-dashboard-to-favorites.html)に自動またはカスタムのダッシュボードを追加することができます。
+お客様は、CloudWatch コンソールのナビゲーションペインから簡単にアクセスできるように、[お気に入りリスト](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add-dashboard-to-favorites.html)に自動またはカスタムのダッシュボードを追加できます。
 
 **その他の参考資料:**
 
 - AWS Observability ワークショップの [CloudWatch ダッシュボード](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/create)
-- AWS Well-Architected ラボのパフォーマンス効率のための [CloudWatch ダッシュボードを使用したモニタリング](https://www.wellarchitectedlabs.com/performance-efficiency/100_labs/100_monitoring_windows_ec2_cloudwatch/)
+- AWS Well-Architected ラボのパフォーマンス効率の [CloudWatch ダッシュボードを使用したモニタリング](https://www.wellarchitectedlabs.com/performance-efficiency/100_labs/100_monitoring_windows_ec2_cloudwatch/)
 
 #### CloudWatch ダッシュボードへの Contributor Insights の追加
 
-CloudWatch は、[Contributor Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) を提供しており、これを使用するとログデータを分析し、トップ N のコントリビューター、ユニーク コントリビューターの総数、およびそれらの使用状況に関するメトリクスを表示する時系列を作成できます。これにより、トップトーカーを見つけ出し、システム パフォーマンスに影響を与えているものが何であるかを理解することができます。たとえば、顧客は不適切なホストを特定したり、最も重いネットワーク ユーザーを識別したり、最も多くのエラーを生成している URL を見つけることができます。
+CloudWatch は、[Contributor Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) を提供しており、これを使用するとログデータを分析し、トップ N のコントリビューター、ユニーク コントリビューターの総数、使用状況に関するメトリクスを表示する時系列データを作成できます。これにより、トップトーカーの特定や、システム パフォーマンスに影響を与えているものが何であるかを理解することができます。たとえば、顧客は不適切なホストを見つけ出したり、最も重いネットワーク ユーザーを特定したり、最も多くのエラーを生成している URL を見つけ出したりすることができます。
 
-Contributor Insights レポートは、CloudWatch コンソールの[新しいダッシュボードまたは既存のダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights-ViewReports.html) に追加できます。
+Contributor Insights レポートは、CloudWatch コンソールの[新規または既存のダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights-ViewReports.html)に追加できます。
 
 ![Contributor Insights](../images/Contributor_Insights_CW_DB.png)
 
@@ -109,7 +109,7 @@ CloudWatch の[メトリクスエクスプローラー](https://docs.aws.amazon.
 
 ## CloudWatch ダッシュボードを使用して可視化するもの
 
-お客様は、リージョンとアカウントをまたいでワークロードとアプリケーションを監視するために、アカウントレベルとアプリケーションレベルのダッシュボードを作成できます。 お客様は、サービス固有のメトリクスで事前構成されたサービスレベルのダッシュボードである CloudWatch 自動ダッシュボードからすぐに開始できます。 本番環境のアプリケーションまたはワークロードに関連し重要なキーメトリクスとリソースに焦点を当てた、アプリケーションおよびワークロード固有のダッシュボードを作成することをおすすめします。
+お客様は、リージョンとアカウントをまたいでワークロードとアプリケーションを監視するために、アカウントレベルとアプリケーションレベルのダッシュボードを作成できます。 お客様は、サービス固有のメトリクスで事前構成されたサービスレベルのダッシュボードである CloudWatch 自動ダッシュボードからすぐに開始できます。 本番環境のアプリケーションやワークロードに関連し重要なキーメトリクスとリソースに焦点を当てた、アプリケーションおよびワークロード固有のダッシュボードを作成することをおすすめします。
 
 #### メトリクスデータの可視化
 
@@ -127,7 +127,7 @@ CloudWatch の[メトリクスエクスプローラー](https://docs.aws.amazon.
 
 顧客は、CloudWatch ダッシュボードでバーチャート、折れ線グラフ、スタックエリアチャートを使用して、[ログデータの視覚化](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)を実現できます。これにより、パターンを効率的に特定できます。CloudWatch Logs Insights は、stats 関数と 1 つ以上の集計関数を使用したクエリの視覚化を生成し、バーチャートを作成できます。クエリが時間とともに 1 つのフィールドで[データをグループ化](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html#CWL_Insights-Visualizing-ByFields)する bin() 関数を使用している場合、折れ線グラフとスタックエリアチャートを使用して視覚化できます。
 
-[時系列データ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html#CWL_Insights-Visualizing-TimeSeries) は、クエリにステータス関数の 1 つ以上の集計が含まれている場合、またはクエリが bin() 関数を使用して 1 つのフィールドでデータをグループ化している場合に、特性を使用して視覚化できます。
+クエリにステータス関数の 1 つ以上の集計、または bin() 関数を使用して 1 つのフィールドでデータをグループ化している場合は、[時系列データ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html#CWL_Insights-Visualizing-TimeSeries) を視覚化できます。
 
 stats 関数として count() を使用したサンプルクエリを以下に示します。
 
@@ -137,24 +137,24 @@ filter @message like /GET/
 | stats count() as request_count by status
 ```
 
-上記のクエリの場合、結果が以下の CloudWatch Logs Insights に示されています。
+上記のクエリでは、CloudWatch Logs Insights で結果が次のように表示されます。
 
 ![CloudWatch Logs Insights](../images/widget_logs_1.png)
 
 クエリ結果のパイチャートとしての視覚化を以下に示します。
 
-![CloudWatch Logs Insights Visualization](../images/widget_logs_2.png)
+![CloudWatch Logs Insights の視覚化](../images/widget_logs_2.png)
 
 **その他の参考資料:**
 
-- CloudWatch ダッシュボードでの[ログ結果の表示](https://catalog.workshops.aws/observability/ja-JP/aws-native/logs/logsinsights/displayformats)に関する AWS Observability ワークショップ
+- AWS Observability ワークショップの CloudWatch ダッシュボードでの[ログ結果の表示](https://catalog.workshops.aws/observability/ja-JP/aws-native/logs/logsinsights/displayformats)
 - [Amazon CloudWatch ダッシュボードで AWS WAF ログを視覚化する](https://aws.amazon.com/jp/blogs/news/visualize-aws-waf-logs-with-an-amazon-cloudwatch-dashboard/)
 
 #### アラームの視覚化
 
-CloudWatch のメトリックアラームは、1 つのメトリクスまたは CloudWatch メトリクスに基づく数式の結果を監視します。アラームは、期間におけるメトリクスまたは式の値をしきい値と比較した結果に基づいて、1つ以上のアクションを実行します。[CloudWatch ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add_remove_alarm_dashboard.html) には、ウィジェット内の単一のアラームとともに追加できます。これは、アラームのメトリクスのグラフとアラームのステータスを表示します。また、CloudWatch ダッシュボードにアラームステータスウィジェットを追加して、グリッド内の複数のアラームのステータスを表示することもできます。アラーム名と現在のステータスのみが表示され、グラフは表示されません。
+CloudWatch のメトリクスアラームは、1 つのメトリクスまたは CloudWatch メトリクスに基づく数式の結果を監視します。アラームは、期間におけるメトリクスまたは式の値をしきい値と比較した結果に基づいて、1つ以上のアクションを実行します。[CloudWatch ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/add_remove_alarm_dashboard.html) には、ウィジェット内の単一のアラームとともに追加できます。これは、アラームのメトリクスのグラフとアラームのステータスを表示します。また、CloudWatch ダッシュボードにアラームステータスウィジェットを追加して、グリッド内の複数のアラームのステータスを表示することもできます。アラーム名と現在のステータスのみが表示され、グラフは表示されません。
 
-CloudWatch ダッシュボード内のアラームウィジェットでキャプチャされたサンプルメトリックアラームステータスを以下に示します。
+CloudWatch ダッシュボード内のアラームウィジェットでキャプチャされたサンプルメトリクスアラームステータスを以下に示します。
 
 ![CloudWatch アラーム](../images/widget_alarms.png)
 
@@ -172,31 +172,31 @@ CloudWatch ダッシュボード内のアラームウィジェットでキャプ
 
 ## ダッシュボードの共有
 
-CloudWatch ダッシュボードは、チーム間の人々、ステークホルダー、および AWS アカウントへの直接アクセス権がない組織外の人と共有できます。これらの[共有ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html)は、チームエリアの大画面、監視やネットワーク運用センター (NOC) で表示したり、Wiki や公開 Web ページに埋め込むことができます。
+CloudWatch ダッシュボードは、チーム間の人々、ステークホルダー、および AWS アカウントへの直接アクセス権がない組織外の人々と共有できます。これらの[共有ダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html)は、チームエリアの大画面、監視やネットワーク運用センター (NOC) で表示したり、Wiki や公開 Web ページに埋め込むことができます。
 
 ダッシュボードを共有して簡単かつ安全にするために、3 つの方法があります。
 
 - ダッシュボードを[一般公開で共有](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboard-public)すると、リンクを持つ誰でもダッシュボードを表示できます。
-- ダッシュボードを表示できる人の[特定のメールアドレスに共有](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboard-email-addresses)することができます。 これらのユーザーはそれぞれ、ダッシュボードを表示するために入力する独自のパスワードを作成します。
+- ダッシュボードを、ダッシュボードを表示できる人々の[特定のメールアドレスに共有](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboard-email-addresses)することができます。 これらのユーザーはそれぞれ、ダッシュボードを表示するために入力する独自のパスワードを作成します。
 - ダッシュボードは、[シングルサインオン (SSO) プロバイダー](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-dashboard-sharing.html#share-cloudwatch-dashboards-setup-SSO) を介したアクセスで AWS アカウント内で共有できます。
 
 **ダッシュボードを一般公開で共有する際の注意点**
 
-ダッシュボードに機密情報や秘密情報が含まれている場合、CloudWatch ダッシュボードの一般公開共有は推奨されません。 ダッシュボードを共有する際は、可能な限りユーザー名/パスワードまたはシングルサインオン (SSO) を使用した認証を利用することをおすすめします。
+ダッシュボードに機密情報や秘密情報が含まれている場合、CloudWatch ダッシュボードの一般公開共有は推奨されません。 可能であれば、ダッシュボード共有時にはユーザー名/パスワードまたはシングルサインオン (SSO) を使用した認証を利用することをおすすめします。
 
-ダッシュボードが一般公開されると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 Web ページを表示している誰でも、一般公開で共有されたダッシュボードの内容を確認できます。 この Web ページは、共有するダッシュボード内のアラームとコントリビューターの洞察ルールをクエリする API を呼び出し、アカウント内のすべてのメトリクスとすべての EC2 インスタンスの名前とタグに一時的な資格情報を提供するリンクを提供します。これは、共有するダッシュボードには表示されていない場合でも同様です。 この情報を一般公開で利用できるようにすることが適切かどうかを検討することをおすすめします。
+ダッシュボードが一般公開されると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 Web ページを表示しているすべてのユーザーが、公開共有ダッシュボードの内容も表示できるようになります。 この Web ページは、共有するダッシュボード内のアラームとコントリビューターの洞察ルールをクエリする API を呼び出し、アカウント内のすべてのメトリクス、EC2 インスタンスの名前とタグに一時的な資格情報を提供するリンクを提供します。これらは、共有するダッシュボードには表示されていない可能性があります。 この情報を一般公開で利用できるようにすることが適切かどうかを検討することをお勧めします。
 
 Web ページへのダッシュボードの一般公開共有を有効にすると、アカウントに次の Amazon Cognito リソースが作成されることに注意してください: Cognito ユーザープール、Cognito アプリクライアント、Cognito ID プール、IAM ロール。
 
 **資格情報(ユーザー名とパスワードで保護されたダッシュボード)を使用してダッシュボードを共有する際の注意点**
 
-ダッシュボードに共有相手のユーザーと共有したくない機密情報または秘密情報が含まれている場合、CloudWatch ダッシュボードの共有は推奨されません。
+ダッシュボードに共有相手のユーザーと共有したくない機密情報や秘密情報が含まれている場合、CloudWatch ダッシュボードの共有は推奨されません。
 
-ダッシュボードの共有が有効になると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 上記で指定したユーザーには、共有するダッシュボード内のアラームとコントリビューターの洞察ルールへの CloudWatch 読み取り専用アクセス権限が付与されます。また、共有するダッシュボードに表示されていなくても、アカウント内のすべてのメトリクスとすべての EC2 インスタンスの名前とタグが付与されます。 この情報を共有しているユーザーが利用できるようにすることが適切かどうかを検討することをおすすめします。
+ダッシュボードの共有が有効になると、CloudWatch はダッシュボードをホストする Web ページへのリンクを生成します。 上記で指定したユーザーには、共有するダッシュボード内のアラームとコントリビューターの洞察ルールへの CloudWatch 読み取り専用アクセス権限が付与されます。また、共有するダッシュボードに表示されていなくても、アカウント内のすべてのメトリクス、EC2 インスタンスの名前とタグが付与されます。 この情報を共有しているユーザーが利用できるようにすることが適切かどうかを検討することをお勧めします。  
 
-Web ページへのアクセスのために指定したユーザーのダッシュボード共有を有効にすると、アカウントに次の Amazon Cognito リソースが作成されることに注意してください: Cognito ユーザープール、Cognito ユーザー、Cognito アプリクライアント、Cognito ID プール、IAM ロール。
+Web ページへのアクセスのために指定したユーザーとのダッシュボードの共有を有効にすると、アカウントに次の Amazon Cognito リソースが作成されることに注意してください: Cognito ユーザープール、Cognito ユーザー、Cognito アプリクライアント、Cognito ID プール、IAM ロール。
 
-**SSO プロバイダーを使用してダッシュボードを共有する際の注意点**
+**SSO プロバイダーを使用したダッシュボードの共有に関する注意事項**
 
 シングルサインオン (SSO) を使用して CloudWatch ダッシュボードが共有されると、選択した SSO プロバイダーに登録されているユーザーに、共有されているアカウントのすべてのダッシュボードへのアクセス権限が付与されます。 また、この方法でのダッシュボードの共有が無効になると、すべてのダッシュボードが自動的に共有解除されます。
 
@@ -208,15 +208,15 @@ Web ページへのアクセスのために指定したユーザーのダッシ�
 
 ## リアルタイムデータ
 
-ダッシュボードには、ワークロードからのメトリクスが定期的に公開されている場合、メトリックウィジェットを介して[リアルタイムデータ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-live-data.html)も表示されます。お客様はダッシュボード全体または個々のウィジェットでリアルタイムデータを有効に選択できます。
+ダッシュボードには、ワークロードからのメトリクスが定期的に公開されている場合、メトリクスウィジェットを介して[リアルタイムデータ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-live-data.html)も表示されます。お客様はダッシュボード全体または個々のウィジェットでリアルタイムデータを有効に選択できます。
 
 リアルタイムデータが **オフ** になっている場合、少なくとも1分前の集計期間のデータポイントのみが表示されます。 たとえば、5分の期間を使用している場合、12:35のデータポイントは12:35から12:40に集計され、12:41に表示されます。
 
-リアルタイムデータが **オン** になっている場合、対応する集計インターバルでデータが公開されるとすぐに、最新のデータポイントが表示されます。 表示を更新するたびに、その集計期間内で新しいデータが公開されると、最新のデータポイントが変更される場合があります。
+リアルタイムデータが **オン** になっている場合、対応する集計インターバルでデータが公開されるとすぐに、最新のデータポイントが表示されます。 表示を更新するたびに、その集計期間内で新しいデータが公開されるにつれて、最新のデータポイントが変更される場合があります。
 
 ## アニメーションダッシュボード
 
-[アニメーションダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-animated-dashboard.html) は、時間経過とともにキャプチャされた CloudWatch メトリクスデータを再生します。これにより、トレンドの確認、プレゼンテーションの作成、問題発生後の分析が容易になります。アニメーション化されるダッシュボードウィジェットには、折れ線グラフウィジェット、積み上げ面グラフウィジェット、数値ウィジェット、メトリクスエクスプローラーウィジェットが含まれます。円グラフ、棒グラフ、テキストウィジェット、ログウィジェットはダッシュボードに表示されますが、アニメーション化されません。
+[アニメーションダッシュボード](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/cloudwatch-animated-dashboard.html) は、時間経過とともにキャプチャされた CloudWatch メトリクスデータを再生します。これにより、トレンドの確認、プレゼンテーションの作成、問題発生後の分析が容易になります。アニメーション化されるダッシュボードウィジェットには、ラインウィジェット、スタックエリアウィジェット、数値ウィジェット、メトリクスエクスプローラウィジェットが含まれます。パイグラフ、バーチャート、テキストウィジェット、ログウィジェットはダッシュボードに表示されますが、アニメーション化されません。
 
 ## CloudWatch ダッシュボードの API/CLI サポート
 

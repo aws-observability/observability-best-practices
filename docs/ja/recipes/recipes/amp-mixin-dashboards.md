@@ -2,7 +2,7 @@
 
 マネージドサービスであっても、EKS は Kubernetes コントロールプレーンから多くのメトリクスを公開し続けます。Prometheus コミュニティは、これらのメトリクスをレビューおよび調査するための一連のダッシュボードを作成しました。このドキュメントでは、Amazon Managed Service for Prometheus でホストされる環境にこれらをインストールする方法を示します。
 
-Prometheus mixin プロジェクトは、Prometheus Operator を介して Prometheus がインストールされていることを想定していますが、Terraform ブループリントはデフォルトの Helm チャートを介して Prometheus エージェントをインストールします。スクレイピングジョブとダッシュボードが一致するようにするには、Prometheus ルールと mixin ダッシュボード構成を更新し、ダッシュボードを Grafana インスタンスにアップロードする必要があります。
+Prometheus mixin プロジェクトは Prometheus が Prometheus Operator 経由でインストールされていることを想定していますが、Terraform ブループリントはデフォルトの Helm チャートを使用して Prometheus エージェントをインストールします。スクレイピングジョブとダッシュボードが一致するようにするには、Prometheus ルールと mixin ダッシュボード構成を更新し、ダッシュボードを Grafana インスタンスにアップロードする必要があります。
 
 ## 前提条件
 
@@ -13,10 +13,10 @@ Prometheus mixin プロジェクトは、Prometheus Operator を介して Promet
 * AMP のインスタンス
 * Amazon Managed Grafana のインスタンス
 
-## ミックスインダッシュボードのインストール
+## mixin ダッシュボードのインストール
 
 
-Cloud9 インスタンスを新規作成し、テラフォームアドオンの例として AWS ブループリントを使用し、前提条件でリンクされている EKS クラスタをターゲットとします。
+Cloud9 インスタンスを新規作成し、terraform complete addon の例の AWS ブループリントを使用して、前提条件でリンクされている EKS クラスタをターゲットとします。
 
 Cloud9 インスタンスのファイルシステムを少なくとも 20 GB に拡張します。EC2 コンソールで EBS ボリュームを 20 GB に拡張してから、Cloud9 シェルから以下のコマンドを実行します。
 
@@ -46,7 +46,7 @@ export PATH="$PATH:~/go/bin"
 ```
 
 
-kubernetes-mixin プロジェクトの jsonnet ライブラリをダウンロードおよびインストールします。
+kubernetes-mixin プロジェクトの jsonnet ライブラリをダウンロードしてインストールします。
 
 
 ```
@@ -55,7 +55,7 @@ jb install
 ```
 
 
-Prometheus ジョブ名と一致するように、config.libsonnet を編集し、「selectors」セクションを以下のように置き換えます。
+config.libsonnet を編集し、prometheus ジョブ名と一致するように「selectors」セクションを以下のように置き換えます。
 
 ```
  // Selectors are inserted between {} in Prometheus queries.
@@ -76,7 +76,7 @@ Prometheus ジョブ名と一致するように、config.libsonnet を編集し�
 
 
 
-Prometheus ルール、アラート、Grafana ダッシュボードをビルドします。
+Prometheus のルール、アラート、Grafana ダッシュボードをビルドします。
 
 ```
 make prometheus_alerts.yaml
@@ -94,6 +94,6 @@ aws amp create-rule-groups-namespace --data file://prometheus_rules.b64 --name k
 
 
 
-Cloud9 環境から「dashboard_out」フォルダの内容をダウンロードし、Grafana Web UI を使用してアップロードします。
+Cloud9 環境から「dashboard_out」フォルダの内容をダウンロードし、Grafana の Web UI を使用してアップロードします。
 
 </region></workspace-id></region></workspace-id>

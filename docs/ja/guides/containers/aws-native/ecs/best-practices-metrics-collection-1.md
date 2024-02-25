@@ -1,26 +1,20 @@
 # Container Insights を使用したシステムメトリクスの収集
 
 システムメトリクスは、サーバー上の物理コンポーネントである CPU、メモリ、ディスク、ネットワークインターフェイスなどの低レベルリソースに関連するものです。
-Amazon ECS にデプロイされたコンテナ化されたアプリケーションからのシステムメトリクスを収集、集約、要約するには、[CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) を使用します。
-Container Insights は、コンテナの再起動失敗などの診断情報も提供し、問題を特定して迅速に解決するのに役立ちます。
-Amazon EC2 と Fargate でデプロイされた Amazon ECS クラスターで利用できます。
+Amazon ECS にデプロイされたコンテナ化されたアプリケーションからのシステムメトリクスを収集、集約、要約するには、[CloudWatch Container Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) を使用します。Container Insights は、コンテナの再起動失敗などの診断情報も提供し、問題を特定して迅速に解決するのに役立ちます。Amazon ECS クラスターが EC2 と Fargate でデプロイされている場合に利用できます。
 
-Container Insights は、[埋め込みメトリックフォーマット](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html)を使用してパフォーマンスログイベントとしてデータを収集します。
-これらのパフォーマンスログイベントは、高基数データを大規模に取り込み、保存できるように構造化された JSON スキーマを使用したエントリです。
-このデータから、CloudWatch はクラスター、ノード、サービス、タスクレベルで集計メトリクスを CloudWatch メトリクスとして作成します。
+Container Insights は、[埋め込みメトリクスフォーマット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html)を使用してパフォーマンスログイベントとしてデータを収集します。これらのパフォーマンスログイベントは、高基数データを大規模に取り込み、保存できるように構造化された JSON スキーマを使用したエントリです。このデータから、CloudWatch はクラスター、ノード、サービス、タスクのレベルで集計メトリクスを CloudWatch メトリクスとして作成します。
 
 !!! note
-	Container Insights のメトリクスを CloudWatch に表示するには、Amazon ECS クラスターで Container Insights を有効にする必要があります。
-	これはアカウントレベルまたは個々のクラスターレベルで実行できます。
-	アカウントレベルで有効にするには、次の AWS CLI コマンドを使用します:
+	Container Insights のメトリクスを CloudWatch に表示するには、Amazon ECS クラスターで Container Insights を有効にする必要があります。これはアカウントレベルまたは個々のクラスターレベルで実行できます。アカウントレベルで有効にするには、次の AWS CLI コマンドを使用します。
 
-	```
+    ```
     aws ecs put-account-setting --name "containerInsights" --value "enabled
     ```
 
-	個々のクラスターレベルで有効にするには、次の AWS CLI コマンドを使用します:
+    個々のクラスターレベルで有効にするには、次の AWS CLI コマンドを使用します。
 
-	```
+    ```
     aws ecs update-cluster-settings --cluster $CLUSTER_NAME --settings name=containerInsights,value=enabled
     ```
 
@@ -50,11 +44,11 @@ EC2 上でホストされている Amazon ECS クラスターに CloudWatch エ�
 
 ## Logs Insights を使用したパフォーマンスログイベントの分析
 
-Container Insights は、メトリック形式が埋め込まれたパフォーマンスログイベントを使用してメトリクスを収集します。各ログイベントには、CPU やメモリなどのシステムリソース、またはタスクやサービスなどの ECS リソースで観測されたパフォーマンスデータが含まれている場合があります。Container Insights が Amazon ECS のクラスター、サービス、タスク、コンテナのレベルで収集するパフォーマンスログイベントの例は[こちらにリストされています](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-reference-performance-logs-ECS.html)。CloudWatch は、これらのログイベントのパフォーマンスデータの一部のみに基づいてメトリクスを生成します。しかし、これらのログイベントを使用して、CloudWatch Logs Insights クエリを使用したパフォーマンスデータのより深い分析を実行できます。
+Container Insights は、メトリクス形式が埋め込まれたパフォーマンスログイベントを使用してメトリクスを収集します。各ログイベントには、CPU やメモリなどのシステムリソース、またはタスクやサービスなどの ECS リソースで観測されたパフォーマンスデータが含まれている場合があります。Container Insights が Amazon ECS のクラスター、サービス、タスク、コンテナのレベルで収集するパフォーマンスログイベントの例は[こちらにリストされています](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-reference-performance-logs-ECS.html)。CloudWatch は、これらのログイベントのパフォーマンスデータの一部のみに基づいてメトリクスを生成します。しかし、これらのログイベントを使用して、CloudWatch Logs Insights クエリを使用したパフォーマンスデータのより深い分析を実行できます。
 
-Logs Insights クエリを実行するためのユーザーインターフェイスは、CloudWatch コンソールのナビゲーションページから *Logs Insights* を選択することで利用できます。ロググループを選択すると、CloudWatch Logs Insights はそのロググループ内のパフォーマンスログイベントのフィールドを自動的に検出し、右側のパネルの *Discovered fields* に表示します。クエリの実行結果は、このロググループ内の時系列に沿ったログイベントの棒グラフとして表示されます。この棒グラフは、クエリと時間範囲に一致するロググループ内のイベントの分布を示しています。
+Logs Insights クエリを実行するためのユーザーインターフェイスは、CloudWatch コンソールのナビゲーションページから *Logs Insights* を選択することで利用できます。ロググループを選択すると、CloudWatch Logs Insights はそのロググループ内のパフォーマンスログイベントのフィールドを自動的に検出し、右側のパネルの *Discovered fields* に表示します。クエリの実行結果は、このロググループ内の時系列に沿ったログイベントのバーグラフとして表示されます。このバーグラフは、クエリと時間範囲に一致するロググループ内のイベントの分布を示しています。
 
-![Logs Insights ダッシュボード](../../../../images/LogInsights.png)  
+![Logs Insights ダッシュボード](../../../../images/LogInsights.png)
 
 !!! info
     コンテナレベルの CPU およびメモリ使用率メトリクスを表示する Logs Insights クエリのサンプルを以下に示します。

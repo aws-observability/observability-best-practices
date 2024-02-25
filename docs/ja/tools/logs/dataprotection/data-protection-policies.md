@@ -1,23 +1,23 @@
 # CloudWatch Logs のデータ保護ポリシー (SLG/EDU 用)
 
-ログデータは一般的に有益ですが、医療保険の相互運用性と説明責任に関する法律 (HIPAA)、一般データ保護規則 (GDPR)、支払カード業界データセキュリティ基準 (PCI-DSS)、連邦リスクおよび認定管理プログラム (FedRAMP) などの厳格な規制を持つ組織にとっては、マスキングが有用です。
+一般的にログデータは有益ですが、医療保険の相互運用性と説明責任に関する法律 (HIPAA)、一般データ保護規則 (GDPR)、支払カード業界データセキュリティ基準 (PCI-DSS)、連邦リスクおよび認定管理プログラム (FedRAMP) などの厳格な規制を持つ組織にとっては、マスキングが有用です。
 
-CloudWatch Logs の[データ保護ポリシー](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html) を使用すると、お客様はログデータをスキャンして機密データを検出し、検出された機密データをマスクするデータ保護ポリシーを定義および適用できます。
+CloudWatch Logs の[データ保護ポリシー](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html) を使用すると、お客様はログデータ内を通過する機密データをスキャンし、検出された機密データをマスクするデータ保護ポリシーを定義および適用できます。  
 
-これらのポリシーは、パターンマッチングと機械学習モデルを利用して機密データを検出し、アカウントの CloudWatch ロググループにインジェストされたイベントに表示されるデータを監査およびマスクするのに役立ちます。
+これらのポリシーは、パターンマッチングと機械学習モデルを利用して機密データを検出し、アカウントの CloudWatch ロググループにインジェストされるイベントに表示されるそれらのデータを監査およびマスクするのに役立ちます。
 
 機密データの選択に使用される技術と基準を [マッチングデータ識別子](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html) と呼びます。 これらのマネージドデータ識別子を使用することで、CloudWatch Logs は次のものを検出できます:
 
-- プライベートキーや AWS シークレットアクセスキーなどの資格情報
-- IP アドレスや MAC アドレスなどのデバイス識別子  
+- プライベートキーや AWS シークレットアクセスキーなどの資格情報  
+- IP アドレスや MAC アドレスなどのデバイス識別子
 - 銀行口座番号、クレジットカード番号、クレジットカード検証コードなどの金融情報
 - 健康保険カード番号 (EHIC) や個人健康番号などの保護された健康情報 (PHI)
 - 運転免許証、社会保障番号、納税者番号などの個人を特定できる情報 (PII)
 
 !!! important
-    機密データは、ロググループにインジェストされると検出されてマスクされます。 データ保護ポリシーを設定しても、その時点より前にロググループにインジェストされたログイベントはマスクされません。
+    機密データは、ロググループにインジェストされると検出され、マスクされます。 データ保護ポリシーを設定したとき、その時点より前にロググループにインジェストされたログイベントはマスクされません。
 
-上記で言及したデータタイプのいくつかを詳しく説明し、例を見ていきましょう。
+上記で言及したデータタイプのいくつかを詳しく説明し、例を見ていきましょう:
 
 ## データ型
 
@@ -72,7 +72,7 @@ PII は、個人を特定できる個人データへのテキスト参照です�
 ![The CloudWatch Logs Data Protection for PHI](../../../images/cwl-dp-pii.png)
 
 !!! info
-    [pii データタイプとデータ識別子の完全なリスト](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html) をご確認ください
+    [PII データタイプとデータ識別子の完全なリスト](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html) をご確認ください
 
 ## マスクされたログ
 
@@ -105,7 +105,7 @@ fields @timestamp, @message
 
 
 !!! Tip
-    CloudWatch Logs では、ロググループデータは常に暗号化されています。 または、[AWS Key Management Service](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) を使用してログデータを暗号化することもできます。
+    CloudWatch Logs のロググループデータは常に暗号化されています。 または、[AWS Key Management Service](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) を使用してログデータを暗号化することもできます。
 
 
 !!! Tip

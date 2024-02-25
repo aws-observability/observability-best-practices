@@ -5,17 +5,17 @@ The content on this site is maintained by Solution Architects, AWS Observability
 Recipes and content contributions in general so far are from the following
 people:
 
-| Authors      | Authors                          | Authors               | Authors |
-| ----------- | ------------------------------------ |--------------------|---------|
-|   Alolita Sharma     |  Aly Shah Imtiaz|Helen Ashton | Elamaran Shanmugam |
- Dinesh Boddula | Imaya Kumar Jagannathan| Dieter Adant|  Eric Hsueh |
- |Jason Derrett|Kevin Lewin|Mahesh Biradar|Michael Hausenblas|
-|Munish Dabra|Rich McDonough|Rob Sable|Rodrigue Koffi|
-|Sheetal Joshi|Tomasz Wrzonski|Tyler Lynch|Vijayan Sarathy|
-|Vikram Venkataraman|Yiming Peng|Arun Chandapillai| Alex Livingstone|
-| Kiran Prakash| Bobby Hallahan| Toshal Dudhwala| Franklin Aguinaldo|
-| Nirmal Mehta| Lucas Vieira Souza da Silva| William Armiros| Abhi Khanna|
-| Arvind Raghunathan| Doyita Mitra | Rahul Popat|
+| Authors             | Authors                     | Authors           | Authors            |
+| ------------------- | --------------------------- | ----------------- | ------------------ |
+| Alolita Sharma      | Aly Shah Imtiaz             | Helen Ashton      | Elamaran Shanmugam |
+| Dinesh Boddula      | Imaya Kumar Jagannathan     | Dieter Adant      | Eric Hsueh         |
+| Jason Derrett       | Kevin Lewin                 | Mahesh Biradar    | Michael Hausenblas |
+| Munish Dabra        | Rich McDonough              | Rob Sable         | Rodrigue Koffi     |
+| Sheetal Joshi       | Tomasz Wrzonski             | Tyler Lynch       | Vijayan Sarathy    |
+| Vikram Venkataraman | Yiming Peng                 | Arun Chandapillai | Alex Livingstone   |
+| Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
+| Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
+| Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
 
 
 Note that all recipes published on this site are available via the

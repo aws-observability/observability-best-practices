@@ -134,10 +134,10 @@ Amazon Managed Service for Prometheus の Alert Manager は、[Amazon SNS を使
 - **E メール** 通知が成功すると、Amazon SNS トピックを介して Amazon Managed Service for Prometheus Alert Manager から送信された E メールがアラートの詳細とともに受信されます。
 - Amazon Managed Service for Prometheus Alert Manager は、[アラートを JSON 形式で送信できます](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver-JSON.html)。これにより、Amazon SNS から下流の AWS Lambda や Webhook 受信エンドポイントで処理できます。  
 - **Webhook** 既存の Amazon SNS トピックを設定して、メッセージを Webhook エンドポイントに出力できます。Webhook は、イベント駆動型のトリガーに基づいてアプリケーション間で HTTP 経由で交換される直列化された形式でエンコードされた JSON または XML 形式のメッセージです。これを使用して、[SIEM やコラボレーションツールをフックして](https://repost.aws/knowledge-center/sns-lambda-webhooks-chime-slack-teams)、アラート、チケット、インシデント管理システムに接続できます。  
-- **Slack** お客様は、Slack の E メールチャネルインテグレーションを使用して、[Slack と統合できます](https://aws.amazon.com/ja/blogs/mt/how-to-integrate-amazon-managed-service-for-prometheus-with-slack/)。これにより、Slack が E メールを受け取って Slack チャネルに転送したり、Lambda 関数を使用して SNS 通知を Slack に書き換えたりできます。
-- **PagerDuty** `alertmanager_config` 定義の `template_files` ブロックで使用されているテンプレートをカスタマイズして、ペイロードを [PagerDuty](https://aws.amazon.com/ja/blogs/mt/using-amazon-managed-service-for-prometheus-alert-manager-to-receive-alerts-with-pagerduty/) に送信できます。これは、Amazon SNS の送信先として機能します。  
+- **Slack** お客様は、Slack の E メールチャネルインテグレーションを使用して、[Slack と統合できます](https://aws.amazon.com/blogs/mt/how-to-integrate-amazon-managed-service-for-prometheus-with-slack/)。これにより、Slack が E メールを受け取って Slack チャネルに転送したり、Lambda 関数を使用して SNS 通知を Slack に書き換えたりできます。
+- **PagerDuty** `alertmanager_config` 定義の `template_files` ブロックで使用されているテンプレートをカスタマイズして、ペイロードを [PagerDuty](https://aws.amazon.com/blogs/mt/using-amazon-managed-service-for-prometheus-alert-manager-to-receive-alerts-with-pagerduty/) に送信できます。これは、Amazon SNS の送信先として機能します。  
 
-参考: [カスタム Alert Manager テンプレート](https://prometheus.io/ja/blog/2016/03/03/custom-alertmanager-templates/)
+参考: [カスタム Alert Manager テンプレート](https://prometheus.io/blog/2016/03/03/custom-alertmanager-templates/)
 
 ## アラートのステータス
 

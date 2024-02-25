@@ -1,6 +1,6 @@
 # Amazon Managed Grafana での Redshift の使用
 
-このレシピでは、[Amazon Redshift][redshift](標準 SQL を使用したペタバイトスケールのデータウェアハウスサービス) を [Amazon Managed Grafana][amg] で使用する方法を示します。この統合は、[Grafana 用 Redshift データソース][redshift-ds](DIY Grafana インスタンスで使用できるオープンソースプラグインで、Amazon Managed Grafana にプリインストールされています) によって可能になります。 
+このレシピでは、[Amazon Redshift][redshift]（標準 SQL を使用したペタバイトスケールのデータウェアハウスサービス—）を [Amazon Managed Grafana][amg] で使用する方法を示します。この統合は、[Grafana 用 Redshift データソース][redshift-ds](DIY Grafana インスタンスで使用できるオープンソースプラグインで、Amazon Managed Grafana にプリインストールされています) によって可能になります。 
 
 !!! note
     このガイドの完了には約 10 分かかります。

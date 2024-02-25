@@ -18,7 +18,7 @@ Canaries are configurable scripts, that you can run on a schedule to continually
 
 ### Recording New Canaries
 
-The [CloudWatch Synthetics Recorder](https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome browser plugin allows you to quickly build new canary test scripts with complex workflows from scratch. The type and click actions taken during recording are converted into a Node.js script that you can use to create a canary. The known limitations of the CloudWatch Synthetics Recorder are noted on [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations).
+The [CloudWatch Synthetics Recorder](https://chromewebstore.google.com/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno) Chrome browser plugin allows you to quickly build new canary test scripts with complex workflows from scratch. The type and click actions taken during recording are converted into a Node.js script that you can use to create a canary. The known limitations of the CloudWatch Synthetics Recorder are noted on [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Recorder.html#CloudWatch_Synthetics_Canaries_Recorder-limitations).
 
 ### Viewing Aggregate Metrics
 

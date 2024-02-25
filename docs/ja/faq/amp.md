@@ -1,6 +1,6 @@
 # Amazon Managed Service for Prometheus - よくある質問
 
-1. **現在どの AWS リージョンがサポートされていますか? 他のリージョンからメトリクスを収集することは可能ですか?** サポートしているリージョンの最新リストは、[ドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html) をご覧ください。2023年にはすべての商用リージョンをサポートする計画です。優先順位をより適切に設定できるよう、サポートが必要なリージョンをお知らせください。特定のサポート対象リージョンにデータを送信することで、任意のリージョンからデータを収集できます。詳細はこちらのブログをご覧ください: [Amazon Managed Service for Prometheus のクロスリージョンメトリクス収集の設定](https://aws.amazon.com/jp/blogs/news/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/)。
+1. **現在どの AWS リージョンがサポートされていますか? 他のリージョンからメトリクスを収集することは可能ですか?** サポートしているリージョンの最新リストは、[ドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html) をご覧ください。2023年にはすべての商用リージョンをサポートする計画です。優先順位をより適切に設定できるよう、サポートが必要なリージョンをお知らせください。特定のサポート対象リージョンにデータを送信することで、任意のリージョンからデータを収集できます。詳細はこちらのブログをご覧ください: [Amazon Managed Service for Prometheus のクロスリージョンメトリクス収集の設定](https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/)。
 
 1. **Cost Explorer や [CloudWatch の AWS 課金情報](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html) で課金やメータリングを確認するまでにどのくらい時間がかかりますか?**
    取り込まれたメトリクス サンプルのブロックは、2 時間ごとに S3 にアップロードされるたびに即座に課金されます。Amazon Managed Service for Prometheus のメータリングと料金が報告されるまでに最大 3 時間かかる場合があります。

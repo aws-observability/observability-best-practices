@@ -25,6 +25,9 @@
       "pattern": "^#"
     },
     {
+      "pattern": "docs/ja/"
+    },
+    {
       "pattern": "^https://www.eksworkshop.com"
     },
     {

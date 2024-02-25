@@ -22,7 +22,7 @@
 サンプリングルールを調整して、大幅に増加した量のトレースデータをキャプチャできます。送信されるセグメントの総数が、[ここで言及されているサービスクォータ制限](https://docs.aws.amazon.com/ja_jp/general/latest/gr/xray.html#limits_xray) を超えなければ、X-Ray は設定されたとおりにデータを収集する努力をします。その結果として 100% のトレースデータのキャプチャが保証されるわけではありません。
 
 8. **サンプリングルールを動的に増減できますか?**
-はい、必要に応じて[X-Ray サンプリング API](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-api-sampling.html) を使用して動的に調整できます。ユースケースベースの説明については、この[ブログ](https://aws.amazon.com/jp/blogs/news/dynamically-adjusting-x-ray-sampling-rules/) を参照してください。 
+はい、必要に応じて[X-Ray サンプリング API](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-api-sampling.html) を使用して動的に調整できます。ユースケースベースの説明については、この[ブログ](https://aws.amazon.com/blogs/mt/dynamically-adjusting-x-ray-sampling-rules/) を参照してください。 
 
 9. **製品 FAQ**
 [https://aws.amazon.com/xray/faqs/]()

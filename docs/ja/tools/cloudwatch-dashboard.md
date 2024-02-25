@@ -35,7 +35,7 @@ AWS アカウント内のリソースのインベントリの詳細、リソー�
 
 - オブザーバビリティワークショップの[カスタムウィジェット](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/custom-widgets)
 - GitHub の [CloudWatch カスタムウィジェットサンプル](https://github.com/aws-samples/cloudwatch-custom-widgets-samples#what-are-custom-widgets)
-- ブログ: [Amazon CloudWatch ダッシュボードのカスタムウィジェットの使用](https://aws.amazon.com/jp/blogs/news/introducing-amazon-cloudwatch-dashboards-custom-widgets/)
+- ブログ: [Amazon CloudWatch ダッシュボードのカスタムウィジェットの使用](https://aws.amazon.com/jp/blogs/mt/introducing-amazon-cloudwatch-dashboards-custom-widgets/)
 
 ## 自動ダッシュボード
 
@@ -148,7 +148,7 @@ filter @message like /GET/
 **その他の参考資料:**
 
 - AWS Observability ワークショップの CloudWatch ダッシュボードでの[ログ結果の表示](https://catalog.workshops.aws/observability/ja-JP/aws-native/logs/logsinsights/displayformats)
-- [Amazon CloudWatch ダッシュボードで AWS WAF ログを視覚化する](https://aws.amazon.com/jp/blogs/news/visualize-aws-waf-logs-with-an-amazon-cloudwatch-dashboard/)
+- [Amazon CloudWatch ダッシュボードで AWS WAF ログを視覚化する](https://aws.amazon.com/blogs/security/visualize-aws-waf-logs-with-an-amazon-cloudwatch-dashboard/)
 
 #### アラームの視覚化
 
@@ -166,8 +166,8 @@ CloudWatch ダッシュボード内のアラームウィジェットでキャプ
 
 **その他の参考文献:**
 
-- [中央の Amazon CloudWatch ダッシュボードで、新しいクロスアカウント Amazon EC2 インスタンスを自動的に追加する方法](https://aws.amazon.com/jp/blogs/news/how-to-auto-add-new-cross-account-amazon-ec2-instances-in-a-central-amazon-cloudwatch-dashboard/)
-- [マルチアカウント Amazon CloudWatch ダッシュボードのデプロイ](https://aws.amazon.com/jp/blogs/news/deploy-multi-account-amazon-cloudwatch-dashboards/)
+- [中央の Amazon CloudWatch ダッシュボードで、新しいクロスアカウント Amazon EC2 インスタンスを自動的に追加する方法](https://aws.amazon.com/blogs/mt/how-to-auto-add-new-cross-account-amazon-ec2-instances-in-a-central-amazon-cloudwatch-dashboard/)
+- [マルチアカウント Amazon CloudWatch ダッシュボードのデプロイ](https://aws.amazon.com/blogs/mt/deploy-multi-account-amazon-cloudwatch-dashboards/)
 - YouTube の [クロスアカウントとクロスリージョン CloudWatch ダッシュボードの作成](https://www.youtube.com/watch?v=eIUZdaqColg)
 
 ## ダッシュボードの共有
@@ -204,7 +204,7 @@ Web ページへのアクセスのために指定したユーザーとのダッ�
 
 - AWS Observability ワークショップの[ダッシュボードの共有](https://catalog.workshops.aws/observability/ja-JP/aws-native/dashboards/sharingdashboard)
 - ブログ: [AWS Single Sign-On を使用して Amazon CloudWatch ダッシュボードを誰でも共有](https://aws.amazon.com/jp/blogs/news/share-your-amazon-cloudwatch-dashboards-with-anyone-using-aws-single-sign-on/)  
-- ブログ: [Amazon CloudWatch ダッシュボードの共有による監視情報の伝達](https://aws.amazon.com/jp/blogs/news/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
+- ブログ: [Amazon CloudWatch ダッシュボードの共有による監視情報の伝達](https://aws.amazon.com/blogs/mt/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
 
 ## リアルタイムデータ
 

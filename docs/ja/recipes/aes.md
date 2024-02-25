@@ -15,12 +15,12 @@
 - [AOS でのトレース分析スタートガイド][tracing-aes]
 
 [aes-main]: https://aws.amazon.com/jp/opensearch-service/
-[aos-gs]: https://aws.amazon.com/jp/blogs/news/get-started-with-amazon-opensearch-service-t-shirt-size-your-domain/
-[aos-tut]: https://aws.amazon.com/jp/blogs/news/amazon-opensearch-tutorial-a-quick-start-guide/ 
+[aos-gs]: https://aws.amazon.com/blogs/big-data/get-started-with-amazon-opensearch-service-t-shirt-size-your-domain/
+[aos-tut]: https://aws.amazon.com/blogs/big-data/amazon-opensearch-tutorial-a-quick-start-guide/ 
 [aes-ws]: https://intro.aesworkshops.com/
 [loan-ws]: https://aesworkshops.com/log-analytics/mainlab/
 [od-ws]: https://od4es.aesworkshops.com/
 [ml-ws]: https://reinvent.aesworkshops.com/ant346/
 [ct-ws]: https://cloudtrail.aesworkshops.com/
 [bs-ws]: https://bookstore.aesworkshops.com/
-[tracing-aes]: https://aws.amazon.com/jp/blogs/news/getting-started-with-trace-analytics-in-amazon-elasticsearch-service/
+[tracing-aes]: https://aws.amazon.com/blogs/big-data/getting-started-with-trace-analytics-in-amazon-elasticsearch-service/

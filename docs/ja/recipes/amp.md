@@ -1,6 +1,6 @@
 # Amazon Managed Service for Prometheus
 
-[Amazon Managed Service for Prometheus][amp-main](AMP) は、コンテナ化されたアプリケーションを大規模にモニタリングするのに役立つ Prometheus 互換のモニタリングサービスです。
+[Amazon Managed Service for Prometheus][amp-main]（AMP） は、コンテナ化されたアプリケーションを大規模にモニタリングするのに役立つ Prometheus 互換のモニタリングサービスです。
 AMP を使用すると、オペレーショナルメトリクスのインジェスト、ストレージ、クエリを管理するために必要な基盤を管理することなく、Prometheus クエリ言語 (PromQL) を使用してコンテナ化ワークロードのパフォーマンスをモニタリングできます。
 
 以下のレシピをご確認ください。

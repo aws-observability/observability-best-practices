@@ -1,6 +1,6 @@
 # Instrumenting Java Spring Integration Applications
 
-This article describes an approach for manually instrumenting [Spring-Integration](https://docs.spring.io/spring-integration/reference/html/overview.html) applications utilizing [Open Telemetry](https://opentelemetry.io/) and [X-ray](https://aws.amazon.com/xray/).
+This article describes an approach for manually instrumenting [Spring-Integration](https://docs.spring.io/spring-integration/reference/overview.html) applications utilizing [Open Telemetry](https://opentelemetry.io/) and [X-ray](https://aws.amazon.com/xray/).
 
 The Spring-Integration framework is designed to enable the development of integration solutions typical of event-driven architectures and messaging-centric architectures. On the other hand, OpenTelemetry tends to be more focused on micro services architectures, in which services communicate and coordinate with each other using HTTP requests. Therefore this guide will provide an example of how to instrument Spring-Integration applications using manual instrumentation with the OpenTelemetry API.
 

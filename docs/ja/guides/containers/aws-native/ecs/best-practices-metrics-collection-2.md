@@ -87,7 +87,7 @@ scrape_configs:
 
 ### Prometheus メトリクスを CloudWatch にインポートする
 
-エージェントによって収集されたメトリクスは、構成の *metric_declaration* セクションで指定されたフィルタリングルールに基づいて、パフォーマンスログイベントとして CloudWatch に送信されます。このセクションは、生成されるべき埋め込みメトリック形式を持つログ配列を指定するためにも使用されます。上記のサンプル構成は、*job:backends* というラベルを持つ *http_requests_total* というメトリックに対してのみ、以下のようなログイベントを生成します。このデータを使用することで、CloudWatch は *ClusterName* と *TaskGroup* のディメンションを持つ *ECS/ContainerInsights/Prometheus* という CloudWatch 名前空間の下に、メトリック *http_requests_total* を作成します。
+エージェントによって収集されたメトリクスは、構成の *metric_declaration* セクションで指定されたフィルタリングルールに基づいて、パフォーマンスログイベントとして CloudWatch に送信されます。このセクションは、生成されるべき埋め込みメトリクス形式を持つログ配列を指定するためにも使用されます。上記のサンプル構成は、*job:backends* というラベルを持つ *http_requests_total* というメトリクスに対してのみ、以下のようなログイベントを生成します。このデータを使用することで、CloudWatch は *ClusterName* と *TaskGroup* のディメンションを持つ *ECS/ContainerInsights/Prometheus* という CloudWatch 名前空間の下に、メトリクス *http_requests_total* を作成します。
 
 ```
 {

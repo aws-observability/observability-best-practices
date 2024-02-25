@@ -21,9 +21,9 @@
 * [SNS トピック](https://docs.aws.amazon.com/ja_jp/sns/latest/dg/sns-create-topic.html)
 * [awscurl](https://github.com/okigan/awscurl)
 
-このレシピでは、サンプルアプリケーションを使用して、ADOT を使用したメトリック スクレイピングと Amazon Managed Service for Prometheus ワークスペースへのリモートライトをデモンストレートします。サンプルアプリを [aws-otel-community](https://github.com/aws-observability/aws-otel-community) リポジトリからフォークしてクローンしてください。
+このレシピでは、サンプルアプリケーションを使用して、ADOT を使用したメトリクス スクレイピングと Amazon Managed Service for Prometheus ワークスペースへのリモートライトをデモンストレートします。サンプルアプリを [aws-otel-community](https://github.com/aws-observability/aws-otel-community) リポジトリからフォークしてクローンしてください。
 
-この Prometheus サンプルアプリは、すべての 4 つの Prometheus メトリックタイプ(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、/metrics エンドポイントで公開します。
+この Prometheus サンプルアプリは、すべての 4 つの Prometheus メトリクスタイプ(カウンター、ゲージ、ヒストグラム、サマリー)を生成し、/metrics エンドポイントで公開します。
 
 ヘルスチェックエンドポイントも / に存在します。
 
@@ -31,12 +31,12 @@
 
 listen_address: (デフォルト = 0.0.0.0:8080) サンプルアプリが公開されるアドレスとポートを定義します。これは主にテストフレームワークの要件に準拠するためです。
 
-metric_count: (デフォルト=1) 生成する各タイプのメトリックの量。メトリックタイプごとに常に同じ量のメトリックが生成されます。
+metric_count: (デフォルト=1) 生成する各タイプのメトリクスの量。メトリクスタイプごとに常に同じ量のメトリクスが生成されます。
 
-label_count: (デフォルト=1) メトリックごとに生成するラベルの量。
+label_count: (デフォルト=1) メトリクスごとに生成するラベルの量。
 
 
-datapoint_count: (デフォルト=1) メトリックごとに生成するデータポイントの数。
+datapoint_count: (デフォルト=1) メトリクスごとに生成するデータポイントの数。
 
 ### AWS Distro for OpenTelemetry を使用したメトリクス収集の有効化
 1. aws-otel-community リポジトリからサンプルアプリをフォークしてクローンします。
@@ -98,7 +98,7 @@ terraform apply
 
 上記の手順が完了したら、awscurl を使用してエンドツーエンドの設定を検証し、エンドポイントをクエリします。適切な Amazon Managed Service for Prometheus ワークスペース ID に `WORKSPACE_ID` 変数を置き換えてください。
 
-次のコマンドを実行すると、「metric:recording_rule」メトリックが表示されます。このメトリックが見つかった場合、記録ルールの作成に成功したことになります:
+次のコマンドを実行すると、「metric:recording_rule」メトリクスが表示されます。このメトリクスが見つかった場合、記録ルールの作成に成功したことになります:
 
 ```
 awscurl https://aps-workspaces.us-east-1.amazonaws.com/workspaces/$WORKSPACE_ID/api/v1/rules  --service="aps"

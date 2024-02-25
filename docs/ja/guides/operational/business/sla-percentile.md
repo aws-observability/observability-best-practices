@@ -29,7 +29,7 @@ fields @timestamp, event_details.duration
 ![ヒストグラム](../../../../images/percentiles-p99.png)
 
 
-これをより視覚化しやすくするために、以下のグラフは平均値と 99 パーセンタイルを比較しています。 この場合、ターゲットのページ読み込み時間は 2 秒であり、代替の [CloudWatch 統計](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean) と [メトリック数学](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html) を使用して他の計算を行うことができます。 この場合、パーセンタイルランク(PR) が統計 **PR(:2000)** とともに使用されており、ページ読み込みの 92.7%が 2000ms というターゲット内で発生していることを示しています。
+これをより視覚化しやすくするために、以下のグラフは平均値と 99 パーセンタイルを比較しています。 この場合、ターゲットのページ読み込み時間は 2 秒であり、代替の [CloudWatch 統計](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean) と [メトリクス数学](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html) を使用して他の計算を行うことができます。 この場合、パーセンタイルランク(PR) が統計 **PR(:2000)** とともに使用されており、ページ読み込みの 92.7%が 2000ms というターゲット内で発生していることを示しています。
 
 ![ヒストグラム](../../../../images/percentiles-comparison.png)
 

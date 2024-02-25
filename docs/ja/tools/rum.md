@@ -83,7 +83,7 @@ CloudWatch RUM イベントのデフォルトの[イベントメタデータ](ht
 
 ## 拡張メトリクスを使用する
 
-CloudWatch RUM によって自動的に収集され、`AWS/RUM` というメトリック名前空間に公開される[デフォルトのメトリクスセット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html)があります。これらは無料の[ベンダーメトリクス](../../tools/metrics/#vended-metrics)で、RUM があなたに代わって作成するものです。
+CloudWatch RUM によって自動的に収集され、`AWS/RUM` というメトリクス名前空間に公開される[デフォルトのメトリクスセット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html)があります。これらは無料の[ベンダーメトリクス](../../tools/metrics/#vended-metrics)で、RUM があなたに代わって作成するものです。
 
 !!! success
     CloudWatch RUM メトリクスのいずれかを、追加のディメンションとともに CloudWatch に送信することで、メトリクスをより詳細な視点で得ることができます。

@@ -1,6 +1,6 @@
-# CloudWatch メトリックストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする
+# CloudWatch メトリクスストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする
 
-このレシピでは、[CloudWatch メトリックストリーム](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) を計装し、[Kinesis Data Firehose](https://aws.amazon.com/kinesis/data-firehose/) と [AWS Lambda](https://aws.amazon.com/lambda) を使用してメトリクスを [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/) にインジェストする方法を示します。
+このレシピでは、[CloudWatch メトリクスストリーム](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) を計装し、[Kinesis Data Firehose](https://aws.amazon.com/kinesis/data-firehose/) と [AWS Lambda](https://aws.amazon.com/lambda) を使用してメトリクスを [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/) にインジェストする方法を示します。
 
 [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) を使用して、Firehose デリバリーストリーム、Lambda、S3 バケットを作成するスタックを設定し、完全なシナリオをデモンストレーションします。
 
@@ -10,7 +10,7 @@
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定します。
 
-CloudWatch メトリックストリームを使用すると、ストリーミングメトリックデータを HTTP エンドポイントや [S3 バケット](https://aws.amazon.com/jp/s3) に転送できます。
+CloudWatch メトリクスストリームを使用すると、ストリーミングメトリクスデータを HTTP エンドポイントや [S3 バケット](https://aws.amazon.com/jp/s3) に転送できます。
 
 ### 前提条件
 
@@ -111,15 +111,15 @@ aws cloudformation list-stacks
 
 ## CloudWatch ストリームの作成
 
-例えば `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList` のように CloudWatch コンソールに移動し、「メトリックストリームの作成」をクリックします。
+例えば `https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList` のように CloudWatch コンソールに移動し、「メトリクスストリームの作成」をクリックします。
 
 必要なメトリクスを選択します。名前空間のすべてのメトリクスまたは選択した名前空間からのみを選択できます。 
 
-CDK によって作成された既存の Firehose を使用して、メトリックストリームを構成します。
+CDK によって作成された既存の Firehose を使用して、メトリクスストリームを構成します。
 出力形式を OpenTelemetry 0.7 の代わりに JSON に変更します。
-メトリックストリーム名を好みの名前に変更し、「メトリックストリームの作成」をクリックします。
+メトリクスストリーム名を好みの名前に変更し、「メトリクスストリームの作成」をクリックします。
 
-![Cloudwatch メトリックストリーム構成のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
+![Cloudwatch メトリクスストリーム構成のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
 
 Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。 `Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
@@ -144,4 +144,4 @@ aws amp delete-workspace --workspace-id \
     `aws amp list-workspaces --alias prometheus-sample-app --query 'workspaces[0].workspaceId' --output text`
 ```
 
-最後に、コンソールからメトリックストリームを削除してください。
+最後に、コンソールからメトリクスストリームを削除してください。

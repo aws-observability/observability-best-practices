@@ -150,7 +150,7 @@ kubectl apply -f adot-collector-ec2.yaml
 [サンプルアプリケーション](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)
 を使用します。
 
-この Prometheus のサンプルアプリは、4 つの Prometheus メトリックタイプ
+この Prometheus のサンプルアプリは、4 つの Prometheus メトリクスタイプ
 (カウンター、ゲージ、ヒストグラム、サマリー)を生成し、`/metrics` エンドポイントで公開します。
 
 ### コンテナイメージのビルド

@@ -41,4 +41,4 @@ CloudWatch アラームを使用すると、CloudWatch メトリクスに対し�
 
 CloudWatch Logs に基づいてアラームを作成できます。CloudWatch Logs は CloudWatch メトリクスに変換できるログデータを使用します。これにより、グラフを作成したりアラームを設定したりできます。 メトリクスを設定したら、CloudWatch ログから生成された CloudWatch メトリクスに対して静的または異常ベースのアラームを使用できます。
 
-CloudWatch ログの[メトリックフィルタの設定例](https://aws.amazon.com/blogs/mt/quantify-custom-application-metrics-with-amazon-cloudwatch-logs-and-metric-filters/)を参照できます。
+CloudWatch ログの[メトリクスフィルタの設定例](https://aws.amazon.com/blogs/mt/quantify-custom-application-metrics-with-amazon-cloudwatch-logs-and-metric-filters/)を参照できます。

@@ -36,7 +36,7 @@ Amazon CloudWatch は、70 を超える AWS サービスとネイティブに統
 
 **私のワークロードには多数の短期的なリソースが含まれており、高基数のログが生成されています。メトリクスとログを収集および測定するための推奨アプローチは何ですか?**
 
-[CloudWatch 埋め込みメトリックフォーマット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html) により、お客様はログの形式で複雑な高基数アプリケーションデータを取り込み、Lambda 関数やコンテナなどの短期的なリソースから実行可能なメトリクスを生成できます。これにより、お客様は個別のコードを計装または維持することなく、詳細なログイベントデータとともにカスタムメトリクスを埋め込むことができ、ログデータに対する強力な分析機能を得ると同時に、CloudWatch がカスタムメトリクスを自動的に抽出してデータの視覚化とリアルタイムのインシデント検出のためのアラームの設定を支援できます。
+[CloudWatch 埋め込みメトリクスフォーマット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html) により、お客様はログの形式で複雑な高基数アプリケーションデータを取り込み、Lambda 関数やコンテナなどの短期的なリソースから実行可能なメトリクスを生成できます。これにより、お客様は個別のコードを計装または維持することなく、詳細なログイベントデータとともにカスタムメトリクスを埋め込むことができ、ログデータに対する強力な分析機能を得ると同時に、CloudWatch がカスタムメトリクスを自動的に抽出してデータの視覚化とリアルタイムのインシデント検出のためのアラームの設定を支援できます。
 
 > 関連する AWS Observability ワークショップ: [Embedded Metric Format](https://catalog.workshops.aws/observability/ja-JP/aws-native/metrics/emf)
 

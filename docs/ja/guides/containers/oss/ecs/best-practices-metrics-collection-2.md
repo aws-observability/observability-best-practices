@@ -172,7 +172,7 @@ service:
 
 ### Amazon CloudWatch へのメトリクスデータの送信
 
-あるいは、以下の構成の *exporters* セクションで示されているように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用して、メトリクスデータを Amazon CloudWatch に送信することもできます。このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。エクスポーターの *metric_declaration* フィールドは、生成する必要がある埋め込みメトリック形式のログの配列を指定するために使用されます。以下の構成では、*http_requests_total* という名前のメトリクスのログイベントのみが生成されます。このデータを使用すると、CloudWatch は *ClusterName*、*ServiceName*、*TaskDefinitionFamily* のディメンションを使用して、CloudWatch 名前空間 *ECS/ContainerInsights/Prometheus* の下にメトリクス *http_requests_total* を作成します。
+あるいは、以下の構成の *exporters* セクションで示されているように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用して、メトリクスデータを Amazon CloudWatch に送信することもできます。このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。エクスポーターの *metric_declaration* フィールドは、生成する必要がある埋め込みメトリクス形式のログの配列を指定するために使用されます。以下の構成では、*http_requests_total* という名前のメトリクスのログイベントのみが生成されます。このデータを使用すると、CloudWatch は *ClusterName*、*ServiceName*、*TaskDefinitionFamily* のディメンションを使用して、CloudWatch 名前空間 *ECS/ContainerInsights/Prometheus* の下にメトリクス *http_requests_total* を作成します。
 
 
 ```yaml

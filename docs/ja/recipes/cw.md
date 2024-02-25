@@ -16,7 +16,7 @@ CloudWatch は、ログ、メトリクス、イベントの形式でモニタリ
 - [ECS と EKS での AWS Distro for OpenTelemetry を使用した CW Container Insights Prometheus サポートのご紹介][cwci-adot]
 - [CW Container Insights を使用した ECS コンテナ化アプリケーションとマイクロサービスのモニタリング][cwci-ecs]  
 - [CW Container Insights を使用した EKS コンテナ化アプリケーションとマイクロサービスのモニタリング][cwci-eks]
-- [Firehose と AWS Lambda を使用した Cloudwatch メトリックストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
+- [Firehose と AWS Lambda を使用した Cloudwatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
 - [KEDA と Amazon CloudWatch を使用した Kubernetes ワークロードのプロアクティブな自動スケーリング][cw-keda-eks-scaling]
 - [Amazon CloudWatch Metrics explorer を使用したリソースタグでフィルタリングされたメトリクスの集計と可視化][metrics-explorer-filter-by-tags]
 

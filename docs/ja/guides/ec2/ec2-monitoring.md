@@ -222,7 +222,7 @@ EC2 インスタンス上の CloudWatch エージェントは、Prometheus と�
 お客様は、オブザーバビリティのニーズのために、オープンソースのセットアップを選択できます。
 これには、AWS Distro for OpenTelemetry (ADOT) Collector を設定して、Prometheus で計装されたアプリケーションからスクレイプし、メトリクスを Prometheus サーバーに送信できます。
 このフローには、Prometheus Receiver、Prometheus Remote Write Exporter、Sigv4 Authentication Extension の 3 つの OpenTelemetry コンポーネントが関与しています。
-Prometheus Receiver は Prometheus 形式のメトリックデータを受信します。Prometheus Exporter は Prometheus 形式でデータをエクスポートします。Sigv4 Authenticator 拡張機能は、AWS サービスへのリクエストに Sigv4 認証を提供します。
+Prometheus Receiver は Prometheus 形式のメトリクスデータを受信します。Prometheus Exporter は Prometheus 形式でデータをエクスポートします。Sigv4 Authenticator 拡張機能は、AWS サービスへのリクエストに Sigv4 認証を提供します。
 
 ![adot prometheus architecture](../../../images/adot-prom-arch.png)
 

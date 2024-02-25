@@ -13,10 +13,10 @@
     はい、Kafka エクスポータとレシーバのサポートが ADOT コレクタ v0.28.0 で追加されました。詳細については、[ADOT コレクタのドキュメント](https://aws-otel.github.io/docs/components/kafka-receiver-exporter)をご確認ください。
 
 1. **ADOT コレクタの設定方法を教えてください。**
-    ADOT コレクタは、ローカルに保存されている YAML 設定ファイルを使用して構成されます。 加えて、S3 バケットなどの他の場所に保存されている構成を使用することもできます。 ADOT コレクタを構成するためにサポートされているすべてのメカニズムは、[ADOT コレクタのドキュメント](https://aws-otel.github.io/docs/components/confmap-providers)に詳しく説明されています。
+    ADOT コレクタは、ローカルに保存されている YAML 設定ファイルを使用して構成されます。 加えて、S3 バケットなどの他の場所に保存されている構成を使用することもできます。 ADOT コレクタを構成するためにサポートされているすべてのメカニズムは、[ADOT コレクタのドキュメント](https://aws-otel.github.io/docs/components/confmap-providers)で詳しく説明されています。
 
 1. **ADOT コレクタで高度なサンプリングを行うことができますか?**
-    現在実装中です。公開 [ロードマップのエントリ](https://github.com/aws-observability/aws-otel-collector/issues/1135) にサブスクライブして最新情報を取得してください。
+    現在実装中です。公開 [ロードマップのエントリ](https://github.com/aws-observability/aws-otel-collector/issues/1135) をサブスクライブして最新情報を取得してください。
 
 1. **ADOT コレクタのスケーリングのヒントを教えてください。**
     はい! アップストリームの OpenTelemetry ドキュメントの [コレクタのスケーリング](https://opentelemetry.io/docs/collector/scaling/) をご覧ください。
@@ -28,6 +28,6 @@
     1. [コレクタの監視](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/monitoring.md) - ポート 8080 で公開されているデフォルトのメトリクスを Prometheus レシーバがスクレイプできます
     2. [Node Exporter](https://prometheus.io/docs/guides/node-exporter/) を使用する - node exporter を実行すると、コレクタが実行されているノード、ポッド、オペレーティング システムに関するいくつかのパフォーマンスと正常性メトリクスも提供されます。
     3. [Kube-state-metrics (KSM)](https://github.com/kubernetes/kube-state-metrics) - KSM もコレクタに関する興味深いイベントを生成できます。
-    4. Prometheus の `up` メトリクス - [Prometheus `up` メトリクス](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)
+    4. [Prometheus `up` メトリクス](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)
     5. はじめに使用できるシンプルな Grafana ダッシュボード: [https://grafana.com/grafana/dashboards/12553]()
-1. **製品 FAQ** - [https://aws.amazon.com/otel/faqs/]()
+2. **製品 FAQ** - [https://aws.amazon.com/otel/faqs/]()

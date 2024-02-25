@@ -45,13 +45,13 @@ b. エージェントトラフィックをインターネット経由にした�
 	オンプレミスで実行される CloudWatch エージェントが使用できるように、[AWS Systems Manager エージェント](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) から取得した資格情報を使用して[一時的な AWS アクセストークン](https://aws.amazon.com/premiumsupport/knowledge-center/cloudwatch-on-premises-temp-credentials/)を追加できます。
 
 
-[^1]: CloudWatch エージェントの使用とデプロイに関するガイダンスが記載されたブログ「[Getting started with open source Amazon CloudWatch Agent](https://aws.amazon.com/blogs/opensource/getting-started-with-open-source-amazon-cloudwatch-agent/)」を参照してください。
+[^1]: CloudWatch エージェントの使用とデプロイに関するガイダンスが記載されたブログ [Getting started with open source Amazon CloudWatch Agent](https://aws.amazon.com/blogs/opensource/getting-started-with-open-source-amazon-cloudwatch-agent/) を参照してください。
 
 
-[^2]: [オンプレミスとその他のクラウド環境で実行されるエージェントの資格情報設定に関するガイダンス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first)
+[^2]: [ オンプレミスおよびその他のクラウド環境で実行されているエージェントの認証情報設定に関するガイダンス ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first)
 
-[^3]: [CloudWatch エンドポイントへの接続性の検証方法](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-internet-access-first-cmd)
+[^3]: [ CloudWatch エンドポイントへの接続性の検証方法 ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-internet-access-first-cmd)
 
-[^4]: [オンプレミスのプライベート接続に関するブログ](https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/)
+[^4]: [ オンプレミスのプライベート接続に関するブログ ](https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/)
 
 [^5]: オブザーバビリティに関連するすべての AWS API の使用は、通常、[インスタンスプロファイル](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)によって実現されます。これは、AWS で実行されているインスタンスとコンテナーに一時的なアクセス資格情報を付与するメカニズムです。

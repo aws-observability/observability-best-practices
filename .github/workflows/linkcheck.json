@@ -25,7 +25,7 @@
       "pattern": "^#"
     },
     {
-      "pattern": "docs/ja/"
+      "pattern": "/observability-best-practices/ja/"
     },
     {
       "pattern": "^https://www.eksworkshop.com"

@@ -33,9 +33,9 @@
 
 ![ADOT Collector Sidecar](../../../../images/adot-collector-eks-sidecar.png)
 
-上記のアーキテクチャでは、コレクターがアプリケーションコンテナと同じ Pod で実行されるため、`localhost` からターゲットをスクレイプすることになるため、スクレイプ構成でサービス検出メカニズムを実際に使用する必要がほとんどありません。
+上記のアーキテクチャでは、コレクターがアプリケーションコンテナと同じ Pod で実行されるため、`localhost` からターゲットをスクレイプすることになるため、スクレイプ設定でサービス検出メカニズムを実際に使用する必要がほとんどありません。
 
-同じアーキテクチャは、トレースの収集にも適用されます。 単に、[ここで示す](https://aws-otel.github.io/docs/getting-started/x-ray#sample-collector-configuration-putting-it-together) OTEL パイプラインを作成する必要があります。
+同じアーキテクチャはトレースの収集にも適用されます。単に [ここで示す](https://aws-otel.github.io/docs/getting-started/x-ray#sample-collector-configuration-putting-it-together) OTEL パイプラインを作成する必要があります。
 
 ##### 長所と短所
 * このデザインを推奨する1つの論拠は、コレクターが自身の仕事を行うために特別な量のリソース(CPU、メモリ)を割り当てる必要がないことです。ターゲットがローカルソースに限定されているためです。
@@ -71,7 +71,7 @@ scrape_configs:
         insecure_skip_verify: true
 ```
 
-同じアーキテクチャをトレースの収集にも使用できます。この場合、コレクターが Prometheus メトリクスをスクレイプするエンドポイントに到達する代わりに、トレーススパンがアプリケーションポッドからコレクターに送信されます。
+同じアーキテクチャをトレースの収集にも使用できます。この場合、コレクターが Prometheus メトリクスをスクレイプするエンドポイントに到達する代わりに、アプリケーションポッドからトレーススパンがコレクターに送信されます。
 
 ##### 長所と短所
 **長所**
@@ -155,13 +155,13 @@ extensions:
 OTEL Collector は、健全性とパフォーマンスを把握するためのいくつかのシグナルを公開しています。Collector の健全性を密接に監視することは、次のような修正アクションを実行するために不可欠です。
 
 * Collector を水平方向にスケールする
-* Collector が望ましい機能を発揮できるように追加リソースをプロビジョニングする
+* Collector が望ましい動作をするために追加のリソースをプロビジョニングする
 
 ### コレクターからのヘルスメトリクスの収集
 
-OTEL コレクターは、`service` パイプラインに `telemetry` セクションを追加するだけで、Prometheus Exposition Format でメトリクスを公開するように構成できます。コレクターは、自身のログも stdout に公開できます。
+OTEL コレクターは、`service` パイプラインに `telemetry` セクションを追加するだけで、Prometheus Exposition Format でメトリクスを公開するように構成できます。コレクターは、自身のログも stdout に出力できます。
 
-テレメトリ構成の詳細は、[OpenTelemetry のドキュメント](https://opentelemetry.io/docs/collector/configuration/#service) で確認できます。
+テレメトリ構成の詳細は、[OpenTelemetry のドキュメント](https://opentelemetry.io/docs/collector/configuration/#service) を参照してください。
 
 コレクターのサンプルテレメトリ構成です。
 
@@ -196,11 +196,11 @@ otelcol_exporter_enqueue_failed_metric_points{exporter="awsxray",service_instanc
 otelcol_exporter_enqueue_failed_metric_points{exporter="logging",service_instance_id="d234b769-dc8a-4b20-8b2b-9c4f342466fe",service_name="aws-otel-collector",service_version="v0.25.0"} 0
 ```
 
-上記のサンプル出力では、送信キューへの追加に失敗したスパン数を示す `otelcol_exporter_enqueue_failed_spans` というメトリックがコレクターによって公開されていることがわかります。このメトリックは、コレクターがトレースデータの送信先への送信に問題があるかどうかを理解するために注意が必要です。この場合、`exporter` ラベルの値 `awsxray` は、使用中のトレースの送信先を示しています。
+上記のサンプル出力では、送信キューへの追加に失敗したスパン数を示す `otelcol_exporter_enqueue_failed_spans` というメトリクスがコレクターによって公開されていることがわかります。このメトリクスは、コレクターがトレースデータの送信先への送信に問題があるかどうかを理解するために注意が必要です。この場合、`exporter` ラベルの値 `awsxray` は、使用中のトレースの送信先を示しています。
 
-もう一つのメトリック `otelcol_process_runtime_total_sys_memory_bytes` は、コレクターが使用しているメモリ量の指標です。このメモリが `otelcol_process_memory_rss` メトリックの値に非常に近づいた場合、プロセスに割り当てられたメモリが枯渇しつつあり、コレクターに問題が発生する可能性があることを示しています。この場合、コレクターにより多くのメモリを割り当てるなどのアクションを取る必要があるかもしれません。
+もう一つのメトリクス `otelcol_process_runtime_total_sys_memory_bytes` は、コレクターが使用しているメモリ量の指標です。このメモリが `otelcol_process_memory_rss` メトリクスの値に非常に近づいた場合、プロセスに割り当てられたメモリが枯渇しつつあり、コレクターに問題が発生する可能性があることを示しています。この場合、コレクターにより多くのメモリを割り当てるなどのアクションを取る必要があるかもしれません。
 
-同様に、リモートの送信先に送信できなかったメトリクス数を示す `otelcol_exporter_enqueue_failed_metric_points` というカウンターメトリックがあることがわかります。
+同様に、リモートの送信先に送信できなかったメトリクスの数を示す `otelcol_exporter_enqueue_failed_metric_points` というカウンターメトリクスがあることがわかります。
 
 #### コレクターの健全性チェック
 コレクターにはライブネスプローブがあり、コレクターが稼働しているかどうかを確認することができます。このエンドポイントを定期的にチェックして、コレクターの可用性を確認することをおすすめします。
@@ -242,7 +242,7 @@ extensions:
 このパイプラインを問題なく機能させることがあなたの責任です。この問題を高レベルで解決する方法は 2 つあります。
 
 * コレクターを無限にスケールして(必要に応じてクラスターにノードを追加して)この要件をサポートする
-* メトリック収集に制限を設定し、アプリケーションチームに上限しきい値を通知する
+* メトリクス収集に制限を設定し、アプリケーションチームに上限しきい値を通知する
 
 両方のアプローチには長所と短所があります。コストやもたらされるオーバーヘッドを考慮せずに、成長し続けるビジネスニーズを完全にサポートすることをコミットしている場合は、オプション 1 を選択すると主張できます。無限に成長し続けるビジネスニーズをサポートすることは、「クラウドは無限のスケーラビリティを実現する」という観点から見ると魅力的に聞こえますが、これは多大な運用上のオーバーヘッドをもたらし、無期限の時間と人的リソースを確保して継続的な中断のない運用を保証しない限り、はるかに大きな破滅的状況を招く可能性があります。ほとんどの場合これは現実的ではありません。
 
@@ -252,7 +252,7 @@ ADOT コレクターの Prometheus レシーバーを使用してこれを実現
 
 Prometheus の [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) で、特定のスクレイプジョブに対していくつかの制限を設定できます。以下の制限を設定できます。
 
-* スクレイプ本体の全体サイズ
+* スクレイプの本文の全体サイズ
 * 受け入れるラベルの数の制限(この制限を超えるとスクレイプは破棄され、コレクターログで確認できます)  
 * スクレイプするターゲットの数の制限
 * その他
@@ -261,15 +261,15 @@ Prometheus の [scrape_config](https://prometheus.io/docs/prometheus/latest/conf
 
 ##### メモリ使用量の制限
 Collector パイプラインは、[`memorylimiterprocessor`](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) を使用して、プロセッサコンポーネントが使用するメモリ量を制限するように構成できます。 
-顧客が複雑な操作を Collector に要求し、多くのメモリと CPU リソースを必要とするのをよく見かけます。
+顧客が複雑な操作を Collector に要求し、強力なメモリと CPU 要件が必要となるのを見かけることがよくあります。
 
-[`redactionprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor) や [`filterprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor)、[`spanprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor) などのプロセッサは魅力的で非常に便利ですが、プロセッサは一般にデータ変換タスクを扱うことと、タスクを完了するためにデータをメモリに保持する必要があることを忘れないでください。 
-これにより、特定のプロセッサが Collector 全体を壊したり、Collector 自身のヘルスメトリクスを公開するのに十分なメモリがなくなる可能性があります。
+[`redactionprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor) や [`filterprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor)、[`spanprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/spanprocessor) などのプロセッサは魅力的で非常に便利ですが、プロセッサは一般にデータ変換タスクを扱うことと、タスクを完了するためにデータをメモリに保持する必要があることを覚えておくべきです。 
+これにより、特定のプロセッサが Collector 全体を壊したり、Collector 自身のヘルスメトリクスを公開するのに十分なメモリがなくなったりする可能性があります。
 
 これを回避するには、 [`memorylimiterprocessor`](https://github.com/open-telemetry/opentelemetry-collector/tree/main/processor/memorylimiterprocessor) を利用して、Collector が使用できるメモリ量を制限します。 
-これに対する推奨事項は、ヘルスメトリクスの公開やその他のタスクを実行するために Collector が利用できるバッファメモリを提供することです。これにより、プロセッサが割り当てられたすべてのメモリを使い切ることがなくなります。
+この場合の推奨は、ヘルスメトリクスの公開やその他のタスクの実行に Collector が利用できるようにバッファメモリを提供することです。これにより、プロセッサが割り当てられたすべてのメモリを使い切ることがなくなります。
 
-たとえば、EKS Pod のメモリ制限が `10Gi` の場合、`memorylimiterprocessor` を `10Gi` 未満の `9Gi` などに設定することで、ヘルスメトリクスの公開、レシーバやエクスポータタスクなど、他の操作を実行するために `1Gi` のバッファを使用できます。
+たとえば、EKS Pod のメモリ制限が `10Gi` の場合、`memorylimiterprocessor` を `10Gi` 未満の `9Gi` などに設定することで、`1Gi` のバッファをヘルスメトリクスの公開、レシーバやエクスポータタスクなど、他の操作に利用できるようになります。
 
 #### バックプレッシャー管理
 
@@ -283,23 +283,25 @@ Collector パイプラインは、[`memorylimiterprocessor`](https://github.com/
 
 次に、[`filterprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/filterprocessor) を使用して信号データの特定部分をフィルタリングし、[`redactionprocessor`](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/redactionprocessor) を使用してクレジットカード番号などの機密情報を編集できます。
 
-高レベルのアーキテクチャ図は、次のようになります。
+高レベルのアーキテクチャ図は、以下のようになります。
 
 ![ADOT Collector Simple Gateway with processors](../../../../images/adot-collector-deployment-simple-gateway-pressure.png)
 
-すでにお気づきの通り、ゲートウェイコレクターはすぐに単一障害点になる可能性があります。ここで明白な選択肢は、[AWS Application Load Balancer (ALB)](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) などのロードバランサーを介してリクエストをプロキシするために、複数のゲートウェイコレクターを起動することです。以下のようにです。
+すでにお気づきの通り、ゲートウェイコレクターはすぐに単一障害点になりえます。ここで明白な選択肢の 1 つは、[AWS Application Load Balancer (ALB)](https://aws.amazon.com/elasticloadbalancing/application-load-balancer/) などのロードバランサーを介してリクエストをプロキシ化するために、複数のゲートウェイコレクターを起動することです。以下のようにです。
 
 ![ADOT Collector Gateway batching pressure](../../../../images/adot-collector-deployment-gateway-batching-pressure.png)
 
-##### Prometheus メトリク収集における順不同サンプルの処理
+##### Prometheus メトリクス収集における順不同サンプルの処理
 
-以下のアーキテクチャのシナリオを考えてみましょう。
+以下のシナリオを下記アーキテクチャで考えてみましょう。
 
 ![ADOT Collector Gateway batching pressure](../../../../images/adot-collector-deployment-gateway-batching.png)
 
-1. Amazon EKS クラスター内の **ADOT Collector-1** からのメトリクスがゲートウェイ クラスターに送信され、**Gateway ADOT Collector-1** にリダイレクトされているとします
-2. しばらくすると、同じ **ADOT Collector-1** (同じターゲットを収集しているため、処理されているメトリック サンプルは同じです) からのメトリクスが **Gateway ADOT Collector-2** に送信されます
-3. ここで、**Gateway ADOT Collector-2** がメトリクスを Amazon Managed Service for Prometheus ワークスペースに先に配信し、次に同じメトリック シリーズの古いサンプルを含む **Gateway ADOT Collector-1** が配信した場合、Amazon Managed Service for Prometheus から `順不同のサンプル` エラーが発生します。
+1. Amazon EKS クラスタ内の **ADOT Collector-1** からのメトリクスが Gateway クラスタに送信され、**Gateway ADOT Collector-1** に転送されるとします。
+
+2. しばらくすると、同じ **ADOT Collector-1** (同じターゲットを収集しているため、扱うメトリクスサンプルは同じ) からのメトリクスが **Gateway ADOT Collector-2** に送信されます。
+
+3. ここで、**Gateway ADOT Collector-2** がメトリクスを Amazon Managed Service for Prometheus ワークスペースに先に配信し、次に同じメトリクス系列の古いサンプルを含む **Gateway ADOT Collector-1** が配信した場合、Amazon Managed Service for Prometheus から `順不同のサンプル` エラーが発生します。
 
 以下にエラーの例を示します。
 
@@ -320,20 +322,20 @@ go.opentelemetry.io/collector/exporter/exporterhelper/internal.(*boundedMemoryQu
 
 ###### 順不同のサンプルエラーの解決方法
 
-この特定のセットアップで順不同のサンプルエラーを解決する方法がいくつかあります。
+この特定のセットアップでは、順不同のサンプルエラーを解決する方法がいくつかあります。
 
-* スティッキーロードバランサーを使用して、IP アドレスに基づいて特定のソースからのリクエストが同じターゲットにルーティングされるようにします。
+* IP アドレスに基づいて、特定のソースからのリクエストを同じターゲットにルーティングするスティッキーロードバランサーを使用します。
 
-  詳細は[こちらのリンク](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/)を参照してください。
+  詳細については、[こちらのリンク](https://aws.amazon.com/premiumsupport/knowledge-center/elb-route-requests-with-source-ip-alb/)を参照してください。
 
 
-* 別のオプションとして、ゲートウェイコレクターに外部ラベルを追加してメトリックシリーズを区別し、Amazon Managed Service for Prometheus がこれらのメトリクスを個別のメトリックシリーズとみなし、同じものではないと判断させることができます。
+* 別のオプションとして、ゲートウェイコレクターに外部ラベルを追加して、Amazon Managed Service for Prometheus がこれらのメトリクスを個別のメトリクスシリーズとみなし、同じものではないと判断できるようにメトリクスシリーズを区別できます。
 
-    !!! warning
-        このソリューションを使用すると、セットアップ内のゲートウェイコレクターに比例してメトリックシリーズが増加する結果となります。これは、[`アクティブな時系列の制限`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)などの制限を超えてしまう可能性があります。
+    !!! warning 
+        このソリューションを使用すると、セットアップ内のゲートウェイコレクターの比率でメトリクスシリーズが増加する結果になります。これは、[`アクティブな時系列の制限`](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP_quotas.html)などの制限を超えてしまう可能性があります。
 
-* **ADOT コレクターを Daemonset としてデプロイしている場合**: 各 ADOT コレクターポッドが実行されているのと同じノードからのサンプルのみを保持するように `relabel_configs` を使用することを確認してください。詳細は以下のリンクを確認してください。
-    - [Amazon Managed Prometheus の高度なコレクター構成](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - *Click to View* セクションを展開し、次のようなエントリを探してください。
+* **ADOT コレクターをデーモンセットとしてデプロイしている場合**: 各 ADOT コレクターポッドが実行されているのと同じノードからのサンプルのみを保持するように `relabel_configs` を使用していることを確認してください。詳細は以下のリンクを確認してください。
+    - [Amazon Managed Prometheus の高度なコレクター構成](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - *Click to View* セクションを展開し、次のようなエントリを探します。
         ```yaml
             relabel_configs:
             - action: keep
@@ -349,24 +351,23 @@ OpAMP は、HTTP および WebSockets を介した通信をサポートするク
 このプロトコルの詳細は、アップストリームの OpenTelemetry ウェブサイトで十分に[文書化されています。](https://opentelemetry.io/docs/collector/management/)
 
 ### 水平スケーリング
-ワークロードに応じて、ADOT Collector を水平方向にスケーリングする必要が生じる場合があります。
-水平方向にスケーリングする必要性は、使用例、Collector の構成、テレメトリスループットに完全に依存します。
+ワークロードに応じて、ADOT Collector を水平方向にスケーリングする必要が生じる場合があります。水平方向にスケーリングする必要性は、使用例、Collector の構成、テレメトリスループットに完全に依存します。
 
 プラットフォーム固有の水平スケーリング手法は、状態を保持するコンポーネント、状態を保持しないコンポーネント、スクレイパーコレクターコンポーネントを認識しながら、他のアプリケーションと同様に Collector に適用できます。
 
-ほとんどの Collector コンポーネントは `状態を保持しない` ため、メモリに状態を保持せず、保持していてもスケーリング目的とは関係ありません。 状態を保持しない Collector の追加レプリカをアプリケーションロードバランサーの背後にスケールできます。
+ほとんどのコレクターコンポーネントは `状態を保持しない` ため、メモリに状態を保持せず、保持していてもスケーリング目的とは関係ありません。状態を保持しないコレクターの追加レプリカをアプリケーションロードバランサーの背後にスケールできます。
 
-`状態を保持する` Collector コンポーネントは、そのコンポーネントの動作に不可欠な情報をメモリに保持する Collector コンポーネントです。
+`状態を保持する` コレクターコンポーネントは、そのコンポーネントの動作に不可欠な情報をメモリに保持するコレクターコンポーネントです。
 
 ADOT Collector の状態を保持するコンポーネントの例には、以下が含まれますがこれらに限定されません。
 
-* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - 正確なサンプリング判断を下すには、トレースのすべてのスパンが必要です。 高度なサンプリングスケーリング手法は [ADOT 開発者ポータルのドキュメント](https://aws-otel.github.io/docs/getting-started/advanced-sampling) に記載されています。
-* [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - 一部のメトリクタイプの累積からデルタへの変換を実行します。 この変換には、前のメトリック値をメモリに格納する必要があります。
-* [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - 累積からデルタへの変換には、前のメトリック値をメモリに格納する必要があります。
+* [Tail Sampling Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/tailsamplingprocessor) - 正確なサンプリング判断を下すには、トレースのすべてのスパンが必要です。 高度なサンプリングスケーリング手法は、[ADOT 開発者ポータルのドキュメント](https://aws-otel.github.io/docs/getting-started/advanced-sampling)に記載されています。
+* [AWS EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) - 一部のメトリクタイプの累積からデルタへの変換を実行します。この変換には、前のメトリクス値をメモリに格納する必要があります。
+* [Cummulative to Delta Processor](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/cumulativetodeltaprocessor#cumulative-to-delta-processor) - 累積からデルタへの変換には、前のメトリクス値をメモリに格納する必要があります。
 
-`スクレイパー` の Collector コンポーネントは、テレメトリデータを受動的に受信するのではなく、能動的に取得します。 現在、ADOT Collector における唯一のスクレイパー型コンポーネントは、[Prometheus レシーバー](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) です。 Prometheus レシーバーを含む Collector 構成を水平方向にスケーリングするには、コレクターごとにスクレイピングジョブを分割して、2 つの Collector が同じエンドポイントをスクレイプしないようにする必要があります。 これを行わないと、Prometheus の順不同のサンプルエラーが発生する可能性があります。
+`スクレイパー` のコレクターコンポーネントは、テレメトリデータを受動的に受信するのではなく、能動的に取得します。現在、ADOT Collector における唯一のスクレイパー型コンポーネントは、[Prometheus receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) です。Prometheus レシーバーを含むコレクター構成を水平方向にスケーリングするには、コレクターごとにスクレイピングジョブを分割して、2 つのコレクターが同じエンドポイントをスクレイプしないようにする必要があります。これを行わないと、Prometheus の順不同のサンプルエラーが発生する可能性があります。
 
-Collector のスケーリングプロセスと手法の詳細は、[アップストリームの OpenTelemetry ウェブサイト](https://opentelemetry.io/docs/collector/scaling/) に記載されています。
+コレクターのスケーリングプロセスと手法の詳細は、[アップストリームの OpenTelemetry ウェブサイトのドキュメント](https://opentelemetry.io/docs/collector/scaling/)に記載されています。
 
 ### 参考文献
 

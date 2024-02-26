@@ -29,7 +29,7 @@ Kubecost は Prometheus からメトリクスを読み取り、コスト割り�
 ## おすすめ
 
 ### コスト割り当て
-Kubecost のコスト割り当てダッシュボードを使用すると、名前空間、k8s ラベル、サービスなど、すべてのネイティブ Kubernetes の概念にわたって割り当てられた支出と最適化の機会をすばやく確認できます。また、チーム、製品/プロジェクト、部門、環境などの組織的概念にコストを割り当てることもできます。 日付範囲、フィルターを変更して、特定のワークロードに関する洞察を導き出し、レポートを保存できます。 Kubernetes のコストを最適化するには、効率とクラスタのアイドルコストに注意を払う必要があります。
+Kubecost のコスト割り当てダッシュボードを使用すると、名前空間、k8s ラベル、サービスなど、すべてのネイティブ Kubernetes の概念にわたって割り当てられた支出と最適化の機会をすばやく確認できます。また、チーム、製品/プロジェクト、部門、環境などの組織的概念にコストを割り当てることもできます。 日付範囲、フィルターを変更して、特定のワークロードに関する洞察を得たり、レポートを保存したりできます。 Kubernetes のコストを最適化するには、効率とクラスタのアイドルコストに注意を払う必要があります。
 
 ![Allocations](../../images/allocations.png)
 
@@ -78,23 +78,17 @@ Kubecost は以下の最適化の推奨を行います:
 
 * コンテナリクエストの過剰プロビジョニングとアンダープロビジョニングの両方を考慮した上での最適なコンテナリクエスト
 * 未使用のキャパシティへの過剰な支出を停止するために、クラスターノードの数とサイズを調整
-* 有意なトラフィックの送受信を行っていない Pod のスケールダウン、削除、リサイズ
+* 有意なレートのトラフィックを送受信していない Pod のスケールダウン、削除、リサイズ
 * スポットノードに適したワークロードの特定
 * どの Pod からも使用されていないボリュームの特定
 
-また、Kubecost には Cluster Controller コンポーネントを有効にした場合に、コンテナリソースリクエストの自動最適化を実装できるプレリリース機能もあります。自動リクエスト最適化を使用することで、複雑な YAML のテストや kubectl コマンドの実行なしに、クラスタ全体のリソース割り当てを即座に最適化できます。クラスタ内のリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化やその他の最適化による大幅なコスト削減の道が開けます。
+また、Kubecost には Cluster Controller コンポーネントを有効にした場合に、コンテナリソースリクエストの自動最適化を実装できるプレリリース機能もあります。自動リクエスト最適化を使用すると、複雑な YAML のテストや kubectl コマンドを実行することなく、クラスタ全体のリソース割り当てを即座に最適化できます。クラスタ内のリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化とその他の最適化による大幅なコスト削減の道が開かれます。
 
 ### Kubecost と Amazon Managed Service for Prometheus の統合
 
-Kubecost は、時系列データベースとしてオープンソースの Prometheus プロジェクトを利用し、Prometheus のデータを後処理してコスト割り当て計算を実行します。
-クラスターのサイズやワークロードの規模によっては、Prometheus サーバーがメトリクスをスクレイプおよび保存することが困難になる場合があります。
-そのような場合は、信頼性の高い方法でメトリクスを保存し、Kubernetes のコストを大規模に監視できるようにする、Prometheus 互換のマネージド監視サービスである Amazon Managed Service for Prometheus を使用できます。
+Kubecost は、時系列データベースとしてオープンソースの Prometheus プロジェクトを利用し、Prometheus のデータを後処理してコスト割り当て計算を実行します。 クラスターのサイズやワークロードの規模によっては、Prometheus サーバーがメトリクスをスクレイプおよび保存することが困難になる場合があります。 このような場合は、信頼性の高い方法でメトリクスを保存し、Kubernetes のコストを大規模に監視できるようにする、Prometheus 互換のマネージド監視サービスである Amazon Managed Service for Prometheus を使用できます。
 
-[Kubecost サービスアカウントの IAM ロールを設定](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html)する必要があります。
-クラスターの OIDC プロバイダーを使用して、クラスターのサービスアカウントに IAM アクセス許可を付与します。
-kubecost-cost-analyzer および kubecost-prometheus-server サービスアカウントに適切なアクセス許可を付与する必要があります。
-これらは、ワークスペースからメトリクスを送受信するために使用されます。
-コマンドラインで次のコマンドを実行します。
+[Kubecost サービスアカウントの IAM ロールを設定](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/iam-roles-for-service-accounts.html)する必要があります。 クラスターの OIDC プロバイダーを使用して、クラスターのサービスアカウントに IAM アクセス許可を付与します。 kubecost-cost-analyzer および kubecost-prometheus-server のサービスアカウントに適切なアクセス許可を付与する必要があります。 これらは、ワークスペースからメトリクスを送受信するために使用されます。 コマンドラインで次のコマンドを実行します:
 
 ```
 eksctl create iamserviceaccount \ 
@@ -120,7 +114,7 @@ eksctl create iamserviceaccount \
 
 `CLUSTER_NAME` は Kubecost をインストールする Amazon EKS クラスターの名前で、<region> は Amazon EKS クラスターのリージョンです。
 
-完了後、次のように Kubecost helm チャートをアップグレードする必要があります。
+完了後、次のように Kubecost helm チャートをアップグレードする必要があります:
 
 ```
 helm upgrade -i kubecost \
@@ -131,7 +125,6 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 --set global.amp.prometheusServerEndpoint=${QUERYURL} \
 --set global.amp.remoteWriteService=${REMOTEWRITEURL}
 ```
-
 </region></region></cluster_name></region></cluster_name>
 
 ### Kubecost UI へのアクセス
@@ -142,8 +135,8 @@ AWS 環境では、Kubecost を公開するために [AWS Load Balancer Controll
 
 ### マルチクラスタービュー
 
-FinOps チームは、ビジネスオーナーとの推奨事項を共有するために EKS クラスターをレビューしたいと考えているでしょう。大規模に運用する場合、各クラスタにログインして推奨事項を表示することが困難になります。マルチクラスターを使用すると、グローバルに集計されたすべてのクラスターコストを一元的に表示できます。Kubecost がサポートしているマルチクラスター環境には、Kubecost Free、Kubecost Business、Kubecost Enterprise の 3 つのオプションがあります。Free モードと Business モードでは、クラウド課金との突合は各クラスターレベルで実行されます。Enterprise モードでは、Kubecost UI を提供し、メトリクスが保存されている共有バケットを使用するプライマリクラスタでクラウド課金との突合が実行されます。
-メトリクスの保持が無制限になるのは、Enterprise モードを使用している場合のみであることに注意してください。
+FinOps チームは、ビジネスオーナーとの推奨事項を共有するために EKS クラスターをレビューしたいと考えているでしょう。大規模に運用する場合、各クラスタにログインして推奨事項を表示することが困難になります。マルチクラスターを使用すると、グローバルに集計されたすべてのクラスターコストを単一のパネルで確認できます。Kubecost がサポートしているマルチクラスター環境のオプションには、Kubecost Free、Kubecost Business、Kubecost Enterprise の 3 つがあります。Free モードと Business モードでは、クラウド課金との突合は各クラスターレベルで実行されます。Enterprise モードでは、Kubecost UI を提供し、メトリクスが保存されている共有バケットを使用するプライマリクラスタでクラウド課金との突合が実行されます。
+Enterprise モードを使用する場合にのみ、メトリクスの保持が無制限であることに注意してください。
 
 ### 参考文献
 * [One Observability ワークショップでの Kubecost のハンズオン体験](https://catalog.workshops.aws/observability/ja-JP/aws-managed-oss/amp/ingest-kubecost-metrics)

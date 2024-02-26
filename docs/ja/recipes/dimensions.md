@@ -35,21 +35,20 @@
 
 ## インフラストラクチャとデータベース
 
-このディメンションでは、サービスが実行されている VPC などのインフラストラクチャや、RDS、DynamoDB、SQS などのデータストアを意味します。
+このディメンションでは、サービスが実行されている VPC などのインフラストラクチャや RDS、DynamoDB、SQS などのデータストアといった、アプリケーションの外部の依存関係のすべてを意味します。
 
 !!! tip "共通点"
     このディメンションのすべてのソースが共通しているのは、アプリケーション(およびアプリケーションが実行されるコンピュート環境)の外部に位置しており、不透明なボックスとして扱わなければならないことです。
 
 このディメンションには以下が含まれますが、これらに限定されません。
 
-- AWS インフラストラクチャー、例えば [VPC フローログ][vpcfl]。
-- [Kubernetes コントロールプレーンログ][kubecpl]などのセカンダリ API。  
-- [S3][s3mon]、[RDS][rdsmon]、[SQS][sqstrace]などのデータストアからのシグナル。
+- AWS インフラストラクチャー、例えば [VPC フローログ][vpcfl] など。
+- [Kubernetes コントロールプレーンログ][kubecpl] などのセカンダリ API。  
+- [S3][s3mon]、[RDS][rdsmon]、[SQS][sqstrace] などのデータストアからのシグナル。
 
 ## コンピュートユニット
 
-コードをパッケージ化、スケジュール設定、実行する方法です。例えば、Lambda では関数がそれに該当し、[ECS][ecs] と [EKS][eks] では、それぞれタスク(ECS)内またはポッド(EKS)内で実行されるコンテナがユニットとなります。
-Kubernetes のようなコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよく利用できます。サイドカーとして、またはノード(インスタンス)ごとのデーモンプロセスとしてです。
+コードをパッケージ化、スケジュール設定、実行する方法です。例えば、Lambda では関数がそれに該当し、[ECS][ecs] と [EKS][eks] では、それぞれタスク(ECS)内またはポッド(EKS)内で実行されるコンテナがユニットとなります。Kubernetes のようなコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよく利用できます。サイドカーとして、またはノード(インスタンス)ごとのデーモンプロセスとしてです。
 
 ## コンピュートエンジン
 
@@ -69,19 +68,19 @@ Kubernetes のようなコンテナ化された環境では、テレメトリの
 [eks]: https://aws.amazon.com/eks/ "Amazon Elastic Kubernetes Service"
 [fargate]: https://aws.amazon.com/fargate/ "AWS Fargate" 
 [fluentbit]: https://fluentbit.io/ "Fluent Bit"
-[firelensef]: https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/ "Fluent Bit for Amazon EKS on AWS Fargate が利用可能に"  
+[firelensef]: https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/ "Fluent Bit for Amazon EKS on AWS Fargate is here"
 [jaeger]: https://www.jaegertracing.io/ "Jaeger"
-[kafka]: https://kafka.apache.org/ "Apache Kafka"  
-[kubecpl]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html "Amazon EKS コントロールプレーンログ" 
+[kafka]: https://kafka.apache.org/ "Apache Kafka" 
+[kubecpl]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html "Amazon EKS control plane logging"
 [lambda]: https://aws.amazon.com/lambda/ "AWS Lambda"
 [lightsail]: https://aws.amazon.com/lightsail/ "Amazon Lightsail"
-[otel]: https://opentelemetry.io/ "OpenTelemetry"  
+[otel]: https://opentelemetry.io/ "OpenTelemetry" 
 [otelinst]: https://opentelemetry.io/docs/concepts/instrumenting/
-[promex]: https://prometheus.io/docs/instrumenting/exporters/ "Prometheus エクスポータとインテグレーション"  
-[rdsmon]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html "Amazon RDS のログ記録とモニタリング"  
-[s3]: https://aws.amazon.com/s3/ "Amazon S3"  
-[s3mon]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html "Amazon S3 のログ記録とモニタリング"
-[sqstrace]: https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html "Amazon SQS と AWS X-Ray"  
-[vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html "VPC フローログ"  
-[xray]: https://aws.amazon.com/xray/ "AWS X-Ray"
+[promex]: https://prometheus.io/docs/instrumenting/exporters/ "Prometheus exporters and integrations"
+[rdsmon]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html "Logging and monitoring in Amazon RDS"
+[s3]: https://aws.amazon.com/s3/ "Amazon S3" 
+[s3mon]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html "Logging and monitoring in Amazon S3"
+[sqstrace]: https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html "Amazon SQS and AWS X-Ray"
+[vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html "VPC Flow Logs"
+[xray]: https://aws.amazon.com/xray/ "AWS X-Ray" 
 [xraysdks]: https://docs.aws.amazon.com/xray/index.html

@@ -4,23 +4,23 @@
 
 モニタリングとは、インフラストラクチャやアプリケーションの所有者が、収集されたメトリクスやログに基づいて、システムの過去と現在の状態を見て理解できるソリューションのことを指します。
 
-これまでにモニタリングは進化してきました。当初はデバッグとダンプログを使用して問題のデバッグとトラブルシューティングを行い、次第に syslogs、top などのコマンドラインツールを使用した基本的なモニタリングが可能になり、ダッシュボード上での可視化が実現しました。クラウドの登場とスケールの拡大に伴い、今日ではこれまでになく多くの項目が追跡されるようになっています。業界はよりオブザーバビリティにシフトしており、インフラストラクチャやアプリケーションの所有者が能動的にシステムのトラブルシューティングとデバッグを行えるソリューションを指しています。オブザーバビリティは、メトリクスから導出されたパターンをより重視しています。
+これまでにモニタリングは進化してきました。当初はデバッグとダンプログを使用して問題をデバッグおよびトラブルシューティングしていましたが、次第に syslogs、top などのコマンドラインツールを使用した基本的なモニタリングへと移行し、ダッシュボード上で視覚化できるようになりました。クラウドの出現とスケールの拡大に伴い、今日ではこれまでになく多くのものを追跡しています。業界はよりオブザーバビリティに移行しており、これはインフラストラクチャやアプリケーションの所有者が能動的にシステムのトラブルシューティングとデバッグを行えるソリューションと定義されます。オブザーバビリティは、メトリクスから導出されたパターンをより重視しています。
 
 
 # メトリクスの重要性
 
-メトリクスとは、作成された時間順に整列させた数値の系列です。これは、環境内のサーバー数、ディスク使用量、1 秒あたりのリクエスト処理数、リクエスト完了までのレイテンシなど、あらゆるものを追跡するために使用されます。メトリクスは、システムのパフォーマンスを示すデータです。小規模でも大規模でも、システムの正常性とパフォーマンスの洞察を得ることで、改善の余地を特定したり、問題のトラブルシューティングとトレースを行ったり、ワークロードのパフォーマンスと効率を全体として向上させたりすることができます。これらの変更は、クラスターに費やす時間とリソースに影響を与え、直接コストにつながります。
+メトリクスとは、作成された時間順に並べられた一連の数値です。これらは、環境内のサーバー数、ディスク使用量、1 秒あたりのリクエスト処理数、リクエスト完了までのレイテンシなど、あらゆるものを追跡するために使用されます。メトリクスは、システムのパフォーマンスを示すデータです。小規模でも大規模でも、システムの正常性とパフォーマンスの洞察を得ることで、改善の余地を特定したり、問題のトラブルシューティングとトレースを行ったり、ワークロードのパフォーマンスと効率を全体として向上させたりすることができます。これらの変更は、クラスターに費やす時間とリソースに影響を与え、直接コストにつながります。
 
 
 # メトリクスの収集
 
 EKS クラスターからのメトリクス収集は、[3 つのコンポーネント](/observability-best-practices/ja/recipes/telemetry/)で構成されます。
 
-1. ソース: このガイドでリストされているものなど、メトリクスの発生源です。 
-2. エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクスのモニタリングデータを収集し、このデータを 2 番目のコンポーネントにプッシュします。このコンポーネントの例としては、[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) と [CloudWatch エージェント](/observability-best-practices/ja/tools/cloudwatch_agent/)があります。
-3. デスティネーション: モニタリングデータの保存と分析ソリューションで、通常、このコンポーネントは [時系列形式のデータ](/observability-best-practices/ja/signals/metrics/)に最適化されたデータサービスです。このコンポーネントの例としては、[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) と [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
+1. ソース: このガイドに記載されているものなど、メトリクスの発生源です。 
+2. エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクス監視データを収集して 2 番目のコンポーネントにプッシュします。このコンポーネントの例としては、[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) と [CloudWatch エージェント](/observability-best-practices/ja/tools/cloudwatch_agent/) があります。
+3. デスティネーション: データサービスであることが多く、[時系列形式のデータ](/observability-best-practices/ja/signals/metrics/)に最適化されたモニタリングデータの保存と分析ソリューションです。このコンポーネントの例としては、[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) と [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
 
-注:このセクションの構成例は、[AWS Observability Accelerator](https://aws-observability.github.io/terraform-aws-observability-accelerator/) の関連セクションへのリンクです。これは、EKS メトリクス収集の実装に関する最新のガイダンスと例を確実に入手できるようにするためです。
+注:このセクションの構成例は、[AWS Observability Accelerator](https://aws-observability.github.io/terraform-aws-observability-accelerator/) の関連セクションへのリンクです。これは、EKS メトリクス収集実装に関する最新のガイダンスと例を確実に入手できるようにするためです。
 
 ## マネージドオープンソースソリューション
 
@@ -37,15 +37,15 @@ AWS Distro for OpenTelemetry(ADOT)、Amazon Managed Service for Prometheus(AMP)�
 EKS のメトリクスは、全体的なソリューションのさまざまなレイヤーで作成されます。これは、必須のメトリクスのセクションで言及されているメトリクスソースを要約した表です。
 
 
-|レイヤー |ソース |ツール |インストールと詳細情報 |Helm チャート |
-|--- |--- |--- |--- |--- |
-|コントロールプレーン |*api サーバーエンドポイント*/メトリクス |N/A - api サーバーはプロメテウス形式で直接メトリクスを公開 |https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/prometheus.html |N/A |
-|クラスター状態 |*kube-state-metrics-http-endpoint*:8080/メトリクス |kube-state-metrics |https://github.com/kubernetes/kube-state-metrics#overview |https://github.com/kubernetes/kube-state-metrics#helm-chart |
-|Kube Proxy |*kube-proxy-http*:10249/メトリクス |N/A - kube proxy はプロメテウス形式で直接メトリクスを公開 |https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/ |N/A |
-|VPC CNI |*vpc-cni-metrics-helper*/メトリクス |cni-metrics-helper |https://github.com/aws/amazon-vpc-cni-k8s/blob/master/cmd/cni-metrics-helper/README.md |https://github.com/aws/amazon-vpc-cni-k8s/tree/master/charts/cni-metrics-helper |
-|Core DNS |*core-dns*:9153/メトリクス |N/A - core DNS はプロメテウス形式で直接メトリクスを公開 |https://github.com/coredns/coredns/tree/master/plugin/metrics |N/A |
-|ノード |*prom-node-exporter-http*:9100/メトリクス |prom-node-exporter |https://github.com/prometheus/node_exporter https://prometheus.io/docs/guides/node-exporter/#node-exporter-metrics |https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter |
-|Kubelet/Pod |*kubelet*/メトリクス/cadvisor |kubelet または api サーバーを介してプロキシ |https://kubernetes.io/docs/concepts/cluster-administration/system-metrics/ |N/A |
+| レイヤー             | ソース                                             | ツール                                                           | インストールと詳細情報                                                                                             | Helm チャート                                                                                 |
+| -------------------- | -------------------------------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------- |
+| コントロールプレーン | *api サーバーエンドポイント*/メトリクス            | 該当なし - API サーバーはメトリクスをプロメテウス形式で直接公開  | https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/prometheus.html                                             | 該当なし                                                                                      |
+| クラスター状態       | *kube-state-metrics-http-endpoint*:8080/メトリクス | kube-state-metrics                                               | https://github.com/kubernetes/kube-state-metrics#overview                                                          | https://github.com/kubernetes/kube-state-metrics#helm-chart                                   |
+| Kube プロキシ        | *kube-proxy-http*:10249/メトリクス                 | 該当なし - kube プロキシはメトリクスをプロメテウス形式で直接公開 | https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/                                      | 該当なし                                                                                      |
+| VPC CNI              | *vpc-cni-metrics-helper*/メトリクス                | cni-metrics-helper                                               | https://github.com/aws/amazon-vpc-cni-k8s/blob/master/cmd/cni-metrics-helper/README.md                             | https://github.com/aws/amazon-vpc-cni-k8s/tree/master/charts/cni-metrics-helper               |
+| CoreDNS              | *core-dns*:9153/メトリクス                         | 該当なし - CoreDNS はメトリクスをプロメテウス形式で直接公開      | https://github.com/coredns/coredns/tree/master/plugin/metrics                                                      | 該当なし                                                                                      |
+| ノード               | *prom-node-exporter-http*:9100/メトリクス          | prom-node-exporter                                               | https://github.com/prometheus/node_exporter https://prometheus.io/docs/guides/node-exporter/#node-exporter-metrics | https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus-node-exporter |
+| Kubelet/Pod          | *kubelet*/メトリクス/cadvisor                      | kubelet または API サーバーを介してプロキシ                      | https://kubernetes.io/docs/concepts/cluster-administration/system-metrics/                                         | 該当なし                                                                                      |
 
 ### エージェント: AWS Distro for OpenTelemetry
 
@@ -56,7 +56,7 @@ AWS は、EKS クラスター上での ADOT のインストール、構成、運
 ADOT コレクターの構成には 2 つのコンポーネントがあります。
 
 1. コレクターのデプロイメントモード(デプロイメント、デーモンセットなど)を含む[コレクター構成](https://github.com/aws-observability/aws-otel-community/blob/master/sample-configs/operator/collector-config-amp.yaml)
-2. メトリック収集に必要なレシーバー、プロセッサー、エクスポーターを含む [OpenTelemetry パイプライン構成](https://opentelemetry.io/docs/collector/configuration/)。構成スニペットの例:
+2. メトリクス収集に必要なレシーバー、プロセッサー、エクスポーターを含む [OpenTelemetry パイプライン構成](https://opentelemetry.io/docs/collector/configuration/)。構成スニペットの例:
 
 ```
 config: |
@@ -144,56 +144,58 @@ ADOT コレクターパイプラインは、Prometheus Remote Write 機能を利
         loglevel: warn
 ```
 
-完全なベストプラクティスのコレクター構成、ADOT パイプライン構成、Prometheus スクレイプ構成は、[Observability Accelerator の Helm チャート](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml)としてここで見つけることができます。
+ベストプラクティスのコレクター構成、ADOT パイプライン構成、Prometheus スクレイプ構成の完全な例は、[Observability Accelerator の Helm チャート](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml) で確認できます。
 
-AMP 構成と使用法のベストプラクティスは、[こちら](/observability-best-practices/ja/recipes/amp/)にあります。
+AMP の構成と使用法のベストプラクティスは、[こちら](/observability-best-practices/ja/recipes/amp/) で確認できます。
 
 # 関連するメトリクスとは?
 
-利用可能なメトリクスがほとんどない日々は過ぎ去り、今日では逆に数百ものメトリクスが利用可能です。 インフラストラクチャとアプリケーションにオブザーバビリティを組み込むにあたり、どのメトリクスに焦点を当てるべきかを判断できることが重要です。
+利用可能なメトリクスがほとんどない時代は過ぎ去り、今日では逆に数百ものメトリクスが利用可能です。インフラストラクチャとアプリケーションにオブザーバビリティを組み込む際に、どのメトリクスに注目すべきかを判断できることが重要です。
 
-このガイドでは、利用可能なメトリクスの異なるグループを概説し、ベストプラクティスに基づいて監視することをお勧めするメトリクスを説明します。以下のセクションにリストされているメトリクスは、[AWS Observability Accelerator Grafana ダッシュボード](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/modules/eks-monitoring)と[Kube Prometheus Stack ダッシュボード](https://monitoring.mixins.dev/)で強調表示されているメトリクスに追加されます。
+このガイドでは、利用可能なさまざまなメトリクス グループについて説明し、ベスト プラクティスに基づいて監視することをおすすめするメトリクスを示します。
+
+以下のセクションでリストされているメトリクスは、[AWS Observability Accelerator Grafana ダッシュボード](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/modules/eks-monitoring) と [Kube Prometheus Stack ダッシュボード](https://monitoring.mixins.dev/) で強調表示されているメトリクスに追加されます。
 
 </your>
 
 ## コントロールプレーンメトリクス
 
-Amazon EKS のコントロールプレーンは、AWS によって管理されており、AWS が管理するアカウントで実行されます。etcd や Kubernetes API サーバなどの Kubernetes コンポーネントを実行するコントロールプレーン ノードで構成されます。Kubernetes は、Pod の起動と停止、デプロイメント、名前空間などのクラスタで必要な基本的なアクティビティを実行するために、コアコンポーネントが適切に機能し、動作できることを追跡する必要がある重要なコンポーネントです。
+Amazon EKS のコントロールプレーンは、AWS によって管理されており、AWS が管理するアカウントで実行されます。etcd や Kubernetes API サーバなどの Kubernetes コンポーネントを実行するコントロールプレーン ノードで構成されます。Kubernetes は、Pod の起動と停止、デプロイメント、名前空間などのクラスタで必要な基本的なアクティビティを通知するために、さまざまなイベントを公開しています。Amazon EKS のコントロールプレーンは、コアコンポーネントが適切に機能し、クラスタに必要な基本的なアクティビティを実行できることを確認するために追跡する必要がある重要なコンポーネントです。
 
-コントロールプレーン API サーバは数千ものメトリクスを公開していますが、以下の表は、監視することをおすすめする基本的なコントロールプレーンメトリクスを示しています。
+コントロールプレーン API サーバは数千ものメトリクスを公開していますが、以下の表は、監視することをおすすめする基本的なコントロールプレーン メトリクスを示しています。
 
-| 名前 | メトリクス | 説明 | 理由 |
-| --- | --- | --- | --- |
-| API サーバの全リクエスト | apiserver_request_total | 動詞、ドライラン値、グループ、バージョン、リソース、スコープ、コンポーネント、HTTP レスポンスコードで分割された apiserver リクエストのカウンター。 |  |  
-| API サーバのレイテンシ | apiserver_request_duration_seconds | 動詞、ドライラン値、グループ、バージョン、リソース、サブリソース、スコープ、コンポーネントごとのレスポンスレイテンシの分布(秒)。 |  |
-| リクエストレイテンシ | rest_client_request_duration_seconds | 動詞と URL で分割されたリクエストのレイテンシ(秒)。 |  |
-| 総リクエスト数 | rest_client_requests_total | ステータスコード、メソッド、ホストで分割された HTTP リクエストの数。 |  |  
-| API サーバのリクエスト期間 | apiserver_request_duration_seconds_bucket | Kubernetes API サーバへの各リクエストのレイテンシを秒単位で測定 |  |
-| API サーバのリクエストレイテンシの合計 | apiserver_request_latencies_sum | K8 API サーバがリクエストを処理するのにかかった総時間を追跡する累積カウンタ |  |
-| API サーバの登録されたウォッチャー | apiserver_registered_watchers | 特定のリソースの現在登録されているウォッチャーの数 |  |
-| API サーバのオブジェクト数 | apiserver_storage_object | 最後のチェック時の保存されたオブジェクトの数(種類ごとに分割)。 |  |
-| アドミッションコントローラのレイテンシ | apiserver_admission_controller_admission_duration_seconds | 名前で識別され、操作と API リソース、タイプ(検証または許可)ごとに分割されたアドミッションコントローラのレイテンシヒストグラム(秒)。 |  |  
-| Etcd のレイテンシ | etcd_request_duration_seconds | 操作とオブジェクトタイプごとの etcd リクエストのレイテンシ(秒)。 |  |
-| Etcd DB サイズ | apiserver_storage_db_total_size_in_bytes | Etcd データベースのサイズ。 | これにより、etcd データベースの使用状況を事前に監視し、制限を超えるのを避けることができます。 |
+| 名前                                 | メトリクス                                                | 説明                                                                                                                                               | 理由                                                                                          |
+| ------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| API サーバの要求の合計               | apiserver_request_total                                   | 各動詞、ドライラン値、グループ、バージョン、リソース、スコープ、コンポーネント、HTTP レスポンスコードごとに分割された apiserver 要求のカウンター。 |                                                                                               |
+| API サーバのレイテンシ               | apiserver_request_duration_seconds                        | 各動詞、ドライラン値、グループ、バージョン、リソース、サブリソース、スコープ、コンポーネントごとの応答待ち時間分布(秒)。                           |                                                                                               |
+| 要求待ち時間                         | rest_client_request_duration_seconds                      | 動詞と URL ごとに分割された要求待ち時間(秒)。                                                                                                      |                                                                                               |
+| 要求の合計                           | rest_client_requests_total                                | ステータスコード、メソッド、ホストごとに分割された HTTP 要求の数。                                                                                 |                                                                                               |
+| API サーバの要求期間                 | apiserver_request_duration_seconds_bucket                 | Kubernetes API サーバへの各要求の待ち時間を秒単位で測定                                                                                            |                                                                                               |
+| API サーバ要求待ち時間の合計         | apiserver_request_latencies_sum                           | K8 API サーバが要求を処理するのにかかった合計時間を追跡する累積カウンタ                                                                            |                                                                                               |
+| API サーバに登録されたウォッチャー   | apiserver_registered_watchers                             | 特定のリソースに対して現在登録されているウォッチャーの数                                                                                           |                                                                                               |
+| API サーバのオブジェクト数           | apiserver_storage_object                                  | 最後のチェック時の保存されたオブジェクトの数を種類ごとに分割。                                                                                     |                                                                                               |
+| アドミッションコントローラの待ち時間 | apiserver_admission_controller_admission_duration_seconds | 名前ごとに識別されたアドミッションコントローラの待ち時間ヒストグラム(秒)。操作、API リソース、タイプ(検証または許可)ごとに分割。                   |                                                                                               |
+| Etcd の待ち時間                      | etcd_request_duration_seconds                             | 操作とオブジェクトタイプごとの etcd 要求の待ち時間(秒)。                                                                                           |                                                                                               |
+| Etcd DB サイズ                       | apiserver_storage_db_total_size_in_bytes                  | Etcd データベースのサイズ。                                                                                                                        | これにより、etcd データベースの使用状況を事前に監視し、制限を超えるのを避けることができます。 |
 
 ## クラスター状態のメトリクス
 
 クラスター状態のメトリクスは、`kube-state-metrics` (KSM) によって生成されます。 KSM はクラスター内で Pod として実行されるユーティリティで、Kubernetes API サーバーをリッスンし、クラスター状態とクラスター内の Kubernetes オブジェクトの洞察を Prometheus メトリクスとして提供します。 これらのメトリクスを利用できるようにするには、事前に KSM を [インストール](https://github.com/kubernetes/kube-state-metrics) する必要があります。 これらのメトリクスは、Kubernetes が効果的な Pod スケジューリングを行うために使用されており、デプロイメント、レプリカセット、ノード、Pod などのさまざまなオブジェクトの健全性に焦点を当てています。  クラスター状態のメトリクスは、Pod のステータス、容量、可用性に関する情報を公開します。  クラスターのスケジューリングタスクのパフォーマンスを追跡し、パフォーマンスを把握し、問題に先立って対処し、クラスターの健全性を監視することが不可欠です。 公開されているクラスター状態メトリクスは約 X 個あり、以下の表は追跡すべき主要なメトリクスをリストしています。
 
-| 名前 | メトリクス | 説明 |
-|---|---|---|
-| ノードステータス | kube_node_status_condition | ノードの現在の健康ステータス。ノード条件のセットと、条件ごとに `true`、`false`、`unknown` のいずれかを返します。 |  
-| 目標 Pod 数 | kube_deployment_spec_replicas または kube_daemonset_status_desired_number_scheduled | Deployment または DaemonSet に指定された Pod 数 |
-| 現在の Pod 数 | kube_deployment_status_replicas または kube_daemonset_status_current_number_scheduled | Deployment または DaemonSet で現在実行中の Pod 数 |
-| Pod 容量 | kube_node_status_capacity_pods | ノードで許可されている最大 Pod 数 |
-| 利用可能な Pod 数 | kube_deployment_status_replicas_available または kube_daemonset_status_number_available | Deployment または DaemonSet で現在利用可能な Pod 数 |  
-| 利用不可能な Pod 数 | kube_deployment_status_replicas_unavailable または kube_daemonset_status_number_unavailable | Deployment または DaemonSet で現在利用できない Pod 数 |
-| Pod のレディネス | kube_pod_status_ready | Pod がクライアントリクエストに対応できるかどうか |
-| Pod のステータス | kube_pod_status_phase | Pod の現在のステータス。pending/running/succeeded/failed/unknown のいずれか |
-| Pod の待機理由 | kube_pod_container_status_waiting_reason | コンテナが待機状態にある理由 | 
-| Pod の終了ステータス | kube_pod_container_status_terminated | コンテナが現在終了状態かどうか |
-| スケジューリング待ちの Pod | pending_pods | ノードの割り当てを待っている Pod 数 |
-| Pod スケジューリングの試行回数 | pod_scheduling_attempts | Pod スケジューリングの試行回数 |
+| 名前                         | メトリクス                                                                                  | 説明                                                                                                             |
+| ---------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| ノードステータス             | kube_node_status_condition                                                                  | ノードの現在の健康ステータス。ノード条件のセットと、条件ごとに `true`、`false`、`unknown` のいずれかを返します。 |
+| 目標 Pod 数                  | kube_deployment_spec_replicas または kube_daemonset_status_desired_number_scheduled         | Deployment または DaemonSet に指定された Pod 数                                                                  |
+| 現在の Pod 数                | kube_deployment_status_replicas または kube_daemonset_status_current_number_scheduled       | Deployment または DaemonSet で現在実行中の Pod 数                                                                |
+| Pod 容量                     | kube_node_status_capacity_pods                                                              | ノードで許可されている最大 Pod 数                                                                                |
+| 利用可能な Pod 数            | kube_deployment_status_replicas_available または kube_daemonset_status_number_available     | Deployment または DaemonSet で現在利用可能な Pod 数                                                              |
+| 利用不可能な Pod 数          | kube_deployment_status_replicas_unavailable または kube_daemonset_status_number_unavailable | Deployment または DaemonSet で現在利用できない Pod 数                                                            |
+| Pod のレディネス             | kube_pod_status_ready                                                                       | Pod がクライアントリクエストに対応できるかどうか                                                                 |
+| Pod のステータス             | kube_pod_status_phase                                                                       | Pod の現在のステータス。pending/running/succeeded/failed/unknown のいずれか                                      |
+| Pod の待機理由               | kube_pod_container_status_waiting_reason                                                    | コンテナが待機状態にある理由                                                                                     |
+| Pod の終了ステータス         | kube_pod_container_status_terminated                                                        | コンテナが現在終了状態かどうか                                                                                   |
+| スケジューリング待ちの Pod   | pending_pods                                                                                | ノード割り当てを待っている Pod 数                                                                                |
+| Pod スケジューリング試行回数 | pod_scheduling_attempts                                                                     | Pod スケジューリングの試行回数                                                                                   |
 
 ## クラスター追加機能のメトリクス
 
@@ -205,32 +207,32 @@ Amazon EKS のコントロールプレーンは、AWS によって管理され�
 
 ## Amazon VPC CNI プラグイン
 
-Amazon EKS は、Amazon VPC コンテナネットワークインターフェイス(VPC CNI)プラグインを介してクラスターネットワーキングを実装しています。CNI プラグインにより、Kubernetes Pod が VPC ネットワーク上と同じ IP アドレスを取得できます。具体的には、Pod 内のすべてのコンテナはネットワーク名前空間を共有し、ローカルポートを使用して相互に通信できます。VPC CNI アドオンを使用すると、Amazon EKS クラスターのセキュリティと安定性を継続的に確保し、アドオンのインストール、構成、更新に必要な作業量を減らすことができます。
+Amazon EKS は、Amazon VPC コンテナネットワークインターフェイス (VPC CNI) プラグインを介してクラスターネットワーキングを実装しています。CNI プラグインにより、Kubernetes Pod が VPC ネットワーク上と同じ IP アドレスを取得できます。具体的には、Pod 内のすべてのコンテナはネットワーク名前空間を共有し、ローカルポートを使用して相互に通信できます。VPC CNI アドオンを使用すると、Amazon EKS クラスターのセキュリティと安定性を継続的に確保し、アドオンのインストール、構成、更新に必要な作業を減らすことができます。
 
-VPC CNI アドオンのメトリクスは、CNI メトリクスヘルパーによって公開されます。IP アドレスの割り当てを監視することは、正常なクラスターを確保し、IP 枯渇の問題を回避する上で基本的です。[こちらから最新のネットワーキングのベストプラクティスと収集・監視する必要のある VPC CNI メトリクスをご覧いただけます。](https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/#monitor-ip-address-inventory)
+CNI メトリクス ヘルパーによって VPC CNI アドオンのメトリクスが公開されます。IP アドレスの割り当てを監視することは、正常なクラスターを確保し、IP 枯渇の問題を回避する上で基本的です。[こちらから最新のネットワーキングのベストプラクティスと収集および監視する必要がある VPC CNI メトリクスをご覧いただけます。](https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/#monitor-ip-address-inventory)
 
 ## CoreDNS メトリクス
 
-CoreDNS は柔軟で拡張性のある DNS サーバーで、Kubernetes クラスターの DNS として機能できます。 CoreDNS Pod は、クラスター内のすべての Pod の名前解決を提供します。 DNS 集中型のワークロードを実行すると、DNS スロットリングのために CoreDNS の障害が断続的に発生することがあり、これがアプリケーションに影響を与える可能性があります。
+CoreDNS は柔軟で拡張性のある DNS サーバーで、Kubernetes クラスターの DNS として機能できます。CoreDNS Pod は、クラスター内のすべての Pod の名前解決を提供します。DNS 集中型のワークロードを実行すると、DNS スロットリングのために CoreDNS の障害が断続的に発生することがあり、これがアプリケーションに影響を与える可能性があります。
 
-主要な [CoreDNS パフォーマンス メトリクスを追跡するための最新のベスト プラクティスはこちら](https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics) を、[DNS スロットリングの問題のための CoreDNS トラフィックの監視はこちら](https://aws.github.io/aws-eks-best-practices/networking/monitoring/) をご覧ください。
+[こちら](https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics) で主要な [CoreDNS パフォーマンス メトリクスの最良のプラクティスを確認](https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics) し、[DNS スロットリングの問題のための CoreDNS トラフィックの監視](https://aws.github.io/aws-eks-best-practices/networking/monitoring/) してください。
 
 ## Pod/コンテナーメトリクス
 
 アプリケーションのすべてのレイヤーにわたる使用状況を追跡することが重要です。これには、クラスター内で実行されているノードと Pod をより詳細に調べることが含まれます。Pod ディメンションで利用できるすべてのメトリクスの中で、このメトリクスリストは、クラスター上で実行されているワークロードの状態を理解するのに実際に役立ちます。CPU、メモリ、ネットワークの使用状況を追跡することで、アプリケーション関連の問題の診断とトラブルシューティングが可能になります。ワークロードメトリクスを追跡することで、EKS 上で実行されているワークロードの適切なサイズ変更のためのリソース利用状況の洞察が得られます。
 
-|メトリクス | PromQL クエリの例 | ディメンション |
-|--- | --- | --- |
-|名前空間ごとの実行中の Pod 数 | count by(namespace) (kube_pod_info) | クラスターごとの名前空間ごと |
-|Pod ごとのコンテナーごとの CPU 使用率 | sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) by (namespace, pod) | クラスターごとの名前空間ごとの Pod ごと |  
-|Pod ごとのメモリ利用量 | sum(container_memory_usage_bytes{container!=""}) by (namespace, pod) | クラスターごとの名前空間ごとの Pod ごと |
-|Pod ごとの受信ネットワーク バイト数 | sum by(pod) (rate(container_network_receive_bytes_total[5m])) | クラスターごとの名前空間ごとの Pod ごと |
-|Pod ごとの送信ネットワーク バイト数 | sum by(pod) (rate(container_network_transmit_bytes_total[5m])) | クラスターごとの名前空間ごとの Pod ごと |
-|コンテナーごとの再起動数 | increase(kube_pod_container_status_restarts_total[15m]) > 3 | クラスターごとの名前空間ごとの Pod ごと |
+| メトリクス                            | PromQL クエリの例                                                                   | ディメンション                    |
+| ------------------------------------- | ----------------------------------------------------------------------------------- | --------------------------------- |
+| 名前空間ごとの実行中の Pod 数         | count by(namespace) (kube_pod_info)                                                 | クラスターごとの名前空間別        |
+| Pod ごとのコンテナーごとの CPU 使用率 | sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) by (namespace, pod) | クラスターごとの名前空間別 Pod 別 |
+| Pod ごとのメモリ利用量                | sum(container_memory_usage_bytes{container!=""}) by (namespace, pod)                | クラスターごとの名前空間別 Pod 別 |
+| Pod ごとの受信ネットワーク バイト数   | sum by(pod) (rate(container_network_receive_bytes_total[5m]))                       | クラスターごとの名前空間別 Pod 別 |
+| Pod ごとの送信ネットワーク バイト数   | sum by(pod) (rate(container_network_transmit_bytes_total[5m]))                      | クラスターごとの名前空間別 Pod 別 |
+| コンテナーごとのコンテナー再起動数    | increase(kube_pod_container_status_restarts_total[15m]) > 3                         | クラスターごとの名前空間別 Pod 別 |
 
 ## ノードメトリクス
 
-Kube State Metrics と Prometheus ノードエクスポーターは、クラスター内のノードのメトリック統計を収集します。 ノードのステータス、CPU 使用率、メモリ、ファイルシステム、トラフィックを追跡することは、ノードの利用状況を理解する上で重要です。 ノードリソースの利用状況を理解することは、実行を予定しているワークロードの種類に効果的なインスタンスタイプとストレージを適切に選択する上で重要です。 以下のメトリクスは、追跡すべき基本的なメトリクスの一部です。
+Kube State Metrics と Prometheus ノードエクスポーターは、クラスター内のノードのメトリクス統計を収集します。 ノードのステータス、CPU 使用率、メモリ、ファイルシステム、トラフィックを追跡することは、ノードの利用状況を理解する上で重要です。 ノードリソースの利用状況を理解することは、実行を予定しているワークロードの種類に効果的なインスタンスタイプとストレージを適切に選択する上で重要です。 以下のメトリクスは、追跡すべき基本的なメトリクスの一部です。
 
 
 |メトリクス	|PromQL クエリの例	|ディメンション	|
@@ -250,7 +252,7 @@ Kube State Metrics と Prometheus ノードエクスポーターは、クラス�
 |クラスターメモリ制限	|sum(kube_node_status_allocatable{resource="memory"})	|クラスターごと	|
 |クラスターノード数	|count(kube_node_info) OR sum(kubelet_node_name{cluster=""})	|クラスターごと	|
 
-# 追加リソース
+# その他のリソース
 
 ## AWS サービス
 

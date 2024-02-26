@@ -1,6 +1,6 @@
 # Amazon Managed Service for Grafana を使用したハイブリッド環境のモニタリング
 
-このレシピでは、[Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) (AMG) を使用して Azure Cloud 環境からメトリクスを可視化し、AMG でアラート通知を作成して [Amazon Simple Notification Service](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) と Slack に送信する方法を示します。
+このレシピでは、Azure Cloud 環境のメトリクスを [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) (AMG) で可視化し、AMG でアラート通知を作成して [Amazon Simple Notification Service](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) と Slack に送信する方法を示します。
 
 実装の一環として、AMG ワークスペースを作成し、Azure Monitor プラグインを AMG のデータソースとして構成し、Grafana ダッシュボードを構成します。 Amazon SNS と Slack の 2 つの通知チャネルを作成します。また、アラート通知を送信するために、AMG ダッシュボードでアラートを構成します。
 
@@ -53,7 +53,7 @@ Azure Monitor プラグインを構成するには、ディレクトリ (テナ�
 
 このセクションでは、2 つの通知チャネルを設定し、アラートを送信します。
 
-次のコマンドを使用して、grafana-notification という名前の SNS トピックを作成し、メールアドレスをサブスクライブします。
+grafana-notification という名前の SNS トピックを作成し、メールアドレスをサブスクライブするには、次のコマンドを使用します。
 
 ```
 aws sns create-topic --name grafana-notification
@@ -61,10 +61,12 @@ aws sns subscribe --topic-arn arn:aws:sns:<region>:<account-id>:grafana-notifica
 
 ```
 
-左側のパネルで、ベルのアイコンを選択して新しい通知チャネルを追加します。 
-次に、grafana-notification 通知チャネルを設定します。[通知チャネルの編集] で、[タイプ] に AWS SNS を選択します。[トピック] には、作成した SNS トピックの ARN を使用します。[認証プロバイダー] にはワークスペース IAM ロールを選択します。
+左側のパネルで、新しい通知チャネルを追加するためにベルのアイコンを選択します。 
+次に、grafana-notification 通知チャネルを設定します。[Edit notification channel] で、[Type] については [AWS SNS] を選択します。[Topic] には、作成した SNS トピックの ARN を使用します。[Auth Provider] にはワークスペース IAM ロールを選択します。
 
-![通知チャネル](../images/notification-channels.png)
+![Notification Channels](../images/notification-channels.png)
+
+</email-id></account-id></region>
 
 ### Slack 通知チャネル
 Slack 通知チャネルを設定するには、Slack ワークスペースを新規作成するか、既存のワークスペースを使用します。[Incoming Webhooks を使用したメッセージ送信](https://api.slack.com/messaging/webhooks) に記載されているように、Incoming Webhooks を有効にします。
@@ -77,7 +79,7 @@ Slack 通知チャネルを設定するには、Slack ワークスペースを�
 
 メトリクスがしきい値を超えたときに Grafana アラートを設定できます。AMG では、ダッシュボードでアラートを評価する頻度と通知を送信する方法を設定できます。この例では、Azure の仮想マシンの CPU 使用率に対するアラートを設定します。使用率がしきい値を超えると、AMG が両方のチャネルに通知を送信するように設定します。
 
-ダッシュボードで CPU 使用率をドロップダウンから選択し、編集を選択します。グラフパネルの [アラート] タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始するために満たされなければならない条件を設定します。
+ダッシュボードで CPU 使用率をドロップダウンから選択し、[編集] を選択します。グラフパネルの [アラート] タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始する条件を設定します。
 
 次の設定では、CPU 使用率が 50% を超えるとアラートが作成されます。grafana-alert-notification と slack-alert-notification チャネルに通知が送信されます。
 
@@ -85,7 +87,7 @@ Slack 通知チャネルを設定するには、Slack ワークスペースを�
 
 これで Azure の仮想マシンにサインインし、stress などのツールを使用してストレステストを開始できます。CPU 使用率がしきい値を超えると、両方のチャネルで通知を受信します。
 
-Slack チャネルに送信されるアラートをシミュレートするために、適切なしきい値で CPU 使用率のアラートを設定してください。
+適切なしきい値で CPU 使用率のアラートを設定し、Slack チャネルに送信されるアラートをシミュレートします。
 
 ## まとめ
 

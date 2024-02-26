@@ -1,6 +1,6 @@
 # AWS App Runner
 
-[AWS App Runner][apprunner-main] は、開発者がコンテナ化された Web アプリケーションや API を、インフラストラクチャの経験がなくてもスケールしてすぐにデプロイできるようにする、完全マネージドサービスです。ソースコードやコンテナイメージから始めます。App Runner は Web アプリケーションを自動的にビルドおよびデプロイし、トラフィックを暗号化してロードバランシングし、トラフィックニーズに合わせてスケーリングし、プライベート Amazon VPC 内で実行されている他の AWS サービスやアプリケーションとの通信を簡単にします。App Runner を使用することで、サーバーやスケーリングを考える代わりに、アプリケーションに集中する時間が増えます。
+[AWS App Runner][apprunner-main] は、開発者がコンテナ化された Web アプリケーションや API を、インフラストラクチャの経験がなくてもスケールしてすぐにデプロイできるようにする、完全マネージドサービスです。ソースコードやコンテナイメージから始めます。App Runner は Web アプリケーションを自動的にビルドおよびデプロイし、トラフィックを暗号化してロードバランシングし、トラフィックニーズに合わせてスケールし、プライベート Amazon VPC 内で実行されている他の AWS サービスやアプリケーションとの通信を簡単にします。App Runner を使用することで、サーバーやスケーリングを考えることなく、アプリケーションに集中する時間が増えます。
 
 以下のレシピをご確認ください:
 
@@ -21,7 +21,7 @@
 ## トレース
 - [AWS Distro for OpenTelemetry を使用した App Runner の AWS X-Ray トレース入門](https://aws-otel.github.io/docs/getting-started/apprunner)
 - [Containers from the Couch | AWS App Runner X-Ray インテグレーション](https://youtu.be/cVr8N7enCMM)
-- [AWS ブログ | OpenTelemetry を使用した AWS X-Ray による AWS App Runner サービスのトレーシング](https://aws.amazon.com/blogs/containers/tracing-an-aws-app-runner-service-using-aws-x-ray-with-opentelemetry/)
+- [AWS ブログ | OpenTelemetry を使用した AWS X-Ray による AWS App Runner サービスのトレース](https://aws.amazon.com/blogs/containers/tracing-an-aws-app-runner-service-using-aws-x-ray-with-opentelemetry/)
 - [AWS ブログ | AWS Copilot CLI を使用した AWS App Runner サービスの AWS X-Ray トレースの有効化](https://aws.amazon.com/blogs/containers/enabling-aws-x-ray-tracing-for-aws-app-runner-service-using-aws-copilot-cli/)
 
 [apprunner-main]: https://aws.amazon.com/apprunner/

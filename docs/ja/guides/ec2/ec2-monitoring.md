@@ -8,11 +8,11 @@
 
 ![three-pillars](../../../images/three-pillars.png)
 
-AWS では、お客様がエンドツーエンドのサービス可視性を持てるよう、モニタリングからオブザーバビリティへの変革を可能にしています。この記事では、ネイティブおよびオープンソースのツールを通じて、Amazon Elastic Compute Cloud (Amazon EC2) サービスの AWS クラウド環境におけるモニタリングとオブザーバビリティを改善するためのベストプラクティスに焦点を当てます。
+AWS では、お客様がエンドツーエンドのサービス可視性を得られるよう、モニタリングからオブザーバビリティへの変革を可能にしています。この記事では、ネイティブおよびオープンソースのツールを通じて、Amazon Elastic Compute Cloud (Amazon EC2) サービスの AWS クラウド環境におけるモニタリングとオブザーバビリティを改善するためのベストプラクティスに焦点を当てます。
 
 ## Amazon EC2
 
-[Amazon Elastic Compute Cloud](https://aws.amazon.com/ec2/) (Amazon EC2) は、Amazon Web Services(AWS) クラウドにおける高度にスケーラブルなコンピューティングプラットフォームです。Amazon EC2 は、前もってのハードウェアへの投資の必要性をなくし、お客様はアプリケーションのより迅速な開発とデプロイが可能となり、実際に使用した分のみの課金となります。EC2 が提供する主な機能として、インスタンスと呼ばれる仮想コンピューティング環境、Amazon マシンイメージと呼ばれるインスタンスの事前設定テンプレート、CPU、メモリ、ストレージ、ネットワーク容量などのリソース構成がインスタンスタイプとして利用可能です。
+[Amazon Elastic Compute Cloud](https://aws.amazon.com/ec2/) (Amazon EC2) は、Amazon Web Services(AWS) クラウドにおける高度にスケーラブルなコンピューティングプラットフォームです。Amazon EC2 は、前もってのハードウェアへの投資の必要性をなくし、お客様はアプリケーションのより迅速な開発とデプロイが可能となり、実際に使用した分のみの課金となります。EC2 が提供する主な機能として、インスタンスと呼ばれる仮想コンピューティング環境、インスタンスの事前設定テンプレートである Amazon マシンイメージ、CPU、メモリ、ストレージ、ネットワーク容量などのリソース構成がインスタンスタイプとして利用可能です。
 
 ## AWS ネイティブツールを使用したモニタリングとオブザーバビリティ
 
@@ -42,7 +42,7 @@ CloudWatch エージェントは、[コマンドライン](https://docs.aws.amaz
 
 #### AWS Systems Manager を使用したインストール
 
-CloudWatch エージェントは、[AWS Systems Manager](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html) を使用してもインストールできます。CloudWatch エージェントが Amazon EC2 インスタンスから情報を読み取り、それを CloudWatch に書き込み、AWS Systems Manager と通信できるアクセス許可を付与する IAM ロールを作成します。EC2 インスタンスに CloudWatch エージェントをインストールする前に、必要な EC2 インスタンスで [SSM エージェントをインストールまたは更新](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/download-CloudWatch-Agent-on-EC2-Instance-SSM-first.html#update-SSM-Agent-EC2instance-first) します。CloudWatch エージェントは AWS Systems Manager を通じてダウンロードできます。収集するメトリクス(カスタムメトリクスを含む)やログを指定する JSON 設定ファイルを作成できます。必要な IAM ロールが作成され、設定ファイルが作成されたら、必要な Amazon EC2 インスタンスで CloudWatch エージェントをインストールして実行できます。
+CloudWatch エージェントは、[AWS Systems Manager](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html) を使用してもインストールできます。CloudWatch エージェントが Amazon EC2 インスタンスから情報を読み取り、それを CloudWatch に書き込み、AWS Systems Manager と通信できるアクセス許可を付与する IAM ロールを作成します。EC2 インスタンスに CloudWatch エージェントをインストールする前に、必要な EC2 インスタンスで [SSM エージェントをインストールまたは更新](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/download-CloudWatch-Agent-on-EC2-Instance-SSM-first.html#update-SSM-Agent-EC2instance-first) します。CloudWatch エージェントは AWS Systems Manager を通じてダウンロードできます。収集するメトリクス(カスタムメトリクスを含む)とログを指定する JSON 設定ファイルを作成できます。必要な IAM ロールが作成され、設定ファイルが作成されたら、必要な Amazon EC2 インスタンスで CloudWatch エージェントをインストールして実行できます。
 
 !!! note "参考文献"
 
@@ -65,7 +65,7 @@ CloudWatch エージェントは、[AWS Systems Manager](https://docs.aws.amazon
 
 ### Amazon CloudWatch を使用した Amazon EC2 インスタンスのモニタリング
 
-Amazon EC2 インスタンスとアプリケーションの信頼性、可用性、パフォーマンスを維持するための重要な側面は、[継続的なモニタリング](https://catalog.workshops.aws/observability/ja-JP/aws-native/ec2-monitoring)です。必要な Amazon EC2 インスタンスに CloudWatch エージェントをインストールすることで、インスタンスの正常性とパフォーマンスを監視し、安定した環境を維持することが必要です。ベースラインとして、CPU 使用率、ネットワーク使用率、ディスクパフォーマンス、ディスク読み書き、メモリ使用率、ディスクスワップ使用率、ディスク空き容量、ページファイル使用率、EC2 インスタンスのログ収集などを推奨します。
+Amazon EC2 インスタンスとアプリケーションの信頼性、可用性、パフォーマンスを維持するための重要な側面は、[継続的なモニタリング](https://catalog.workshops.aws/observability/ja/aws-native/ec2-monitoring)です。必要な Amazon EC2 インスタンスに CloudWatch エージェントをインストールすることで、インスタンスの正常性とパフォーマンスを監視し、安定した環境を維持する必要があります。ベースラインとして、CPU 使用率、ネットワーク使用率、ディスクパフォーマンス、ディスク読み取り/書き込み、メモリ使用率、ディスクスワップ使用率、ディスク空き容量、ページファイル使用率、EC2 インスタンスのログ収集などを推奨します。
 
 #### 基本と詳細モニタリング
 
@@ -76,7 +76,7 @@ Amazon CloudWatch は、Amazon EC2 からの生データを収集し、リアル
 #### モニタリングの自動化ツールと手動ツール
 
 AWS は、Amazon EC2 のモニタリングと問題が発生した場合の報告を支援する自動化ツールと手動ツールの 2 種類を提供しています。これらのツールの一部は少しの設定が必要で、いくつかは手動の介入が必要です。
-[自動化モニタリングツール](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_automated_tools) には、AWS システムステータスチェック、インスタンスステータスチェック、Amazon CloudWatch アラーム、Amazon EventBridge、Amazon CloudWatch Logs、CloudWatch エージェント、Microsoft System Center Operations Manager 用 AWS Management Pack が含まれます。[手動モニタリング](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_manual_tools) ツールには、この記事で後述する個別のセクションで詳しく見ていくダッシュボードが含まれます。
+[自動化モニタリングツール](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_automated_tools) には、AWS システムステータスチェック、インスタンスステータスチェック、Amazon CloudWatch アラーム、Amazon EventBridge、Amazon CloudWatch Logs、CloudWatch エージェント、Microsoft System Center Operations Manager 用 AWS Management Pack が含まれます。[手動モニタリング](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_manual_tools) ツールには、この記事の下のセクションで詳しく見ていくダッシュボードが含まれます。
 
 !!! note "参考文献"
 
@@ -104,7 +104,7 @@ Amazon CloudWatch は、Amazon EC2 インスタンスからメトリクスを収
 
 #### CloudWatch エージェントを使用した追加のカスタムメトリクス
 
-CloudWatch エージェントは、EC2 インスタンスからカスタムメトリクスを収集することをサポートしています。いくつかの一般的な例は以下のとおりです。
+CloudWatch エージェントは、EC2 インスタンスからカスタムメトリクスを収集することをサポートしています。一般的な例をいくつか示します。
 
 - Elastic Network Adapter(ENA)を使用する Linux 上の EC2 インスタンスのネットワークパフォーマンスメトリクス。
 - Linux サーバーからの Nvidia GPU メトリクス。  
@@ -112,7 +112,7 @@ CloudWatch エージェントは、EC2 インスタンスからカスタムメ�
 
 ### CloudWatch エージェントを使用した Amazon EC2 インスタンスからのログ
 
-Amazon CloudWatch Logs は、既存のシステム、アプリケーション、カスタムのログファイルを使用して、システムとアプリケーションを近リアルタイムで監視およびトラブルシューティングするのに役立ちます。Amazon EC2 インスタンスやオンプレミスのサーバーから CloudWatch にログを収集するには、統合された CloudWatch エージェントをインストールする必要があります。ログと高度なメトリクスの両方を収集できる最新の統合された CloudWatch エージェントが推奨されます。また、さまざまなオペレーティングシステムをサポートしています。インスタンスがインスタンスメタデータサービスバージョン 2 (IMDSv2) を使用している場合は、統合エージェントが必要です。
+Amazon CloudWatch Logs は、既存のシステム、アプリケーション、カスタムのログファイルを使用して、システムとアプリケーションをほぼリアルタイムで監視およびトラブルシューティングするのに役立ちます。Amazon EC2 インスタンスとオンプレミスのサーバーから CloudWatch にログを収集するには、統合された CloudWatch エージェントをインストールする必要があります。統合された最新の CloudWatch エージェントが推奨されています。これはログと高度なメトリクスの両方を収集でき、さまざまなオペレーティングシステムをサポートしています。インスタンスがインスタンスメタデータサービスバージョン 2 (IMDSv2) を使用している場合、統合エージェントが必要です。
 
 ![cw-logs](../../../images/cw-logs.png)
 
@@ -159,7 +159,7 @@ AWS アカウント内のリソースのインベントリの詳細、リソー�
 
 #### CloudWatch の自動ダッシュボード
 
-自動ダッシュボードは、すべての AWS パブリックリージョンで利用でき、Amazon EC2 インスタンスを含むすべての AWS リソースの正常性とパフォーマンスの集約されたビューを CloudWatch で提供します。これにより、お客様はモニタリング、メトリクスとアラームのリソースベースのビューをすぐに開始し、パフォーマンスの問題の根本原因を簡単に特定できます。自動ダッシュボードは、AWS サービスの推奨 [ベストプラクティス](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で構築されており、リソースを意識した状態を維持し、重要なパフォーマンスメトリクスの最新の状態を動的に反映するように更新されます。
+自動ダッシュボードは、すべての AWS パブリックリージョンで利用でき、Amazon EC2 インスタンスを含むすべての AWS リソースの正常性とパフォーマンスの集約されたビューを CloudWatch で提供します。これにより、お客様はモニタリング、メトリクスとアラームのリソースベースのビューをすぐに開始し、パフォーマンスの問題の根本原因を簡単に特定できます。自動ダッシュボードは、AWS サービスの推奨 [ベストプラクティス](https://docs.aws.amazon.com/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で事前構築されており、リソースを意識した状態を維持し、重要なパフォーマンスメトリクスの最新の状態を動的に反映するように更新されます。
 
 ![ec2 ダッシュボード](../../../images/ec2-auto-dashboard.png)
 
@@ -183,15 +183,15 @@ CloudWatch ServiceLens のリソースヘルスは、お客様がアプリケー
 
 ![AWS Distro for Open Telemetry の概要](../../../images/adot.png)
 
-AWS Distro for OpenTelemetry(ADOT) は、アプリケーションのパフォーマンスと正常性を監視するためにデータを相関付けることができる分散型モニタリングフレームワークを提供します。これは、サービスの可視性とメンテナンスを向上させる上で重要です。
+AWS Distro for OpenTelemetry(ADOT) は、アプリケーションのパフォーマンスと正常性を監視するためにデータを相関付けることを容易にする分散型モニタリングフレームワークを提供します。これは、サービスの可視性とメンテナンスを向上させる上で重要です。
 
-ADOT の主なコンポーネントは、SDK、自動インスツルメンテーションエージェント、コレクタ、バックエンドサービスにデータを送信するエクスポータです。
+ADOT の主なコンポーネントは、SDK、自動インスツルメンテーション エージェント、コレクター、バックエンドサービスにデータを送信するエクスポーターです。
 
-[OpenTelemetry SDK](https://github.com/aws-observability): AWS リソース固有のメタデータの収集を可能にするために OpenTelemetry SDK へのサポートを追加し、X-Ray トレースフォーマットとコンテキストのサポートを追加します。OpenTelemetry SDK は、AWS X-Ray および CloudWatch からインジェストされたトレースデータとメトリクスデータを相関付けることができます。
+[OpenTelemetry SDK](https://github.com/aws-observability): AWS リソース固有のメタデータの収集を可能にするために、X-Ray トレースフォーマットとコンテキストの OpenTelemetry SDK へのサポートを追加します。OpenTelemetry SDK は、AWS X-Ray および CloudWatch からインジェストされたトレースデータとメトリクスデータを相関付けることができます。
 
-[自動インスツルメンテーションエージェント](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr): OpenTelemetry Java 自動インスツルメンテーションエージェントに、AWS SDK と AWS X-Ray トレースデータのサポートが追加されています。
+[自動インスツルメンテーションエージェント](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr): AWS SDK および AWS X-Ray トレースデータ用の OpenTelemetry Java 自動インスツルメンテーションエージェントへのサポートを追加しました。
 
-[OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector): このディストリビューションのコレクタは、アップストリームの OpenTelemetry コレクタを使用して構築されています。 アップストリームコレクタに、AWS X-Ray、Amazon CloudWatch、Amazon Managed Service for Prometheus を含む AWS サービスにデータを送信する AWS 専用のエクスポータが追加されています。
+[OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector): このディストリビューションのコレクターは、アップストリームの OpenTelemetry コレクターを使用して構築されています。 アップストリームコレクターに、AWS X-Ray、Amazon CloudWatch、Amazon Managed Service for Prometheus を含む AWS サービスにデータを送信する AWS 専用のエクスポーターを追加しました。
 
 ![adot アーキテクチャ](../../../images/adot-arch.png)
 
@@ -199,7 +199,7 @@ ADOT の主なコンポーネントは、SDK、自動インスツルメンテー
 
 AWS Distro for OpenTelemetry (ADOT) Collector は、CloudWatch エージェントとともに Amazon EC2 インスタンスにインストールでき、OpenTelemetry SDK を使用して Amazon EC2 インスタンスで実行されているワークロードからアプリケーショントレースとメトリクスを収集できます。
 
-OpenTelemetry メトリクスを Amazon CloudWatch でサポートするために、[AWS EMF Exporter for OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) は OpenTelemetry 形式のメトリクスを CloudWatch Embedded Metric Format(EMF)に変換します。これにより、OpenTelemetry メトリクスに統合されたアプリケーションが、高基数のアプリケーションメトリクスを CloudWatch に送信できるようになります。 [The X-Ray exporter](https://aws-otel.github.io/docs/getting-started/x-ray#configuring-the-aws-x-ray-exporter) を使用すると、OTLP 形式で収集されたトレースを [AWS X-ray](https://aws.amazon.com/xray/) にエクスポートできます。
+OpenTelemetry メトリクスを Amazon CloudWatch でサポートするために、[AWS EMF Exporter for OpenTelemetry Collector](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) は OpenTelemetry 形式のメトリクスを CloudWatch Embedded Metric Format(EMF)に変換します。これにより、OpenTelemetry メトリクスに統合されたアプリケーションが、高基数のアプリケーションメトリクスを CloudWatch に送信できるようになります。[The X-Ray exporter](https://aws-otel.github.io/docs/getting-started/x-ray#configuring-the-aws-x-ray-exporter) を使用すると、OTLP 形式で収集されたトレースを [AWS X-ray](https://aws.amazon.com/xray/) にエクスポートできます。
 
 ![adot emf architecture](../../../images/adot-emf.png)
 
@@ -219,12 +219,10 @@ EC2 インスタンス上の CloudWatch エージェントは、Prometheus と�
 
 #### Prometheus と ADOT Collector によるメトリクス
 
-お客様は、オブザーバビリティのニーズのために、オープンソースのセットアップを選択できます。 
-これには、AWS Distro for OpenTelemetry (ADOT) Collector を設定して、Prometheus で計装されたアプリケーションからスクレイプし、メトリクスを Prometheus サーバーに送信できます。 
+お客様は、オブザーバビリティのニーズのために、オープンソースのセットアップを選択できます。
+これには、AWS Distro for OpenTelemetry (ADOT) Collector を設定して、Prometheus で計装されたアプリケーションからスクレイプし、メトリクスを Prometheus サーバーに送信できます。
 このフローには、Prometheus Receiver、Prometheus Remote Write Exporter、Sigv4 Authentication Extension の 3 つの OpenTelemetry コンポーネントが関与しています。
-Prometheus Receiver は、Prometheus 形式のメトリックデータを受信します。
-Prometheus Exporter は、Prometheus 形式でデータをエクスポートします。
-Sigv4 Authenticator 拡張機能は、AWS サービスへのリクエストに Sigv4 認証を提供します。
+Prometheus Receiver は Prometheus 形式のメトリクスデータを受信します。Prometheus Exporter は Prometheus 形式でデータをエクスポートします。Sigv4 Authenticator 拡張機能は、AWS サービスへのリクエストに Sigv4 認証を提供します。
 
 ![adot prometheus architecture](../../../images/adot-prom-arch.png)
 
@@ -244,7 +242,7 @@ Sigv4 Authenticator 拡張機能は、AWS サービスへのリクエストに S
 
 ![fluent architecture](../../../images/fluent-arch.png)
 
-Fluent Bit は、Amazon EC2 からのログを Amazon CloudWatch などの AWS サービスにストリーミングするための簡単な拡張ポイントを作成するのに役立ちます。ログの保持と分析には Amazon CloudWatch を使用します。新しくリリースされた [Fluent Bit プラグイン](https://github.com/aws/amazon-cloudwatch-logs-for-fluent-bit#new-higher-performance-core-fluent-bit-plugin) を使用すると、ログを Amazon CloudWatch にルーティングできます。
+Fluent Bit は、Amazon EC2 からのログを Amazon CloudWatch などの AWS サービスにストリーミングするための簡単な拡張ポイントを作成するのに役立ちます。ログの保持と分析に使用されます。新しくリリースされた [Fluent Bit プラグイン](https://github.com/aws/amazon-cloudwatch-logs-for-fluent-bit#new-higher-performance-core-fluent-bit-plugin) を使用すると、ログを Amazon CloudWatch にルーティングできます。
 
 ### Amazon Managed Grafana によるダッシュボード
 
@@ -252,7 +250,7 @@ Fluent Bit は、Amazon EC2 からのログを Amazon CloudWatch などの AWS �
 
 ![grafana overview](../../../images/grafana-overview.png)
 
-Grafana ワークスペースコンソールの AWS データソース構成オプションを使用して、Amazon Managed Grafana に Amazon CloudWatch をデータソースとして追加できます。この機能により、既存の CloudWatch アカウントを検出し、CloudWatch へのアクセスに必要な認証情報の構成を管理することで、CloudWatch をデータソースとして簡単に追加できます。Amazon Managed Grafana は [Prometheus データソース](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)もサポートしています。つまり、セルフマネージドの Prometheus サーバーと Amazon Managed Service for Prometheus ワークスペースの両方をデータソースとして使用できます。
+Grafana ワークスペースコンソールの AWS データソース構成オプションを使用して、Amazon Managed Grafana に Amazon CloudWatch をデータソースとして追加できます。この機能により、既存の CloudWatch アカウントを検出し、CloudWatch へのアクセスに必要な認証情報の構成を管理することで、CloudWatch をデータソースとして簡単に追加できます。Amazon Managed Grafana は [Prometheus データソース](https://docs.aws.amazon.com/grafana/latest/userguide/prometheus-data-source.html)もサポートしています。つまり、セルフマネージドの Prometheus サーバーと Amazon Managed Service for Prometheus ワークスペースの両方がデータソースとして利用できます。
 
 Amazon Managed Grafana にはさまざまなパネルが用意されているため、適切なクエリの構築や表示プロパティのカスタマイズが簡単に行え、必要なダッシュボードを作成できます。
 
@@ -262,4 +260,4 @@ Amazon Managed Grafana にはさまざまなパネルが用意されているた
 
 モニタリングにより、システムが適切に機能しているかどうかを把握できます。オブザーバビリティにより、システムが適切に機能していない理由を理解できます。優れたオブザーバビリティにより、気づく必要があるとは思わなかった疑問に答えることができます。モニタリングとオブザーバビリティは、システムの出力から推測できる内部状態を測定する道を開きます。
 
-マイクロサービス、サーバーレス、非同期アーキテクチャでクラウド上で実行されているモダンアプリケーションは、メトリクス、ログ、トレース、イベントの形式で大量のデータを生成します。Amazon CloudWatch と Amazon Distro for OpenTelemetry、Amazon Managed Prometheus、Amazon Managed Grafana などのオープンソースツールにより、顧客はこのデータを統一プラットフォームで収集、アクセス、相関付けることができます。データサイロを壊し、システム全体の可視性を容易に得て、問題を迅速に解決できるよう支援します。
+マイクロサービス、サーバーレス、非同期アーキテクチャでクラウド上で実行されているモダンアプリケーションは、メトリクス、ログ、トレース、イベントの形式で大量のデータを生成します。Amazon CloudWatch と Amazon Distro for OpenTelemetry、Amazon Managed Prometheus、Amazon Managed Grafana などのオープンソースツールにより、顧客はこのデータを統一プラットフォームで収集、アクセス、相関付けることができます。データサイロを壊すことで、システム全体の可視性を容易に得て、問題を迅速に解決できるよう支援します。

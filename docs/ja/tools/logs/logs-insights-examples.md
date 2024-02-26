@@ -12,7 +12,7 @@ CloudWatch Logs Insights は、次のカテゴリのためのサンプルクエ�
 - AWS AppSync
 - NAT ゲートウェイ
 
-このベストプラクティスガイドのこのセクションでは、現在ボックス付属のサンプルに含まれていないその他のタイプのログのサンプルクエリをいくつか提供します。 このリストは時間の経過とともに進化し変化するでしょう。GitHub で [issue](https://github.com/aws-observability/observability-best-practices/issues) を残すことで、独自のサンプルをレビューのために送信できます。
+このベストプラクティスガイドのこのセクションでは、現在ボックス付属のサンプルには含まれていないその他のタイプのログのサンプルクエリをいくつか提供します。 このリストは時間の経過とともに進化し変化するでしょう。GitHub で [issue](https://github.com/aws-observability/observability-best-practices/issues) を残すことで、独自のサンプルをレビューのために送信できます。
 
 ## API Gateway
 
@@ -73,7 +73,21 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 
 !!! tip
     
-    このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)する必要があります。
+    このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) する必要があります。
+
+### ライングラフでのルートアカウントアクティビティ
+
+```
+fields @timestamp, @message, userIdentity.type 
+| filter userIdentity.type='Root' 
+| stats count() as RootActivity by bin(5m)
+```
+
+このクエリを使用すると、ルートアカウントのアクティビティをライングラフで視覚化できます。このクエリは時間経過とともにルートアクティビティを集計し、5 分ごとの区間内でのルートアクティビティの発生回数をカウントします。
+
+!!! tip
+    
+     [グラフでログデータを視覚化する](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)
 
 ## VPC フローログ
 
@@ -85,7 +99,7 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP'
 | limit 20
 ```
 
-このクエリは、$SOURCEIP からの「REJECT」を含む直近 20 件のログメッセージを返します。これにより、トラフィックが明示的に拒否されているか、クライアント側のネットワーク構成の問題があるかどうかを検出できます。
+このクエリは、$SOURCEIP からの「REJECT」を含む直近 20 件のログメッセージを返します。これは、トラフィックが明示的に拒否されているか、クライアント側のネットワーク構成の問題があるかどうかを検出するために使用できます。 
 
 !!! tip
     '$SOURCEIP' を調べたい IP アドレスの値に置き換えてください。
@@ -95,3 +109,31 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' 
 | sort @timestamp desc
 | limit 20
 ```
+
+### アベイラビリティゾーン別にネットワークトラフィックをグルーピング
+
+```
+stats sum(bytes / 1048576) as Traffic_MB by azId as AZ_ID 
+| sort Traffic_MB desc
+```
+
+このクエリは、アベイラビリティゾーン(AZ)別にネットワークトラフィックデータを取得します。バイト数を合計してメガバイト(MB)に変換することで、トラフィックの総量を計算します。結果は、各 AZ のトラフィック量を基準に降順で並べ替えられます。
+
+### フロー方向別にネットワークトラフィックをグルーピング
+
+```
+stats sum(bytes / 1048576) as Traffic_MB by flowDirection as Flow_Direction 
+| sort by Bytes_MB desc
+```
+
+このクエリは、フロー方向(イングレスまたはエグレス)でグループ化されたネットワークトラフィックを分析するように設計されています。
+
+### 送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送
+
+```
+stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAddr as Destination_IP 
+| sort Data_Transferred_MB desc 
+| limit 10
+```
+
+このクエリは、送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送を取得します。このクエリにより、特定の送信元 IP アドレスと送信先 IP アドレス間で最も大きなデータ転送を特定できます。

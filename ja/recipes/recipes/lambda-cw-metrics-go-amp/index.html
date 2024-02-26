@@ -16,11 +16,11 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
-        <title>CloudWatch メトリックストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする - AWS Observability Best Practices</title>
+        <title>CloudWatch メトリクスストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする - AWS Observability Best Practices</title>
       
     
     
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              CloudWatch メトリックストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする
+              CloudWatch メトリクスストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする
             
           </span>
         </div>
@@ -3374,8 +3374,8 @@
   
 
 
-<h1 id="cloudwatch-firehose-aws-lambda-amazon-managed-service-for-prometheus">CloudWatch メトリックストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする<a class="headerlink" href="#cloudwatch-firehose-aws-lambda-amazon-managed-service-for-prometheus" title="Permanent link">&para;</a></h1>
-<p>このレシピでは、<a href="https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList">CloudWatch メトリックストリーム</a> を計装し、<a href="https://aws.amazon.com/kinesis/data-firehose/">Kinesis Data Firehose</a> と <a href="https://aws.amazon.com/lambda">AWS Lambda</a> を使用してメトリクスを <a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus (AMP)</a> にインジェストする方法を示します。</p>
+<h1 id="cloudwatch-firehose-aws-lambda-amazon-managed-service-for-prometheus">CloudWatch メトリクスストリームを Firehose と AWS Lambda 経由で Amazon Managed Service for Prometheus にエクスポートする<a class="headerlink" href="#cloudwatch-firehose-aws-lambda-amazon-managed-service-for-prometheus" title="Permanent link">&para;</a></h1>
+<p>このレシピでは、<a href="https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList">CloudWatch メトリクスストリーム</a> を計装し、<a href="https://aws.amazon.com/kinesis/data-firehose/">Kinesis Data Firehose</a> と <a href="https://aws.amazon.com/lambda">AWS Lambda</a> を使用してメトリクスを <a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus (AMP)</a> にインジェストする方法を示します。</p>
 <p><a href="https://aws.amazon.com/cdk/">AWS Cloud Development Kit (CDK)</a> を使用して、Firehose デリバリーストリーム、Lambda、S3 バケットを作成するスタックを設定し、完全なシナリオをデモンストレーションします。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3383,7 +3383,7 @@
 </div>
 <h2 id="_1">インフラストラクチャ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>このレシピのインフラストラクチャを設定します。</p>
-<p>CloudWatch メトリックストリームを使用すると、ストリーミングメトリックデータを HTTP エンドポイントや <a href="https://aws.amazon.com/jp/s3">S3 バケット</a> に転送できます。</p>
+<p>CloudWatch メトリクスストリームを使用すると、ストリーミングメトリクスデータを HTTP エンドポイントや <a href="https://aws.amazon.com/jp/s3">S3 バケット</a> に転送できます。</p>
 <h3 id="_2">前提条件<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <ul>
 <li>AWS CLI がインストールされ、環境に<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html">構成</a>されていること。</li>
@@ -3442,13 +3442,13 @@ CDK と Lambda コードをビルドするには、リポジトリのルート�
 </span></code></pre></div>
 <p><code>CDK Stack</code> という名前のスタックが作成されているはずです。</p>
 <h2 id="cloudwatch">CloudWatch ストリームの作成<a class="headerlink" href="#cloudwatch" title="Permanent link">&para;</a></h2>
-<p>CloudWatch コンソール(例: <code>https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList</code>)に移動し、「メトリックストリームの作成」をクリックします。</p>
-<p>必要なメトリクス(すべての名前空間のすべてのメトリクス、または選択した名前空間からのメトリクス)を選択します。</p>
-<p>CDK によって作成された既存の Firehose を使用して、メトリックストリームを構成します。
-出力形式を OpenTelemetry 0.7 ではなく JSON に変更します。
-メトリックストリームの名前を好みに応じて変更し、「メトリックストリームの作成」をクリックします。</p>
-<p><img alt="Cloudwatch メトリックストリーム構成のスクリーンショット" src="../../images/cloudwatch-metric-stream-configuration.png" /></p>
-<p>Lambda 関数の呼び出しを確認するには、<a href="https://console.aws.amazon.com/lambda/home">Lambda コンソール</a>に移動し、関数 <code>KinesisMessageHandler</code> をクリックします。<code>Monitor</code> タブと <code>Logs</code> サブタブをクリックし、<code>Recent Invocations</code> の下に Lambda 関数のトリガーのエントリが表示されている必要があります。</p>
+<p>例えば <code>https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList</code> のように CloudWatch コンソールに移動し、「メトリクスストリームの作成」をクリックします。</p>
+<p>必要なメトリクスを選択します。名前空間のすべてのメトリクスまたは選択した名前空間からのみを選択できます。 </p>
+<p>CDK によって作成された既存の Firehose を使用して、メトリクスストリームを構成します。
+出力形式を OpenTelemetry 0.7 の代わりに JSON に変更します。
+メトリクスストリーム名を好みの名前に変更し、「メトリクスストリームの作成」をクリックします。</p>
+<p><img alt="Cloudwatch メトリクスストリーム構成のスクリーンショット" src="../../images/cloudwatch-metric-stream-configuration.png" /></p>
+<p>Lambda 関数の呼び出しを確認するには、<a href="https://console.aws.amazon.com/lambda/home">Lambda コンソール</a>に移動し、関数 <code>KinesisMessageHandler</code> をクリックします。 <code>Monitor</code> タブと <code>Logs</code> サブタブをクリックし、<code>Recent Invocations</code> の下に Lambda 関数がトリガーされたエントリが表示されるはずです。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Monitor タブに呼び出しが表示されるまでに最大 5 分かかる場合があります。</p>
@@ -3463,7 +3463,7 @@ CDK と Lambda コードをビルドするには、リポジトリのルート�
 <div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>aws amp delete-workspace --workspace-id \
 </span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>    `aws amp list-workspaces --alias prometheus-sample-app --query &#39;workspaces[0].workspaceId&#39; --output text`
 </span></code></pre></div>
-<p>最後に、コンソールからメトリックストリームを削除してください。</p>
+<p>最後に、コンソールからメトリクスストリームを削除してください。</p>
 
 
 

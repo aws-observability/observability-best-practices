@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3752,7 +3752,7 @@
 </ul>
 <p>AWS は、ネイティブとオープンソースの両方のツールを提供して、ログの記録、メトリクスのモニタリング、トレースの取得を容易にし、AWS Lambda アプリケーションの実行可能なインサイトを取得できるようにしています。</p>
 <h2 id="_2"><strong>ログ</strong><a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>このオブザーバビリティのベストプラクティスガイドのセクションでは、次のトピックを深く掘り下げます。</p>
+<p>このオブザーバビリティのベストプラクティスガイドのセクションでは、次のトピックを深掘りします。</p>
 <ul>
 <li>構造化されていないログと構造化されたログ</li>
 <li>CloudWatch Logs Insights</li>
@@ -3779,16 +3779,16 @@
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>   &quot;cold-start&quot;: true
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>}
 </span></code></pre></div>
-<p>トランザクション、異なるコンポーネント間の相関 ID、アプリケーションからのビジネスアウトカムなど、運用に関する情報をエミットするために、<strong>CloudWatch ログへの構造化された集中ロギングを推奨します。</strong></p>
+<p>トランザクションに関する運用情報、異なるコンポーネント間の相関 ID、アプリケーションからのビジネスアウトカムを発行するために、<strong>CloudWatch ログへの構造化された集中ログを推奨します。</strong></p>
 <h3 id="cloudwatch-logs-insights"><strong>CloudWatch Logs Insights</strong><a class="headerlink" href="#cloudwatch-logs-insights" title="Permanent link">&para;</a></h3>
 <p>JSON 形式のログにあるフィールドを自動的に検出できる CloudWatch Logs Insights を使用します。
-さらに、JSON ログはアプリケーション固有のカスタムメタデータをログに記録して拡張でき、これを使用してログを検索、フィルタリング、集計できます。</p>
+さらに、JSON ログはカスタムメタデータをログに記録して拡張でき、これを使用してログを検索、フィルタリング、集計できます。</p>
 <h3 id="id"><strong>ログの相関ID</strong><a class="headerlink" href="#id" title="Permanent link">&para;</a></h3>
-<p>たとえば、API Gateway からの HTTP リクエストの場合、相関 ID は <code>requestContext.requestId</code> パスに設定されます。これは、Lambda Powertools を使用して簡単に抽出し、下流の Lambda 関数でログに記録できます。分散システムは、リクエストを処理するために複数のサービスとコンポーネントが協調して動作することがよくあります。したがって、相関 ID のログ記録と、それを下流システムに渡すことが、エンドツーエンドのトレースとデバッグに不可欠です。相関 ID とは、リクエストの最初に割り当てられる一意の識別子です。リクエストがさまざまなサービスを通過するにつれて、相関 ID がログに含まれるため、リクエストの経路全体をトレースできます。相関 ID を AWS Lambda ログに手動で挿入するか、<a href="https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id">AWS Lambda Powertools</a> のようなツールを使用して、API Gateway から相関 ID を取得し、アプリケーションログとともに簡単に記録できます。たとえば、HTTP リクエストの相関 ID は、API Gateway で開始され、Lambda 関数などのバックエンドサービスに渡される request-id になります。</p>
+<p>たとえば、API Gateway からの HTTP リクエストの場合、相関 ID は <code>requestContext.requestId</code> パスに設定されます。これは、Lambda Powertools を使用して簡単に抽出し、下流の Lambda 関数でログに記録できます。分散システムは、リクエストを処理するために複数のサービスとコンポーネントが協調して動作することがよくあります。したがって、相関 ID のログ記録と、それを下流システムに渡すことが、エンドツーエンドのトレースとデバッグに不可欠です。相関 ID とは、リクエストの最初に割り当てられる一意の識別子です。リクエストがさまざまなサービスを通過するにつれて、相関 ID がログに含まれるため、リクエストの経路全体をトレースできます。相関 ID を AWS Lambda ログに手動で挿入するか、<a href="https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id">AWS Lambda Powertools</a> のようなツールを使用して、API Gateway から相関 ID を取得し、アプリケーションログとともに簡単に記録できます。たとえば、HTTP リクエストの相関 ID は、API Gateway で開始され、Lambda 関数などのバックエンドサービスに渡されるリクエスト ID になります。</p>
 <h3 id="lambda-powertools"><strong>Lambda Powertools を使用したコードサンプル</strong><a class="headerlink" href="#lambda-powertools" title="Permanent link">&para;</a></h3>
 <p>ベストプラクティスとして、リクエストライフサイクルのできるだけ早い段階で相関IDを生成することをおすすめします。サーバレスアプリケーションのエントリーポイント、たとえば API Gateway やアプリケーションロードバランサーなどで生成することが理想的です。UUIDやリクエストID、分散システム全体でリクエストを追跡できるその他のユニークな属性を使用してください。相関IDをカスタムヘッダー、本文、メタデータのいずれかの部分として、各リクエストとともに渡してください。相関IDがダウンストリームサービスのすべてのログエントリとトレースに含まれていることを確認してください。</p>
 <p>相関IDをLambda関数のログの一部として手動でキャプチャして含めるか、<a href="https://docs.powertools.aws.dev/lambda/python/latest/core/logger/#setting-a-correlation-id">AWS Lambda Powertools</a> などのツールを使用できます。Lambda Powertoolsを使用すると、サポートされているアップストリームサービスの事前定義されたリクエスト <a href="https://github.com/aws-powertools/powertools-lambda-python/blob/08a0a7b68d2844d36c33ab8156640f4ea9632d0c/aws_lambda_powertools/logging/correlation_paths.py">パスマッピング</a> から簡単に相関IDを取得し、アプリケーションログとともに自動的に追加できます。また、障害が発生した場合に失敗の根本原因を特定し、元のリクエストに結び付けることができるよう、エラーメッセージにも相関IDが追加されていることを確認してください。</p>
-<p>以下のサーバレスアーキテクチャに対して、相関IDを用いた構造化ログとCloudWatchでの表示方法をデモするコードサンプルを見ていきましょう。</p>
+<p>以下のサーバレスアーキテクチャに対して、相関IDを使用した構造化ログとCloudWatchでの表示方法をデモするコードサンプルを見ていきましょう。</p>
 <p><img alt="architecture" src="../../../../images/Serverless/aws-native/apigw_lambda.png" /></p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>// Initializing Logger
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>Logger log = LogManager.getLogger();
@@ -3802,8 +3802,8 @@
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>  ...
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>}
 </span></code></pre></div>
-<p>この例では、JavaベースのLambda関数がLambda Powertoolsライブラリを使用して、APIゲートウェイリクエストからの<code>相関ID</code>をログに記録しています。</p>
-<p>コードサンプルのCloudWatchログの例:</p>
+<p>この例では、JavaベースのLambda関数がLambda Powertoolsライブラリを使用して、APIゲートウェイリクエストからの <code>correlation_id</code> をログに記録しています。</p>
+<p>コードサンプルのCloudWatchログのサンプル:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>{
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>   &quot;level&quot;: &quot;INFO&quot;,
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>   &quot;message&quot;: &quot;Success&quot;,
@@ -3813,15 +3813,16 @@
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>   &quot;correlation_id&quot;: &quot;&lt;correlation_id_value&gt;&quot;
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>}_
 </span></code></pre></div>
+<p></correlation_id_value></p>
 <h3 id="cloudwatch"><strong>CloudWatch ダッシュボードを使用したログの視覚化</strong><a class="headerlink" href="#cloudwatch" title="Permanent link">&para;</a></h3>
-<p>ログデータを構造化 JSON 形式で記録すると、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWatch Logs Insights</a> が自動的に JSON 出力内の値を検出し、メッセージをフィールドとして解析します。CloudWatch Logs Insights は、複数のログストリームを検索およびフィルタリングするための目的構築型の <a href="https://serverlessland.com/snippets?type=CloudWatch+Logs+Insights">SQL ライクなクエリ</a> 言語を提供します。グロブおよび正規表現パターンマッチングを使用して、複数のロググループに対してクエリを実行できます。さらに、カスタムクエリを記述して保存し、再実行するたびに再作成する必要がないようにすることもできます。</p>
+<p>ログデータを構造化 JSON 形式で記録すると、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWatch Logs Insights</a> が自動的に JSON 出力内の値を検出し、メッセージをフィールドとして解析します。CloudWatch Logs Insights は、複数のログストリームを検索およびフィルタリングするための目的構築型の <a href="https://serverlessland.com/snippets?type=CloudWatch+Logs+Insights">SQL ライクなクエリ</a> 言語を提供します。glob および正規表現パターンマッチングを使用して、複数のロググループに対してクエリを実行できます。さらに、カスタムクエリを記述して保存し、再実行するたびに再作成する必要がないようにすることもできます。</p>
 <p><img alt="CloudWatch ダッシュボード" src="../../../../images/Serverless/aws-native/cw_dashboard.png" />
 CloudWatch Logs Insights では、1 つ以上の集計関数を使用したクエリから、折れ線グラフ、棒グラフ、積み上げ面グラフなどの視覚化を生成できます。その後、これらの視覚化を簡単に CloudWatch ダッシュボードに追加できます。以下のサンプルダッシュボードは、Lambda 関数の実行時間のパーセンタイルレポートを示しています。このようなダッシュボードにより、アプリケーションのパフォーマンスを改善する必要がある部分をすばやく把握できます。平均待ち時間を見ることは有用ですが、<strong>「平均待ち時間ではなく p99 を最適化することを目指すべきです」</strong>。</p>
 <p><img alt="CloudWatch ダッシュボード" src="../../../../images/Serverless/aws-native/cw_percentile.png" /></p>
-<p>ログを CloudWatch 以外の場所に送信するには、Lambda 拡張機能を使用した <a href="https://docs.aws.amazon.com/lambda/latest/dg/telemetry-api.html">Lambda Telemetry API</a> を使用できます。 いくつかの<a href="https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html">パートナーソリューション</a> は、Lambda Telemetry API を使用する Lambda レイヤーを提供し、それらのシステムとの統合を容易にしています。</p>
+<p>ログを CloudWatch 以外の場所に送信するには、Lambda 拡張機能を使用した <a href="https://docs.aws.amazon.com/lambda/latest/dg/telemetry-api.html">Lambda Telemetry API</a> を使用できます。 いくつかの<a href="https://docs.aws.amazon.com/lambda/latest/dg/extensions-api-partners.html">パートナーソリューション</a> は、Lambda Telemetry API を使用する Lambda レイヤーを提供し、システムとの統合を容易にしています。</p>
 <p>CloudWatch Logs Insights を最大限に活用するには、構造化ロギングの形式でログにインジェストする必要があるデータについて考えることが大切です。これにより、アプリケーションの正常性をより適切に監視できます。</p>
 <h3 id="cloudwatch-logs"><strong>CloudWatch Logs の保持期間</strong><a class="headerlink" href="#cloudwatch-logs" title="Permanent link">&para;</a></h3>
-<p>デフォルトでは、Lambda 関数内の stdout に書き込まれたすべてのメッセージは、Amazon CloudWatch のログストリームに保存されます。Lambda 関数の実行ロールには、CloudWatch ログストリームの作成と、ストリームへのログイベントの書き込みの許可が必要です。CloudWatch は取り込まれたデータ量と使用されたストレージによって課金されることに注意することが重要です。したがって、ログ量を減らすことで、関連コストを最小限に抑えるのに役立ちます。 <strong><code>デフォルトでは、CloudWatch ログは無期限に保持され、期限切れになりません。ログストレージコストを削減するために、ログの保持ポリシーを設定することをお勧めします</code></strong> 。これをすべてのロググループに適用します。環境ごとに異なる保持ポリシーが必要な場合もあるでしょう。ログの保持は AWS コンソールで手動で設定できますが、一貫性とベストプラクティスを確保するために、Infrastructure as Code (IaC) のデプロイの一部として設定する必要があります。以下は、Lambda 関数のログ保持を設定する方法を示すサンプルの CloudFormation テンプレートです:</p>
+<p>デフォルトでは、Lambda 関数内の stdout に書き込まれたすべてのメッセージが Amazon CloudWatch のログストリームに保存されます。Lambda 関数の実行ロールには、CloudWatch ログストリームの作成と、ストリームへのログイベントの書き込みの許可が必要です。CloudWatch は取り込まれたデータ量と使用されたストレージによって課金されることに注意することが重要です。したがって、ログ量を減らすことで、関連コストを最小限に抑えるのに役立ちます。<strong><code>デフォルトでは、CloudWatch ログは無期限に保持され、期限切れになりません。ログストレージコストを削減するために、ログの保持ポリシーを設定することをお勧めします</code></strong>、そしてそれをすべてのロググループに適用します。環境ごとに異なる保持ポリシーが必要な場合もあるでしょう。ログの保持は AWS コンソールで手動で設定できますが、一貫性とベストプラクティスを確保するために、Infrastructure as Code (IaC) のデプロイの一部として設定する必要があります。以下は、Lambda 関数のログ保持を設定する方法を示すサンプルの CloudFormation テンプレートです:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>Resources:
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>  Function:
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    Type: AWS::Serverless::Function
@@ -3839,7 +3840,7 @@ CloudWatch Logs Insights では、1 つ以上の集計関数を使用したク�
 </span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>      # Explicit retention time
 </span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>      RetentionInDays: 7
 </span></code></pre></div>
-<p>この例では、Lambda 関数と対応するロググループを作成しました。<strong><code>RetentionInDays</code></strong> プロパティは <strong>7 日に設定されて</strong>おり、このロググループのログは 7 日間保持された後、自動的に削除されるため、ログストレージコストの制御に役立ちます。</p>
+<p>この例では、Lambda 関数と対応するロググループを作成しました。<strong><code>RetentionInDays</code></strong> プロパティは <strong>7 日に設定されて</strong>おり、このロググループのログは 7 日間保持され、その後自動的に削除されることを意味します。これにより、ログストレージコストを制御できます。</p>
 <h2 id="_4"><strong>メトリクス</strong><a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>このオブザーバビリティのベストプラクティスガイドのセクションでは、次のトピックを深掘りします:</p>
 <ul>
@@ -3852,18 +3853,18 @@ CloudWatch Logs Insights では、1 つ以上の集計関数を使用したク�
 <h3 id="_5"><strong>標準で提供されるメトリクスの監視とアラートの設定</strong><a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>メトリクスとは、さまざまな時間間隔(時系列データ)で測定された数値データやサービスレベルインジケーター(リクエストレート、エラーレート、持続時間、CPU など)のことです。AWS サービスは、アプリケーションの運用状態を監視するのに役立つ、多数の標準のメトリクスを提供しています。アプリケーションに適用可能な主要メトリクスを確立し、それらを使用してアプリケーションのパフォーマンスを監視してください。主要メトリクスの例として、関数のエラー、キューの深さ、状態マシンの失敗した実行、API の応答時間などがあります。</p>
 <p>標準で提供されるメトリクスの課題の 1 つは、CloudWatch ダッシュボードでそれらを分析する方法が分からないことです。たとえば、同時実行数を見る場合、最大値、平均値、パーセンタイルのどれを見ればよいのでしょうか。また、監視するための適切な統計情報は、メトリクスごとに異なります。</p>
-<p>ベストプラクティスとして、Lambda 関数の <code>ConcurrentExecutions</code> メトリクスでは、アカウントとリージョンの制限に近づいているか、該当する場合は Lambda の予約済み同時実行数の制限に近づいているかを確認するために、<code>Count</code> 統計を見る必要があります。関数がイベントを処理するのにかかる時間を示す <code>Duration</code> メトリクスの場合は、<code>Average</code> または <code>Max</code> の統計を見てください。API のレイテンシを測定する場合は、API Gateway の <code>Latency</code> メトリクスの <code>Percentile</code> 統計を見てください。P50、P90、P99 は、平均値によるレイテンシの監視よりもるかに優れた方法です。</p>
-<p>監視するメトリクスが分かったら、これらの主要メトリクスにアラートを設定し、アプリケーションのコンポーネントが不健全なときに通知を受け取れるようにしてください。例:</p>
+<p>ベストプラクティスとして、Lambda 関数の <code>ConcurrentExecutions</code> メトリクスでは、アカウントとリージョンの制限に近づいているか、該当する場合は Lambda の予約済み同時実行数の制限に近づいているかを確認するために、<code>Count</code> 統計を見てください。関数がイベントを処理するのにかかる時間を示す <code>Duration</code> メトリクスの場合は、<code>Average</code> または <code>Max</code> の統計を見てください。API のレイテンシを測定する場合は、API Gateway の <code>Latency</code> メトリクスの <code>Percentile</code> 統計を見てください。P50、P90、P99 は、平均値によるレイテンシの監視よりもるかに優れた方法です。</p>
+<p>監視するメトリクスが分かったら、これらの主要メトリクスにアラートを設定し、アプリケーションのコンポーネントが不健全なときに通知を受け取れるようにしてください。例として、</p>
 <ul>
 <li>AWS Lambda の場合、Duration、Errors、Throttling、ConcurrentExecutions にアラートを設定します。ストリームベースの呼び出しの場合は IteratorAge に、非同期呼び出しの場合は DeadLetterErrors にアラートを設定します。</li>
-<li>Amazon API Gateway の場合、IntegrationLatency、Latency、5XXError、4XXError にアラートを設定します。 </li>
-<li>Amazon SQS の場合、ApproximateAgeOfOldestMessage、ApproximateNumberOfMessageVisible にアラートを設定します。</li>
+<li>Amazon API Gateway の場合、IntegrationLatency、Latency、5XXError、4XXError にアラートを設定します。</li>
+<li>Amazon SQS の場合、ApproximateAgeOfOldestMessage、ApproximateNumberOfMessageVisible にアラートを設定します。 </li>
 <li>AWS Step Functions の場合、ExecutionThrottled、ExecutionsFailed、ExecutionsTimedOut にアラートを設定します。</li>
 </ul>
 <h3 id="_6"><strong>カスタムメトリクスの公開</strong><a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>アプリケーションのビジネスおよび顧客の成果に基づいて、重要業績評価指標(KPI)を特定します。KPI を評価して、アプリケーションの成功と運用上の健全性を判断します。重要なメトリクスは、アプリケーションの種類によって異なりますが、訪問サイト、注文数、購入フライト、ページロード時間、ユニーク訪問者などが例として挙げられます。</p>
-<p>AWS CloudWatch にカスタムメトリクスを公開する 1 つの方法は、CloudWatch メトリクス SDK の <code>putMetricData</code> API を呼び出すことです。ただし、<code>putMetricData</code> API 呼び出しは同期的です。これにより、Lambda 関数の実行時間が長くなり、アプリケーション内の他の API 呼び出しを潜在的にブロックして、パフォーマンスのボトルネックにつながる可能性があります。また、Lambda 関数の実行時間が長くなると、コストが高くなります。さらに、CloudWatch に送信されるカスタムメトリクスの数と、行われる API 呼び出し(つまり PutMetricData API 呼び出し)の数の両方に対して課金されます。</p>
-<p><strong>カスタムメトリクスを公開するためのもっと効率的でコスト効果の高い方法は、</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html">CloudWatch Embedded Metrics Format</a> (EMF) を使用することです。CloudWatch Embedded Metrics 形式を使用すると、<strong><code>非同期的に</code></strong> CloudWatch ログに書き込まれたログとしてカスタムメトリクスを生成できるため、アプリケーションのパフォーマンスが向上し、コストを下げることができます。EMF を使用すると、詳細なログイベントデータとともにカスタムメトリクスを埋め込むことができます。CloudWatch はこれらのカスタムメトリクスを自動的に抽出するので、アウトオブザボックスのメトリクスのように可視化やアラームの設定ができます。埋め込みメトリクス形式でログを送信すると、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWatch Logs Insights</a> を使用してクエリでき、メトリクスのコストではなくクエリのコストのみが発生します。</p>
+<p>AWS CloudWatch にカスタムメトリクスを公開する 1 つの方法は、CloudWatch メトリクス SDK の <code>putMetricData</code> API を呼び出すことです。ただし、<code>putMetricData</code> API 呼び出しは同期的です。これにより、Lambda 関数の実行時間が長くなり、アプリケーション内の他の API 呼び出しを潜在的にブロックし、パフォーマンスのボトルネックにつながる可能性があります。また、Lambda 関数の実行時間が長くなるほどコストが高くなります。さらに、CloudWatch に送信されるカスタムメトリクスの数と、行われる API 呼び出し(つまり PutMetricData API 呼び出し)の数の両方に対して課金されます。</p>
+<p><strong>カスタムメトリクスを公開するためのもっと効率的でコスト効果の高い方法は、</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html">CloudWatch Embedded Metrics Format</a> (EMF) を使用することです。CloudWatch Embedded Metrics 形式を使用すると、<strong><code>非同期的に</code></strong> CloudWatch ログに書き込まれたログとしてカスタムメトリクスを生成できるため、アプリケーションのパフォーマンスが向上し、コストを下げることができます。EMF を使用すると、詳細なログイベントデータとともにカスタムメトリクスを埋め込むことができます。CloudWatch はこれらのカスタムメトリクスを自動的に抽出するため、プリセットのメトリクスと同様に可視化やアラームの設定ができます。埋め込みメトリクス形式でログを送信すると、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWatch Logs Insights</a> を使用してクエリでき、メトリクスのコストではなくクエリのコストのみが発生します。</p>
 <p>これを実現するには、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html">EMF 仕様</a>を使用してログを生成し、<code>PutLogEvents</code> API を使用して CloudWatch に送信します。プロセスを簡素化するために、<strong>EMF 形式のメトリクスの作成をサポートする 2 つのクライアントライブラリが</strong>あります。</p>
 <ul>
 <li>ローレベルのクライアントライブラリ (<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html">aws-embedded-metrics</a>)  </li>
@@ -3897,10 +3898,10 @@ AWS コンソールまたは Infrastructure as Code (IaC) を介して有効化�
 <h3 id="cloudwatch_1"><strong>CloudWatch アラームの作成</strong><a class="headerlink" href="#cloudwatch_1" title="Permanent link">&para;</a></h3>
 <p>メトリクスが異常値を示したときに CloudWatch アラームを作成し、必要なアクションを実行することは、オブザーバビリティにとって極めて重要です。Amazon <a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html">CloudWatch アラーム</a> は、アプリケーションとインフラストラクチャのメトリクスが静的または動的に設定されたしきい値を超えたときに、アラートを送信したり、修復アクションを自動化するために使用されます。</p>
 <p>メトリクスのアラームを設定するには、一連のアクションをトリガーするしきい値を選択します。固定のしきい値は、静的しきい値と呼ばれます。たとえば、Lambda 関数の <code>Throttles</code> メトリクスに対して、5 分間の期間内で 10% を超えた場合にアラームがアクティブになるよう設定できます。これは、Lambda 関数がアカウントとリージョンの最大同時実行数に達した可能性を示しています。</p>
-<p>サーバレスアプリケーションでは、SNS(Simple Notification Service)を使用してアラートを送信するのが一般的です。これにより、ユーザーはメール、SMS、その他のチャネルを介してアラートを受信できます。さらに、Lambda 関数を SNS トピックにサブスクライブすることで、アラームが発生した原因となった問題を自動的に修復できます。</p>
-<p>たとえば、SQS キューをポーリングして下流のサービスを呼び出す Lambda 関数 A があるとします。下流のサービスがダウンしていて応答がない場合、Lambda 関数は SQS からポーリングを続け、下流のサービスを呼び出し続けて失敗します。これらのエラーを監視し、SNS を使用して適切なチームに通知する CloudWatch アラームを生成できますが、SNS サブスクリプションを介して別の Lambda 関数 B も呼び出し、Lambda 関数 A のイベントソースマッピングを無効にして SQS キューのポーリングを停止することもできます。これにより、下流のサービスが再起動するまで待つことができます。</p>
-<p>個々のメトリクスに対してアラームを設定することは良いことですが、アプリケーションの運用状況とパフォーマンスをよりよく理解するには、複数のメトリクスを監視する必要がある場合もあります。そのようなシナリオでは、 <a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html">メトリック数式</a> を使用して、複数のメトリクスに基づいてアラームを設定する必要があります。</p>
-<p>たとえば、少数のエラーを許容する場合に AWS Lambda のエラーを監視したい場合は、パーセンテージの形式のエラーレート式を作成できます。つまり、ErrorRate = errors / invocation * 100 という式で、設定された評価期間内で ErrorRate が 20% を超えた場合にアラームを送信するように設定できます。</p>
+<p>サーバレスアプリケーションでは、SNS(Simple Notification Service)を使用してアラートを送信するのが一般的です。これにより、ユーザーはメール、SMS、その他のチャネルを介してアラートを受信できます。さらに、Lambda 関数を SNS トピックにサブスクライブすることで、アラームが発生した原因となった問題を自動的に修正できます。</p>
+<p>たとえば、SQS キューをポーリングして下流のサービスを呼び出す Lambda 関数 A があるとします。下流のサービスがダウンしていて応答がない場合、Lambda 関数は SQS からのポーリングを続け、下流のサービスを呼び出し続けて失敗します。これらのエラーを監視し、SNS を使用して適切なチームに通知する CloudWatch アラームを生成できますが、SNS サブスクリプションを介して別の Lambda 関数 B も呼び出すことができます。これにより、下流のサービスが再起動するまで、Lambda 関数 A の SQS キューからのポーリングを停止できます。</p>
+<p>個々のメトリクスに対してアラームを設定することは良いことですが、アプリケーションの運用状況とパフォーマンスをよりよく理解するには、複数のメトリクスを監視する必要がある場合があります。そのようなシナリオでは、 <a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/using-metric-math.html">メトリクス数式</a> を使用して、複数のメトリクスに基づいてアラームを設定する必要があります。</p>
+<p>たとえば、少数のエラーを許容する範囲内で AWS Lambda のエラーを監視したい場合は、パーセンテージの形式のエラーレート式を作成できます。つまり、ErrorRate = errors / invocation * 100 という式で、設定された評価期間内で ErrorRate が 20% を超えた場合にアラートを送信するアラームを作成します。</p>
 <h2 id="_7"><strong>トレーシング</strong><a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
 <p>このオブザーバビリティのベストプラクティスガイドのセクションでは、次のトピックを深掘りします。</p>
 <ul>
@@ -3910,9 +3911,9 @@ AWS コンソールまたは Infrastructure as Code (IaC) を介して有効化�
 <li>X-Ray SDK を使用した統合サービスのトレーシングのコードサンプル</li>
 </ul>
 <h3 id="aws-x-ray">分散トレーシングと AWS X-Ray の概要<a class="headerlink" href="#aws-x-ray" title="Permanent link">&para;</a></h3>
-<p>ほとんどのサーバーレスアプリケーションは、複数の AWS サービスを使用する複数のマイクロサービスで構成されています。 サーバーレスアーキテクチャの性質上、分散トレーシングが不可欠です。 効果的なパフォーマンスモニタリングとエラートラッキングのために、ソース呼び出し元からすべての下流のサービスを介して、アプリケーションフロー全体でトランザクションをトレースすることが重要です。 個々のサービスのログを使用してこれを実現することは可能ですが、AWS X-Ray のようなトレーシングツールを使用する方がより高速で効率的です。 詳細については、<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html">AWS X-Ray を使用したアプリケーションの計装</a> を参照してください。</p>
-<p>AWS X-Ray を使用すると、関連するマイクロサービスを介してリクエストをトレースできます。 X-Ray サービスマップを使用すると、さまざまな統合ポイントを理解し、アプリケーションのパフォーマンス低下を特定できます。 アプリケーションのどのコンポーネントがエラー、スロットリング、レイテンシの問題を引き起こしているかを、ほんの数クリックですぐに特定できます。 サービスグラフの下には、各マイクロサービスにかかった正確な時間も表示されます。</p>
-<p><img alt="X-Ray トレース" src="../../../../images/Serverless/aws-native/xray_trace.png" /></p>
+<p>ほとんどのサーバーレスアプリケーションは、複数の AWS サービスを使用する複数のマイクロサービスで構成されています。 サーバーレスアーキテクチャの性質上、分散トレーシングが不可欠です。 効果的なパフォーマンスモニタリングとエラートラッキングのために、ソース呼び出し元からすべての下流のサービスを通して、アプリケーションフロー全体でトランザクションをトレースすることが重要です。 個々のサービスのログを使用してこれを実現することは可能ですが、AWS X-Ray のようなトレーシングツールを使用する方がより高速で効率的です。 詳細については、<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html">AWS X-Ray を使用したアプリケーションの計装</a> を参照してください。</p>
+<p>AWS X-Ray を使用すると、関連するマイクロサービスを通過するにつれてリクエストをトレースできます。 X-Ray サービスマップを使用すると、さまざまな統合ポイントを理解し、アプリケーションのパフォーマンス低下を特定できます。 アプリケーションのどのコンポーネントがエラー、スロットリング、レイテンシの問題を引き起こしているかを、わずか数クリックですぐに隔離できます。 サービスグラフの下で、各マイクロサービスにかかる正確な期間を特定する個々のトレースも表示できます。</p>
+<p><img alt="X-Ray Trace" src="../../../../images/Serverless/aws-native/xray_trace.png" /></p>
 <p><strong><code>ベストプラクティスとして、ダウンストリーム呼び出しや監視が必要な特定の機能のためにコード内にカスタムサブセグメントを作成します</code></strong>。 たとえば、外部 HTTP API への呼び出しや SQL データベースクエリの監視のためのサブセグメントを作成できます。</p>
 <p>たとえば、ダウンストリームサービスを呼び出す関数のカスタムサブセグメントを作成するには、<code>captureAsyncFunc</code> 関数(Node.js の場合)を使用します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>var AWSXRay = require(&#39;aws-xray-sdk&#39;);
@@ -3934,13 +3935,13 @@ AWS コンソールまたは Infrastructure as Code (IaC) を介して有効化�
 </span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>  });
 </span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>});
 </span></code></pre></div>
-<p>この例では、アプリケーションは <code>sendRequest</code> 関数への呼び出し用に <code>send</code> という名前のカスタムサブセグメントを作成します。 <code>captureAsyncFunc</code> は非同期呼び出しが完了したときにコールバック関数内で閉じる必要があるサブセグメントを渡します。</p>
+<p>この例では、アプリケーションは <code>sendRequest</code> 関数への呼び出し用に <code>send</code> という名前のカスタムサブセグメントを作成します。 <code>captureAsyncFunc</code> は非同期呼び出しが完了したコールバック関数内で閉じる必要があるサブセグメントを渡します。</p>
 <h3 id="_8"><strong>適切なサンプリングルールを適用する</strong><a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>デフォルトでは、AWS X-Ray SDK はすべてのリクエストをトレースするわけではありません。保守的なサンプリングルールを適用して、高コストを発生させることなく、リクエストの代表的なサンプルを提供します。ただし、デフォルトのサンプリングルールを<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-console-sampling.html#xray-console-config">カスタマイズ</a>したり、サンプリングを完全に無効にして、特定の要件に基づいてすべてのリクエストのトレースを開始することができます。</p>
 <p>AWS X-Ray は監査やコンプライアンスのツールとして使用することを意図していないことに注意することが重要です。<strong><code>アプリケーションのタイプごとに異なるサンプリングレートを考慮する必要があります</code></strong>。たとえば、バックグラウンドのポーリングやヘルスチェックなどの高ボリュームの読み取り専用の呼び出しは、潜在的な問題を特定するのに十分なデータを提供しながら、より低いレートでサンプリングできます。<strong><code>環境ごとに異なるサンプリングレートを設定することもできます</code></strong>。たとえば、開発環境では、エラーやパフォーマンスの問題を簡単にトラブルシューティングするために、すべてのリクエストをトレースしたい場合があります。一方、本番環境では、トレース数を少なくすることができます。<strong><code>広範囲なトレーシングはコストの増加につながる可能性があることにも留意する必要があります</code></strong>。サンプリングルールの詳細については、<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-console-sampling.html"><em>Configuring sampling rules in the X-Ray console</em></a> を参照してください。</p>
 <h3 id="x-ray-sdk-aws"><strong>X-Ray SDK を使用して他の AWS サービスとの対話をトレースする</strong><a class="headerlink" href="#x-ray-sdk-aws" title="Permanent link">&para;</a></h3>
-<p>X-Ray トレーシングは、AWS Lambda や Amazon API Gateway などのサービスでは、クリック数回または IaC ツール上の数行で簡単に有効にできますが、他のサービスではコードに追加の手順が必要です。<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-services.html">X-Ray と統合されている AWS サービスの完全なリストはこちら</a> をご覧ください。</p>
-<p>DynamoDB など、X-Ray と統合されていないサービスへの呼び出しを計測するには、AWS SDK 呼び出しを AWS X-Ray SDK でラップすることでトレースをキャプチャできます。 たとえば、node.js を使用している場合は、以下のコード例に従って、すべての AWS SDK 呼び出しをキャプチャできます。</p>
+<p>X-Ray トレーシングは、AWS Lambda や Amazon API Gateway などのサービスでは、クリック数回または IaC ツール上のコード数行で簡単に有効にできますが、他のサービスではコードにインスツルメンテーションを追加する必要があります。<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-services.html">X-Ray と統合されている AWS サービスの完全なリストはこちら</a> をご覧ください。</p>
+<p>DynamoDB など、X-Ray と統合されていないサービスへの呼び出しについてトレースをキャプチャするには、AWS SDK 呼び出しを AWS X-Ray SDK でラップすることで実現できます。たとえば、node.js を使用している場合は、以下のコード例に従って、すべての AWS SDK 呼び出しをキャプチャできます。</p>
 <h3 id="x-ray-sdk"><strong>X-Ray SDK を使用した統合サービスのトレースのためのコードサンプル</strong><a class="headerlink" href="#x-ray-sdk" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>//... FROM (old code)
 </span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>const AWS = require(&#39;aws-sdk&#39;);
@@ -3952,7 +3953,7 @@ AWS コンソールまたは Infrastructure as Code (IaC) を介して有効化�
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>個々のクライアントを計装するには、AWS SDK クライアントを <code>AWSXRay.captureAWSClient</code> の呼び出しでラップします。<code>captureAWS</code> と <code>captureAWSClient</code> の両方を使用しないでください。これにより、重複したトレースが発生します。</p>
+<p>個々のクライアントを計装するには、AWS SDK クライアントを <code>AWSXRay.captureAWSClient</code> の呼び出しでラップします。<code>captureAWS</code> と <code>captureAWSClient</code> の両方を使用しないでください。これにより重複したトレースが発生します。</p>
 </div>
 <h2 id="_9"><strong>その他のリソース</strong><a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
 <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWatch Logs Insights</a></p>

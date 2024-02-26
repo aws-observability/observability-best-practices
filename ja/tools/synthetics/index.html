@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3682,12 +3682,11 @@
 <p>Amazon CloudWatch Synthetics を使用すると、実際のユーザーがいなくても、お客様の視点からアプリケーションを監視できます。
 API とウェブサイトのエクスペリエンスを継続的にテストすることで、ユーザートラフィックがない場合でも発生する間欠的な問題の可視化が可能になります。</p>
 <p>Canary はスクリプトで構成されており、API とウェブサイトのエクスペリエンスを 24 時間 365 日テストするためにスケジュールで実行できます。
-Canary は実際のユーザーと同じコードパスとネットワークルートに従い、レイテンシやページロードエラー、壊れたリンクやデッドリンク、壊れたユーザーワークフローなど、予期しない動作を通知します。</p>
+実際のユーザーと同じコードパスとネットワークルートに従い、レイテンシやページロードエラー、壊れたリンクやデッドリンク、壊れたユーザーワークフローなど、予期しない動作を通知します。</p>
 <p><img alt="CloudWatch Synthetics architecture" src="../../images/synthetics0.png" /></p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Synthetics Canary を使用して、所有権またはアクセス許可があるエンドポイントと API のみを監視するようにしてください。
-Canary の頻度設定によって、これらのエンドポイントはトラフィックが増加する可能性があります。</p>
+<p>Synthetics Canary を使用して、所有権またはアクセス許可があるエンドポイントと API のみを監視するようにしてください。Canary の頻度設定によって、これらのエンドポイントがトラフィック増加を経験する可能性があります。</p>
 </div>
 <h2 id="_2">はじめに<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="_3">完全カバレッジ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
@@ -3702,7 +3701,7 @@ Canary の頻度設定によって、これらのエンドポイントはトラ�
 <p><img alt="The CloudWatch Dashboard for Synthetics" src="../../images/synthetics1.png" /></p>
 <h2 id="canary_1">Canary の構築<a class="headerlink" href="#canary_1" title="Permanent link">&para;</a></h2>
 <h3 id="_5">ブループリント<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
-<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Blueprints.html">Canary ブループリント</a>を使用すると、複数の Canary タイプのセットアッププロセスを簡素化できます。</p>
+<p>複数の Canary タイプのセットアッププロセスを簡略化するために、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Blueprints.html">Canary ブループリント</a> を使用します。</p>
 <p><img alt="シンセティック Canary を作成する複数の方法" src="../../images/synthetics2.png" /></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
@@ -3712,7 +3711,7 @@ Canary の頻度設定によって、これらのエンドポイントはトラ�
 <p>独自の Canary を作成すると、それらは <em>ランタイムバージョン</em>に結び付けられます。これは、Selenium を使用した特定バージョンの Python、または Puppeteer を使用した JavaScript のいずれかになります。現在サポートされているランタイムバージョンと廃止予定のもののリストについては、[このページ]を参照してください。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>Canary の実行中にアクセスできるデータを共有するために、<a href="https://aws.amazon.com/blogs/mt/using-environment-variables-with-amazon-cloudwatch-synthetics/">環境変数を使用</a>してスクリプトの保守性を向上させます。</p>
+<p>Canary の実行中にアクセスできるデータを共有するために、<a href="https://aws.amazon.com/blogs/mt/using-environment-variables-with-amazon-cloudwatch-synthetics/">環境変数を使用</a>することでスクリプトの保守性を向上させます。</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
@@ -3722,13 +3721,13 @@ Canary の頻度設定によって、これらのエンドポイントはトラ�
 <p>Canary からシークレット(ログイン資格情報など)を、Canary やその環境変数の外部のセキュアなシステムからプルするようにコーディングできます。AWS Lambda からアクセスできるシステムなら、実行時に Canary にシークレットを提供できる可能性があります。 </p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>テストを実行し、データベース接続詳細、API キー、アプリケーション資格情報などのシークレットを AWS Secrets Manager を使用して保存することで、<a href="https://aws.amazon.com/blogs/mt/secure-monitoring-of-user-workflow-experience-using-amazon-cloudwatch-synthetics-and-aws-secrets-manager/">センシティブデータを保護</a>します。</p>
+<p>テストを実行し、データベースの接続詳細、API キー、アプリケーションの資格情報などのシークレットを AWS Secrets Manager を使用して保存することで、<a href="https://aws.amazon.com/blogs/mt/secure-monitoring-of-user-workflow-experience-using-amazon-cloudwatch-synthetics-and-aws-secrets-manager/">センシティブなデータを保護</a>します。</p>
 </div>
 <h2 id="canary_2">Canary の大規模管理<a class="headerlink" href="#canary_2" title="Permanent link">&para;</a></h2>
 <h3 id="_8">壊れたリンクの確認<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>ウェブサイトに多数の動的コンテンツとリンクが含まれている場合は、CloudWatch Synthetics を使用してウェブサイトをクロールし、<a href="https://aws.amazon.com/blogs/mt/cloudwatch-synthetics-to-find-broken-links-on-your-website/">壊れたリンクを検出</a>し、障害の理由を特定できます。次に、障害のしきい値を使用して、しきい値が違反したときに optionally <a href="../../tools/alarms/">CloudWatch アラーム</a> を作成します。</p>
+<p>ウェブサイトに多数の動的コンテンツとリンクが含まれている場合は、CloudWatch Synthetics を使用してウェブサイトをクロールし、<a href="https://aws.amazon.com/blogs/mt/cloudwatch-synthetics-to-find-broken-links-on-your-website/">壊れたリンクを検出</a>し、失敗の理由を特定できます。次に、失敗のしきい値を使用して、しきい値の違反が発生したときにオプションで <a href="../../toosl/alarms/">CloudWatch アラーム</a> を作成します。</p>
 </div>
 <h3 id="url">複数のハートビート URL<a class="headerlink" href="#url" title="Permanent link">&para;</a></h3>
 <div class="admonition success">

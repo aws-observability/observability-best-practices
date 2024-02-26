@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3385,7 +3385,7 @@
 <span class="p">,</span><span class="w"> </span><span class="s">&quot;sum&quot;</span><span class="p">(</span><span class="nx">line_item_unblended_cost</span><span class="p">)</span><span class="w"> </span><span class="nx">cost</span>
 <span class="nx">FROM</span>
 <span class="nx">database</span><span class="p">.</span><span class="nx">tablename</span><span class="w"> </span><span class="err">#</span><span class="nx">データベース名とテーブル名を置き換えてください</span>
-<span class="nx">WHERE</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;line_item_product_code&quot;</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="err">&#39;</span><span class="nx">AmazonPrometheus</span><span class="err">&#39;</span><span class="p">)</span>
+<span class="nx">WHERE</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;line_item_product_code&quot;</span><span class="w"> </span><span class="p">=</span><span class="w"> </span><span class="err">&#39;</span><span class="nx">AmazonPrometheus</span><span class="err">&#39;</span><span class="p">)</span><span class="w"> </span>
 <span class="nx">GROUP</span><span class="w"> </span><span class="nx">BY</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">6</span>
 </code></pre></div>
 
@@ -3395,8 +3395,8 @@
 <p>Amazon Managed Grafana を使用すると、Grafana ワークスペースコンソールの AWS データソース構成オプションを使用して、Athena をデータソースとして追加できます。この機能により、既存の Athena アカウントを検出し、Athena へのアクセスに必要な認証情報の構成を管理することで、Athena をデータソースとして追加することが簡単になります。Athena データソースを使用するための前提条件については、<a href="https://docs.aws.amazon.com/grafana/latest/userguide/Athena-prereq.html">前提条件</a> を参照してください。</p>
 <p>以下の <strong>Grafana ダッシュボード</strong> は、AWS Organizations のすべての AWS アカウントにわたる Amazon Managed Service for Prometheus のコストと使用状況を、個々の Prometheus ワークスペースインスタンスのコストや RemoteWrite、Query、HourlyStorageMetering などのオペレーションとともに示しています。</p>
 <p><img alt="prometheus-cost" src="../../../../images/prometheus-cost.png" /></p>
-<p>Grafana のダッシュボードは、ダッシュボードのメタデータを格納する JSON オブジェクトで表されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記ダッシュボードの JSON テンプレートにアクセスするには、<a href="../AmazonPrometheus.json">こちら</a> を参照してください。</p>
-<p>このダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana <a href="https://docs.aws.amazon.com/grafana/latest/userguide/Grafana-panels.html">ダッシュボードパネル</a> を使用できます。</p>
+<p>Grafana のダッシュボードは、ダッシュボードのメタデータを格納する JSON オブジェクトで表されます。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルのメタデータ、テンプレート変数、パネルクエリなどが含まれます。上記のダッシュボードの JSON テンプレートにアクセスするには、<a href="../AmazonPrometheus.json">こちら</a> を参照してください。</p>
+<p>このダッシュボードを使用することで、Organization 全体の AWS アカウントにおける Amazon Managed Service for Prometheus のコストと使用状況を特定できるようになりました。要件に合わせてビジュアルを構築するために、他の Grafana の <a href="https://docs.aws.amazon.com/grafana/latest/userguide/Grafana-panels.html">ダッシュボードパネル</a> を使用できます。</p>
 
 
 

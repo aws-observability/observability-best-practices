@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3472,22 +3472,21 @@
 <h2 id="_4">言語<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>このディメンションは、サービスやアプリケーションの記述に使用するプログラミング言語に関係しています。ここでは、<a href="https://docs.aws.amazon.com/xray/index.html">X-Ray SDK</a> や OpenTelemetry が <a href="https://opentelemetry.io/docs/concepts/instrumenting/">instrumentation</a> のコンテキストで提供するものなどの SDK やライブラリを扱っています。ログやメトリクスなどの特定のシグナルタイプについて、o11y ソリューションが選択したプログラミング言語をサポートしていることを確認する必要があります。</p>
 <h2 id="_5">インフラストラクチャとデータベース<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
-<p>このディメンションでは、サービスが実行されている VPC などのインフラストラクチャや、RDS、DynamoDB、SQS などのデータストアを意味します。</p>
+<p>このディメンションでは、サービスが実行されている VPC などのインフラストラクチャや RDS、DynamoDB、SQS などのデータストアといった、アプリケーションの外部の依存関係のすべてを意味します。</p>
 <div class="admonition tip">
 <p class="admonition-title">共通点</p>
 <p>このディメンションのすべてのソースが共通しているのは、アプリケーション(およびアプリケーションが実行されるコンピュート環境)の外部に位置しており、不透明なボックスとして扱わなければならないことです。</p>
 </div>
 <p>このディメンションには以下が含まれますが、これらに限定されません。</p>
 <ul>
-<li>AWS インフラストラクチャー、例えば <a href="https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html" title="VPC フローログ">VPC フローログ</a>。</li>
-<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html" title="Amazon EKS コントロールプレーンログ">Kubernetes コントロールプレーンログ</a>などのセカンダリ API。  </li>
-<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html" title="Amazon S3 のログ記録とモニタリング">S3</a>、<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html" title="Amazon RDS のログ記録とモニタリング">RDS</a>、<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html" title="Amazon SQS と AWS X-Ray">SQS</a>などのデータストアからのシグナル。</li>
+<li>AWS インフラストラクチャー、例えば <a href="https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html" title="VPC Flow Logs">VPC フローログ</a> など。</li>
+<li><a href="https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html" title="Amazon EKS control plane logging">Kubernetes コントロールプレーンログ</a> などのセカンダリ API。  </li>
+<li><a href="https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html" title="Logging and monitoring in Amazon S3">S3</a>、<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html" title="Logging and monitoring in Amazon RDS">RDS</a>、<a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html" title="Amazon SQS and AWS X-Ray">SQS</a> などのデータストアからのシグナル。</li>
 </ul>
 <h2 id="_6">コンピュートユニット<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>コードをパッケージ化、スケジュール設定、実行する方法です。例えば、Lambda では関数がそれに該当し、<a href="https://aws.amazon.com/ecs/" title="Amazon Elastic Container Service">ECS</a> と <a href="https://aws.amazon.com/eks/" title="Amazon Elastic Kubernetes Service">EKS</a> では、それぞれタスク(ECS)内またはポッド(EKS)内で実行されるコンテナがユニットとなります。
-Kubernetes のようなコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよく利用できます。サイドカーとして、またはノード(インスタンス)ごとのデーモンプロセスとしてです。</p>
+<p>コードをパッケージ化、スケジュール設定、実行する方法です。例えば、Lambda では関数がそれに該当し、<a href="https://aws.amazon.com/ecs/" title="Amazon Elastic Container Service">ECS</a> と <a href="https://aws.amazon.com/eks/" title="Amazon Elastic Kubernetes Service">EKS</a> では、それぞれタスク(ECS)内またはポッド(EKS)内で実行されるコンテナがユニットとなります。Kubernetes のようなコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよく利用できます。サイドカーとして、またはノード(インスタンス)ごとのデーモンプロセスとしてです。</p>
 <h2 id="_7">コンピュートエンジン<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>このディメンションは、ベースとなるランタイム環境を指します。これは、EC2 インスタンスなどの場合はプロビジョニングおよびパッチ適用の責任がある一方で、Fargate や Lambda などのサーバーレスオファリングの場合はそうでない場合があります。使用するコンピュートエンジンに応じて、テレメトリの部分はすでにオファリングの一部となっている場合があります。たとえば、<a href="https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/" title="Fluent Bit for Amazon EKS on AWS Fargate が利用可能に">Fargate 上の EKS</a> には Fluent Bit を介したログルーティングが統合されています。</p>
+<p>このディメンションは、ベースとなるランタイム環境を指します。これは、EC2 インスタンスなどの場合はプロビジョニングおよびパッチ適用の責任がある一方で、Fargate や Lambda などのサーバーレスオファリングの場合はそうでない場合があります。使用するコンピュートエンジンに応じて、テレメトリの部分はすでにオファリングの一部となっている場合があります。たとえば、<a href="https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/" title="Fluent Bit for Amazon EKS on AWS Fargate is here">Fargate 上の EKS</a> には Fluent Bit を介したログルーティングが統合されています。</p>
 
 
 

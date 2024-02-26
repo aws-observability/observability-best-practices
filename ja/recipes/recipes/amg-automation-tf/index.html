@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3371,10 +3371,10 @@
 <li>使用できる <a href="../../amg/">Amazon Managed Grafana</a> ワークスペースがあること。</li>
 </ul>
 <h2 id="amazon-managed-grafana">Amazon Managed Grafanaの設定<a class="headerlink" href="#amazon-managed-grafana" title="Permanent link">&para;</a></h2>
-<p>Terraformが<a href="https://grafana.com/docs/grafana/latest/http_api/auth/">Grafanaに対して認証</a>するために、APIキーを使用しています。これはパスワードのようなものです。</p>
+<p>Terraformが<a href="https://grafana.com/docs/grafana/latest/http_api/auth/">Grafanaに対して認証</a>するために、APIキーを使用しています。APIキーはパスワードのようなものです。</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>APIキーは、Grafana APIに対するすべてのリクエストで呼び出し元を認証する51文字の英数字値を持つ<a href="https://datatracker.ietf.org/doc/html/rfc6750">RFC 6750</a> HTTPベアラーヘッダーです。</p>
+<p>APIキーは、Grafana APIに対するすべてのリクエストで呼び出し元を認証するための51文字の英数字値を持つ<a href="https://datatracker.ietf.org/doc/html/rfc6750">RFC 6750</a> HTTPベアラーヘッダーです。</p>
 </div>
 <p>したがって、Terraformマニフェストを設定する前に、まずAPIキーを作成する必要があります。Grafana UIで次のように行います。</p>
 <p>まず、左側のメニューの<code>Configuration</code>セクションから<code>API keys</code>メニュー項目を選択します。</p>

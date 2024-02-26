@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3447,7 +3447,7 @@
 <p class="admonition-title">Success</p>
 <p>条件文を使用して、パフォーマンスが導出値のしきい値を超えたときに、アラームと通知をトリガーしてください。</p>
 </div>
-<p><code>SEARCH</code> 関数を使用して、任意のメトリクスの上位 <code>n</code> 件を表示することもできます。 多数の時系列 (例: サーバーが数千台) にわたる最もパフォーマンスの良い、または最も悪いメトリクスを可視化する場合、このアプローチにより、最も重要なデータのみを表示できます。 過去 5 分間の平均で、CPU 使用率が最も高い上位 2 つの EC2 インスタンスを返す search の例を以下に示します。</p>
+<p><code>SEARCH</code> 関数を使用して、任意のメトリクスの上位 <code>n</code> 件を表示することもできます。 多数の時系列 (例: サーバーが数千台) にわたる最もパフォーマンスの良い、または最も悪いメトリクスを可視化する場合、このアプローチにより、最も重要なデータのみを表示できます。 過去 5 分間の平均値で、CPU 使用率が最も高い上位 2 つの EC2 インスタンスを返す search の例を以下に示します。</p>
 <div class="codehilite"><pre><span></span><code>SLICE(SORT(SEARCH(&#39;{AWS/EC2,InstanceId} MetricName=&quot;CPUUtilization&quot;&#39;, &#39;Average&#39;, 300), MAX, DESC),0, 2)
 </code></pre></div>
 
@@ -3461,7 +3461,7 @@
 <p>EC2 インスタンスのメモリやディスク空き容量など、追加のメトリクスが必要な場合は、<a href="../../tools/cloudwatch_agent/">CloudWatch エージェント</a> を使用して、このデータを CloudWatch にプッシュできます。または、グラフィカルに視覚化する必要があるカスタム処理データがあり、このデータを CloudWatch メトリクスとして存在させたい場合は、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html"><code>PutMetricData</code> API</a> を使用して、カスタムメトリクスを CloudWatch に公開できます。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>裸の API ではなく、<a href="https://aws.amazon.com/developer/tools/">AWS SDK</a> のいずれかを使用して、メトリックデータを CloudWatch にプッシュすることをお勧めします。</p>
+<p>裸の API ではなく、<a href="https://aws.amazon.com/developer/tools/">AWS SDK</a> のいずれかを使用して、メトリクスデータを CloudWatch にプッシュすることをお勧めします。</p>
 </div>
 <p><code>PutMetricData</code> API 呼び出しは、クエリの数に基づいて課金されます。この API を最適に使用するにはベストプラクティスに従うことが大切です。この API の Values and Counts メソッドを使用すると、1 つの <code>PutMetricData</code> リクエストでメトリクスごとに最大 150 個の値を公開でき、このデータのパーセンタイル統計を取得できます。したがって、各データポイントごとに個別の API 呼び出しを行う代わりに、すべてのデータポイントをグループ化してから、単一の <code>PutMetricData</code> API 呼び出しで CloudWatch にプッシュする必要があります。このアプローチは、次の 2 つの方法でユーザーに利益をもたらします。</p>
 <ol>
@@ -3489,7 +3489,7 @@
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>ベストプラクティスは、異常検知モデルを通常の動作が期待される時間帯のみを分析するようにトレーニングすることです。 トレーニングから除外する時間帯を定義できます(夜間、週末、休日など)。</p>
+<p>ベストプラクティスは、異常検知モデルを通常の動作が期待される時間帯のみを分析するようにトレーニングすることです。 トレーニングから除外する時間帯(夜間、週末、休日など)を定義できます。</p>
 </div>
 <p>ここでは、グレーの帯が異常検知帯の例を示しています。</p>
 <p><img alt="Anomaly detection band" src="../../images/metrics4.png" /></p>

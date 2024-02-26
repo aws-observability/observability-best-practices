@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3357,56 +3357,56 @@
 
 
 <h1 id="kubernetes">Kubernetes ワークロードのリソース最適化のベストプラクティス<a class="headerlink" href="#kubernetes" title="Permanent link">&para;</a></h1>
-<p>Kubernetes の採用は加速し続けており、多くの組織がマイクロサービスベースのアーキテクチャに移行しています。当初の焦点は、アプリケーションをサポートするための新しいクラウドネイティブアーキテクチャの設計と構築に置かれていました。 環境が成長するにつれ、リソース割り当ての最適化に焦点を当てる顧客が出てきています。 リソース最適化は、セキュリティの次に運用チームが最も重要視する質問事項です。</p>
-<p>Kubernetes 環境でのリソース割り当ての最適化とアプリケーションの適切なサイジングのガイダンスについて説明します。 これには、マネージドノードグループ、セルフマネージドノードグループ、AWS Fargate でデプロイされた Amazon EKS 上で実行されているアプリケーションが含まれます。</p>
+<p>Kubernetes の採用は加速し続けており、多くの組織がマイクロサービスベースのアーキテクチャに移行しています。当初の焦点は、アプリケーションをサポートするための新しいクラウドネイティブアーキテクチャの設計と構築に置かれていました。 環境が成長するにつれ、リソース割り当ての最適化に焦点を当てる顧客が増えてきています。 リソース最適化は、セキュリティの次に運用チームが最も重要視する質問事項です。</p>
+<p>Kubernetes 環境でのリソース割り当ての最適化とアプリケーションの適切なサイジングのガイダンスについて説明しましょう。 これには、マネージドノードグループ、セルフマネージドノードグループ、AWS Fargate でデプロイされた Amazon EKS 上で実行されているアプリケーションが含まれます。</p>
 <h2 id="kubernetes_1">Kubernetes 上のアプリケーションの適切なリソースサイズ設定の理由<a class="headerlink" href="#kubernetes_1" title="Permanent link">&para;</a></h2>
 <p>Kubernetes では、アプリケーションにリソース仕様を設定することでリソースの適切なサイズ設定が行われます。これらの設定は直接次のことに影響します。</p>
 <ul>
 <li>パフォーマンス - 適切なリソース仕様がないと、Kubernetes アプリケーションは勝手にリソースを奪い合うことになり、アプリケーションのパフォーマンスに悪影響を及ぼします。</li>
 <li>コスト最適化 - 過剰なリソース仕様でデプロイされたアプリケーションはコストの増加とインフラの未利用を招きます。  </li>
-<li>オートスケーリング - Kubernetes クラスターオートスケーラとポッドの水平方向のオートスケーリングには、機能するためにリソース仕様が必要です。</li>
+<li>自動スケーリング - Kubernetes クラスターオートスケーラーとポッドの水平方向の自動スケーリングには、機能するためにリソース仕様が必要です。</li>
 </ul>
-<p>Kubernetes で最も一般的なリソース仕様は、<a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits">CPU とメモリのリクエストとリミット</a> です。</p>
+<p>Kubernetes で最も一般的なリソース仕様は、<a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#requests-and-limits">CPU とメモリのリクエストと制限</a>です。</p>
 <h2 id="_1">リクエストと制限<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>コンテナ化されたアプリケーションは、Pod として Kubernetes 上にデプロイされます。CPU とメモリのリクエストと制限は、Pod 定義のオプションの部分です。CPU は <a href="https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/#meaning-of-cpu">Kubernetes CPU</a> の単位で指定され、メモリは通常、<a href="https://simple.wikipedia.org/wiki/Mebibyte">メビバイト (Mi)</a> で指定されたバイト数です。</p>
 <p>リクエストと制限は、Kubernetes において異なる機能を果たし、スケジューリングとリソースの実施に異なる影響を与えます。</p>
 <h2 id="_2">おすすめ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>アプリケーションの所有者は、CPU とメモリのリソース要求に対して「適切な」値を選択する必要があります。理想的な方法は、開発環境でアプリケーションの負荷テストを実行し、オブザーバビリティツールを使用してリソース使用量を測定することです。これは組織の最も重要なアプリケーションには適しているかもしれませんが、クラスターにデプロイされているすべてのコンテナ化されたアプリケーションについて実行可能というわけではありません。ワークロードを最適化および適正サイジングするのに役立つツールについて説明しましょう。</p>
+<p>アプリケーションの所有者は、CPU とメモリのリソース要求に対して「適切な」値を選択する必要があります。理想的な方法は、開発環境でアプリケーションの負荷テストを実行し、オブザーバビリティツールを使用してリソース使用量を測定することです。これは組織の最も重要なアプリケーションには適しているかもしれませんが、クラスターにデプロイされているすべてのコンテナ化されたアプリケーションについて実行可能というわけではありません。ワークロードを最適化および適正サイズ化するのに役立つツールについて説明しましょう。</p>
 <h3 id="vertical-pod-autoscaler-vpa">Vertical Pod Autoscaler (VPA)<a class="headerlink" href="#vertical-pod-autoscaler-vpa" title="Permanent link">&para;</a></h3>
-<p><a href="https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler">VPA</a> は、Autoscaling 特別関心グループ (SIG) が所有する Kubernetes のサブプロジェクトです。これは、観測されたアプリケーションのパフォーマンスに基づいて Pod のリクエストを自動的に設定するように設計されています。VPA はデフォルトで <a href="https://github.com/kubernetes-sigs/metrics-server">Kubernetes Metric Server</a> を使用してリソース使用量を収集しますが、オプションで Prometheus をデータソースとして設定することもできます。</p>
-<p>VPA にはアプリケーションのパフォーマンスを測定し、サイズの推奨を行う推奨エンジンがあります。VPA 推奨エンジンはスタンドアロンで展開できるため、VPA はスケーリングアクションを実行しません。各アプリケーションの VerticalPodAutoscaler カスタムリソースを作成することによって設定され、VPA はリソースサイズの推奨をオブジェクトのステータスフィールドで更新します。</p>
-<p>クラスタ内のすべてのアプリケーションの VerticalPodAutoscaler オブジェクトを作成し、JSON 結果を読み取って解釈することは、スケールでは困難です。 <a href="https://github.com/FairwindsOps/goldilocks">Goldilocks</a> は、これを簡単にするオープンソースプロジェクトです。</p>
+<p><a href="https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler">VPA</a> は、Autoscaling 特別利害関係グループ (SIG) が所有する Kubernetes のサブプロジェクトです。これは、観測されたアプリケーションのパフォーマンスに基づいて Pod のリクエストを自動的に設定するように設計されています。VPA はデフォルトで <a href="https://github.com/kubernetes-sigs/metrics-server">Kubernetes Metric Server</a> を使用してリソース使用量を収集しますが、オプションで Prometheus をデータソースとして設定することもできます。</p>
+<p>VPA にはアプリケーションのパフォーマンスを測定し、サイズの推奨を行う推奨エンジンがあります。VPA 推奨エンジンはスタンドアロンでデプロイできるため、VPA はいかなる自動スケーリングアクションも実行しません。各アプリケーションの VerticalPodAutoscaler カスタムリソースを作成することによって設定され、VPA はリソースサイズの推奨事項でオブジェクトのステータスフィールドを更新します。</p>
+<p>クラスタ内のすべてのアプリケーションに対して VerticalPodAutoscaler オブジェクトを作成し、JSON 結果を読み取って解釈することは、スケールでは困難です。 <a href="https://github.com/FairwindsOps/goldilocks">Goldilocks</a> は、これを簡単にするオープンソースプロジェクトです。</p>
 <h3 id="goldilocks">Goldilocks<a class="headerlink" href="#goldilocks" title="Permanent link">&para;</a></h3>
 <p>Goldilocks は Fairwinds が提供するオープンソースプロジェクトで、組織が Kubernetes アプリケーションのリソース要求を「ちょうど良い」状態にするのを支援することを目的としています。Goldilocks のデフォルト設定はオプトインモデルです。goldilocks.fairwinds.com/enabled: true ラベルを名前空間に追加することで、どのワークロードをモニタリングするかを選択します。</p>
 <p><img alt="Goldilocks アーキテクチャ" src="../../../../../images/goldilocks-architecture.png" /></p>
-<p>Metrics Server はワーカーノード上の Kubelet からリソースメトリクスを収集し、Vertical Pod Autoscaler が使用するために Metrics API を通じて公開します。Goldilocks コントローラは、goldilocks.fairwinds.com/enabled: true ラベルの付いた名前空間を監視し、それらの名前空間内の各ワークロードに対して VerticalPodAutoscaler オブジェクトを作成します。</p>
+<p>Metrics Server はワーカーノード上の Kubelet からリソースメトリクスを収集し、Vertical Pod Autoscaler が使用するために Metrics API を通じて公開します。Goldilocks コントローラーは、goldilocks.fairwinds.com/enabled: true ラベルの付いた名前空間を監視し、それらの名前空間内の各ワークロードに対して VerticalPodAutoscaler オブジェクトを作成します。</p>
 <p>リソース推奨を有効にするには、次のコマンドを実行します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>kubectl create ns javajmx-sample
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>kubectl label ns javajmx-sample goldilocks.fairwinds.com/enabled=true
 </span></code></pre></div>
-<p>Amazon EKS クラスタに goldilocks をデプロイするには、次のコマンドを実行します:</p>
+<p>Amazon EKS クラスターに goldilocks をデプロイするには、次のコマンドを実行します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>helm repo add fairwinds-stable https://charts.fairwinds.com/stable
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>helm upgrade --install goldilocks fairwinds-stable/goldilocks --namespace goldilocks --create-namespace --set vpa.enabled=true
 </span></code></pre></div>
 <p>goldilocks-dashboard はポート 8080 でダッシュボードを公開するので、リソース推奨を取得するためにアクセスできます。ダッシュボードにアクセスするには、次のコマンドを実行します:</p>
 <p><div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>kubectl -n goldilocks port-forward svc/goldilocks-dashboard 8080:80
 </span></code></pre></div>
-その後、ブラウザで http://localhost:8080 を開きます</p>
+その後、ブラウザで http://localhost:8080 を開きます。</p>
 <p><img alt="Goldilocks ダッシュボード" src="../../../../../images/goldilocks-dashboard.png" /></p>
 <p>サンプル名前空間を分析して、Goldilocks によって提供された推奨を確認しましょう。デプロイメントの推奨が表示されるはずです。
 <img alt="Goldilocks 推奨" src="../../../../../images/goldilocks-recommendation.png" /></p>
 <p>javajmx-sample ワークロードの要求と制限の推奨を確認できます。各サービス品質(QoS)の下の Current 列は、現在設定されている CPU とメモリの要求と制限を示しています。Guranteed 列と Burstable 列は、それぞれの QoS に対する推奨される CPU とメモリの要求制限を示しています。</p>
-<p>リソースが過剰にプロビジョニングされていることが明らかで、Goldilocks は CPU とメモリの要求を最適化するための推奨を行っています。CPU の要求と制限が Guranteed QoS の 100m と 300m に対して 15m と 15m に推奨されており、メモリの要求と制限は 180Mi と 300 Mi に対して 105M と 105M に推奨されています。
+<p>リソースが過剰にプロビジョニングされていることが明らかで、goldilocks は CPU とメモリの要求を最適化するための推奨を行っています。CPU の要求と制限が Guranteed QoS の 100m と 300m に対して 15m と 15m に推奨されており、メモリの要求と制限は 180Mi と 300 Mi に対して 105M と 105M に推奨されています。
 関心のある QoS クラスのマニフェストファイルを単純にコピーして、適切にサイズ調整および最適化されたワークロードをデプロイできます。</p>
 <h3 id="cadvisor">cAdvisor メトリクスを使用したスロットリングの理解とリソースの適切な構成<a class="headerlink" href="#cadvisor" title="Permanent link">&para;</a></h3>
-<p>制限を設定するとき、特定の期間中に特定のコンテナ化されたアプリケーションがどのくらいの長さで実行できるかを Linux ノードに指示しています。これは、ノード上の他のワークロードを、過度な CPU サイクルを消費するプロセスのグループから保護するためです。マザーボード上にあるいくつかの物理的な「コア」を定義しているわけではありません。ただし、他のアプリケーションを圧迫せずにコンテナを一時停止できるように、単一のコンテナ内のプロセスまたはスレッドのグループが実行できる時間を設定しています。</p>
-<p><code>container_cpu_cfs_throttled_seconds_total</code> という便利な cAdvisor メトリクスがあり、スロットルされたすべての 5 ms スライスを加算し、プロセスがクォータをどの程度超過しているかを示します。このメトリクスは秒単位なので、コンテナに関連付けられている実際の時間である 100 ms を取得するために値を 10 で割ります。</p>
-<p>100 ms の時間で上位 3 つの Pod の CPU 使用率を理解するための PromQl クエリ。
+<p>制限を設定するとき、特定の期間中に特定のコンテナ化されたアプリケーションがどのくらいの長さで実行できるかを Linux ノードに指示しています。これは、ノード上の他のワークロードを、過度な CPU サイクルを消費するプロセスのグループから保護するためです。マザーボード上に実際に存在する「コア」の数を定義しているわけではありません。ただし、他のアプリケーションを圧迫しないようにコンテナを一時停止する前に、単一のコンテナ内のプロセスまたはスレッドのグループが実行できる時間を設定しています。</p>
+<p>便利な cAdvisor メトリクス <code>container_cpu_cfs_throttled_seconds_total</code> があり、これはすべてのスロットルされた 5 ms スライスを加算し、プロセスがクォータをどの程度超えているかを示します。このメトリクスは秒単位なので、コンテナに関連付けられている実際の時間である 100 ms を取得するために値を 10 で割ります。</p>
+<p>100 ms の時間における上位 3 つの Pod の CPU 使用率を理解するための PromQL クエリ。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>topk(3, max by (pod, container)(rate(container_cpu_usage_seconds_total{image!=&quot;&quot;, instance=&quot;$instance&quot;}[$__rate_interval]))) / 10
 </span></code></pre></div>
-400 ms の vCPU 使用が観測されました。</p>
+ 400 ms の vCPU 使用が観測されました。</p>
 <p><img alt="Throttled-Period" src="../../../../../images/throttled-period.png" /></p>
-<p>PromQl は 1 秒あたりのスロットリングを示し、1 秒に 10 期間あります。期間ごとのスロットリングを取得するには、10 で割ります。制限の設定をどのくらい増やす必要があるかを知りたい場合は、10 を掛けることができます(例: 400 ms * 10 = 4000 m)。</p>
+<p>PromQL は 1 秒あたりのスロットリングを示し、1 秒に 10 期間あります。期間ごとのスロットリングを取得するには、10 で割ります。制限の設定をどのくらい増やす必要があるかを知りたい場合は、10 を掛けることができます(例: 400 ms * 10 = 4000 m)。</p>
 <p>上記のツールはリソース最適化の機会を特定する方法を提供しますが、アプリケーションチームは、特定のアプリケーションが CPU/メモリ集中型であるかどうかを特定し、スロットリング/過剰プロビジョニングを防ぐためにリソースを割り当てる時間を費やす必要があります。</p>
 
 

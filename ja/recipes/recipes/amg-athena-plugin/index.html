@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3419,18 +3419,18 @@
 <p>まず、必要なインフラストラクチャを設定しましょう。</p>
 <h3 id="amazon-athena">Amazon Athena の設定<a class="headerlink" href="#amazon-athena" title="Permanent link">&para;</a></h3>
 <p>Athena を 2 つの異なるシナリオで使用する方法を確認したいと考えています。1 つは Geomap プラグインとともに地理データを使用したシナリオで、もう 1 つは VPC フローログを使用したセキュリティ関連のシナリオです。</p>
-<p>まず、Athena が設定され、データセットがロードされていることを確認しましょう。 </p>
+<p>まず、Athena が設定され、データセットが読み込まれていることを確認しましょう。</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>これらのクエリを実行するには、Amazon Athena コンソールを使用する必要があります。
-一般に、Grafana はデータソースへの読み取り専用アクセス権を持っているため、データの作成や更新に使用できません。</p>
+Grafana はデータソースへの読み取り専用アクセス権しかないため、データの作成や更新に使用できません。</p>
 </div>
 <h4 id="_3">地理データの読み込み<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h4>
 <p>この最初のユースケースでは、<a href="https://registry.opendata.aws/">Registry of Open Data on AWS</a> からのデータセットを使用します。
 より具体的には、地理データをモチベーションとしたユースケースのために Athena プラグインの使用法を示すために、<a href="https://aws.amazon.com/blogs/big-data/querying-openstreetmap-with-amazon-athena/">OpenStreetMap</a>(OSM)を使用します。
 そのためには、まず OSM データを Athena に取り込む必要があります。</p>
-<p>そこで、まず Athena で新しいデータベースを作成します。<a href="https://console.aws.amazon.com/athena/">Athena コンソール</a>にアクセスし、以下の 3つの SQL クエリを使用して、OSM データをデータベースにインポートします。</p>
-<p>クエリ1:</p>
+<p>そこで、まず Athena で新しいデータベースを作成します。<a href="https://console.aws.amazon.com/athena/">Athena コンソール</a> に移動し、以下の 3 つの SQL クエリを使用して、OSM データをデータベースにインポートします。</p>
+<p>クエリ 1:</p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">EXTERNAL</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">planet</span><span class="w"> </span><span class="p">(</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="k">type</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
@@ -3448,7 +3448,7 @@
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="n">STORED</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ORCFILE</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="k">LOCATION</span><span class="w"> </span><span class="s1">&#39;s3://osm-pds/planet/&#39;</span><span class="p">;</span>
 </span></code></pre></div>
-<p>クエリ2: </p>
+<p>クエリ 2: </p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">EXTERNAL</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">planet_history</span><span class="w"> </span><span class="p">(</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="n">STRING</span><span class="p">,</span>
@@ -3467,7 +3467,7 @@
 </span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="n">STORED</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ORCFILE</span>
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="k">LOCATION</span><span class="w"> </span><span class="s1">&#39;s3://osm-pds/planet-history/&#39;</span><span class="p">;</span>
 </span></code></pre></div>
-<p>クエリ3:</p>
+<p>クエリ 3:</p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">EXTERNAL</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">changesets</span><span class="w"> </span><span class="p">(</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="n">id</span><span class="w"> </span><span class="nb">BIGINT</span><span class="p">,</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="n">tags</span><span class="w"> </span><span class="k">MAP</span><span class="o">&lt;</span><span class="n">STRING</span><span class="p">,</span><span class="n">STRING</span><span class="o">&gt;</span><span class="p">,</span>
@@ -3495,9 +3495,10 @@
 <p class="admonition-title">Note</p>
 <p>クエリパフォーマンスを向上させ、ストレージフットプリントを最小限に抑えるために、VPC フローログを列指向のストレージフォーマットである <a href="https://github.com/apache/parquet-format">Parquet</a> に格納します。Parquet はネストされたデータをサポートしています。</p>
 </div>
-<p>当社の設定では、(ネットワークインターフェース、サブネット、VPC) を選択するかは関係ありません。下記のように Parquet 形式で S3 バケットに公開するだけで構いません。</p>
+<p>当社の設定では、Parquet 形式で S3 バケットに公開されている限り、オプション (ネットワークインターフェイス、サブネット、VPC) は関係ありません。
+以下のように表示されます。</p>
 <p><img alt="EC2 コンソールの「フローログの作成」パネルのスクリーンショット" src="../../images/ec2-vpc-flowlogs-creation.png" /></p>
-<p>次に、<a href="https://console.aws.amazon.com/athena/">Athena コンソール</a> から、OSM データをインポートしたのと同じデータベース、または必要に応じて新しいデータベースに、VPC フローログデータのテーブルを作成します。</p>
+<p>次に、<a href="https://console.aws.amazon.com/athena/">Athena コンソール</a> から、OSM データをインポートしたのと同じデータベースで、VPC フローログデータのテーブルを作成するか、必要に応じて新しいデータベースを作成します。</p>
 <p>次の SQL クエリを使用し、<code>VPC_FLOW_LOGS_LOCATION_IN_S3</code> を独自のバケット/フォルダに置き換えてください。</p>
 <div class="language-sql highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">CREATE</span><span class="w"> </span><span class="k">EXTERNAL</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">vpclogs</span><span class="w"> </span><span class="p">(</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="o">`</span><span class="k">version</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span>
@@ -3554,10 +3555,10 @@
 <ol>
 <li>左側のツールバーの「Configurations」アイコンをクリックし、「Add data source」をクリックします。  </li>
 <li>「Athena」と入力します。</li>
-<li>[オプション] 認証プロバイダーの構成 (推奨: ワークスペースIAMロール)。</li>
+<li>[オプション] 認証プロバイダーを構成します(推奨: ワークスペースIAMロール)。</li>
 <li>対象のAthenaデータソース、データベース、ワークグループを選択します。  </li>
 <li>ワークグループに出力場所がまだ構成されていない場合は、クエリ結果に使用するS3バケットとフォルダを指定します。 サービスマネージドポリシーの恩恵を受けるには、バケット名が <code>grafana-athena-query-results-</code> で始まる必要があることに注意してください。</li>
-<li>「Save &amp; test」をクリックします。</li>
+<li>「Save &amp; test」をクリックします。  </li>
 </ol>
 <p>次のような画面が表示されるはずです。</p>
 <p><img alt="Athenaデータソース構成のスクリーンショット" src="../../images/amg-plugin-athena-ds.png" /></p>

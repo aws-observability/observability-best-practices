@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3869,7 +3869,7 @@
 
 
 <h1 id="instrumenting-java-spring-integration-applications">Instrumenting Java Spring Integration Applications<a class="headerlink" href="#instrumenting-java-spring-integration-applications" title="Permanent link">&para;</a></h1>
-<p>This article describes an approach for manually instrumenting <a href="https://docs.spring.io/spring-integration/reference/html/overview.html">Spring-Integration</a> applications utilizing <a href="https://opentelemetry.io/">Open Telemetry</a> and <a href="https://aws.amazon.com/xray/">X-ray</a>.</p>
+<p>This article describes an approach for manually instrumenting <a href="https://docs.spring.io/spring-integration/reference/overview.html">Spring-Integration</a> applications utilizing <a href="https://opentelemetry.io/">Open Telemetry</a> and <a href="https://aws.amazon.com/xray/">X-ray</a>.</p>
 <p>The Spring-Integration framework is designed to enable the development of integration solutions typical of event-driven architectures and messaging-centric architectures. On the other hand, OpenTelemetry tends to be more focused on micro services architectures, in which services communicate and coordinate with each other using HTTP requests. Therefore this guide will provide an example of how to instrument Spring-Integration applications using manual instrumentation with the OpenTelemetry API.</p>
 <h2 id="background-information">Background Information<a class="headerlink" href="#background-information" title="Permanent link">&para;</a></h2>
 <h3 id="what-is-tracing">What is tracing?<a class="headerlink" href="#what-is-tracing" title="Permanent link">&para;</a></h3>

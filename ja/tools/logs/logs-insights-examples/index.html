@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -2230,6 +2230,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ライングラフでのルートアカウントアクティビティ
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2249,6 +2258,33 @@
   <a href="#ip-reject" class="md-nav__link">
     <span class="md-ellipsis">
       選択した送信元 IP アドレスのフローログをアクションが REJECT であるものにフィルタリング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      アベイラビリティゾーン別にネットワークトラフィックをグルーピング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      フロー方向別にネットワークトラフィックをグルーピング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-ip-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送
     </span>
   </a>
   
@@ -3459,6 +3495,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_1" class="md-nav__link">
+    <span class="md-ellipsis">
+      ライングラフでのルートアカウントアクティビティ
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3478,6 +3523,33 @@
   <a href="#ip-reject" class="md-nav__link">
     <span class="md-ellipsis">
       選択した送信元 IP アドレスのフローログをアクションが REJECT であるものにフィルタリング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_2" class="md-nav__link">
+    <span class="md-ellipsis">
+      アベイラビリティゾーン別にネットワークトラフィックをグルーピング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_3" class="md-nav__link">
+    <span class="md-ellipsis">
+      フロー方向別にネットワークトラフィックをグルーピング
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ip-ip-10" class="md-nav__link">
+    <span class="md-ellipsis">
+      送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送
     </span>
   </a>
   
@@ -3518,7 +3590,7 @@
 <li>AWS AppSync</li>
 <li>NAT ゲートウェイ</li>
 </ul>
-<p>このベストプラクティスガイドのこのセクションでは、現在ボックス付属のサンプルに含まれていないその他のタイプのログのサンプルクエリをいくつか提供します。 このリストは時間の経過とともに進化し変化するでしょう。GitHub で <a href="https://github.com/aws-observability/observability-best-practices/issues">issue</a> を残すことで、独自のサンプルをレビューのために送信できます。</p>
+<p>このベストプラクティスガイドのこのセクションでは、現在ボックス付属のサンプルには含まれていないその他のタイプのログのサンプルクエリをいくつか提供します。 このリストは時間の経過とともに進化し変化するでしょう。GitHub で <a href="https://github.com/aws-observability/observability-best-practices/issues">issue</a> を残すことで、独自のサンプルをレビューのために送信できます。</p>
 <h2 id="api-gateway">API Gateway<a class="headerlink" href="#api-gateway" title="Permanent link">&para;</a></h2>
 <h3 id="http-20">HTTP メソッドタイプを含む最新 20 件のメッセージ<a class="headerlink" href="#http-20" title="Permanent link">&para;</a></h3>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>filter @message like /$METHOD/ 
@@ -3559,23 +3631,49 @@
 <p>このクエリを使用すると、カテゴリ別にグループ化された API スロットリングエラーを降順で表示できます。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>このクエリを使用するには、まず <a href="https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html">CloudTrail ログを CloudWatch に送信</a>する必要があります。</p>
+<p>このクエリを使用するには、まず <a href="https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html">CloudTrail ログを CloudWatch に送信</a> する必要があります。</p>
+</div>
+<h3 id="_1">ライングラフでのルートアカウントアクティビティ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fields @timestamp, @message, userIdentity.type 
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>| filter userIdentity.type=&#39;Root&#39; 
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>| stats count() as RootActivity by bin(5m)
+</span></code></pre></div>
+<p>このクエリを使用すると、ルートアカウントのアクティビティをライングラフで視覚化できます。このクエリは時間経過とともにルートアクティビティを集計し、5 分ごとの区間内でのルートアクティビティの発生回数をカウントします。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html">グラフでログデータを視覚化する</a></p>
 </div>
 <h2 id="vpc">VPC フローログ<a class="headerlink" href="#vpc" title="Permanent link">&para;</a></h2>
 <h3 id="ip-reject">選択した送信元 IP アドレスのフローログをアクションが REJECT であるものにフィルタリング<a class="headerlink" href="#ip-reject" title="Permanent link">&para;</a></h3>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>fields @timestamp, @message, @logStream, @log  | filter srcAddr like &#39;$SOURCEIP&#39; and action = &#39;REJECT&#39;
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>| sort @timestamp desc
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>| limit 20
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>fields @timestamp, @message, @logStream, @log  | filter srcAddr like &#39;$SOURCEIP&#39; and action = &#39;REJECT&#39;
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>| sort @timestamp desc
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>| limit 20
 </span></code></pre></div>
-<p>このクエリは、$SOURCEIP からの「REJECT」を含む直近 20 件のログメッセージを返します。これにより、トラフィックが明示的に拒否されているか、クライアント側のネットワーク構成の問題があるかどうかを検出できます。</p>
+<p>このクエリは、$SOURCEIP からの「REJECT」を含む直近 20 件のログメッセージを返します。これは、トラフィックが明示的に拒否されているか、クライアント側のネットワーク構成の問題があるかどうかを検出するために使用できます。 </p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>'$SOURCEIP' を調べたい IP アドレスの値に置き換えてください。</p>
 </div>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>fields @timestamp, @message, @logStream, @log  | filter srcAddr like &#39;10.0.0.5&#39; and action = &#39;REJECT&#39;
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>| sort @timestamp desc
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>| limit 20
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>fields @timestamp, @message, @logStream, @log  | filter srcAddr like &#39;10.0.0.5&#39; and action = &#39;REJECT&#39;
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>| sort @timestamp desc
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>| limit 20
 </span></code></pre></div>
+<h3 id="_2">アベイラビリティゾーン別にネットワークトラフィックをグルーピング<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>stats sum(bytes / 1048576) as Traffic_MB by azId as AZ_ID 
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>| sort Traffic_MB desc
+</span></code></pre></div>
+<p>このクエリは、アベイラビリティゾーン(AZ)別にネットワークトラフィックデータを取得します。バイト数を合計してメガバイト(MB)に変換することで、トラフィックの総量を計算します。結果は、各 AZ のトラフィック量を基準に降順で並べ替えられます。</p>
+<h3 id="_3">フロー方向別にネットワークトラフィックをグルーピング<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>stats sum(bytes / 1048576) as Traffic_MB by flowDirection as Flow_Direction 
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>| sort by Bytes_MB desc
+</span></code></pre></div>
+<p>このクエリは、フロー方向(イングレスまたはエグレス)でグループ化されたネットワークトラフィックを分析するように設計されています。</p>
+<h3 id="ip-ip-10">送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送<a class="headerlink" href="#ip-ip-10" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAddr as Destination_IP 
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>| sort Data_Transferred_MB desc 
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>| limit 10
+</span></code></pre></div>
+<p>このクエリは、送信元 IP アドレスと送信先 IP アドレス別の上位 10 データ転送を取得します。このクエリにより、特定の送信元 IP アドレスと送信先 IP アドレス間で最も大きなデータ転送を特定できます。</p>
 
 
 

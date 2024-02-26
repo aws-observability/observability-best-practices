@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3308,7 +3308,7 @@
 <ol>
 <li>
 <p><strong>AWS Distro for OpenTelemetry(ADOT) は、EventBridge や SQS などの AWS サービス間でのトレースのプロパゲーションをサポートしていますか?</strong>
-    技術的には、それは ADOT ではなく AWS X-Ray です。プロパゲーションを行ったりスパンを生成したりする AWS サービスの数と種類を拡大する作業を行っています。これに依存するユースケースがある場合は、ご連絡ください。</p>
+    技術的には、それは ADOT ではなく AWS X-Ray です。プロパゲーションを行ったり、スパンを生成したりする AWS サービスの数と種類を拡大する作業を行っています。これに依存するユースケースがある場合は、ご連絡ください。</p>
 </li>
 <li>
 <p><strong>2023年後半に、ADOT を使用して W3C トレースヘッダーを利用してスパンを AWS X-Ray にインジェストすることができますか?</strong>
@@ -3332,14 +3332,14 @@
 </li>
 <li>
 <p><strong>サンプリングなしで、すべてのトレースを記録する 100% サンプリングを実現できますか。</strong>
-サンプリングルールを調整して、大幅に増加した量のトレースデータをキャプチャできます。送信されるセグメントの総数が、<a href="https://docs.aws.amazon.com/ja_jp/general/latest/gr/xray.html#limits_xray">ここで言及されているサービスクォータ制限</a> を超えなければ、X-Ray は設定されたとおりにデータを収集する努力をします。ただし、これが 100% のトレースデータキャプチャになることを保証するものではありません。</p>
+サンプリングルールを調整して、大幅に増加した量のトレースデータをキャプチャできます。送信されるセグメントの総数が、<a href="https://docs.aws.amazon.com/ja_jp/general/latest/gr/xray.html#limits_xray">ここで言及されているサービスクォータ制限</a> を超えなければ、X-Ray は設定されたとおりにデータを収集する努力をします。その結果として 100% のトレースデータのキャプチャが保証されるわけではありません。</p>
 </li>
 <li>
 <p><strong>サンプリングルールを動的に増減できますか?</strong>
-はい、必要に応じて<a href="https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-api-sampling.html">X-Ray サンプリング API</a> を使用して動的に調整できます。ユースケースベースの説明については、この<a href="https://aws.amazon.com/jp/blogs/news/dynamically-adjusting-x-ray-sampling-rules/">ブログ</a> を参照してください。 </p>
+はい、必要に応じて<a href="https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-api-sampling.html">X-Ray サンプリング API</a> を使用して動的に調整できます。ユースケースベースの説明については、この<a href="https://aws.amazon.com/blogs/mt/dynamically-adjusting-x-ray-sampling-rules/">ブログ</a> を参照してください。 </p>
 </li>
 <li>
-<p><strong>製品に関する FAQ</strong>
+<p><strong>製品 FAQ</strong>
 <a href="">https://aws.amazon.com/xray/faqs/</a></p>
 </li>
 </ol>

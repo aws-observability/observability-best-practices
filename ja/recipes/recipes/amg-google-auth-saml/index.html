@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3299,7 +3299,7 @@
         <li class="md-nav__item">
   <a href="#amazon-managed-grafana-saml" class="md-nav__link">
     <span class="md-ellipsis">
-      Amazon Managed Grafana への SAML メタデータのアップロード
+      Amazon Managed Grafana に SAML メタデータをアップロードする
     </span>
   </a>
   
@@ -3350,18 +3350,18 @@
 <p><img alt="AMG - SAML 設定の詳細" src="../../images/amg-saml-google-auth/9.png" /></p>
 <p><strong>属性マッピング</strong> 画面で、以下のスクリーンショットに示すように、<strong>Google ディレクトリ属性</strong>と<strong>アプリ属性</strong>間のマッピングを行います。</p>
 <p><img alt="Google ワークスペース - カスタム SAML アプリの追加 - 属性マッピング" src="../../images/amg-saml-google-auth/10.png" /></p>
-<p>Google 認証でログインするユーザーが <strong>Amazon Managed Grafana</strong> で <strong>Admin</strong> 権限を持つためには、<strong>Department</strong> フィールドの値を <strong><em>monitoring</em></strong> に設定します。これには任意のフィールドと値を選択できます。Google ワークスペース側で何を選択するかに関わらず、Amazon Managed Grafana の SAML 設定でそのマッピングを反映するようにしてください。</p>
-<h3 id="amazon-managed-grafana-saml">Amazon Managed Grafana への SAML メタデータのアップロード<a class="headerlink" href="#amazon-managed-grafana-saml" title="Permanent link">&para;</a></h3>
-<p>Amazon Managed Grafana コンソールで、<strong>Upload or copy/paste</strong> オプションをクリックし、前述の Google ワークスペースからダウンロードした SAML メタデータファイルを選択するために <strong>Choose file</strong> ボタンを選択します。</p>
-<p><strong>Assertion mapping</strong> セクションで、<strong>Assertion attribute role</strong> フィールドに <strong>Department</strong>、<strong>Admin role values</strong> フィールドに <strong>monitoring</strong> と入力します。
-これにより、<strong>Department</strong> が <strong>monitoring</strong> としてログインしたユーザーは、Grafana で<strong>管理者</strong>権限を持ち、ダッシュボードやデータソースの作成などの管理者業務を実行できるようになります。</p>
+<p>Google 認証でログインするユーザーが <strong>Amazon Managed Grafana</strong> で <strong>Admin</strong> 権限を持つためには、<strong>Department</strong> フィールドの値を <strong><em>monitoring</em></strong> に設定します。 これには任意のフィールドと値を選択できます。 Google ワークスペース側で何を使用するかを選択した場合は、Amazon Managed Grafana の SAML 設定でそれを反映するマッピングを行う必要があります。</p>
+<h3 id="amazon-managed-grafana-saml">Amazon Managed Grafana に SAML メタデータをアップロードする<a class="headerlink" href="#amazon-managed-grafana-saml" title="Permanent link">&para;</a></h3>
+<p>Amazon Managed Grafana コンソールで、<strong>Upload or copy/paste</strong> オプションをクリックし、先ほど Google ワークスペースからダウンロードした SAML メタデータファイルを選択するために <strong>Choose file</strong> ボタンを選択します。</p>
+<p><strong>Assertion mapping</strong> セクションで、<strong>Assertion attribute role</strong> フィールドに <strong>Department</strong> と入力し、<strong>Admin role values</strong> フィールドに <strong>monitoring</strong> と入力します。
+これにより、<strong>Department</strong> が <strong>monitoring</strong> としてログインするユーザーは、Grafana で <strong>Admin</strong> 権限を持ち、ダッシュボードやデータソースの作成などの管理者用のタスクを実行できるようになります。</p>
 <p>以下のスクリーンショットに示すように、<strong>Additional settings - optional</strong> セクションの値を設定します。<strong>Save SAML configuration</strong> をクリックします。</p>
-<p><img alt="AMG SAML - アサーションマッピング" src="../../images/amg-saml-google-auth/11.png" /></p>
+<p><img alt="AMG SAML - Assertion mapping" src="../../images/amg-saml-google-auth/11.png" /></p>
 <p>これで、Amazon Managed Grafana は Google ワークスペースを使用してユーザーを認証するように設定されました。</p>
 <p>ユーザーがログインすると、次のように Google ログインページにリダイレクトされます。</p>
-<p><img alt="Google ワークスペース - Google サインイン" src="../../images/amg-saml-google-auth/12.png" /></p>
+<p><img alt="Google Workspace - Google sign in" src="../../images/amg-saml-google-auth/12.png" /></p>
 <p>資格情報を入力すると、以下のスクリーンショットのように Grafana にログインされます。
-<img alt="AMG - Grafana ユーザー設定ページ" src="../../images/amg-saml-google-auth/13.png" /></p>
+<img alt="AMG - Grafana user settings page" src="../../images/amg-saml-google-auth/13.png" /></p>
 <p>ご覧のとおり、ユーザーは Google ワークスペース認証を使用して Grafana に正常にログインできました。</p>
 
 

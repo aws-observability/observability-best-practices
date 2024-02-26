@@ -16,11 +16,11 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
-        <title>組み込みメトリックフォーマット - AWS Observability Best Practices</title>
+        <title>組み込みメトリクスフォーマット - AWS Observability Best Practices</title>
       
     
     
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              組み込みメトリックフォーマット
+              組み込みメトリクスフォーマット
             
           </span>
         </div>
@@ -3288,15 +3288,15 @@
   
 
 
-<h1 id="_1">組み込みメトリックフォーマット<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>CloudWatch 組み込みメトリックフォーマット(EMF) は、構造化されたログイベントに埋め込まれたメトリック値を CloudWatch Logs が自動的に抽出するように指示するために使用される JSON 仕様です。抽出されたメトリック値をグラフ化したり、アラームを作成したりすることができます。EMF を使用すると、CloudWatch ログとしてプッシュされ、CloudWatch でメトリックとして発見されるメトリック関連データをプッシュできます。</p>
+<h1 id="_1">組み込みメトリクスフォーマット<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
+<p>CloudWatch 組み込みメトリクスフォーマット(EMF) は、構造化されたログイベントに埋め込まれたメトリクス値を CloudWatch Logs が自動的に抽出するように指示するために使用される JSON 仕様です。抽出されたメトリクス値をグラフ化したり、アラームを作成したりすることができます。EMF を使用すると、CloudWatch ログとしてプッシュされ、CloudWatch でメトリクスとして発見されるメトリクス関連データを指定できます。</p>
 <p>以下は EMF のサンプルと JSON スキーマです。</p>
 <div class="codehilite"><pre><span></span><code>{
   &quot;_aws&quot;: {
     &quot;Timestamp&quot;: 1574109732004,
     &quot;CloudWatchMetrics&quot;: [
       {
-        &quot;Namespace&quot;: &quot;lambda-function-metrics&quot;,
+        &quot;Namespace&quot;: &quot;lambda-function-metrics&quot;, 
         &quot;Dimensions&quot;: [
           [
             &quot;functionVersion&quot;
@@ -3305,7 +3305,7 @@
         &quot;Metrics&quot;: [
           {
             &quot;Name&quot;: &quot;time&quot;,
-            &quot;Unit&quot;: &quot;ミリ秒&quot;
+            &quot;Unit&quot;: &quot;ミリ秒&quot; 
           }
         ]
       }
@@ -3317,7 +3317,7 @@
 }
 </code></pre></div>
 
-<p>したがって、EMF の助けを借りることで、手動の PutMetricData API 呼び出しを行う必要なく、高基数メトリックを送信できます。</p>
+<p>したがって、EMF の助けを借りて、PutMetricData API 呼び出しを手動で行う必要なく、高基数メトリクスを送信できます。</p>
 
 
 

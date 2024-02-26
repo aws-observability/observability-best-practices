@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3723,9 +3723,9 @@
 
 
 <h1 id="amazon-rds-aurora">Amazon RDS と Aurora データベースのモニタリング<a class="headerlink" href="#amazon-rds-aurora" title="Permanent link">&para;</a></h1>
-<p>モニタリングは、Amazon RDS と Aurora データベースクラスターの信頼性、可用性、パフォーマンスを維持するうえで欠かせない重要な部分です。AWS には Amazon RDS と Aurora データベースリソースの正常性を監視し、重大な問題になる前に検知したり、一貫したユーザーエクスペリエンスのためにパフォーマンスを最適化するいくつかのツールが用意されています。このガイドでは、データベースがスムーズに実行されていることを確認するためのオブザーバビリティのベストプラクティスを提供します。</p>
+<p>モニタリングは、Amazon RDS と Aurora データベースクラスターの信頼性、可用性、パフォーマンスを維持するうえで欠かせない重要な部分です。AWS には Amazon RDS と Aurora データベースリソースの正常性を監視し、重大な問題になる前に検知したり、一貫したユーザーエクスペリエンスのためにパフォーマンスを最適化するいくつかのツールが用意されています。このガイドでは、データベースがスムーズに実行されていることを確認するためのオブザーバビリティのベストプラクティスを紹介します。</p>
 <h2 id="_1">パフォーマンスガイドライン<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
-<p>ベストプラクティスとして、ワークロードのベースライン パフォーマンスを確立することから始めることをお勧めします。DB インスタンスをセットアップして一般的なワークロードで実行するときに、すべてのパフォーマンス メトリクスの平均、最大、最小値をキャプチャしてください。これをさまざまな間隔で行ってください(例: 1 時間、24 時間、1 週間、2 週間など)。これにより、何が正常なのかを把握できます。ピーク時とオフピーク時の両方の比較情報を取得することで役立ちます。この情報を使用して、パフォーマンスが標準レベルを下回っているときを特定できます。</p>
+<p>ベストプラクティスとして、ワークロードのベースライン パフォーマンスを確立することから始めることをお勧めします。DB インスタンスをセットアップして一般的なワークロードで実行するときに、すべてのパフォーマンス メトリクスの平均、最大、最小値をキャプチャしてください。これをさまざまな間隔で行ってください(例: 1 時間、24 時間、1 週間、2 週間など)。これにより、何が正常なのかを把握できます。ピーク時とオフピーク時の両方の比較情報を取得することをお勧めします。この情報を使用して、パフォーマンスが標準レベルを下回っているときを特定できます。</p>
 <h2 id="_2">モニタリングオプション<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <h3 id="amazon-cloudwatch">Amazon CloudWatch メトリクス<a class="headerlink" href="#amazon-cloudwatch" title="Permanent link">&para;</a></h3>
 <p><a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html">Amazon CloudWatch</a> は、<a href="https://aws.amazon.com/rds/">RDS</a> および <a href="https://aws.amazon.com/rds/aurora/">Aurora</a> データベースを監視および管理するための重要なツールです。データベースのパフォーマンスに関する貴重な洞察を提供し、問題の特定と迅速な解決に役立ちます。Amazon RDS と Aurora の両方のデータベースは、アクティブな各データベースインスタンスについて 1 分ごとの粒度でメトリクスを CloudWatch に送信します。モニタリングはデフォルトで有効になっており、メトリクスは 15 日間利用できます。RDS と Aurora は、<strong>AWS/RDS</strong> 名前空間でインスタンスレベルのメトリクスを Amazon CloudWatch に公開します。</p>
@@ -3733,15 +3733,15 @@
 <ul>
 <li><strong>CPU 利用率</strong> - 使用されているコンピュータ処理容量の割合。 </li>
 <li><strong>DB 接続</strong> - DB インスタンスに接続されているクライアントセッションの数。 インスタンスのパフォーマンスと応答時間の低下と合わせて、高い数のユーザー接続が見られる場合は、データベース接続を制限することを検討してください。 DB インスタンスの最適なユーザー接続数は、インスタンスクラスと実行される操作の複雑さによって異なります。 データベース接続数を判断するには、DB インスタンスをパラメータグループに関連付けます。</li>
-<li><strong>空きメモリ</strong> - DB インスタンスで利用できる RAM の量(メガバイト単位)。 モニタリングタブのメトリクスの赤線は、CPU、メモリ、ストレージメトリクスで 75% に設定されています。 インスタンスのメモリ消費が頻繁にその線を超える場合は、ワークロードを確認するかインスタンスをアップグレードする必要があることを示しています。</li>
+<li><strong>空きメモリ</strong> - DB インスタンスで利用できる RAM の量(メガバイト単位)。 モニタリングタブのメトリクスの赤線は、CPU、メモリ、ストレージメトリクスで 75% にマークされています。 インスタンスのメモリ消費が頻繁にその線を超える場合は、ワークロードを確認するかインスタンスをアップグレードする必要があることを示しています。</li>
 <li><strong>ネットワークスループット</strong> - DB インスタンスへのネットワークトラフィックの速度(秒あたりのバイト数)。</li>
 <li><strong>読み取り/書き込みレイテンシ</strong> - 読み取りまたは書き込み操作の平均時間(ミリ秒)。</li>
 <li><strong>読み取り/書き込み IOPS</strong> - ディスクの読み取りまたは書き込み操作の平均数(秒あたり)。</li>
-<li><strong>空きストレージスペース</strong> - 現在使用されていないディスクスペースの量(メガバイト)。 使用されているスペースが、合計ディスクスペースの 85% を一貫して上回っているか、それに近い場合は、ディスクスペースの消費を調査してください。 インスタンスからデータを削除したり、データをアーカイブして別のシステムに移動したりして、スペースを解放できるかどうかを確認してください。</li>
+<li><strong>空きストレージスペース</strong> - 現在 DB インスタンスで使用されていないディスク容量(メガバイト)。 使用されているスペースが、合計ディスク容量の 85% を一貫して上回っているか、それに近い場合は、ディスク容量の消費を調査してください。 インスタンスからデータを削除したり、データをアーカイブして別のシステムに移動したりして、スペースを解放できるかどうかを確認してください。</li>
 </ul>
 <p><img alt="db_cw_metrics.png" src="../../../images/db_cw_metrics.png" /></p>
 <p>パフォーマンス関連の問題をトラブルシューティングする場合、最初のステップは、最も頻繁に使用されている高コストなクエリのチューニングです。 これらのクエリをチューニングして、システムリソースへのプレッシャーが低下するかどうかを確認します。 詳細については、<a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html#CHAP_BestPractices.TuningQueries">クエリのチューニング</a> を参照してください。</p>
-<p>クエリがチューニングされているにもかかわらず問題が続く場合は、データベースインスタンスクラスのアップグレードを検討してください。 リソース(CPU、RAM、ディスクスペース、ネットワーク帯域幅、I/O 容量)が多いインスタンスにアップグレードできます。</p>
+<p>クエリがチューニングされているにもかかわらず問題が続く場合は、データベースインスタンスクラスのアップグレードを検討してください。 リソース(CPU、RAM、ディスク容量、ネットワーク帯域幅、I/O 容量)が多いインスタンスにアップグレードできます。</p>
 <p>その後、これらのメトリクスが重要なしきい値に達したときにアラートを設定し、問題をできるだけ早く解決するためのアクションを実行できます。</p>
 <p>CloudWatch メトリクスの詳細については、<a href="https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/rds-metrics.html">Amazon RDS 用の Amazon CloudWatch メトリクス</a> および <a href="https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/metrics_dimensions.html">CloudWatch コンソールと AWS CLI での DB インスタンスメトリクスの表示</a> を参照してください。</p>
 <h4 id="cloudwatch-logs-insights">CloudWatch Logs Insights<a class="headerlink" href="#cloudwatch-logs-insights" title="Permanent link">&para;</a></h4>
@@ -3773,8 +3773,8 @@
 <p>データベース監査ログは、RDS および Aurora データベースで実行されたすべてのアクションの詳細な記録を提供します。これにより、不正アクセス、データの変更、その他の潜在的に有害なアクティビティを監視できます。データベース監査ログのベストプラクティスを次に示します。</p>
 <ul>
 <li>すべての RDS および Aurora インスタンスでデータベース監査ログを有効にし、すべての関連データをキャプチャするよう設定します。</li>
-<li>Amazon CloudWatch Logs や Amazon Kinesis Data Streams などの集中ログ管理ソリューションを使用して、データベース監査ログを収集および分析します。 </li>
-<li>データベース監査ログを定期的に監視し、疑わしいアクティビティがあれば迅速に調査および解決するためのアクションを実行します。</li>
+<li>Amazon CloudWatch Logs や Amazon Kinesis Data Streams などの集中ログ管理ソリューションを使用して、データベース監査ログを収集および分析します。  </li>
+<li>データベース監査ログを定期的に監視し、疑わしいアクティビティがあれば迅速に調査および解決するアクションを実行します。</li>
 </ul>
 <p>データベース監査ログの設定方法の詳細については、<a href="https://aws.amazon.com/blogs/database/configuring-an-audit-log-to-capture-database-activities-for-amazon-rds-for-mysql-and-amazon-aurora-with-mysql-compatibility/">Configuring an Audit Log to Capture database activities for Amazon RDS and Aurora</a> を参照してください。</p>
 <h4 id="_4">データベースの遅いクエリとエラーログ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h4>
@@ -3795,7 +3795,7 @@
 <li>PostgreSQL</li>
 </ul>
 <p><strong>CloudWatch と拡張モニタリングの違い</strong>
-CloudWatch は、DB インスタンスのハイパーバイザーから CPU 使用率に関するメトリクスを収集します。対照的に、拡張モニタリングは、DB インスタンス上のエージェントからそのメトリクスを収集します。 ハイパーバイザーは仮想マシン (VM) を作成および実行します。 ハイパーバイザーを使用すると、インスタンスはメモリと CPU を仮想的に共有することにより、複数のゲスト VM をサポートできます。 ハイパーバイザー層が少量の作業を実行するため、CloudWatch と拡張モニタリングの測定値の間に差異がある場合があります。 DB インスタンスでより小さいインスタンスクラスを使用する場合、差異は大きくなる可能性があります。 このシナリオでは、複数の仮想マシン (VM) が物理インスタンス上のハイパーバイザー層によって管理されている可能性が高くなります。</p>
+CloudWatch は、DB インスタンスのハイパーバイザーから CPU 使用率に関するメトリクスを収集します。対照的に、拡張モニタリングは、DB インスタンス上のエージェントからそのメトリクスを収集します。 ハイパーバイザーは仮想マシン (VM) を作成および実行します。 ハイパーバイザーを使用すると、インスタンスはメモリと CPU を仮想的に共有することにより、複数のゲスト VM をサポートできます。 ハイパーバイザー層がわずかな処理を実行するため、CloudWatch と拡張モニタリングの測定値の間に差異がある場合があります。 DB インスタンスでより小さいインスタンスクラスを使用している場合、差異は大きくなる可能性があります。 このシナリオでは、複数の仮想マシン (VM) が物理インスタンス上のハイパーバイザー層によって管理されている可能性が高くなります。</p>
 <p>拡張モニタリングで利用できるすべてのメトリクスの詳細については、<a href="https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_Monitoring-Available-OS-Metrics.html">拡張モニタリングの OS メトリクス</a> を参照してください。</p>
 <p><img alt="db-enhanced-monitoring.png" src="../../../images/db_enhanced_monitoring.png" /></p>
 <h4 id="performance-insights_1">Performance Insights<a class="headerlink" href="#performance-insights_1" title="Permanent link">&para;</a></h4>

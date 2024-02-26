@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3312,23 +3312,23 @@
 </li>
 <li>
 <p><strong>ADOT コレクタを使用してログを収集し、Amazon CloudWatch または Amazon OpenSearch に取り込むことができますか?</strong>
-    まだできませんが、OpenTelemetry でログを上流で安定化させる作業を行っています。時期が来たら、おそらく 2023 年後半または 2024 年初頭に、ADOT でログをサポートする予定です。詳細は <a href="https://github.com/aws-observability/aws-otel-community/issues/11">パブリックロードマップのエントリ</a> を参照してください。</p>
+    まだできませんが、OpenTelemetry でログを上流で安定化させる作業を行っています。時期が来たら、おそらく 2023 年後半または 2024 年初頭に、ADOT でログをサポートする予定です。詳細については、<a href="https://github.com/aws-observability/aws-otel-community/issues/11">パブリックロードマップのエントリ</a> を参照してください。</p>
 </li>
 <li>
 <p><strong>ADOT コレクタのリソース使用量とパフォーマンスの詳細はどこで確認できますか?</strong>
-    コレクタのリリースごとに更新している <a href="https://aws-observability.github.io/aws-otel-collector/benchmark/report">パフォーマンスレポート</a> がオンラインで公開されています。</p>
+    コレクタのリリースごとに更新している<a href="https://aws-observability.github.io/aws-otel-collector/benchmark/report">パフォーマンスレポート</a>がオンラインで公開されています。</p>
 </li>
 <li>
 <p><strong>ADOT を Apache Kafka で使用することは可能ですか?</strong>
-    はい、Kafka エクスポータとレシーバのサポートが ADOT コレクタ v0.28.0 で追加されました。詳細は、<a href="https://aws-otel.github.io/docs/components/kafka-receiver-exporter">ADOT コレクタのドキュメント</a> をご確認ください。</p>
+    はい、Kafka エクスポータとレシーバのサポートが ADOT コレクタ v0.28.0 で追加されました。詳細については、<a href="https://aws-otel.github.io/docs/components/kafka-receiver-exporter">ADOT コレクタのドキュメント</a>をご確認ください。</p>
 </li>
 <li>
 <p><strong>ADOT コレクタの設定方法を教えてください。</strong>
-    ADOT コレクタは、ローカルに保存されている YAML 設定ファイルを使用して構成されます。 加えて、S3 バケットなどの他の場所に保存されている設定を使用することもできます。 ADOT コレクタを構成するためにサポートされているすべてのメカニズムは、<a href="https://aws-otel.github.io/docs/components/confmap-providers">ADOT コレクタのドキュメント</a> で詳しく説明されています。</p>
+    ADOT コレクタは、ローカルに保存されている YAML 設定ファイルを使用して構成されます。 加えて、S3 バケットなどの他の場所に保存されている構成を使用することもできます。 ADOT コレクタを構成するためにサポートされているすべてのメカニズムは、<a href="https://aws-otel.github.io/docs/components/confmap-providers">ADOT コレクタのドキュメント</a>で詳しく説明されています。</p>
 </li>
 <li>
 <p><strong>ADOT コレクタで高度なサンプリングを行うことができますか?</strong>
-    現在実装中です。 進捗を確認したい場合は、パブリック <a href="https://github.com/aws-observability/aws-otel-collector/issues/1135">ロードマップ</a> にサブスクライブしてください。</p>
+    現在実装中です。公開 <a href="https://github.com/aws-observability/aws-otel-collector/issues/1135">ロードマップのエントリ</a> をサブスクライブして最新情報を取得してください。</p>
 </li>
 <li>
 <p><strong>ADOT コレクタのスケーリングのヒントを教えてください。</strong>
@@ -3336,21 +3336,19 @@
 </li>
 <li>
 <p><strong>ADOT コレクタのフリートを持っています。どのように管理できますか?</strong>
-    これは現在積極的に開発が進められている領域で、2023年に成熟することが期待されています。 詳細については、アップストリームの OpenTelemetry ドキュメントの <a href="https://opentelemetry.io/docs/collector/management/">管理</a> を参照してください。特に <a href="https://opentelemetry.io/docs/collector/management/#opamp">Open Agent Management Protocol (OpAMP)</a> をご覧ください。</p>
+    これは現在積極的に開発が進められている領域であり、2023年に成熟すると予想されます。 詳細については、アップストリームの OpenTelemetry ドキュメントの <a href="https://opentelemetry.io/docs/collector/management/">管理</a> を参照してください。特に <a href="https://opentelemetry.io/docs/collector/management/#opamp">Open Agent Management Protocol (OpAMP)</a> をご覧ください。</p>
 </li>
 <li>
-<p><strong>ADOT コレクタの正常性とパフォーマンスをどのように監視しますか?</strong></p>
+<p><strong>ADOT コレクタの正常性とパフォーマンスをどのように監視していますか?</strong></p>
 <ol>
 <li><a href="https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/monitoring.md">コレクタの監視</a> - ポート 8080 で公開されているデフォルトのメトリクスを Prometheus レシーバがスクレイプできます</li>
 <li><a href="https://prometheus.io/docs/guides/node-exporter/">Node Exporter</a> を使用する - node exporter を実行すると、コレクタが実行されているノード、ポッド、オペレーティング システムに関するいくつかのパフォーマンスと正常性メトリクスも提供されます。</li>
-<li><a href="https://github.com/kubernetes/kube-state-metrics">Kube-state-metrics (KSM)</a> - KSM もコレクタに関する興味深いイベントを生成できます。 </li>
-<li>Prometheus の <a href="https://github.com/open-telemetry/opentelemetry-collector/pull/2918"><code>up</code> メトリクス</a></li>
+<li><a href="https://github.com/kubernetes/kube-state-metrics">Kube-state-metrics (KSM)</a> - KSM もコレクタに関する興味深いイベントを生成できます。</li>
+<li><a href="https://github.com/open-telemetry/opentelemetry-collector/pull/2918">Prometheus <code>up</code> メトリクス</a></li>
 <li>はじめに使用できるシンプルな Grafana ダッシュボード: <a href="">https://grafana.com/grafana/dashboards/12553</a></li>
 </ol>
 </li>
-<li>
-<p><strong>製品 FAQ</strong> - <a href="">https://aws.amazon.com/otel/faqs/</a></p>
-</li>
+<li><strong>製品 FAQ</strong> - <a href="">https://aws.amazon.com/otel/faqs/</a></li>
 </ol>
 
 

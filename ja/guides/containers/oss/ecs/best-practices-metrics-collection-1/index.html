@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3400,8 +3400,8 @@
   
 
 
-<h1 id="aws-distro-for-opentelemetry-ecs">AWS Distro for OpenTelemetry を使用した ECS クラスター内のシステムメトリクスの収集<a class="headerlink" href="#aws-distro-for-opentelemetry-ecs" title="Permanent link">&para;</a></h1>
-<p><a href="https://aws-otel.github.io/docs/introduction">AWS Distro for OpenTelemetry</a>(ADOT) は、<a href="https://opentelemetry.io/">OpenTelemetry</a> プロジェクトの安全で AWS サポートのディストリビューションです。ADOT を使用すると、複数のソースからテレメトリデータを収集し、相関するメトリクス、トレース、ログを複数のモニタリングソリューションに送信できます。ADOT は、Amazon ECS クラスターに 2 つのパターンでデプロイできます。</p>
+<h1 id="aws-distro-for-opentelemetry-ecs">AWS Distro for OpenTelemetry を使用した ECS クラスターのシステムメトリクスの収集<a class="headerlink" href="#aws-distro-for-opentelemetry-ecs" title="Permanent link">&para;</a></h1>
+<p><a href="https://aws-otel.github.io/docs/introduction">AWS Distro for OpenTelemetry</a>(ADOT) は、<a href="https://opentelemetry.io/">OpenTelemetry</a> プロジェクトのセキュアで AWS サポートのディストリビューションです。ADOT を使用すると、複数のソースからテレメトリデータを収集し、相関するメトリクス、トレース、ログを複数のモニタリングソリューションに送信できます。ADOT は、Amazon ECS クラスターに 2 つのパターンでデプロイできます。</p>
 <h2 id="adot-collector">ADOT Collector のデプロイメントパターン<a class="headerlink" href="#adot-collector" title="Permanent link">&para;</a></h2>
 <ol>
 <li>サイドカーパターンでは、ADOT Collector はクラスタ内の各タスク内で実行され、そのタスク内のアプリケーションコンテナから収集したテレメトリデータのみを処理します。このデプロイメントパターンは、コレクターが <a href="https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/task-metadata-endpoint.html">Amazon ECS のタスクメタデータエンドポイント</a> からタスクメタデータを読み取り、そこからリソース使用量メトリクス(CPU、メモリ、ネットワーク、ディスクなど)を生成する必要がある場合にのみ必要です。</li>
@@ -3417,7 +3417,7 @@
 <p>Receiver、Processor、Exporter、Extensions の詳細な説明については、OpenTelemetry の<a href="https://opentelemetry.io/docs/collector/configuration/#basics">ドキュメント</a>を参照してください。</p>
 </div>
 <h2 id="ecs-adot-collector">ECS タスクメトリクス収集のための ADOT Collector のデプロイ<a class="headerlink" href="#ecs-adot-collector" title="Permanent link">&para;</a></h2>
-<p>ECS タスクレベルでリソース利用メトリクスを収集するには、以下に示すタスク定義を使用して、サイドカーパターンで ADOT Collector をデプロイする必要があります。Collector に使用されるコンテナイメージには、いくつかのパイプライン構成がバンドルされています。要件に基づいてそれらのいずれかを選択し、コンテナ定義の <em>command</em> セクションで構成ファイルパスを指定できます。この値を <code>--config=/etc/ecs/container-insights/otel-task-metrics-config.yaml</code> に設定すると、Collector と同じタスク内の他のコンテナからリソース利用メトリクスとトレースを収集し、それらを Amazon CloudWatch と AWS X-Ray に送信する<a href="https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml">パイプライン構成</a>が使用されます。具体的には、Collector は <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4.html">Amazon ECS Task Metadata Endpoint</a> からタスクメタデータと docker ステータスを読み取る <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver">AWS ECS Container Metrics Receiver</a> を使用し、それらからリソース使用メトリクス(CPU、メモリ、ネットワーク、ディスクなど)を生成します。</p>
+<p>ECS タスクレベルでリソース利用メトリクスを収集するには、以下に示すタスク定義を使用して、サイドカーパターンで ADOT Collector をデプロイする必要があります。Collector に使用されるコンテナイメージには、いくつかのパイプライン構成がバンドルされています。要件に基づいてそれらのいずれかを選択し、コンテナ定義の <em>command</em> セクションで構成ファイルパスを指定できます。この値を <code>--config=/etc/ecs/container-insights/otel-task-metrics-config.yaml</code> に設定すると、Collector と同じタスク内の他のコンテナからリソース利用メトリクスとトレースを収集し、それらを Amazon CloudWatch と AWS X-Ray に送信する<a href="https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/container-insights/otel-task-metrics-config.yaml">パイプライン構成</a>が使用されます。具体的には、Collector は <a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-metadata-endpoint-v4.html">Amazon ECS Task Metadata Endpoint</a> からタスクメタデータと docker stats を読み取り、それらからリソース使用メトリクス(CPU、メモリ、ネットワーク、ディスクなど)を生成する <a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver">AWS ECS Container Metrics Receiver</a> を使用します。</p>
 <div class="language-javascript highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p">{</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="s2">&quot;family&quot;</span><span class="o">:</span><span class="s2">&quot;AdotTask&quot;</span><span class="p">,</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span><span class="s2">&quot;taskRoleArn&quot;</span><span class="o">:</span><span class="s2">&quot;arn:aws:iam::123456789012:role/ECS-ADOT-Task-Role&quot;</span><span class="p">,</span>
@@ -3474,13 +3474,13 @@
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 </div>
-<p>これらは、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html">Amazon ECS 用 Container Insights で収集されるメトリクス</a>と同じであり、クラスターまたはアカウントレベルで Container Insights を有効にすると CloudWatch ですぐに利用できるようになります。したがって、CloudWatch で ECS リソース使用メトリクスを収集するには、Container Insights の有効化が推奨アプローチです。</p>
-<p>AWS ECS Container Metrics Receiver は、Amazon ECS タスクメタデータエンドポイントから読み取った 52 のユニークなメトリクスを発行します。レシーバーによって収集されるメトリクスの完全なリストは、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics">こちらで文書化されています</a>。すべてを希望の宛先に送信したくない場合があります。ECS リソース使用メトリクスをより明示的に制御したい場合は、使用可能なメトリクスを選択したプロセッサ/トランスフォーマでフィルタリングおよび変換するカスタムパイプライン構成を作成し、選択したエクスポーターに基づいて宛先に送信できます。ECS タスクレベルのメトリクスをキャプチャするためのパイプライン構成の<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples">追加の例</a>を参照してください。</p>
-<p>カスタムパイプライン構成を使用する場合は、以下に示すタスク定義を使用して、サイドカーパターンで Collector をデプロイできます。ここでは、AWS SSM パラメータストアの <em>otel-collector-config</em> という名前のパラメータから Collector パイプラインの構成が読み込まれます。</p>
+<p>これらは、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html">Amazon ECS 用 Container Insights で収集されるメトリクス</a>と同じであり、クラスターまたはアカウントレベルで Container Insights を有効にすると CloudWatch ですぐに利用できるようになります。したがって、CloudWatch で ECS リソース使用メトリクスを収集するには、Container Insights の有効化が推奨されるアプローチです。</p>
+<p>AWS ECS Container Metrics Receiver は、Amazon ECS タスクメタデータエンドポイントから読み取った 52 のユニークなメトリクスを発行します。レシーバーによって収集されるメトリクスの完全なリストは、<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#available-metrics">こちらで文書化されています</a>。すべてを希望の宛先に送信したくない場合があります。ECS リソース使用メトリクスをより明示的に制御したい場合は、使用可能なメトリクスを選択したプロセッサ/トランスフォーマでフィルタリングおよび変換するカスタムパイプライン構成を作成できます。選択したエクスポーターに基づいて、宛先に送信できます。ECS タスクレベルのメトリクスをキャプチャするためのパイプライン構成の<a href="https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsecscontainermetricsreceiver#full-configuration-examples">追加の例</a>は、ドキュメントを参照してください。</p>
+<p>カスタムパイプライン構成を使用する場合は、以下に示すタスク定義を使用して、サイドカーパターンで Collector をデプロイできます。ここで、Collector パイプラインの構成は、AWS SSM パラメータストアの <em>otel-collector-config</em> という名前のパラメータからロードされます。</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-</div>
 <p>SSM パラメータストアパラメータの名前は、環境変数 AOT_CONFIG_CONTENT を使用して Collector に公開する必要があります。</p>
+</div>
 <div class="language-javascript highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p">{</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="s2">&quot;family&quot;</span><span class="o">:</span><span class="s2">&quot;AdotTask&quot;</span><span class="p">,</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span><span class="s2">&quot;taskRoleArn&quot;</span><span class="o">:</span><span class="s2">&quot;arn:aws:iam::123456789012:role/ECS-ADOT-Task-Role&quot;</span><span class="p">,</span>

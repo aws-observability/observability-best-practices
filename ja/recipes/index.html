@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3397,8 +3397,8 @@
 
 
 <h1 id="_1">レシピ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ここでは、<a href="amp/" title="Amazon Managed Service for Prometheus">Amazon Managed Service for Prometheus</a>や<a href="amg/" title="Amazon Managed Grafana">Amazon Managed Grafana</a>といったマネージドサービス、<a href="https://opentelemetry.io/" title="OpenTelemetry">OpenTelemetry</a>や<a href="https://fluentbit.io/" title="Fluent Bit">Fluent Bit</a>といったエージェントなど、さまざまなユースケースにおけるオブザーバビリティの適用に役立つ、厳選されたガイダンス、ハウツー、その他のリソースへのリンクを紹介しています。コンテンツは AWS ツールに限定されているわけではなく、多くのオープンソースプロジェクトが参照されています。</p>
-<p>開発者とインフラ担当者の両方のニーズに対応するために、レシピの多くが「幅広い対象」となっています。探索して、あなたが達成しようとしていることに最適なソリューションを見つけることをおすすめします。 </p>
+<p>ここでは、<a href="amp/" title="Amazon Managed Service for Prometheus">Amazon Managed Service for Prometheus</a>や<a href="amg/" title="Amazon Managed Grafana">Amazon Managed Grafana</a>といったマネージドサービス、<a href="https://opentelemetry.io/" title="OpenTelemetry">OpenTelemetry</a>や<a href="https://fluentbit.io/" title="Fluent Bit">Fluent Bit</a>といったエージェントなど、さまざまなユースケースに対するオブザーバビリティの適用に役立つ、厳選されたガイダンス、ハウツー、その他のリソースへのリンクを紹介しています。コンテンツは AWS ツールに限定されているわけではなく、多くのオープンソースプロジェクトが参照されています。</p>
+<p>開発者とインフラ担当者の両方のニーズに対応するために、レシピの多くが「幅広い対象」となっています。探索して、あなたが達成しようとしていることに最適なソリューションを見つけることをお勧めします。 </p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
 <p>ここにあるコンテンツは、ソリューションアーキテクト、プロフェッショナルサービス、およびその他のお客様からのフィードバックによって導き出されたものです。ここで紹介されているものはすべて、お客様自身の環境で実際に実装されたものです。</p>
@@ -3440,8 +3440,8 @@
 </tbody>
 </table>
 <div class="admonition question">
-<p class="admonition-title">ソリューション要件の例</p>
-<p>Fargate 上の EKS で実行している Python アプリのログソリューションが必要です。ログを S3 バケットに格納してさらに消費することが目標です。</p>
+<p class="admonition-title">例としてのソリューション要件</p>
+<p>EKS on Fargate で実行している Python アプリのログソリューションが必要です。データのさらなる消費のためにログを S3 バケットに格納することが目的です。</p>
 </div>
 <p>このニーズを満たすスタックの一例は、次のとおりです:</p>
 <ol>
@@ -3452,7 +3452,7 @@
 <li><em>コンピュートユニット</em>: Kubernetes (EKS)  </li>
 <li><em>コンピュートエンジン</em>: EC2</li>
 </ol>
-<p>すべてのディメンションを指定する必要はなく、どこから始めればいいか判断しにくいこともあります。さまざまなパスを試し、特定のレシピの長所と短所を比較してください。</p>
+<p>すべてのディメンションを指定する必要はなく、時にはどこから始めればいいか判断しにくいこともあります。さまざまなパスを試し、特定のレシピの長所と短所を比較してください。</p>
 <p>ナビゲーションを簡略化するために、6つのディメンションを次のカテゴリにグループ化しています:</p>
 <ul>
 <li><strong>By Compute</strong>: コンピュートエンジンとユニットをカバー</li>

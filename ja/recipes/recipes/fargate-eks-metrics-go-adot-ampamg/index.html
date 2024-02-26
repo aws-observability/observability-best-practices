@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3327,7 +3327,7 @@
           <li class="md-nav__item">
   <a href="#amp" class="md-nav__link">
     <span class="md-ellipsis">
-      AMPの設定
+      AMPのセットアップ
     </span>
   </a>
   
@@ -3456,7 +3456,7 @@
 そして、<a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> を使用してそれらのメトリクスを可視化します。</p>
 <p><a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service(EKS)</a> の
 <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上にクラスタを設定し、
-<a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a> リポジトリを使用して、
+<a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a> レポジトリを使用して、
 完全なシナリオをデモンストレーションします。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3482,13 +3482,13 @@
 <li>AWS CLI がインストールされ、環境に<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html">構成</a>されている必要があります。</li>
 <li>環境に <a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/eksctl.html">eksctl</a> コマンドをインストールする必要があります。</li>
 <li>環境に <a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/install-kubectl.html">kubectl</a> をインストールする必要があります。</li>
-<li><a href="https://docs.docker.com/get-docker/">Docker</a> がインストールされている必要があります。</li>
+<li>環境に <a href="https://docs.docker.com/get-docker/">Docker</a> がインストールされている必要があります。</li>
 </ul>
 <h3 id="fargate-eks">Fargate 上の EKS クラスターの作成<a class="headerlink" href="#fargate-eks" title="Permanent link">&para;</a></h3>
 <p>デモアプリケーションは、Fargate 上の EKS クラスターで実行する Kubernetes アプリケーションです。
-そのため、まず提供されている <a href="cluster-config.yaml">cluster-config.yaml</a> テンプレートファイルを使用して EKS クラスターを作成します。
+そのため、まず <a href="cluster-config.yaml">cluster-config.yaml</a> テンプレートファイルを使用して EKS クラスターを作成します。
 <code>&lt;your_region&gt;</code> を <a href="https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html#AMP-supported-Regions">AMP がサポートしているリージョン</a> のいずれかに変更してください。</p>
-<p>シェルセッションで <code>&lt;your_region&gt;</code> を設定することを確認してください。たとえば、Bash の場合:</p>
+<p><code>&lt;your_region&gt;</code> をシェルセッションで設定することを確認してください。たとえば、Bash の場合:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>export AWS_DEFAULT_REGION=&lt;YOUR_REGION&gt;
 </span></code></pre></div>
 <p>次のコマンドを使用してクラスターを作成します: </p>
@@ -3505,41 +3505,40 @@
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    --region &lt;YOUR_REGION&gt;
 </span></code></pre></div>
 <p></your_region></your_region></p>
-<h3 id="amp">AMPの設定<a class="headerlink" href="#amp" title="Permanent link">&para;</a></h3>
+<h3 id="amp">AMPのセットアップ<a class="headerlink" href="#amp" title="Permanent link">&para;</a></h3>
 <p>まず、AWS CLIを使用してAmazon Managed Service for Prometheusワークスペースを次のように作成します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aws amp create-workspace --alias prometheus-sample-app
 </span></code></pre></div>
-<p>次のコマンドでワークスペースが作成されたことを確認します。</p>
+<p>次のコマンドを使用して、ワークスペースが作成されたことを確認します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws amp list-workspaces
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>詳細は、<a href="https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html">AMP スタートガイド</a>を参照してください。</p>
+<p>詳細は、<a href="https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html">AMP スタートガイド</a>をご確認ください。</p>
 </div>
 <h3 id="adot-collector">ADOT Collectorのセットアップ<a class="headerlink" href="#adot-collector" title="Permanent link">&para;</a></h3>
 <p><a href="adot-collector-fargate.yaml">adot-collector-fargate.yaml</a> をダウンロードし、次のステップで説明するパラメータを使用してこのYAMLドキュメントを編集します。</p>
 <p>この例では、ADOT Collectorの構成ではアノテーション <code>(scrape=true)</code> を使用して、スクレイプする対象のエンドポイントを指示しています。 これにより、ADOT Collectorはクラスタ内の<code>kube-system</code> エンドポイントとサンプルアプリケーションのエンドポイントを区別できます。
 別のサンプルアプリケーションをスクレイプしたい場合は、この再ラベル付け構成から削除できます。</p>
-<p>ダウンロードしたファイルを環境に合わせて編集するには、次のステップに従ってください。</p>
+<p>ダウンロードしたファイルを環境に合わせて編集するには、次のステップに従ってください:</p>
 <p>1. <code>&lt;your_region&gt;</code> を現在のリージョンに置き換えます。</p>
 <p>2. <code>&lt;your_endpoint&gt;</code> をワークスペースのリモートライト URL に置き換えます。</p>
 <p>次のクエリを実行することで、AMP リモートライト URL エンドポイントを取得できます。</p>
-<p>まず、次のようにワークスペース ID を取得します。</p>
+<p>まず、次のようにワークスペース ID を取得します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                    --alias prometheus-sample-app \
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                    --query &#39;workspaces[0].workspaceId&#39; --output text)
 </span></code></pre></div>
-<p>次に、ワークスペースのリモートライト URL エンドポイントを取得するには、次を使用します。</p>
+<p>次に、以下を使用してワークスペースのリモートライト URL エンドポイントを取得します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>YOUR_ENDPOINT=$(aws amp describe-workspace \
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>                --workspace-id $YOUR_WORKSPACE_ID  \
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>                --query &#39;workspace.prometheusEndpoint&#39; --output text)api/v1/remote_write
 </span></code></pre></div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p><code>YOUR_ENDPOINT</code> が実際にリモートライト URL であることを確認してください。つまり、
-URL は <code>/api/v1/remote_write</code> で終わる必要があります。</p>
+<p><code>YOUR_ENDPOINT</code>が実際にリモートライトURLであること、つまりURLが<code>/api/v1/remote_write</code>で終わっていることを確認してください。</p>
 </div>
-<p>デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます。</p>
+<p>デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>kubectl apply -f adot-collector-fargate.yaml
 </span></code></pre></div>
 <div class="admonition info">
@@ -3559,7 +3558,7 @@ URL は <code>/api/v1/remote_write</code> で終わる必要があります。</
 (カウンター、ゲージ、ヒストグラム、サマリー)を生成し、<code>/metrics</code> エンドポイントで公開します。</p>
 <h3 id="_5">コンテナイメージのビルド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>コンテナイメージをビルドするには、まず Git リポジトリをクローンし、
-ディレクトリに移動します。</p>
+次のようにディレクトリに移動します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>git clone https://github.com/aws-observability/aws-otel-community.git &amp;&amp; \
 </span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cd ./aws-otel-community/sample-apps/prometheus
 </span></code></pre></div>
@@ -3574,8 +3573,8 @@ URL は <code>/api/v1/remote_write</code> で終わる必要があります。</
 </span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>proxy.golang.or i/o タイムアウトのため <code>go mod</code> が環境で失敗する場合は、
-Dockerfile を編集することで go mod プロキシをバイパスできます。</p>
+<p>proxy.golang.or へのタイムアウトなどにより、ご自身の環境で <code>go mod</code> が失敗する場合があります。
+この場合は Dockerfile を編集することで、go mod プロキシをバイパスできます。</p>
 <p>Dockerfile の次の行を変更します。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>RUN GO111MODULE=on go mod download
 </span></code></pre></div>
@@ -3583,13 +3582,13 @@ Dockerfile を編集することで go mod プロキシをバイパスできま�
 <div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>RUN GOPROXY=direct GO111MODULE=on go mod download
 </span></code></pre></div></p>
 </div>
-<p>これで、前に作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。</p>
-<p>そのために、まずデフォルトの ECR レジストリにログインします。</p>
+<p>これで、前述の手順で作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。</p>
+<p>そのためにまず、デフォルトの ECR レジストリにログインします。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    docker login --username AWS --password-stdin \
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    &quot;$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com&quot;
 </span></code></pre></div>
-<p>そして最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。</p>
+<p>最後に、上記で作成した ECR リポジトリにコンテナイメージをプッシュします。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker push &quot;$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest&quot;
 </span></code></pre></div>
 <p></your_region></your_region></p>
@@ -3602,7 +3601,7 @@ Dockerfile を編集することで go mod プロキシをバイパスできま�
 <div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl apply -f prometheus-sample-app.yaml
 </span></code></pre></div>
 <h2 id="_7">エンドツーエンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>インフラストラクチャとアプリケーションが整ったので、設定をテストします。EKS で実行されている Go アプリからメトリクスを送信し、AMP に記録され、AMG で可視化します。</p>
+<p>インフラストラクチャとアプリケーションが整ったので、設定をテストします。EKS で実行されている Go アプリからメトリクスを送信し、AMP に記録し、AMG で可視化します。</p>
 <h3 id="_8">パイプラインが機能していることを確認する<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>ADOT コレクターがサンプルアプリの Pod からメトリクスをスクレイピングし、AMP にインジェストしていることを確認するには、コレクターログを確認します。</p>
 <p>ADOT コレクターログをフォローするには、次のコマンドを入力します。</p>

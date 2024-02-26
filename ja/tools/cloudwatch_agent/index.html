@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3459,11 +3459,11 @@
 <p>CloudWatch エージェントの使用は AWS 内に<em>限定されておらず</em>、オンプレミスと他のクラウド環境の両方でサポートされています。ただし、AWS 外で CloudWatch エージェントを使用する場合、以下の 2 つの追加の考慮事項に留意する必要があります。</p>
 <ol>
 <li>エージェントが必要な API 呼び出しを行うことを許可する IAM 資格情報<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> の設定。EC2 であっても CloudWatch API への認証なしアクセスはありません<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup>。</li>
-<li>インターネットを経由して、<a href="https://aws.amazon.com/directconnect/">AWS Direct Connect</a> を使用して、または <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html">プライベートエンドポイント</a>(通常、<em>VPC エンドポイント</em>と呼ばれる)を使用して、要件を満たすルートを介して、エージェントが CloudWatch、CloudWatch Logs、およびその他の AWS エンドポイント<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> に接続できることを確認してください。</li>
+<li>インターネットを介して、<a href="https://aws.amazon.com/directconnect/">AWS Direct Connect</a> を使用して、または <a href="https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html">プライベートエンドポイント</a>(通常、<em>VPC エンドポイント</em>と呼ばれる)を使用して、要件を満たすルートを介してエージェントが CloudWatch、CloudWatch Logs およびその他の AWS エンドポイント<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> に接続できることを確認してください。</li>
 </ol>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>環境と CloudWatch 間のトランスポートは、ガバナンスとセキュリティの要件に合致する必要があります。概して、AWS 外のワークロードにプライベートエンドポイントを使用すると、最も厳格に規制された業界のニーズも満たすことができます。ただし、大多数のお客様にとって、パブリックエンドポイントを使用することで十分なサービスが提供されます。</p>
+<p>お客様の環境と CloudWatch 間のトランスポートは、ガバナンスとセキュリティの要件に合致する必要があります。概して、AWS 外のワークロードにプライベートエンドポイントを使用することは、最も厳格に規制された業界のお客様のニーズにも対応できます。ただし、ほとんどのお客様はパブリックエンドポイントを介して十分にサービスを利用できます。</p>
 </div>
 <h2 id="_1">プライベートエンドポイントの使用<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <p>メトリクスとログをプッシュするために、CloudWatch エージェントは <em>CloudWatch</em> および <em>CloudWatch Logs</em> エンドポイントへの接続が必要です。エージェントのインストール場所に基づいて、これを実現する方法はいくつかあります。</p>
@@ -3476,29 +3476,29 @@
 </div>
 <p>c. 既存の TLS と <a href="https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html">Sigv4</a> メカニズムを超えたプライベートまたはセキュアな接続性の要件がない場合、エンドポイントへの接続性を提供するための最も簡単なオプションは、<a href="https://docs.aws.amazon.com/vpc/latest/userguide/VPC_Internet_Gateway.html">インターネットゲートウェイ</a> を持つことです。</p>
 <h3 id="_2">オンプレミスやその他のクラウド環境から<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>a. AWS 外で実行されているエージェントは、インターネット(独自のネットワーク設定を介して)またはダイレクトコネクト <a href="https://docs.aws.amazon.com/ja_jp/directconnect/latest/UserGuide/WorkingWithVirtualInterfaces.html">パブリック VIF</a> を介して、CloudWatch のパブリックエンドポイントに接続できます。</p>
-<p>b. エージェントトラフィックをインターネット経由にしたくない場合は、ダイレクトコネクトのプライベート VIF や VPN を使用してオンプレミスネットワークまでのプライベート接続を拡張する AWS PrivateLink 対応の <a href="https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/vpce-interface.html">VPC インターフェイスエンドポイント</a> を活用できます。トラフィックがインターネットに公開されることがなく、脅威ベクトルが排除されます。</p>
+<p>a. AWS 外で実行されているエージェントは、インターネット(独自のネットワーク設定を介して)または Direct Connect <a href="https://docs.aws.amazon.com/directconnect/latest/UserGuide/WorkingWithVirtualInterfaces.html">Public VIF</a> を経由して、CloudWatch のパブリックエンドポイントに接続できます。</p>
+<p>b. エージェントトラフィックをインターネット経由にしたくない場合は、<a href="https://docs.aws.amazon.com/vpc/latest/userguide/vpce-interface.html">VPC インターフェイスエンドポイント</a>を利用できます。これは AWS PrivateLink によって動作し、Direct Connect Private VIF や VPN を使用してオンプレミスネットワークまでプライベート接続を拡張します。トラフィックがインターネットに公開されることがなく、脅威ベクトルが排除されます。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p><a href="https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/ssm-agent.html">AWS Systems Manager エージェント</a> から取得した資格情報を使用して、CloudWatch エージェントが使用するための<a href="https://aws.amazon.com/jp/premiumsupport/knowledge-center/cloudwatch-on-premises-temp-credentials/">一時的な AWS アクセストークン</a>を追加できます。</p>
+<p>オンプレミスで実行される CloudWatch エージェントが使用できるように、<a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html">AWS Systems Manager エージェント</a> から取得した資格情報を使用して<a href="https://aws.amazon.com/premiumsupport/knowledge-center/cloudwatch-on-premises-temp-credentials/">一時的な AWS アクセストークン</a>を追加できます。</p>
 </div>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>CloudWatch エージェントの使用とデプロイに関するガイダンスが記載されたブログ「<a href="https://aws.amazon.com/blogs/opensource/getting-started-with-open-source-amazon-cloudwatch-agent/">Getting started with open source Amazon CloudWatch Agent</a>」を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>CloudWatch エージェントの使用とデプロイに関するガイダンスが記載されたブログ <a href="https://aws.amazon.com/blogs/opensource/getting-started-with-open-source-amazon-cloudwatch-agent/">Getting started with open source Amazon CloudWatch Agent</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 <li id="fn:2">
-<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first">オンプレミスおよびその他のクラウド環境で実行されているエージェントの資格情報の設定に関するガイダンス</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first"> オンプレミスおよびその他のクラウド環境で実行されているエージェントの認証情報設定に関するガイダンス </a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
 </li>
 <li id="fn:3">
-<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-internet-access-first-cmd">CloudWatch エンドポイントへの接続を確認する方法</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-internet-access-first-cmd"> CloudWatch エンドポイントへの接続性の検証方法 </a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 <li id="fn:4">
-<p><a href="https://aws.amazon.com/jp/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/">オンプレミスのプライベート接続に関するブログ</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+<p><a href="https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/"> オンプレミスのプライベート接続に関するブログ </a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
 </li>
 <li id="fn:5">
-<p>オブザーバビリティに関連するすべての AWS API の使用は、通常、AWS で実行されているインスタンスとコンテナへの一時的なアクセス資格情報を付与するメカニズムである <a href="https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html">インスタンスプロファイル</a> によって実現されます。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+<p>オブザーバビリティに関連するすべての AWS API の使用は、通常、<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html">インスタンスプロファイル</a>によって実現されます。これは、AWS で実行されているインスタンスとコンテナーに一時的なアクセス資格情報を付与するメカニズムです。&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

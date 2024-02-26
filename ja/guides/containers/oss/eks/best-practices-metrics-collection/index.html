@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3311,17 +3311,17 @@
 <h1 id="eks">EKS のオブザーバビリティ: 必須メトリクス<a class="headerlink" href="#eks" title="Permanent link">&para;</a></h1>
 <h1 id="_1">現在の状況<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>モニタリングとは、インフラストラクチャやアプリケーションの所有者が、収集されたメトリクスやログに基づいて、システムの過去と現在の状態を見て理解できるソリューションのことを指します。</p>
-<p>これまでにモニタリングは進化してきました。当初はデバッグとダンプログを使用して問題のデバッグとトラブルシューティングを行い、次第に syslogs、top などのコマンドラインツールを使用した基本的なモニタリングが可能になり、ダッシュボード上での可視化が実現しました。クラウドの登場とスケールの拡大に伴い、今日ではこれまでになく多くの項目が追跡されるようになっています。業界はよりオブザーバビリティにシフトしており、インフラストラクチャやアプリケーションの所有者が能動的にシステムのトラブルシューティングとデバッグを行えるソリューションを指しています。オブザーバビリティは、メトリクスから導出されたパターンをより重視しています。</p>
+<p>これまでにモニタリングは進化してきました。当初はデバッグとダンプログを使用して問題をデバッグおよびトラブルシューティングしていましたが、次第に syslogs、top などのコマンドラインツールを使用した基本的なモニタリングへと移行し、ダッシュボード上で視覚化できるようになりました。クラウドの出現とスケールの拡大に伴い、今日ではこれまでになく多くのものを追跡しています。業界はよりオブザーバビリティに移行しており、これはインフラストラクチャやアプリケーションの所有者が能動的にシステムのトラブルシューティングとデバッグを行えるソリューションと定義されます。オブザーバビリティは、メトリクスから導出されたパターンをより重視しています。</p>
 <h1 id="_2">メトリクスの重要性<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h1>
-<p>メトリクスとは、作成された時間順に整列させた数値の系列です。これは、環境内のサーバー数、ディスク使用量、1 秒あたりのリクエスト処理数、リクエスト完了までのレイテンシなど、あらゆるものを追跡するために使用されます。メトリクスは、システムのパフォーマンスを示すデータです。小規模でも大規模でも、システムの正常性とパフォーマンスの洞察を得ることで、改善の余地を特定したり、問題のトラブルシューティングとトレースを行ったり、ワークロードのパフォーマンスと効率を全体として向上させたりすることができます。これらの変更は、クラスターに費やす時間とリソースに影響を与え、直接コストにつながります。</p>
+<p>メトリクスとは、作成された時間順に並べられた一連の数値です。これらは、環境内のサーバー数、ディスク使用量、1 秒あたりのリクエスト処理数、リクエスト完了までのレイテンシなど、あらゆるものを追跡するために使用されます。メトリクスは、システムのパフォーマンスを示すデータです。小規模でも大規模でも、システムの正常性とパフォーマンスの洞察を得ることで、改善の余地を特定したり、問題のトラブルシューティングとトレースを行ったり、ワークロードのパフォーマンスと効率を全体として向上させたりすることができます。これらの変更は、クラスターに費やす時間とリソースに影響を与え、直接コストにつながります。</p>
 <h1 id="_3">メトリクスの収集<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h1>
 <p>EKS クラスターからのメトリクス収集は、<a href="/observability-best-practices/ja/recipes/telemetry/">3 つのコンポーネント</a>で構成されます。</p>
 <ol>
-<li>ソース: このガイドでリストされているものなど、メトリクスの発生源です。 </li>
-<li>エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクスのモニタリングデータを収集し、このデータを 2 番目のコンポーネントにプッシュします。このコンポーネントの例としては、<a href="https://aws-otel.github.io/">AWS Distro for OpenTelemetry (ADOT)</a> と <a href="/observability-best-practices/ja/tools/cloudwatch_agent/">CloudWatch エージェント</a>があります。</li>
-<li>デスティネーション: モニタリングデータの保存と分析ソリューションで、通常、このコンポーネントは <a href="/observability-best-practices/ja/signals/metrics/">時系列形式のデータ</a>に最適化されたデータサービスです。このコンポーネントの例としては、<a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a> と <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">AWS CloudWatch</a> があります。</li>
+<li>ソース: このガイドに記載されているものなど、メトリクスの発生源です。 </li>
+<li>エージェント: EKS 環境で実行されるアプリケーションは、しばしばエージェントと呼ばれ、メトリクス監視データを収集して 2 番目のコンポーネントにプッシュします。このコンポーネントの例としては、<a href="https://aws-otel.github.io/">AWS Distro for OpenTelemetry (ADOT)</a> と <a href="/observability-best-practices/ja/tools/cloudwatch_agent/">CloudWatch エージェント</a> があります。</li>
+<li>デスティネーション: データサービスであることが多く、<a href="/observability-best-practices/ja/signals/metrics/">時系列形式のデータ</a>に最適化されたモニタリングデータの保存と分析ソリューションです。このコンポーネントの例としては、<a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a> と <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">AWS CloudWatch</a> があります。</li>
 </ol>
-<p>注:このセクションの構成例は、<a href="https://aws-observability.github.io/terraform-aws-observability-accelerator/">AWS Observability Accelerator</a> の関連セクションへのリンクです。これは、EKS メトリクス収集の実装に関する最新のガイダンスと例を確実に入手できるようにするためです。</p>
+<p>注:このセクションの構成例は、<a href="https://aws-observability.github.io/terraform-aws-observability-accelerator/">AWS Observability Accelerator</a> の関連セクションへのリンクです。これは、EKS メトリクス収集実装に関する最新のガイダンスと例を確実に入手できるようにするためです。</p>
 <h2 id="_4">マネージドオープンソースソリューション<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p><a href="https://aws-otel.github.io/">AWS Distro for OpenTelemetry(ADOT)</a> は、<a href="https://opentelemetry.io/">OpenTelemetry</a> プロジェクトのサポートされたバージョンで、<a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a> や <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html">AWS CloudWatch</a> などの様々なモニタリングデータ収集ソリューションに相関メトリクスとトレースを送信できます。ADOT は <a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html">EKS マネージドアドオン</a> を通じて EKS クラスタにインストールでき、このページにリストされているメトリクス(負荷トレースなど)を収集するように構成できます。AWS は、ADOT アドオンが Amazon EKS と互換性があることを検証しており、最新のバグ修正とセキュリティパッチが定期的に適用されます。 <a href="/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector/">ADOT のベストプラクティスと詳細情報。</a></p>
 <h2 id="adot-amp">ADOT + AMP<a class="headerlink" href="#adot-amp" title="Permanent link">&para;</a></h2>
@@ -3343,9 +3343,9 @@
 <tr>
 <td>コントロールプレーン</td>
 <td><em>api サーバーエンドポイント</em>/メトリクス</td>
-<td>N/A - api サーバーはプロメテウス形式で直接メトリクスを公開</td>
+<td>該当なし - API サーバーはメトリクスをプロメテウス形式で直接公開</td>
 <td>https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/prometheus.html</td>
-<td>N/A</td>
+<td>該当なし</td>
 </tr>
 <tr>
 <td>クラスター状態</td>
@@ -3355,11 +3355,11 @@
 <td>https://github.com/kubernetes/kube-state-metrics#helm-chart</td>
 </tr>
 <tr>
-<td>Kube Proxy</td>
+<td>Kube プロキシ</td>
 <td><em>kube-proxy-http</em>:10249/メトリクス</td>
-<td>N/A - kube proxy はプロメテウス形式で直接メトリクスを公開</td>
+<td>該当なし - kube プロキシはメトリクスをプロメテウス形式で直接公開</td>
 <td>https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/</td>
-<td>N/A</td>
+<td>該当なし</td>
 </tr>
 <tr>
 <td>VPC CNI</td>
@@ -3369,11 +3369,11 @@
 <td>https://github.com/aws/amazon-vpc-cni-k8s/tree/master/charts/cni-metrics-helper</td>
 </tr>
 <tr>
-<td>Core DNS</td>
+<td>CoreDNS</td>
 <td><em>core-dns</em>:9153/メトリクス</td>
-<td>N/A - core DNS はプロメテウス形式で直接メトリクスを公開</td>
+<td>該当なし - CoreDNS はメトリクスをプロメテウス形式で直接公開</td>
 <td>https://github.com/coredns/coredns/tree/master/plugin/metrics</td>
-<td>N/A</td>
+<td>該当なし</td>
 </tr>
 <tr>
 <td>ノード</td>
@@ -3385,9 +3385,9 @@
 <tr>
 <td>Kubelet/Pod</td>
 <td><em>kubelet</em>/メトリクス/cadvisor</td>
-<td>kubelet または api サーバーを介してプロキシ</td>
+<td>kubelet または API サーバーを介してプロキシ</td>
 <td>https://kubernetes.io/docs/concepts/cluster-administration/system-metrics/</td>
-<td>N/A</td>
+<td>該当なし</td>
 </tr>
 </tbody>
 </table>
@@ -3397,7 +3397,7 @@
 <p>ADOT コレクターの構成には 2 つのコンポーネントがあります。</p>
 <ol>
 <li>コレクターのデプロイメントモード(デプロイメント、デーモンセットなど)を含む<a href="https://github.com/aws-observability/aws-otel-community/blob/master/sample-configs/operator/collector-config-amp.yaml">コレクター構成</a></li>
-<li>メトリック収集に必要なレシーバー、プロセッサー、エクスポーターを含む <a href="https://opentelemetry.io/docs/collector/configuration/">OpenTelemetry パイプライン構成</a>。構成スニペットの例:</li>
+<li>メトリクス収集に必要なレシーバー、プロセッサー、エクスポーターを含む <a href="https://opentelemetry.io/docs/collector/configuration/">OpenTelemetry パイプライン構成</a>。構成スニペットの例:</li>
 </ol>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>config: |
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    extensions:
@@ -3476,15 +3476,16 @@
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>      logging:
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        loglevel: warn
 </span></code></pre></div>
-<p>完全なベストプラクティスのコレクター構成、ADOT パイプライン構成、Prometheus スクレイプ構成は、<a href="https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml">Observability Accelerator の Helm チャート</a>としてここで見つけることができます。</p>
-<p>AMP 構成と使用法のベストプラクティスは、<a href="/observability-best-practices/ja/recipes/amp/">こちら</a>にあります。</p>
+<p>ベストプラクティスのコレクター構成、ADOT パイプライン構成、Prometheus スクレイプ構成の完全な例は、<a href="https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml">Observability Accelerator の Helm チャート</a> で確認できます。</p>
+<p>AMP の構成と使用法のベストプラクティスは、<a href="/observability-best-practices/ja/recipes/amp/">こちら</a> で確認できます。</p>
 <h1 id="_6">関連するメトリクスとは?<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h1>
-<p>利用可能なメトリクスがほとんどない日々は過ぎ去り、今日では逆に数百ものメトリクスが利用可能です。 インフラストラクチャとアプリケーションにオブザーバビリティを組み込むにあたり、どのメトリクスに焦点を当てるべきかを判断できることが重要です。</p>
-<p>このガイドでは、利用可能なメトリクスの異なるグループを概説し、ベストプラクティスに基づいて監視することをお勧めするメトリクスを説明します。以下のセクションにリストされているメトリクスは、<a href="https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/modules/eks-monitoring">AWS Observability Accelerator Grafana ダッシュボード</a>と<a href="https://monitoring.mixins.dev/">Kube Prometheus Stack ダッシュボード</a>で強調表示されているメトリクスに追加されます。</p>
+<p>利用可能なメトリクスがほとんどない時代は過ぎ去り、今日では逆に数百ものメトリクスが利用可能です。インフラストラクチャとアプリケーションにオブザーバビリティを組み込む際に、どのメトリクスに注目すべきかを判断できることが重要です。</p>
+<p>このガイドでは、利用可能なさまざまなメトリクス グループについて説明し、ベスト プラクティスに基づいて監視することをおすすめするメトリクスを示します。</p>
+<p>以下のセクションでリストされているメトリクスは、<a href="https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/modules/eks-monitoring">AWS Observability Accelerator Grafana ダッシュボード</a> と <a href="https://monitoring.mixins.dev/">Kube Prometheus Stack ダッシュボード</a> で強調表示されているメトリクスに追加されます。</p>
 <p></your></p>
 <h2 id="_7">コントロールプレーンメトリクス<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>
-<p>Amazon EKS のコントロールプレーンは、AWS によって管理されており、AWS が管理するアカウントで実行されます。etcd や Kubernetes API サーバなどの Kubernetes コンポーネントを実行するコントロールプレーン ノードで構成されます。Kubernetes は、Pod の起動と停止、デプロイメント、名前空間などのクラスタで必要な基本的なアクティビティを実行するために、コアコンポーネントが適切に機能し、動作できることを追跡する必要がある重要なコンポーネントです。</p>
-<p>コントロールプレーン API サーバは数千ものメトリクスを公開していますが、以下の表は、監視することをおすすめする基本的なコントロールプレーンメトリクスを示しています。</p>
+<p>Amazon EKS のコントロールプレーンは、AWS によって管理されており、AWS が管理するアカウントで実行されます。etcd や Kubernetes API サーバなどの Kubernetes コンポーネントを実行するコントロールプレーン ノードで構成されます。Kubernetes は、Pod の起動と停止、デプロイメント、名前空間などのクラスタで必要な基本的なアクティビティを通知するために、さまざまなイベントを公開しています。Amazon EKS のコントロールプレーンは、コアコンポーネントが適切に機能し、クラスタに必要な基本的なアクティビティを実行できることを確認するために追跡する必要がある重要なコンポーネントです。</p>
+<p>コントロールプレーン API サーバは数千ものメトリクスを公開していますが、以下の表は、監視することをおすすめする基本的なコントロールプレーン メトリクスを示しています。</p>
 <table>
 <thead>
 <tr>
@@ -3496,63 +3497,63 @@
 </thead>
 <tbody>
 <tr>
-<td>API サーバの全リクエスト</td>
+<td>API サーバの要求の合計</td>
 <td>apiserver_request_total</td>
-<td>動詞、ドライラン値、グループ、バージョン、リソース、スコープ、コンポーネント、HTTP レスポンスコードで分割された apiserver リクエストのカウンター。</td>
+<td>各動詞、ドライラン値、グループ、バージョン、リソース、スコープ、コンポーネント、HTTP レスポンスコードごとに分割された apiserver 要求のカウンター。</td>
 <td></td>
 </tr>
 <tr>
 <td>API サーバのレイテンシ</td>
 <td>apiserver_request_duration_seconds</td>
-<td>動詞、ドライラン値、グループ、バージョン、リソース、サブリソース、スコープ、コンポーネントごとのレスポンスレイテンシの分布(秒)。</td>
+<td>各動詞、ドライラン値、グループ、バージョン、リソース、サブリソース、スコープ、コンポーネントごとの応答待ち時間分布(秒)。</td>
 <td></td>
 </tr>
 <tr>
-<td>リクエストレイテンシ</td>
+<td>要求待ち時間</td>
 <td>rest_client_request_duration_seconds</td>
-<td>動詞と URL で分割されたリクエストのレイテンシ(秒)。</td>
+<td>動詞と URL ごとに分割された要求待ち時間(秒)。</td>
 <td></td>
 </tr>
 <tr>
-<td>総リクエスト数</td>
+<td>要求の合計</td>
 <td>rest_client_requests_total</td>
-<td>ステータスコード、メソッド、ホストで分割された HTTP リクエストの数。</td>
+<td>ステータスコード、メソッド、ホストごとに分割された HTTP 要求の数。</td>
 <td></td>
 </tr>
 <tr>
-<td>API サーバのリクエスト期間</td>
+<td>API サーバの要求期間</td>
 <td>apiserver_request_duration_seconds_bucket</td>
-<td>Kubernetes API サーバへの各リクエストのレイテンシを秒単位で測定</td>
+<td>Kubernetes API サーバへの各要求の待ち時間を秒単位で測定</td>
 <td></td>
 </tr>
 <tr>
-<td>API サーバのリクエストレイテンシの合計</td>
+<td>API サーバ要求待ち時間の合計</td>
 <td>apiserver_request_latencies_sum</td>
-<td>K8 API サーバがリクエストを処理するのにかかった総時間を追跡する累積カウンタ</td>
+<td>K8 API サーバが要求を処理するのにかかった合計時間を追跡する累積カウンタ</td>
 <td></td>
 </tr>
 <tr>
-<td>API サーバの登録されたウォッチャー</td>
+<td>API サーバに登録されたウォッチャー</td>
 <td>apiserver_registered_watchers</td>
-<td>特定のリソースの現在登録されているウォッチャーの数</td>
+<td>特定のリソースに対して現在登録されているウォッチャーの数</td>
 <td></td>
 </tr>
 <tr>
 <td>API サーバのオブジェクト数</td>
 <td>apiserver_storage_object</td>
-<td>最後のチェック時の保存されたオブジェクトの数(種類ごとに分割)。</td>
+<td>最後のチェック時の保存されたオブジェクトの数を種類ごとに分割。</td>
 <td></td>
 </tr>
 <tr>
-<td>アドミッションコントローラのレイテンシ</td>
+<td>アドミッションコントローラの待ち時間</td>
 <td>apiserver_admission_controller_admission_duration_seconds</td>
-<td>名前で識別され、操作と API リソース、タイプ(検証または許可)ごとに分割されたアドミッションコントローラのレイテンシヒストグラム(秒)。</td>
+<td>名前ごとに識別されたアドミッションコントローラの待ち時間ヒストグラム(秒)。操作、API リソース、タイプ(検証または許可)ごとに分割。</td>
 <td></td>
 </tr>
 <tr>
-<td>Etcd のレイテンシ</td>
+<td>Etcd の待ち時間</td>
 <td>etcd_request_duration_seconds</td>
-<td>操作とオブジェクトタイプごとの etcd リクエストのレイテンシ(秒)。</td>
+<td>操作とオブジェクトタイプごとの etcd 要求の待ち時間(秒)。</td>
 <td></td>
 </tr>
 <tr>
@@ -3627,10 +3628,10 @@
 <tr>
 <td>スケジューリング待ちの Pod</td>
 <td>pending_pods</td>
-<td>ノードの割り当てを待っている Pod 数</td>
+<td>ノード割り当てを待っている Pod 数</td>
 </tr>
 <tr>
-<td>Pod スケジューリングの試行回数</td>
+<td>Pod スケジューリング試行回数</td>
 <td>pod_scheduling_attempts</td>
 <td>Pod スケジューリングの試行回数</td>
 </tr>
@@ -3641,11 +3642,11 @@
 <p>これらのクラスター追加機能は、ネットワーキング、ドメイン名解決など、さまざまな領域で運用上のサポートを提供します。重要なサポートインフラストラクチャとコンポーネントの動作についての洞察を提供します。追加機能のメトリクスを追跡することは、クラスターの運用上の健全性を理解するうえで重要です。</p>
 <p>以下は、監視する必要がある主要な追加機能と、その主要なメトリクスを示しています。</p>
 <h2 id="amazon-vpc-cni">Amazon VPC CNI プラグイン<a class="headerlink" href="#amazon-vpc-cni" title="Permanent link">&para;</a></h2>
-<p>Amazon EKS は、Amazon VPC コンテナネットワークインターフェイス(VPC CNI)プラグインを介してクラスターネットワーキングを実装しています。CNI プラグインにより、Kubernetes Pod が VPC ネットワーク上と同じ IP アドレスを取得できます。具体的には、Pod 内のすべてのコンテナはネットワーク名前空間を共有し、ローカルポートを使用して相互に通信できます。VPC CNI アドオンを使用すると、Amazon EKS クラスターのセキュリティと安定性を継続的に確保し、アドオンのインストール、構成、更新に必要な作業量を減らすことができます。</p>
-<p>VPC CNI アドオンのメトリクスは、CNI メトリクスヘルパーによって公開されます。IP アドレスの割り当てを監視することは、正常なクラスターを確保し、IP 枯渇の問題を回避する上で基本的です。<a href="https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/#monitor-ip-address-inventory">こちらから最新のネットワーキングのベストプラクティスと収集・監視する必要のある VPC CNI メトリクスをご覧いただけます。</a></p>
+<p>Amazon EKS は、Amazon VPC コンテナネットワークインターフェイス (VPC CNI) プラグインを介してクラスターネットワーキングを実装しています。CNI プラグインにより、Kubernetes Pod が VPC ネットワーク上と同じ IP アドレスを取得できます。具体的には、Pod 内のすべてのコンテナはネットワーク名前空間を共有し、ローカルポートを使用して相互に通信できます。VPC CNI アドオンを使用すると、Amazon EKS クラスターのセキュリティと安定性を継続的に確保し、アドオンのインストール、構成、更新に必要な作業を減らすことができます。</p>
+<p>CNI メトリクス ヘルパーによって VPC CNI アドオンのメトリクスが公開されます。IP アドレスの割り当てを監視することは、正常なクラスターを確保し、IP 枯渇の問題を回避する上で基本的です。<a href="https://aws.github.io/aws-eks-best-practices/networking/vpc-cni/#monitor-ip-address-inventory">こちらから最新のネットワーキングのベストプラクティスと収集および監視する必要がある VPC CNI メトリクスをご覧いただけます。</a></p>
 <h2 id="coredns">CoreDNS メトリクス<a class="headerlink" href="#coredns" title="Permanent link">&para;</a></h2>
-<p>CoreDNS は柔軟で拡張性のある DNS サーバーで、Kubernetes クラスターの DNS として機能できます。 CoreDNS Pod は、クラスター内のすべての Pod の名前解決を提供します。 DNS 集中型のワークロードを実行すると、DNS スロットリングのために CoreDNS の障害が断続的に発生することがあり、これがアプリケーションに影響を与える可能性があります。</p>
-<p>主要な <a href="https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics">CoreDNS パフォーマンス メトリクスを追跡するための最新のベスト プラクティスはこちら</a> を、<a href="https://aws.github.io/aws-eks-best-practices/networking/monitoring/">DNS スロットリングの問題のための CoreDNS トラフィックの監視はこちら</a> をご覧ください。</p>
+<p>CoreDNS は柔軟で拡張性のある DNS サーバーで、Kubernetes クラスターの DNS として機能できます。CoreDNS Pod は、クラスター内のすべての Pod の名前解決を提供します。DNS 集中型のワークロードを実行すると、DNS スロットリングのために CoreDNS の障害が断続的に発生することがあり、これがアプリケーションに影響を与える可能性があります。</p>
+<p><a href="https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics">こちら</a> で主要な <a href="https://aws.github.io/aws-eks-best-practices/reliability/docs/dataplane/#monitor-coredns-metrics">CoreDNS パフォーマンス メトリクスの最良のプラクティスを確認</a> し、<a href="https://aws.github.io/aws-eks-best-practices/networking/monitoring/">DNS スロットリングの問題のための CoreDNS トラフィックの監視</a> してください。</p>
 <h2 id="pod">Pod/コンテナーメトリクス<a class="headerlink" href="#pod" title="Permanent link">&para;</a></h2>
 <p>アプリケーションのすべてのレイヤーにわたる使用状況を追跡することが重要です。これには、クラスター内で実行されているノードと Pod をより詳細に調べることが含まれます。Pod ディメンションで利用できるすべてのメトリクスの中で、このメトリクスリストは、クラスター上で実行されているワークロードの状態を理解するのに実際に役立ちます。CPU、メモリ、ネットワークの使用状況を追跡することで、アプリケーション関連の問題の診断とトラブルシューティングが可能になります。ワークロードメトリクスを追跡することで、EKS 上で実行されているワークロードの適切なサイズ変更のためのリソース利用状況の洞察が得られます。</p>
 <table>
@@ -3660,37 +3661,37 @@
 <tr>
 <td>名前空間ごとの実行中の Pod 数</td>
 <td>count by(namespace) (kube_pod_info)</td>
-<td>クラスターごとの名前空間ごと</td>
+<td>クラスターごとの名前空間別</td>
 </tr>
 <tr>
 <td>Pod ごとのコンテナーごとの CPU 使用率</td>
 <td>sum(rate(container_cpu_usage_seconds_total{container!=""}[5m])) by (namespace, pod)</td>
-<td>クラスターごとの名前空間ごとの Pod ごと</td>
+<td>クラスターごとの名前空間別 Pod 別</td>
 </tr>
 <tr>
 <td>Pod ごとのメモリ利用量</td>
 <td>sum(container_memory_usage_bytes{container!=""}) by (namespace, pod)</td>
-<td>クラスターごとの名前空間ごとの Pod ごと</td>
+<td>クラスターごとの名前空間別 Pod 別</td>
 </tr>
 <tr>
 <td>Pod ごとの受信ネットワーク バイト数</td>
 <td>sum by(pod) (rate(container_network_receive_bytes_total[5m]))</td>
-<td>クラスターごとの名前空間ごとの Pod ごと</td>
+<td>クラスターごとの名前空間別 Pod 別</td>
 </tr>
 <tr>
 <td>Pod ごとの送信ネットワーク バイト数</td>
 <td>sum by(pod) (rate(container_network_transmit_bytes_total[5m]))</td>
-<td>クラスターごとの名前空間ごとの Pod ごと</td>
+<td>クラスターごとの名前空間別 Pod 別</td>
 </tr>
 <tr>
-<td>コンテナーごとの再起動数</td>
+<td>コンテナーごとのコンテナー再起動数</td>
 <td>increase(kube_pod_container_status_restarts_total[15m]) &gt; 3</td>
-<td>クラスターごとの名前空間ごとの Pod ごと</td>
+<td>クラスターごとの名前空間別 Pod 別</td>
 </tr>
 </tbody>
 </table>
 <h2 id="_10">ノードメトリクス<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h2>
-<p>Kube State Metrics と Prometheus ノードエクスポーターは、クラスター内のノードのメトリック統計を収集します。 ノードのステータス、CPU 使用率、メモリ、ファイルシステム、トラフィックを追跡することは、ノードの利用状況を理解する上で重要です。 ノードリソースの利用状況を理解することは、実行を予定しているワークロードの種類に効果的なインスタンスタイプとストレージを適切に選択する上で重要です。 以下のメトリクスは、追跡すべき基本的なメトリクスの一部です。</p>
+<p>Kube State Metrics と Prometheus ノードエクスポーターは、クラスター内のノードのメトリクス統計を収集します。 ノードのステータス、CPU 使用率、メモリ、ファイルシステム、トラフィックを追跡することは、ノードの利用状況を理解する上で重要です。 ノードリソースの利用状況を理解することは、実行を予定しているワークロードの種類に効果的なインスタンスタイプとストレージを適切に選択する上で重要です。 以下のメトリクスは、追跡すべき基本的なメトリクスの一部です。</p>
 <table>
 <thead>
 <tr>
@@ -3772,7 +3773,7 @@
 </tr>
 </tbody>
 </table>
-<h1 id="_11">追加リソース<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h1>
+<h1 id="_11">その他のリソース<a class="headerlink" href="#_11" title="Permanent link">&para;</a></h1>
 <h2 id="aws">AWS サービス<a class="headerlink" href="#aws" title="Permanent link">&para;</a></h2>
 <p><a href="https://aws-otel.github.io/">https://aws-otel.github.io/</a></p>
 <p><a href="https://aws.amazon.com/prometheus">https://aws.amazon.com/prometheus</a></p>

@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3326,7 +3326,7 @@
 <li>この<a href="https://aws.amazon.com/premiumsupport/knowledge-center/cloudwatch-logs-bill-increase/">ナレッジセンターのドキュメント</a>を使用して、トップコントリビューターを特定してください。</li>
 <li>必要とされない限り、トップコントリビューターのログレベルを下げてください。</li>
 <li>CloudWatch に加えて、ログ記録に第三者ツールを使用しているかどうかを確認してください。</li>
-<li>すべての VPC で有効になっており、トラフィックが多い場合、VPC フローログのコストはすぐに上がる可能性があります。まだ必要な場合は、Amazon S3 に配信することを検討してください。</li>
+<li>すべての VPC で有効になっており、トラフィック量が多い場合、VPC フローログのコストはすぐに上がる可能性があります。まだ必要な場合は、Amazon S3 に配信することを検討してください。</li>
 <li>すべての AWS Lambda 関数でログが必要かどうかを確認してください。必要ない場合は、Lambda ロールで「logs:PutLogEvents」アクセス許可を拒否してください。</li>
 <li>CloudTrail ログはしばしばトップコントリビューターです。Amazon S3 に送信し、Amazon Athena でクエリと Amazon EventBridge でアラーム/通知を使用するほうが安上がりです。</li>
 </ul>

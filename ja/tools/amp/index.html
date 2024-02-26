@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3290,10 +3290,10 @@
 
 <h1 id="amazon-managed-service-for-prometheus">Amazon Managed Service for Prometheus<a class="headerlink" href="#amazon-managed-service-for-prometheus" title="Permanent link">&para;</a></h1>
 <p><a href="https://prometheus.io/">Prometheus</a> は、コンピュートノードやアプリケーション関連のパフォーマンスデータなどのリソースに関する幅広いメトリクス機能とインサイトを提供する人気のオープンソースモニタリングツールです。</p>
-<p>Prometheus はデータの収集に <em>プル</em> モデルを使用しますが、CloudWatch は <em>プッシュ</em> モデルを使用します。Prometheus と CloudWatch は一部のユースケースで重複していますが、その運用モデルは大きく異なり、価格設定も異なります。</p>
+<p>Prometheus はデータの収集に <em>プル</em> モデルを使用しますが、CloudWatch は <em>プッシュ</em> モデルを使用します。Prometheus と CloudWatch は一部のユースケースで重複していますが、その運用モデルは非常に異なっており、価格設定も異なっています。</p>
 <p><a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus</a> は、Kubernetes でホストされるコンテナ化アプリケーションや <a href="https://aws.amazon.com/ecs/">Amazon ECS</a> で広く使用されています。</p>
-<p><a href="../../tools/cloudwatch_agent/">CloudWatch エージェント</a> や <a href="https://aws-otel.github.io/">AWS Distro for OpenTelemetry</a> を使用して、EC2 インスタンスや ECS/EKS クラスターに Prometheus メトリクス機能を追加できます。Prometheus サポート付きの CloudWatch エージェントは、Prometheus メトリクスを発見および収集して、アプリケーションのパフォーマンス低下と障害をより早く監視、トラブルシューティング、アラーム設定できるようにします。これにより、オブザーバビリティを改善するために必要なモニタリングツールの数も削減されます。</p>
-<p>Prometheus のための CloudWatch Container Insights モニタリングは、コンテナ化されたシステムとワークロードからの Prometheus メトリクスの自動検出を実現します https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html</p>
+<p><a href="../../tools/cloudwatch_agent/">CloudWatch エージェント</a> や <a href="https://aws-otel.github.io/">AWS Distro for OpenTelemetry</a> を使用して、EC2 インスタンスや ECS/EKS クラスターに Prometheus メトリクス機能を追加できます。Prometheus サポート付きの CloudWatch エージェントは、Prometheus メトリクスを発見および収集して、アプリケーションのパフォーマンス低下と障害をより迅速に監視、トラブルシューティング、アラーム設定を行います。これにより、オブザーバビリティを改善するために必要なモニタリングツールの数も削減されます。</p>
+<p>コンテナ化されたシステムとワークロードからの Prometheus メトリクスの自動検出を行う Container Insights による Prometheus のモニタリング https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html</p>
 
 
 

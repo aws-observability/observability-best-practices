@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3578,7 +3578,7 @@ Kubecost は Prometheus からメトリクスを読み取り、コスト割り�
 </div>
 <h2 id="_1">おすすめ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <h3 id="_2">コスト割り当て<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p>Kubecost のコスト割り当てダッシュボードを使用すると、名前空間、k8s ラベル、サービスなど、すべてのネイティブ Kubernetes の概念にわたって割り当てられた支出と最適化の機会をすばやく確認できます。また、チーム、製品/プロジェクト、部門、環境などの組織的概念にコストを割り当てることもできます。 日付範囲、フィルターを変更して、特定のワークロードに関する洞察を導き出し、レポートを保存できます。 Kubernetes のコストを最適化するには、効率とクラスタのアイドルコストに注意を払う必要があります。</p>
+<p>Kubecost のコスト割り当てダッシュボードを使用すると、名前空間、k8s ラベル、サービスなど、すべてのネイティブ Kubernetes の概念にわたって割り当てられた支出と最適化の機会をすばやく確認できます。また、チーム、製品/プロジェクト、部門、環境などの組織的概念にコストを割り当てることもできます。 日付範囲、フィルターを変更して、特定のワークロードに関する洞察を得たり、レポートを保存したりできます。 Kubernetes のコストを最適化するには、効率とクラスタのアイドルコストに注意を払う必要があります。</p>
 <p><img alt="Allocations" src="../../../images/allocations.png" /></p>
 <h3 id="_3">効率性<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>Pod のリソース効率性は、特定の時間ウィンドウにおけるリソース利用率とリソース要求の比率として定義されます。これはコスト重み付けされており、次のように表すことができます。</p>
@@ -3606,20 +3606,14 @@ RAM 使用量 = 時間ウィンドウにおける avg(container_memory_working_s
 <ul>
 <li>コンテナリクエストの過剰プロビジョニングとアンダープロビジョニングの両方を考慮した上での最適なコンテナリクエスト</li>
 <li>未使用のキャパシティへの過剰な支出を停止するために、クラスターノードの数とサイズを調整</li>
-<li>有意なトラフィックの送受信を行っていない Pod のスケールダウン、削除、リサイズ</li>
+<li>有意なレートのトラフィックを送受信していない Pod のスケールダウン、削除、リサイズ</li>
 <li>スポットノードに適したワークロードの特定</li>
 <li>どの Pod からも使用されていないボリュームの特定</li>
 </ul>
-<p>また、Kubecost には Cluster Controller コンポーネントを有効にした場合に、コンテナリソースリクエストの自動最適化を実装できるプレリリース機能もあります。自動リクエスト最適化を使用することで、複雑な YAML のテストや kubectl コマンドの実行なしに、クラスタ全体のリソース割り当てを即座に最適化できます。クラスタ内のリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化やその他の最適化による大幅なコスト削減の道が開けます。</p>
+<p>また、Kubecost には Cluster Controller コンポーネントを有効にした場合に、コンテナリソースリクエストの自動最適化を実装できるプレリリース機能もあります。自動リクエスト最適化を使用すると、複雑な YAML のテストや kubectl コマンドを実行することなく、クラスタ全体のリソース割り当てを即座に最適化できます。クラスタ内のリソースの過剰割り当てを簡単に排除できるため、クラスタの最適化とその他の最適化による大幅なコスト削減の道が開かれます。</p>
 <h3 id="kubecost-amazon-managed-service-for-prometheus">Kubecost と Amazon Managed Service for Prometheus の統合<a class="headerlink" href="#kubecost-amazon-managed-service-for-prometheus" title="Permanent link">&para;</a></h3>
-<p>Kubecost は、時系列データベースとしてオープンソースの Prometheus プロジェクトを利用し、Prometheus のデータを後処理してコスト割り当て計算を実行します。
-クラスターのサイズやワークロードの規模によっては、Prometheus サーバーがメトリクスをスクレイプおよび保存することが困難になる場合があります。
-そのような場合は、信頼性の高い方法でメトリクスを保存し、Kubernetes のコストを大規模に監視できるようにする、Prometheus 互換のマネージド監視サービスである Amazon Managed Service for Prometheus を使用できます。</p>
-<p><a href="https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html">Kubecost サービスアカウントの IAM ロールを設定</a>する必要があります。
-クラスターの OIDC プロバイダーを使用して、クラスターのサービスアカウントに IAM アクセス許可を付与します。
-kubecost-cost-analyzer および kubecost-prometheus-server サービスアカウントに適切なアクセス許可を付与する必要があります。
-これらは、ワークスペースからメトリクスを送受信するために使用されます。
-コマンドラインで次のコマンドを実行します。</p>
+<p>Kubecost は、時系列データベースとしてオープンソースの Prometheus プロジェクトを利用し、Prometheus のデータを後処理してコスト割り当て計算を実行します。 クラスターのサイズやワークロードの規模によっては、Prometheus サーバーがメトリクスをスクレイプおよび保存することが困難になる場合があります。 このような場合は、信頼性の高い方法でメトリクスを保存し、Kubernetes のコストを大規模に監視できるようにする、Prometheus 互換のマネージド監視サービスである Amazon Managed Service for Prometheus を使用できます。</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/iam-roles-for-service-accounts.html">Kubecost サービスアカウントの IAM ロールを設定</a>する必要があります。 クラスターの OIDC プロバイダーを使用して、クラスターのサービスアカウントに IAM アクセス許可を付与します。 kubecost-cost-analyzer および kubecost-prometheus-server のサービスアカウントに適切なアクセス許可を付与する必要があります。 これらは、ワークスペースからメトリクスを送受信するために使用されます。 コマンドラインで次のコマンドを実行します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>eksctl create iamserviceaccount \ 
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>--name kubecost-cost-analyzer \ 
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>--namespace kubecost \ 
@@ -3640,8 +3634,8 @@ kubecost-cost-analyzer および kubecost-prometheus-server サービスアカ�
 </span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>--approve
 </span></code></pre></div>
 <p><code>CLUSTER_NAME</code> は Kubecost をインストールする Amazon EKS クラスターの名前で、<region> は Amazon EKS クラスターのリージョンです。</p>
-<p>完了後、次のように Kubecost helm チャートをアップグレードする必要があります。</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>helm upgrade -i kubecost \
+<p>完了後、次のように Kubecost helm チャートをアップグレードする必要があります:</p>
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>helm upgrade -i kubecost \
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>oci://public.ecr.aws/kubecost/cost-analyzer --version &lt;$VERSION&gt; \
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>--namespace kubecost --create-namespace \
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>-f https://tinyurl.com/kubecost-amazon-eks \
@@ -3649,13 +3643,13 @@ kubecost-cost-analyzer および kubecost-prometheus-server サービスアカ�
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>--set global.amp.prometheusServerEndpoint=${QUERYURL} \
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>--set global.amp.remoteWriteService=${REMOTEWRITEURL}
 </span></code></pre></div>
-<p></region></region></cluster_name></region></cluster_name></p>
+</region></region></cluster_name></region></cluster_name></p>
 <h3 id="kubecost-ui">Kubecost UI へのアクセス<a class="headerlink" href="#kubecost-ui" title="Permanent link">&para;</a></h3>
 <p>Kubecost は、kubectl port-forward、Ingress、または Load Balancer を介してアクセスできる Web ダッシュボードを提供します。Kubecost のエンタープライズ版では、<a href="https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc">SSO/SAML</a> を使用したダッシュボードへのアクセス制限や、異なるアクセスレベルの提供もサポートしています。たとえば、チームの表示をそのチームが担当する製品に限定する、といったことができます。</p>
 <p>AWS 環境では、Kubecost を公開するために <a href="https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html">AWS Load Balancer Controller</a> の使用や、認証、認可、ユーザー管理に <a href="https://aws.amazon.com/cognito/">Amazon Cognito</a> の使用を検討してください。Kubernetes Web アプリケーションのユーザー認証に Application Load Balancer と Amazon Cognito を使用する方法の詳細は、<a href="https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/">こちらの記事</a> を参照してください。</p>
 <h3 id="_7">マルチクラスタービュー<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p>FinOps チームは、ビジネスオーナーとの推奨事項を共有するために EKS クラスターをレビューしたいと考えているでしょう。大規模に運用する場合、各クラスタにログインして推奨事項を表示することが困難になります。マルチクラスターを使用すると、グローバルに集計されたすべてのクラスターコストを一元的に表示できます。Kubecost がサポートしているマルチクラスター環境には、Kubecost Free、Kubecost Business、Kubecost Enterprise の 3 つのオプションがあります。Free モードと Business モードでは、クラウド課金との突合は各クラスターレベルで実行されます。Enterprise モードでは、Kubecost UI を提供し、メトリクスが保存されている共有バケットを使用するプライマリクラスタでクラウド課金との突合が実行されます。
-メトリクスの保持が無制限になるのは、Enterprise モードを使用している場合のみであることに注意してください。</p>
+<p>FinOps チームは、ビジネスオーナーとの推奨事項を共有するために EKS クラスターをレビューしたいと考えているでしょう。大規模に運用する場合、各クラスタにログインして推奨事項を表示することが困難になります。マルチクラスターを使用すると、グローバルに集計されたすべてのクラスターコストを単一のパネルで確認できます。Kubecost がサポートしているマルチクラスター環境のオプションには、Kubecost Free、Kubecost Business、Kubecost Enterprise の 3 つがあります。Free モードと Business モードでは、クラウド課金との突合は各クラスターレベルで実行されます。Enterprise モードでは、Kubecost UI を提供し、メトリクスが保存されている共有バケットを使用するプライマリクラスタでクラウド課金との突合が実行されます。
+Enterprise モードを使用する場合にのみ、メトリクスの保持が無制限であることに注意してください。</p>
 <h3 id="_8">参考文献<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <ul>
 <li><a href="https://catalog.workshops.aws/observability/ja-JP/aws-managed-oss/amp/ingest-kubecost-metrics">One Observability ワークショップでの Kubecost のハンズオン体験</a></li>

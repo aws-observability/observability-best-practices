@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -1629,7 +1629,7 @@
           <li class="md-nav__item">
   <a href="#flux" class="md-nav__link">
     <span class="md-ellipsis">
-      Flux を使用する利点
+      Flux を使用するメリット
     </span>
   </a>
   
@@ -3473,7 +3473,7 @@
           <li class="md-nav__item">
   <a href="#flux" class="md-nav__link">
     <span class="md-ellipsis">
-      Flux を使用する利点
+      Flux を使用するメリット
     </span>
   </a>
   
@@ -3543,7 +3543,7 @@
 <p>このオブザーバビリティのベストプラクティスガイドは、Amazon Managed Grafana での Grafana リソースと Grafana ダッシュボードのライフサイクルを Kubernetes ネイティブな方法で作成および管理するために、Amazon EKS クラスター上の Kubernetes オペレータとして <a href="https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.">grafana-operator</a> を使用したい開発者やアーキテクトを対象としています。</p>
 <h2 id="_2">はじめに<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>お客様は、オープンソースの分析およびモニタリングソリューションのためのオブザーバビリティプラットフォームとして Grafana を使用しています。Amazon EKS でワークロードを実行しているお客様が、ワークロード重力に焦点を当て、Cloud リソースなどの外部リソースのデプロイとライフサイクル管理を Kubernetes ネイティブのコントローラーに依存しようとしていることがわかります。 お客様が <a href="https://aws-controllers-k8s.github.io/community/docs/community/overview/">AWS Controllers for Kubernetes (ACK)</a> をインストールして、AWS サービスを作成、デプロイ、管理していることがわかりました。 これらの日々、多くのお客様が Prometheus と Grafana の実装をマネージドサービスにオフロードすることを選択しています。AWS の場合、これらのサービスは、ワークロードのモニタリングに使用される <a href="https://docs.aws.amazon.com/prometheus/?icmpid=docs_homepage_mgmtgov">Amazon Managed Service for Prometheus</a> と <a href="https://docs.aws.amazon.com/grafana/?icmpid=docs_homepage_mgmtgov">Amazon Managed Grafana</a> です。</p>
-<p>Grafana を使用する際にお客様が直面する一般的な課題の 1 つは、Kubernetes クラスタから Amazon Managed Grafana などの外部 Grafana インスタンスでの Grafana リソースと Grafana ダッシュボードの作成とライフサイクル管理です。 お客様は、Git ベースのワークフローを使用したシステム全体のインフラストラクチャとアプリケーションのデプロイメントを完全に自動化および管理する方法を見つけることに課題を感じています。これには、Amazon Managed Grafana での Grafana リソースの作成も含まれます。 このオブザーバビリティのベストプラクティスガイドでは、次のトピックに焦点を当てます。</p>
+<p>Grafana を使用する際にお客様が直面する一般的な課題の 1 つは、Kubernetes クラスタから Amazon Managed Grafana などの外部 Grafana インスタンスでの Grafana リソースと Grafana ダッシュボードの作成とライフサイクル管理です。 お客様は、Git ベースのワークフローを使用したシステム全体のインフラストラクチャとアプリケーションのデプロイメントを完全に自動化および管理する方法を見つけることに課題があります。これには、Amazon Managed Grafana での Grafana リソースの作成も含まれます。 このオブザーバビリティのベストプラクティスガイドでは、次のトピックに焦点を当てます。</p>
 <ul>
 <li>Grafana Operator の紹介 - Kubernetes クラスタから外部 Grafana インスタンスを管理するための Kubernetes Operator</li>
 <li>GitOps の紹介 - Git ベースのワークフローを使用してインフラストラクチャを作成および管理するための自動メカニズム</li>
@@ -3556,11 +3556,11 @@
 <h3 id="gitops-flux">GitOps と Flux とは<a class="headerlink" href="#gitops-flux" title="Permanent link">&para;</a></h3>
 <p>GitOps は、デプロイ設定の真実の情報源として Git を利用するソフトウェア開発および運用の方法論です。これは、アプリケーションまたはインフラストラクチャの目的の状態を Git リポジトリに保持し、Git ベースのワークフローを使用して変更を管理およびデプロイすることを含みます。GitOps は、システム全体を Git リポジトリで宣言的に記述するアプリケーションおよびインフラストラクチャのデプロイを管理する方法です。これは、バージョン管理、イミュータブルなアーティファクト、自動化のベストプラクティスを活用して、複数の Kubernetes クラスタの状態を管理するための運用モデルです。</p>
 <p>Flux は、Kubernetes 上のアプリケーションのデプロイを自動化する GitOps ツールです。これは、Git リポジトリの状態を継続的に監視し、クラスタに変更を適用することによって機能します。Flux は、GitHub、GitLab、Bitbucket などのさまざまな Git プロバイダと統合されています。リポジトリに変更が加えられると、Flux がそれらを自動的に検出し、クラスタをそれに応じて更新します。</p>
-<h3 id="flux">Flux を使用する利点<a class="headerlink" href="#flux" title="Permanent link">&para;</a></h3>
+<h3 id="flux">Flux を使用するメリット<a class="headerlink" href="#flux" title="Permanent link">&para;</a></h3>
 <ul>
 <li><strong>自動デプロイ</strong>: Flux はデプロイプロセスを自動化し、手動のエラーを減らし、開発者が他のタスクに集中できるようにします。</li>
 <li><strong>Git ベースのワークフロー</strong>: Flux は Git を真実の情報源として利用し、変更の追跡と巻き戻しを容易にします。</li>
-<li><strong>宣言的な構成</strong>: Flux は目的のクラスタ状態を定義するために <a href="https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co">Kubernetes</a> マニフェストを使用し、管理と変更の追跡を容易にします。</li>
+<li><strong>宣言的な構成</strong>: Flux は目的のクラスター状態を定義するために <a href="https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co">Kubernetes</a> マニフェストを使用し、管理と変更の追跡を容易にします。</li>
 </ul>
 <h3 id="flux_1">Flux の採用における課題<a class="headerlink" href="#flux_1" title="Permanent link">&para;</a></h3>
 <ul>
@@ -3570,17 +3570,17 @@
 <h2 id="amazon-managed-grafana-amazon-eks-grafana-operator">Amazon Managed Grafana のリソースを管理するために Amazon EKS で Grafana Operator を使用する<a class="headerlink" href="#amazon-managed-grafana-amazon-eks-grafana-operator" title="Permanent link">&para;</a></h2>
 <p>前のセクションで説明したように、Grafana Operator を使用すると、Kubernetes ネイティブの方法で Amazon Managed Grafana のリソースのライフサイクルを作成および管理するために Kubernetes クラスタを使用できます。 以下のアーキテクチャ図は、Grafana Operator を使用して AMG とのアイデンティティの設定、Amazon Managed Service for Prometheus のデータソースとしての追加、および Amazon EKS クラスタからのダッシュボードの Kubernetes ネイティブな方法での Amazon Managed Grafana への作成を示しています。</p>
 <p><img alt="GitOPS-WITH-AMG-2" src="../../../../images/Operational/gitops-with-amg/gitops-with-amg-2.jpg" /></p>
-<p>Amazon Managed Grafana を管理するために Kubernetes クラスタでオープンソースの Grafana Operator を使用する方法の詳細なデモンストレーションは、<a href="https://aws.amazon.com/blogs/mt/using-open-source-grafana-operator-on-your-kubernetes-cluster-to-manage-amazon-managed-grafana/">Kubernetes クラスタでオープンソースの Grafana Operator を使用して Amazon Managed Grafana を管理する</a> の投稿を参照してください。</p>
+<p>Amazon Managed Grafana を管理するために Kubernetes クラスタでオープンソースの Grafana Operator を使用する方法の詳細なデモンストレーションは、<a href="https://aws.amazon.com/blogs/mt/using-open-source-grafana-operator-on-your-kubernetes-cluster-to-manage-amazon-managed-grafana/">Using Open Source Grafana Operator on your Kubernetes cluster to manage Amazon Managed Grafana</a> を参照してください。</p>
 <h2 id="flux-amazon-eks-gitops-amazon-managed-grafana">Flux を使用した Amazon EKS での GitOps による Amazon Managed Grafana のリソース管理<a class="headerlink" href="#flux-amazon-eks-gitops-amazon-managed-grafana" title="Permanent link">&para;</a></h2>
 <p>上記で説明したように、Flux は Kubernetes 上のアプリケーションのデプロイを自動化します。 
 Flux は GitHub などの Git リポジトリを継続的に監視し、リポジトリに変更が加えられると自動的に検出してクラスタを適切に更新します。 
-以下のアーキテクチャ図は、Kubernetes クラスタから Grafana Operator を使用し、Flux を使用した GitOps メカニズムで、データソースとして Amazon Managed Service for Prometheus を追加し、Kubernetes ネイティブの方法で Amazon Managed Grafana 上にダッシュボードを作成する方法をデモンストレーションしています。</p>
+以下のアーキテクチャ図は、Kubernetes クラスタから Grafana Operator を使用し、Flux を使用した GitOps メカニズムで、データソースとして Amazon Managed Service for Prometheus を追加し、Kubernetes ネイティブの方法で Amazon Managed Grafana にダッシュボードを作成する方法をデモンストレーションしています。</p>
 <p><img alt="GitOPS-WITH-AMG-1" src="../../../../images/Operational/gitops-with-amg/gitops-with-amg-1.jpg" /></p>
 <p>One Observability ワークショップのモジュール <a href="https://catalog.workshops.aws/observability/ja/aws-managed-oss/gitops-with-amg">GitOps with Amazon Managed Grafana</a> を参照してください。このモジュールでは、EKS クラスター上に以下のような必要な「Day 2」運用ツールをセットアップします。</p>
 <ul>
 <li><a href="https://github.com/external-secrets/external-secrets/tree/main/deploy/charts/external-secrets">External Secrets Operator</a> は正常にインストールされ、AWS シークレットマネージャから Amazon Managed Grafana のシークレットを読み取ります</li>
-<li><a href="https://github.com/prometheus/node_exporter">Prometheus Node Exporter</a> はメモリ、ディスク、CPU 利用率などのさまざまなマシンリソースを測定します</li>
-<li><a href="https://github.com/grafana-operator/grafana-operator">Grafana Operator</a> は、Kubernetes ネイティブな方法で Kubernetes クラスタを使用して、Amazon Managed Grafana のリソースのライフサイクルを作成および管理します</li>
+<li><a href="https://github.com/prometheus/node_exporter">Prometheus Node Exporter</a> はメモリ、ディスク、CPU 使用率などのさまざまなマシンリソースを測定します</li>
+<li><a href="https://github.com/grafana-operator/grafana-operator">Grafana Operator</a> は、Kubernetes クラスタを使用して、Kubernetes ネイティブの方法で Amazon Managed Grafana のリソースのライフサイクルを作成および管理します</li>
 <li><a href="https://fluxcd.io/">Flux</a> は、GitOps メカニズムを使用して Kubernetes 上のアプリケーションのデプロイを自動化します</li>
 </ul>
 <h2 id="_3">まとめ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>

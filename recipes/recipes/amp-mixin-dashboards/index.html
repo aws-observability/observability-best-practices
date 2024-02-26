@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3595,7 +3595,7 @@
 <p>The Prometheus mixin project expects prometheus to be installed via the Prometheus Operator, but the Terraform blueprints install the Prometheus agent via the default helm charts. In order for the scraping jobs and the dashboards to line up, we need to update the Prometheus rules and the mixin dashboard configuration, then upload the dashboard to our Grafana instance.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li>An EKS cluster - Starting from: <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/">https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons</a></li>
+<li>An EKS cluster - Starting from: <a href="https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/">https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons</a></li>
 <li>A Cloud9 environment</li>
 <li>kubectl in Cloud9 configured to manage the EKS cluster</li>
 <li>IAM credentials for EKS</li>

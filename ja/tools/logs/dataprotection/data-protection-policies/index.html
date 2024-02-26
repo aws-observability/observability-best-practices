@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3467,22 +3467,22 @@
 
 
 <h1 id="cloudwatch-logs-slgedu">CloudWatch Logs のデータ保護ポリシー (SLG/EDU 用)<a class="headerlink" href="#cloudwatch-logs-slgedu" title="Permanent link">&para;</a></h1>
-<p>ログデータは一般的に有益ですが、医療保険の相互運用性と説明責任に関する法律 (HIPAA)、一般データ保護規則 (GDPR)、支払カード業界データセキュリティ基準 (PCI-DSS)、連邦リスクおよび認定管理プログラム (FedRAMP) などの厳格な規制を持つ組織にとっては、マスキングが有用です。</p>
-<p>CloudWatch Logs の<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html">データ保護ポリシー</a> を使用すると、お客様はログデータをスキャンして機密データを検出し、検出された機密データをマスクするデータ保護ポリシーを定義および適用できます。</p>
-<p>これらのポリシーは、パターンマッチングと機械学習モデルを利用して機密データを検出し、アカウントの CloudWatch ロググループにインジェストされたイベントに表示されるデータを監査およびマスクするのに役立ちます。</p>
+<p>一般的にログデータは有益ですが、医療保険の相互運用性と説明責任に関する法律 (HIPAA)、一般データ保護規則 (GDPR)、支払カード業界データセキュリティ基準 (PCI-DSS)、連邦リスクおよび認定管理プログラム (FedRAMP) などの厳格な規制を持つ組織にとっては、マスキングが有用です。</p>
+<p>CloudWatch Logs の<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html">データ保護ポリシー</a> を使用すると、お客様はログデータ内を通過する機密データをスキャンし、検出された機密データをマスクするデータ保護ポリシーを定義および適用できます。  </p>
+<p>これらのポリシーは、パターンマッチングと機械学習モデルを利用して機密データを検出し、アカウントの CloudWatch ロググループにインジェストされるイベントに表示されるそれらのデータを監査およびマスクするのに役立ちます。</p>
 <p>機密データの選択に使用される技術と基準を <a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html">マッチングデータ識別子</a> と呼びます。 これらのマネージドデータ識別子を使用することで、CloudWatch Logs は次のものを検出できます:</p>
 <ul>
-<li>プライベートキーや AWS シークレットアクセスキーなどの資格情報</li>
-<li>IP アドレスや MAC アドレスなどのデバイス識別子  </li>
+<li>プライベートキーや AWS シークレットアクセスキーなどの資格情報  </li>
+<li>IP アドレスや MAC アドレスなどのデバイス識別子</li>
 <li>銀行口座番号、クレジットカード番号、クレジットカード検証コードなどの金融情報</li>
 <li>健康保険カード番号 (EHIC) や個人健康番号などの保護された健康情報 (PHI)</li>
 <li>運転免許証、社会保障番号、納税者番号などの個人を特定できる情報 (PII)</li>
 </ul>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>機密データは、ロググループにインジェストされると検出されてマスクされます。 データ保護ポリシーを設定しても、その時点より前にロググループにインジェストされたログイベントはマスクされません。</p>
+<p>機密データは、ロググループにインジェストされると検出され、マスクされます。 データ保護ポリシーを設定したとき、その時点より前にロググループにインジェストされたログイベントはマスクされません。</p>
 </div>
-<p>上記で言及したデータタイプのいくつかを詳しく説明し、例を見ていきましょう。</p>
+<p>上記で言及したデータタイプのいくつかを詳しく説明し、例を見ていきましょう:</p>
 <h2 id="_1">データ型<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <h3 id="_2">資格情報<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
 <p>資格情報は、あなたが誰であるか、リクエストしたリソースにアクセスする権限があるかを確認するために使用される機密データ型です。AWS は、これらの資格情報(プライベートキーやシークレットアクセスキーなど)を使用して、リクエストを認証および認可します。</p>
@@ -3519,7 +3519,7 @@
 <p><img alt="The CloudWatch Logs Data Protection for PHI" src="../../../../images/cwl-dp-pii.png" /></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html">pii データタイプとデータ識別子の完全なリスト</a> をご確認ください</p>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html">PII データタイプとデータ識別子の完全なリスト</a> をご確認ください</p>
 </div>
 <h2 id="_4">マスクされたログ<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>データ保護ポリシーを設定したロググループに移動すると、データ保護が <code>On</code> になっており、コンソールに機密データのカウントも表示されていることがわかります。</p>
@@ -3545,7 +3545,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>CloudWatch Logs では、ロググループデータは常に暗号化されています。 または、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html">AWS Key Management Service</a> を使用してログデータを暗号化することもできます。</p>
+<p>CloudWatch Logs のロググループデータは常に暗号化されています。 または、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html">AWS Key Management Service</a> を使用してログデータを暗号化することもできます。</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>

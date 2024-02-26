@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3401,10 +3401,10 @@
 <p class="admonition-title">Warning</p>
 <p>この記事を書いている時点では、<a href="https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/">インターネットモニター</a> は CloudWatch コンソールの<strong>プレビュー</strong>で利用できます。 一般提供の機能範囲は、今日体験しているものから変更される可能性があります。</p>
 </div>
-<p><a href="../../guides/#collect-telemetry-from-all-tiers-of-your-workload">ワークロードのすべてのティアからテレメトリを収集する</a>ことはベストプラクティスであり、課題となり得るものです。 しかし、ワークロードのティアとは何でしょうか。 ある人にとっては、ウェブ、アプリケーション、データベースサーバーである可能性があります。 他の人は、ワークロードをフロントエンドとバックエンドとして見るかもしれません。 そして、ウェブアプリケーションを運用している人は、<a href="../../tools/rum">リアルユーザーモニタリング</a>(RUM)を使用して、エンドユーザーが経験するこれらのアプリの正常性を観察できます。</p>
-<p>しかし、クライアントとデータセンターまたはクラウドサービスプロバイダー間のトラフィックはどうでしょうか。 そして、ウェブページとして提供されないために RUM を使用できないアプリケーションの場合はどうでしょうか。</p>
+<p><a href="../../guides/#collect-telemetry-from-all-tiers-of-your-workload">ワークロードのすべてのティアからテレメトリを収集する</a>ことはベストプラクティスであり、課題となり得ることです。 しかし、ワークロードのティアとは何でしょうか。 ある人にとっては、ウェブ、アプリケーション、データベースサーバーである可能性があります。 他の人は、ワークロードをフロントエンドとバックエンドとして見るかもしれません。 そして、ウェブアプリケーションを運用している人は、<a href="../../tools/rum">リアルユーザーモニタリング</a>(RUM)を使用して、エンドユーザーが経験するこれらのアプリの正常性を観察できます。</p>
+<p>しかし、クライアントとデータセンターまたはクラウドサービスプロバイダー間のトラフィックはどうでしょうか。 そして、ウェブページとして提供されないために RUM を使用できないアプリケーションはどうでしょうか。</p>
 <p><img alt="インターネットを介したアプリケーションのネットワークテレメトリ" src="../../images/internet_monitor.png" /></p>
-<p>インターネットモニターはネットワークレベルで機能し、観測されたトラフィックの正常性を <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html">AWS の既存の知識</a>と関連付けて評価します。 既知のインターネットの問題。 つまり、パフォーマンスまたは可用性の問題があるインターネットサービスプロバイダー (ISP) が<strong>あり</strong>、アプリケーションのトラフィックがこの ISP を使用してクライアント/サーバー間の通信を行っている場合、インターネットモニターはワークロードへのこの影響について事前に通知できます。 さらに、選択したホスティングリージョンと <a href="https://aws.amazon.com/cloudfront/">CloudFront</a> をコンテンツデリバリーネットワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> として使用することに基づいて、推奨事項を提示できます。</p>
+<p>インターネットモニターはネットワークレベルで機能し、観測されたトラフィックの正常性を <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html">AWS の既存の知識</a>と関連付けて評価します。 既知のインターネットの問題。 つまり、パフォーマンスまたは可用性の問題があるインターネットサービスプロバイダー (ISP) が<strong>あり</strong>、アプリケーションのトラフィックがこの ISP を使用してクライアント/サーバー間の通信を行っている場合、インターネットモニターはワークロードへのこの影響について事前に通知できます。 さらに、選択したホスティングリージョンと <a href="https://aws.amazon.com/cloudfront/">CloudFront</a> をコンテンツデリバリーネットワーク<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> として使用することに基づいて、推奨事項を提示できます。 </p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>インターネットモニターは、ワークロードが通過するネットワークのトラフィックのみを評価します。 たとえば、別の国の ISP に問題が発生していても、ユーザーがそのキャリアを使用していない場合、その問題の可視性はありません。</p>
@@ -3493,17 +3493,17 @@
 <p>各モニターは少なくとも 10 個の個別の CloudWatch メトリクスを作成します。これらは、他の運用メトリクスと同様に <a href="../../tools/alarms">アラーム</a> の作成に使用する必要があります。</p>
 </div>
 <h2 id="_3">トラフィック最適化の提案を利用する<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>Internet Monitor には、ワークロードを最適な場所に配置することで、最高の顧客体験を実現できるようにアドバイスしてくれるトラフィック最適化の提案機能があります。グローバルで事業を展開している、またはグローバルな顧客を対象としたワークロードでは、この機能が特に価値があります。</p>
+<p>Internet Monitor には、ワークロードを最適な場所に配置することで、最高の顧客体験を実現できるようにアドバイスしてくれるトラフィック最適化の提案機能があります。グローバルなワークロードやグローバルな顧客を対象とする場合、この機能は特に価値があります。</p>
 <p><img alt="Internet Monitor コンソール" src="../../images/internet_monitor_3.png" /></p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>トラフィック最適化の提案ビューで、現在の TTFB (Time to First Byte)値、予測 TTFB 値、最低 TTFB 値に注目してください。これらの値は、そうでない場合観測が難しい、潜在的に不良なエンドユーザー体験を示している可能性があります。</p>
+<p>トラフィック最適化の提案ビューの現在の TTFB (Time to First Byte)値、予測 TTFB 値、最低 TTFB 値に注意を払ってください。これらは、そうでない場合観測が難しい、潜在的に不良なエンドユーザー体験を示している可能性があります。</p>
 </div>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>この新機能についてのローンチブログは <a href="https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/">https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>この新機能のローンチブログは <a href="https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/">https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

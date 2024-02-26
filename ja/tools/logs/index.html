@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -2188,7 +2188,7 @@
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
-      ログのフォーマット
+      ログフォーマット
     </span>
   </a>
   
@@ -2221,6 +2221,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      ログ記録クラスの設定
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -2237,7 +2246,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       クエリのスコープを管理してコストを抑える
     </span>
@@ -2246,9 +2255,27 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       他のユーザーとのクエリの共有
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      パターン分析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diff" class="md-nav__link">
+    <span class="md-ellipsis">
+      前の期間との比較(diff)
     </span>
   </a>
   
@@ -3459,7 +3486,7 @@
           <li class="md-nav__item">
   <a href="#_4" class="md-nav__link">
     <span class="md-ellipsis">
-      ログのフォーマット
+      ログフォーマット
     </span>
   </a>
   
@@ -3492,6 +3519,15 @@
   
 </li>
         
+          <li class="md-nav__item">
+  <a href="#_7" class="md-nav__link">
+    <span class="md-ellipsis">
+      ログ記録クラスの設定
+    </span>
+  </a>
+  
+</li>
+        
       </ul>
     </nav>
   
@@ -3508,7 +3544,7 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#_7" class="md-nav__link">
+  <a href="#_8" class="md-nav__link">
     <span class="md-ellipsis">
       クエリのスコープを管理してコストを抑える
     </span>
@@ -3517,9 +3553,27 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#_8" class="md-nav__link">
+  <a href="#_9" class="md-nav__link">
     <span class="md-ellipsis">
       他のユーザーとのクエリの共有
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#_10" class="md-nav__link">
+    <span class="md-ellipsis">
+      パターン分析
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#diff" class="md-nav__link">
+    <span class="md-ellipsis">
+      前の期間との比較(diff)
     </span>
   </a>
   
@@ -3549,56 +3603,56 @@
 
 
 <h1 id="_1">ログ記録<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
-<p>ログ記録ツールの選択は、データ送信、フィルタリング、保持、キャプチャ、およびデータを生成するアプリケーションとの統合に対する要件によって異なります。
-オブザーバビリティのために Amazon Web Services を使用する場合(オンプレミスでホストしているか、別のクラウド環境でホストしているかに関係なく)、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html">CloudWatch エージェント</a> や <a href="https://www.fluentd.org/">Fluentd</a> などのツールを利用して、分析のためのログデータを送信できます。</p>
-<p>ここでは、ログ記録のための CloudWatch エージェントの実装に関するベストプラクティスと、AWS コンソールまたは API での CloudWatch Logs の使用について説明します。</p>
+<p>ログツールの選択は、データ送信、フィルタリング、保持、キャプチャ、およびデータを生成するアプリケーションとの統合に対する要件に関連しています。
+オブザーバビリティのために Amazon Web Services を使用する場合(オンプレミスでホストしているか、別のクラウド環境でホストしているかに関係なく)、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html">CloudWatch エージェント</a> や <a href="https://www.fluentd.org/">Fluentd</a> などの別のツールを利用して、分析のためのログデータを送信できます。</p>
+<p>ここでは、ログ記録のための CloudWatch エージェントの実装に関するベストプラクティスと、AWS コンソールまたは API での CloudWatch Logs の使用について詳しく説明します。</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>CloudWatch エージェントは、<a href="../../signals/metrics/">メトリクスデータ</a>を CloudWatch に送信するためにも使用できます。実装の詳細については、<a href="../../tools/metrics/">メトリクス</a>のページを参照してください。</p>
+<p>CloudWatch エージェントは、<a href="../../signals/metrics/">メトリクスデータ</a> を CloudWatch に配信するためにも使用できます。実装の詳細については、<a href="../../tools/metrics/">メトリクス</a> ページを参照してください。OpenTelemetry や X-Ray クライアント SDK からの<a href="../../signals/traces/">トレース</a> を収集し、<a href="../xray/">AWS X-Ray</a> に送信するためにも使用できます。</p>
 </div>
 <h2 id="cloudwatch">CloudWatch エージェントによるログの収集<a class="headerlink" href="#cloudwatch" title="Permanent link">&para;</a></h2>
 <h3 id="_2">転送<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
-<p><a href="../../faq#what-is-a-cloud-first-approach">クラウドファーストのアプローチ</a>でオブザーバビリティを実現する場合、原則として、ログを取得するためにマシンにログインする必要がある場合は、アンチパターンが存在していることになります。ワークロードは、リアルタイムに近い状態でログ解析システムにログデータを外部に送信し、その送信と元のイベントの間のレイテンシは、ワークロードに障害が発生した場合の時点情報の潜在的な損失を表しています。</p>
-<p>アーキテクトとして、ログデータの許容損失量を判断し、これに対応するように CloudWatch エージェントの <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection"><code>force_flush_interval</code></a> を調整する必要があります。</p>
-<p><code>force_flush_interval</code> は、バッファサイズに達した場合を除き、エージェントに一定の間隔でログデータをデータプレーンに送信するよう指示します。その場合、エージェントはすべてのバッファされたログを直ちに送信します。</p>
+<p><a href="../../faq#what-is-a-cloud-first-approach">クラウドファーストのアプローチ</a>でオブザーバビリティを実現する場合、原則として、ログを取得するためにマシンにログインする必要がある場合は、アンチパターンが存在していることになります。ワークロードは、ログ分析システムに対して、リアルタイムに近い形でログデータをマシンの外部に出力する必要があります。イベント発生から転送までのレイテンシは、ワークロードに障害が発生した場合に、その時点の情報が失われる可能性を表しています。</p>
+<p>アーキテクトとして、ログデータの許容可能な損失を判断し、これに合わせて CloudWatch エージェントの <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection"><code>force_flush_interval</code></a> を調整する必要があります。</p>
+<p><code>force_flush_interval</code> は、バッファサイズに達した場合を除き、一定の間隔でログデータをデータプレーンに送信するようエージェントに指示します。バッファサイズに達した場合は、すべてのバッファされたログを直ちに送信します。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>エッジデバイスは、低レイテンシーの AWS 内ワークロードとは要件が大きく異なる場合があり、<code>force_flush_interval</code> の設定をより長くする必要があるかもしれません。たとえば、低帯域幅のインターネット接続を使用している IoT デバイスの場合、ログのフラッシュは 15 分ごとに実行するだけで十分な場合があります。 </p>
+<p>エッジデバイスは、低レイテンシーの AWS 内ワークロードとは要件が大きく異なる場合があり、<code>force_flush_interval</code> の設定を長くする必要があるかもしれません。例えば、低帯域幅のインターネット接続を使用している IoT デバイスの場合、ログのフラッシュは 15 分ごとに実行するだけで十分な場合があります。 </p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>コンテナ化されたステートレスなワークロードや EC2 フリートは、ログフラッシュの要件に特に敏感である可能性があります。いつでもスケールインできるステートレスな Kubernetes アプリケーションや EC2 フリートを考えてみましょう。これらのリソースが突然終了したときにログの損失が発生する可能性があり、将来的にはそれらからログを抽出する方法がなくなります。 <code>force_flush_interval</code> の標準設定は、これらのシナリオには通常適していますが、必要に応じて低くすることができます。</p>
+<p>コンテナ化されたステートレスなワークロードや EC2 フリートは、ログフラッシュの要件に特に敏感である可能性があります。いつでもスケールインできるステートレスな Kubernetes アプリケーションや EC2 フリートを考えてみましょう。これらのリソースが突然終了したときにログの損失が発生する可能性があり、将来的にマシンからログを抽出する方法がなくなります。これらのシナリオでは、通常、標準の <code>force_flush_interval</code> が適していますが、必要に応じて低くすることもできます。</p>
 </div>
 <h3 id="_3">ロググループ<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <p>CloudWatch Logs では、アプリケーションに論理的に適用されるログのコレクションは、単一の<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html">ロググループ</a>に配信する必要があります。そのロググループ内では、ログストリームを作成するソースシステム間で<em>共通性</em>がある必要があります。</p>
 <p>LAMP スタックを考えてみましょう。Apache、MySQL、PHP アプリケーション、ホスティング Linux オペレーティングシステムからのログは、それぞれ別個のロググループに属します。</p>
-<p>このグループ化は重要であり、同じ保持期間、暗号化キー、メトリックフィルター、サブスクリプションフィルター、Contributor Insights ルールをグループで扱えるようになります。</p>
+<p>このグループ化は重要であり、同じ保持期間、暗号化キー、メトリクスフィルター、サブスクリプションフィルター、Contributor Insights ルールをグループで扱えるようになります。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>ロググループ内のログストリーム数に制限はありません。また、CloudWatch Logs Insights クエリー1つで、アプリケーションのログ全体を検索できます。Kubernetes サービスの各 Pod や、EC2 フリートの各インスタンスごとに個別のログストリームを持つのが一般的なパターンです。</p>
+<p>ロググループ内のログストリーム数に制限はありません。また、CloudWatch Logs Insights クエリー1つでアプリケーションのすべてのログを検索できます。Kubernetes サービスの各 Pod や、EC2 フリートの各インスタンスごとに個別のログストリームを持つのが一般的なパターンです。</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
 <p>ロググループのデフォルトの保持期間は<em>無期限</em>です。ベストプラクティスは、ロググループを作成するタイミングで保持期間を設定することです。</p>
-<p>これは CloudWatch コンソールでいつでも設定できますが、ベストプラクティスは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kit など)を使用したロググループの作成と同時に、または CloudWatch エージェント構成内の <code>retention_in_days</code> 設定を使用して実行することです。</p>
+<p>これを CloudWatch コンソールでいつでも設定できますが、ベストプラクティスは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kit など)を使用したロググループ作成時に同時に設定するか、CloudWatch エージェント構成内の <code>retention_in_days</code> 設定を使用することです。</p>
 <p>いずれのアプローチも、ログの保持期間をプロアクティブに設定し、プロジェクトのデータ保持要件に合わせて設定できます。</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>デフォルトでは、ロググループは暗号化されません。ベストプラクティスは、プレーンテキストデータの偶発的な漏洩を防ぐために、ロググループを作成するタイミングで暗号化キーを設定することです。これは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kitなど)を使用して実行できます。</p>
-<p>CloudWatch Logs でキーを管理するために AWS Key Management Service を使用するには、追加の構成とユーザーへのキーへのアクセス許可の付与が必要です。 <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>ロググループデータは、CloudWatch Logs で常に暗号化されます。デフォルトでは、CloudWatch Logs は保管中のログデータに対して<code>サーバーサイド</code>の暗号化を使用します。代替として、この暗号化に AWS Key Management Service を使用できます。 <a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html">AWS KMS を使用した暗号化</a> は、ロググループレベルで有効になり、KMS キーをロググループに関連付けることによって、ロググループの作成時または作成後に行います。これは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kit など)で構成できます。</p>
+<p>CloudWatch Logs のキー管理に AWS Key Management Service を使用するには、追加の構成とユーザーへのキーへのアクセス許可の付与が必要です<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>。</p>
 </div>
-<h3 id="_4">ログのフォーマット<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
-<p>CloudWatch Logs には、インジェスト時に JSON データをインデックス化し、これを使ってアドホッククエリを実行する機能があります。 あらゆる種類のログデータを CloudWatch Logs に配信できますが、このデータの自動インデックス化が行われるのは、適切に構造化されている場合に限られます。</p>
-<p>構造化されていないログでも検索は可能ですが、正規表現を使用する必要があります。</p>
+<h3 id="_4">ログフォーマット<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs には、インジェスト時にログフィールドを自動的に検出し、JSON データをインデックスする機能があります。この機能により、アドホッククエリとフィルタリングが容易になり、ログデータの使いやすさが向上します。ただし、自動インデックスは構造化データにのみ適用されることに注意が必要です。非構造化ログデータは自動的にインデックス化されませんが、CloudWatch Logs に配信することができます。</p>
+<p>非構造化ログでも、正規表現を使用した <code>parse</code> コマンドで検索やクエリを実行できます。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>CloudWatch Logs を使用する際のログフォーマットのベストプラクティスは次のとおりです。</p>
+<p>CloudWatch Logs を使用する場合のログフォーマットのベストプラクティスは次のとおりです。</p>
 <ol>
-<li><a href="https://logging.apache.org/log4j/2.x/">Log4j</a>、<a href="https://pypi.org/project/python-json-logger/"><code>python-json-logger</code></a>、フレームワークのネイティブ JSON エミッタなどの構造化ログフォーマッタを使用します。</li>
-<li>ログ先にイベントごとに 1 行のログを送信します。</li>
+<li>Log4j、<code>python-json-logger</code>、フレームワークのネイティブ JSON エミッタなどの構造化ログフォーマッタを使用します。</li>
+<li>ログ先に1イベントごとに1行のログを送信します。</li>
 </ol>
-<p>複数行の JSON ログを送信する場合、各行が 1 つのイベントとして解釈されることに注意してください。</p>
+<p>複数行の JSON ログを送信する場合、各行が1つのイベントとして解釈されることに注意してください。</p>
 </div>
 <h3 id="stdout"><code>stdout</code> の処理<a class="headerlink" href="#stdout" title="Permanent link">&para;</a></h3>
 <p><a href="../../signals/logs/#log-to-stdout">ログシグナル</a>のページで説明したように、ベストプラクティスはログシステムを生成アプリケーションから切り離すことです。
@@ -3617,7 +3671,7 @@ Kubernetesや<a href="https://aws.amazon.com/ecs/">Amazon Elastic Container Serv
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>ログに漏れる可能性のある特定の形式の既知のデータをフィルタリングすることは時間がかかり、エラーが発生しやすい場合があります。ただし、特定のタイプの望ましくないデータ(クレジットカード番号、社会保障番号など)を扱うワークロードの場合、これらのレコードのフィルタを持つことで、将来的に潜在的に破壊的なコンプライアンスの問題を防ぐことができます。たとえば、社会保障番号を含むすべてのレコードをドロップするには、次の構成で簡単にできます:</p>
+<p>ログに漏れる可能性のある特定の形式の既知のデータをフィルタリングすることは時間がかかり、エラーが発生しやすい場合があります。ただし、特定のタイプの望ましくないデータ(クレジットカード番号、社会保障番号など)を扱うワークロードの場合、これらのレコードのフィルタを持つことで、将来的に潜在的に破壊的なコンプライアンスの問題を防ぐことができます。たとえば、社会保障番号を含むすべてのレコードをドロップする単純な構成は次のとおりです:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&quot;filters&quot;: [
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>  {
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    &quot;type&quot;: &quot;exclude&quot;,
@@ -3635,8 +3689,22 @@ CloudWatch エージェントは、<a href="https://docs.aws.amazon.com/AmazonCl
 <p class="admonition-title">Success</p>
 <p><code>multi_line_start_pattern</code> ディレクティブを使用して、マルチラインログを CloudWatch Logs に取り込む負担を軽減します。</p>
 </div>
+<h3 id="_7">ログ記録クラスの設定<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs には、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html">クラス</a> が 2 つあります。</p>
+<ul>
+<li>
+<p>CloudWatch Logs 標準ログクラスは、リアルタイム監視が必要なログや、頻繁にアクセスするログに適した機能豊富なオプションです。</p>
+</li>
+<li>
+<p>CloudWatch Logs アクセス頻度の低いログクラスは、ログをコスト効率よく統合するために使用できる新しいログクラスです。このログクラスには、管理対象の取り込み、ストレージ、クロスアカウントのログ分析、暗号化が含まれており、GB 当たりの取り込み価格が低くなっています。アクセス頻度の低いログクラスは、アドホッククエリと事後的なフォレンジック分析に適しています。</p>
+</li>
+</ul>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p><code>log_group_class</code> ディレクティブを使用して、新しいロググループに使用するロググループクラスを指定します。有効な値は <strong>STANDARD</strong> と <strong>INFREQUENT_ACCESS</strong> です。このフィールドを省略した場合、エージェントはデフォルトで <strong>STANDARD</strong> を使用します。</p>
+</div>
 <h2 id="cloudwatch-logs">CloudWatch Logs での検索<a class="headerlink" href="#cloudwatch-logs" title="Permanent link">&para;</a></h2>
-<h3 id="_7">クエリのスコープを管理してコストを抑える<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
+<h3 id="_8">クエリのスコープを管理してコストを抑える<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
 <p>CloudWatch Logs にデータが配信されたら、必要に応じて検索できます。CloudWatch Logs はスキャンされたデータ量に応じて課金されることに注意してください。データスキャンを抑える戦略があり、これによってスキャンされるデータ量を減らすことができます。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
@@ -3651,18 +3719,38 @@ CloudWatch エージェントは、<a href="https://docs.aws.amazon.com/AmazonCl
 <p>各クエリが実際にスキャンしたデータ量は、CloudWatch コンソールから直接確認できます。このアプローチにより、効率的なクエリを作成できます。</p>
 <p><img alt="CloudWatch Logs コンソールのプレビュー" src="../../images/cwl1.png" /></p>
 </div>
-<h3 id="_8">他のユーザーとのクエリの共有<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h3>
-<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html">CloudWatch Logs のクエリ構文</a>は複雑ではありません(コマンドは7つしかありませんが)、一からクエリを書くのに時間がかかることがあります。同じ AWS アカウント内の他のユーザーと、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html">AWS コンソール内から直接</a>または <a href="https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html">CloudFormation</a> を使用して、適切に書かれたクエリを共有することができます。これにより、アプリケーションログを調査する必要がある場合の再作業量を減らすことができます。 </p>
+<h3 id="_9">他のユーザーとのクエリの共有<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h3>
+<p><a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html">CloudWatch Logs のクエリ構文</a> は複雑ではありませんが、特定のクエリを最初から作成することは時間がかかる場合があります。同じ AWS アカウント内の他のユーザーとの間で適切に記述されたクエリを共有することで、アプリケーションログの調査を効率化できます。これは、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html">AWS Management Console</a> から直接、または <a href="https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html">CloudFormation</a> や <a href="https://docs.aws.amazon.com/ja_jp/cdk/api/v2/docs/aws-cdk-lib.aws_logs.CfnQueryDefinition.html">AWS CDK</a> を使用してプログラムで実現できます。これにより、ログデータを分析する必要がある他のユーザーの再作業が軽減されます。 </p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
 <p>頻繁に繰り返し使用されるクエリを CloudWatch Logs に保存することで、ユーザーに対して事前入力された状態で提供できます。</p>
-<p><img alt="CloudWatch Logs クエリエディターページ" src="../../images/cwl2.png" /></p>
+<p><img alt="CloudWatch Logs クエリエディタページ" src="../../images/cwl2.png" /></p>
+</div>
+<h3 id="_10">パターン分析<a class="headerlink" href="#_10" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs Insights は、ログをクエリするときに機械学習アルゴリズムを使用してパターンを見つけます。パターンは、ログフィールド間で繰り返し発生する共有テキスト構造です。大量のログイベントがごく少数のパターンに圧縮できることが多いため、パターンは大規模なログセットの分析に役立ちます。<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p>パターンを使用して、ログデータを自動的にパターンにクラスタリングします。</p>
+<p><img alt="CloudWatch Logs クエリのパターン例" src="../../images/pattern_analysis.png" /></p>
+</div>
+<h3 id="diff">前の期間との比較(diff)<a class="headerlink" href="#diff" title="Permanent link">&para;</a></h3>
+<p>CloudWatch Logs Insights では、エラーの検出やトレンドの特定に役立つように、時間の経過とともにログイベントの変化を比較できます。比較クエリはパターンを明らかにし、迅速なトレンド分析を容易にします。また、より深い調査のためにサンプルの生ログイベントを調べることができます。クエリは、選択した期間と同じ長さの比較期間の2つの期間に対して分析されます <sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup>。</p>
+<div class="admonition success">
+<p class="admonition-title">Success</p>
+<p><code>diff</code> コマンドを使用して、時間の経過とともにログイベントの変化を比較してください。</p>
+<p><img alt="CloudWatch Logs のクエリの差分例" src="../../images/diff-query.png" /></p>
 </div>
 <div class="footnote">
 <hr />
 <ol>
 <li id="fn:1">
-<p>CloudWatch Logs ロググループの暗号化とアクセス権限の実践的な例については、<a href="https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/">How to search through your AWS Systems Manager Session Manager console logs – Part 1</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+<p>アクセス権限を持つ CloudWatch Logs ロググループの暗号化の実際的な例については、<a href="https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/">How to search through your AWS Systems Manager Session Manager console logs – Part 1</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>より詳細なインサイトについては、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html">CloudWatch Logs Insights Pattern Analysis</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>詳細については、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html">CloudWatch Logs Insigts Compare(diff) with previous ranges</a> を参照してください。&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
 </li>
 </ol>
 </div>

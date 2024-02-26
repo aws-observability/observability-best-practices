@@ -16,11 +16,11 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
-        <title>EKS on EC2 で Amazon Managed Service for Prometheus を使用した AWS Distro for OpenTelemetry - AWS Observability Best Practices</title>
+        <title>EKS on EC2 で AWS Distro for OpenTelemetry と Amazon Managed Service for Prometheus を使用する - AWS Observability Best Practices</title>
       
     
     
@@ -98,7 +98,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#eks-on-ec2-amazon-managed-service-for-prometheus-aws-distro-for-opentelemetry" class="md-skip">
+        <a href="#eks-on-ec2-aws-distro-for-opentelemetry-amazon-managed-service-for-prometheus" class="md-skip">
           コンテンツにスキップ
         </a>
       
@@ -133,7 +133,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              EKS on EC2 で Amazon Managed Service for Prometheus を使用した AWS Distro for OpenTelemetry
+              EKS on EC2 で AWS Distro for OpenTelemetry と Amazon Managed Service for Prometheus を使用する
             
           </span>
         </div>
@@ -3449,13 +3449,14 @@
   
 
 
-<h1 id="eks-on-ec2-amazon-managed-service-for-prometheus-aws-distro-for-opentelemetry">EKS on EC2 で Amazon Managed Service for Prometheus を使用した AWS Distro for OpenTelemetry<a class="headerlink" href="#eks-on-ec2-amazon-managed-service-for-prometheus-aws-distro-for-opentelemetry" title="Permanent link">&para;</a></h1>
-<p>このレシピでは、<a href="https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app">サンプルの Go アプリケーション</a> にインスツルメンテーションを適用し、
+<h1 id="eks-on-ec2-aws-distro-for-opentelemetry-amazon-managed-service-for-prometheus">EKS on EC2 で AWS Distro for OpenTelemetry と Amazon Managed Service for Prometheus を使用する<a class="headerlink" href="#eks-on-ec2-aws-distro-for-opentelemetry-amazon-managed-service-for-prometheus" title="Permanent link">&para;</a></h1>
+<p>このレシピでは、<a href="https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app">サンプルの Go アプリケーション</a> を計装し、
 <a href="https://aws.amazon.com/otel">AWS Distro for OpenTelemetry(ADOT)</a> を使用してメトリクスを 
-<a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus(AMP)</a> にインジェストします。
-そして、<a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana(AMG)</a> を使用してそれらのメトリクスを可視化します。</p>
-<p>デモとして、<a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service(EKS)</a> on EC2 クラスタと 
-<a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a> レポジトリのセットアップを行います。</p>
+<a href="https://aws.amazon.com/prometheus/">Amazon Managed Service for Prometheus(AMP)</a> にインジェストする方法を示します。
+そして、<a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana(AMG)</a> を使用してそのメトリクスを可視化します。</p>
+<p>デモのために、<a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service(EKS)</a> on EC2 
+クラスターと <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a>
+リポジトリをセットアップします。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>このガイドの完了には約 1 時間かかります。</p>
@@ -3505,15 +3506,15 @@
 </span></code></pre></div>
 <p></your_region></your_region></p>
 <h3 id="amp">AMP の設定<a class="headerlink" href="#amp" title="Permanent link">&para;</a></h3>
-<p>AWS CLI を使用してワークスペースを作成する
+<p>AWS CLI を使用してワークスペースを作成します。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>aws amp create-workspace --alias prometheus-sample-app
 </span></code></pre></div></p>
-<p>次のコマンドを使用してワークスペースが作成されたことを確認する:
+<p>次のコマンドでワークスペースが作成されたことを確認します。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws amp list-workspaces
 </span></code></pre></div></p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>詳細は <a href="https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html">AMP スタートガイド</a> を参照してください。</p>
+<p>詳細は <a href="https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html">AMP スタートガイド</a> をご覧ください。</p>
 </div>
 <h3 id="adot-collector">ADOT Collector のセットアップ<a class="headerlink" href="#adot-collector" title="Permanent link">&para;</a></h3>
 <p><a href="adot-collector-ec2.yaml">adot-collector-ec2.yaml</a> をダウンロードし、次のステップで説明するパラメータを使用してこの YAML ドキュメントを編集します。</p>
@@ -3522,13 +3523,13 @@
 <p>ダウンロードしたファイルを環境に合わせて編集するには、次の手順に従ってください。</p>
 <p>1. <code>&lt;your_region&gt;</code> を現在のリージョンに置き換えます。</p>
 <p>2. <code>&lt;your_endpoint&gt;</code> をワークスペースのリモートライト URL に置き換えます。</p>
-<p>次のクエリを実行することで、AMP リモートライト URL エンドポイントを取得できます。</p>
+<p>次のクエリを実行して、AMP リモートライト URL エンドポイントを取得します。</p>
 <p>まず、次のようにワークスペース ID を取得します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>YOUR_WORKSPACE_ID=$(aws amp list-workspaces \
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>                    --alias prometheus-sample-app \
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>                    --query &#39;workspaces[0].workspaceId&#39; --output text)
 </span></code></pre></div>
-<p>次に、次のコマンドを使用して、ワークスペースのリモートライト URL エンドポイントを取得します。</p>
+<p>次に、ワークスペースのリモートライト URL エンドポイントを取得するには、次を使用します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>YOUR_ENDPOINT=$(aws amp describe-workspace \
 </span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>                --workspace-id $YOUR_WORKSPACE_ID  \
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>                --query &#39;workspace.prometheusEndpoint&#39; --output text)api/v1/remote_write
@@ -3542,7 +3543,7 @@
 </span></code></pre></div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>詳細は、<a href="https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup">AWS Distro for OpenTelemetry(ADOT) Collector のセットアップ</a> をご覧ください。</p>
+<p>詳細については、<a href="https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup">AWS Distro for OpenTelemetry(ADOT) Collector のセットアップ</a> をご覧ください。</p>
 </div>
 <p></your_endpoint></your_region></p>
 <h3 id="amg">AMGの設定<a class="headerlink" href="#amg" title="Permanent link">&para;</a></h3>
@@ -3553,7 +3554,7 @@
 <p>このレシピでは、AWS Observability リポジトリの
 <a href="https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus">サンプルアプリケーション</a>
 を使用します。</p>
-<p>この Prometheus のサンプルアプリは、4 つの Prometheus メトリックタイプ
+<p>この Prometheus のサンプルアプリは、4 つの Prometheus メトリクスタイプ
 (カウンター、ゲージ、ヒストグラム、サマリー)を生成し、<code>/metrics</code> エンドポイントで公開します。</p>
 <h3 id="_5">コンテナイメージのビルド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>コンテナイメージをビルドするには、まず Git リポジトリをクローンし、
@@ -3573,7 +3574,7 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>proxy.golang.or へのタイムアウトなどにより、ご自身の環境で <code>go mod</code> が失敗する場合があります。
-go mod プロキシを迂回するには、Dockerfile を編集できます。</p>
+この場合は Dockerfile を編集することで、go mod プロキシをバイパスできます。</p>
 <p>Dockerfile の次の行を変更します。
 <div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>RUN GO111MODULE=on go mod download
 </span></code></pre></div>
@@ -3582,7 +3583,7 @@ go mod プロキシを迂回するには、Dockerfile を編集できます。</
 </span></code></pre></div></p>
 </div>
 <p>これで、前述の手順で作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。</p>
-<p>そのために、まずデフォルトの ECR レジストリにログインします。</p>
+<p>そのためにまず、デフォルトの ECR レジストリにログインします。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>aws ecr get-login-password --region $AWS_DEFAULT_REGION | \
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    docker login --username AWS --password-stdin \
 </span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    &quot;$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com&quot;
@@ -3592,13 +3593,11 @@ go mod プロキシを迂回するには、Dockerfile を編集できます。</
 </span></code></pre></div>
 <p></your_region></your_region></p>
 <h3 id="_6">サンプルアプリのデプロイ<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
-<p><a href="prometheus-sample-app.yaml">prometheus-sample-app.yaml</a>を編集して、
-ECR イメージパスを含めます。つまり、ファイル内の <code>ACCOUNTID</code> と <code>AWS_DEFAULT_REGION</code> を
-自分の値に置き換えます。</p>
+<p><a href="prometheus-sample-app.yaml">prometheus-sample-app.yaml</a>を編集して、ECR イメージパスを含めます。つまり、ファイル内の <code>ACCOUNTID</code> と <code>AWS_DEFAULT_REGION</code> を自分の値に置き換えます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>    # change the following to your container image:
 </span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>    image: &quot;ACCOUNTID.dkr.ecr.AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest&quot;
 </span></code></pre></div>
-<p>これで次のコマンドを使用してサンプルアプリをクラスタにデプロイできます。</p>
+<p>これで以下のコマンドを使用してサンプルアプリをクラスタにデプロイできます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>kubectl apply -f prometheus-sample-app.yaml
 </span></code></pre></div>
 <h2 id="_7">エンドツーエンド<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

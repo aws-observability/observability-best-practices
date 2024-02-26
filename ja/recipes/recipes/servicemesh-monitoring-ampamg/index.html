@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3468,13 +3468,13 @@
 </div>
 <h3 id="_3">前提条件<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h3>
 <ul>
-<li>AWS CLI が<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-install.html">インストール</a>され、<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html">設定</a>されていること。</li>
-<li><a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/eksctl.html">eksctl</a> コマンドがインストールされていること。  </li>
-<li><a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/install-kubectl.html">kubectl</a> がインストールされていること。</li>
-<li><a href="https://www.docker.com/get-started/">Docker</a> がインストールされていること。</li>
-<li>AMP ワークスペースが AWS アカウントに設定されていること。  </li>
-<li><a href="https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html">Helm</a> がインストールされていること。</li>
-<li><a href="https://docs.aws.amazon.com/ja_jp/singlesignon/latest/userguide/step1.html">AWS SSO</a> が有効化されていること。</li>
+<li>AWS CLI が<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-install.html">インストール</a>され、<a href="https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html">設定</a>されています。</li>
+<li><a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/eksctl.html">eksctl</a> コマンドがインストールされています。 </li>
+<li><a href="https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/install-kubectl.html">kubectl</a> がインストールされています。</li>
+<li><a href="https://www.docker.com/get-started/">Docker</a> がインストールされています。</li>
+<li>AMP ワークスペースが AWS アカウントに設定されています。</li>
+<li><a href="https://www.eksworkshop.com/beginner/060_helm/helm_intro/install/index.html">Helm</a> がインストールされています。</li>
+<li><a href="https://docs.aws.amazon.com/ja_jp/singlesignon/latest/userguide/step1.html">AWS SSO</a> が有効化されています。</li>
 </ul>
 <h3 id="eks">EKS クラスターのセットアップ<a class="headerlink" href="#eks" title="Permanent link">&para;</a></h3>
 <p>まず、サンプルアプリケーションを実行するために App Mesh が有効になった EKS クラスターを作成します。
@@ -3507,7 +3507,7 @@
 </span></code></pre></div>
 <h3 id="amp">AMP の設定<a class="headerlink" href="#amp" title="Permanent link">&para;</a></h3>
 <p>AMP ワークスペースは、Envoy から収集された Prometheus メトリクスを取り込むために使用されます。
-ワークスペースは、テナントに専用の論理 Cortex サーバーです。ワークスペースは、更新、一覧表示、
+ワークスペースは、テナントに専用の論理 Cortex サーバーです。ワークスペースは、更新、リスト表示、
 説明、削除などの管理を承認するための細かいアクセス制御をサポートし、メトリクスの取り込みとクエリを行います。</p>
 <p>AWS CLI を使用してワークスペースを作成します:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>aws amp create-workspace --alias AMP-APPMESH --region $AWS_REGION
@@ -3530,7 +3530,7 @@ Grafana エージェントには、AWS Identity and Access Management (IAM) 認�
 <p>ここから、Prometheus メトリクスを AMP に送信するための IAM ロールの設定手順を説明します。 
 EKS クラスターに Grafana エージェントをインストールし、メトリクスを AMP に転送します。</p>
 <h4 id="_5">アクセス許可の設定<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h4>
-<p>Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、Sigv4 を使用して有効な AWS 資格情報で署名する必要があり、これにより、マネージドサービスの各クライアントリクエストを認証および承認します。</p>
+<p>Grafana Agent は、EKS クラスターで実行されているコンテナ化されたワークロードから運用メトリクスをスクレイピングし、それらを AMP に送信します。AMP に送信されるデータは、Sigv4 を使用して有効な AWS 資格情報で署名する必要があり、これによりマネージドサービスの各クライアントリクエストを認証および承認します。</p>
 <p>Grafana Agent は、Kubernetes サービスアカウントの ID で実行するように EKS クラスターにデプロイできます。IAM ロールを使用したサービスアカウント (IRSA) では、IAM ロールを Kubernetes サービスアカウントに関連付けることができます。これにより、そのサービスアカウントを使用するすべての Pod に IAM アクセス許可を提供できます。</p>
 <p>IRSA の設定を次のように準備します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>kubectl create namespace grafana-agent
@@ -3540,9 +3540,9 @@ EKS クラスターに Grafana エージェントをインストールし、メ�
 </span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>export NAMESPACE=&quot;grafana-agent&quot;
 </span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>export REMOTE_WRITE_URL=&quot;https://aps-workspaces.$AWS_REGION.amazonaws.com/workspaces/$WORKSPACE/api/v1/remote_write&quot;
 </span></code></pre></div>
-<p>次の手順を自動化するために、<a href="gca-permissions.sh">gca-permissions.sh</a> シェルスクリプトを使用できます(プレースホルダー変数 <code>YOUR_EKS_CLUSTER_NAME</code> を EKS クラスターの名前に置き換えてください)。</p>
+<p><a href="gca-permissions.sh">gca-permissions.sh</a> シェルスクリプトを使用して、次の手順を自動化できます(プレースホルダー変数 <code>YOUR_EKS_CLUSTER_NAME</code> を EKS クラスターの名前に置き換えてください)。</p>
 <ul>
-<li>AMP ワークスペースへのリモートライトアクセス許可を持つ IAM ポリシーを使用して、<code>EKS-GrafanaAgent-AMP-ServiceAccount-Role</code> という名前の IAM ロールを作成します。</li>
+<li>AMP ワークスペースにリモートライトするアクセス許可を持つ IAM ポリシーを使用して、<code>EKS-GrafanaAgent-AMP-ServiceAccount-Rol</code>e という名前の IAM ロールを作成します。</li>
 <li><code>grafana-agent</code> 名前空間の下に <code>grafana-agent</code> という名前の Kubernetes サービスアカウントを作成し、それを IAM ロールに関連付けます。 </li>
 <li>IAM ロールと Amazon EKS クラスターでホストされている OIDC プロバイダー間の信頼関係を作成します。</li>
 </ul>
@@ -3615,9 +3615,9 @@ Envoy メトリクスの分析を開始できます。</p>
 <p>メトリクスが意図したしきい値を超えた場合に、Grafanaアラートを設定できます。
 AMGを使用すると、ダッシュボードでアラートを評価する頻度と通知を送信する方法を設定できます。
 アラートルールを作成する前に、通知チャネルを作成する必要があります。</p>
-<p>この例では、Amazon SNSを通知チャネルとして設定します。
-デフォルトを使用している場合、つまり<a href="https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account">サービス管理権限</a>の場合、トピックに正常に通知を発行するには、SNSトピックに<code>grafana</code>接頭辞を付ける必要があります。</p>
-<p>次のコマンドを使用して、<code>grafana-notification</code>という名前のSNSトピックを作成します。</p>
+<p>この例では、通知チャネルとしてAmazon SNSを設定します。
+デフォルトを使用している場合、つまり<a href="https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-manage-permissions.html#AMG-service-managed-account">サービス管理権限</a>の場合、トピックに成功裏に通知を公開するには、SNSトピックに<code>grafana</code>接頭辞を付ける必要があります。</p>
+<p><code>grafana-notification</code>という名前のSNSトピックを作成するには、次のコマンドを使用します。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>aws sns create-topic --name grafana-notification
 </span></code></pre></div>
 <p>メールアドレスを介してサブスクライブします。以下のコマンドで、リージョンとアカウントIDを指定することを確認してください。</p>
@@ -3626,16 +3626,16 @@ AMGを使用すると、ダッシュボードでアラートを評価する頻�
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    --protocol email \
 </span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>    --notification-endpoint &lt;email-id&gt;
 </span></code></pre></div>
-<p>次に、Grafanaダッシュボードから新しい通知チャネルを追加します。
+<p>次に、Grafanaダッシュボードから新しい通知チャネルを追加します。 
 grafana-notificationという名前の新しい通知チャネルを設定します。
 タイプの場合、ドロップダウンからAWS SNSを使用します。
 トピックの場合、作成したSNSトピックのARNを使用します。
-認証プロバイダーとして、AWS SDK Defaultを選択します。</p>
+認証プロバイダーとして、AWS SDK Defaultを選択します。 </p>
 <p><img alt="通知チャネルの作成" src="../../images/alert-configuration.png" /></p>
-<p>次に、1分間の期間でダウンストリームレイテンシが5ミリ秒を超えた場合にアラートを設定します。
+<p>1分間でダウンストリームレイテンシが5ミリ秒を超えるとアラートが設定されます。
 ダッシュボードで、ドロップダウンからダウンストリームレイテンシを選択し、編集を選択します。
 グラフパネルの[アラート]タブで、アラートルールを評価する頻度と、アラートが状態を変更して通知を開始する条件を設定します。</p>
-<p>次の設定では、ダウンストリームレイテンシがしきい値を超えるとアラートが作成され、設定されたgrafana-alert-notificationチャネルを介してSNSトピックに通知が送信されます。</p>
+<p>次の設定では、ダウンストリームレイテンシがしきい値を超えるとアラートが作成され、設定された grafana-alert-notification チャネルを介して SNS トピックに通知が送信されます。</p>
 <p><img alt="アラート設定" src="../../images/downstream-latency.png" /></p>
 <p></email-id></account-id></region></p>
 <h2 id="_7">クリーンアップ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h2>

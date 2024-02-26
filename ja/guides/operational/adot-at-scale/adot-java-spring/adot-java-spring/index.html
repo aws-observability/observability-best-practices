@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -1416,11 +1416,11 @@
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      コンテキスト伝播を利用したトレーシング
+      コンテキスト伝播を利用したトレース
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="コンテキスト伝播を利用したトレーシング">
+    <nav class="md-nav" aria-label="コンテキスト伝播を利用したトレース">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3478,11 +3478,11 @@
         <li class="md-nav__item">
   <a href="#_3" class="md-nav__link">
     <span class="md-ellipsis">
-      コンテキスト伝播を利用したトレーシング
+      コンテキスト伝播を利用したトレース
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="コンテキスト伝播を利用したトレーシング">
+    <nav class="md-nav" aria-label="コンテキスト伝播を利用したトレース">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -3593,7 +3593,7 @@
 
 
 <h1 id="java-spring-integration">Java Spring Integration アプリケーションの計装<a class="headerlink" href="#java-spring-integration" title="Permanent link">&para;</a></h1>
-<p>この記事では、<a href="https://opentelemetry.io/">Open Telemetry</a> と <a href="https://aws.amazon.com/xray/">X-Ray</a> を利用した <a href="https://docs.spring.io/spring-integration/reference/html/overview.html">Spring Integration</a> アプリケーションの手動計装のアプローチについて説明します。</p>
+<p>この記事では、<a href="https://opentelemetry.io/">Open Telemetry</a> と <a href="https://aws.amazon.com/xray/">X-Ray</a> を利用した <a href="https://docs.spring.io/spring-integration/reference/overview.html">Spring Integration</a> アプリケーションの手動計装のアプローチについて説明します。</p>
 <p>Spring Integration フレームワークは、イベント駆動アーキテクチャやメッセージ指向アーキテクチャの統合ソリューションの開発を可能にするように設計されています。一方、OpenTelemetry は HTTP リクエストを使用してサービス間で通信と調整を行うマイクロサービスアーキテクチャに焦点を当てる傾向があります。したがって、このガイドでは OpenTelemetry API を使用した手動計装による Spring Integration アプリケーションの計装例を提供します。</p>
 <h2 id="_1">背景情報<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h2>
 <h3 id="_2">トレーシングとは<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h3>
@@ -3603,7 +3603,7 @@
 <p>トレースは、アプリケーションへのリクエストが行われたときに何が起こるかの全体像を示します。アプリケーションが単一のデータベースを持つモノリスであれ、精巧なサービスのメッシュであれ、トレースはアプリケーション内のリクエストの完全な「パス」を理解するうえで不可欠です。</p>
 </div>
 <p>トレーシングの主なメリットの 1 つがリクエストのエンドツーエンドの可視性であることを考えると、トレースがリクエストの発信元からバックエンドまで適切にリンクされていることが重要です。OpenTelemetry ではこれを実現する一般的な方法は、<a href="https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans">ネストされたスパン</a> を利用することです。これは、スパンが最終的な宛先に到達するまでサービスからサービスへと渡されていくマイクロサービスアーキテクチャで機能します。Spring Integration アプリケーションでは、リモートでもローカルでも作成されたスパン間の親子関係を作成する必要があります。</p>
-<h2 id="_3">コンテキスト伝播を利用したトレーシング<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
+<h2 id="_3">コンテキスト伝播を利用したトレース<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>コンテキスト伝播を利用したアプローチをデモンストレーションします。このアプローチは通常、ローカルおよびリモートの場所で作成されたスパン間の親子関係を作成する必要がある場合に使用されますが、Spring Integration アプリケーションの場合に使用されます。これはコードを簡素化し、アプリケーションのスケールを可能にするためです。メッセージを複数のスレッドで並列に処理でき、異なるホストでメッセージを処理する必要がある場合は水平方向にスケールできます。</p>
 <p>これを実現するために必要な概要は次のとおりです。</p>
 <ul>
@@ -3617,7 +3617,7 @@
 <li>上流で生成されている前のメッセージからコンテキストを読み取ることを試みる。これは、上流のメッセージからスパンを接続できる場所です。コンテキストが存在しない場合、新しいトレースが開始されます(これは OpenTelemetry SDK によって実行されます)。</li>
 <li>その操作を識別する一意の名前を持つ Span を作成する。これは、このメッセージが処理されているチャネルの名前にできます。</li>
 <li>現在のコンテキストをメッセージに保存する。</li>
-<li>コンテキストとスコープを thread.local に格納して、後でクローズできるようにする。 </li>
+<li>コンテキストとスコープを thread.local に格納して、後で閉じることができるようにする。 </li>
 <li>ダウンストリームに送信されるメッセージにコンテキストを挿入する。</li>
 </ul>
 </li>
@@ -3625,13 +3625,13 @@
 <li>thread.local からコンテキストとスコープを復元する。</li>
 <li>コンテキストからスパンを再作成する。</li>
 <li>メッセージ処理中に発生した例外を登録する。</li>
-<li>スコープをクローズする。</li>
+<li>スコープを閉じる。</li>
 <li>スパンの終了。</li>
 </ul>
 </li>
 </ul>
-<p>これは必要なことの簡略化された説明です。Spring Integration フレームワークを使用した機能サンプルアプリケーションを提供しています。このアプリケーションのコードは<a href="https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp">こちら</a> にあります。</p>
-<p>アプリケーションの計装のために実装された変更のみを表示するには、この <a href="https://github.com/rapphil/spring-integration-samples/compare/30e01ce9eefd8dae288eca44013810afa8c1a585..6f056a76350340a9658db0cad7fc12dbda505437">diff</a> をご覧ください。</p>
+<p>これは必要なことの簡略化された説明です。 Spring-Integration フレームワークを使用した機能サンプルアプリケーションを提供しています。このアプリケーションのコードは<a href="https://github.com/rapphil/spring-integration-samples/tree/rapphil-5.5.x-otel/applications/file-split-ftp">こちら</a> にあります。</p>
+<p>アプリケーションへの計装の変更のみを表示するには、この <a href="https://github.com/rapphil/spring-integration-samples/compare/30e01ce9eefd8dae288eca44013810afa8c1a585..6f056a76350340a9658db0cad7fc12dbda505437">diff</a> をご覧ください。</p>
 <h3 id="_4">このサンプルアプリケーションを実行するには次のコマンドを使用します:<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h3>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># build and run</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>mvn<span class="w"> </span>spring-boot:run
@@ -3672,7 +3672,7 @@
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">echo</span><span class="w"> </span><span class="s1">&#39;foo123\nbar123\nfoo1234&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>/tmp/in/testfile.txt
 </span></code></pre></div>
 <p><img alt="X-Ray の結果" src="../x-ray-results.png" /></p>
-<p>上記のセグメントは、サンプルアプリケーションで説明されているワークフローと一致していることがわかります。一部のメッセージを処理する際に例外が発生することが予想されるため、適切に登録されており、X-Ray でトラブルシューティングできることが確認できます。</p>
+<p>上記のセグメントは、サンプルアプリケーションで説明されているワークフローと一致していることがわかります。一部のメッセージの処理時に例外が発生することが予想されるため、適切に登録されており、X-Ray でトラブルシューティングできることが確認できます。</p>
 <h2 id="_6">よくある質問<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
 <h3 id="_7">ネストされたスパンを作成するには?<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
 <p>OpenTelemetryには、スパンを接続するために使用できる3つのメカニズムがあります。</p>

@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3538,7 +3538,7 @@
 <p>CloudWatch RUM を使用すると、リアルユーザーモニタリングを実行して、ウェブアプリケーションのパフォーマンスに関するクライアントサイドのデータを、実際のユーザーセッションからリアルタイムに近い形で収集および表示できます。可視化および分析できるデータには、ページの読み込み時間、クライアントサイドのエラー、ユーザーの動作が含まれます。このデータを表示すると、すべて集計されて表示されるだけでなく、お客様が使用しているブラウザやデバイスごとの内訳でも表示できます。</p>
 <p><img alt="RUM アプリケーションモニターダッシュボードがデバイスの内訳を示している" src="../../images/rum2.png" /></p>
 <h2 id="web">Web クライアント<a class="headerlink" href="#web" title="Permanent link">&para;</a></h2>
-<p>CloudWatch RUM Web クライアントは、Node.js バージョン 16 以降を使用して開発およびビルドされています。コードは <a href="https://github.com/aws-observability/aws-rum-web">GitHub で公開</a> されています。<a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_angular.md">Angular</a> および <a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_react.md">React</a> アプリケーションでこのクライアントを使用できます。</p>
+<p>CloudWatch RUM Web クライアントは、Node.js バージョン 16 以降を使用して開発およびビルドされています。コードは GitHub 上で<a href="https://github.com/aws-observability/aws-rum-web">公開されています</a>。<a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_angular.md">Angular</a> および <a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_react.md">React</a> アプリケーションでこのクライアントを使用できます。</p>
 <p>CloudWatch RUM は、アプリケーションのロード時間、パフォーマンス、アンロード時間に知覚できる影響を与えないように設計されています。 </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -3546,7 +3546,7 @@
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Web アプリケーションで広告ブロッカーによる潜在的な中断を避けることが懸念事項である場合は、Web クライアントを独自のコンテンツデリバリーネットワークでホストするか、独自の Web サイト内にホストすることをお勧めします。独自のオリジンドメインから Web クライアントをホストするためのガイダンスは、<a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_installation.md">GitHub のドキュメント</a> に記載されています。</p>
+<p>Web アプリケーションで広告ブロッカーによる潜在的な中断を避けることが懸念事項である場合は、Web クライアントを独自のコンテンツデリバリーネットワークでホストするか、独自の Web サイト内にホストすることをお勧めします。独自のオリジンドメインから Web クライアントをホストするためのガイダンスは、GitHub の<a href="https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_installation.md">ドキュメント</a>に記載されています。</p>
 </div>
 <h2 id="_2">アプリケーションの認証<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>CloudWatch RUM を使用するには、3 つのオプションのいずれかを使用してアプリケーションを認証する必要があります。</p>
@@ -3564,16 +3564,16 @@
 <p>CloudWatch RUM は、認証されていないユーザーと認証されたユーザーを分離するように構成できます。 詳細については、<a href="https://aws.amazon.com/blogs/mt/how-to-isolate-signed-in-users-from-guest-users-within-amazon-cloudwatch-rum/">このブログ記事</a> を参照してください。</p>
 </div>
 <h2 id="_3">データ保護とプライバシー<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
-<p>CloudWatch RUM クライアントは、エンドユーザーデータの収集を支援するために Cookie を使用できます。これはユーザージャーニー機能に役立ちますが、必須ではありません。プライバシー関連の詳細については、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-privacy.html">詳細なドキュメント</a> をご覧ください。<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  </p>
+<p>CloudWatch RUM クライアントは、エンドユーザーデータの収集を支援するために Cookie を使用できます。これはユーザージャーニー機能に役立ちますが、必須ではありません。プライバシー関連の詳細については、<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-privacy.html">詳細なドキュメント</a> をご覧ください。<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>  </p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>RUM を使用した Web アプリケーションテレメトリの収集は安全であり、コンソールや CloudWatch Logs を通じて個人を特定できる情報 (PII) は公開されませんが、Web クライアントを通じて <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html">カスタム属性</a> を収集できることに注意してください。このメカニズムを使用して機密データが公開されないように注意してください。</p>
+<p>RUM を使用した Web アプリケーションテレメトリの収集は安全であり、コンソールや CloudWatch Logs を通じて個人を特定できる情報 (PII) は公開されませんが、Web クライアントを通じて<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html">カスタム属性</a> を収集できることに注意してください。このメカニズムを使用して機密データが公開されないように注意してください。</p>
 </div>
 <h2 id="_4">クライアントコードスニペット<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
 <p>CloudWatch RUM Web クライアントのコードスニペットは自動生成されますが、必要に応じて手動で修正することもできます。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>シングルページアプリケーションでクッキーの作成を動的に有効にするには、クッキー同意メカニズムを使用します。詳細は、<a href="https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/">このブログ記事</a>を参照してください。</p>
+<p>シングルページアプリケーションでクッキーの作成を動的に有効にするには、クッキー同意メカニズムを使用します。詳細は<a href="https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/">このブログ記事</a>を参照してください。</p>
 </div>
 <h3 id="url">URL 収集の無効化<a class="headerlink" href="#url" title="Permanent link">&para;</a></h3>
 <p>個人情報が含まれる可能性のあるリソース URL の収集を防ぎます。</p>
@@ -3584,7 +3584,7 @@
 <h3 id="_5">アクティブトレースを有効にする<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
 <p>Web クライアントで <code>addXRayTraceIdHeader: true</code> を設定することで、エンドツーエンドのトレースを有効にします。これにより、CloudWatch RUM Web クライアントが HTTP リクエストに X-Ray トレースヘッダーを追加します。</p>
 <p>このオプションの設定を有効にすると、アプリモニターによってサンプリングされたユーザーセッション中に行われた XMLHttpRequest および fetch リクエストがトレースされます。その後、これらのユーザーセッションのトレースとセグメントを、RUM ダッシュボード、CloudWatch ServiceLens コンソール、および X-Ray コンソールで確認できます。</p>
-<p>AWS コンソールでアプリケーションモニターを設定するときにアクティブトレースのチェックボックスをオンにすると、コードスニペットでこの設定が自動的に有効になります。</p>
+<p>AWS コンソールでアプリケーションモニターを設定するときに、アクティブトレースのチェックボックスをオンにすると、コードスニペットでこの設定が自動的に有効になります。</p>
 <p><img alt="RUM アプリケーションモニターのアクティブトレースの設定" src="../../images/rum1.png" /></p>
 <h3 id="_6">スニペットの挿入<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h3>
 <p>前のセクションでコピーまたはダウンロードしたコードスニペットを、アプリケーションの <code>&lt;head&gt;</code> 要素の中に挿入します。<code>&lt;body&gt;</code> 要素やその他の `<script></script></body></head></p>
@@ -3602,15 +3602,15 @@
 </span></code></pre></div>
 </div>
 <h2 id="_9">拡張メトリクスを使用する<a class="headerlink" href="#_9" title="Permanent link">&para;</a></h2>
-<p>CloudWatch RUM によって自動的に収集され、<code>AWS/RUM</code> というメトリック名前空間に公開される<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html">デフォルトのメトリクスセット</a>があります。これらは無料の<a href="../../tools/metrics/#vended-metrics">ベンダーメトリクス</a>で、RUM があなたに代わって作成します。 </p>
+<p>CloudWatch RUM によって自動的に収集され、<code>AWS/RUM</code> というメトリクス名前空間に公開される<a href="https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html">デフォルトのメトリクスセット</a>があります。これらは無料の<a href="../../tools/metrics/#vended-metrics">ベンダーメトリクス</a>で、RUM があなたに代わって作成するものです。</p>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>CloudWatch RUM メトリクスのいずれかを、追加のディメンションとともに CloudWatch に送信することで、メトリクスがより詳細なビューを提供できます。</p>
+<p>CloudWatch RUM メトリクスのいずれかを、追加のディメンションとともに CloudWatch に送信することで、メトリクスをより詳細な視点で得ることができます。</p>
 </div>
 <p>拡張メトリクスでサポートされているディメンションは以下のとおりです。</p>
 <ul>
 <li>BrowserName</li>
-<li>CountryCode - ISO-3166 形式 (2 文字コード)  </li>
+<li>CountryCode - ISO-3166 フォーマット (2 文字コード)  </li>
 <li>DeviceType</li>
 <li>FileType</li>
 <li>OSName</li>

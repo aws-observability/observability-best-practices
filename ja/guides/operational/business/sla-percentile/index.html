@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3309,21 +3309,21 @@
 <h1 id="_1">パーセンタイルの重要性<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>パーセンタイルは、平均値だけに依存するのではなく、データ分布のより詳細で正確な見方を提供するため、モニタリングとレポートでは重要です。平均値は時には、パフォーマンスやユーザーエクスペリエンスに大きな影響を与える可能性のある、外れ値やデータの変動などの重要な情報を隠してしまうことがあります。一方、パーセンタイルはこれらの隠された詳細を明らかにし、データがどのように分布しているかをよりよく理解するのに役立ちます。 </p>
 <p><a href="https://aws.amazon.com/cloudwatch/">Amazon CloudWatch</a> では、アプリケーションとインフラストラクチャ全体のレスポンスタイム、レイテンシー、エラーレートなど、さまざまなメトリクスのモニタリングとレポートにパーセンタイルを使用できます。パーセンタイルに対するアラームを設定することで、特定のパーセンタイル値がしきい値を超えたときにアラートを受け取り、より多くの顧客に影響を与える前にアクションを実行できます。</p>
-<p>CloudWatch で<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles">パーセンタイルを使用する</a>には、CloudWatch コンソールの <strong>All metrics</strong> でメトリクスを選択し、既存のメトリクスを使用して<strong>統計</strong>を <strong>p99</strong> に設定します。p の後の値を希望のパーセンタイルに編集できます。次に、パーセンタイルグラフを表示したり、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html">CloudWatch ダッシュボード</a> に追加したり、これらのメトリクスに対するアラームを設定できます。 たとえば、レスポンスタイムの 95 パーセンタイルが特定のしきい値を超えたときに通知するアラームを設定できます。これは、多数のユーザーが遅いレスポンスタイムを経験していることを示しています。</p>
-<p>以下のヒストグラムは、<a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で作成されており、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWath Logs Insights</a> クエリを使用して <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a> ログからデータを取得しています。使用したクエリは以下のとおりです。</p>
+<p>CloudWatch で<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_concepts.html#Percentiles">パーセンタイルを使用する</a>には、CloudWatch コンソールの <strong>All metrics</strong> でメトリクスを選択し、既存のメトリクスを使用して<strong>統計</strong> を <strong>p99</strong> に設定します。p の後の値を希望のパーセンタイルに編集できます。次に、パーセンタイルグラフを表示したり、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html">CloudWatch ダッシュボード</a> に追加したり、これらのメトリクスに対するアラームを設定できます。 たとえば、レスポンスタイムの 95 パーセンタイルが特定のしきい値を超えたときに通知するアラームを設定できます。これは、多数のユーザーが遅いレスポンスタイムを経験していることを示しています。</p>
+<p>以下のヒストグラムは、<a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で作成されており、<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html">CloudWath Logs Insights</a> からのクエリを使用しています。<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a> ログです。 使用したクエリは次のとおりです。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>fields @timestamp, event_details.duration
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>| filter event_type = &quot;com.amazon.rum.performance_navigation_event&quot;
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>| sort @timestamp desc
 </span></code></pre></div>
-<p>このヒストグラムは、ページの読み込み時間をミリ秒単位でプロットしています。この表示では、外れ値を明確に確認できます。平均を使用すると、このデータは隠されてしまいます。</p>
+<p>このヒストグラムは、ページの読み込み時間をミリ秒単位でプロットしています。 このビューを使用すると、外れ値を明確に確認できます。 平均を使用すると、このデータは非表示になります。</p>
 <p><img alt="ヒストグラム" src="../../../../images/percentiles-histogram.png" /></p>
-<p>CloudWatch で平均値を使用して同じデータを表示すると、ページの読み込みに 2 秒未満かかっていることが示されます。上記のヒストグラムから、ほとんどのページが実際には 1 秒未満で読み込まれており、外れ値が存在することがわかります。</p>
-<p><img alt="平均" src="../../../../images/percentiles-average.png" /></p>
-<p>同じデータを再びパーセンタイル(p99)を使用して表示すると、問題があることが示されます。CloudWatch のグラフは現在、99%のページ読み込みが 23 秒未満であることを示しています。</p>
-<p><img alt="p99" src="../../../../images/percentiles-p99.png" /></p>
-<p>これをより視覚的に表すために、以下のグラフは平均値と 99 パーセンタイルを比較しています。この場合、目標のページ読み込み時間は 2 秒であり、代替の <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean">CloudWatch 統計</a> と <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html">メトリック数式</a> を使用して他の計算を行うことができます。 この場合、パーセントランク(PR)を統計 <strong>PR(:2000)</strong> とともに使用して、ページ読み込みの 92.7%が 2000ms という目標内で発生していることを示しています。</p>
-<p><img alt="比較" src="../../../../images/percentiles-comparison.png" /></p>
-<p>CloudWatch でパーセンタイルを使用することで、システムのパフォーマンスをより深く洞察し、早期に問題を検出し、そうでなければ隠されてしまう外れ値を特定することで顧客のエクスペリエンスを改善できます。</p>
+<p>平均値を使用してCloudWatchに表示されている同じデータは、ページの読み込みに2秒未満かかっていることを示しています。 上記のヒストグラムから、ほとんどのページが実際には1秒未満で読み込まれており、外れ値があることがわかります。</p>
+<p><img alt="ヒストグラム" src="../../../../images/percentiles-average.png" /></p>
+<p>同じデータを再びパーセンタイル(p99)で使用すると、問題があることが示されます。CloudWatch のグラフは現在、99%のページ読み込みが 23 秒未満であることを示しています。</p>
+<p><img alt="ヒストグラム" src="../../../../images/percentiles-p99.png" /></p>
+<p>これをより視覚化しやすくするために、以下のグラフは平均値と 99 パーセンタイルを比較しています。 この場合、ターゲットのページ読み込み時間は 2 秒であり、代替の <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Statistics-definitions.html#Percentile-versus-Trimmed-Mean">CloudWatch 統計</a> と <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/using-metric-math.html">メトリクス数学</a> を使用して他の計算を行うことができます。 この場合、パーセンタイルランク(PR) が統計 <strong>PR(:2000)</strong> とともに使用されており、ページ読み込みの 92.7%が 2000ms というターゲット内で発生していることを示しています。</p>
+<p><img alt="ヒストグラム" src="../../../../images/percentiles-comparison.png" /></p>
+<p>CloudWatch でパーセンタイルを使用することで、システムのパフォーマンスをより深く洞察し、問題を早期に検出し、そうでなければ隠されてしまう外れ値を特定することで、顧客のエクスペリエンスを改善できます。</p>
 
 
 

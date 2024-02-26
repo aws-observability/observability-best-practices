@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3333,7 +3333,7 @@
 
 
 <h1 id="amazon-managed-grafana-redshift">Amazon Managed Grafana での Redshift の使用<a class="headerlink" href="#amazon-managed-grafana-redshift" title="Permanent link">&para;</a></h1>
-<p>このレシピでは、<a href="https://aws.amazon.com/redshift/">Amazon Redshift</a> (標準 SQL を使用したペタバイトスケールのデータウェアハウスサービス) を <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で使用する方法を示します。この統合は、<a href="https://grafana.com/grafana/plugins/grafana-redshift-datasource/">Grafana 用 Redshift データソース</a> (DIY Grafana インスタンスで使用できるオープンソースプラグインで、Amazon Managed Grafana にプリインストールされています) によって実現されます。</p>
+<p>このレシピでは、<a href="https://aws.amazon.com/redshift/">Amazon Redshift</a>（標準 SQL を使用したペタバイトスケールのデータウェアハウスサービス—）を <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で使用する方法を示します。この統合は、<a href="https://grafana.com/grafana/plugins/grafana-redshift-datasource/">Grafana 用 Redshift データソース</a>(DIY Grafana インスタンスで使用できるオープンソースプラグインで、Amazon Managed Grafana にプリインストールされています) によって可能になります。 </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>このガイドの完了には約 10 分かかります。</p>
@@ -3354,22 +3354,22 @@
 <a href="https://docs.aws.amazon.com/grafana/latest/userguide/security_iam_id-based-policy-examples.html">Amazon Managed Grafanaドキュメントの例</a>を参照してください。</p>
 </div>
 <h2 id="_2">インフラストラクチャ<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
-<p>Grafana インスタンスが必要なので、<a href="https://console.aws.amazon.com/grafana/home#/workspaces">Amazon Managed Grafana ワークスペース</a> を新規にセットアップするか、<a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">Getting Started</a> ガイドを使用するか、既存のワークスペースを使用します。</p>
+<p>Grafana インスタンスが必要なので、<a href="https://console.aws.amazon.com/grafana/home#/workspaces">Amazon Managed Grafana ワークスペース</a> を新規にセットアップするか、<a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">Getting Started</a> ガイドを使用するなどしてセットアップしてください。または、既存のワークスペースを使用しても構いません。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>AWS データソースの構成を使用するには、まず Amazon Managed Grafana コンソールに移動して、Athena リソースを読み取るために必要な IAM ポリシーをワークスペースに付与する、サービスマネージド IAM ロールを有効にします。</p>
+<p>AWS データソースの構成を使用するには、まず Amazon Managed Grafana コンソールに移動し、Athena リソースを読み取るために必要な IAM ポリシーをワークスペースに付与する、サービスマネージドの IAM ロールを有効にしてください。</p>
 </div>
-<p>Athena データソースを設定するには、左側のツールバーを使用し、下部の AWS アイコンを選択してから「Redshift」を選択します。プラグインが Redshift データソースを検出するために使用するデフォルトリージョンを選択し、使用したいアカウントを選択して、最後に「Add data source」を選択します。</p>
-<p>あるいは、次の手順に従って Redshift データソースを手動で追加および構成できます。</p>
+<p>Athena データソースを設定するには、左側のツールバーを使用し、下の AWS アイコンを選択してから「Redshift」を選択します。プラグインが Redshift データソースを検出するために使用するデフォルトリージョンを選択し、使用したいアカウントを選択して、最後に「Add data source」を選択します。</p>
+<p>あるいは、次の手順に従って Redshift データソースを手動で追加および構成することもできます。</p>
 <ol>
-<li>左側のツールバーの「Configurations」アイコンをクリックしてから、「Add data source」をクリックします。 </li>
+<li>左側のツールバーの「Configurations」アイコンをクリックし、次に「Add data source」をクリックします。  </li>
 <li>「Redshift」と入力します。</li>
-<li>[オプション] 認証プロバイダーを構成します(推奨: ワークスペース IAM ロール)。</li>
-<li>「Cluster Identifier」、「Database」、「Database User」の値を入力します。  </li>
+<li>[オプション] 認証プロバイダーを構成します(推奨: ワークスペースの IAM ロール)。</li>
+<li>「Cluster Identifier」、「Database」、「Database User」の値を入力します。 </li>
 <li>「Save &amp; test」をクリックします。</li>
 </ol>
 <p>次のような画面が表示されるはずです。</p>
-<p><img alt="Redshift データソース構成のスクリーンショット" src="../../images/amg-plugin-redshift-ds.png" /></p>
+<p><img alt="Redshift データソース設定のスクリーンショット" src="../../images/amg-plugin-redshift-ds.png" /></p>
 <h2 id="_3">使い方<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p><a href="https://github.com/awslabs/amazon-redshift-monitoring">Redshift アドバンスドモニタリング</a> の設定を使用します。
 すべてがすぐに利用できる状態なので、この時点では構成する必要はありません。</p>

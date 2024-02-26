@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3309,14 +3309,14 @@
 
 
 <h1 id="amazon-managed-grafana">Amazon Managed Grafana<a class="headerlink" href="#amazon-managed-grafana" title="Permanent link">&para;</a></h1>
-<p>Amazon Managed Grafana のコストと使用量のビジュアルにより、個々の AWS アカウント、AWS リージョン、特定の Grafana ワークスペースインスタンス、および Admin、Editor、Viewer ユーザーのライセンスコストの洞察が得られます。</p>
-<p>コストと使用量データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。</p>
+<p>Amazon Managed Grafana のコストと使用状況のビジュアルにより、個々の AWS アカウント、AWS リージョン、特定の Grafana ワークスペースインスタンス、および Admin、Editor、Viewer ユーザーのライセンスコストの洞察を得ることができます。</p>
+<p>コストと使用状況データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。</p>
 <ol>
 <li>
-<p>続行する前に、<a href="../cost/#implementation">Implementation overview</a> に記載されている CUR (ステップ #1) を作成し、AWS Conformation テンプレート (ステップ #2) をデプロイしたことを確認してください。</p>
+<p>開始する前に、<a href="../cost/#implementation">Implementation overview</a> に記載されている CUR (ステップ #1) を作成し、AWS Confirmation Template (ステップ #2) をデプロイしたことを確認してください。</p>
 </li>
 <li>
-<p>次に、以下のクエリを使用して、新しい Amazon Athena <a href="https://athena-in-action.workshop.aws/30-basics/303-create-view.html">ビュー</a> を作成します。このクエリは、Organization 内のすべての AWS アカウントにわたる Amazon Managed Grafana のコストと使用量を取得します。</p>
+<p>次に、以下のクエリを使用して、新しい Amazon Athena <a href="https://athena-in-action.workshop.aws/30-basics/303-create-view.html">view</a> を作成します。このクエリは、Organization 内のすべての AWS アカウントにわたる Amazon Managed Grafana のコストと使用状況を取得します。</p>
 <div class="codehilite"><pre><span></span><code><span class="nx">CREATE</span><span class="w"> </span><span class="nx">OR</span><span class="w"> </span><span class="nx">REPLACE</span><span class="w"> </span><span class="nx">VIEW</span><span class="w"> </span><span class="s">&quot;grafana_cost&quot;</span><span class="w"> </span><span class="nx">AS</span>
 <span class="nx">SELECT</span>
 <span class="nx">line_item_usage_type</span>
@@ -3335,7 +3335,7 @@
 
 </li>
 </ol>
-<p>Athena をデータソースとして使用することで、ビジネス要件に合わせて Amazon Managed Grafana または Amazon QuickSight のいずれかでダッシュボードを構築できます。また、作成した Athena ビューに対して直接 <a href="https://docs.aws.amazon.com/athena/latest/ug/querying-athena-tables.html">SQL クエリ</a> を実行することもできます。</p>
+<p>Athena をデータソースとして使用することで、ビジネス要件に合わせて Amazon Managed Grafana または Amazon QuickSight でダッシュボードを構築できます。また、作成した Athena ビューに対して直接 <a href="https://docs.aws.amazon.com/athena/latest/ug/querying-athena-tables.html">SQL クエリ</a> を実行することもできます。</p>
 
 
 

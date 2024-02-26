@@ -16,7 +16,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3450,8 +3450,8 @@
 
 
 <h1 id="fargate-eks-aws-distro-for-opentelemetry-aws-x-ray">Fargate 上の EKS で AWS Distro for OpenTelemetry を AWS X-Ray と共に使用する<a class="headerlink" href="#fargate-eks-aws-distro-for-opentelemetry-aws-x-ray" title="Permanent link">&para;</a></h1>
-<p>このレシピでは、サンプルの Go アプリケーションにインスツルメンテーションを適用し、<a href="https://aws.amazon.com/otel">AWS Distro for OpenTelemetry(ADOT)</a>を使用してトレースを <a href="https://aws.amazon.com/xray/">AWS X-Ray</a> にインジェストし、トレースを <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で可視化する方法を示します。</p>
-<p><a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service(EKS)</a> 上に <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> クラスターをセットアップし、デモンストレーションのために <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a> リポジトリを使用します。</p>
+<p>このレシピでは、サンプルの Go アプリケーションにインスツルメンテーションを適用し、<a href="https://aws.amazon.com/otel">AWS Distro for OpenTelemetry(ADOT)</a> を使用してトレースを <a href="https://aws.amazon.com/xray/">AWS X-Ray</a> にインジェストし、トレースを <a href="https://aws.amazon.com/grafana/">Amazon Managed Grafana</a> で可視化する方法を示します。</p>
+<p><a href="https://aws.amazon.com/eks/">Amazon Elastic Kubernetes Service(EKS)</a> を <a href="https://aws.amazon.com/fargate/">AWS Fargate</a> 上にセットアップし、デモンストレーションのために <a href="https://aws.amazon.com/ecr/">Amazon Elastic Container Registry(ECR)</a> リポジトリを使用します。</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>このガイドの完了には約 1 時間かかります。</p>
@@ -3497,8 +3497,8 @@
 <h3 id="managed-grafana">Managed Grafanaの設定<a class="headerlink" href="#managed-grafana" title="Permanent link">&para;</a></h3>
 <p><a href="https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/">Amazon Managed Grafana – Getting Started</a> ガイドを使用して新しいワークスペースを設定し、<a href="https://docs.aws.amazon.com/grafana/latest/userguide/x-ray-data-source.html">X-Ray をデータソースとして追加</a>します。</p>
 <h2 id="_4">シグナルジェネレーター<a class="headerlink" href="#_4" title="Permanent link">&para;</a></h2>
-<p>シグナルジェネレーターの <code>ho11y</code> を <a href="https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y">sandbox</a> から使用します。
-レシピリポジトリをまだローカル環境にクローンしていない場合は、次のコマンドでクローンしてください:</p>
+<p>シグナルジェネレーターの <code>ho11y</code> を、レシピリポジトリの <a href="https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y">sandbox</a> から使用します。
+したがって、まだローカル環境にリポジトリをクローンしていない場合は、次のようにクローンしてください:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>git clone https://github.com/aws-observability/aws-o11y-recipes.git
 </span></code></pre></div>
 <h3 id="_5">コンテナイメージのビルド<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h3>
@@ -3525,11 +3525,11 @@
 <div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker push &quot;$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest&quot;
 </span></code></pre></div>
 <h3 id="_7">シグナルジェネレーターのデプロイ<a class="headerlink" href="#_7" title="Permanent link">&para;</a></h3>
-<p>ECR イメージパスを含むように <a href="x-ray-sample-app.yaml">x-ray-sample-app.yaml</a> を編集してください。つまり、ファイル内の <code>ACCOUNTID</code> と <code>REGION</code> を自分の値に置き換えます(全体で 3 か所)。</p>
+<p><a href="x-ray-sample-app.yaml">x-ray-sample-app.yaml</a> を編集して、ECR イメージパスを含めます。つまり、ファイル内の <code>ACCOUNTID</code> と <code>REGION</code> を自分の値に置き換えます(合計 3 か所)。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>    # change the following to your container image:
 </span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>    image: &quot;ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest&quot;
 </span></code></pre></div>
-<p>これでサンプルアプリをクラスタにデプロイできます。</p>
+<p>これでサンプルアプリをクラスタに次のコマンドでデプロイできます。</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>kubectl -n example-app apply -f x-ray-sample-app.yaml
 </span></code></pre></div>
 <h2 id="_8">エンドツーエンド<a class="headerlink" href="#_8" title="Permanent link">&para;</a></h2>

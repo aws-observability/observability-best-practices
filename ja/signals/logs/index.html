@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.11">
     
     
       
@@ -3452,7 +3452,7 @@
 
 <h1 id="_1">ログ<a class="headerlink" href="#_1" title="Permanent link">&para;</a></h1>
 <p>ログは、イベントまたはアプリケーションの正常性に関する 1 行以上の詳細を表すメッセージのシリーズであり、アプリケーションまたはアプライアンスによって送信されます。通常、ログはファイルに記録されますが、時には分析や集計を実行するコレクターに送信されることもあります。メガバイト/日からテラバイト/時間までのあらゆるボリュームのログデータを生成、取り込み、管理するための多機能なログアグリゲーター、フレームワーク、製品が数多く存在します。</p>
-<p>ログは一度に 1 つのアプリケーションから発行され、通常その <em>1 つのアプリケーション</em> の範囲に関連しています。ただし、開発者はログを任意の複雑さとニュアンスを持たせることができます。当社では、ログを<a href="../../signals/traces">トレース</a>とは基本的に異なるシグナルとみなしています。トレースは複数のアプリケーションまたはサービスからのイベントで構成されており、レスポンス待ち時間、サービス障害、リクエストパラメータなどのサービス間のコンテキストに関する情報が含まれます。</p>
+<p>ログは一度に 1 つのアプリケーションから発行され、通常その <em>1 つのアプリケーション</em> の範囲に関連しています。ただし、開発者はログを任意の複雑さとニュアンスを持たせることができます。当社では、ログを<a href="../../signals/traces">トレース</a>とは基本的に異なるシグナルとみなしています。トレースは複数のアプリケーションまたはサービスからのイベントで構成され、レスポンス待ち時間、サービス障害、リクエストパラメータなどのサービス間のコンテキストに関する情報が含まれます。</p>
 <p>ログ内のデータは、期間をまたいで集計することもできます。たとえば、過去 1 分間に処理されたリクエスト数などの統計情報である場合があります。構造化されている場合もあればフリーフォームの場合もあり、詳細であったり、任意の言語で書かれている場合もあります。</p>
 <p>ログの主なユースケースは以下の通りです。</p>
 <ul>
@@ -3464,14 +3464,14 @@
 <p class="admonition-title">Note</p>
 <p>ログは <em>イミュータブル(不変)</em> であることを目的としており、多くのログ管理システムには、ログデータの変更を防止し、変更の試みを検出するメカニズムが含まれています。</p>
 </div>
-<p>ログに対する要件が何であれ、特定したベストプラクティスは次のとおりです。</p>
+<p>ログに対する要件は何であれ、特定したベストプラクティスは次のとおりです。</p>
 <h2 id="_2">構造化ログが成功の鍵<a class="headerlink" href="#_2" title="Permanent link">&para;</a></h2>
 <p>多くのシステムは半構造化形式でログを出力します。 たとえば、Apache Web サーバーは、各行が 1 つの Web リクエストに対応するようにこのようにログを書き込む場合があります。</p>
 <div class="codehilite"><pre><span></span><code><span class="mf">192.168.2.20</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="err">[</span><span class="mf">28</span><span class="o">/</span><span class="n">Jul</span><span class="o">/</span><span class="mf">2006</span><span class="p">:</span><span class="mf">10</span><span class="p">:</span><span class="mf">27</span><span class="p">:</span><span class="mf">10</span><span class="w"> </span><span class="o">-</span><span class="mf">0300</span><span class="err">]</span><span class="w"> </span><span class="s">&quot;GET /cgi-bin/try/ HTTP/1.0&quot;</span><span class="w"> </span><span class="mf">200</span><span class="w"> </span><span class="mf">3395</span>
 <span class="mf">127.0.0.1</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="err">[</span><span class="mf">28</span><span class="o">/</span><span class="n">Jul</span><span class="o">/</span><span class="mf">2006</span><span class="p">:</span><span class="mf">10</span><span class="p">:</span><span class="mf">22</span><span class="p">:</span><span class="mf">04</span><span class="w"> </span><span class="o">-</span><span class="mf">0300</span><span class="err">]</span><span class="w"> </span><span class="s">&quot;GET / HTTP/1.0&quot;</span><span class="w"> </span><span class="mf">200</span><span class="w"> </span><span class="mf">2216</span>
 </code></pre></div>
 
-<p>一方、Java のスタックトレースは、複数行にまたがる 1 つのイベントで、構造化されていない場合があります。</p>
+<p>一方、Java のスタックトレースは、複数行にまたがる1つのイベントで、構造化されていない場合があります。</p>
 <div class="codehilite"><pre><span></span><code><span class="nv">Exception</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">thread</span><span class="w"> </span><span class="s2">&quot;main&quot;</span><span class="w"> </span><span class="nv">java</span>.<span class="nv">lang</span>.<span class="nv">NullPointerException</span>
 <span class="w">    </span><span class="nv">at</span><span class="w"> </span><span class="nv">com</span>.<span class="nv">example</span>.<span class="nv">myproject</span>.<span class="nv">Book</span>.<span class="k">getTitle</span><span class="ss">(</span><span class="nv">Book</span>.<span class="nv">java</span>:<span class="mi">16</span><span class="ss">)</span>
 <span class="w">    </span><span class="nv">at</span><span class="w"> </span><span class="nv">com</span>.<span class="nv">example</span>.<span class="nv">myproject</span>.<span class="nv">Author</span>.<span class="nv">getBookTitles</span><span class="ss">(</span><span class="nv">Author</span>.<span class="nv">java</span>:<span class="mi">25</span><span class="ss">)</span>
@@ -3495,7 +3495,7 @@ TypeError: Again !?!
 }
 </code></pre></div>
 
-<p>構造化ログを使用すると、データを一つのログシステムから別のログシステムに転送できるようになり、開発が簡略化され、運用上の診断がより速く(エラーも少なく)行えるようになります。 また、JSON を使用すると、実際のデータとともにログメッセージのスキーマが埋め込まれるため、高度なログ分析システムがメッセージを自動的にインデックス化できるようになります。</p>
+<p>構造化ログを使用すると、データを一つのログシステムから別のログシステムに転送できるようになり、開発が簡素化され、運用上の診断がより速く(エラーも少なく)行えるようになります。 また、JSON を使用すると、実際のデータとともにログメッセージのスキーマが埋め込まれるため、高度なログ分析システムがメッセージを自動的にインデックス化できるようになります。</p>
 <p></module></p>
 <h2 id="_3">ログレベルを適切に使用する<a class="headerlink" href="#_3" title="Permanent link">&para;</a></h2>
 <p>ログには、<em>レベル</em> を持つものと、一連のイベントから成るものの 2 種類があります。レベルを持つものは、成功したログ戦略にとって極めて重要なコンポーネントです。ログレベルはフレームワークによって若干異なりますが、概して次の構造に従っています。</p>
@@ -3509,7 +3509,7 @@ TypeError: Again !?!
 <tbody>
 <tr>
 <td><code>DEBUG</code></td>
-<td>アプリケーションのデバッグに最も役立つ詳細な情報イベント。これらは通常、開発者にとって価値があり、非常に詳細です。</td>
+<td>アプリケーションのデバッグに最も有用な詳細な情報イベント。これらは通常、開発者にとって価値があり、非常に詳細です。</td>
 </tr>
 <tr>
 <td><code>INFO</code></td>
@@ -3533,7 +3533,7 @@ TypeError: Again !?!
 <p class="admonition-title">Info</p>
 <p>明示的なレベルを持たない暗黙的なログは、<code>INFO</code> と見なされる場合がありますが、この動作はアプリケーションによって異なる場合があります。</p>
 </div>
-<p>その他一般的なログレベルには、ニーズ、プログラミング言語、フレームワークに応じて <code>CRITICAL</code> と <code>NONE</code> があります。<code>ALL</code> と <code>NONE</code> も一般的ですが、すべてのアプリケーションスタックで見つかるわけではありません。</p>
+<p>その他一般的なログレベルには、ニーズ、プログラミング言語、フレームワークに応じて、<code>CRITICAL</code> と <code>NONE</code> があります。<code>ALL</code> と <code>NONE</code> も一般的ですが、すべてのアプリケーションスタックで見つかるわけではありません。</p>
 <p>ログレベルは、環境の健全性についてモニタリングおよび可観測性ソリューションに通知するために不可欠であり、ログデータは論理値を使用してこのデータを簡単に表現できる必要があります。</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -3552,17 +3552,17 @@ TypeError: Again !?!
 <p>可能であれば、ログ量をできるだけソース近くで削減してください。このベストプラクティスにはさまざまな理由があります。</p>
 <ul>
 <li>ログの取り込みには常に時間、コスト、リソースがかかります。</li>
-<li>ダウンストリームシステムからのデータ漏洩リスクを軽減するために、機密データ(個人を特定できるデータなど)をフィルタリングします。</li>
-<li>ダウンストリームシステムは、データソースと同じ運用上の関心事を持っているとは限りません。たとえば、アプリケーションからの <code>INFO</code> ログは、<code>CRITICAL</code> または <code>FATAL</code> メッセージを監視する監視およびアラートシステムにとって関心の対象外かもしれません。</li>
+<li>ダウンストリームシステムからの個人情報などの機密データのフィルタリングは、データ漏洩からのリスクエクスポージャーを減らします。</li>
+<li>ダウンストリームシステムは、データソースと同じ運用上の関心事を持っているとは限りません。たとえば、アプリケーションからの <code>INFO</code> ログは、<code>CRITICAL</code> や <code>FATAL</code> メッセージを監視する監視・アラートシステムにとって関心の対象ではないかもしれません。  </li>
 <li>ログシステムやネットワークが不要なストレスやトラフィックにさらされる必要はありません。</li>
 </ul>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>ソース近くでログをフィルタリングすることでコストを下げ、データ露出のリスクを減らし、各コンポーネントを<a href="../../guides/#monitor-what-matters">重要事項</a>に集中させます。</p>
+<p>ソース近くでログをフィルタリングすることでコストを下げ、データ露出のリスクを減らし、各コンポーネントを<a href="../../guides/#monitor-what-matters">重要事項</a>に集中させることができます。</p>
 </div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>アーキテクチャによっては、アプリケーションと環境の両方を1つの操作でデプロイするために、インフラストラクチャーアズコード(IaC)を使用することをお勧めします。このアプローチにより、アプリケーションとともにログフィルタパターンをデプロイできるため、同じ厳格さと扱いが可能になります。</p>
+<p>アーキテクチャによっては、アプリケーションと環境の両方を1つの操作でデプロイできるインフラストラクチャ・アズ・コード(IaC) を使用したい場合があるでしょう。このアプローチにより、アプリケーションとともにログフィルタパターンを同じ厳密さと処理でデプロイできます。</p>
 </div>
 <h2 id="_5">二重取り込みのアンチパターンを避ける<a class="headerlink" href="#_5" title="Permanent link">&para;</a></h2>
 <p>管理者がしばしば追求するパターンは、すべてのログデータを単一のシステムにコピーし、すべてのログを単一の場所からクエリできるようにすることです。これには手動のワークフロー上のいくつかの利点がありますが、このパターンはコスト、複雑さ、障害点、運用上のオーバーヘッドを増加させます。</p>
@@ -3573,30 +3573,30 @@ TypeError: Again !?!
 </div>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>一部の組織やワークロードでは、規制要件を満たしたり、ログを安全な場所に保存したり、否認防止を提供したり、その他の目的を達成するために、<a href="https://en.wikipedia.org/wiki/Log_shipping">ログ出荷</a>が必要です。これは、ログデータを再取り込む一般的なユースケースです。適切な<a href="#use-log-levels-appropriately">ログレベル</a>と<a href="#filter-logs-close-to-the-source">ログフィルタリング</a>の適用は、これらのログアーカイブに入る冗長なデータの量を減らす上でも適切です。</p>
+<p>一部の組織やワークロードでは、規制要件を満たしたり、ログを安全な場所に保存したり、否認防止を提供したり、その他の目的を達成するために、<a href="https://en.wikipedia.org/wiki/Log_shipping">ログ出荷</a>が必要です。これは、ログデータを再取り込む一般的なユースケースです。適切な<a href="#use-log-levels-appropriately">ログレベル</a>と<a href="#filter-logs-close-to-the-source">ログフィルタリング</a>の適用は、これらのログアーカイブに入る不要なデータの量を減らす上でも適切です。</p>
 </div>
 <h2 id="_6">ログからメトリクスデータを収集する<a class="headerlink" href="#_6" title="Permanent link">&para;</a></h2>
-<p>ログには、収集を待っている<a href="../../signals/metrics/">メトリクス</a>が含まれています。自分で書いていない ISV ソリューションやアプリケーションでも、貴重なデータがログに出力されており、これを抽出することで、全体的なワークロードの健全性について意味のある洞察を得ることができます。一般的な例としては以下があります。</p>
+<p>ログには、収集を待っている<a href="../../signals/metrics/">メトリクス</a>が含まれています。自分で書いていない ISV ソリューションやアプリケーションでも、貴重なデータがログに出力されており、これを抽出することで、全体的なワークロードの健全性について意味のある洞察を得ることができます。一般的な例を以下に示します。</p>
 <ul>
-<li>データベースの遅いクエリ時間</li>
+<li>データベースの遅いクエリ時間  </li>
 <li>Web サーバーのアップタイム</li>
-<li>トランザクション処理時間  </li>
+<li>トランザクション処理時間</li>
 <li>時間経過とともにの <code>ERROR</code> または <code>WARNING</code> イベントのカウント</li>
 <li>アップグレード可能なパッケージの生のカウント</li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>このデータは、静的なログファイルに閉じ込められているとあまり役に立ちません。ベストプラクティスは、重要なメトリクスデータを特定し、それをメトリックシステムにパブリッシュすることで、他のシグナルと相関付けできるようにすることです。</p>
+<p>このデータは、静的なログファイルに閉じ込められているとあまり役に立ちません。ベストプラクティスは、重要なメトリクスデータを特定し、それをメトリクスシステムにパブリッシュすることで、他のシグナルと相関付けできるようにすることです。</p>
 </div>
 <h2 id="stdout"><code>stdout</code> にログ出力<a class="headerlink" href="#stdout" title="Permanent link">&para;</a></h2>
-<p>可能な場合は、アプリケーションはファイルやソケットなどの固定の場所ではなく、<code>stdout</code> にログを出力する必要があります。これにより、ログ エージェントがあなたの可観測性ソリューションにとって意味のあるルールに基づいて、ログ イベントを収集およびルーティングできるようになります。すべてのアプリケーションで可能というわけではありませんが、これがコンテナ化ワークロードのベスト プラクティスです。 </p>
+<p>可能な場合は、アプリケーションはファイルやソケットなどの固定の場所ではなく、<code>stdout</code> にログを出力する必要があります。これにより、ログ エージェントがあなたの可観測性ソリューションにとって意味のあるルールに基づいて、ログ イベントを収集およびルーティングできるようになります。すべてのアプリケーションで可能というわけではありませんが、これがコンテナ化ワークロードにおけるベスト プラクティスです。 </p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>アプリケーションは、ロギング ソリューションから緩やかに結合された状態を保ちながら、ロギング プラクティスを汎用的かつシンプルに保つ必要がありますが、ログ データの送信には、<code>stdout</code> からファイルにデータを送信する <a href="../../tools/logs/">ログ コレクター</a> が必要です。重要な概念は、アプリケーションとビジネス ロジックがロギング インフラストラクチャに依存しないようにすることです。つまり、懸念事項を分離する必要があります。</p>
+<p>アプリケーションは、ロギングの慣行において汎用的でシンプルである必要があり、ロギング ソリューションとの結合度を低く保つ必要がありますが、ログデータの送信には、<code>stdout</code> からファイルへデータを送信する <a href="../../tools/logs/">ログコレクター</a> が必要です。重要な概念は、アプリケーションとビジネス ロジックがロギング インフラストラクチャに依存しないようにすることです。つまり、懸念事項を分離する必要があります。</p>
 </div>
 <div class="admonition success">
 <p class="admonition-title">Success</p>
-<p>アプリケーションとログ管理を切り離すことで、コード変更を必要とせずにソリューションを適応および進化させることができるため、環境への変更による <a href="../../faq/#what-is-a-blast-radius">blast radius</a> を最小限に抑えることができます。</p>
+<p>アプリケーションとログ管理を切り離すことで、コード変更を必要とせずにソリューションを適応および進化させることができるため、環境への変更による <a href="../../faq/#what-is-a-blast-radius">blast radius</a> の最小化が可能になります。</p>
 </div>
 
 

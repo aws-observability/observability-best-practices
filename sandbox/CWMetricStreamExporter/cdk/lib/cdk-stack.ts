@@ -1,11 +1,10 @@
-import { Construct } from 'constructs';
-import {
-  Stack, App, aws_s3 as s3, aws_kinesisfirehose as kinesisfirehose, aws_lambda as lambda, aws_iam as iam} from 'aws-cdk-lib'
+import { Construct } from "constructs";
+import { aws_s3 as s3, aws_lambda as lambda, aws_iam as iam } from "aws-cdk-lib";
 
-import * as alpha_kinesisfirehose from '@aws-cdk/aws-kinesisfirehose-alpha'
-import * as destinations from '@aws-cdk/aws-kinesisfirehose-destinations-alpha';
+import * as alpha_kinesisfirehose from "@aws-cdk/aws-kinesisfirehose-alpha";
+import * as destinations from "@aws-cdk/aws-kinesisfirehose-destinations-alpha";
 
-import * as cdk from 'aws-cdk-lib';
+import * as cdk from "aws-cdk-lib";
 import * as yaml from "js-yaml";
 import * as path from "path";
 import * as fs from "fs";
@@ -13,7 +12,7 @@ export class CdkStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const INPUT_YAML_FILE = "config.yaml"; 
+    const INPUT_YAML_FILE = "config.yaml";
 
     const data = convertYamlToJson(INPUT_YAML_FILE, "/../../") as any;
 
@@ -56,10 +55,10 @@ export class CdkStack extends cdk.Stack {
       },
     });
 
-    new alpha_kinesisfirehose.DeliveryStream(this, 'Delivery Stream', {
+    new alpha_kinesisfirehose.DeliveryStream(this, "Delivery Stream", {
       destinations: [destination],
     });
-    
+
   }
 }
 

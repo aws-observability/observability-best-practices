@@ -1,0 +1,17 @@
+[package]
+name = "custom-metrics"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+aws-config = "1.1.6"
+aws-sdk-cloudwatch = "1.16.0"
+aws-sdk-cloudwatchlogs = "1.16.0"
+log = "0.4.20"
+rand = "0.8.5"
+serde = "1.0.197"
+serde_json = "1.0.114"
+structured-logger = "1.0.3"
+tokio = { version = "1.36.0", features = ["full"] }

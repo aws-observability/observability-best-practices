@@ -142,3 +142,48 @@ stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAd
 
 This query retrieves the top 10 data transfers by source and destination IP addresses. This query allows for identifying the most significant data transfers between specific source and destination IP addresses.
 
+## Amazon SNS Logs
+
+### Count of SMS message failures by reasons
+
+```
+filter status = "FAILURE"
+| stats count(*) by delivery.providerResponse as FailureReason
+| sort delivery.providerResponse desc
+```
+
+The query above lists the count of Delivery failures sorted by reason in descending order. This query can be used to find the reasons for delivery failure.
+
+### SMS message failures due to Invalid Phone Number
+
+```
+fields notification.messageId as MessageId, delivery.destination as PhoneNumber
+| filter status = "FAILURE" and delivery.providerResponse = "Invalid phone number"
+| limit 100
+```
+
+This query returns the message that fails to deliver due to Invalid Phone Number. This can be used to identify phone numbers that need to be corrected.
+
+### Message failure statistics by SMS Type
+
+```
+fields delivery.smsType
+| filter status = "FAILURE"
+| stats count(notification.messageId), avg(delivery.dwellTimeMs), sum(delivery.priceInUSD) by delivery.smsType
+```
+
+This query returns the count, average dwell time and spend for each SMS type (Transactional or Promotional). This query can be used to establish thresholds to trigger corrective actions. The query can be modified to filter only certain SMS Type, if only that SMS Type warrants corrective action.
+
+### SNS failure notifications statistics
+
+```
+fields @MessageID 
+| filter status = "FAILURE"
+| stats count(delivery.deliveryId) as FailedDeliveryCount, avg(delivery.dwellTimeMs) as AvgDwellTime, max(delivery.dwellTimeMs) as MaxDwellTime by notification.messageId as MessageID
+| limit 100
+```
+
+This query returns the count, average dwell time and spend for each failed Message. This query can be used to establish thresholds to trigger corrective actions.
+
+
+

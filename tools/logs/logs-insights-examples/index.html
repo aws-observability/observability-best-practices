@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e359304.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.bcfcd587.min.css">
       
         
         <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
@@ -2592,6 +2592,57 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#amazon-sns-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon SNS Logs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon SNS Logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#count-of-sms-message-failures-by-reasons" class="md-nav__link">
+    <span class="md-ellipsis">
+      Count of SMS message failures by reasons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sms-message-failures-due-to-invalid-phone-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      SMS message failures due to Invalid Phone Number
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-failure-statistics-by-sms-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message failure statistics by SMS Type
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sns-failure-notifications-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      SNS failure notifications statistics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3857,6 +3908,57 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#amazon-sns-logs" class="md-nav__link">
+    <span class="md-ellipsis">
+      Amazon SNS Logs
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Amazon SNS Logs">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#count-of-sms-message-failures-by-reasons" class="md-nav__link">
+    <span class="md-ellipsis">
+      Count of SMS message failures by reasons
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sms-message-failures-due-to-invalid-phone-number" class="md-nav__link">
+    <span class="md-ellipsis">
+      SMS message failures due to Invalid Phone Number
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#message-failure-statistics-by-sms-type" class="md-nav__link">
+    <span class="md-ellipsis">
+      Message failure statistics by SMS Type
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#sns-failure-notifications-statistics" class="md-nav__link">
+    <span class="md-ellipsis">
+      SNS failure notifications statistics
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -3971,6 +4073,32 @@
 </span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>| limit 10
 </span></code></pre></div>
 <p>This query retrieves the top 10 data transfers by source and destination IP addresses. This query allows for identifying the most significant data transfers between specific source and destination IP addresses.</p>
+<h2 id="amazon-sns-logs">Amazon SNS Logs<a class="headerlink" href="#amazon-sns-logs" title="Permanent link">&para;</a></h2>
+<h3 id="count-of-sms-message-failures-by-reasons">Count of SMS message failures by reasons<a class="headerlink" href="#count-of-sms-message-failures-by-reasons" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>filter status = &quot;FAILURE&quot;
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>| stats count(*) by delivery.providerResponse as FailureReason
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>| sort delivery.providerResponse desc
+</span></code></pre></div>
+<p>The query above lists the count of Delivery failures sorted by reason in descending order. This query can be used to find the reasons for delivery failure.</p>
+<h3 id="sms-message-failures-due-to-invalid-phone-number">SMS message failures due to Invalid Phone Number<a class="headerlink" href="#sms-message-failures-due-to-invalid-phone-number" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>fields notification.messageId as MessageId, delivery.destination as PhoneNumber
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>| filter status = &quot;FAILURE&quot; and delivery.providerResponse = &quot;Invalid phone number&quot;
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>| limit 100
+</span></code></pre></div>
+<p>This query returns the message that fails to deliver due to Invalid Phone Number. This can be used to identify phone numbers that need to be corrected.</p>
+<h3 id="message-failure-statistics-by-sms-type">Message failure statistics by SMS Type<a class="headerlink" href="#message-failure-statistics-by-sms-type" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>fields delivery.smsType
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>| filter status = &quot;FAILURE&quot;
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>| stats count(notification.messageId), avg(delivery.dwellTimeMs), sum(delivery.priceInUSD) by delivery.smsType
+</span></code></pre></div>
+<p>This query returns the count, average dwell time and spend for each SMS type (Transactional or Promotional). This query can be used to establish thresholds to trigger corrective actions. The query can be modified to filter only certain SMS Type, if only that SMS Type warrants corrective action.</p>
+<h3 id="sns-failure-notifications-statistics">SNS failure notifications statistics<a class="headerlink" href="#sns-failure-notifications-statistics" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>fields @MessageID 
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>| filter status = &quot;FAILURE&quot;
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>| stats count(delivery.deliveryId) as FailedDeliveryCount, avg(delivery.dwellTimeMs) as AvgDwellTime, max(delivery.dwellTimeMs) as MaxDwellTime by notification.messageId as MessageID
+</span><span id="__span-14-4"><a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>| limit 100
+</span></code></pre></div>
+<p>This query returns the count, average dwell time and spend for each failed Message. This query can be used to establish thresholds to trigger corrective actions.</p>
 
 
 
@@ -4024,7 +4152,7 @@
     <script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.tabs.sticky"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../assets/javascripts/bundle.bd41221c.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.1e8ae164.min.js"></script>
       
     
   </body>

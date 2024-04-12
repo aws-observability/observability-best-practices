@@ -25,6 +25,12 @@
       "pattern": "^#"
     },
     {
+      "pattern": "/observability-best-practices/ja/"
+    },
+    {
+      "pattern": "https://chrome.google.com/webstore/detail/cloudwatch-synthetics-rec/bhdnlmmgiplmbcdmkkdfplenecpegfno"
+    },
+    {
       "pattern": "^https://www.eksworkshop.com"
     },
     {

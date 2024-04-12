@@ -1,6 +1,6 @@
 # Traces
 
-Traces represent an entire journey of the requests as they traverse through different components of an application. 
+Traces represent an entire journey of the requests as they traverse through different components of an application.
 
 Unlike logs or metrics, *traces* are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters, and metadata.
 
@@ -48,10 +48,10 @@ It is important that you measure the transaction times and response codes to eve
 
 Traces are persisted and assigned a unique ID, with each trace broken down into *spans* or *segments* (depending on your tooling) that record each step within the request’s path. A span indicates the entities with which the trace interacts, and, like the parent trace, each span is assigned a unique ID and time stamp and can include additional data and metadata as well. This information is useful for debugging because it gives you the exact time and location a problem occurred.
 
-This is best explained through a practical example. An e-commerce application may be divided into many domains: authentication, authorizatino, shipping, inventory, payment processing, fulfillment, product search, recommendations, and many more. Rather than search through traces from all of these interconnected domains though, labelling your trace with a customer ID allows you to search for only interactions that are specific to this one person. This helps you to narrow your search instantly when diagnosing an operational issue.
+This is best explained through a practical example. An e-commerce application may be divided into many domains: authentication, authorization, shipping, inventory, payment processing, fulfillment, product search, recommendations, and many more. Rather than search through traces from all of these interconnected domains though, labelling your trace with a customer ID allows you to search for only interactions that are specific to this one person. This helps you to narrow your search instantly when diagnosing an operational issue.
 
 !!! success
-    While the naming convention may vary between vendors, each trace can be augmented with metadata, labels, or annotations, and these are searchable across your entire workload. Adding them does require code on your part, but greatly increases the observability of your workload. 
+    While the naming convention may vary between vendors, each trace can be augmented with metadata, labels, or annotations, and these are searchable across your entire workload. Adding them does require code on your part, but greatly increases the observability of your workload.
 
 !!! warning
     Traces are not logs, so be frugal with what metadata you include in your traces. And trace data is not intended for forensics and auditing, even with a high sample rate.

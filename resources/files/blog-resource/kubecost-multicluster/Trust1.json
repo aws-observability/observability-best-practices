@@ -1,0 +1,30 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::123456789:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/AF4832F0CCC4BCBC4636863B58BFD3F9"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "oidc.eks.us-east-1.amazonaws.com/id/AF4832F0CCC4BCBC4636863B58BFD3F9:sub": "system:serviceaccount:kubecost:kubecost-prometheus-server-amp"
+                }
+            }
+        },
+        {
+            "Effect": "Allow",
+            "Principal": {
+                "Federated": "arn:aws:iam::123456789:oidc-provider/oidc.eks.us-east-1.amazonaws.com/id/BCEA68EF86BA073F9E2DEE3B6327EE2D"
+            },
+            "Action": "sts:AssumeRoleWithWebIdentity",
+            "Condition": {
+                "StringEquals": {
+                    "oidc.eks.us-east-1.amazonaws.com/id/BCEA68EF86BA073F9E2DEE3B6327EE2D:sub": "system:serviceaccount:kubecost:kubecost-prometheus-server-amp"
+                }
+            }
+        }
+    ]
+}
+

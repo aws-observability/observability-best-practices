@@ -50,7 +50,7 @@ Don't reinvent the wheel! "Round" is a great shape already, and we should always
 * Integrate with existing identity providers (e.g. Active Directory, SAML based IdPs).
 * If you have existing IT trouble tracking system (e.g. JIRA, ServiceNow) then integrate with it to quickly manage problems as they arise.
 * Use existing workload management and escalation tools (e.g. PagerDuty, OpsGenie) if you already have them!
-* Infrastructure as code tools such as Anisble, SaltStack, CloudFormation, TerraForm, and CDK are all great tools. Use them to manage your observability as well as everything else, and build your observability solution with the same infrastructure as code tools you already use today (see [include observability from day one](#include-observability-from-day-one)).
+* Infrastructure as code tools such as Ansible, SaltStack, CloudFormation, TerraForm, and CDK are all great tools. Use them to manage your observability as well as everything else, and build your observability solution with the same infrastructure as code tools you already use today (see [include observability from day one](#include-observability-from-day-one)).
 
 #### Use automation and machine learning
 

@@ -2,7 +2,7 @@
 
 ## Welcome
 
-This is the source for the AWS Observability Best Practices site. Everyone is welcome to contribute here, not just AWS employees!
+This is the source for the [AWS Observability Best Practices site](https://aws-observability.github.io/observability-best-practices/). Everyone is welcome to contribute here, not just AWS employees!
 
 ## How to run/develop this site
 
@@ -27,6 +27,11 @@ For more details or assistance setting up, see:
 
 ```
 mkdocs serve
+```
+
+If you want to Build and run Japanese content
+```
+mkdocs serve -f mkdocs.ja.yaml
 ```
 
 ## Security

@@ -44,7 +44,7 @@ OTLP interface    |               |    OM exposition at '/metrics'
                      downstreams
 ```
 
-To use `ho11y`, build the binary with `go build .` and launch it then as follows:
+To use `ho11y`, build the binary with `go mod tidy && go build .` and launch it then as follows:
 
 ```
 $ ./ho11y

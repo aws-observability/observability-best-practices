@@ -1,0 +1,14 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: external-grafana
+  namespace: grafana-operator
+  labels:
+    dashboards: "external-grafana"
+spec:
+  external:
+    url: ${AMG_ENDPOINT_URL}
+    apiKey:
+      name: grafana-admin-credentials
+      key: GF_SECURITY_ADMIN_APIKEY
+

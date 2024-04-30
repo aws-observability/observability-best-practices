@@ -1,0 +1,23 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: grafanadatasource-amp
+  namespace: grafana-operator
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: aws-observability-accelerator
+    type: prometheus
+    access: proxy
+    url: ${AMP_ENDPOINT_URL}
+    isDefault: true
+    jsonData:
+      'tlsSkipVerify': false
+      'timeInterval': "5s"
+      'sigV4Auth': true
+      'sigV4AuthType': "ec2_iam_role"
+      'sigV4Region': ${AMG_AWS_REGION}
+    editable: true
+

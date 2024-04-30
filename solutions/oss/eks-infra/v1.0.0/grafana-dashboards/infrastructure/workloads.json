@@ -2107,7 +2107,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "60s",
+  "refresh": "1m",
   "schemaVersion": 35,
   "style": "dark",
   "tags": [

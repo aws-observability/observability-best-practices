@@ -1467,16 +1467,6 @@
    }
   }
  },
- "Outputs": {
-  "APSScraperName": {
-   "Value": {
-    "Fn::GetAtt": [
-     "APSScraper",
-     "Alias"
-    ]
-   }
-  }
- },
  "Parameters": {
   "EKSClusterName": {
    "Type": "String",

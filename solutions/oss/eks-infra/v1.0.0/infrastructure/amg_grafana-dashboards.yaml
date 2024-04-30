@@ -4,7 +4,7 @@ metadata:
   name: cluster-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -16,7 +16,7 @@ metadata:
   name: kubelet-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -28,7 +28,7 @@ metadata:
   name: namespace-workloads-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -40,7 +40,7 @@ metadata:
   name: node-exporter-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -52,7 +52,7 @@ metadata:
   name: nodes-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
@@ -64,9 +64,44 @@ metadata:
   name: workloads-grafanadashboard
   namespace: grafana-operator
 spec:
-  folder: "EKS Infrastructure Dashboards"
+  folder: "EKS Infrastructure Monitoring"
   instanceSelector:
     matchLabels:
       dashboards: "external-grafana"
   url: ${GRAFANA_WORKLOADS_DASH_URL}
-
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: apiserver-basic-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_APISERVER_BASIC_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: apiserver-advanced-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_APISERVER_ADVANCED_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: apiserver-troubleshooting-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_APISERVER_TROUBLESHOOTING_DASH_URL}

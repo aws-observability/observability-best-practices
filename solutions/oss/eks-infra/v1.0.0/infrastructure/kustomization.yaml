@@ -3,7 +3,5 @@ kind: Kustomization
 resources:
   - amg_grafana-identity.yaml
   - amg_grafana-amp-datasource.yaml
-  - amg_grafana-cw-datasource.yaml
-  - amg_grafana-xray-datasource.yaml
   - amg_grafana-dashboards.yaml
 

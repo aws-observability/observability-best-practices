@@ -2989,7 +2989,7 @@
       "type": "table"
     }
   ],
-  "refresh": "10s",
+  "refresh": "60s",
   "revision": 1,
   "schemaVersion": 38,
   "style": "dark",

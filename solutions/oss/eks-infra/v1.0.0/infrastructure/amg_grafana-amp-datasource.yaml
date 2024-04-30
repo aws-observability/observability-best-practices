@@ -8,7 +8,7 @@ spec:
     matchLabels:
       dashboards: "external-grafana"
   datasource:
-    name: aws-observability-accelerator
+    name: eks-infra-monitoring-amp
     type: prometheus
     access: proxy
     url: ${AMP_ENDPOINT_URL}

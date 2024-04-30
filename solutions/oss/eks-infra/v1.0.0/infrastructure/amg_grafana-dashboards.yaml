@@ -69,39 +69,3 @@ spec:
     matchLabels:
       dashboards: "external-grafana"
   url: ${GRAFANA_WORKLOADS_DASH_URL}
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: apiserver-basic-grafanadashboard
-  namespace: grafana-operator
-spec:
-  folder: "EKS Infrastructure Monitoring"
-  instanceSelector:
-    matchLabels:
-      dashboards: "external-grafana"
-  url: ${GRAFANA_APISERVER_BASIC_DASH_URL}
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: apiserver-advanced-grafanadashboard
-  namespace: grafana-operator
-spec:
-  folder: "EKS Infrastructure Monitoring"
-  instanceSelector:
-    matchLabels:
-      dashboards: "external-grafana"
-  url: ${GRAFANA_APISERVER_ADVANCED_DASH_URL}
----
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDashboard
-metadata:
-  name: apiserver-troubleshooting-grafanadashboard
-  namespace: grafana-operator
-spec:
-  folder: "EKS Infrastructure Monitoring"
-  instanceSelector:
-    matchLabels:
-      dashboards: "external-grafana"
-  url: ${GRAFANA_APISERVER_TROUBLESHOOTING_DASH_URL}

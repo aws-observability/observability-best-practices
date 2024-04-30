@@ -1,0 +1,307 @@
+{
+ "Resources": {
+  "HandlerServiceRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     },
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+       ]
+      ]
+     },
+     {
+      "Fn::If": [
+       "HandlerHasEcrPublic",
+       {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":iam::aws:policy/AmazonElasticContainerRegistryPublicReadOnly"
+         ]
+        ]
+       },
+       {
+        "Ref": "AWS::NoValue"
+       }
+      ]
+     }
+    ]
+   }
+  },
+  "HandlerServiceRoleDefaultPolicy": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "eks:DescribeCluster",
+       "Effect": "Allow",
+       "Resource": {
+        "Fn::Join": [
+         "",
+         [
+          "arn:",
+          {
+           "Ref": "AWS::Partition"
+          },
+          ":eks:",
+          {
+           "Ref": "AWS::Region"
+          },
+          ":",
+          {
+           "Ref": "AWS::AccountId"
+          },
+          ":cluster/",
+          {
+           "Ref": "EKSClusterName"
+          }
+         ]
+        ]
+       }
+      },
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Resource": { "Ref": "EKSClusterRoleARN" }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "HandlerServiceRoleDefaultPolicy",
+    "Roles": [
+     {
+      "Ref": "HandlerServiceRole"
+     }
+    ]
+   }
+  },
+  "Handler": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Ref": "S3Bucket"
+     },
+     "S3Key": "KubectlOnEventHandler.zip"
+    },
+    "Description": "onEvent handler for EKS kubectl resource provider",
+    "Handler": "index.handler",
+    "Layers": [
+     {
+      "Ref": "AwsCliLayer"
+     },
+     {
+      "Ref": "KubectlLayerRef"
+     }
+    ],
+    "MemorySize": 1024,
+    "Role": {
+     "Fn::GetAtt": [
+      "HandlerServiceRole",
+      "Arn"
+     ]
+    },
+    "Runtime": "python3.10",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "HandlerServiceRoleDefaultPolicy",
+    "HandlerServiceRole"
+   ]
+  },
+  "AwsCliLayer": {
+   "Type": "AWS::Lambda::LayerVersion",
+   "Properties": {
+    "Content": {
+     "S3Bucket": {
+      "Ref": "S3Bucket"
+     },
+     "S3Key": "AWSCliLayer.zip"
+    },
+    "Description": "/opt/awscli/aws"
+   }
+  },
+  "ProviderframeworkonEventServiceRole": {
+   "Type": "AWS::IAM::Role",
+   "Properties": {
+    "AssumeRolePolicyDocument": {
+     "Statement": [
+      {
+       "Action": "sts:AssumeRole",
+       "Effect": "Allow",
+       "Principal": {
+        "Service": "lambda.amazonaws.com"
+       }
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "ManagedPolicyArns": [
+     {
+      "Fn::Join": [
+       "",
+       [
+        "arn:",
+        {
+         "Ref": "AWS::Partition"
+        },
+        ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+       ]
+      ]
+     }
+    ]
+   }
+  },
+  "ProviderframeworkonEventServiceRoleDefaultPolicy": {
+   "Type": "AWS::IAM::Policy",
+   "Properties": {
+    "PolicyDocument": {
+     "Statement": [
+      {
+       "Action": "lambda:InvokeFunction",
+       "Effect": "Allow",
+       "Resource": [
+        {
+         "Fn::GetAtt": [
+          "Handler",
+          "Arn"
+         ]
+        },
+        {
+         "Fn::Join": [
+          "",
+          [
+           {
+            "Fn::GetAtt": [
+             "Handler",
+             "Arn"
+            ]
+           },
+           ":*"
+          ]
+         ]
+        }
+       ]
+      }
+     ],
+     "Version": "2012-10-17"
+    },
+    "PolicyName": "ProviderframeworkonEventServiceRoleDefaultPolicy",
+    "Roles": [
+     {
+      "Ref": "ProviderframeworkonEventServiceRole"
+     }
+    ]
+   }
+  },
+  "ProviderframeworkonEvent": {
+   "Type": "AWS::Lambda::Function",
+   "Properties": {
+    "Code": {
+     "S3Bucket": {
+      "Ref": "S3Bucket"
+     },
+     "S3Key": "ProviderFrameworkOnEvent.zip"
+    },
+    "Description": "AWS CDK resource provider framework - onEvent (KubectlProvider/Provider)",
+    "Environment": {
+     "Variables": {
+      "USER_ON_EVENT_FUNCTION_ARN": {
+       "Fn::GetAtt": [
+        "Handler",
+        "Arn"
+       ]
+      }
+     }
+    },
+    "Handler": "framework.onEvent",
+    "Role": {
+     "Fn::GetAtt": [
+      "ProviderframeworkonEventServiceRole",
+      "Arn"
+     ]
+    },
+    "Runtime": "nodejs18.x",
+    "Timeout": 900
+   },
+   "DependsOn": [
+    "ProviderframeworkonEventServiceRoleDefaultPolicy",
+    "ProviderframeworkonEventServiceRole"
+   ]
+  }
+ },
+ "Conditions": {
+  "HandlerHasEcrPublic": {
+   "Fn::Equals": [
+    {
+     "Ref": "AWS::Partition"
+    },
+    "aws"
+   ]
+  }
+ },
+ "Outputs": {
+  "existingeksopensourceobservabilityacceleratorexistingeksopensourceobservabilityacceleratorimportedclustercfnfinalrun5BCB62C4KubectlProviderframeworkonEvent15AF23A0Arn": {
+   "Value": {
+    "Fn::GetAtt": [
+     "ProviderframeworkonEvent",
+     "Arn"
+    ]
+   }
+  }
+ },
+ "Parameters": {
+  "KubectlLayerRef": {
+   "Type": "String"
+  },
+  "EKSClusterName": {
+   "Type": "String",
+   "Description": "Name of the EKS cluster which to deploy monitoring Add Ons."
+  },
+  "EKSClusterRoleARN": {
+   "Type": "String",
+   "Description": "ARN of the role associated with the EKS cluster."
+  },
+  "S3Bucket": {
+   "Type": "String",
+   "Description": "S3 bucket where CloudFormation assets are stored"
+  }
+ }
+}
+

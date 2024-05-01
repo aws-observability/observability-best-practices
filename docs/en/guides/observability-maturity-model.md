@@ -88,6 +88,37 @@ The assessment helps identify the targeted metrics and KPIs that lays the founda
 
 Moreover, regular assessments ensure that your business remains agile and adaptable. It allows you to keep pace with evolving technologies and methodologies, thereby ensuring that your systems are always at the peak of efficiency and reliability.
 
+The assessment is designed to help you review the state of your observability strategy against AWS best practices, identify opportunities for improvement, and track progress over time. The questions below should help you assess your current observability maturity level. To have an assessment performed using our "AWS Observability Maturity Model Assessment" tool at no cost to you, please contact your AWS account team.
+
+**Logs**
+
+1. How do you collect logs?
+2. How do you use logs?
+3. How do you access logs?
+4. What is your log retention policy for security and regulatory compliance?
+5. Do you use any ML/AI capability today?
+
+**Metrics**
+
+6. What type of metrics do you collect?
+7. How do you use metrics?
+8. How do you access metrics?
+
+**Traces**
+
+9. How do you collect traces?
+10. How do you use traces?
+
+**Dashboards and Alerting**
+
+11. How do you use alarms?
+12. How do you use dashboards?
+
+**Organization**
+
+13. Do you have an enterprise observability strategy?
+14. How do you use SLOs?
+
 ## Building the observability strategy
 
 Once the organization has identified their observability stage, they should start to build the strategy to optimize the current processes & tools and also start to work towards the maturity. Organizations want to ensure that their customers have a great customer experience, so they start with those customer requirements and work backwards from there. Then work with your stakeholders because they understand those requirements really well. With the aim for an observability strategy, organizations must first define their observability goals as they should be aligned with the overall business objectives and should clearly articulate what the organization aims to achieve through the strategy, providing a roadmap for building and implementing the observability plan.
@@ -108,6 +139,7 @@ The observability maturity model serves as a roadmap for organizations to assess
 
 ## Helpful Resources
 
+- [Building an effective observability strategy](https://youtu.be/7PQv9eYCJW8?si=gsn0qPyIMhrxU6sy) - AWS re:Invent 2023
 - [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)
 - [What is observability and Why does it matter?](https://aws.amazon.com/blogs/mt/what-is-observability-and-why-does-it-matter-part-1/)
 - [How to develop an Observability strategy?](https://aws.amazon.com/blogs/mt/how-to-develop-an-observability-strategy/)

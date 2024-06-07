@@ -134,8 +134,10 @@ nav:
         - CloudWatch Logs Data Protection Policies for SLG/EDU: tools/logs/dataprotection/data-protection-policies.md
     - Metrics: tools/metrics.md
     - Real User Monitoring: tools/rum.md
+    - Application Signals:
+      - Service Level Objectives (SLOs): tools/slos.md
+      - Application Signals for Kotlin Services: tools/application-signals/kotlin-signals.md
     - Synthetic Testing: tools/synthetics.md
-    - Service Level Objectives (SLOs): tools/slos.md
     # - Tracing with ADOT: tools/adot-traces.md
     - Tracing with AWS X-Ray: tools/xray.md
 

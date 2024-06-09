@@ -1,8 +1,11 @@
 # What is observability
 
+One of the fallacies of distributed computing states that observability is optional. In this project, we will show you why that's wrong and will help you to make your systems more observable.
+
 ## What it is
 
 Observability is the capability to continuously generate and discover actionable insights based on signals from the system under observation. In other words, observability allows users to understand a system’s state from its external output and take (corrective) action.
+
 
 ## Problem it addresses
 

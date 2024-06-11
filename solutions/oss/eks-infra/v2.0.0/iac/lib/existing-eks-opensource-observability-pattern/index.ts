@@ -10,8 +10,8 @@ import * as iam from 'aws-cdk-lib/aws-iam';
 
 export default class ExistingEksOpenSourceobservabilityPattern {
     async buildAsync(scope: cdk.App, _id: string) {
-        const stackId = `EKS-Infrastructure-Observability-Accelerator`;
         const clusterName = process.env.EKS_CLUSTER_NAME || "";
+        const stackId = `aws-observability-solution-eks-infra-${clusterName.replace("_", "-")}`;
 
         const account = process.env.COA_ACCOUNT_ID! || process.env.CDK_DEFAULT_ACCOUNT!;
         const region = process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
@@ -90,7 +90,7 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             assumedBy: new iam.CompositePrincipal(
                 new iam.ServicePrincipal("eks.amazonaws.com"),
                 new iam.AccountPrincipal(account).withConditions(
-                    { StringLike: { 'aws:PrincipalArn':  "arn:aws:iam::" + account + ":role/EKS-Infrastructure-Observ-*" } }
+                    { StringLike: { 'aws:PrincipalArn':  "arn:aws:iam::" + account + ":role/aws-observability-solutio-*" } }
                 ),
             ),
             roleName: clusterRoleName,
@@ -133,6 +133,9 @@ export default class ExistingEksOpenSourceobservabilityPattern {
         });
 
         scraper.node.addDependency(obs)
+
+        cdk.Tags.of(obs.getClusterInfo().cluster.stack)
+            .add('o11y', "eks-infra-v" + utils.valueFromContext(scope, "solutionVersion", "2.0.0"));
     }
 }
 

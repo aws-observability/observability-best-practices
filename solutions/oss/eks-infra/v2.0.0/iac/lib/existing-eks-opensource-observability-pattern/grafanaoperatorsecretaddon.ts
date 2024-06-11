@@ -61,7 +61,7 @@ export class GrafanaOperatorSecretAddon implements blueprints.ClusterAddOn {
                             {
                                 secretKey: "GF_SECURITY_ADMIN_APIKEY",
                                 remoteRef: {
-                                    key: "/eks-infra-monitoring-accelerator/grafana-api-key"
+                                    key: "/observability-aws-solution-eks-infra/grafana-api-key"
                                 },
                             },
                         ],

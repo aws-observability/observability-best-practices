@@ -7,6 +7,7 @@ import { ObservabilityBuilder } from '@aws-quickstart/eks-blueprints';
 import * as cdk from "aws-cdk-lib";
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import { AmpClient, TagResourceCommand } from "@aws-sdk/client-amp";
 
 export default class ExistingEksOpenSourceobservabilityPattern {
     async buildAsync(scope: cdk.App, _id: string) {
@@ -81,12 +82,14 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             .resourceProvider(blueprints.GlobalResources.Vpc, new blueprints.VpcProvider(vpcId)) // this is required with import cluster provider
             .build(scope, stackId);
 
-        new iam.OpenIdConnectProvider(obs.getClusterInfo().cluster.stack, 'OIDCProvider', {
+        const stack = obs.getClusterInfo().cluster.stack;
+
+        new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
             url: sdkCluster.identity!.oidc!.issuer!,
             clientIds: ['sts.amazonaws.com'],
         });
 
-        const clusterRole = new iam.Role(obs.getClusterInfo().cluster.stack, 'ClusterAdminRole', {
+        const clusterRole = new iam.Role(stack, 'ClusterAdminRole', {
             assumedBy: new iam.CompositePrincipal(
                 new iam.ServicePrincipal("eks.amazonaws.com"),
                 new iam.AccountPrincipal(account).withConditions(
@@ -97,7 +100,7 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             description: 'Deployed by AWS Managed OSS EKS Infrastructure Observability Solution'
         });
 
-        new eks.CfnAccessEntry(obs.getClusterInfo().cluster.stack, 'MyCfnAccessEntry', {
+        new eks.CfnAccessEntry(stack, 'MyCfnAccessEntry', {
             clusterName: clusterName,
             principalArn: clusterRole.roleArn,
             accessPolicies: [{
@@ -134,8 +137,20 @@ export default class ExistingEksOpenSourceobservabilityPattern {
 
         scraper.node.addDependency(obs)
 
-        cdk.Tags.of(obs.getClusterInfo().cluster.stack)
-            .add('o11y', "eks-infra-v" + utils.valueFromContext(scope, "solutionVersion", "2.0.0"));
+        const versionNumber = utils.valueFromContext(scope, "solutionVersion", "2.0.0")
+
+        cdk.Tags.of(stack)
+            .add('o11y', "eks-infra-v" + versionNumber);
+
+        // Tag existing AMP workspace with version number
+        const ampClient = new AmpClient();
+        const tagInput = {
+            resourceArn: ampWorkspaceArn,
+            tags: {
+                "o11y": "eks-infra-v" + versionNumber,
+            },
+        };
+        await ampClient.send(new TagResourceCommand(tagInput));
     }
 }
 

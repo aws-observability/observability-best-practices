@@ -1,3 +1,4 @@
+
 # Best practices overview
 
 Observability is a broad topic with a mature landscape of tools. Not every tool is right for every solution though! To help you navigate through your observability requirements, configuration, and final deployment, we have summarized five key best practices that will inform your decision making process on your Observability strategy.

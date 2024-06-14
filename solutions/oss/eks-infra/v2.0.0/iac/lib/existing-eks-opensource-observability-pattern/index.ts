@@ -140,14 +140,14 @@ export default class ExistingEksOpenSourceobservabilityPattern {
         const versionNumber = utils.valueFromContext(scope, "solutionVersion", "2.0.0")
 
         cdk.Tags.of(stack)
-            .add('o11y', "eks-infra-v" + versionNumber);
+            .add('o11y-eks-infra', "v-" + versionNumber);
 
         // Tag existing AMP workspace with version number
         const ampClient = new AmpClient();
         const tagInput = {
             resourceArn: ampWorkspaceArn,
             tags: {
-                "o11y": "eks-infra-v" + versionNumber,
+                "o11y-eks-infra":"v-" + versionNumber,
             },
         };
         await ampClient.send(new TagResourceCommand(tagInput));

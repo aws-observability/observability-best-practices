@@ -1,5 +1,6 @@
-# EKS Workloads with Node Exporter, Amazon Managed Prometheus, and Grafana Visualization
-
+# EKS Monitoring with AWS Open source service
+<!-- Workloads with Node Exporter, Amazon Managed Prometheus, and Grafana Visualization
+-->
 In the world of containerized applications and Kubernetes, monitoring and observability are crucial for ensuring the reliability, performance, and efficiency of your workloads. Amazon Elastic Kubernetes Service (EKS) provides a powerful and scalable platform for deploying and managing containerized applications, and when combined with tools like Node Exporter, Amazon Managed Prometheus, and Grafana, you can unlock a comprehensive monitoring solution for your EKS workloads.
 
 Node Exporter is a Prometheus exporter that exposes a wide range of hardware and kernel-related metrics from a host machine. By deploying Node Exporter as a DaemonSet in your EKS cluster, you can collect valuable metrics from each worker node, including CPU, memory, disk, and network usage, as well as various system-level metrics.
@@ -7,6 +8,10 @@ Node Exporter is a Prometheus exporter that exposes a wide range of hardware and
 Amazon Managed Prometheus is a fully-managed service provided by AWS that simplifies the deployment, management, and scaling of Prometheus monitoring infrastructure. By integrating Node Exporter with Amazon Managed Prometheus, you can collect and store node-level metrics in a highly available and scalable manner, without the overhead of managing and scaling Prometheus instances yourself.
 
 Grafana is a powerful open-source data visualization and monitoring tool that seamlessly integrates with Prometheus. By configuring Grafana to connect to your Amazon Managed Prometheus instance, you can create rich and customizable dashboards that provide real-time insights into the health and performance of your EKS workloads and underlying infrastructure.
+
+![EKS AMP AMG](./images/eksnodeexporterampamg.png)
+*Figure 1: EKS node metrics sent to AMP and visualize with AMG*
+
 
 Deploying this monitoring stack in your EKS cluster offers several benefits:
 

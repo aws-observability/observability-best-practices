@@ -1,4 +1,4 @@
-# ECS Tracing with AWS X-Ray: Enhancing Observability for Containerized Applications
+# ECS Tracing with AWS X-Ray
 
 In the world of modern application development, containerization has become the de facto standard for deploying and managing applications. Amazon Elastic Container Service (ECS) provides a highly scalable and reliable platform for deploying and managing containerized applications. However, as applications become more distributed and complex, observability becomes crucial for ensuring the reliability, performance, and efficiency of these applications.
 
@@ -15,6 +15,9 @@ AWS X-Ray addresses this challenge by offering a powerful distributed tracing se
 5. **Integration with AWS Services**: AWS X-Ray seamlessly integrates with a wide range of AWS services, including AWS Lambda, API Gateway, Amazon ECS, and Amazon EKS. This integration allows you to trace requests across multiple services and correlate performance data with logs and metrics from other AWS services.
 
 6. **Custom Instrumentation**: While AWS X-Ray provides out-of-the-box instrumentation for many AWS services, you can also instrument your custom applications and services using the AWS X-Ray SDKs. This capability enables you to trace and analyze the performance of your custom code within your containerized applications, providing a more comprehensive view of your application's behavior.
+
+![ECS Tracing](../images/xrayecs.png)
+*Figure 1: Sending tracing from ECS to X-Raymv *
 
 To leverage AWS X-Ray for enhanced observability of your ECS workloads, you'll need to follow these general steps:
 

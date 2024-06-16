@@ -1,10 +1,13 @@
-# Application Performance Monitoring with CloudWatch Application Signals
+# APM with Application Signals
 
 In the ever-evolving world of modern application development, ensuring optimal performance and meeting service level objectives (SLOs) is crucial for providing a seamless user experience and maintaining business continuity. Amazon CloudWatch Application Signals, an OpenTelemetry (OTel) compatible application performance monitoring (APM) feature, revolutionizes the way organizations monitor and troubleshoot their applications running on AWS.
 
 CloudWatch Application Signals takes a holistic approach to application performance monitoring by seamlessly correlating telemetry data across multiple sources, including metrics, traces, logs, real-user monitoring, and synthetic monitoring. This integrated approach enables organizations to gain comprehensive insights into their applications' performance, pinpoint root causes of issues, and proactively address potential disruptions.
 
 One of the key advantages of CloudWatch Application Signals is its automatic instrumentation and tracking capabilities. With no manual effort or custom code required, Application Signals provides a pre-built, standardized dashboard that displays the most critical metrics for application performance – volume, availability, latency, faults, and errors – for each application running on AWS. This streamlined approach eliminates the need for custom dashboards, enabling service operators to quickly assess application health and performance against their defined SLOs.
+
+![APM](./images/apm.png)
+*Figure 1: Cloudwatch Application Signals sending metrics, logs and traces*
 
 CloudWatch Application Signals empowers organizations with the following capabilities:
 

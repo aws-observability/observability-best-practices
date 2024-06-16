@@ -1,4 +1,5 @@
-# EC2 Tracing with AWS X-Ray: Enhancing Observability for Applications Running on Instances
+# EC2 Tracing with AWS X-Ray
+<!--: Enhancing Observability for Applications Running on Instances-->
 
 In the world of cloud computing, Amazon Elastic Compute Cloud (EC2) provides a highly scalable and flexible platform for running a wide range of applications. However, as applications become more distributed and complex, observability becomes crucial for ensuring the reliability, performance, and efficiency of these applications.
 
@@ -15,6 +16,9 @@ AWS X-Ray addresses this challenge by offering a powerful distributed tracing se
 5. **Integration with AWS Services**: AWS X-Ray seamlessly integrates with a wide range of AWS services, including AWS Lambda, API Gateway, Amazon ECS, and Amazon EKS. This integration allows you to trace requests across multiple services and correlate performance data with logs and metrics from other AWS services.
 
 6. **Custom Instrumentation**: While AWS X-Ray provides out-of-the-box instrumentation for many AWS services, you can also instrument your custom applications and services using the AWS X-Ray SDKs. This capability enables you to trace and analyze the performance of your custom code within your EC2-hosted applications, providing a more comprehensive view of your application's behavior.
+
+![EC2 Xray](../images/xrayec2.png)
+*Figure 1: Applications running from EC2 sending traces to x-ray*
 
 To leverage AWS X-Ray for enhanced observability of your EC2-hosted applications, you'll need to follow these general steps:
 

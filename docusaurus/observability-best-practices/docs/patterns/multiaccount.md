@@ -1,4 +1,4 @@
-# AWS Multi-Account Monitoring
+# Cross account Monitoring with AWS Native services
 
 With the increasing complexity of modern cloud environments, managing and monitoring multiple AWS accounts has become a critical aspect of efficient cloud operations. AWS multi-account monitoring provides a centralized approach to monitoring and managing resources across multiple AWS accounts, enabling organizations to gain better visibility, enhance security, and streamline operations.
 
@@ -11,6 +11,8 @@ AWS multi-account monitoring offers a range of benefits that can significantly e
 
 According to Gartner, by 2025, more than 95% of new digital workloads will be deployed on cloud-native platforms, emphasizing the need for robust multi-account monitoring solutions. A study by Cloud Conformity revealed that organizations with more than 25 AWS accounts experienced an average of 223 high-risk security incidents per month, highlighting the importance of centralized monitoring and governance. Forrester Research estimates that organizations with effective cloud governance and monitoring strategies can reduce operational costs by up to 30%.
 
+![Multi account monitoring](./images/crossaccountmonitoring.png)
+         *Figure 1: Cross account monitoring with AWS Cloudwatch*
 
 ## Pros of AWS Multi-Account Monitoring:
 
@@ -41,3 +43,4 @@ According to Gartner, by 2025, more than 95% of new digital workloads will be de
 2. Gartner Research: "Cloud Adoption Trends and Key Considerations for 2023" (https://www.gartner.com/en/documents/4009858)
 3. Cloud Conformity Report: "The State of AWS Security and Compliance in the Cloud" (https://www.cloudconformity.com/knowledge-base/the-state-of-aws-security-and-compliance-in-the-cloud.html)
 4. Forrester Research: "The Total Economic Impact™ Of AWS Cloud Governance Solutions" (https://d1.awsstatic.com/
+5. How Audible used Amazon CloudWatch cross-account observability to resolve severity tickets faster (https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/)

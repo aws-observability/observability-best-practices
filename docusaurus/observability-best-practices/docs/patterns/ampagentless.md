@@ -1,8 +1,11 @@
-# Pushing Metrics from EKS Containerized Workloads using AWS Managed Prometheus (AMP)
+# Pushing Metrics from EKS to Prometheus
 
 When running containerized workloads on Amazon Elastic Kubernetes Service (EKS), you can leverage AWS Managed Prometheus (AMP) to collect and analyze metrics from your applications and infrastructure. AMP simplifies the deployment and management of Prometheus-compatible monitoring by providing a fully managed Prometheus-compatible monitoring solution.
 
 To push metrics from your EKS containerized workloads to AMP, you can use the Managed Prometheus Collector configuration. The Managed Prometheus Collector is a component of AMP that scrapes metrics from your applications and services and sends them to the AMP workspace for storage and analysis.
+
+![EKS AMP](./images/eksamp.png)
+*Figure 1: Sending metrics from EKS to AMP*
 
 ## Configuring Managed Prometheus Collector
 

@@ -1,4 +1,5 @@
-# Lambda Logging: Observability for Serverless Applications with CloudWatch Logs
+# Lambda Logging
+<!-- Observability for Serverless Applications with CloudWatch Logs-->
 
 In the world of serverless computing, observability is a critical aspect of ensuring the reliability, performance, and efficiency of your applications. AWS Lambda, a cornerstone of serverless architectures, provides a powerful and scalable platform for running event-driven code without the need to manage underlying infrastructure. However, as with any application, logging is essential for monitoring, troubleshooting, and gaining insights into the behavior and health of your Lambda functions.
 
@@ -15,6 +16,8 @@ AWS Lambda seamlessly integrates with Amazon CloudWatch Logs, a fully-managed lo
 5. Monitoring and Alerting: By integrating CloudWatch Logs with other AWS services like Amazon CloudWatch, you can set up custom metrics, alarms, and triggers based on log data. This integration enables proactive monitoring and alerting, ensuring that you are notified of critical events or deviations from expected behavior.
 
 6. Integration with AWS Services: CloudWatch Logs seamlessly integrates with other AWS services, such as AWS Lambda Insights, AWS X-Ray, and AWS CloudTrail, enabling you to correlate log data with application performance metrics, distributed tracing, and security auditing, providing a comprehensive view of your serverless applications.
+![Lambda logging](./images/lambdalogging.png)
+*Figure 1: Lambda logging showing the events from S3 captured to AWS Cloudwatch*
 
 To leverage Lambda logging with CloudWatch Logs, you'll need to follow these general steps:
 

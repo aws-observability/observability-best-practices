@@ -1,4 +1,4 @@
-# VPC Flow Logs for Network Observability and Troubleshooting
+# VPC Flow Logs for Network Observability 
 
 In modern cloud environments, network observability plays a crucial role in ensuring the security, performance, and reliability of your applications and infrastructure. Amazon Virtual Private Cloud (VPC) Flow Logs, a feature provided by Amazon Web Services (AWS), offers a powerful tool for gaining visibility into network traffic within your VPCs, enabling effective troubleshooting and security analysis.
 
@@ -14,6 +14,9 @@ VPC Flow Logs capture metadata about the IP traffic flowing in and out of your V
 
 5. **Cost Optimization**: By analyzing VPC Flow Logs, organizations can gain insights into network traffic patterns and resource utilization. This information can be used to optimize network configurations, rightsizing network resources, and potentially reducing unnecessary costs associated with over-provisioning or underutilized resources.
 
+![VPC flow logs](./images/vpcflowlogs.png)
+*Figure 1: VPC flow logs visualization with Grafana*
+<!--https://aws.amazon.com/blogs/mt/visualize-and-gain-insights-into-your-vpc-flow-logs-with-amazon-managed-grafana/-->
 To leverage VPC Flow Logs for network observability and troubleshooting, organizations can follow these general steps:
 
 1. **Enable VPC Flow Logs**: Configure VPC Flow Logs for your VPCs or specific network interfaces within your VPCs, specifying the desired log destination (e.g., Amazon CloudWatch Logs, Amazon S3, or a third-party log management solution).

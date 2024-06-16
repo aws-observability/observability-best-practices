@@ -1,4 +1,4 @@
-# Lambda Tracing with AWS X-Ray: Enhancing Observability for Serverless Applications
+# Lambda Tracing with AWS X-Ray
 
 In the world of serverless computing, observability is crucial for ensuring the reliability, performance, and efficiency of your applications. AWS Lambda, the cornerstone of serverless architectures, provides a powerful and scalable platform for running event-driven code without the need to manage underlying infrastructure. However, as applications become more distributed and complex, traditional logging and monitoring techniques often fall short in providing a comprehensive view of the end-to-end request flow and performance.
 
@@ -15,6 +15,9 @@ AWS X-Ray addresses this challenge by offering a powerful distributed tracing se
 5. **Integration with AWS Services**: AWS X-Ray seamlessly integrates with a wide range of AWS services, including AWS Lambda, API Gateway, Amazon DynamoDB, and Amazon SQS. This integration allows you to trace requests across multiple services and correlate performance data with logs and metrics from other AWS services.
 
 6. **Custom Instrumentation**: While AWS X-Ray provides out-of-the-box instrumentation for AWS Lambda functions, you can also instrument your custom code within Lambda functions using the AWS X-Ray SDKs. This capability enables you to trace and analyze the performance of your custom logic, providing a more comprehensive view of your application's behavior.
+
+![Lambda Xrary](../images/xraylambda.png)
+*Figure 1: Sending traces from Lambda to X-Ray*
 
 To leverage AWS X-Ray for enhanced observability of your Lambda functions, you'll need to follow these general steps:
 

@@ -15,6 +15,9 @@ OpenTelemetry is an open-source, vendor-neutral observability framework that pro
 5. **Exporters**: OpenTelemetry supports various exporters that allow you to send telemetry data to different backends or observability platforms. Popular exporters include Prometheus, Jaeger, Zipkin, and cloud-native observability solutions like AWS CloudWatch, Azure Monitor, and Google Cloud Operations.
 
 6. **Data Processing and Analysis**: Once the telemetry data is exported, you can leverage observability platforms, monitoring tools, or custom data processing pipelines to analyze and visualize the collected metrics, traces, and logs. This analysis can provide insights into system performance, identify bottlenecks, and aid in troubleshooting and root cause analysis.
+![Otel](./images/otel.png)
+*Figure 1: EKS Cluster sending observability signals with ADOT and FluentBit*
+<!--Ref: https://aws.amazon.com/blogs/architecture/amazon-cloudwatch-insights-for-amazon-eks-on-ec2-using-aws-distro-for-opentelemetry-helm-charts/-->
 
 ## Benefits of Using OpenTelemetry
 

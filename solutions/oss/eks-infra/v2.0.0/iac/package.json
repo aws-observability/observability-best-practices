@@ -30,6 +30,7 @@
     "aws-cdk": "2.133.0",
     "aws-cdk-lib": "^2.135.0",
     "aws-sdk": "^2.1455.0",
+    "@aws-sdk/client-amp": "^3.596.0",
     "constructs": "^10.3.0",
     "eks-blueprints-cdk-kubeflow-ext": "0.1.9",
     "source-map-support": "^0.5.21"

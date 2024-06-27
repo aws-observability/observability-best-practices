@@ -19,12 +19,13 @@ export default class ExistingEksOpenSourceobservabilityPattern {
         const region = process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         const amgEndpointUrl = process.env.AMG_ENDPOINT || "";
-        const sdkCluster = await blueprints.describeCluster(clusterName, region); // get cluster information using EKS APIs
-        const vpcId = sdkCluster.resourcesVpcConfig?.vpcId;
 
         const ampWorkspaceArn = process.env.AMP_WS_ARN || "";
 
         validateInput(account, region, clusterName, amgEndpointUrl, ampWorkspaceArn)
+
+        const sdkCluster = await blueprints.describeCluster(clusterName, region); // get cluster information using EKS APIs
+        const vpcId = sdkCluster.resourcesVpcConfig?.vpcId;
 
         const ampEndpoint = getAmpWorkspaceEndpointFromArn(ampWorkspaceArn);
 
@@ -88,10 +89,12 @@ export default class ExistingEksOpenSourceobservabilityPattern {
 
         const stack = obs.getClusterInfo().cluster.stack;
 
-        new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
-            url: sdkCluster.identity!.oidc!.issuer!,
-            clientIds: ['sts.amazonaws.com'],
-        });
+        if (!sdkCluster.identity?.oidc) {
+            new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
+                url: sdkCluster.identity!.oidc!.issuer!,
+                clientIds: ['sts.amazonaws.com'],
+            });
+        }
 
         const clusterRole = new iam.Role(stack, 'ClusterAdminRole', {
             assumedBy: new iam.CompositePrincipal(

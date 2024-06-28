@@ -8,6 +8,7 @@ import * as cdk from "aws-cdk-lib";
 import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AmpClient, TagResourceCommand } from "@aws-sdk/client-amp";
+import * as regionInfo from 'aws-cdk-lib/region-info';
 
 export default class ExistingEksOpenSourceobservabilityPattern {
     async buildAsync(scope: cdk.App, _id: string) {
@@ -18,10 +19,14 @@ export default class ExistingEksOpenSourceobservabilityPattern {
         const region = process.env.COA_AWS_REGION! || process.env.CDK_DEFAULT_REGION!;
 
         const amgEndpointUrl = process.env.AMG_ENDPOINT || "";
+
+        const ampWorkspaceArn = process.env.AMP_WS_ARN || "";
+
+        validateInput(account, region, clusterName, amgEndpointUrl, ampWorkspaceArn)
+
         const sdkCluster = await blueprints.describeCluster(clusterName, region); // get cluster information using EKS APIs
         const vpcId = sdkCluster.resourcesVpcConfig?.vpcId;
 
-        const ampWorkspaceArn = process.env.AMP_WS_ARN || "";
         const ampEndpoint = getAmpWorkspaceEndpointFromArn(ampWorkspaceArn);
 
         const clusterRoleName = "EKS_Obs_" + clusterName;
@@ -84,10 +89,12 @@ export default class ExistingEksOpenSourceobservabilityPattern {
 
         const stack = obs.getClusterInfo().cluster.stack;
 
-        new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
-            url: sdkCluster.identity!.oidc!.issuer!,
-            clientIds: ['sts.amazonaws.com'],
-        });
+        if (!sdkCluster.identity?.oidc) {
+            new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
+                url: sdkCluster.identity!.oidc!.issuer!,
+                clientIds: ['sts.amazonaws.com'],
+            });
+        }
 
         const clusterRole = new iam.Role(stack, 'ClusterAdminRole', {
             assumedBy: new iam.CompositePrincipal(
@@ -151,6 +158,33 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             },
         };
         await ampClient.send(new TagResourceCommand(tagInput));
+    }
+}
+
+function validateInput(account: string, region: string, clusterName: string, amgEndpoint: string, ampArn: string) {
+    if (!account || !region || !clusterName || !amgEndpoint || !ampArn) {
+        throw new Error("Missing required input parameters. Account, region, cluster name, AMG endpoint, AMP" +
+            " workspace ARN are all required.");
+    }
+
+    const validRegions = regionInfo.RegionInfo.regions.map(r => r.name);
+    if (!validRegions.includes(region)) {
+        throw new Error("Region must be valid.");
+    }
+
+    if (!amgEndpoint.startsWith("https://")) {
+        throw new Error("Invalid AMG endpoint. It should start with \"https://\"");
+    } else if (!amgEndpoint.endsWith(".amazonaws.com")) {
+        throw new Error("Invalid AMG endpoint. It should end with \".amazonaws.com\"");
+    }
+
+    const ampArnParts = ampArn.split(':');
+    if (ampArnParts.length !== 6) {
+        throw new Error("Invalid AMP ARN format.");
+    } else if (ampArnParts[2] !== "aps") {
+        throw new Error("Invalid AMP workspace ARN format. It should start with \"arn:aws:aps:\"");
+    } else if (!ampArnParts[5].includes("workspace/ws-")) {
+        throw new Error("Invalid AMP workspace ARN format. It should end with workspace/ws-abcd1234-abcd-1234-abcd-abcd1234abcd");
     }
 }
 

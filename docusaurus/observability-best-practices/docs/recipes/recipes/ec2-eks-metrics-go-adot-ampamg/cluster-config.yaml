@@ -1,0 +1,44 @@
+
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: amp-eks-ec2
+  region: <YOUR_REGION>
+  version: '1.21'
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: adot-collector
+      namespace: adot-col
+      labels: {aws-usage: "application"}
+    attachPolicy:
+      Version: "2012-10-17"
+      Statement:
+      - Effect: Allow
+        Action:
+        - "aps:RemoteWrite"
+        - "aps:GetSeries"
+        - "aps:GetLabels"
+        - "aps:GetMetricMetadata"
+        - "aps:QueryMetrics"
+        - "logs:PutLogEvents"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:DescribeLogStreams"
+        - "logs:DescribeLogGroups"
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecord"
+        - "xray:GetSamplingRules"
+        - "xray:GetSamplingTargets"
+        - "xray:GetSamplingStatisticSummaries"
+        - "ssm:GetParameters"
+        Resource: "*"
+nodeGroups:
+  - name: ng-1
+    instanceType: t2.large
+    desiredCapacity: 2
+    volumeSize: 80
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]

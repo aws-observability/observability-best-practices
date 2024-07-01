@@ -1,0 +1,54 @@
+{
+  "app": "npx ts-node --prefer-ts-exts dist/lib/common/default-main.js",
+  "watch": {
+    "include": [
+      "**"
+    ],
+    "exclude": [
+      "README.md",
+      "cdk*.json",
+      "**/*.d.ts",
+      "**/*.js",
+      "tsconfig.json",
+      "package*.json",
+      "yarn.lock",
+      "node_modules",
+      "test"
+    ]
+  },
+  "context": {
+    "solutionVersion": "2.0.0",
+    "fluxRepository": {
+      "name": "grafana-dashboards",
+      "namespace": "grafana-operator",
+      "repository": {
+        "repoUrl": "https://github.com/aws-observability/observability-best-practices",
+        "name": "grafana-dashboards",
+        "targetRevision": "main",
+        "path": "./solutions/oss/eks-infra/v2.0.0/infrastructure"
+      },
+      "values": {
+        "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/cluster.json",
+        "GRAFANA_KUBELET_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/kubelet.json",
+        "GRAFANA_NSWRKLDS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/namespace-workloads.json",
+        "GRAFANA_NODEEXP_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/nodeexporter-nodes.json",
+        "GRAFANA_NODES_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/nodes.json",
+        "GRAFANA_WORKLOADS_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/workloads.json",
+        "GRAFANA_FLEET_DASH_URL": "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/fleet-monitoring.json",
+        "GRAFANA_LOGS_DASH_URL": "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/infrastructure/logs.json",
+        "GRAFANA_APISERVER_BASIC_DASH_URL": "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/apiserver/apiserver-basic.json",
+        "GRAFANA_APISERVER_ADVANCED_DASH_URL": "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/apiserver/apiserver-advanced.json",
+        "GRAFANA_APISERVER_TROUBLESHOOTING_DASH_URL": "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v2.0.0/grafana-dashboards/apiserver/apiserver-troubleshooting.json"
+      },
+      "kustomizations": [
+        {
+          "kustomizationPath": "./solutions/oss/eks-infra/v2.0.0/infrastructure"
+        },
+        {
+          "kustomizationPath": "./solutions/oss/eks-infra/v2.0.0/apiserver"
+        }
+      ]
+    },
+    "apiserver.pattern.enabled": true
+  }
+}

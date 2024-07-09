@@ -15,7 +15,7 @@ spec:
     isDefault: true
     jsonData:
       'tlsSkipVerify': false
-      'timeInterval': "5s"
+      'timeInterval': "60s"
       'sigV4Auth': true
       'sigV4AuthType': "ec2_iam_role"
       'sigV4Region': ${AMG_AWS_REGION}

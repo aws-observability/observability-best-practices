@@ -17,7 +17,7 @@
     ]
   },
   "context": {
-    "solutionVersion": "2.0.0",
+    "solutionVersion": "3.0.0",
     "fluxRepository": {
       "name": "grafana-dashboards",
       "namespace": "grafana-operator",
@@ -25,7 +25,7 @@
         "repoUrl": "https://github.com/aws-observability/observability-best-practices",
         "name": "grafana-dashboards",
         "targetRevision": "main",
-        "path": "./solutions/oss/eks-infra/v2.0.0/infrastructure"
+        "path": "./solutions/oss/eks-infra/v3.0.0/infrastructure"
       },
       "values": {
         "GRAFANA_CLUSTER_DASH_URL" : "https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/solutions/oss/eks-infra/v3.0.0/grafana-dashboards/infrastructure/cluster.json",
@@ -42,10 +42,10 @@
       },
       "kustomizations": [
         {
-          "kustomizationPath": "./solutions/oss/eks-infra/v2.0.0/infrastructure"
+          "kustomizationPath": "./solutions/oss/eks-infra/v3.0.0/infrastructure"
         },
         {
-          "kustomizationPath": "./solutions/oss/eks-infra/v2.0.0/apiserver"
+          "kustomizationPath": "./solutions/oss/eks-infra/v3.0.0/apiserver"
         }
       ]
     },

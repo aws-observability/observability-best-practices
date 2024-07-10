@@ -12,6 +12,10 @@ spec:
     type: cloudwatch
     access: proxy
     isDefault: false
-    'authType': "ec2_iam_role",
-    'defaultRegion': ${AMG_AWS_REGION}
+    jsonData:
+      'tlsSkipVerify': false,
+      'sigV4Auth': true,
+      'sigV4AuthType': "ec2_iam_role",
+      'sigV4Region': ${AMG_AWS_REGION},
+      'defaultRegion': ${AMG_AWS_REGION}
     editable: true

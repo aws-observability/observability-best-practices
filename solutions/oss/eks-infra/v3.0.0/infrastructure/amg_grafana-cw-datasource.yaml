@@ -13,9 +13,9 @@ spec:
     access: proxy
     isDefault: false
     jsonData:
-      'tlsSkipVerify': false,
-      'sigV4Auth': true,
-      'sigV4AuthType': "ec2_iam_role",
-      'sigV4Region': ${AMG_AWS_REGION},
+      'tlsSkipVerify': false
+      'sigV4Auth': true
+      'sigV4AuthType': "ec2_iam_role"
+      'sigV4Region': ${AMG_AWS_REGION}
       'defaultRegion': ${AMG_AWS_REGION}
     editable: true

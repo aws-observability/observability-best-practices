@@ -73,7 +73,7 @@ spec:
 apiVersion: grafana.integreatly.org/v1beta1
 kind: GrafanaDashboard
 metadata:
-  name: logs-grafanadashboard
+  name: fleet-monitoring-grafanadashboard
   namespace: grafana-operator
 spec:
   folder: "EKS Infrastructure Monitoring"

@@ -65,10 +65,6 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             nameSuffix: clusterName
         };
 
-        const cwLogsAddOnProps: blueprints.CloudWatchLogsAddonProps = {
-            logGroupPrefix: `/aws/eks/aws-observability-solution-eks-infra`,
-        }
-
         Reflect.defineMetadata("ordered", true, blueprints.addons.GrafanaOperatorAddon);
 
         const cwAgentConfig: blueprints.Values = {

@@ -1,6 +1,6 @@
 {
-  "name": "cdk-aws-observability-accelerator",
-  "version": "2.0.0",
+  "name": "aws-eks-infrastructure-monitoring-solution",
+  "version": "3.0.0",
   "scripts": {
     "build": "rm -rf dist && tsc --skipLibCheck",
     "watch": "tsc -w",

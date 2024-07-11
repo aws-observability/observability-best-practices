@@ -112,12 +112,10 @@ export default class ExistingEksOpenSourceobservabilityPattern {
 
         const stack = obs.getClusterInfo().cluster.stack;
 
-        if (!sdkCluster.identity?.oidc) {
-            new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
-                url: sdkCluster.identity!.oidc!.issuer!,
-                clientIds: ['sts.amazonaws.com'],
-            });
-        }
+        new iam.OpenIdConnectProvider(stack, 'OIDCProvider', {
+            url: sdkCluster.identity!.oidc!.issuer!,
+            clientIds: ['sts.amazonaws.com'],
+        });
 
         const clusterRole = new iam.Role(stack, 'ClusterAdminRole', {
             assumedBy: new iam.CompositePrincipal(

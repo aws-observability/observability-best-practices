@@ -12,6 +12,7 @@ spec:
     type: cloudwatch
     access: proxy
     isDefault: false
+    url: ""
     jsonData:
       'tlsSkipVerify': false
       'sigV4Auth': true

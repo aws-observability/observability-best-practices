@@ -15,64 +15,64 @@ groups:
         labels:
           severity: warning
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up.
-          summary: Filesystem is predicted to run out of space within the next 24 hours.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up.
+          summary: File system is predicted to run out of space within the next 24 hours.
       - alert: NodeFilesystemSpaceFillingUp
         expr: (node_filesystem_avail_bytes{fstype!="",job="node-exporter"} / node_filesystem_size_bytes{fstype!="",job="node-exporter"} * 100 < 10 and predict_linear(node_filesystem_avail_bytes{fstype!="",job="node-exporter"}[6h], 4 * 60 * 60) < 0 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 1h
         labels:
           severity: critical
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up fast.
-          summary: Filesystem is predicted to run out of space within the next 4 hours.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left and is filling up fast.
+          summary: File system is predicted to run out of space within the next 4 hours.
       - alert: NodeFilesystemAlmostOutOfSpace
         expr: (node_filesystem_avail_bytes{fstype!="",job="node-exporter"} / node_filesystem_size_bytes{fstype!="",job="node-exporter"} * 100 < 3 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 30m
         labels:
           severity: warning
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.
-          summary: Filesystem has less than 3% space left.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.
+          summary: File system has less than 3% space left.
       - alert: NodeFilesystemAlmostOutOfSpace
         expr: (node_filesystem_avail_bytes{fstype!="",job="node-exporter"} / node_filesystem_size_bytes{fstype!="",job="node-exporter"} * 100 < 5 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 30m
         labels:
           severity: critical
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.
-          summary: Filesystem has less than 5% space left.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available space left.
+          summary: File system has less than 5% space left.
       - alert: NodeFilesystemFilesFillingUp
         expr: (node_filesystem_files_free{fstype!="",job="node-exporter"} / node_filesystem_files{fstype!="",job="node-exporter"} * 100 < 40 and predict_linear(node_filesystem_files_free{fstype!="",job="node-exporter"}[6h], 24 * 60 * 60) < 0 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 1h
         labels:
           severity: warning
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up.
-          summary: Filesystem is predicted to run out of inodes within the next 24 hours.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up.
+          summary: File system is predicted to run out of inodes within the next 24 hours.
       - alert: NodeFilesystemFilesFillingUp
         expr: (node_filesystem_files_free{fstype!="",job="node-exporter"} / node_filesystem_files{fstype!="",job="node-exporter"} * 100 < 20 and predict_linear(node_filesystem_files_free{fstype!="",job="node-exporter"}[6h], 4 * 60 * 60) < 0 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 1h
         labels:
           severity: critical
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.
-          summary: Filesystem is predicted to run out of inodes within the next 4 hours.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left and is filling up fast.
+          summary: File system is predicted to run out of inodes within the next 4 hours.
       - alert: NodeFilesystemAlmostOutOfFiles
         expr: (node_filesystem_files_free{fstype!="",job="node-exporter"} / node_filesystem_files{fstype!="",job="node-exporter"} * 100 < 5 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 1h
         labels:
           severity: warning
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
-          summary: Filesystem has less than 5% inodes left.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
+          summary: File system has less than 5% inodes left.
       - alert: NodeFilesystemAlmostOutOfFiles
         expr: (node_filesystem_files_free{fstype!="",job="node-exporter"} / node_filesystem_files{fstype!="",job="node-exporter"} * 100 < 3 and node_filesystem_readonly{fstype!="",job="node-exporter"} == 0)
         for: 1h
         labels:
           severity: critical
         annotations:
-          description: Filesystem on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
-          summary: Filesystem has less than 3% inodes left.
+          description: File system on {{ $labels.device }} at {{ $labels.instance }} has only {{ printf "%.2f" $value }}% available inodes left.
+          summary: File system has less than 3% inodes left.
       - alert: NodeNetworkReceiveErrs
         expr: rate(node_network_receive_errs_total[2m]) / rate(node_network_receive_packets_total[2m]) > 0.01
         for: 1h
@@ -95,7 +95,7 @@ groups:
           severity: warning
         annotations:
           description: The {{ $value | humanizePercentage }} of conntrack entries are used.
-          summary: Number of conntrack are getting close to the limit.
+          summary: Number of conntrack entries are getting close to the limit.
       - alert: NodeTextFileCollectorScrapeError
         expr: node_textfile_scrape_error{job="node-exporter"} == 1
         labels:
@@ -111,14 +111,14 @@ groups:
         annotations:
           description: Clock on {{ $labels.instance }} is out of sync by more than 300s. Ensure NTP is configured correctly on this host.
           summary: Clock skew detected.
-      - alert: NodeClockNotSynchronising
+      - alert: NodeClockNotSynchronizing
         expr: min_over_time(node_timex_sync_status[5m]) == 0 and node_timex_maxerror_seconds >= 16
         for: 10m
         labels:
           severity: warning
         annotations:
-          description: Clock on {{ $labels.instance }} is not synchronising. Ensure NTP is configured on this host.
-          summary: Clock not synchronising.
+          description: Clock on {{ $labels.instance }} is not synchronizing. Ensure NTP is configured on this host.
+          summary: Clock not synchronizing.
       - alert: NodeRAIDDegraded
         expr: node_md_disks_required - ignoring(state) (node_md_disks{state="active"}) > 0
         for: 15m
@@ -321,40 +321,40 @@ groups:
         labels:
           severity: critical
         annotations:
-          description: The PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is only {{ $value | humanizePercentage }} free.
-          summary: PersistentVolume is filling up.
+          description: The Persistent Volume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is only {{ $value | humanizePercentage }} free.
+          summary: Persistent Volume is filling up.
       - alert: KubePersistentVolumeFillingUp
         expr: (kubelet_volume_stats_available_bytes{job="kubelet",namespace=~".*"} / kubelet_volume_stats_capacity_bytes{job="kubelet",namespace=~".*"}) < 0.15 and kubelet_volume_stats_used_bytes{job="kubelet",namespace=~".*"} > 0 and predict_linear(kubelet_volume_stats_available_bytes{job="kubelet",namespace=~".*"}[6h], 4 * 24 * 3600) < 0 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_access_mode{access_mode="ReadOnlyMany"} == 1 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
         for: 1h
         labels:
           severity: warning
         annotations:
-          description: Based on recent sampling, the PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to fill up within four days.
-          summary: PersistentVolume is filling up.
+          description: Based on recent sampling, the Persistent Volume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to fill up within four days.
+          summary: Persistent Volume is filling up.
       - alert: KubePersistentVolumeInodesFillingUp
         expr: (kubelet_volume_stats_inodes_free{job="kubelet",namespace=~".*"} / kubelet_volume_stats_inodes{job="kubelet",namespace=~".*"}) < 0.03 and kubelet_volume_stats_inodes_used{job="kubelet",namespace=~".*"} > 0 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_access_mode{access_mode="ReadOnlyMany"} == 1 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
         for: 1m
         labels:
           severity: critical
         annotations:
-          description: The PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} only has {{ $value | humanizePercentage }} free inodes.
-          summary: PersistentVolumeInodes is filling up.
+          description: The Persistent Volume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} only has {{ $value | humanizePercentage }} free inodes.
+          summary: Persistent Volume Inodes is filling up.
       - alert: KubePersistentVolumeInodesFillingUp
         expr: (kubelet_volume_stats_inodes_free{job="kubelet",namespace=~".*"} / kubelet_volume_stats_inodes{job="kubelet",namespace=~".*"}) < 0.15 and kubelet_volume_stats_inodes_used{job="kubelet",namespace=~".*"} > 0 and predict_linear(kubelet_volume_stats_inodes_free{job="kubelet",namespace=~".*"}[6h], 4 * 24 * 3600) < 0 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_access_mode{access_mode="ReadOnlyMany"} == 1 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
         for: 1h
         labels:
           severity: warning
         annotations:
-          description: Based on recent sampling, the PersistentVolume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to run out of inodes within four days. Currently {{ $value | humanizePercentage }} of its inodes are free.
-          summary: PersistentVolumeInodes are filling up.
+          description: Based on recent sampling, the Persistent Volume claimed by {{ $labels.persistentvolumeclaim }} in Namespace {{ $labels.namespace }} is expected to run out of inodes within four days. Currently {{ $value | humanizePercentage }} of its inodes are free.
+          summary: Persistent Volume Inodes are filling up.
       - alert: KubePersistentVolumeErrors
         expr: kube_persistentvolume_status_phase{job="kube-state-metrics",phase=~"Failed|Pending"} > 0
         for: 5m
         labels:
           severity: critical
         annotations:
-          description: The persistent volume {{ $labels.persistentvolume }} has status {{ $labels.phase }}.
-          summary: PersistentVolume is having issues with provisioning.
+          description: The Persistent Volume {{ $labels.persistentvolume }} has status {{ $labels.phase }}.
+          summary: Persistent Volume is having issues with provisioning.
       - alert: KubeCPUOvercommit
         expr: sum(namespace_cpu:kube_pod_container_resource_requests:sum) - (sum(kube_node_status_allocatable{resource="cpu"}) - max(kube_node_status_allocatable{resource="cpu"})) > 0 and (sum(kube_node_status_allocatable{resource="cpu"}) - max(kube_node_status_allocatable{resource="cpu"})) > 0
         for: 10m
@@ -531,7 +531,7 @@ groups:
           severity: warning
         annotations:
           description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler }} has not matched the desired number of replicas for longer than 15 minutes.
-          summary: HPA has not matched descired number of replicas.
+          summary: HPA has not matched desired number of replicas.
       - alert: KubeHpaMaxedOut
         expr: kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics",namespace=~".*"} == kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics",namespace=~".*"}
         for: 15m
@@ -619,6 +619,7 @@ groups:
           severity: warning
         annotations:
           description: The {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{ $labels.namespace }} namespace are down.
+          summary: One or more targets are down.
   - name: infra-alerts-05
     rules:
       - alert: Watchdog
@@ -639,84 +640,92 @@ groups:
         labels:
           severity: critical
         annotations:
-          message: etcd cluster "{{ $labels.job }}":insufficient members ({{ $value }}).
+          description: etcd cluster "{{ $labels.job }}":insufficient members ({{ $value }}).
+          summary: etcd cluster insufficient members.
       - alert: etcdHighNumberOfLeaderChanges
         expr: rate(etcd_server_leader_changes_seen_total{job=~".*etcd.*"}[15m]) > 3
         for: 15m
         labels:
           severity: warning
         annotations:
-          message: etcd cluster "{{ $labels.job }}":instance {{ $labels.instance }} has seen {{ $value }} leader changes within the last hour.
+          description: etcd cluster "{{ $labels.job }}":instance {{ $labels.instance }} has seen {{ $value }} leader changes within the last hour.
+          summary: etcd cluster high number of leader changes.
       - alert: etcdNoLeader
         expr: etcd_server_has_leader{job=~".*etcd.*"} == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          message: message:etcd cluster "{{ $labels.job }}":member {{ $labels.instance }} has no leader.
+          description: message:etcd cluster "{{ $labels.job }}":member {{ $labels.instance }} has no leader.
+          summary: etcd cluster has no leader.
       - alert: etcdHighNumberOfFailedGRPCRequests
         expr: 100 * sum by(job, instance, grpc_service, grpc_method) (rate(grpc_server_handled_total{grpc_code!="OK",job=~".*etcd.*"}[5m])) / sum by(job, instance, grpc_service, grpc_method) (rate(grpc_server_handled_total{job=~".*etcd.*"}[5m])) > 1
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: etcd cluster "{{ $labels.job }}":{{ $value }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}.
+          description: etcd cluster "{{ $labels.job }}":{{ $value }}% of requests for {{ $labels.grpc_method }} failed on etcd instance {{ $labels.instance }}.
+          summary: etcd cluster high number of failed gRPC requests.
       - alert: etcdGRPCRequestsSlow
         expr: histogram_quantile(0.99, sum by(job, instance, grpc_service, grpc_method, le) (rate(grpc_server_handling_seconds_bucket{grpc_type="unary",job=~".*etcd.*"}[5m]))) > 0.15
         for: 10m
         labels:
           severity: critical
         annotations:
-          message: etcd cluster "{{ $labels.job }}":gRPC requests to {{ $labels.grpc_method }} are taking {{ $value }}s on etcd instance {{ $labels.instance }}.
+          description: etcd cluster "{{ $labels.job }}":gRPC requests to {{ $labels.grpc_method }} are taking {{ $value }}s on etcd instance {{ $labels.instance }}.
+          summary: etcd cluster gRPC requests are slow.
       - alert: etcdMemberCommunicationSlow
         expr: histogram_quantile(0.99, rate(etcd_network_peer_round_trip_time_seconds_bucket{job=~".*etcd.*"}[5m])) > 0.15
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: message:etcd cluster "{{ $labels.job }}":member communication with {{ $labels.To }} is taking {{ $value }}s on etcd instance {{ $labels.instance }}.
+          description: message:etcd cluster "{{ $labels.job }}":member communication with {{ $labels.To }} is taking {{ $value }}s on etcd instance {{ $labels.instance }}.
+          summary: etcd cluster member communication is slow.
       - alert: etcdHighNumberOfFailedProposals
         expr: rate(etcd_server_proposals_failed_total{job=~".*etcd.*"}[15m]) > 5
         for: 15m
         labels:
           severity: warning
         annotations:
-          message: etcd cluster "{{ $labels.job }}":{{ $value }} proposal failures within the last hour on etcd instance {{ $labels.instance }}.
+          description: etcd cluster "{{ $labels.job }}":{{ $value }} proposal failures within the last hour on etcd instance {{ $labels.instance }}.
+          summary: etcd cluster high number of failed proposals.
       - alert: etcdHighFsyncDurations
         expr: histogram_quantile(0.99, rate(etcd_disk_wal_fsync_duration_seconds_bucket{job=~".*etcd.*"}[5m])) > 0.5
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: etcd cluster "{{ $labels.job }}":99th percentile fync durations are {{ $value }}s on etcd instance {{ $labels.instance }}.
+          description: etcd cluster "{{ $labels.job }}":99th percentile fsync durations are {{ $value }}s on etcd instance {{ $labels.instance }}.
+          summary: etcd cluster high fsync durations.
       - alert: etcdHighCommitDurations
         expr: histogram_quantile(0.99, rate(etcd_disk_backend_commit_duration_seconds_bucket{job=~".*etcd.*"}[5m])) > 0.25
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: etcd cluster "{{ $labels.job }}":99th percentile commit durations {{ $value }}s on etcd instance {{ $labels.instance }}.
+          description: etcd cluster "{{ $labels.job }}":99th percentile commit durations {{ $value }}s on etcd instance {{ $labels.instance }}.
       - alert: etcdHighNumberOfFailedHTTPRequests
         expr: sum by(method) (rate(etcd_http_failed_total{code!="404",job=~".*etcd.*"}[5m])) / sum by(method) (rate(etcd_http_received_total{job=~".*etcd.*"}[5m])) > 0.01
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: The {{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}
+          description: The {{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}
       - alert: etcdHighNumberOfFailedHTTPRequests
         expr: sum by(method) (rate(etcd_http_failed_total{code!="404",job=~".*etcd.*"}[5m])) / sum by(method) (rate(etcd_http_received_total{job=~".*etcd.*"}[5m])) > 0.05
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: The {{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}.
+          description: The {{ $value }}% of requests for {{ $labels.method }} failed on etcd instance {{ $labels.instance }}.
       - alert: etcdHTTPRequestsSlow
         expr: histogram_quantile(0.99, rate(etcd_http_successful_duration_seconds_bucket[5m])) > 0.15
         for: 10m
         labels:
           severity: warning
         annotations:
-          message: etcd instance {{ $labels.instance }} HTTP requests to {{ $labels.method }} are slow.
+          description: etcd instance {{ $labels.instance }} HTTP requests to {{ $labels.method }} are slow.
   - name: infra-alerts-06
     rules:
       - alert: HostClockNotSynchronising

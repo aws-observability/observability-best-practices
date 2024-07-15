@@ -1,5 +1,5 @@
 groups:
-  - name: infra-alerts-01
+  - name: node-alerts
     rules:
       - alert: NodeNetworkInterfaceFlapping
         expr: changes(node_network_up{device!~"veth.+",job="node-exporter"}[2m]) > 2
@@ -150,7 +150,17 @@ groups:
         annotations:
           description: File descriptors limit at {{ $labels.instance }} is currently at {{ printf "%.2f" $value }}%.
           summary: Kernel is predicted to exhaust file descriptors limit soon.
-  - name: infra-alerts-02
+      - alert: HostOomKillDetected
+        expr: increase(node_vmstat_oom_kill[4m]) > 0
+        for: 0m
+        labels:
+          severity: WARNING
+          infrastructure_level: NODE
+          reason: EKS_NODE_OOM_KILL
+        annotations:
+          summary: Host OOM kill detected (instance {{ $labels.instance }})
+          description: OOM kill detected; VALUE = {{ $value }}; LABELS = {{ $labels }}
+  - name: kube-infra-alerts
     rules:
       - alert: KubeNodeNotReady
         expr: kube_node_status_condition{condition="Ready",job="kube-state-metrics",status="true"} == 0
@@ -200,50 +210,6 @@ groups:
         annotations:
           description: Kubelet Pod startup 99th percentile latency is {{ $value }} seconds on node {{ $labels.node }}.
           summary: Kubelet Pod startup latency is too high.
-      - alert: KubeletClientCertificateExpiration
-        expr: kubelet_certificate_manager_client_ttl_seconds < 604800
-        labels:
-          severity: warning
-        annotations:
-          description: Client certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
-          summary: Kubelet client certificate is about to expire.
-      - alert: KubeletClientCertificateExpiration
-        expr: kubelet_certificate_manager_client_ttl_seconds < 86400
-        labels:
-          severity: critical
-        annotations:
-          description: Client certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
-          summary: Kubelet client certificate is about to expire.
-      - alert: KubeletServerCertificateExpiration
-        expr: kubelet_certificate_manager_server_ttl_seconds < 604800
-        labels:
-          severity: warning
-        annotations:
-          description: Server certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
-          summary: Kubelet server certificate is about to expire.
-      - alert: KubeletServerCertificateExpiration
-        expr: kubelet_certificate_manager_server_ttl_seconds < 86400
-        labels:
-          severity: critical
-        annotations:
-          description: Server certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
-          summary: Kubelet server certificate is about to expire.
-      - alert: KubeletClientCertificateRenewalErrors
-        expr: increase(kubelet_certificate_manager_client_expiration_renew_errors[5m]) > 0
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Kubelet on node {{ $labels.node }} has failed to renew its client certificate ({{ $value | humanize }} errors in the last 5 minutes).
-          summary: Kubelet has failed to renew its client certificate.
-      - alert: KubeletServerCertificateRenewalErrors
-        expr: increase(kubelet_server_expiration_renew_errors[5m]) > 0
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Kubelet on node {{ $labels.node }} has failed to renew its server certificate ({{ $value | humanize }} errors in the last 5 minutes).
-          summary: Kubelet has failed to renew its server certificate.
       - alert: KubeletDown
         expr: absent(up{job="kubelet"} == 1)
         for: 15m
@@ -260,61 +226,6 @@ groups:
         annotations:
           description: There are {{ $value }} different semantic versions of Kubernetes components running.
           summary: Different semantic versions of Kubernetes components running.
-      - alert: KubeClientErrors
-        expr: (sum by(cluster, instance, job, namespace) (rate(rest_client_requests_total{code=~"5.."}[5m])) / sum by(cluster, instance, job, namespace) (rate(rest_client_requests_total[5m]))) > 0.01
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Kubernetes API server client '{{ $labels.job }}/{{ $labels.instance }}' is experiencing {{ $value | humanizePercentage }} errors.'
-          summary: Kubernetes API server client is experiencing errors.
-      - alert: KubeClientCertificateExpiration
-        expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and on(job) histogram_quantile(0.01, sum by(job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 604800
-        labels:
-          severity: warning
-        annotations:
-          description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 7.0 days.
-          summary: Client certificate is about to expire.
-      - alert: KubeClientCertificateExpiration
-        expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and on(job) histogram_quantile(0.01, sum by(job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 86400
-        labels:
-          severity: critical
-        annotations:
-          description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 24.0 hours.
-          summary: Client certificate is about to expire.
-      - alert: KubeAggregatedAPIErrors
-        expr: sum by(name, namespace, cluster) (increase(aggregator_unavailable_apiservice_total[10m])) > 4
-        labels:
-          severity: warning
-        annotations:
-          description: Kubernetes aggregated API {{ $labels.name }}/{{ $labels.namespace }} has reported errors. It has appeared unavailable {{ $value | humanize }} times averaged over the past 10m.
-          summary: Kubernetes aggregated API has reported errors.
-  - name: infra-alerts-03
-    rules:
-      - alert: KubeAggregatedAPIDown
-        expr: (1 - max by(name, namespace, cluster) (avg_over_time(aggregator_unavailable_apiservice[10m]))) * 100 < 85
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          description: Kubernetes aggregated API {{ $labels.name }}/{{ $labels.namespace }} has been only {{ $value | humanize }}% available over the last 10m.
-          summary: Kubernetes aggregated API is down.
-      - alert: KubeAPIDown
-        expr: absent(up{job="kube-admin"} == 1)
-        for: 15m
-        labels:
-          severity: critical
-        annotations:
-          description: KubeAPI has disappeared from Prometheus target discovery.
-          summary: Target disappeared from Prometheus target discovery.
-      - alert: KubeAPITerminatedRequests
-        expr: sum(rate(apiserver_request_terminations_total{job="apiserver"}[10m])) / (sum(rate(apiserver_request_total{job="apiserver"}[10m])) + sum(rate(apiserver_request_terminations_total{job="apiserver"}[10m]))) > 0.2
-        for: 5m
-        labels:
-          severity: warning
-        annotations:
-          description: The kubernetes apiserver has terminated {{ $value | humanizePercentage }} of its incoming requests.
-          summary: The kubernetes apiserver has terminated {{ $value | humanizePercentage }} of its incoming requests.
       - alert: KubePersistentVolumeFillingUp
         expr: (kubelet_volume_stats_available_bytes{job="kubelet",namespace=~".*"} / kubelet_volume_stats_capacity_bytes{job="kubelet",namespace=~".*"}) < 0.03 and kubelet_volume_stats_used_bytes{job="kubelet",namespace=~".*"} > 0 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_access_mode{access_mode="ReadOnlyMany"} == 1 unless on(namespace, persistentvolumeclaim) kube_persistentvolumeclaim_labels{label_excluded_from_alerts="true"} == 1
         for: 1m
@@ -435,24 +346,6 @@ groups:
         annotations:
           description: Pod {{ $labels.namespace }}/{{ $labels.pod }} ({{ $labels.container }}) has been in a non-ready state for longer than 15 minutes.
           summary: Pod has been in a non-ready state for more than 15 minutes.
-      - alert: KubeDeploymentGenerationMismatch
-        expr: kube_deployment_status_observed_generation{job="kube-state-metrics",namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics",namespace=~".*"}
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back.
-          summary: Deployment generation mismatch due to possible roll-back
-      - alert: KubeDeploymentReplicasMismatch
-        expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace=~".*"} > kube_deployment_status_replicas_available{job="kube-state-metrics",namespace=~".*"}) and (changes(kube_deployment_status_replicas_updated{job="kube-state-metrics",namespace=~".*"}[10m]) == 0)
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number of replicas for longer than 15 minutes.
-          summary: Deployment has not matched the expected number of replicas.
-  - name: infra-alerts-04
-    rules:
       - alert: KubeStatefulSetReplicasMismatch
         expr: (kube_statefulset_status_replicas_ready{job="kube-state-metrics",namespace=~".*"} != kube_statefulset_status_replicas{job="kube-state-metrics",namespace=~".*"}) and (changes(kube_statefulset_status_replicas_updated{job="kube-state-metrics",namespace=~".*"}[10m]) == 0)
         for: 15m
@@ -460,7 +353,7 @@ groups:
           severity: warning
         annotations:
           description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} has not matched the expected number of replicas for longer than 15 minutes.
-          summary: Deployment has not matched the expected number of replicas.
+          summary: StatefulSet has not matched the expected number of replicas.
       - alert: KubeStatefulSetGenerationMismatch
         expr: kube_statefulset_status_observed_generation{job="kube-state-metrics",namespace=~".*"} != kube_statefulset_metadata_generation{job="kube-state-metrics",namespace=~".*"}
         for: 15m
@@ -469,61 +362,6 @@ groups:
         annotations:
           description: StatefulSet generation for {{ $labels.namespace }}/{{ $labels.statefulset }} does not match, this indicates that the StatefulSet has failed but has not been rolled back.
           summary: StatefulSet generation mismatch due to possible roll-back
-      - alert: KubeStatefulSetUpdateNotRolledOut
-        expr: (max without(revision) (kube_statefulset_status_current_revision{job="kube-state-metrics",namespace=~".*"} unless kube_statefulset_status_update_revision{job="kube-state-metrics",namespace=~".*"}) * (kube_statefulset_replicas{job="kube-state-metrics",namespace=~".*"} != kube_statefulset_status_replicas_updated{job="kube-state-metrics",namespace=~".*"})) and (changes(kube_statefulset_status_replicas_updated{job="kube-state-metrics",namespace=~".*"}[5m]) == 0)
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update has not been rolled out.
-          summary: StatefulSet update has not been rolled out.
-      - alert: KubeDaemonSetRolloutStuck
-        expr: ((kube_daemonset_status_current_number_scheduled{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"}) or (kube_daemonset_status_number_misscheduled{job="kube-state-metrics",namespace=~".*"} != 0) or (kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"}) or (kube_daemonset_status_number_available{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"})) and (changes(kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics",namespace=~".*"}[5m]) == 0)
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has not finished or progressed for at least 15 minutes.
-          summary: DaemonSet rollout is stuck.
-      - alert: KubeContainerWaiting
-        expr: sum by(namespace, pod, container, cluster) (kube_pod_container_status_waiting_reason{job="kube-state-metrics",namespace=~".*"}) > 0
-        for: 1h
-        labels:
-          severity: warning
-        annotations:
-          description: Pod/{{ $labels.pod }} in namespace {{ $labels.namespace }} on container {{ $labels.container}} has been in waiting state for longer than 1 hour.
-          summary: Pod container waiting longer than 1 hour
-      - alert: KubeDaemonSetNotScheduled
-        expr: kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"} - kube_daemonset_status_current_number_scheduled{job="kube-state-metrics",namespace=~".*"} > 0
-        for: 10m
-        labels:
-          severity: warning
-        annotations:
-          description: The {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled.
-          summary: DaemonSet pods are not scheduled.
-      - alert: KubeDaemonSetMisScheduled
-        expr: kube_daemonset_status_number_misscheduled{job="kube-state-metrics",namespace=~".*"} > 0
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: The {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run.
-          summary: DaemonSet pods are misscheduled.
-      - alert: KubeJobNotCompleted
-        expr: time() - max by(namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics",namespace=~".*"} and kube_job_status_active{job="kube-state-metrics",namespace=~".*"} > 0) > 43200
-        labels:
-          severity: warning
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete.
-          summary: Job did not complete in time
-      - alert: KubeJobFailed
-        expr: kube_job_failed{job="kube-state-metrics",namespace=~".*"} > 0
-        for: 15m
-        labels:
-          severity: warning
-        annotations:
-          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert.
-          summary: Job failed to complete.
       - alert: KubeHpaReplicasMismatch
         expr: (kube_horizontalpodautoscaler_status_desired_replicas{job="kube-state-metrics",namespace=~".*"} != kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics",namespace=~".*"}) and (kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics",namespace=~".*"} > kube_horizontalpodautoscaler_spec_min_replicas{job="kube-state-metrics",namespace=~".*"}) and (kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics",namespace=~".*"} < kube_horizontalpodautoscaler_spec_max_replicas{job="kube-state-metrics",namespace=~".*"}) and changes(kube_horizontalpodautoscaler_status_current_replicas{job="kube-state-metrics",namespace=~".*"}[15m]) == 0
         for: 15m
@@ -540,38 +378,107 @@ groups:
         annotations:
           description: HPA {{ $labels.namespace }}/{{ $labels.horizontalpodautoscaler }} has been running at max replicas for longer than 15 minutes.
           summary: HPA is running at max replicas
-      - alert: KubeStateMetricsListErrors
-        expr: (sum(rate(kube_state_metrics_list_total{job="kube-state-metrics",result="error"}[5m])) / sum(rate(kube_state_metrics_list_total{job="kube-state-metrics"}[5m]))) > 0.01
+  - name: certificate-alerts
+    rules:
+      - alert: KubeletClientCertificateExpiration
+        expr: kubelet_certificate_manager_client_ttl_seconds < 604800
+        labels:
+          severity: warning
+        annotations:
+          description: Client certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
+          summary: Kubelet client certificate is about to expire.
+      - alert: KubeletClientCertificateExpiration
+        expr: kubelet_certificate_manager_client_ttl_seconds < 86400
+        labels:
+          severity: critical
+        annotations:
+          description: Client certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
+          summary: Kubelet client certificate is about to expire.
+      - alert: KubeletServerCertificateExpiration
+        expr: kubelet_certificate_manager_server_ttl_seconds < 604800
+        labels:
+          severity: warning
+        annotations:
+          description: Server certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
+          summary: Kubelet server certificate is about to expire.
+      - alert: KubeletServerCertificateExpiration
+        expr: kubelet_certificate_manager_server_ttl_seconds < 86400
+        labels:
+          severity: critical
+        annotations:
+          description: Server certificate for Kubelet on node {{ $labels.node }} expires in {{ $value | humanizeDuration }}.
+          summary: Kubelet server certificate is about to expire.
+      - alert: KubeletClientCertificateRenewalErrors
+        expr: increase(kubelet_certificate_manager_client_expiration_renew_errors[5m]) > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Kubelet on node {{ $labels.node }} has failed to renew its client certificate ({{ $value | humanize }} errors in the last 5 minutes).
+          summary: Kubelet has failed to renew its client certificate.
+      - alert: KubeletServerCertificateRenewalErrors
+        expr: increase(kubelet_server_expiration_renew_errors[5m]) > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Kubelet on node {{ $labels.node }} has failed to renew its server certificate ({{ $value | humanize }} errors in the last 5 minutes).
+          summary: Kubelet has failed to renew its server certificate.
+      - alert: KubeClientCertificateExpiration
+        expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and on(job) histogram_quantile(0.01, sum by(job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 604800
+        labels:
+          severity: warning
+        annotations:
+          description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 7.0 days.
+          summary: Client certificate is about to expire.
+      - alert: KubeClientCertificateExpiration
+        expr: apiserver_client_certificate_expiration_seconds_count{job="apiserver"} > 0 and on(job) histogram_quantile(0.01, sum by(job, le) (rate(apiserver_client_certificate_expiration_seconds_bucket{job="apiserver"}[5m]))) < 86400
+        labels:
+          severity: critical
+        annotations:
+          description: A client certificate used to authenticate to kubernetes apiserver is expiring in less than 24.0 hours.
+          summary: Client certificate is about to expire.
+  - name: kube-api-alerts
+    rules:
+      - alert: KubeAggregatedAPIDown
+        expr: (1 - max by(name, namespace, cluster) (avg_over_time(aggregator_unavailable_apiservice[10m]))) * 100 < 85
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: Kubernetes aggregated API {{ $labels.name }}/{{ $labels.namespace }} has been only {{ $value | humanize }}% available over the last 10m.
+          summary: Kubernetes aggregated API is down.
+      - alert: KubeAPIDown
+        expr: absent(up{job="kube-admin"} == 1)
         for: 15m
         labels:
           severity: critical
         annotations:
-          description: kube-state-metrics is experiencing errors at an elevated rate in list operations. This is likely causing it to not be able to expose metrics about Kubernetes objects or at all.
-          summary: kube-state-metrics is experiencing errors in list operations.
-      - alert: KubeStateMetricsWatchErrors
-        expr: (sum(rate(kube_state_metrics_watch_total{job="kube-state-metrics",result="error"}[5m])) / sum(rate(kube_state_metrics_watch_total{job="kube-state-metrics"}[5m]))) > 0.01
+          description: KubeAPI has disappeared from Prometheus target discovery.
+          summary: Target disappeared from Prometheus target discovery.
+      - alert: KubeAPITerminatedRequests
+        expr: sum(rate(apiserver_request_terminations_total{job="apiserver"}[10m])) / (sum(rate(apiserver_request_total{job="apiserver"}[10m])) + sum(rate(apiserver_request_terminations_total{job="apiserver"}[10m]))) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          description: The kubernetes apiserver has terminated {{ $value | humanizePercentage }} of its incoming requests.
+          summary: The kubernetes apiserver has terminated {{ $value | humanizePercentage }} of its incoming requests.
+      - alert: KubeAggregatedAPIErrors
+        expr: sum by(name, namespace, cluster) (increase(aggregator_unavailable_apiservice_total[10m])) > 4
+        labels:
+          severity: warning
+        annotations:
+          description: Kubernetes aggregated API {{ $labels.name }}/{{ $labels.namespace }} has reported errors. It has appeared unavailable {{ $value | humanize }} times averaged over the past 10m.
+          summary: Kubernetes aggregated API has reported errors.
+      - alert: KubeClientErrors
+        expr: (sum by(cluster, instance, job, namespace) (rate(rest_client_requests_total{code=~"5.."}[5m])) / sum by(cluster, instance, job, namespace) (rate(rest_client_requests_total[5m]))) > 0.01
         for: 15m
         labels:
-          severity: critical
+          severity: warning
         annotations:
-          description: kube-state-metrics is experiencing errors at an elevated rate in list operations. This is likely causing it to not be able to expose metrics about Kubernetes objects or at all.
-          summary: kube-state-metrics is experiencing errors in watch operations.
-      - alert: KubeStateMetricsShardingMismatch
-        expr: stdvar(kube_state_metrics_total_shards{job="kube-state-metrics"}) != 0
-        for: 15m
-        labels:
-          severity: critical
-        annotations:
-          description: kube-state-metrics pods are running with different --total-shards configuration, some Kubernetes objects may be exposed multiple times or not exposed at all.
-          summary: kube-state-metrics sharding is misconfigured.
-      - alert: KubeStateMetricsShardsMissing
-        expr: 2 ^ max(kube_state_metrics_total_shards{job="kube-state-metrics"}) - 1 - sum(2 ^ max by(shard_ordinal) (kube_state_metrics_shard_ordinal{job="kube-state-metrics"})) != 0
-        for: 15m
-        labels:
-          severity: critical
-        annotations:
-          description: kube-state-metrics shards are missing, some Kubernetes objects are not being exposed.
-          summary: kube-state-metrics shards are missing.
+          description: Kubernetes API server client '{{ $labels.job }}/{{ $labels.instance }}' is experiencing {{ $value | humanizePercentage }} errors.'
+          summary: Kubernetes API server client is experiencing errors.
       - alert: KubeAPIErrorBudgetBurn
         expr: sum(apiserver_request:burnrate1h) > (14.4 * 0.01) and sum(apiserver_request:burnrate5m) > (14.4 * 0.01)
         for: 2m
@@ -612,28 +519,66 @@ groups:
         annotations:
           description: The API server is burning too much error budget.
           summary: The API server is burning too much error budget.
-      - alert: TargetDown
-        expr: 100 * (count by(job, namespace, service) (up == 0) / count by(job, namespace, service) (up)) > 10
+  - name: deployment-alerts
+    rules:
+      - alert: KubeDeploymentGenerationMismatch
+        expr: kube_deployment_status_observed_generation{job="kube-state-metrics",namespace=~".*"} != kube_deployment_metadata_generation{job="kube-state-metrics",namespace=~".*"}
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Deployment generation for {{ $labels.namespace }}/{{ $labels.deployment }} does not match, this indicates that the Deployment has failed but has not been rolled back.
+          summary: Deployment generation mismatch due to possible roll-back
+      - alert: KubeDeploymentReplicasMismatch
+        expr: (kube_deployment_spec_replicas{job="kube-state-metrics",namespace=~".*"} > kube_deployment_status_replicas_available{job="kube-state-metrics",namespace=~".*"}) and (changes(kube_deployment_status_replicas_updated{job="kube-state-metrics",namespace=~".*"}[10m]) == 0)
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Deployment {{ $labels.namespace }}/{{ $labels.deployment }} has not matched the expected number of replicas for longer than 15 minutes.
+          summary: Deployment has not matched the expected number of replicas.
+      - alert: KubeStatefulSetUpdateNotRolledOut
+        expr: (max without(revision) (kube_statefulset_status_current_revision{job="kube-state-metrics",namespace=~".*"} unless kube_statefulset_status_update_revision{job="kube-state-metrics",namespace=~".*"}) * (kube_statefulset_replicas{job="kube-state-metrics",namespace=~".*"} != kube_statefulset_status_replicas_updated{job="kube-state-metrics",namespace=~".*"})) and (changes(kube_statefulset_status_replicas_updated{job="kube-state-metrics",namespace=~".*"}[5m]) == 0)
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: StatefulSet {{ $labels.namespace }}/{{ $labels.statefulset }} update has not been rolled out.
+          summary: StatefulSet update has not been rolled out.
+      - alert: KubeDaemonSetRolloutStuck
+        expr: ((kube_daemonset_status_current_number_scheduled{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"}) or (kube_daemonset_status_number_misscheduled{job="kube-state-metrics",namespace=~".*"} != 0) or (kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"}) or (kube_daemonset_status_number_available{job="kube-state-metrics",namespace=~".*"} != kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"})) and (changes(kube_daemonset_status_updated_number_scheduled{job="kube-state-metrics",namespace=~".*"}[5m]) == 0)
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} has not finished or progressed for at least 15 minutes.
+          summary: DaemonSet rollout is stuck.
+      - alert: KubeContainerWaiting
+        expr: sum by(namespace, pod, container, cluster) (kube_pod_container_status_waiting_reason{job="kube-state-metrics",namespace=~".*"}) > 0
+        for: 1h
+        labels:
+          severity: warning
+        annotations:
+          description: Pod/{{ $labels.pod }} in namespace {{ $labels.namespace }} on container {{ $labels.container}} has been in waiting state for longer than 1 hour.
+          summary: Pod container waiting longer than 1 hour
+      - alert: KubeDaemonSetNotScheduled
+        expr: kube_daemonset_status_desired_number_scheduled{job="kube-state-metrics",namespace=~".*"} - kube_daemonset_status_current_number_scheduled{job="kube-state-metrics",namespace=~".*"} > 0
         for: 10m
         labels:
           severity: warning
         annotations:
-          description: The {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{ $labels.namespace }} namespace are down.
-          summary: One or more targets are down.
-  - name: infra-alerts-05
+          description: The {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are not scheduled.
+          summary: DaemonSet pods are not scheduled.
+      - alert: KubeDaemonSetMisScheduled
+        expr: kube_daemonset_status_number_misscheduled{job="kube-state-metrics",namespace=~".*"} > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: The {{ $value }} Pods of DaemonSet {{ $labels.namespace }}/{{ $labels.daemonset }} are running where they are not supposed to run.
+          summary: DaemonSet pods are misscheduled.
+  - name: etcd-alerts
     rules:
-      - alert: Watchdog
-        expr: vector(1)
-        labels:
-          severity: none
-        annotations:
-          description: This is an alert meant to ensure that the entire alerting pipeline is functional. This alert is always firing, therefore it should always be firing in Alertmanager and always fire against a receiver. There are integrations with various notification mechanisms that send a notification when this alert is not firing. For example the "DeadMansSnitch" integration in PagerDuty.
-      - alert: InfoInhibitor
-        expr: ALERTS{severity="info"} == 1 unless on(namespace) ALERTS{alertname!="InfoInhibitor",alertstate="firing",severity=~"warning|critical"} == 1
-        labels:
-          severity: none
-        annotations:
-          description: This is an alert that is used to inhibit info alerts. By themselves, the info-level alerts are sometimes very noisy, but they are relevant when combined with other alerts. This alert fires whenever there's a severity="info" alert, and stops firing when another alert with a severity of 'warning' or 'critical' starts firing on the same namespace. This alert should be routed to a null receiver and configured to inhibit alerts with severity="info".
       - alert: etcdInsufficientMembers
         expr: sum by(job) (up{job=~".*etcd.*"} == bool 1) < ((count by(job) (up{job=~".*etcd.*"}) + 1) / 2)
         for: 3m
@@ -726,25 +671,74 @@ groups:
           severity: warning
         annotations:
           description: etcd instance {{ $labels.instance }} HTTP requests to {{ $labels.method }} are slow.
-  - name: infra-alerts-06
+  - name: special-alerts
     rules:
-      - alert: HostClockNotSynchronising
-        expr: 100 - (avg without(cpu) (rate(node_cpu_seconds_total{mode="idle"}[2m])) * 100) > 80
-        for: 2m
+      - alert: Watchdog
+        expr: vector(1)
         labels:
-          severity: WARNING
-          infrastructure_level: NODE
-          reason: EKS_NODE_CLOCK_NOT_SYNC
+          severity: none
         annotations:
-          summary: Host clock not synchronising (instance {{ $labels.instance }})
-          description: Clock not synchronising. Ensure NTP is configured on this host; VALUE = {{ $value }};  LABELS = {{ $labels }}
-      - alert: HostOomKillDetected
-        expr: increase(node_vmstat_oom_kill[4m]) > 0
-        for: 0m
+          description: This is an alert meant to ensure that the entire alerting pipeline is functional. This alert is always firing, therefore it should always be firing in Alertmanager and always fire against a receiver. There are integrations with various notification mechanisms that send a notification when this alert is not firing. For example the "DeadMansSnitch" integration in PagerDuty.
+      - alert: InfoInhibitor
+        expr: ALERTS{severity="info"} == 1 unless on(namespace) ALERTS{alertname!="InfoInhibitor",alertstate="firing",severity=~"warning|critical"} == 1
         labels:
-          severity: WARNING
-          infrastructure_level: NODE
-          reason: EKS_NODE_OOM_KILL
+          severity: none
         annotations:
-          summary: Host OOM kill detected (instance {{ $labels.instance }})
-          description: OOM kill detected; VALUE = {{ $value }}; LABELS = {{ $labels }}
+          description: This is an alert that is used to inhibit info alerts. By themselves, the info-level alerts are sometimes very noisy, but they are relevant when combined with other alerts. This alert fires whenever there's a severity="info" alert, and stops firing when another alert with a severity of 'warning' or 'critical' starts firing on the same namespace. This alert should be routed to a null receiver and configured to inhibit alerts with severity="info".
+  - name: misc-alerts
+    rules:
+      - alert: KubeJobNotCompleted
+        expr: time() - max by(namespace, job_name, cluster) (kube_job_status_start_time{job="kube-state-metrics",namespace=~".*"} and kube_job_status_active{job="kube-state-metrics",namespace=~".*"} > 0) > 43200
+        labels:
+          severity: warning
+        annotations:
+          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} is taking more than {{ "43200" | humanizeDuration }} to complete.
+          summary: Job did not complete in time
+      - alert: KubeJobFailed
+        expr: kube_job_failed{job="kube-state-metrics",namespace=~".*"} > 0
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          description: Job {{ $labels.namespace }}/{{ $labels.job_name }} failed to complete. Removing failed job after investigation should clear this alert.
+          summary: Job failed to complete.
+      - alert: KubeStateMetricsListErrors
+        expr: (sum(rate(kube_state_metrics_list_total{job="kube-state-metrics",result="error"}[5m])) / sum(rate(kube_state_metrics_list_total{job="kube-state-metrics"}[5m]))) > 0.01
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: kube-state-metrics is experiencing errors at an elevated rate in list operations. This is likely causing it to not be able to expose metrics about Kubernetes objects or at all.
+          summary: kube-state-metrics is experiencing errors in list operations.
+      - alert: KubeStateMetricsWatchErrors
+        expr: (sum(rate(kube_state_metrics_watch_total{job="kube-state-metrics",result="error"}[5m])) / sum(rate(kube_state_metrics_watch_total{job="kube-state-metrics"}[5m]))) > 0.01
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: kube-state-metrics is experiencing errors at an elevated rate in list operations. This is likely causing it to not be able to expose metrics about Kubernetes objects or at all.
+          summary: kube-state-metrics is experiencing errors in watch operations.
+      - alert: KubeStateMetricsShardingMismatch
+        expr: stdvar(kube_state_metrics_total_shards{job="kube-state-metrics"}) != 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: kube-state-metrics pods are running with different --total-shards configuration, some Kubernetes objects may be exposed multiple times or not exposed at all.
+          summary: kube-state-metrics sharding is misconfigured.
+      - alert: KubeStateMetricsShardsMissing
+        expr: 2 ^ max(kube_state_metrics_total_shards{job="kube-state-metrics"}) - 1 - sum(2 ^ max by(shard_ordinal) (kube_state_metrics_shard_ordinal{job="kube-state-metrics"})) != 0
+        for: 15m
+        labels:
+          severity: critical
+        annotations:
+          description: kube-state-metrics shards are missing, some Kubernetes objects are not being exposed.
+          summary: kube-state-metrics shards are missing.
+      - alert: TargetDown
+        expr: 100 * (count by(job, namespace, service) (up == 0) / count by(job, namespace, service) (up)) > 10
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          description: The {{ printf "%.4g" $value }}% of the {{ $labels.job }}/{{ $labels.service }} targets in {{ $labels.namespace }} namespace are down.
+          summary: One or more Prometheus scrape targets are down.

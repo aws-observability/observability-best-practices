@@ -136,14 +136,11 @@
     },
     {
       "datasource": {
-        "type": "cloudwatch",
-        "uid": "${cloudwatch}"
+        "uid": "${cloudwatch}",
+        "type": "cloudwatch"
       },
       "fieldConfig": {
         "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
           "mappings": [],
           "thresholds": {
             "mode": "absolute",
@@ -153,6 +150,9 @@
                 "value": null
               }
             ]
+          },
+          "color": {
+            "mode": "thresholds"
           }
         },
         "overrides": []
@@ -165,18 +165,18 @@
       },
       "id": 6,
       "options": {
-        "colorMode": "value",
-        "graphMode": "area",
-        "justifyMode": "auto",
-        "orientation": "auto",
         "reduceOptions": {
+          "values": false,
           "calcs": [
             "lastNotNull"
           ],
-          "fields": "",
-          "values": false
+          "fields": ""
         },
-        "textMode": "auto"
+        "orientation": "auto",
+        "textMode": "auto",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto"
       },
       "pluginVersion": "9.4.7",
       "targets": [
@@ -197,16 +197,29 @@
           "metricName": "IncomingLogEvents",
           "metricQueryType": 0,
           "namespace": "AWS/Logs",
-          "period": "6h",
+          "period": "",
           "queryMode": "Metrics",
           "refId": "A",
           "region": "default",
           "sqlExpression": "",
-          "statistic": "Sum"
+          "statistic": "Average"
         }
       ],
       "title": "Total Events",
-      "type": "stat"
+      "type": "stat",
+      "transformations": [
+        {
+          "id": "reduce",
+          "options": {
+            "reducers": [
+              "sum"
+            ],
+            "labelsToFields": false,
+            "mode": "reduceFields",
+            "includeTimeField": false
+          }
+        }
+      ]
     },
     {
       "datasource": {

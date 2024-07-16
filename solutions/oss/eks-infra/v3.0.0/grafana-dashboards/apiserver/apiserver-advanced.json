@@ -666,7 +666,7 @@
             "uid": "$datasource"
           },
           "editorMode": "code",
-          "expr": "cluster_quantile:apiserver_request_slo_duration_seconds:histogram_quantile{verb=\"read\", cluster=\"$cluster\", resource != \"\"}",
+          "expr": "cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile{verb=\"read\", cluster=\"$cluster\", resource != \"\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{ resource }}",
@@ -1096,7 +1096,7 @@
             "type": "prometheus",
             "uid": "$datasource"
           },
-          "expr": "cluster_quantile:apiserver_request_slo_duration_seconds:histogram_quantile{verb=\"write\", cluster=\"$cluster\"}",
+          "expr": "cluster_quantile:apiserver_request_sli_duration_seconds:histogram_quantile{verb=\"write\", cluster=\"$cluster\"}",
           "format": "time_series",
           "intervalFactor": 2,
           "legendFormat": "{{ resource }}",

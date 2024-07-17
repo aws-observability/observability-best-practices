@@ -20,7 +20,7 @@
       
       
       <link rel="icon" href="../../../../images/aws-logo.png">
-      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.27">
+      <meta name="generator" content="mkdocs-1.6.0, mkdocs-material-9.5.29">
     
     
       
@@ -28,7 +28,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.6543a935.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.76a95c52.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -3881,7 +3881,7 @@
 </ul>
 <h2 id="introduction-to-aws-distro-for-opentelemetry-adot"><strong>Introduction to AWS Distro for OpenTelemetry (ADOT)</strong><a class="headerlink" href="#introduction-to-aws-distro-for-opentelemetry-adot" title="Permanent link">&para;</a></h2>
 <p><a href="https://aws-otel.github.io/docs/introduction">AWS Distro for OpenTelemetry (ADOT)</a> is a secure, production-ready, AWS-supported distribution of the Cloud Native Computing Foundation (CNCF) <a href="https://opentelemetry.io/">OpenTelemetry (OTel)</a> project. Using ADOT, you can instrument your applications just once and send correlated metrics and traces to multiple monitoring solutions.</p>
-<p>AWS's managed <a href="https://aws-otel.github.io/docs/getting-started/lambda">OpenTelemetry Lambda Layer</a> utilizes <a href="https://github.com/open-telemetry/opentelemetry-lambda">OpenTelemetry Lambda Layer</a>  to export telemetry data asynchronously from AWS Lambda. It provides plug-and-play user experience by wrapping an AWS Lambda function, and by packaging the OpenTelemetry runtime specific SDK, trimmed down version of ADOT collector together with an out-of-the-box configuration for auto-instrumenting AWS Lambda functions. ADOT Lambda Layer collector components, such as Receivers, Exporters, and Extensions support integration with Amazon CloudWatch, Amazon OpenSearch Service, Amazon Managed Service for Prometheus, AWS X-Ray, and others. Find the complete list <a href="https://github.com/aws-observability/aws-otel-lambda">here</a>. ADOT also supports integrations with <a href="https://aws.amazon.com/otel/partners">partner solutions</a>.</p>
+<p><a href="https://aws-otel.github.io/docs/getting-started/lambda">AWS Distro for OpenTelemetry Lambda</a> utilizes the upstream <a href="https://github.com/open-telemetry/opentelemetry-lambda">OpenTelemetry Lambda</a> Layers to export telemetry data from AWS Lambda. It provides plug-and-play user experience by wrapping an AWS Lambda function, and by packaging the OpenTelemetry runtime specific SDK, trimmed down version of ADOT collector together with an out-of-the-box configuration for auto-instrumenting AWS Lambda functions. ADOT Lambda Layer collector components, such as Receivers, Exporters, and Extensions support integration with Amazon CloudWatch, Amazon OpenSearch Service, Amazon Managed Service for Prometheus, AWS X-Ray, and others. Find the complete list <a href="https://github.com/aws-observability/aws-otel-lambda">here</a>. ADOT also supports integrations with <a href="https://aws.amazon.com/otel/partners">partner solutions</a>.</p>
 <p>ADOT Lambda Layer supports both auto-instrumentation (for Python, NodeJS, and Java) as well as custom instrumentation for any specific set of libraries and SDKs. With auto-instrumentation, by default, the Lambda Layer is configured to export traces to AWS X-Ray. For custom instrumentation, you will need to include the corresponding library instrumentation from the respective <a href="https://github.com/open-telemetry">OpenTelemetry runtime instrumentation repository</a> and modify your code to initialize it in your function.</p>
 <h2 id="auto-instrumentation-using-adot-lambda-layer-with-aws-lambda"><strong>Auto-instrumentation using ADOT Lambda Layer with AWS Lambda</strong><a class="headerlink" href="#auto-instrumentation-using-adot-lambda-layer-with-aws-lambda" title="Permanent link">&para;</a></h2>
 <p>You can easily enable auto-instrumentation of Lambda function using ADOT Lambda Layer without any code changes. Let’s take an example of adding ADOT Lambda layer to your existing Java based Lambda function and view execution logs and traces in CloudWatch.</p>
@@ -4114,7 +4114,7 @@ Prometheus Remote Write Exporter can also be configured with retry, and timeout 
     <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.tabs.sticky"], "search": "../../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
     
     
-      <script src="../../../../assets/javascripts/bundle.ad660dcc.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.fe8b6f2b.min.js"></script>
       
     
   </body>

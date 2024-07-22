@@ -1,0 +1,22 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDatasource
+metadata:
+  name: grafanadatasource-cw
+  namespace: grafana-operator
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  datasource:
+    name: eks-infra-monitoring-cw
+    type: cloudwatch
+    access: proxy
+    isDefault: false
+    url: ""
+    jsonData:
+      'tlsSkipVerify': false
+      'sigV4Auth': true
+      'sigV4AuthType': "ec2_iam_role"
+      'sigV4Region': ${AMG_AWS_REGION}
+      'defaultRegion': ${AMG_AWS_REGION}
+    editable: true

@@ -96,28 +96,31 @@ The assessment is designed to help you review the state of your observability st
 2. How do you use logs?
 3. How do you access logs?
 4. What is your log retention policy for security and regulatory compliance?
-5. Do you use any ML/AI capability today?
 
 **Metrics**
 
-6. What type of metrics do you collect?
-7. How do you use metrics?
-8. How do you access metrics?
+5. What type of metrics do you collect?
+6. How do you use metrics?
+7. How do you access metrics?
 
 **Traces**
 
-9. How do you collect traces?
-10. How do you use traces?
+8. How do you collect traces?
+9. How do you use traces?
 
 **Dashboards and Alerting**
 
-11. How do you use alarms?
-12. How do you use dashboards?
+10. How do you use alarms?
+11. How do you use dashboards?
+12. How adaptive are your alarm thresholds?
 
 **Organization**
 
 13. Do you have an enterprise observability strategy?
 14. How do you use SLOs?
+15. Are you getting return on investments (ROI) from your current observability tool-set?
+16. Do you use any ML/AI capability today?
+17. Do you have real end-user monitoring?
 
 ## Building the observability strategy
 

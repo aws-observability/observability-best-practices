@@ -9,6 +9,8 @@ import * as eks from 'aws-cdk-lib/aws-eks';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import { AmpClient, TagResourceCommand } from "@aws-sdk/client-amp";
 import * as regionInfo from 'aws-cdk-lib/region-info';
+import {PolicyDocument, PolicyStatement} from "aws-cdk-lib/aws-iam";
+import {ICluster, ServiceAccount} from "aws-cdk-lib/aws-eks";
 
 export default class ExistingEksOpenSourceobservabilityPattern {
     async buildAsync(scope: cdk.App, _id: string) {
@@ -47,7 +49,7 @@ export default class ExistingEksOpenSourceobservabilityPattern {
         });
 
         // All Grafana Dashboard URLs from `cdk.json` if present
-        const fluxRepository: blueprints.FluxGitRepo = utils.valueFromContext(scope, "fluxRepository", undefined);
+        const fluxRepository: blueprints.FluxBucketRepo = utils.valueFromContext(scope, "fluxRepository", undefined);
         fluxRepository.values!.AMG_AWS_REGION = region;
         fluxRepository.values!.AMP_ENDPOINT_URL = ampEndpoint;
         fluxRepository.values!.AMG_ENDPOINT_URL = amgEndpointUrl;
@@ -96,7 +98,7 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             new blueprints.KubeStateMetricsAddOn(),
             new blueprints.MetricsServerAddOn(),
             new blueprints.PrometheusNodeExporterAddOn(),
-            new blueprints.FluxCDAddOn({ "repositories": [fluxRepository] }),
+            new blueprints.FluxCDAddOn({ "buckets": [fluxRepository] }),
             new blueprints.CloudWatchInsights(CloudWatchInsightsAddOnProps),
             new GrafanaOperatorSecretAddon(),
         ];
@@ -127,6 +129,12 @@ export default class ExistingEksOpenSourceobservabilityPattern {
             roleName: clusterRoleName,
             description: 'Deployed by AWS Managed OSS EKS Infrastructure Observability Solution'
         });
+
+        const s3Policy = new iam.ManagedPolicy(stack, 'fluxCD-addon-managed-policy', {
+            document: s3ReadPolicy(fluxRepository.bucketName)
+        });
+
+        createS3ReadServiceAccountWithPolicy(obs.getClusterInfo().cluster, "source-controller", "flux-system", s3Policy)
 
         new eks.CfnAccessEntry(stack, 'MyCfnAccessEntry', {
             clusterName: clusterName,
@@ -216,4 +224,40 @@ function getAmpWorkspaceEndpointFromArn(arn: string): string {
     const ampWorkspaceId = arnParts[5].split('/')[1];
 
     return `https://aps-workspaces.${ampRegion}.amazonaws.com/workspaces/${ampWorkspaceId}`;
+}
+
+export function s3ReadPolicy(bucketName: string): PolicyDocument {
+    return new PolicyDocument({
+        statements: [
+            new PolicyStatement({
+                actions: [
+                    's3:ListBucket',
+                ],
+                resources: ['arn:aws:s3:::'.concat(bucketName)]
+            }),
+            new PolicyStatement({
+                actions: [
+                    's3:GetObject',
+                ],
+                resources: ['arn:aws:s3:::'.concat(bucketName).concat("/*")]
+            })
+        ]
+    });
+}
+
+export function createS3ReadServiceAccountWithPolicy(cluster: ICluster, name: string, namespace: string, ...policies: iam.IManagedPolicy[]): ServiceAccount {
+    const sa = cluster.addServiceAccount(`${name}-sa`, {
+        name: name,
+        namespace: namespace,
+        annotations: {
+            "meta.helm.sh/release-name": "blueprints-fluxcd-addon",
+            "meta.helm.sh/release-namespace": "flux-system"
+        },
+        labels: {
+            "app.kubernetes.io/managed-by": "Helm"
+        }
+    });
+
+    policies.forEach(policy => sa.role.addManagedPolicy(policy));
+    return sa;
 }

@@ -194,5 +194,9 @@ To verify the newly created datasource is working lets try to explore the metric
 
 ![AMP Metric](../../../../images/Containers/aws-native/eks/grafana-amp-metric.png)
 
+By selection Dashboards from the left menu, You can also import a dashboard from grafana.com using a URL or the dashboards ID. For example you can use the dashboard ID `10182` to import a dahsboard that helps you to monitor kubernetes nodes. When you import the dashboard and use the AMP datasource you should see the something similiar to the following
+
+![AMP Dashboard](../../../../images/Containers/aws-native/eks/grafana-amp-dashboard.png)
+
 # Conclusion
 In this guide we have understood on how to migrate from self managed observability services to managed services like Amazon Managed Prometheus and Amazon Managed Grafana. By migrating from self-managed observability tools to fully-managed services like Amazon Managed Prometheus and Amazon Managed Grafana, you can significantly reduce operational overhead and complexity. With Amazon's managed services, you benefit from a secure, highly available, and fully scalable monitoring solution without the burden of provisioning, operating, and maintaining the underlying infrastructure. By embracing Amazon's managed observability solutions, you can focus your efforts on core business objectives, accelerate innovation, and deliver high-quality applications and services to your customers with greater confidence and efficiency.

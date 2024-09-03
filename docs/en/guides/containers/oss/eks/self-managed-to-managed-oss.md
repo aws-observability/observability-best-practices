@@ -141,11 +141,19 @@ NAME                                                 DESIRED   CURRENT   READY  
 replicaset.apps/observability-collector-5774bbc68d   1         1         1       59s
 ```
 
+If you don't have prometheus node exporter already available in the EKS cluster then use the following commands to install prometheus node exporter. This is required to verify that ADOT collector is able to scrape metrics and pushing it to AMP.
+
+```
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+helm install prometheus-node-exporter prometheus-community/prometheus-node-exporter --version 4.37.0
+```
+
 Now you have successfully deployed the ADOT Collector to collect metrics from the EKS cluster and send it to the Amazon Managed Service for Prometheus workspace you created. To test whether Amazon Managed Service for Prometheus received the metrics, use awscurl. This tool enables you to send HTTP requests through the command line with AWS Sigv4 authentication, so you must have AWS credentials set up locally with the correct permissions to query from Amazon Managed Service for Prometheus. For instructions on installing awscurl, see [awscurl](https://github.com/okigan/awscurl).
 
 ```
 awscurl --service="aps" \
- --region="$EKS_CLUSTER_REGION" "https://aps-workspaces.$EKS_CLUSTER_REGION.amazonaws.com/workspaces/$AMP_WORKSPACE_ID/api/v1/query?query=up"
+ --region="$EKS_CLUSTER_REGION" "https://aps-workspaces.$EKS_CLUSTER_REGION.amazonaws.com/workspaces/$AMP_WORKSPACE_ID/api/v1/query?query=node_cpu_seconds_total"
 ```
 
  Your results should look similar to shown below:
@@ -158,16 +166,16 @@ awscurl --service="aps" \
         "result": [
             {
                 "metric": {
-                    "__name__": "up",
-                    "alpha_eksctl_io_cluster_name":"eks-oss-managed",
-                    "alpha_eksctl_io_nodegroup_name":"linux-nodes",
+                    "__name__": "node_cpu_seconds_total",
+                    "app_kubernetes_io_component":"metrics",
+                    "app_kubernetes_io_instance":"prometheus-node-exporter",
                     ....................................
                     ....................................
                     "version": "v1"
                 },
                 "value": [
-                    1725321830,
-                    "1"
+                    1725391168,
+                    "20.37"
                 ]
             }
         ]
@@ -176,6 +184,15 @@ awscurl --service="aps" \
 ```
 
 # Setup Amazon Managed Grafana
-Amazon Managed Grafana is a fully managed service that simplifies the deployment and operation of Grafana, an open-source data visualization and monitoring solution. With Amazon Managed Grafana, you can quickly set up and scale your Grafana environment, enabling you to monitor and analyze your application and infrastructure metrics from various data sources. Please follow the instructions found [here](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/) to create a Amazon managed Grafana workspace. 
+Amazon Managed Grafana is a fully managed service that simplifies the deployment and operation of Grafana, an open-source data visualization and monitoring solution. With Amazon Managed Grafana, you can quickly set up and scale your Grafana environment, enabling you to monitor and analyze your application and infrastructure metrics from various data sources. Please follow the instructions found [here](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/) to create a Amazon managed Grafana workspace. After you create the grafana workspace to set up Authentication and Authorization, follow the instructions in the [Amazon Managed Grafana User Guide](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-users-and-groups-AMG.html) for enabling AWS IAM Identity Center.
 
-To set up Authentication and Authorization, follow the instructions in the [Amazon Managed Grafana User Guide](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-users-and-groups-AMG.html) for enabling AWS IAM Identity Center. To setup the data source for [Amazon Managed Service for Prometheus](https://docs.aws.amazon.com/grafana/latest/userguide/AMP-adding-AWS-config.html).
+After completing authentication and authorization setup, connect to grafana workspace using the workspace URL found in the Amazon managed grafana console. From the left menu select Apps->AWS Data Sources and click on the Data sources tab. From the service dropdown select `Amazon Managed Service for Prometheus` and select the region that you used to create the AMP workspace. You will see the AMP workspace listed after selecting the region, select the AMP workspace and click on `Add data source` button. 
+
+![AMP Datasource](../../../../images/Containers/aws-native/eks/grafana-amp-datasource.png)
+
+To verify the newly created datasource is working lets try to explore the metrics available in the datasource. To explore the metrics, from the left menu select `Explore` and select newly created datasource and from the metrics drop down select `node_memory_MemAvailable_bytes` metric. You should see something similiar to the image below
+
+![AMP Metric](../../../../images/Containers/aws-native/eks/grafana-amp-metric.png)
+
+# Conclusion
+In this guide we have understood on how to migrate from self managed observability services to managed services like Amazon Managed Prometheus and Amazon Managed Grafana. By migrating from self-managed observability tools to fully-managed services like Amazon Managed Prometheus and Amazon Managed Grafana, you can significantly reduce operational overhead and complexity. With Amazon's managed services, you benefit from a secure, highly available, and fully scalable monitoring solution without the burden of provisioning, operating, and maintaining the underlying infrastructure. By embracing Amazon's managed observability solutions, you can focus your efforts on core business objectives, accelerate innovation, and deliver high-quality applications and services to your customers with greater confidence and efficiency.

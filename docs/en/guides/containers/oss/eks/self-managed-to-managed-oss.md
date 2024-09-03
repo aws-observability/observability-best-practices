@@ -1,5 +1,5 @@
-# EKS Observability : Migrating from Self Managed to Managed Observability Services
-In the ever-evolving world of modern software development, observability has become a critical aspect of ensuring the reliability, performance, and scalability of applications. While self-managed tools like Prometheus and Datadog have been invaluable in providing insights into the health and behavior of systems, the increasing complexity and scale of modern architectures often demand more robust and scalable solutions.Enter managed observability services, such as Amazon Managed Prometheus and Amazon Managed Grafana. These fully managed offerings from AWS aim to simplify the management and operation of observability tools, freeing up valuable time and resources for organizations to focus on their core business objectives.
+# EKS Observability : Managed Observability Services to AWS Managed Open Source Observability Services
+In the ever-evolving world of modern software development, observability has become a critical aspect of ensuring the reliability, performance, and scalability of applications. While self-managed tools like Prometheus and Datadog have been invaluable in providing insights into the health and behavior of systems, the increasing complexity and scale of modern architectures often demand more robust and scalable solutions. Enter managed observability services, such as Amazon Managed Prometheus and Amazon Managed Grafana. These fully managed offerings from AWS aim to simplify the management and operation of observability tools, freeing up valuable time and resources for organizations to focus on their core business objectives.
 
 In this guide, we will explore the journey of migrating from self-managed observability tools to Amazon's managed services.
 
@@ -30,14 +30,16 @@ kubectl delete secret <prometheus-secret-name>
 ```
 
 # Uninstall DataDog
-Use the following command to delete the DataDog Secret
-```
-kubectl delete secret <datadog-agent-secret-name> -n <namespace>
-```
-Use the following commands to uninstall DataDog agent and operator
+
+If you have DataDog installed, use the following commands to uninstall DataDog
+
 ```
 helm uninstall datadog-agent
 helm delete datadog-operator
+```
+If you have a secret created for DataDog, then Use the following command to delete the DataDog Secret
+```
+kubectl delete secret <datadog-agent-secret-name> -n <namespace>
 ```
 
 # Setup Amazon Managed Service for Prometheus
@@ -67,7 +69,7 @@ One of the easiest ways to collect Prometheus metrics from Amazon EKS workloads 
 
 If you dont have `eksctl` installed already please install it by follwowing the instructions found [here](https://eksctl.io/installation/).
 
-Lets create a IAM Service account using `eksctl` which will used to remote write prometheus metrics to AMP workspace.
+Lets create a IAM Service account using `eksctl` which will be used to remote write prometheus metrics to AMP workspace.
 
 ```
 export EKS_CLUSTER_NAME=<name-of-eks-cluster>
@@ -87,7 +89,7 @@ ADOT requires cert-manager, if your EKS cluster does not have cert manager alrea
 kubectl apply -f https://github.com/cert-manager/cert-manager/releases/download/v1.15.3/cert-manager.yaml
 ```
 
-Next, we will grant permissions to Amazon EKS add-ons to install ADOT and then we will installing the ADOT Add-on :
+Next, we will grant permissions to Amazon EKS add-ons to install ADOT and then we will be installing the ADOT Add-on :
 
 ```
 kubectl apply -f https://amazon-eks.s3.amazonaws.com/docs/addons-otel-permissions.yaml
@@ -141,7 +143,7 @@ NAME                                                 DESIRED   CURRENT   READY  
 replicaset.apps/observability-collector-5774bbc68d   1         1         1       59s
 ```
 
-If you don't have prometheus node exporter already available in the EKS cluster then use the following commands to install prometheus node exporter. This is required to verify that ADOT collector is able to scrape metrics and pushing it to AMP.
+If you don't have prometheus node exporter already available in the EKS cluster then use the following commands to install prometheus node exporter. This is required to verify that ADOT collector is able to scrape metrics and push it to AMP.
 
 ```
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -149,7 +151,7 @@ helm repo update
 helm install prometheus-node-exporter prometheus-community/prometheus-node-exporter --version 4.37.0
 ```
 
-Now you have successfully deployed the ADOT Collector to collect metrics from the EKS cluster and send it to the Amazon Managed Service for Prometheus workspace you created. To test whether Amazon Managed Service for Prometheus received the metrics, use awscurl. This tool enables you to send HTTP requests through the command line with AWS Sigv4 authentication, so you must have AWS credentials set up locally with the correct permissions to query from Amazon Managed Service for Prometheus. For instructions on installing awscurl, see [awscurl](https://github.com/okigan/awscurl).
+Now you have successfully deployed the ADOT Collector to collect metrics from the EKS cluster and send it to the AMP workspace you created. To test whether AMP received the metrics, use awscurl. This tool enables you to send HTTP requests through the command line with AWS Sigv4 authentication, so you must have AWS credentials set up locally with the correct permissions to query from Amazon Managed Service for Prometheus. For instructions on installing awscurl, see [awscurl](https://github.com/okigan/awscurl).
 
 ```
 awscurl --service="aps" \
@@ -184,17 +186,17 @@ awscurl --service="aps" \
 ```
 
 # Setup Amazon Managed Grafana
-Amazon Managed Grafana is a fully managed service that simplifies the deployment and operation of Grafana, an open-source data visualization and monitoring solution. With Amazon Managed Grafana, you can quickly set up and scale your Grafana environment, enabling you to monitor and analyze your application and infrastructure metrics from various data sources. Please follow the instructions found [here](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/) to create a Amazon managed Grafana workspace. After you create the grafana workspace to set up Authentication and Authorization, follow the instructions in the [Amazon Managed Grafana User Guide](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-users-and-groups-AMG.html) for enabling AWS IAM Identity Center.
+Amazon Managed Grafana (AMG) is a fully managed service that simplifies the deployment and operation of Grafana, an open-source data visualization and monitoring solution. With AMG, you can quickly set up and scale your Grafana environment, enabling you to monitor and analyze your application and infrastructure metrics from various data sources. Please follow the instructions found [here](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/) to create a AMG workspace. After you create the AMG workspace, to set up Authentication and Authorization, follow the instructions in the [AMG User Guide](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-users-and-groups-AMG.html) for enabling AWS IAM Identity Center.
 
-After completing authentication and authorization setup, connect to grafana workspace using the workspace URL found in the Amazon managed grafana console. From the left menu select Apps->AWS Data Sources and click on the Data sources tab. From the service dropdown select `Amazon Managed Service for Prometheus` and select the region that you used to create the AMP workspace. You will see the AMP workspace listed after selecting the region, select the AMP workspace and click on `Add data source` button. 
+After completing authentication and authorization setup, connect to AMG workspace using the workspace URL found in the AMG console. From the left menu select Apps->AWS Data Sources and click on the Data sources tab. From the service dropdown select `Amazon Managed Service for Prometheus` and select the region that you used to create the AMP workspace. You will see the AMP workspace listed after selecting the region, select the AMP workspace and click on `Add data source` button. 
 
 ![AMP Datasource](../../../../images/Containers/aws-native/eks/grafana-amp-datasource.png)
 
-To verify the newly created datasource is working lets try to explore the metrics available in the datasource. To explore the metrics, from the left menu select `Explore` and select newly created datasource and from the metrics drop down select `node_memory_MemAvailable_bytes` metric and click on `Run Query` button. You should see something similiar to the image below
+To verify the newly created datasource is working, lets try to explore the metrics available in the datasource. To explore the metrics, from the left menu select `Explore` and select newly created datasource and from the metrics drop down select `node_memory_MemAvailable_bytes` metric and click on `Run Query` button. You should see something similiar to the image below
 
 ![AMP Metric](../../../../images/Containers/aws-native/eks/grafana-amp-metric.png)
 
-By selection Dashboards from the left menu, You can also import a dashboard from grafana.com using a URL or the dashboards ID. For example you can use the dashboard ID `10182` to import a dahsboard that helps you to monitor kubernetes nodes. When you import the dashboard and use the AMP datasource you should see the something similiar to the following
+By selecting Dashboards from the left menu, You can also import a dashboard from grafana.com using a URL or the dashboard ID. For example you can use the dashboard ID `10182` to import a dahsboard that helps you to monitor kubernetes nodes. When you import the dashboard and use the AMP datasource the dashboard should look something similiar to the following
 
 ![AMP Dashboard](../../../../images/Containers/aws-native/eks/grafana-amp-dashboard.png)
 

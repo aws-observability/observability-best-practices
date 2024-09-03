@@ -190,7 +190,7 @@ After completing authentication and authorization setup, connect to grafana work
 
 ![AMP Datasource](../../../../images/Containers/aws-native/eks/grafana-amp-datasource.png)
 
-To verify the newly created datasource is working lets try to explore the metrics available in the datasource. To explore the metrics, from the left menu select `Explore` and select newly created datasource and from the metrics drop down select `node_memory_MemAvailable_bytes` metric. You should see something similiar to the image below
+To verify the newly created datasource is working lets try to explore the metrics available in the datasource. To explore the metrics, from the left menu select `Explore` and select newly created datasource and from the metrics drop down select `node_memory_MemAvailable_bytes` metric and click on `Run Query` button. You should see something similiar to the image below
 
 ![AMP Metric](../../../../images/Containers/aws-native/eks/grafana-amp-metric.png)
 

@@ -60,7 +60,7 @@ nav:
         - Tracing with X-Ray: guides/containers/aws-native/eks/container-tracing-with-aws-xray.md
       - Open Source:
         - Essential Metrics: guides/containers/oss/eks/best-practices-metrics-collection.md
-        - Self Managed to Managed Observability: guides/containers/oss/eks/self-managed-to-managed-oss.md
+        - Moving to Managed Observability Services: guides/containers/oss/eks/self-managed-to-managed-oss.md
     - Serverless best practices:
       - AWS Native: guides/serverless/aws-native/lambda-based-observability.md
       - Open Source: guides/serverless/oss/lambda-based-observability-adot.md

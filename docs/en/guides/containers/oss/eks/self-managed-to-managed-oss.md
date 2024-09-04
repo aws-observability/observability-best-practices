@@ -1,7 +1,7 @@
-# EKS Observability : Managed Observability Services to AWS Managed Open Source Observability Services
-In the ever-evolving world of modern software development, observability has become a critical aspect of ensuring the reliability, performance, and scalability of applications. While self-managed tools like Prometheus and Datadog have been invaluable in providing insights into the health and behavior of systems, the increasing complexity and scale of modern architectures often demand more robust and scalable solutions. Enter managed observability services, such as Amazon Managed Prometheus and Amazon Managed Grafana. These fully managed offerings from AWS aim to simplify the management and operation of observability tools, freeing up valuable time and resources for organizations to focus on their core business objectives.
+# EKS Observability : Moving to Managed Open Source Observability Services
+In the ever-evolving world of modern software development, observability has become a critical aspect of ensuring the reliability, performance, and scalability of applications. While tools like Prometheus and Datadog have been invaluable in providing insights into the health and behavior of systems, the increasing complexity and scale of modern architectures often demand more robust and scalable solutions. Enter managed observability services, such as Amazon Managed Service for Prometheus and Amazon Managed Grafana. These fully managed offerings from AWS aim to simplify the management and operation of observability tools, freeing up valuable time and resources for organizations to focus on their core business objectives.
 
-In this guide, we will explore the journey of migrating from self-managed observability tools to Amazon's managed services.
+In this guide, we will explore the journey of migrating from self-managed and 3rd party observability tools to Amazon's managed services.
 
 # Why Managed Observability Services ?
 By leveraging managed services, organizations can benefit from:
@@ -29,9 +29,13 @@ kubectl delete configmap <prometheus-config-map-name>
 kubectl delete secret <prometheus-secret-name>
 ```
 
+If you are using Prometheus service monitors and other advanced prometheus deployments, please uninstall them accordingly.
+
 # Uninstall DataDog
 
-If you have DataDog installed, use the following commands to uninstall DataDog
+This procedure could apply for all 3rd party vendors with some caveats. In this case, we are taking the example of Datadog to showcase the workflow.
+
+Use the following commands to uninstall DataDog
 
 ```
 helm uninstall datadog-agent
@@ -186,6 +190,7 @@ awscurl --service="aps" \
 ```
 
 # Setup Amazon Managed Grafana
+
 Amazon Managed Grafana (AMG) is a fully managed service that simplifies the deployment and operation of Grafana, an open-source data visualization and monitoring solution. With AMG, you can quickly set up and scale your Grafana environment, enabling you to monitor and analyze your application and infrastructure metrics from various data sources. Please follow the instructions found [here](https://aws-observability.github.io/terraform-aws-observability-accelerator/helpers/managed-grafana/) to create a AMG workspace. After you create the AMG workspace, to set up Authentication and Authorization, follow the instructions in the [AMG User Guide](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-manage-users-and-groups-AMG.html) for enabling AWS IAM Identity Center.
 
 After completing authentication and authorization setup, connect to AMG workspace using the workspace URL found in the AMG console. From the left menu select Apps->AWS Data Sources and click on the Data sources tab. From the service dropdown select `Amazon Managed Service for Prometheus` and select the region that you used to create the AMP workspace. You will see the AMP workspace listed after selecting the region, select the AMP workspace and click on `Add data source` button. 
@@ -199,6 +204,10 @@ To verify the newly created datasource is working, lets try to explore the metri
 By selecting Dashboards from the left menu, You can also import a dashboard from grafana.com using a URL or the dashboard ID. For example you can use the dashboard ID `10182` to import a dahsboard that helps you to monitor kubernetes nodes. When you import the dashboard and use the AMP datasource the dashboard should look something similiar to the following
 
 ![AMP Dashboard](../../../../images/Containers/aws-native/eks/grafana-amp-dashboard.png)
+
+# AWS CDK Observability Accelerator
+
+The previous sections of this guide had instructions to setup AMP ang AMG using a combination of AWS CLI commands and manual actions. We can also leverage AWS CDK Observability Accelerator to setup observability for existing and new EKS clusters. [AWS CDK Observability Accelerator](https://github.com/aws-observability/cdk-aws-observability-accelerator/tree/main) – a set of opinionated modules to help you set up observability for your AWS environments with AWS Native services and AWS-managed observability services such as AMP, AMG, ADOT and Amazon CloudWatch. AWS CDK Observability Accelerator simplifies the observability provisioning and maintenance process for Amazon EKS clusters using a one-click solution with AWS Cloud Development Kit (AWS CDK) and [CDK EKS Blueprints](https://aws-quickstart.github.io/cdk-eks-blueprints/getting-started/). Please checkout this [github repo](https://github.com/aws-observability/cdk-aws-observability-accelerator/blob/main/docs/patterns/existing-eks-observability-accelerators/existing-eks-opensource-observability.md) which explains how to use one of the CDK observability accelerator pattern to setup ADOT, AMP and AMG for an existing EKS cluster.
 
 # Conclusion
 In this guide we have understood on how to migrate from self managed observability services to managed services like Amazon Managed Prometheus and Amazon Managed Grafana. By migrating from self-managed observability tools to fully-managed services like Amazon Managed Prometheus and Amazon Managed Grafana, you can significantly reduce operational overhead and complexity. With Amazon's managed services, you benefit from a secure, highly available, and fully scalable monitoring solution without the burden of provisioning, operating, and maintaining the underlying infrastructure. By embracing Amazon's managed observability solutions, you can focus your efforts on core business objectives, accelerate innovation, and deliver high-quality applications and services to your customers with greater confidence and efficiency.

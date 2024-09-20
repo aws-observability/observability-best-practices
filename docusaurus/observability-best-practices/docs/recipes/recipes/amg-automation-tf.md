@@ -3,9 +3,9 @@
 In this recipe we show you how use Terraform to automate Amazon Managed Grafana, 
 for example to add datasources or dashboards consistently across a number of workspaces.
 
-!!! note
+:::note
     This guide will take approximately 30 minutes to complete.
-
+:::
 ## Prerequisites
 
 * The [AWS command line][aws-cli] is installed and [configured][aws-cli-conf] in your local environment.
@@ -18,10 +18,11 @@ for example to add datasources or dashboards consistently across a number of wor
 In order for Terraform to [authenticate][grafana-authn] against Grafana, we are 
 using an API Key, which acts as a kind of password. 
 
-!!! info
+:::info
     The API key is an [RFC 6750][rfc6750] HTTP Bearer header
     with a 51 character long alpha-numeric value authenticating the caller with
     every request against the Grafana API.
+:::
 
 So, before we can set up the Terraform manifest, we first need to create an
 API key. You do this via the Grafana UI as follows.
@@ -36,18 +37,18 @@ hand, assign it `Admin` role and set the duration time to, for example, one day:
 
 ![API key creation](../images/api-key-creation.png)
 
-!!! note
+:::note
     The API key is valid for a limited time, in AMG you can use values up to 30 days.
-
+:::
 Once you hit the `Add` button you should see a pop-up dialog that contains the
 API key:
 
 ![API key result](../images/api-key-result.png)
 
-!!! warning
+:::warning
     This is the only time you will see the API key, so store it from here
     in a safe place, we will need it in the Terraform manifest later.
-
+:::
 With this we've set up everything we need in Amazon Managed Grafana in order to
 use Terraform for automation, so let's move on to this step.
 
@@ -104,11 +105,11 @@ In the Prometheus resource section, insert the `url` which is the AMP
 workspace URL in the form of 
 `https://aps-workspaces.eu-west-1.amazonaws.com/workspaces/ws-xxxxxxxxx`.
 
-!!! note
+:::note
     If you're using Amazon Managed Grafana in a different region than the one
     shown in the file, you will have to, in addition to above, also set the
     `sigv4_region` to your region.
-
+:::
 To wrap up the preparation phase, let's now initialize Terraform:
 
 ```
@@ -259,11 +260,11 @@ resource "grafana_dashboard" "exampledashboard" {
 Terraform is a powerful tool for automation and you can use it as shown here
 to manage your Grafana resources. 
 
-!!! note
+:::note
     Keep in mind, though, that the [state in Terraform][tf-state] is, by default,
     managed locally. This means, if you plan to collaboratively work with Terraform,
     you need to pick one of the options available that allow you to share the state across a team.
-
+:::
 ## Cleanup
 
 Remove the Amazon Managed Grafana workspace by removing it from the console.

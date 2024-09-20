@@ -10,9 +10,9 @@ Add to this the complexity of multicloud and hybrid, and gaining insights from y
 
 In order to deal with these added dimensions and facilitate approaches to observability, customers tend to invest in a single toolchain with a unified interface. After all, reducing the signal-to-noise ratio is usually a good thing! However, a single approach does not work for all use cases, and the operating models of various platforms may add confusion. Our goal is to help you make informed decisions that compliment your needs and reduce your mean time to remediation when issues do occur. Below are the best practices that we have learned through working with customers of all sizes, and across every industry.
 
-!!! info
+:::tip
     These best practices are intended for a broad set of roles: enterprise architects, developers, DevOps, and more. We suggest evaluating them through the lens of your organization’s business needs, and how observability in distributed environments can provide as much value as possible.
-
+:::
 ## Don’t let your tooling dictate your decisions
 
 Your applications, tools, and processes exist to help achieve business outcomes, such as increasing sales and customer satisfaction. A well-advised technology strategy is one that does everything possible to help you achieve those business goals. But the things that help you get there are simply tools, and they are meant to support your strategy – not be the strategy. To make an analogy, if you needed to build a house, you would not ask your tools how to design and build it. Rather, your tools are a means to an end.
@@ -28,11 +28,13 @@ Here are some examples of “tool-first” outcomes to avoid:
 3.	Not collecting an entire type of telemetry (usually traces) due to a lack of existing trace collection infrastructure, but a rich set of log and metric collectors, can lead to an incomplete observability solution.
 4.	Support staff having been trained on only a single toolchain, in the desire to reduce labour and training costs, thereby reducing the potential value of other observability patterns.
 
-!!! success
+:::info
     If your tooling is dictating your observability strategy, then you need to invert the approach. Tools are meant to enable and empower observability, not to limit your choices.
+:::
 
-!!! success
+:::info
     Tool sprawl is a very real issue that companies struggle with, however a radical shift to a singular toolchain can likewise reduce your observability solution’s usefulness. Hybrid and multicloud workloads have technologies that are unique to each platform, and higher-level services from each CSP are useful – though the trade-offs in using a single-source product require a value-based analysis. See “[Invest in OpenTelemetry](#invest-in-opentelemetry)” for an approach that mitigates some of these risks.
+:::
 
 ## (Observability) data has gravity
 
@@ -40,11 +42,13 @@ All data has gravity – which is to say that it attracts workloads, solutions, 
 
 One cannot completely separate the context of your observability telemetry from the underlying workload and data that it relates to. The same rule applies here: your telemetry is data, and it has gravity to it. This should influence where you place your telemetry agents, collectors, or systems that aggregate and analyze signals.
 
-!!! tip
+:::tip
     The value of observability data over time is considerably less than most other data types. You could call it the “half-life” of observability data. Consider the additional latency in relaying telemetry to another environment as a potential forced devaluation of this data prior to its potential use, and then weigh that against the requirements you have for alerting when issues occur.
+:::
 
-!!! success
+:::info
     The best practice is to emit data between environments only when there is business value to be gained from this aggregation. Having a single source for querying data does not solve many business needs on its own, and may create a more expensive solution than desired, with more points of failure.
+:::
 
 ## A single pane of glass is less important than your workload’s context
 
@@ -56,17 +60,21 @@ We have seen customers sometimes pursue the single pane of glass so aggressively
 
 Moreover, your tooling needs to align to your operating model. A single pane of glass can add value when your support teams are global with access to all of your environments, but if they are limited to only accessing a single workload, in a single CSP or hybrid environment, then there is no value added through this approach. In these instances, allowing teams to create dashboards within each environment natively may hasten time to value, and be more flexible changes in the future.
 
-!!! success
+:::info
     The value of observability data is deeply integrated into the application from which it came. Your telemetry requires contextual awareness that comes from its environment. In hybrid and multicloud environments, the differences between technologies makes the need for context even greater (though systems such as Kubernetes can be similar between different cloud providers and on-premises).
+:::
 
-!!! success
+:::info
     When building a single pane of glass for distributed system, display your business metrics and Service Level Objectives (SLOs) in the same view as other data (such as infrastructure metrics) that contributes to these SLOs. This gives context that may otherwise be lacking.
+:::
 
-!!! tip
+:::tip
     A single pane of glass can help to rapidly diagnose issues and reduce Time to Detection (MTTD) and thereby Mean Time to Resolution (MTTR), but only if the meaning of telemetry data can be preserved. Without this, a single pane of glass approach can increase the time to value, or become a net-negative for operations teams.
+:::
 
-!!! success
+:::info
     If the value of a single pane of glass cannot be determined, or if workloads are bound entirely to a single CSP or on-premises environment, consider only rolling-up top-level business metrics to a single pane of glass, leaving the raw metrics and other contributing factors in their original environments.
+:::
 
 ## Invest in OpenTelemetry
 
@@ -76,11 +84,14 @@ To collect transaction traces with the most value, and with your business and in
 
 OTel captures logs, metrics, and traces using a concept of a span. Spans contain these signals grouped together from a single transaction, packaging them into a contextualized, searchable object. This means you can view your signals from a single application event in one simple entity. For example, a user logging into a web site, and the requests this creates to all the downstream services this integrates with, can be presented as a single span.
 
-!!! tip
+:::tip
     OTel is not limited to application traces, and is widely used for logs and metrics. And many [ISV products accept OTLP directly today](https://opentelemetry.io/ecosystem/vendors/).
+:::
 
-!!! Success
+:::info
     By instrumenting your applications using OTel, you remove the need to replace this instrumentation at the application layer in the future, should you choose to move from one observability platform to another. This turns part of your observability solution into a [two-way door](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/).
+:::
 
-!!! success
+:::info
     OTel is future-proofing, scalable, and makes it easier to change your collection and analysis systems in the future without having to change application code, making it an efficient [shift to the left](https://www.youtube.com/watch?v=99r7cxKW8Rg).
+:::    

@@ -10,9 +10,9 @@
 [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) レポジトリを使用して、
 完全なシナリオをデモンストレーションします。
 
-!!! note
+:::note
     このガイドの完了には約 1 時間かかります。
-
+:::
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定するセクションです。
 
@@ -27,10 +27,10 @@ ADOT Collector には、Prometheus 固有の 2 つのコンポーネントが含
 * Prometheus Receiver
 * AWS Prometheus Remote Write Exporter
 
-!!! info
+:::info
     Prometheus Remote Write Exporter の詳細については、以下をご確認ください。 
     [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)
-
+:::
 ### 前提条件
 
 * AWS CLI がインストールされ、環境に[構成](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html)されている必要があります。
@@ -85,9 +85,9 @@ aws amp create-workspace --alias prometheus-sample-app
 aws amp list-workspaces
 ```
 
-!!! info
+:::info
     詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html)をご確認ください。
-
+:::
 ### ADOT Collectorのセットアップ
 
 [adot-collector-fargate.yaml](./fargate-eks-metrics-go-adot-ampamg/adot-collector-fargate.yaml) をダウンロードし、次のステップで説明するパラメータを使用してこのYAMLドキュメントを編集します。
@@ -119,18 +119,18 @@ YOUR_ENDPOINT=$(aws amp describe-workspace \
                 --query 'workspace.prometheusEndpoint' --output text)api/v1/remote_write
 ```
 
-!!! warning
+:::warning
     `YOUR_ENDPOINT`が実際にリモートライトURLであること、つまりURLが`/api/v1/remote_write`で終わっていることを確認してください。
-
+:::
 デプロイメントファイルの作成後、次のコマンドを使用してこれをクラスタに適用できます:
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
 ```  
 
-!!! info
+:::info
     詳細については、 [AWS Distro for OpenTelemetry(ADOT) Collectorのセットアップ](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup) をご覧ください。
-
+:::
 
 ### AMGの設定
 
@@ -174,7 +174,7 @@ export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-!!! note
+:::note
     proxy.golang.or へのタイムアウトなどにより、ご自身の環境で `go mod` が失敗する場合があります。
     この場合は Dockerfile を編集することで、go mod プロキシをバイパスできます。
 
@@ -186,7 +186,7 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
     ```
     RUN GOPROXY=direct GO111MODULE=on go mod download
     ```
-
+:::
 これで、前述の手順で作成した ECR リポジトリにコンテナイメージをプッシュできるようになりました。
 
 そのためにまず、デフォルトの ECR レジストリにログインします。
@@ -256,7 +256,7 @@ Value: 0.000000
 ...
 ```
 
-!!! tip
+:::tip
     AMP がメトリクスを受信したことを確認するには、[awscurl](https://github.com/okigan/awscurl) を使用できます。
     このツールを使用すると、AWS Sigv4 認証を使用してコマンドラインから HTTP リクエストを送信できるため、AMP からクエリを実行するための適切なアクセス許可を持つ AWS 資格情報をローカルに設定する必要があります。
     次のコマンドでは、`$AMP_ENDPOINT` を AMP ワークスペースのエンドポイントに置き換えます。
@@ -266,6 +266,7 @@ Value: 0.000000
             --region="$AWS_DEFAULT_REGION" "https://$AMP_ENDPOINT/api/v1/query?query=adot_test_gauge0"
     {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"adot_test_gauge0"},"value":[1606512592.493,"16.87214000011479"]}]}}
     ```
+:::
 
 ### Grafana ダッシュボードの作成
 

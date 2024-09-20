@@ -12,9 +12,9 @@ collecting the Envoy metrics using [Grafana Agent](https://github.com/grafana/ag
 configured in the EKS cluster and write them to AMP. Finally, we will be creating
 an AMG workspace and configure the AMP as the datasource and create a custom dashboard.
 
-!!! note
+:::note
     This guide will take approximately 45 minutes to complete.
-
+:::
 ## Infrastructure
 In the following section we will be setting up the infrastructure for this recipe. 
 
@@ -25,10 +25,10 @@ In the following section we will be setting up the infrastructure for this recip
 
 The Grafana agent is configured to scrape the Envoy metrics and ingest them to AMP through the AMP remote write endpoint 
 
-!!! info 
+:::info 
     For more information on Prometheus Remote Write Exporter check out
     [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter).
-
+:::
 
 ### Prerequisites
 
@@ -160,10 +160,10 @@ They must be configured to access your Amazon EKS cluster.
 Now create a manifest file, [grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml), 
 with the scrape configuration to extract Envoy metrics and deploy the Grafana Agent. 
 
-!!! note
+:::note
     At time of writing, this solution will not work for EKS on Fargate
     due to the lack of support for daemon sets there.
-
+:::
 The example deploys a daemon set named `grafana-agent` and a deployment named 
 `grafana-agent-deployment`. The `grafana-agent` daemon set collects metrics 
 from pods on the cluster and the `grafana-agent-deployment` deployment collects

@@ -10,9 +10,9 @@ The Spring-Integration framework is designed to enable the development of integr
 
 The following quote from the [OpenTelemetry documentation](https://opentelemetry.io/docs/concepts/signals/traces/) gives a good overview of what a trace's purpose is:
 
-!!! quote
+:::note
     Traces give us the big picture of what happens when a request is made to an application. Whether your application is a monolith with a single database or a sophisticated mesh of services, traces are essential to understanding the full “path” a request takes in your application.
-
+:::
 Given that one of the main benefits of tracing is end-to-end visibility of a request, it is important for traces to link properly all the way from the request origin to the backend. A common way of doing this in OpenTelemetry is to utilize [nested spans](https://opentelemetry.io/docs/instrumentation/java/manual/#create-nested-spans). This works in a microservices architecture where the spans are passed from service to service until they reach the final destination. In a Spring Integration application, we need to create parent/child relationships between spans created both remotely AND locally.
 
 ## Tracing Utilizing Context Propagation

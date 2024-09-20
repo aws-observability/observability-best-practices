@@ -8,15 +8,16 @@ Canary はスクリプトで構成されており、API とウェブサイトの
 
 ![CloudWatch Synthetics architecture](../images/synthetics0.png)
 
-!!! important
+:::note
     Synthetics Canary を使用して、所有権またはアクセス許可があるエンドポイントと API のみを監視するようにしてください。Canary の頻度設定によって、これらのエンドポイントがトラフィック増加を経験する可能性があります。
-
+:::
 ## はじめに
 
 ### 完全カバレッジ
 
-!!! tip
+:::tip
     テスト戦略を立てる際は、Amazon VPC 内のパブリックエンドポイントと[プライベート内部エンドポイント](https://aws.amazon.com/blogs/mt/monitor-your-private-endpoints-using-cloudwatch-synthetics/)の両方を考慮してください。
+:::
 
 ### 新しい Canary の記録
 
@@ -36,57 +37,58 @@ Canary スクリプトのフリートから収集された集計メトリクス�
 
 ![シンセティック Canary を作成する複数の方法](../images/synthetics2.png)
 
-!!! info
+:::info
     ブループリントは、Canary の記述を開始するための便利な方法であり、コードなしでシンプルなユースケースをカバーできます。
-
+:::
 ### 保守性
 
 独自の Canary を作成すると、それらは *ランタイムバージョン*に結び付けられます。これは、Selenium を使用した特定バージョンの Python、または Puppeteer を使用した JavaScript のいずれかになります。現在サポートされているランタイムバージョンと廃止予定のもののリストについては、[このページ]を参照してください。
 
-!!! success
+:::info
     Canary の実行中にアクセスできるデータを共有するために、[環境変数を使用](https://aws.amazon.com/blogs/mt/using-environment-variables-with-amazon-cloudwatch-synthetics/)することでスクリプトの保守性を向上させます。
+:::
 
-!!! success
+:::info
     利用可能な場合は、Canary を最新のランタイムバージョンにアップグレードします。
-
+:::
 ### 文字列シークレット
 
 Canary からシークレット(ログイン資格情報など)を、Canary やその環境変数の外部のセキュアなシステムからプルするようにコーディングできます。AWS Lambda からアクセスできるシステムなら、実行時に Canary にシークレットを提供できる可能性があります。 
 
-!!! success
+:::info
     テストを実行し、データベースの接続詳細、API キー、アプリケーションの資格情報などのシークレットを AWS Secrets Manager を使用して保存することで、[センシティブなデータを保護](https://aws.amazon.com/blogs/mt/secure-monitoring-of-user-workflow-experience-using-amazon-cloudwatch-synthetics-and-aws-secrets-manager/)します。
-
+:::
 ## Canary の大規模管理
 
 ### 壊れたリンクの確認
 
-!!! success
+:::info
     ウェブサイトに多数の動的コンテンツとリンクが含まれている場合は、CloudWatch Synthetics を使用してウェブサイトをクロールし、[壊れたリンクを検出](https://aws.amazon.com/blogs/mt/cloudwatch-synthetics-to-find-broken-links-on-your-website/)し、失敗の理由を特定できます。次に、失敗のしきい値を使用して、しきい値の違反が発生したときにオプションで  を作成します。
-
+:::
 ### 複数のハートビート URL
 
-!!! success
+:::info
     テストを簡略化し、コストを最適化するには、単一のハートビート監視 Canary テストで[複数の URL をバッチ処理](https://aws.amazon.com/blogs/mt/simplify-your-canary-by-batching-multiple-urls-in-amazon-cloudwatch-synthetics/)します。そうすると、Canary 実行レポートのステップサマリで、各 URL のステータス、期間、関連するスクリーンショット、失敗理由を確認できます。
-
+:::
 ### グループで整理する
 
-!!! success
+:::info
     [グループ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Groups.html)で Canary を整理し、トラッキングすることで、集計メトリクスを表示したり、障害をより簡単に分離およびドリルダウンしたりできます。
-
+:::
 ![Organize and track canaries in groups](../images/synthetics3.png)
 
-!!! warning
+:::warning
     クロスリージョンのグループを作成する場合、Canary の*正確な*名前が必要になります。
-
+:::
 ## ランタイムオプション
 
 ### バージョンとサポート
 
 CloudWatch Synthetics は現在、スクリプトに Node.js を使用し、フレームワークに [Puppeteer](https://github.com/puppeteer/puppeteer) を使用したランタイムと、スクリプトに Python を使用し、フレームワークに [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) を使用したランタイムをサポートしています。
 
-!!! success
+:::info
     Canary で最新のランタイムバージョンを常に使用することで、Synthetics ライブラリの最新の機能とアップデートを利用できます。
-
+:::
 [廃止予定のランタイム](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries_Library.html#CloudWatch_Synthetics_Canaries_runtime_support) を使用している Canary がある場合、CloudWatch Synthetics は 60 日前にメールで通知します。
 
 ### コードサンプル

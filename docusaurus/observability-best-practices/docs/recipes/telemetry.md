@@ -6,9 +6,9 @@ they are consumed:
 
 ![telemetry concept](images/telemetry.png)
 
-!!! success
+:::info
     See the [Data types](../signals/logs) section for a detailed breakdown of the best practices for each type of telemetry.
-
+:::
 Let's further dive into the concepts introduced in above figure.
 
 ## Sources
@@ -26,12 +26,14 @@ some sort of intermediary we call agent. These agents receive or pull signals
 from the sources and, typically via configuration, determine where signals 
 shoud go, optionally supporting filtering and aggregation.
 
-!!! question "Agents? Routing? Shipping? Ingesting?"
+:::note
+    "Agents? Routing? Shipping? Ingesting?"
     There are many terms out there people use to refer to the process of
     getting the signals from sources to destinations including routing,
     shipping, aggregation, ingesting etc. and while they may mean slightly 
     different things, we will use them here interchangeably. Canonically, 
 	we will refer to those intermediary transport components as agents.
+:::
 
 ## Destinations
 

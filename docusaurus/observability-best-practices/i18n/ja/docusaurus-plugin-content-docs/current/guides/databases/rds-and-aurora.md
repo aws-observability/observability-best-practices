@@ -117,9 +117,9 @@ CloudWatch は、DB インスタンスのハイパーバイザーから CPU 使�
 
 Performance Insights は 7 日間の無料のパフォーマンス履歴保持を提供しており、料金を支払うことで最大 2 年間まで延長できます。Performance Insights は、RDS 管理コンソールまたは AWS CLI から有効にできます。Performance Insights はパブリックに利用可能な API も公開しているため、カスタマーやサードパーティは Performance Insights を独自のカスタムツールと統合できます。  
 
-!!! 注意
+:::note
 	現在、RDS Performance Insights は Aurora (PostgreSQL および MySQL 互換エディション)、Amazon RDS for PostgreSQL、MySQL、MariaDB、SQL Server、Oracle でのみ利用できます。
-
+:::
 **DBLoad** は、平均アクティブセッション数を表す主要メトリクスです。Performance Insights では、このデータは **db.load.avg** メトリクスとしてクエリされます。
 
 ![db_perf_insights.png](../../images/db_perf_insights.png)
@@ -169,10 +169,9 @@ $ ./install.sh
 [Amazon DevOps Guru for RDS](https://aws.amazon.com/devops-guru/features/devops-guru-for-rds/) を使用すると、パフォーマンスのボトルネックや運用上の問題のためにデータベースを監視できます。Performance Insights メトリクスを使用し、機械学習(ML)で分析して、パフォーマンスの問題に関するデータベース固有の分析を提供し、修正アクションを推奨します。DevOps Guru for RDS は、ホストリソースの過剰利用、データベースのボトルネック、SQL クエリの誤動作など、さまざまなパフォーマンス関連のデータベースの問題を特定および分析できます。 問題または異常な動作が検出されると、DevOps Guru for RDS は DevOps Guru コンソールに調査結果を表示し、[Amazon EventBridge](https://aws.amazon.com/pm/eventbridge) または [Amazon Simple Notification Service(SNS)](https://aws.amazon.com/pm/sns) を使用して通知を送信するため、DevOps または SRE チームは、パフォーマンスおよび運用上の問題が顧客に影響を及ぼす障害になる前に、それらに対してリアルタイムでアクションを実行できます。
 
 DevOps Guru for RDS は、データベースメトリクスのベースラインを確立します。ベースライニングとは、一定期間データベースパフォーマンスメトリクスを分析して、通常の動作を確立することを意味します。Amazon DevOps Guru for RDS は次に、機械学習(ML)を使用して、確立されたベースラインに対する異常を検出します。ワークロードパターンが変更された場合、DevOps Guru for RDS は新しい通常動作に対して異常を検出するために使用される新しいベースラインを確立します。
-
-!!! 注意
+:::note
 	新しいデータベースインスタンスの場合、Amazon DevOps Guru for RDS は、データベースの使用パターンの分析と通常の動作の確立が必要なため、最初のベースラインを確立するまでに最大 2 日かかります。
-
+:::
 
 ![db_dgr_anomaly.png.png](../../images/db_dgr_anomaly.png)
 

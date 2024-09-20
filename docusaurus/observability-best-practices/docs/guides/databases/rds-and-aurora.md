@@ -117,8 +117,9 @@ To learn about all the metrics available with Enhanced Monitoring, please refer 
 
 Performance Insights provides seven days of free performance history retention and you can extend that up to 2 years with a fees. You can enable Performance Insights from RDS management console or AWS CLI. Performance Insights also exposes a publicly available API to enable customers and third parties to integrate Performance Insights with their own custom tooling.
 
-!!! Note
+:::note
 	Currently, RDS Performance Insights is available only for Aurora (PostgreSQL- and MySQL-compatible editions), Amazon RDS for PostgreSQL, MySQL, MariaDB, SQL Server and Oracle.
+:::
 
 **DBLoad** is the key metric which represents the average number of database active sessions. In Performance Insights, this data is queried as **db.load.avg** metric.
 
@@ -170,9 +171,9 @@ With [Amazon DevOps Guru for RDS](https://aws.amazon.com/devops-guru/features/de
 
 DevOps Guru for RDS establishes a baseline for the database metrics. Baselining involves analyzing the database performance metrics over a period of time to establish a normal behavior. Amazon DevOps Guru for RDS then uses ML to detect anomalies against the established baseline. If your workload pattern changes, then DevOps Guru for RDS establishes a new baseline that it uses to detect anomalies against the new normal. 
 
-!!! Note
+:::note
 	For new database instances, Amazon DevOps Guru for RDS takes up to 2 days to establish an initial baseline, because it requires an analysis of the database usage patterns and establishing what is considered a normal behavior.
-
+:::
 
 ![db_dgr_anomaly.png.png](../../images/db_dgr_anomaly.png)
 

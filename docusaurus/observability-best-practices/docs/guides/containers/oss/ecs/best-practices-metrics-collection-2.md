@@ -3,8 +3,9 @@
 The ADOT collector can be deployed using a task definition as shown below, using the sidecar pattern. The container image used for the collector is bundled with two collector pipeline configurations which can be specified in the *command* section of the container defintion. Seting this value `--config=/etc/ecs/ecs-default-config.yaml`
 will result in the use of a [pipeline configuration](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml) that will collect application metrics and traces from other containers running within the same task as the collector and send them to Amazon CloudWatch and AWS X-Ray. Specifically, the collector uses an [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) to receive metrics sent by applications that have been instrumented with OpenTelemetry SDKs as well as a [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) to collect StatsD metrics. Additionally, it uses an [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) to collect traces from applications that have been instrumented with AWS X-Ray SDK.
 
-!!! info
+:::info
     Refer to the [documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html) for details about setting up the IAM task role and task execution role that the ADOT collector will use when deployed on an Amazon ECS cluster.
+:::
 
 ```javascript
 {
@@ -79,11 +80,10 @@ To deploy ADOT with the central collector pattern, with a pipeline that is diffe
  }
 ```
 
-!!! important
+:::note
     The SSM Parameter Store parameter name must be exposed to the collector using an environment variable named AOT_CONFIG_CONTENT.
-
-!!! important
     When using the ADOT collector for Prometheus metrics collection from applications and deploying it with REPLICA service scheduler startegy, make sure that you set the replica count to 1. Deploying more than 1 replica of the collector will result in an incorrect representation of metrics data in the target destination.
+:::
 
 The configuration shown below enables the ADOT collector to collect Prometheus metrics from services in the cluster using a [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver). The receiver is meant to minimally be a drop-in replacement for Prometheus server. To collect metrics with this receiver, you need a mechanism for discovering the set of target services to be scraped. The receiver supports both static and dynamic discovery of scraping targets using one of the dozens of supported [service-discovery mechanisms](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). 
 

@@ -7,11 +7,12 @@ This is the source for the [AWS Observability Best Practices site](https://aws-o
 ## How to run/develop this site
 
 This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+You need to install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) as a prerequisite.
 
 ### Installation
 
 ```
-$ yarn [or] npm
+$ (yarn | npm ) install
 ```
 
 ### Local Development
@@ -32,10 +33,14 @@ This command generates static content into the `build` directory and can be serv
 
 ### Deployment
 
-Using SSH:
-
+Using SSH with yarn:
 ```
-$ USE_SSH=true yarn deploy [or] npm run serve
+$ USE_SSH=true yarn deploy 
+```
+
+Using SSH with npm:
+```
+$ USE_SSH=true  npm run serve
 ```
 
 Not using SSH:

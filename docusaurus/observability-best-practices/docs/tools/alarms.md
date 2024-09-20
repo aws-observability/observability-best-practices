@@ -10,12 +10,12 @@ CloudWatch alarms allows you to define thresholds on CloudWatch metrics and rece
 
 2. **Anomaly detection**: Anomaly detection is generally identified as rare items, events or observations which deviate significantly from the majority of the data and do not conform to a well-defined notion of normal behaviour.  CloudWatch anomaly detection analyzes past metric data and creates a model of expected values. The expected values take into account the typical hourly, daily, and weekly patterns in the metric.  You can apply the anomaly detection for each metric as required and CloudWatch applies a machine-learning algorithm to define the upper limit and lower limit for each of the enabled metrics and generate an alarm only when the metrics fall out of the expected values. 
 
-!!! tip
+:::tip
 	Static thresholds are best used for metrics that you have a firm understanding of, such as identified performance breakpoints in your workload, or absolute limits on infrastructure components.
-
-!!! success
+:::
+:::info
 	Use an anomaly detection model with your alarms when you do not have visibility into the performance of a particular metric over time, or when the metric value has not been observed under load-testing or anomalous traffic previously.
-
+:::
 ![CloudWatch Alarm types](../images/cwalarm1.png)
 
 You can follow the instructions below on how to setup of Static and Anomaly based alarms in CloudWatch.
@@ -24,12 +24,13 @@ You can follow the instructions below on how to setup of Static and Anomaly base
 
 [CloudWatch anomaly Detection based alarms](https://catalog.us-east-1.prod.workshops.aws/workshops/31676d37-bbe9-4992-9cd1-ceae13c5116c/en-US/alarms/adalarm)
 
-!!! success
+:::info
 	To reduce the alarm fatigue or reduce the noise from the number of alarms generated, you have two advanced methods to configure the alarms:
 
 	1. **Composite alarms**: A composite alarm includes a rule expression that takes into account the alarm states of other alarms that have been created. The composite alarm goes into `ALARM` state only if all conditions of the rule are met. The alarms specified in a composite alarm's rule expression can include metric alarms and other composite alarms. Composite alarms help to [fight alarm fatigue with aggregation](../signals/alarms/#fight-alarm-fatigue-with-aggregation).
 
 	2. **Metric math based alarms**: Metric math expressions can be used to build more meaningful KPIs and alarms on them. You can combine multiple metrics and create a combined utilization metric and alarm on them.
+:::
 
 These instructions below guide you on how to setup of Composite alarms and Metric math based alarms.
 

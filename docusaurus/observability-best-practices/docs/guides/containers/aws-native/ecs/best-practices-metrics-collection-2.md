@@ -12,12 +12,12 @@ When Prometheus server scrapes your applications's HTTP endpoint, the client lib
 
 [CloudWatch Container Insights monitoring for Prometheus](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) enables you to leverage the capabilities of Prometheus in an Amazon ECS cluster. It is available for Amazon ECS clusters deployed on EC2 and Fargate The CloudWatch agent can be used as a drop-in replacement for a Prometheus server, reducing the number of monitoring tools required to improve observability. It automates the discovery of Prometheus metrics from containerized applications deployed to Amazon ECS and sends the metrics data to CloudWatch as performance log events. 
 
-!!! info
+:::info
     Steps to deploy the CloudWatch agent with Prometheus metrics collection on an Amazon ECS cluster are documented in the [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)
-
-!!! warning
+:::
+:::warning
     Metrics collected by Container Insights monitoring for Prometheus are charged as custom metrics. For more information about CloudWatch pricing, see [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/)
-
+:::
 ### Autodiscovery of targets on Amazon ECS clusters
 The CloudWatch agent supports the standard Prometheus scrape configurations under the [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) section in the Prometheus documentation. Prometheus supports both static and dynamic discovery of scraping targets using one of the dozens of supported [service-discovery mechanisms](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config). . As Amazon ECS does not have any built-in service discovery mechanism, the agent relies on Prometheus' support for file-based discovery of targets. To setup the agent for file-based discovery of targets, the agent needs two [configuration parameters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html), which are both defined in the task definition used for launching the agent. You can customize these parameters to have granular control over the metrics collected by the agent.
 

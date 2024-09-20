@@ -34,9 +34,9 @@ filter @message like /POST/
 | limit 20
 ```  
 
-!!! tip
-
+:::tip
     $limit の値を変更することで、返されるメッセージ数を変更できます。
+:::
 
 ### IP でソートされた上位 20 の通信元
 
@@ -71,9 +71,9 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 
 このクエリを使用すると、カテゴリ別にグループ化された API スロットリングエラーを降順で表示できます。
 
-!!! tip
-    
+:::tip
     このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) する必要があります。
+:::
 
 ### ライングラフでのルートアカウントアクティビティ
 
@@ -85,9 +85,9 @@ fields @timestamp, @message, userIdentity.type
 
 このクエリを使用すると、ルートアカウントのアクティビティをライングラフで視覚化できます。このクエリは時間経過とともにルートアクティビティを集計し、5 分ごとの区間内でのルートアクティビティの発生回数をカウントします。
 
-!!! tip
-    
+:::tip
      [グラフでログデータを視覚化する](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)
+:::
 
 ## VPC フローログ
 
@@ -101,8 +101,9 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP'
 
 このクエリは、$SOURCEIP からの「REJECT」を含む直近 20 件のログメッセージを返します。これは、トラフィックが明示的に拒否されているか、クライアント側のネットワーク構成の問題があるかどうかを検出するために使用できます。 
 
-!!! tip
+:::tip
     '$SOURCEIP' を調べたい IP アドレスの値に置き換えてください。
+:::
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' and action = 'REJECT'

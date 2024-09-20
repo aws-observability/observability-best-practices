@@ -2,8 +2,9 @@
 
 このレシピでは、[Amazon Athena][athena] を [Amazon Managed Grafana][amg] で使用する方法を紹介します。Athena は、Amazon S3 のデータを標準 SQL を使用して分析できるサーバーレスの対話型クエリサービスです。この統合は、[Grafana 用 Athena データソース][athena-ds] によって実現されています。これはオープンソースのプラグインで、DIY Grafana インスタンスで使用できるだけでなく、Amazon Managed Grafana にもプリインストールされています。
 
-!!! note
+:::note
     このガイドの完了には約 20 分かかります。
+:::
 
 ## 前提条件
 
@@ -20,10 +21,10 @@ Athena を 2 つの異なるシナリオで使用する方法を確認したい�
 
 まず、Athena が設定され、データセットが読み込まれていることを確認しましょう。
 
-!!! warning
+:::warning
     これらのクエリを実行するには、Amazon Athena コンソールを使用する必要があります。
     Grafana はデータソースへの読み取り専用アクセス権しかないため、データの作成や更新に使用できません。
-
+:::
 #### 地理データの読み込み
 
 この最初のユースケースでは、[Registry of Open Data on AWS][awsod] からのデータセットを使用します。
@@ -105,9 +106,9 @@ LOCATION 's3://osm-pds/changesets/';
 まず、EC2 に VPC フローログを生成させる必要があります。
 したがって、まだ行っていない場合は、ネットワークインターフェイスレベル、サブネットレベル、VPC レベルのいずれかで [VPC フローログを作成][createvpcfl] します。  
 
-!!! note
+:::note
     クエリパフォーマンスを向上させ、ストレージフットプリントを最小限に抑えるために、VPC フローログを列指向のストレージフォーマットである [Parquet][parquet] に格納します。Parquet はネストされたデータをサポートしています。
-
+:::
 当社の設定では、Parquet 形式で S3 バケットに公開されている限り、オプション (ネットワークインターフェイス、サブネット、VPC) は関係ありません。
 以下のように表示されます。
 
@@ -167,7 +168,7 @@ s3://allmyflowlogs/AWSLogs/12345678901/vpcflowlogs/eu-west-1/2021/
 
 Grafanaインスタンスが必要なので、[Amazon Managed Grafanaワークスペース][amg-workspace]を新規作成するか、既存のものを使用します。 新規作成する場合は、[Getting Started][amg-getting-started]ガイドを参考にしてください。
 
-!!! warning
+:::warning
     AWSデータソースの構成を使用するには、まずAmazon Managed Grafanaコンソールに移動し、Athenaリソースを読み取るために必要なIAMポリシーをワークスペースに付与する、サービスマネージドIAMロールを有効にしてください。
     さらに、次の点に注意してください。
 
@@ -175,7 +176,7 @@ Grafanaインスタンスが必要なので、[Amazon Managed Grafanaワーク�
 	1. サービスマネージドIAMポリシーは、`grafana-athena-query-results-`で始まるクエリ結果バケットへのアクセスのみを許可するので、他のバケットを使用する場合はアクセス許可を手動で追加する必要があります。 
 	1. クエリ対象の基礎となるデータソースへの`s3:Get*`および`s3:List*`アクセス許可を手動で追加する必要があります。
 
-
+:::
 Athenaデータソースの設定では、左側のツールバーから下のAWSアイコンを選択し、「Athena」を選択します。プラグインがデータソース検出に使用するデフォルトリージョンを選択し、アカウントを選択した後、「Add data source」を選択します。
 
 あるいは、次の手順でAthenaデータソースを手動で追加および構成できます。
@@ -215,17 +216,17 @@ WHERE type = 'node'
 LIMIT 500;
 ```
 
-!!!info
+:::info
     上記クエリのラスベガス地域は、緯度が `36.1` から `36.3` の間、経度が `-115.5` から `-114.5` の間と定義されています。
 	これを各コーナーの変数セットに変換し、Geomap プラグインを他の地域に適応させることができます。
-
+:::
 上記のクエリを使用して OSM データを可視化するには、[osm-sample-dashboard.json](./amg-athena-plugin/osm-sample-dashboard.json) からサンプルダッシュボードをインポートできます。そのダッシュボードは次のようになります。
 
 ![AMG の OSM ダッシュボードのスクリーンショット](../images/amg-osm-dashboard.png)  
 
-!!!note
+:::note
     上記のスクリーンショットでは、データポイントをプロットするために左パネルの Geomap 可視化を使用しています。
-
+:::
 ### VPC フローログデータの使用
 
 VPC フローログデータを分析し、SSH と RDP トラフィックを検出するには、
@@ -259,9 +260,10 @@ GROUP BY start, action
 ORDER BY start ASC;
 ```
 
-!!! tip
+:::tip
     Athena でクエリするデータ量を制限する場合は、
 	`$__timeFilter` マクロを使用することを検討してください。
+:::
 
 VPC フローログデータを視覚化するには、[vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json) 
 からサンプルダッシュボードをインポートできます。

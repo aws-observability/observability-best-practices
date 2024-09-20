@@ -5,9 +5,9 @@ In this recipe we show you how to visualize metrics from an Azure Cloud environm
 
 As part of the implementation, we will create an AMG workspace, configure the Azure Monitor plugin as the data source for AMG and configure the Grafana dashboard. We will be creating two notification channels: one for Amazon SNS and one for slack.We will also configure alerts in the AMG dashboard to be sent to the notification channels.
 
-!!! note
+:::note
     This guide will take approximately 30 minutes to complete.
-
+:::
 ## Infrastructure
 In the following section we will be setting up the infrastructure for this recipe. 
 
@@ -21,9 +21,9 @@ In the following section we will be setting up the infrastructure for this recip
 
 First, create an AMG workspace to visualize the metrics from Azure Monitor. Follow the steps in the [Getting Started with Amazon Managed Service for Grafana](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/) blog post. After you create the workspace, you can assign access to the Grafana workspace to an individual user or a user group. By default, the user has a user type of viewer. Change the user type based on the user role.
 
-!!! Note 
+:::note 
     You must assign an Admin role to at least one user in the workspace.
-
+:::
 In Figure 1, the user name is grafana-admin. The user type is Admin. On the Data sources tab, choose the required data source. Review the configuration, and then choose Create workspace.
 ![azure-monitor-grafana-demo](../images/azure-monitor-grafana.png)
 

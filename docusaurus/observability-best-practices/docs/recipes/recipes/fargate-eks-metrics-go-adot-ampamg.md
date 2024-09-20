@@ -10,9 +10,9 @@ on [AWS Fargate](https://aws.amazon.com/fargate/) cluster and use an
 [Amazon Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/) repository
 to demonstrate a complete scenario.
 
-!!! note
+:::note
     This guide will take approximately 1 hour to complete.
-
+:::
 ## Infrastructure
 In the following section we will be setting up the infrastructure for this recipe.
 
@@ -30,10 +30,10 @@ The ADOT Collector includes two components specific to Prometheus:
 * the Prometheus Receiver, and
 * the AWS Prometheus Remote Write Exporter.
 
-!!! info
+:::info
     For more information on Prometheus Remote Write Exporter check out:
     [Getting Started with Prometheus Remote Write Exporter for AMP](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter).
-
+:::
 
 ### Prerequisites
 
@@ -89,9 +89,9 @@ Verify the workspace is created using:
 aws amp list-workspaces
 ```
 
-!!! info
+:::info
     For more details check out the [AMP Getting started](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) guide.
-
+:::
 
 ### Set up ADOT Collector
 
@@ -127,20 +127,20 @@ YOUR_ENDPOINT=$(aws amp describe-workspace \
                 --query 'workspace.prometheusEndpoint' --output text)api/v1/remote_write
 ```
 
-!!! warning
+:::warning
     Make sure that `YOUR_ENDPOINT` is in fact the remote write URL, that is,
     the URL should end in `/api/v1/remote_write`.
-
+:::
 After creating deployment file we can now apply this to our cluster by using the following command:
 
 ```
 kubectl apply -f adot-collector-fargate.yaml
 ```
 
-!!! info
+:::info
     For more information check out the [AWS Distro for OpenTelemetry (ADOT)
     Collector Setup](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter/eks#aws-distro-for-opentelemetry-adot-collector-setup).
-
+:::
 ### Set up AMG
 
 Set up a new AMG workspace using the
@@ -184,7 +184,7 @@ Next, build the container image:
 docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/prometheus-sample-app:latest"
 ```
 
-!!! note
+:::note
     If `go mod` fails in your environment due to a proxy.golang.or i/o timeout,
     you are able to bypass the go mod proxy by editing the Dockerfile.
 
@@ -196,6 +196,7 @@ docker build . -t "$ACCOUNTID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/promethe
     ```
     RUN GOPROXY=direct GO111MODULE=on go mod download
     ```
+:::
 
 Now you can push the container image to the ECR repo you created earlier on.
 
@@ -271,7 +272,7 @@ Value: 0.000000
 ...
 ```
 
-!!! tip
+:::tip
     To verify if AMP received the metrics, you can use [awscurl](https://github.com/okigan/awscurl).
     This tool enables you to send HTTP requests from the command line with AWS Sigv4 authentication,
     so you must have AWS credentials set up locally with the correct permissions to query from AMP.
@@ -282,7 +283,7 @@ Value: 0.000000
             --region="$AWS_DEFAULT_REGION" "https://$AMP_ENDPOINT/api/v1/query?query=adot_test_gauge0"
     {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"adot_test_gauge0"},"value":[1606512592.493,"16.87214000011479"]}]}}
     ```
-
+:::
 ### Create a Grafana dashboard
 
 You can import an example dashboard, available via

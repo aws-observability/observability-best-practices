@@ -6,8 +6,9 @@ and [Fluent Bit][fluentbit]. Content here is not resitricted to AWS tools alone 
 
 We want to address the needs of both developers and infrastructure folks equally, so many of the recipes "cast a wide net". We encourge you to explore and find the solutions that work best for what you are seeking to accomplish.
 
-!!! info
+:::info
     The content here is derived from actual customer engagement by our Solutions Architects, Professional Services, and feedback from other customers. Everything you will find here has been implemented by our actual customers in their own environments.
+:::
 
 The way we think about the o11y space is as follows: we decompose it into
 [six dimensions][dimensions] you can then combine to arrive at a specific solution:
@@ -21,9 +22,11 @@ The way we think about the o11y space is as follows: we decompose it into
 | Compute unit | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
 | Compute engine | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
 
-!!! question "Example solution requirement"
+:::note
+    "Example solution requirement"
     I need a logging solution for a Python app I'm running on EKS on Fargate
     with the goal to store the logs in an S3 bucket for further consumption
+:::
 
 One stack that would fit this need is the following:
 
@@ -58,10 +61,12 @@ Alternatively, you can search the site pressing `/` or the `s` key:
 
 ![o11y space](images/search.png)
 
-!!! info "License"
-    All recipes published on this site are available via the
+:::info
+   "License"
+  All recipes published on this site are available via the
 	[MIT-0][mit0] license, a modification to the usual MIT license
 	that removes the requirement for attribution.
+:::
 
 ## How to contribute
 

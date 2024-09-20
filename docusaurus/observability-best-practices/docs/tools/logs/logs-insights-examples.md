@@ -34,10 +34,9 @@ filter @message like /POST/
 | limit 20
 ```
 
-!!! tip
-
+:::tip
     You can change the $limit value in order to return a different amount of messages.
-
+:::
 
 ### Top 20 Talkers Sorted by IP
 
@@ -72,10 +71,9 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 
 This query allows you to see API throttling errors grouped by category and displayed in descending order.
 
-!!! tip
-    
+:::tip
     In order to use this query you would first need to ensure you are [sending CloudTrail logs to CloudWatch.](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)
-
+:::
     
 ### Root account activity in line graph
 
@@ -86,10 +84,9 @@ fields @timestamp, @message, userIdentity.type
 ```
 
 With this query you can visualize root account activity in a line graph. This query aggregates the root activity over time, counting the occurrences of root activity within each 5-minute interval.
-
-!!! tip
-    
+:::tip
      [Visualize log data in graphs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)
+:::
 
 ## VPC Flow Logs
 
@@ -103,8 +100,9 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP'
 
 This query will return the last 20 log messages containing a 'REJECT' from the $SOURCEIP. This can be used to detect if traffic is explicitly rejected, or if the issue is some type of client side network configuration problem.
 
-!!! tip
+:::tip
     Ensure that you substitute the value of the IP address you are interested in for '$SOURCEIP'
+:::
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' and action = 'REJECT'

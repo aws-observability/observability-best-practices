@@ -3,9 +3,9 @@
 このレシピでは、[Terraform](https://www.terraform.io/) を使用して [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) をプロビジョニングし、ルール管理とアラートマネージャーを設定して、特定の条件が満たされた場合に [SNS](https://docs.aws.amazon.com/sns/) トピックに通知を送信する方法を示します。
 
 
-!!! note
+:::note
     このガイドの完了には約 30 分かかります。
-
+:::
 ## 前提条件
 
 セットアップを完了するには、次のものが必要です。

@@ -4,9 +4,9 @@ In this recipe we show you how to instrument a [CloudWatch Metric Stream](https:
 
 We will be setting up a stack using [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) to create a Firehose Delivery Stream, Lambda, and a S3 Bucket to demonstrate a complete scenario.
 
-!!! note
+:::note
     This guide will take approximately 30 minutes to complete.
-
+:::
 ## Infrastructure
 In the following section we will be setting up the infrastructure for this recipe. 
 
@@ -34,9 +34,9 @@ Ensure your workspace has been created with the following command:
 aws amp list-workspaces
 ```
 
-!!! info
+:::info
     For more details check out the [AMP Getting started](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html) guide.
-
+:::
 ### Install dependencies
 
 From the root of the aws-o11y-recipes repository, change your directory to CWMetricStreamExporter via the command:
@@ -132,9 +132,9 @@ Modify the Metric Stream name to your liking, and click "Create metric stream":
 To verify the Lambda function invocation, navigate to the [Lambda console](https://console.aws.amazon.com/lambda/home)
 and click the function `KinesisMessageHandler`. Click the `Monitor` tab and `Logs` subtab, and under `Recent Invocations` there should be entries of the Lambda function being triggered.
 
-!!! note
+:::note
     It may take upto 5 minutes for invocations to show in the Monitor tab.
-
+:::
 That is it! Congratulations, your metrics are now being streamed from CloudWatch to Amazon Managed Service for Prometheus.
 
 ## Cleanup

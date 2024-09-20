@@ -10,11 +10,12 @@ The CloudWatch RUM web client is developed and built using Node.js version 16 or
 
 CloudWatch RUM is designed to create no perceptible impact to your application’s load time, performance, and unload time.
 
-!!! note
+:::note
     End user data that you collect for CloudWatch RUM is retained for 30 days and then automatically deleted. If you want to keep the RUM events for a longer time, you can choose to have the app monitor send copies of the events to CloudWatch Logs in your account.
-
-!!! tip
+:::
+:::tip
     If avoiding potential interruption by ad blockers is a concern for your web application then you may wish to host the web client on your own content delivery network, or even inside your own web site. Our [documentation on GitHub](https://github.com/aws-observability/aws-rum-web/blob/main/docs/cdn_installation.md) provides guidance on hosting the web client from your own origin domain.
+:::
 
 ## Authorize Your Application
 
@@ -24,32 +25,33 @@ To use CloudWatch RUM, your application must have authorization through one of t
 1. Use an existing Amazon Cognito identity pool
 1. Let CloudWatch RUM create a new Amazon Cognito identity pool for the application
 
-!!! success
+:::info
     Letting CloudWatch RUM create a new Amazon Cognito identity pool for the application requires the least effort to set up. It's the default option.
-
-!!! tip
+:::
+:::tip
     CloudWatch RUM can configured to separate unauthenticated users from authenticated users. See [this blog post](https://aws.amazon.com/blogs/mt/how-to-isolate-signed-in-users-from-guest-users-within-amazon-cloudwatch-rum/) for details. 
-
+:::
 ## Data Protection & Privacy
 
 The CloudWatch RUM client can use cookies to help collect end user data. This is useful for the user journey feature, but is not required. See [our detailed documentation for privacy related information](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-privacy.html).[^1]
 
-!!! tip
+:::tip
     While the collection of web application telemetry using RUM is safe and does not expose personally identifiable information (PII) to you through the console or CloudWatch Logs, be mindful that you can collect [custom attribute](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html) through the web client. Be careful not to expose sensitive data using this mechanism.
+:::
 
 ## Client Code Snippet
 
 While the code snippet for the CloudWatch RUM web client will be automatically generated, you can also manually modify the code snippet to configure the client to your requirements. 
-
-!!! success
+:::info
     Use a cookie consent mechanism to dynamically enable cookie creation in singe page applications. See [this blog post](https://aws.amazon.com/blogs/mt/how-and-when-to-enable-session-cookies-with-amazon-cloudwatch-rum/) for more information.
-
+:::
 ### Disable URL Collection 
 
 Prevent the collection of resource URLs that might contain personal information.
 
-!!! success
+:::info
     If your application uses URLs that contain personally identifiable information (PII), we strongly recommend that you disable the collection of resource URLs by setting `recordResourceUrl: false` in the code snippet configuration, before inserting it into your application.
+:::
 
 ### Enable Active Tracing
 
@@ -65,35 +67,36 @@ Click the checkbox to enable active tracing when setting up your application mon
 
 Insert the code snippet that you copied or downloaded in the previous section inside the `<head>` element of your application. Insert it before the `<body>` element or any other `<script>` tags.
 
-!!! success
+:::info
     If your application has multiple pages, insert the code snippet in a shared header component that is included in all pages.
+:::
 
-!!! warning
+:::warning
     It is critical that the web client be as early in the `<head>` element as possible! Unlike passive web trackers that are loaded near the bottom of a page's HTML, for RUM to capture the most performance data requires it be instantiated early in the page render process.
-
+:::
 ## Use Custom Metadata
 
 You can add custom metadata to the CloudWatch RUM events default [event metadata](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-datacollected.html#CloudWatch-RUM-datacollected-metadata). Session attributes are added to all events in a user's session. Page attributes are added only to the pages specified.
 
-!!! success
+:::info
     Avoid using reserved keywords noted on [this page](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-custom-metadata.html#CloudWatch-RUM-custom-metadata-syntax) as key names for your custom attributes
-
+:::
 ## Use Page Groups
 
-!!! success
+:::info
     Use page groups to associate different pages in your application with each other so that you can see aggregated analytics for groups of pages. For example, you might want to see the aggregated page load times of all of your pages by type and language.
 
     ```
     awsRum.recordPageView({ pageId: '/home', pageTags: ['en', 'landing']})
     ```
-
+:::
 ## Use Extended Metrics
 
 There is a [default set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html) automatically collected by CloudWatch RUM that are published in the metric namespace named `AWS/RUM`. These are free, [vended metrics](../tools/metrics/#vended-metrics) that RUM creates on your behalf.
 
-!!! success
+:::info
     Send any of the CloudWatch RUM metrics to CloudWatch with additional dimensions so that the metrics give you a more fine-grained view.
-
+:::
 The following dimensions are supported for extended metrics:
 
 - BrowserName

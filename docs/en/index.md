@@ -27,7 +27,7 @@ This site is organized into four categories:
 1. [Best practices for specific AWS tools (though these are largely fungible to other vendor products as well)](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)
 1. [Curated recipes for observability with AWS](https://aws-observability.github.io/observability-best-practices/recipes/)
 
-!!! success
+:::info
 	This site is based on real world use cases that AWS and our customers have solved for.
 
 	Observability is at the heart of modern application development, and a critical consideration when operating distributed systems, such as microservices, or complex applications with many external integrations. We consider it to be a leading indicator of a healthy workload, and we are pleased to share our experiences with you here!

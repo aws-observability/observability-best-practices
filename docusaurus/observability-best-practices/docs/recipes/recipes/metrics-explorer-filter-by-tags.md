@@ -4,9 +4,9 @@ In this recipe we show you how to use Metrics explorer to filter, aggregate, and
 
 There are number of ways to create visualizations with Metrics explorer; in this walkthrough we simply leverage the AWS Console.
 
-!!! note
+:::note
     This guide will take approximately 5 minutes to complete.
-
+:::
 ## Prerequisites
 
 * Access to AWS account

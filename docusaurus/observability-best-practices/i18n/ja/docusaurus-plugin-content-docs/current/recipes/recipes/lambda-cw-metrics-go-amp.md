@@ -4,9 +4,9 @@
 
 [AWS Cloud Development Kit (CDK)](https://aws.amazon.com/cdk/) を使用して、Firehose デリバリーストリーム、Lambda、S3 バケットを作成するスタックを設定し、完全なシナリオをデモンストレーションします。
 
-!!! note
+:::note
     このガイドの完了には約 30 分かかります。
-
+:::
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定します。
 
@@ -33,9 +33,9 @@ aws amp create-workspace --alias prometheus-demo-recipe
 aws amp list-workspaces
 ```
 
-!!! info
+:::info
     詳細は、[AMP スタートガイド](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-getting-started.html)をご覧ください。
-
+:::
 ### 依存関係のインストール
 
 aws-o11y-recipes リポジトリのルートから、次のコマンドを使用して CWMetricStreamExporter ディレクトリに移動します。
@@ -123,9 +123,9 @@ CDK によって作成された既存の Firehose を使用して、メトリク
 
 Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、関数 `KinesisMessageHandler` をクリックします。 `Monitor` タブと `Logs` サブタブをクリックし、`Recent Invocations` の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
-!!! note
+:::note
     Monitor タブに呼び出しが表示されるまでに最大 5 分かかる場合があります。
-
+:::
 以上です!おめでとうございます。メトリクスが CloudWatch から Amazon Managed Service for Prometheus にストリーミングされるようになりました。
 
 ## クリーンアップ

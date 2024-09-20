@@ -14,9 +14,9 @@ CloudWatch Logs の[データ保護ポリシー](https://docs.aws.amazon.com/ja_
 - 健康保険カード番号 (EHIC) や個人健康番号などの保護された健康情報 (PHI)
 - 運転免許証、社会保障番号、納税者番号などの個人を特定できる情報 (PII)
 
-!!! important
+:::important
     機密データは、ロググループにインジェストされると検出され、マスクされます。 データ保護ポリシーを設定したとき、その時点より前にロググループにインジェストされたログイベントはマスクされません。
-
+:::
 上記で言及したデータタイプのいくつかを詳しく説明し、例を見ていきましょう:
 
 ## データ型
@@ -34,14 +34,15 @@ CloudWatch Logs データ保護ポリシーを使用すると、選択したデ�
 
 
 
-!!! Tip
+:::tip
     データ分類のベストプラクティスは、組織、法的、コンプライアンス基準を満たす明確に定義されたデータ分類ティアと要件から始まります。
 
     ベストプラクティスとして、組織のデータガバナンスポリシーに準拠したコンプライアンスを実装するために、データ分類フレームワークに基づいて AWS リソースにタグを付けます。
+:::
 
-
-!!! Tip
+:::tip
    ログイベントに機密データが含まれないようにするには、ベストプラクティスとして、コード内で最初に除外し、必要な情報のみを記録することです。
+:::
 
 ### 金融情報
 
@@ -51,9 +52,9 @@ PCI DSS(Payment Card Industry Data Security Standard) で定義されている�
 
 ![CloudWatch Logs における金融情報のデータ保護](../../../images/cwl-dp-fin-info.png)
 
-!!! info
+:::info
     金融データタイプとデータ識別子の完全なリストは[こちら](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-financial.html)をご確認ください
-
+:::
 ### 個人健康情報(PHI)
 
 PHI には、保険や請求情報、診断データ、医療記録やデータセットなどの臨床ケアデータ、画像や検査結果などの研究室結果など、広範囲にわたる個人を特定できる健康および健康関連データが含まれます。
@@ -62,18 +63,18 @@ CloudWatch Logs は、選択したロググループから健康情報をスキ�
 
 ![CloudWatch Logs による PHI のデータ保護](../../../images/cwl-dp-phi.png)
 
-!!! info
+:::info
     [phi データタイプとデータ識別子の完全なリスト](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-health.html) をご確認ください
-
+:::
 ### 個人を特定できる情報(PII)
 
 PII は、個人を特定できる個人データへのテキスト参照です。PII の例には、住所、銀行口座番号、電話番号があります。
 
 ![The CloudWatch Logs Data Protection for PHI](../../../images/cwl-dp-pii.png)
 
-!!! info
+:::info
     [PII データタイプとデータ識別子の完全なリスト](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html) をご確認ください
-
+:::
 ## マスクされたログ
 
 データ保護ポリシーを設定したロググループに移動すると、データ保護が `On` になっており、コンソールに機密データのカウントも表示されていることがわかります。
@@ -92,25 +93,25 @@ fields @timestamp, @message
 
 ![CloudWatch Logs の PHI のためのデータ保護](../../../images/cwl-dp-masked.png)
 
-!!! important
+:::important
     データ保護ポリシーを作成すると、デフォルトで選択したデータ識別子と一致する機密データがマスクされます。 `logs:Unmask` IAM アクセス許可を持つユーザーのみがマスクされていないデータを表示できます。
+:::
 
-
-!!! Tip
+:::tip
     CloudWatch の機密データへのアクセス管理と制限には、[AWS IAM and Access Management(IAM)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/auth-and-access-control-cw.html) を利用してください。
+:::
 
-
-!!! Tip
+:::tip
     クラウド環境の定期的なモニタリングと監査は、機密データを保護するうえで同様に重要です。アプリケーションが大量のデータを生成する場合、手動による監査が困難になるため、過剰な量のデータをログに記録しないことをおすすめします。 こちらの AWS 推奨ガイダンスをご覧ください。[ロギングのベストプラクティス](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html)
+:::
 
-
-!!! Tip
+:::tip
     CloudWatch Logs のロググループデータは常に暗号化されています。 または、[AWS Key Management Service](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) を使用してログデータを暗号化することもできます。
+:::
 
-
-!!! Tip
+:::tip
     回復力とスケーラビリティのために、CloudWatch アラームを設定し、AWS Amazon EventBridge と AWS Systems Manager を使用して自動修復を行ってください。
-
+:::
 
 
 [^1]: 機密データを保護する方法については、AWS ブログの [Protect Sensitive Data with Amazon CloudWatch Logs](https://aws.amazon.com/blogs/aws/protect-sensitive-data-with-amazon-cloudwatch-logs/) から始めてください。

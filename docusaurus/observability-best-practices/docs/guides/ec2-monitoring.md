@@ -34,18 +34,19 @@ The Unified CloudWatch Agent is an open-source software under the MIT license wh
 
 The CloudWatch Agent can be installed through the [command line](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html). The required package for various architectures and various operating systems are available for [download](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html). Create the necessary [IAM role](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html) which provides permissions for CloudWatch agent to read information from the Amazon EC2 instance and write it to CloudWatch. Once the required IAM role is created, you can [install and run](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html) the CloudWatch agent on the required Amazon EC2 Instance. 
 
-!!! note "References"
+:::note
+   "References"
 
     Documentation: [Installing the CloudWatch agent using the command line](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html)
 
     AWS Observability Workshop: [Setup and install CloudWatch agent](https://catalog.workshops.aws/observability/en-US/aws-native/ec2-monitoring/install-ec2)
+:::
 
 #### Installation through AWS Systems Manager
 
 The CloudWatch Agent can also be installed through [AWS Systems Manager](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html). Create the necessary IAM role which provides permissions for CloudWatch agent to read information from the Amazon EC2 instance and write it to CloudWatch & communicate with AWS Systems Manager. Before installing the CloudWatch agent on the EC2 instances, [install or update](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/download-CloudWatch-Agent-on-EC2-Instance-SSM-first.html#update-SSM-Agent-EC2instance-first) the SSM agent on the required EC2 instances. The CloudWatch agent can be downloaded through the AWS Systems Manager. JSON Configuration file can be created to specify what metrics (including custom metrics), logs are to be collected. Once the required IAM role is created & the configuration file is created, you can install and run the CloudWatch agent on the required Amazon EC2 Instances. 
 
-!!! note "References"
-
+:::note
     References:
     Documentation: [Installing the CloudWatch agent using AWS Systems Manager](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html)
 
@@ -54,14 +55,15 @@ The CloudWatch Agent can also be installed through [AWS Systems Manager](https:/
     Related Blog Article: [Amazon CloudWatch Agent with AWS Systems Manager Integration – Unified Metrics & Log Collection for Linux & Windows](https://aws.amazon.com/blogs/aws/new-amazon-cloudwatch-agent-with-aws-systems-manager-integration-unified-metrics-log-collection-for-linux-windows/)
 
     YouTube Video: [Collect Metrics and Logs from Amazon EC2 instances with the CloudWatch Agent](https://www.youtube.com/watch?v=vAnIhIwE5hY)
+:::
 
 #### Installing CloudWatch Agent on on-premise servers in hybrid environment. 
 
 In hybrid customer environments, where servers are on-premisis as well as in the cloud. A similar approach of can be taken to accomplish unified observability in Amazon CloudWatch. The CloudWatch agent can be directly downloaded from Amazon S3 or through AWS Systems Manager. Create an IAM User for the on-premise server to send data to Amazon CloudWatch. Install and Start the Agent on the on-premise servers. 
 
-!!! note "Reference"
-
+:::note
     Documentation: [Installing the CloudWatch agent on on-premises servers](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-premise.html)
+:::
 
 ### Monitoring of Amazon EC2 Instances using Amazon CloudWatch
 
@@ -76,10 +78,9 @@ Amazon CloudWatch collects and processes raw data from Amazon EC2 into readable 
 AWS provides two types of tools, automated and manual that help customers monitor their Amazon EC2 and report back when something is wrong. Some of these tools require a little configuration and a few require manual intervention. 
 [Automated Monitoring tools](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_automated_tools) include AWS System status checks, Instance status checks, Amazon CloudWatch alarms, Amazon EventBridge, Amazon CloudWatch Logs, CloudWatch agent, AWS Management Pack for Microsoft System Center Operations Manager. [Manual monitoring](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_manual_tools) tools include Dashboards which we’ll look in detail a separate section below in this article.
 
-!!! note "Reference"
-
+:::note
     Documentation: [Automated and manual monitoring](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring_automated_manual.html)
-
+:::
 ### Metrics from Amazon EC2 Instances using CloudWatch Agent
 
 Metrics are the fundamental concept in CloudWatch. A metric represents a time-ordered set of data points that are published to CloudWatch. Think of a metric as a variable to monitor, and the data points as representing the values of that variable over time. For example, the CPU usage of a particular EC2 instance is one metric provided by Amazon EC2.
@@ -118,9 +119,9 @@ The logs collected by the unified CloudWatch agent are processed and stored in A
 
 ![logs-view]((../imageslogs-view.png)
 
-!!! note "Reference"
-
+:::note
     AWS Observability Workshop: [Logs](https://catalog.workshops.aws/observability/en-US/aws-native/logs)
+:::
 
 ### Amazon EC2 Instance Events
 
@@ -133,9 +134,9 @@ Customers can [monitor the status of Amazon EC2 Instances](https://docs.aws.amaz
 Amazon CloudWatch Events can use Amazon EventBridge to automate system events to respond automatically for actions such as resource changes or issues. Events from AWS services including Amazon EC2 are delivered to CloudWatch Events in near real time and customers can create EventBridge rules to take appropriate actions when an event matches a rule. 
 Actions can be, Invoke an AWS Lambda function, Invoke Amazon EC2 Run Command, Relay the event to Amazon Kinesis Data Streams, Activate an AWS Step Functions state machine, Notify an Amazon SNS topic, Notify an Amazon SQS queue, piping to internal or external incident response application or SIEM tool.
 
-!!! note "Reference"
-
+:::note
     AWS Observability Workshop: [Incident Response - EventBridge Rule](https://catalog.workshops.aws/observability/en-US/aws-native/ec2-monitoring/incident-response/create-eventbridge-rule)
+:::
 
 #### Amazon CloudWatch Alarms for Amazon EC2 Instances
 

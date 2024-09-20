@@ -5,7 +5,7 @@ Amazon ECS にデプロイされたコンテナ化されたアプリケーショ
 
 Container Insights は、[埋め込みメトリクスフォーマット](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html)を使用してパフォーマンスログイベントとしてデータを収集します。これらのパフォーマンスログイベントは、高基数データを大規模に取り込み、保存できるように構造化された JSON スキーマを使用したエントリです。このデータから、CloudWatch はクラスター、ノード、サービス、タスクのレベルで集計メトリクスを CloudWatch メトリクスとして作成します。
 
-!!! note
+:::note
 	Container Insights のメトリクスを CloudWatch に表示するには、Amazon ECS クラスターで Container Insights を有効にする必要があります。これはアカウントレベルまたは個々のクラスターレベルで実行できます。アカウントレベルで有効にするには、次の AWS CLI コマンドを使用します。
 
     ```
@@ -17,7 +17,7 @@ Container Insights は、[埋め込みメトリクスフォーマット](https:/
     ```
     aws ecs update-cluster-settings --cluster $CLUSTER_NAME --settings name=containerInsights,value=enabled
     ```
-
+:::
 ## クラスターレベルとサービスレベルのメトリクスの収集
 
 デフォルトでは、CloudWatch Container Insights はタスク、サービス、クラスタのレベルでメトリクスを収集します。
@@ -29,18 +29,17 @@ Container Insights が収集するメトリクスは、CloudWatch コンソー�
 
 ![Container Insights metrics dashboard](../../../../images/ContainerInsightsMetrics.png)
 
-!!! note
+:::note
     Amazon EC2 インスタンス上で Amazon ECS を使用している場合で、Container Insights からネットワークとストレージのメトリクスを収集したい場合は、Amazon ECS エージェントバージョン 1.29 を含む AMI を使用してそのインスタンスを起動してください。
-    
-!!! warning
     Container Insights によって収集されたメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、[Amazon CloudWatch 料金](https://aws.amazon.com/cloudwatch/pricing/) を参照してください。
-
+:::
 ## インスタンスレベルのメトリクスの収集
 
 EC2 上でホストされている Amazon ECS クラスターに CloudWatch エージェントをデプロイすることで、そのクラスターのインスタンスレベルのメトリクスを収集できます。このエージェントはデーモンサービスとしてデプロイされ、クラスター内の各 EC2 コンテナインスタンスからインスタンスレベルのメトリクスをパフォーマンスログイベントとして送信します。これらのイベントから抽出されるインスタンスレベルのメトリクスの完全なリストは、[こちらで文書化されています](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-ECS.html)。
 
-!!! info
+:::info
     Amazon ECS クラスターに CloudWatch エージェントをデプロイしてインスタンスレベルのメトリクスを収集する手順は、[Amazon CloudWatch ユーザーガイド](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-instancelevel.html)に文書化されています。Fargate 上でホストされている Amazon ECS クラスターでは、このオプションは利用できないことに注意してください。
+:::
 
 ## Logs Insights を使用したパフォーマンスログイベントの分析
 
@@ -50,9 +49,10 @@ Logs Insights クエリを実行するためのユーザーインターフェイ
 
 ![Logs Insights ダッシュボード](../../../../images/LogInsights.png)
 
-!!! info
+:::info
     コンテナレベルの CPU およびメモリ使用率メトリクスを表示する Logs Insights クエリのサンプルを以下に示します。
     
     ```
     stats avg(CpuUtilized) as CPU, avg(MemoryUtilized) as Mem by TaskId, ContainerName | sort Mem, CPU desc
     ```
+:::

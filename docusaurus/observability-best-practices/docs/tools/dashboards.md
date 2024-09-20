@@ -30,9 +30,9 @@ Consider adding a visualization which shows how often the alarm has triggered in
 
 Finally, add some context to the dashboard. Include a brief description of the reason this dashboard exists, the workflow it relates to, what to do when there is an issue, links to documentation, and who to contact.
 
-!!! info
+:::info
     Now we have a *story*, which helps the dashboard user to see what is happening, understand the impact, and make appropriate data driven decisions on what action and the urgency of it.
-
+:::
 ### Don't try to visualize everything all at once
 
 We often talk about alarm fatigue. Too many alarms, without identifiable actions and priorities, can overload your team and lead to inefficiencies. Alarms should be for things which are important to you, and actionable.
@@ -48,8 +48,9 @@ For your dashboards, think about
 * What questions are they trying to answer?
 * What actions will they be taking as a result of seeing this data?
 
-!!! tip
+:::tip
     Sometimes it can be hard to know what your dashboard story should be, and how much to include. So where could you start to design your dashboard? Lets look at two ways: *KPI driven*, or *incident driven*.
+:::
 
 #### Design your dashboard: KPI driven
 
@@ -71,16 +72,16 @@ For each of these workflows, you might consider checking key components are func
 
 However, don't put all of your information on the same dashboard. Again, consider your user audience.
 
-!!! success
+:::info
     Create layers of dashboards that allow drilldown and provide the right context for the right users.
-
+:::
 #### Design your dashboard: Incident driven
 
 For many people, incident resolution is a key driver for observability. You have been alerted to an issue, by a user, or by an Observability alarm, and you need to quickly find a fix and potentially a root cause of the issue.
 
-!!! success
+:::info
     Start by looking at your recent incidents. Are there common patterns? Which were the most impactful for your company? Which ones repeat?
-
+:::
 In this case, we're designing a dashboard for those trying to understand the severity, identify the root cause and fix the incident.
 
 Think back to the specific indcident. 
@@ -100,8 +101,9 @@ It can be very useful here to have some kind of filtering or drilldown, to get t
 
 The layout of your dashboard is also important. 
 
-!!! success
+:::info
     Typically the most significant visualizations for your user want to be top left, or otherwise aligned with a natural *beginning* of page navigation.
+:::
 
 You can use layout to help tell the story. For example, you may use a top-down layout, where the further down you scroll, the more details you see. Or perhaps a left-right display would be useful with higher level services on the left, and their dependencies as you move to the right.
 
@@ -109,25 +111,25 @@ You can use layout to help tell the story. For example, you may use a top-down l
 
 Many of your workloads will be designed to grow or shrink as demand dictates, and your dashboards need to take this into account. For example you may have your instances in an autoscaling group, and when you hit a certain load, additional instances are added.
 
-!!! success
+:::info
     A dashboard showing data from specific instances, specified by some kind of ID, will not allow the data from those new instances to be seen. Add metadata to your resources and data, so you can create your visualizations to capture all instances with a specific metadata value. This way they will reflect the actual state.
-
+:::
 Another example of dynamic visualizations might be being able to find the top 10 errors occurring now, and how they have behaved over recent history. You want to be able to see a table, or a chart, without knowledge of which errors might occur.
 
 ### Think about symptoms first over causes
 
 When you observe symptoms, you are considering about the impact this has on your users and systems. Many underlying causes might give the same symptoms. This enables you to capture more issues, including unknown issues. As you understand causes, your lower level dashboards may be more specific to these to help you quickly diagnose and fix issues.
 
-!!! tip 
+:::tip 
     Don't capture the specific JavaScript error that impacted the users last week. Capture the *impact* on the workflow it disrupted, and then show the top count of JavaScript errors over recent history, or which have dramatically increased in recent history.
-
+:::
 ### Use top/bottom N
 
 Most of the time there is no need to visualize *all* of your operational metrics at the same time. A large fleet of EC2 instances is a good example of this: there is no need or value in having the disk IOPS or CPU utilization for an entire farm of hundreds of servers displayed simultaneously. This creates an anti-pattern where you can spend more time trying to dig-through your metrics than seeing the best (or worst) performing resources.
 
-!!! success
+:::info
     Use your dashboards to show the ten or 20 of any given metric, and then focus on the [symptoms](#think-about-symptoms-first-over-causes) this reveals. 
-
+:::
 [CloudWatch metrics](../tools/metrics/) allows you to search for the top N for any time series. For example, this query will return the busiest 20 EC2 instances by CPU utilization:
 
 ```
@@ -142,17 +144,18 @@ Your KPIs should have a warning or error threshold, and dashboards can show this
 
 ![Image of a horizonal annotation](../images/horizontal-annotation.png)
 
-!!! success
+:::info
     Horizontal annotations are a critical part of a well-developed dashboard.
-
+:::
 ### The importance of context
 
 People can easily misinterpret data. Their background and current context will colour how they view the data.
 
 So make sure you include *text* within your dashboard. What is this data for, and who? What does it mean? Link to documentation on the application, who supports it, the troubleshooting docs. You can also uses text displays to divide your dashboard display. se them on the left to set left-right context. Use them as full horizontal displays to divide your dashboard vertically.
 
-!!! success
+:::info
     Having links to IT support, operations on-call, or business owners can give teams a fast path to contact people who can help support when issues occur.
-
-!!! tip
+:::
+:::tip
     Hyperlinks to ticketing systems is also a very useful addition for dashboards.
+:::

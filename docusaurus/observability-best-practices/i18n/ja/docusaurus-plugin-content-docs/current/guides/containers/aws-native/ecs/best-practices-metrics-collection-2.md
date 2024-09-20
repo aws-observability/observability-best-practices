@@ -15,12 +15,10 @@ Prometheus サーバーがアプリケーションの HTTP エンドポイント
 
 [CloudWatch Container Insights による Prometheus モニタリング](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html) を使用すると、Amazon ECS クラスターで Prometheus の機能を活用できます。これは、EC2 と Fargate 上にデプロイされた Amazon ECS クラスターで利用できます。CloudWatch エージェントは、Prometheus サーバーのドロップイン置換として使用でき、可観測性を向上させるために必要なモニタリングツールの数を削減します。これにより、Amazon ECS にデプロイされたコンテナ化されたアプリケーションからの Prometheus メトリクスの自動検出が可能になり、メトリクスデータがパフォーマンスログイベントとして CloudWatch に送信されます。
 
-!!! info
+:::info
     Prometheus メトリクス収集用の CloudWatch エージェントを Amazon ECS クラスターにデプロイする手順は、[Amazon CloudWatch ユーザーガイド](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)に記載されています。
-    
-!!! warning
     Container Insights による Prometheus モニタリングで収集されるメトリクスは、カスタムメトリクスとして課金されます。CloudWatch の料金について詳しくは、[Amazon CloudWatch 料金](https://aws.amazon.com/jp/cloudwatch/pricing/) を参照してください。
-
+:::
 ### Amazon ECS クラスター上のターゲットの自動検出
 
 CloudWatch エージェントは、Prometheus ドキュメントの [scrape_config](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) セクションで定義されている標準の Prometheus スクレイプ構成をサポートしています。Prometheus は、サポートされている数十種類の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプ対象の静的および動的検出の両方をサポートしています。Amazon ECS には組み込みのサービス検出メカニズムがないため、エージェントはターゲットのファイルベースの検出をサポートする Prometheus に依存しています。ファイルベースのターゲット検出のためにエージェントを設定するには、エージェントの起動に使用されるタスク定義で定義されている 2 つの [構成パラメータ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-Setup-configure-ECS.html) が必要です。これらのパラメータをカスタマイズすることで、エージェントが収集するメトリクスを細かく制御できます。

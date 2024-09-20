@@ -2,9 +2,9 @@
 
 このレシピでは、[Amazon Redshift][redshift]（標準 SQL を使用したペタバイトスケールのデータウェアハウスサービス—）を [Amazon Managed Grafana][amg] で使用する方法を示します。この統合は、[Grafana 用 Redshift データソース][redshift-ds](DIY Grafana インスタンスで使用できるオープンソースプラグインで、Amazon Managed Grafana にプリインストールされています) によって可能になります。 
 
-!!! note
+:::note
     このガイドの完了には約 10 分かかります。
-
+:::
 ## 前提条件
 
 1. アカウントからAmazon Redshiftへの管理者アクセス権を持っている
@@ -13,16 +13,17 @@
     1. デフォルトのメカニズム、つまりRedshiftデータベースに対して一時的な資格情報オプションを使用して認証する場合は、`redshift_data_api_user`という名前のデータベースユーザーを作成する必要があります
     1. Secrets Managerの資格情報を使用する場合は、シークレットに`RedshiftQueryOwner: true`タグを付ける必要があります
 
-!!! tip
+:::tip
     サービス管理ポリシーまたはカスタムポリシーの使用方法の詳細は、
     [Amazon Managed Grafanaドキュメントの例][svpolicies]を参照してください。
+:::
 
 ## インフラストラクチャ
 Grafana インスタンスが必要なので、[Amazon Managed Grafana ワークスペース][amg-workspace] を新規にセットアップするか、[Getting Started][amg-getting-started] ガイドを使用するなどしてセットアップしてください。または、既存のワークスペースを使用しても構いません。
 
-!!! note
+:::note
     AWS データソースの構成を使用するには、まず Amazon Managed Grafana コンソールに移動し、Athena リソースを読み取るために必要な IAM ポリシーをワークスペースに付与する、サービスマネージドの IAM ロールを有効にしてください。
-
+:::
 
 Athena データソースを設定するには、左側のツールバーを使用し、下の AWS アイコンを選択してから「Redshift」を選択します。プラグインが Redshift データソースを検出するために使用するデフォルトリージョンを選択し、使用したいアカウントを選択して、最後に「Add data source」を選択します。
 

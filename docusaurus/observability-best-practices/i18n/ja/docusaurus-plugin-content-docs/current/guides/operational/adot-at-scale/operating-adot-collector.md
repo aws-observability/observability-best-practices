@@ -15,9 +15,9 @@
 * ゲートウェイ
 
 
-!!! tip
+:::tip
     これらの概念の詳細については、[OpenTelemetry のドキュメント](https://opentelemetry.io/docs/collector/deployment/)をご確認ください。
-
+:::
 ### コレクタなし
 このオプションは、基本的にコレクタを方程式から完全に省略します。ご存知かもしれませんが、OTEL SDK から直接デスティネーション サービスへの API 呼び出しを行い、シグナルを送信することが可能です。たとえば、ADOT Collector などのアウトオブプロセス エージェントにスパンを送信する代わりに、アプリケーション プロセスから直接 AWS X-Ray の [PutTraceSegments](https://docs.aws.amazon.com/xray/latest/api/API_PutTraceSegments.html) API を呼び出すことを考えてみてください。
 
@@ -330,9 +330,9 @@ go.opentelemetry.io/collector/exporter/exporterhelper/internal.(*boundedMemoryQu
 
 * 別のオプションとして、ゲートウェイコレクターに外部ラベルを追加して、Amazon Managed Service for Prometheus がこれらのメトリクスを個別のメトリクスシリーズとみなし、同じものではないと判断できるようにメトリクスシリーズを区別できます。
 
-    !!! warning 
+:::warning 
         このソリューションを使用すると、セットアップ内のゲートウェイコレクターの比率でメトリクスシリーズが増加する結果になります。これは、[`アクティブな時系列の制限`](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP_quotas.html)などの制限を超えてしまう可能性があります。
-
+:::
 * **ADOT コレクターをデーモンセットとしてデプロイしている場合**: 各 ADOT コレクターポッドが実行されているのと同じノードからのサンプルのみを保持するように `relabel_configs` を使用していることを確認してください。詳細は以下のリンクを確認してください。
     - [Amazon Managed Prometheus の高度なコレクター構成](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - *Click to View* セクションを展開し、次のようなエントリを探します。
         ```yaml

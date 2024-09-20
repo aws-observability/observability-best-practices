@@ -8,8 +8,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'AWS Observability Best Practices',
-  tagline: '🖥️ AWS Insights Amplified: Elevate Your Cloud with Smart Observability 🚀',
+  title: 'AWS Observability best practices',
+  tagline: '🖥️ AWS Insights: Elevate Your Cloud with Smart Observability 🚀',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -21,7 +21,7 @@ const config = {
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
   organizationName: 'AWS', // Usually your GitHub org/user name.
-  projectName: 'AWS Observability Best Practices', // Usually your repo name.
+  projectName: 'AWS Observability best practices', // Usually your repo name.
 
   onBrokenLinks: 'throw',
   onBrokenMarkdownLinks: 'warn',

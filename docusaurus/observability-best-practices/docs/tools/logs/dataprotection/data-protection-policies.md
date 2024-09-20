@@ -14,9 +14,9 @@ The techniques and criteria used to select sensitive data are referred to as [ma
 - Protected Health Information (PHI) such as Health Insurance Card Number (EHIC) or Personal health Number
 - Personally Identifiable Information (PII) such as driver’s licenses, social security numbers or taxpayer identification numbers
 
-!!! important
+:::note
     Sensitive data is detected and masked when it is ingested into the log group. When you set a data protection policy, log events ingested to the log group before that time are not masked.
-
+:::
 Let us expand on some of the data types mentioned above and see some examples:
 
 
@@ -35,15 +35,15 @@ Using CloudWatch Logs Data Protection policies, sensitive data that matches the 
 
 
 
-!!! Tip
+:::tip
     Data classification best practices start with clearly defined data classification tiers and requirements, which meet your organizational, legal, and compliance standards.
 
     As a best practice, use tags on AWS resources based on the data classification framework to implement compliance in accordance with your organization data governance policies. 
+:::
 
-
-!!! Tip
+:::tip
     To avoid sensitive data in your log events, best practice is to exclude them in your code in the first place and log only necessary information.
-
+:::
 
 
 ### Financial Information
@@ -54,9 +54,9 @@ To detect sensitive data, CloudWatch Logs scans for the data identifiers that yo
 
 ![The CloudWatch Logs Data Protection for Financial](../../../images/cwl-dp-fin-info.png)
 
-!!! info
+:::info
     Check the full list of [financial data types and data identifiers](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-financial.html)
-
+:::
 
 
 ### Protected Health Information (PHI)
@@ -67,10 +67,9 @@ CloudWatch Logs scan and detect the health information from the chosen log group
 
 ![The CloudWatch Logs Data Protection for PHI](../../../images/cwl-dp-phi.png)
 
-!!! info
+:::info
     Check the full list of [phi data types and data identifiers](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-health.html)
-
-
+:::
 
 ### Personally Identifiable Information (PII)
 
@@ -78,10 +77,9 @@ PII is a textual reference to personal data that could be used to identify an in
 
 ![The CloudWatch Logs Data Protection for PHI](../../../images/cwl-dp-pii.png)
 
-!!! info
+:::info
     Check the full list of [pii data types and data identifiers](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protect-sensitive-log-data-types-pii.html)
-
-
+:::
 
 ## Masked Logs
 
@@ -101,25 +99,25 @@ Once you expand a query, you will see the masked results as shown below:
 
 ![The CloudWatch Logs Data Protection for PHI](../../../images/cwl-dp-masked.png)
 
-!!! important
+:::important
     When you create a data protection policy, then by default, sensitive data that matches the data identifiers you've selected is masked. Only users who have the `logs:Unmask` IAM permission can view unmasked data.
+:::
 
-
-!!! Tip
+:::tip
     Use [AWS IAM and Access Management(IAM)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/auth-and-access-control-cw.html) to administer and restrict access to sensitive data in CloudWatch.
+:::
 
-
-!!! Tip
+:::tip
     Regular monitoring and auditing of your cloud environment are equally important in safeguarding sensitive data. It becomes a critical aspect when applications generate a large volume of data and manual and thereby, it is recommended not to log an excessive amount of data. Read this AWS Prescriptive Guidance for [Logging Best Practices](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html)
+:::
 
-
-!!! Tip
+:::tip
     Log Group Data is always encrypted in CloudWatch Logs. Alternatively, you can also use [AWS Key Management Service](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) to encrypt your log data.
+:::
 
-
-!!! Tip
+:::tip
     For resiliency and scalability, set up CloudWatch alarms and automate remediation using AWS Amazon EventBridge and AWS Systems Manager. 
-
+:::
 
 
 [^1]: Check our AWS blog [Protect Sensitive Data with Amazon CloudWatch Logs](https://aws.amazon.com/blogs/aws/protect-sensitive-data-with-amazon-cloudwatch-logs/) to get started.

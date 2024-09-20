@@ -10,9 +10,9 @@ on [AWS Fargate](https://aws.amazon.com/fargate/) cluster and use an
 [Amazon Elastic Container Registry (ECR)](https://aws.amazon.com/ecr/) repository
 to demonstrate a complete scenario.
 
-!!! note
+:::note
     This guide will take approximately 1 hour to complete.
-
+:::
 ## Infrastructure
 In the following section we will be setting up the infrastructure for this recipe. 
 
@@ -107,9 +107,10 @@ export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 To build the `ho11y` container image, first change into the `./sandbox/ho11y/`
 directory and build the container image :
 
-!!! note
+:::note
     The following build step assumes that the Docker daemon or an equivalent OCI image 
     build tool is running.
+:::
 
 ```
 docker build . -t "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest"
@@ -174,10 +175,10 @@ $ curl localhost:8765/
 {"traceId":"1-6193a9be-53693f29a0119ee4d661ba0d"}
 ```
 
-!!! tip
+:::tip
     If you want to automate the invocation, you can wrap the `curl` call into
     a `while true` loop.
-
+:::
 To verify our setup, visit the [X-Ray view in CloudWatch](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/)
 where you should see something like shown below:
 

@@ -10,11 +10,13 @@ like containers or Lambda functions.
 ![o11y space](images/o11y-space.png)
 
 
-!!! question "What is a signal?"
+:::note
+    "What is a signal?"
     When we say signal here we mean any kinds of o11y data and metadata points,
     including log entries, metrics, and traces. Unless we want to or have to be
     more specific, we use "signal" and it should be clear from the context what
     restrictions may apply.
+:::
 
 Let's now have a look at each of the six dimensions one by one:
 
@@ -63,11 +65,13 @@ With this dimension we mean any sort of application-external dependencies,
 be it infrastructure like the VPC the service is running in or a datastore
 like RDS or DynamoDB or a queue like SQS. 
 
-!!! tip "Commonalities"
+:::tip
+    "Commonalities"
     One thing all the sources in this dimension have
     in common is that they are located outside of your application (as well
     as the compute environment your app runs in) and with that you have to treat
     them as an opaque box.
+:::
 
 This dimension includes but is not limited to:
 

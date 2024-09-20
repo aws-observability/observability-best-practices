@@ -4,9 +4,9 @@
 
 実装の一環として、AMG ワークスペースを作成し、Azure Monitor プラグインを AMG のデータソースとして構成し、Grafana ダッシュボードを構成します。 Amazon SNS と Slack の 2 つの通知チャネルを作成します。また、アラート通知を送信するために、AMG ダッシュボードでアラートを構成します。
 
-!!! note
+:::note
     このガイドの完了には約 30 分かかります。
-
+:::
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定するセクションです。
 
@@ -21,9 +21,9 @@
 
 まず、Azure Monitor からのメトリクスを可視化するための AMG ワークスペースを作成します。[Amazon Managed Service for Grafana の概要](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/)のブログ記事の手順に従ってください。ワークスペースを作成したら、Grafana ワークスペースへのアクセスを個々のユーザーまたはユーザーグループに割り当てることができます。デフォルトでは、ユーザーのユーザータイプは viewer です。ユーザーロールに基づいてユーザータイプを変更します。 
 
-!!! 注意
+:::note
     ワークスペース内の少なくとも 1 人のユーザーには、Admin ロールを割り当てる必要があります。
-
+:::
 図 1 では、ユーザー名は grafana-admin です。ユーザータイプは Admin です。Data sources タブで、必要なデータソースを選択します。構成を確認し、Create workspace を選択します。
 ![azure-monitor-grafana-demo](../images/azure-monitor-grafana.png)
 

@@ -34,18 +34,19 @@ AWS では、お客様がエンドツーエンドのサービス可視性を得�
 
 CloudWatch エージェントは、[コマンドライン](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html)を通じてインストールできます。必要なパッケージは、さまざまなアーキテクチャとオペレーティング システムのために[ダウンロード](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/download-cloudwatch-agent-commandline.html)可能です。CloudWatch エージェントが Amazon EC2 インスタンスから情報を読み取り、CloudWatch に書き込むことを許可する必要な [IAM ロール](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/create-iam-roles-for-cloudwatch-agent-commandline.html) を作成します。必要な IAM ロールが作成されたら、必要な Amazon EC2 インスタンス上で CloudWatch エージェントを[インストールして実行](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html)できます。
 
-!!! note "参考資料"
+:::note
+     "参考資料"
 
     ドキュメント: [コマンドラインを使用した CloudWatch エージェントのインストール](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html)
 
     AWS Observability ワークショップ: [CloudWatch エージェントのセットアップとインストール](https://catalog.workshops.aws/observability/ja-JP/aws-native/ec2-monitoring/install-ec2)
+:::
 
 #### AWS Systems Manager を使用したインストール
 
 CloudWatch エージェントは、[AWS Systems Manager](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html) を使用してもインストールできます。CloudWatch エージェントが Amazon EC2 インスタンスから情報を読み取り、それを CloudWatch に書き込み、AWS Systems Manager と通信できるアクセス許可を付与する IAM ロールを作成します。EC2 インスタンスに CloudWatch エージェントをインストールする前に、必要な EC2 インスタンスで [SSM エージェントをインストールまたは更新](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/download-CloudWatch-Agent-on-EC2-Instance-SSM-first.html#update-SSM-Agent-EC2instance-first) します。CloudWatch エージェントは AWS Systems Manager を通じてダウンロードできます。収集するメトリクス(カスタムメトリクスを含む)とログを指定する JSON 設定ファイルを作成できます。必要な IAM ロールが作成され、設定ファイルが作成されたら、必要な Amazon EC2 インスタンスで CloudWatch エージェントをインストールして実行できます。
 
-!!! note "参考文献"
-
+:::note
     参考文献:
     ドキュメント: [AWS Systems Manager を使用した CloudWatch エージェントのインストール](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html)
 
@@ -54,14 +55,14 @@ CloudWatch エージェントは、[AWS Systems Manager](https://docs.aws.amazon
     関連ブログ記事: [Amazon CloudWatch Agent with AWS Systems Manager Integration – Unified Metrics & Log Collection for Linux & Windows](https://aws.amazon.com/blogs/aws/new-amazon-cloudwatch-agent-with-aws-systems-manager-integration-unified-metrics-log-collection-for-linux-windows/)
 
     YouTube 動画: [Collect Metrics and Logs from Amazon EC2 instances with the CloudWatch Agent](https://www.youtube.com/watch?v=vAnIhIwE5hY)
-
+:::
 #### ハイブリッド環境のオンプレミスサーバーへの CloudWatch エージェントのインストール
 
 サーバーがオンプレミスとクラウドの両方に存在するハイブリッドなお客様の環境では、Amazon CloudWatch で統一されたオブザーバビリティを実現するために、同様のアプローチを取ることができます。CloudWatch エージェントは、Amazon S3 から直接ダウンロードするか、AWS Systems Manager を通じてダウンロードできます。オンプレミスのサーバーから Amazon CloudWatch にデータを送信するための IAM ユーザーを作成します。オンプレミスのサーバーにエージェントをインストールして起動します。
 
-!!! note "参考資料" 
-
+:::note
     ドキュメント: [オンプレミスサーバーへの CloudWatch エージェントのインストール](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-premise.html)
+:::
 
 ### Amazon CloudWatch を使用した Amazon EC2 インスタンスのモニタリング
 
@@ -78,9 +79,9 @@ Amazon CloudWatch は、Amazon EC2 からの生データを収集し、リアル
 AWS は、Amazon EC2 のモニタリングと問題が発生した場合の報告を支援する自動化ツールと手動ツールの 2 種類を提供しています。これらのツールの一部は少しの設定が必要で、いくつかは手動の介入が必要です。
 [自動化モニタリングツール](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_automated_tools) には、AWS システムステータスチェック、インスタンスステータスチェック、Amazon CloudWatch アラーム、Amazon EventBridge、Amazon CloudWatch Logs、CloudWatch エージェント、Microsoft System Center Operations Manager 用 AWS Management Pack が含まれます。[手動モニタリング](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html#monitoring_manual_tools) ツールには、この記事の下のセクションで詳しく見ていくダッシュボードが含まれます。
 
-!!! note "参考文献"
-
+:::note
     ドキュメント: [自動化および手動によるモニタリング](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/monitoring_automated_manual.html)
+:::
 
 ### CloudWatch エージェントを使用した Amazon EC2 インスタンスからのメトリクス
 
@@ -120,9 +121,9 @@ Amazon CloudWatch Logs は、既存のシステム、アプリケーション、
 
 ![logs-view](../../images/logs-view.png)
 
-!!! note "参考資料"
-
+:::note
     AWS Observability ワークショップ: [Logs](https://catalog.workshops.aws/observability/ja-JP/aws-native/logs)
+:::
 
 ### Amazon EC2 インスタンスイベント
 
@@ -135,10 +136,10 @@ Amazon CloudWatch Logs は、既存のシステム、アプリケーション、
 Amazon CloudWatch Events は、Amazon EventBridge を使用してシステムイベントを自動化し、リソースの変更や問題などのアクションに自動的に対応できます。Amazon EC2 を含む AWS サービスからのイベントは、リアルタイムで CloudWatch Events に配信されます。カスタマーは、イベントがルールに一致したときに適切なアクションを実行するための EventBridge ルールを作成できます。
 アクションとして、AWS Lambda 関数の呼び出し、Amazon EC2 Run Command の呼び出し、イベントの Amazon Kinesis Data Streams へのリレー、AWS Step Functions ステートマシンのアクティブ化、Amazon SNS トピックへの通知、Amazon SQS キューへの通知、内部または外部のインシデント対応アプリケーションや SIEM ツールへのパイプなどがあります。
 
-!!! note "参照"
+:::note
 
     AWS Observability ワークショップ: [インシデント対応 - EventBridge ルール](https://catalog.workshops.aws/observability/ja-JP/aws-native/ec2-monitoring/incident-response/create-eventbridge-rule)
-
+:::
 #### Amazon EC2 インスタンスの Amazon CloudWatch アラーム
 
 Amazon [CloudWatch アラーム](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) は、指定した期間にわたってメトリクスを監視し、複数の期間におけるしきい値とのメトリクス値に基づいて、1つ以上のアクションを実行できます。アラームは状態が変化したときにのみアクションを呼び出します。アクションは、Amazon SNS トピックや Amazon EC2 オートスケーリングへの通知の送信あるいは [EC2 インスタンスの停止、終了、再起動、復旧などの適切な処理](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/UsingAlarmActions.html)を実行できます。

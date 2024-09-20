@@ -182,9 +182,10 @@ AWS CloudWatch にカスタムメトリクスを公開する 1 つの方法は�
 
 CloudWatch Lambda Insights は、CPU 時間、メモリ使用量、ディスク利用率、ネットワークパフォーマンスなどのシステムレベルのメトリクスを提供します。Lambda Insights は、**`コールドスタート`** や Lambda ワーカーのシャットダウンなどの診断情報も収集、集約、要約します。Lambda Insights は、Lambda レイヤーとしてパッケージ化された CloudWatch Lambda 拡張機能を利用しています。有効にすると、システムレベルのメトリクスを収集し、その Lambda 関数の呼び出しごとに埋め込みメトリクス形式の単一のパフォーマンスログイベントを CloudWatch Logs に発行します。
 
-!!! note
+:::note
     CloudWatch Lambda Insights はデフォルトでは有効化されておらず、Lambda 関数ごとに有効化する必要があります。
     AWS コンソールまたは Infrastructure as Code (IaC) を介して有効化できます。以下は、AWS サーバーレスアプリケーションモデル (SAM) を使用して有効化する例です。Lambda 関数に `LambdaInsightsExtension` 拡張レイヤーを追加し、ログストリームの作成と `PutLogEvents` API の呼び出しを許可してログを書き込めるようにする IAM マネージドポリシー `CloudWatchLambdaInsightsExecutionRolePolicy` も追加します。
+:::
 
 ```
 // Add LambdaInsightsExtension Layer to your function resource
@@ -290,9 +291,9 @@ const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 ...
 ```
 
-!!! note
+:::note
     個々のクライアントを計装するには、AWS SDK クライアントを `AWSXRay.captureAWSClient` の呼び出しでラップします。`captureAWS` と `captureAWSClient` の両方を使用しないでください。これにより重複したトレースが発生します。
-
+:::
 ## **その他のリソース**
 
 [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)

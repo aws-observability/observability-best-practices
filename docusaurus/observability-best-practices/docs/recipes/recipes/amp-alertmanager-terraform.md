@@ -3,9 +3,9 @@
 In this recipe, we will demonstrate how you can use [Terraform](https://www.terraform.io/) to provision [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) and configure rules management and alert manager to send notification to a [SNS](https://docs.aws.amazon.com/sns/) topic if a certain condition is met.
 
 
-!!! note
+:::note
     This guide will take approximately 30 minutes to complete.
-
+:::
 ## Prerequisites
 
 You will need the following to complete the setup:

@@ -4,9 +4,9 @@
 
 [Amazon Elastic Kubernetes Service(EKS)](https://aws.amazon.com/eks/) を [AWS Fargate](https://aws.amazon.com/fargate/) 上にセットアップし、デモンストレーションのために [Amazon Elastic Container Registry(ECR)](https://aws.amazon.com/ecr/) リポジトリを使用します。
 
-!!! note
+:::note
     このガイドの完了には約 1 時間かかります。
-
+:::
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定するセクションです。
 
@@ -91,9 +91,9 @@ export ACCOUNTID=`aws sts get-caller-identity --query Account --output text`
 
 `ho11y` コンテナイメージをビルドするには、まず `./sandbox/ho11y/` ディレクトリに移動し、コンテナイメージをビルドします。
 
-!!! note
+:::note
     次のビルド手順では、Docker デーモンまたは同等の OCI イメージビルドツールが実行されていることを前提としています。
-
+:::
 ```
 docker build . -t "$ACCOUNTID.dkr.ecr.$REGION.amazonaws.com/ho11y:latest"
 ```
@@ -150,8 +150,9 @@ $ curl localhost:8765/
 {"traceId":"1-6193a9be-53693f29a0119ee4d661ba0d"}
 ```
 
-!!! tip
+:::tip
     呼び出しを自動化したい場合は、`curl` 呼び出しを `while true` ループでラップできます。
+:::
 
 セットアップを確認するには、[CloudWatch の X-Ray ビュー](https://console.aws.amazon.com/cloudwatch/home#xray:service-map/) を参照してください。次のような表示がされるはずです。
 

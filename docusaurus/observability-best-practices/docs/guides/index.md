@@ -9,8 +9,9 @@ The most important consideration with observability is not your servers, network
 
 Start first with what your success criteria are. For example, if you run an e-commerce application, your measures of success may be number of purchases made over the past hour. If you run a non-profit, then it may be donations vs. your target for the month. A payment processor may watch for transaction processing time, whereas universities would want to measure student attendance.
 
-!!! tip
+:::tip
 	Success metrics are different for everyone! We may use an e-commerce application as an example here, but your projects can have a very different measurement. Regardless, the advice remains the same: know what *good* looks like and measure for it.
+:::
 
 Regardless of your application, you must start with identifying your key metrics. Then *work backwards[^1]* from that to see what impacts it from an application or infrastructure perspective. For example, if high CPU on your web servers endangers customer satisfaction, and in-turn your sales, then monitoring CPU utilization is important!
 
@@ -35,8 +36,9 @@ Tool selection is important and has a profound difference in how you operate and
 
 A complete picture of your health and operations requires tools that collect [logs](../signals/logs), [metrics](../signals/metrics), and [traces](../signals/traces), and then performs correlation, analysis, [anomaly detection](../signals/anomalies), [dashboarding](../tools/dashboards), [alarms](../tools/alarms) and more.
 
-!!! info
+:::info
 	Some observability solutions may not contain all of the above but are intended to augment, extend, or give added value to existing systems. In all cases, tool interoperability and extensibility is an important consideration when beginning an observability project.
+:::
 
 #### Every workload is different, but common tools make for a faster results
 

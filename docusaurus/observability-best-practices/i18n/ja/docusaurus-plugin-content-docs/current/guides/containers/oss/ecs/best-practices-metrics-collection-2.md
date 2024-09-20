@@ -4,9 +4,9 @@
 
 ADOT Collector は、以下に示すタスク定義を使用してサイドカーパターンでデプロイできます。Collector に使用されるコンテナイメージには、コンテナ定義の *command* セクションで指定できる 2 つの Collector パイプライン構成がバンドルされています。この値を `--config=/etc/ecs/ecs-default-config.yaml` に設定すると、Collector と同じタスク内で実行されている他のコンテナからのアプリケーションメトリクスとトレースを収集し、Amazon CloudWatch と AWS X-Ray に送信する[パイプライン構成](https://github.com/aws-observability/aws-otel-collector/blob/main/config/ecs/ecs-default-config.yaml)が使用されます。具体的には、Collector は OpenTelemetry SDK で計装されたアプリケーションから送信されたメトリクスを受信するために [OpenTelemetry Protocol (OTLP) Receiver](https://github.com/open-telemetry/opentelemetry-collector/tree/main/receiver/otlpreceiver) と、StatsD メトリクスを収集するための [StatsD Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/statsdreceiver) を使用します。さらに、AWS X-Ray SDK で計装されたアプリケーションからトレースを収集する [AWS X-ray Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/awsxrayreceiver) を使用します。
 
-!!! info
+:::info
     Amazon ECS クラスターにデプロイされた ADOT Collector が使用する IAM タスクロールとタスク実行ロールの設定についての詳細は、[ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-adot.html)を参照してください。
-
+:::
 ```javascript
 {
     "family":"AdotTask",
@@ -82,11 +82,10 @@ ADOT Collector は、以下に示すタスク定義を使用してサイドカ�
  }
 ```
 
-!!! important
+:::note
     SSM パラメータストアのパラメータ名は、AOT_CONFIG_CONTENT という名前の環境変数を使用してコレクターに公開する必要があります。
-    
-!!! important
     アプリケーションからの Prometheus メトリクスの収集のために ADOT コレクターを使用し、REPLICA サービススケジューラー戦略でデプロイする場合は、レプリカの数を 1 に設定する必要があります。コレクターのレプリカを 2 つ以上デプロイすると、ターゲットの宛先でメトリクスデータの不正な表現が発生します。
+:::
 
 以下の構成では、ADOT コレクターがクラスタ内のサービスから [Prometheus Receiver](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/prometheusreceiver) を使用して Prometheus メトリクスを収集できるようになります。このレシーバーは、最小限 Prometheus サーバーのドロップイン置換を意図しています。このレシーバーを使用してメトリクスを収集するには、スクレイプするターゲットサービスのセットを検出するメカニズムが必要です。このレシーバーは、サポートされている数十の [サービス検出メカニズム](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#scrape_config) のいずれかを使用して、スクレイプターゲットの静的および動的検出の両方をサポートしています。
 

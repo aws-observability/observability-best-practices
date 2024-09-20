@@ -7,8 +7,9 @@ is enabled by the [Athena data source for Grafana][athena-ds], an open source
 plugin available for you to use in any DIY Grafana instance as well as 
 pre-installed in Amazon Managed Grafana.
 
-!!! note
+:::note
     This guide will take approximately 20 minutes to complete.
+:::
 
 ## Prerequisites
 
@@ -27,10 +28,11 @@ scenario around VPC flow logs.
 
 First, let's make sure Athena is set up and the datasets are loaded.
 
-!!! warning
+:::warning
     You have to use the Amazon Athena console to execute these queries. Grafana
 	in general has read-only access to the data sources, so can not be used
 	to create or update data.
+:::
 
 #### Load geographical data
 
@@ -117,10 +119,11 @@ First, we need to tell EC2 to generate VPC Flow Logs for us. So, if you have
 not done this already, you go ahead now and [create VPC flow logs][createvpcfl] 
 either on the network interfaces level, subnet level, or VPC level.
 
-!!! note
+:::note
     To improve query performance and minimize the storage footprint, we store
     the VPC flow logs in [Parquet][parquet], a columnar storage format
     that supports nested data.
+:::
 
 For our setup it doesn't matter what option you choose (network interfaces, 
 subnet, or VPC), as long as you publish them to an S3 bucket in Parquet format
@@ -187,7 +190,7 @@ We need a Grafana instance, so go ahead and set up a new [Amazon Managed Grafana
 workspace][amg-workspace], for example by using the [Getting Started][amg-getting-started] guide,
 or use an existing one.
 
-!!! warning
+:::warning
     To use AWS data source configuration, first go to the Amazon Managed Grafana
     console to enable service-mananged IAM roles that grant the workspace the 
     IAM policies necessary to read the Athena resources.
@@ -201,6 +204,7 @@ or use an existing one.
 	you MUST add permissions manually.
 	1. You have to add the `s3:Get*` and `s3:List*` permissions for the underlying data source 
 	being queried manually.
+:::
 
 
 
@@ -257,22 +261,22 @@ WHERE type = 'node'
 LIMIT 500;
 ```
 
-!!!info
+:::info
     The Las Vegas region in above query is defined as everything with a latitude 
     between `36.1` and `36.3` as well as a longitude between `-115.5` and `-114.5`.
 	You could turn that into a set of variables (one for each corner) and make
 	the Geomap plugin adaptable to other regions.
-
+:::
 To visualize the OSM data using above query, you can import an example dashboard, 
 available via [osm-sample-dashboard.json](./amg-athena-plugin/osm-sample-dashboard.json)
 that looks as follows:
 
 ![Screen shot of the OSM dashboard in AMG](../images/amg-osm-dashboard.png)
 
-!!!note
+:::note
     In above screen shot we use the Geomap visualization (in the left panel) to
     plot the data points.
-
+:::
 ### Use VPC flow logs data
 
 To analyze the VPC flow log data, detecting SSH and RDP traffic, use the
@@ -305,9 +309,10 @@ GROUP BY start, action
 ORDER BY start ASC;
 ```
 
-!!! tip
+:::tip
     If you want to limit the amount of data queried in Athena, consider using
 	the `$__timeFilter` macro.
+:::
 
 To visualize the VPC flow log data, you can import an example dashboard, 
 available via [vpcfl-sample-dashboard.json](./amg-athena-plugin/vpcfl-sample-dashboard.json)

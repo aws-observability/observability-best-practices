@@ -16,8 +16,9 @@ A downside of the above two approach is that you may end up with unused capacity
 
 The most efficient way to track costs in multi-tenant Kubernetes clusters is to distribute incurred costs based on the amount of resources consumed by workloads. This pattern allows you to maximize the utilization of your EC2 instances because different workloads can share nodes, which allows you to increase the pod-density on your nodes. However, calculating costs by workload or namespaces is a challenging task. Understanding the cost-responsibility of a workload requires aggregating all the resources consumed or reserved during a time-frame, and evaluating the charges based on the cost of the resource and the duration of the usage. This is the exact challenge that Kubecost is dedicated to tackling.
 
-!!! tip
+:::tip
     Take a look at our [One Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics) to get a hands-on experience on Kubecost.
+:::
 
 ## Recommendations
 ### Cost Allocation

@@ -15,10 +15,10 @@ Depending on the your requirements, there are a few deployment options that you 
 * Gateway
 
 
-!!! tip
+:::tip
     Check out the [OpenTelemetry documentation](https://opentelemetry.io/docs/collector/deployment/)
     for additional information on these concepts.
-
+:::
 
 ### No Collector
 This option essentially skips the collector from the equation completely. If you are not aware, it is possible to make the API calls to destination services directly from the OTEL SDK and send the signals. Think about you making calls to the AWS X-Ray's [PutTraceSegments](https://docs.aws.amazon.com/xray/latest/api/API_PutTraceSegments.html) API directly from your application process instead of sending the spans to an out-of-process agent such as the ADOT Collector.
@@ -328,8 +328,9 @@ You can solve the out of order sample error in this particular setup in a couple
 
 * As an alternate option, you can add an external label in the Gateway Collectors to distinguish the metric series so Amazon Managed Service for Prometheus considers these metrics are individual metric series and are not from the same.
 
-    !!! warning
+:::warning
         Using this solution can will result in multiplying the metric series in proportion to the Gateway Collectors in the setup. This is might mean that you can overrun some limits such as [`Active time series limits`](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP_quotas.html)
+:::
 
 * **If you are deploying ADOT Collector as a Daemonset**: make sure you are using `relabel_configs` to only keep samples from the same node where each ADOT Collector pod is running. Check the links below to learn more.
     - [Advanced Collector Configuration for Amazon Managed Prometheus](https://aws-otel.github.io/docs/getting-started/adot-eks-add-on/config-advanced) - Expand the *Click to View* section, and look for the entried similar to the following:

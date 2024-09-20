@@ -186,8 +186,10 @@ To achieve this, you can generate the logs using [EMF specification](https://doc
 
 CloudWatch Lambda insights provides you system-level metrics, including CPU time, memory usage, disk utilization, and network performance. Lambda Insights also collects, aggregates, and summarizes diagnostic information, such as **`cold starts`** and Lambda worker shutdowns. Lambda Insights leverages CloudWatch Lambda extension, which is packaged as a Lambda layer. Once enabled, it collects system-level metrics and emits a single performance log event to CloudWatch Logs for every invocation of that Lambda function in the embedded metrics format. 
 
-!!! note
+:::note
     CloudWatch Lambda Insights is not enabled by default and needs to be turned on per Lambda function. 
+:::
+
 You can enable it via AWS console or via  Infrastructure as Code (IaC). Here is an example of how to enable it using the AWS serverless application model (SAM). You add `LambdaInsightsExtension` extension Layer to your Lambda function, and also add managed IAM policy `CloudWatchLambdaInsightsExecutionRolePolicy`, which gives permissions to your Lambda function to create log stream and call `PutLogEvents` API to be able to write logs to it.
 
 ```
@@ -296,9 +298,9 @@ const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 ...
 ```
 
-!!! note
+:::note
     To instrument individual clients wrap your AWS SDK client in a call to `AWSXRay.captureAWSClient`.  Do not use both `captureAWS` and `captureAWSClient` together. This will lead to duplicate traces.
-
+:::
 
 ## **Additional Resources**
 

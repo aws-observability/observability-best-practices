@@ -4,9 +4,9 @@
 
 実装の一環として、AMP ワークスペースを作成し、Kubernetes 用 App Mesh コントローラーをインストールして、Envoy コンテナを Pod に挿入します。EKS クラスターに構成された [Grafana Agent](https://github.com/grafana/agent) を使用して Envoy メトリクスを収集し、AMP に書き込みます。最後に、AMG ワークスペースを作成し、データソースとして AMP を構成し、カスタムダッシュボードを作成します。  
 
-!!! note
+:::note
     このガイドの完了には約 45 分かかります。
-
+:::
 ## インフラストラクチャ
 このレシピのインフラストラクチャを設定するセクションです。
 
@@ -17,10 +17,10 @@
 
 Grafana エージェントは Envoy メトリクスをスクレイプし、AMP のリモートライトエンドポイントを介して AMP に取り込むように構成されています。
 
-!!! info
+:::info
     AMP 用の Prometheus リモートライトエクスポータの詳細については、
     [AMP 用 Prometheus リモートライトエクスポータの概要](https://aws-otel.github.io/docs/getting-started/prometheus-remote-write-exporter)をご覧ください。
-
+:::
 ### 前提条件
 
 * AWS CLI が[インストール](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-install.html)され、[設定](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html)されています。
@@ -137,9 +137,9 @@ export REMOTE_WRITE_URL="https://aps-workspaces.$AWS_REGION.amazonaws.com/worksp
 
 次に、[grafana-agent.yaml](./servicemesh-monitoring-ampamg/grafana-agent.yaml) というマニフェストファイルを作成し、Envoy メトリクスを抽出するスクレイプ構成を記述し、Grafana Agent をデプロイします。
 
-!!! 注意
+:::note
     記事作成時点では、このソリューションはデーモンセットのサポートがない EKS on Fargate では機能しません。
-
+:::
 この例では、`grafana-agent` という名前のデーモンセットと `grafana-agent-deployment` という名前のデプロイメントをデプロイします。`grafana-agent` デーモンセットはクラスター上の Pod からメトリクスを収集し、`grafana-agent-deployment` デプロイメントは、クラスター外に存在する EKS コントロールプレーンなどのサービスからメトリクスを収集します。
 
 ```

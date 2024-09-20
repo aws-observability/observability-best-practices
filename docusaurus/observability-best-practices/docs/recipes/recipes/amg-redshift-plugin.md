@@ -6,9 +6,9 @@ is enabled by the [Redshift data source for Grafana][redshift-ds], an open sourc
 plugin available for you to use in any DIY Grafana instance as well as 
 pre-installed in Amazon Managed Grafana.
 
-!!! note
+:::note
     This guide will take approximately 10 minutes to complete.
-
+:::
 ## Prerequisites
 
 1. You have admin access to Amazon Redshift from your account.
@@ -21,20 +21,21 @@ pre-installed in Amazon Managed Grafana.
     1. If you want to use the credentials from Secrets Manager, you must tag the 
     secret with `RedshiftQueryOwner: true`.
 
-!!! tip
+:::tip
     For more information on how to work with the service-managed or custom policies,
     see the [examples in the Amazon Managed Grafana docs][svpolicies].
+:::
 
 ## Infrastructure
 We need a Grafana instance, so go ahead and set up a new [Amazon Managed Grafana
 workspace][amg-workspace], for example by using the [Getting Started][amg-getting-started] guide,
 or use an existing one.
 
-!!! note
+:::note
     To use AWS data source configuration, first go to the Amazon Managed Grafana
     console to enable service-mananged IAM roles that grant the workspace the 
     IAM policies necessary to read the Athena resources.
-
+:::
 
 To set up the Athena data source, use the left-hand toolbar and choose the 
 lower AWS icon and then choose "Redshift". Select your default region you want 

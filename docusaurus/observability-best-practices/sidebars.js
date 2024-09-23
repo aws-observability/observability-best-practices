@@ -101,7 +101,9 @@ module.exports = {
             {
               type: 'category',
               label: 'Open Source',
-              items: ['guides/containers/oss/eks/best-practices-metrics-collection'],
+              items: ['guides/containers/oss/eks/best-practices-metrics-collection',
+                'guides/containers/oss/eks/keda-amp-eks',
+              ],
             },
           ],
         },

@@ -27,7 +27,6 @@
 [alb-docs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-monitoring.html
 [nlb-docs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-monitoring.html 
 [vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
-[vpcf-ws]: https://amazon-es-vpc-flowlogs.workshop.aws/en/
 [eks-cp]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
 [lambda-docs]: https://docs.aws.amazon.com/lambda/latest/operatorguide/monitoring-observability.html
 [rds]: rds.md

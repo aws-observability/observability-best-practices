@@ -1,0 +1,11 @@
+{
+    "localeConfigs.label": "日本語",
+    "navbar.home": "ホーム",
+    "navbar.guides": "ガイド",
+    "navbar.signals": "シグナル",
+    "navbar.tools": "ツール",
+    "navbar.recipes": "レシピ",
+    "navbar.faq": "FAQ",
+    "navbar.contributors": "貢献者",
+    "footer.copyright": "Built with ❤️ at AWS. <br/> © ${new Date().getFullYear()}.  Amazon.com, Inc. or its affiliates. All Rights Reserved."
+  }

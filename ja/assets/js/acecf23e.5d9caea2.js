@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkobservability_best_practices=self.webpackChunkobservability_best_practices||[]).push([[1903],{1912:e=>{e.exports=JSON.parse('{"blogBasePath":"/ja/blog","blogTitle":"Blog"}')}}]);

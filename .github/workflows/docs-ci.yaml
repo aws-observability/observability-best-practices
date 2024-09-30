@@ -11,17 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-python@v4
+      - uses: actions/setup-node@v3
         with:
-          python-version: 3.x
-      - uses: actions/cache@v2
-        with:
-          key: ${{ github.ref }}
-          path: .cache
-      - run: pip install mkdocs-material
-      - run: mkdocs build -f mkdocs.yaml
-      - run: mkdocs build -f mkdocs.ja.yaml
+          node-version: 20
+          cach: yarn
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile --non-interactive
+      - name: Build
+        run: yarn build
       - uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./site
+          publish_dir: ./build

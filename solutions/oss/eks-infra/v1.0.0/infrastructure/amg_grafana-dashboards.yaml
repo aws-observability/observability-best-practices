@@ -1,0 +1,71 @@
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: cluster-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_CLUSTER_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: kubelet-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_KUBELET_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: namespace-workloads-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_NSWRKLDS_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: node-exporter-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_NODEEXP_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: nodes-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_NODES_DASH_URL}
+---
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDashboard
+metadata:
+  name: workloads-grafanadashboard
+  namespace: grafana-operator
+spec:
+  folder: "EKS Infrastructure Monitoring"
+  instanceSelector:
+    matchLabels:
+      dashboards: "external-grafana"
+  url: ${GRAFANA_WORKLOADS_DASH_URL}

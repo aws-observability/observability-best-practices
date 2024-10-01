@@ -17,16 +17,18 @@ Any transaction tracing solution requires an agent and an integration into the u
 
 The SDKs included with X-Ray are part of a tightly integrated instrumentation solution offered by AWS. ADOT is part of a broader industry solution in which X-Ray is only one of many tracing solutions. You can implement end-to-end tracing in X-Ray using either approach, but it’s important to understand the differences in order to determine the most useful approach for you.
 
-!!! success
+:::info
 	We recommend instrumenting your application with the AWS Distro for OpenTelemetry if you need the following:
 
     * The ability to send traces to multiple different tracing backends without having to re-instrument your code. For example, of you wish to shift from using the X-Ray console to [Zipkin](https://zipkin.io), then only configuration of the collector would change, leaving your applicaiton code untouched.
 
     * Support for a large number of library instrumentations for each language, maintained by the OpenTelemetry community. 
+:::
 
-!!! success
+:::info
 	We recommend choosing an X-Ray SDK for instrumenting your application if you need the following:
 
     * A tightly integrated single-vendor solution.
 
     * Integration with X-Ray centralized sampling rules, including the ability to configure sampling rules from the X-Ray console and automatically use them across multiple hosts, when using Node.js, Python, Ruby, or .NET
+:::

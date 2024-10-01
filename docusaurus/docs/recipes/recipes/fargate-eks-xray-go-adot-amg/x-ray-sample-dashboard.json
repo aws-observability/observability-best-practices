@@ -1,0 +1,379 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "AWS o11y recipes X-Ray example dashboard",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 18,
+  "links": [
+    {
+      "asDropdown": false,
+      "icon": "external link",
+      "includeVars": false,
+      "keepTime": false,
+      "tags": [],
+      "targetBlank": false,
+      "title": "Recipe …",
+      "tooltip": "",
+      "type": "link",
+      "url": "https://aws-observability.github.io/aws-o11y-recipes/recipes/fargate-eks-xray-go-adot-amg/"
+    }
+  ],
+  "panels": [
+    {
+      "collapsed": false,
+      "datasource": null,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 19,
+      "panels": [],
+      "title": "Traces",
+      "type": "row"
+    },
+    {
+      "datasource": "AWS X-Ray eu-west-1",
+      "description": "From X-Ray",
+      "gridPos": {
+        "h": 16,
+        "w": 15,
+        "x": 0,
+        "y": 1
+      },
+      "id": 12,
+      "pluginVersion": "7.5.5",
+      "targets": [
+        {
+          "group": {
+            "FilterExpression": null,
+            "GroupName": "Default",
+            "InsightsConfiguration": {
+              "InsightsEnabled": true,
+              "NotificationsEnabled": true
+            }
+          },
+          "query": "\n",
+          "queryType": "getServiceMap",
+          "refId": "A",
+          "region": "default"
+        }
+      ],
+      "title": "service map",
+      "type": "nodeGraph"
+    },
+    {
+      "datasource": "AWS X-Ray eu-west-1",
+      "description": "From X-Ray",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Error Count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "dark-red",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Total Count"
+            },
+            "properties": [
+              {
+                "id": "color",
+                "value": {
+                  "fixedColor": "yellow",
+                  "mode": "fixed"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 16,
+        "w": 9,
+        "x": 15,
+        "y": 1
+      },
+      "id": 13,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.0.5",
+      "targets": [
+        {
+          "columns": [
+            "TotalCount"
+          ],
+          "group": {
+            "FilterExpression": null,
+            "GroupName": "Default",
+            "InsightsConfiguration": {
+              "InsightsEnabled": true,
+              "NotificationsEnabled": true
+            }
+          },
+          "query": "service(\"frontend\")",
+          "queryType": "getTimeSeriesServiceStatistics",
+          "refId": "A",
+          "region": "default"
+        },
+        {
+          "columns": [
+            "ErrorStatistics.TotalCount"
+          ],
+          "group": {
+            "FilterExpression": null,
+            "GroupName": "Default",
+            "InsightsConfiguration": {
+              "InsightsEnabled": true,
+              "NotificationsEnabled": true
+            }
+          },
+          "hide": false,
+          "query": "service(\"frontend\")",
+          "queryType": "getTimeSeriesServiceStatistics",
+          "refId": "B",
+          "region": "default"
+        }
+      ],
+      "title": "invocation counts",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "AWS X-Ray eu-west-1",
+      "description": "From X-Ray",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "displayMode": "auto",
+            "filterable": true
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Id"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 302
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Response"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 90
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Response Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 147
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "URL"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": null
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client IP"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 140
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Annotations"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 61
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 20,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 21,
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": false,
+            "displayName": "Client IP"
+          }
+        ]
+      },
+      "pluginVersion": "8.0.5",
+      "targets": [
+        {
+          "group": {
+            "FilterExpression": null,
+            "GroupName": "Default",
+            "InsightsConfiguration": {
+              "InsightsEnabled": true,
+              "NotificationsEnabled": true
+            }
+          },
+          "query": "service(\"downstream0\") or service(\"downstream1\")",
+          "queryType": "getTraceSummaries",
+          "refId": "A",
+          "region": "default"
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "downstreams",
+      "type": "table"
+    }
+  ],
+  "refresh": false,
+  "schemaVersion": 30,
+  "style": "dark",
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "X-Ray sample (ho11y)",
+  "uid": "X-M5Ssc7z",
+  "version": 5
+}

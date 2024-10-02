@@ -22,10 +22,10 @@ It is important that you consider observability as a *solution* though and not a
 
 This site is organized into four categories:
 
-1. [Best practices by solution, such as for dashboarding, application performance monitoring, or containers](https://aws-observability.github.io/observability-best-practices/guides/)
-1. [Best practices for the use of different data types, such as for logs or traces](https://aws-observability.github.io/observability-best-practices/signals/logs/)
-1. [Best practices for specific AWS tools (though these are largely fungible to other vendor products as well)](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)
-1. [Curated recipes for observability with AWS](https://aws-observability.github.io/observability-best-practices/recipes/)
+1. [Best practices by solution, such as for dashboarding, application performance monitoring, or containers](https://aws-observability.github.io/observability-best-practices/docs/guides/)
+1. [Best practices for the use of different data types, such as for logs or traces](https://aws-observability.github.io/observability-best-practices/docs/signals/logs)
+1. [Best practices for specific AWS tools (though these are largely fungible to other vendor products as well)](https://aws-observability.github.io/observability-best-practices/docs/tools/cloudwatch_agent)
+1. [Curated recipes for observability with AWS](https://aws-observability.github.io/observability-best-practices/docs/recipes/)
 
 :::info
 	This site is based on real world use cases that AWS and our customers have solved for.

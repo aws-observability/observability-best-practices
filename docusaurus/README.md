@@ -12,6 +12,7 @@ You need to install [npm](https://docs.npmjs.com/downloading-and-installing-node
 ### Installation
 
 ```
+cd docusaurus
 $ (yarn | npm ) install
 ```
 

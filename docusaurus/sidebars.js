@@ -42,6 +42,7 @@ module.exports = {
           label: 'Cost',
           items: [
             'guides/cost/kubecost',
+            'guides/cost/OLA-EC2-righsizing',
             {
               type: 'category',
               label: 'Visualizing costs',

@@ -220,6 +220,13 @@ module.exports = {
             },
           ],
         },
+        {
+          type: 'category',
+          label: 'Application Signals',
+          items: [
+            'tools/application-signals/kotlin-signals',
+          ],
+        },
         'tools/metrics',
         'tools/rum',
         'tools/synthetics',

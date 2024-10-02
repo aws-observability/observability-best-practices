@@ -1,4 +1,4 @@
-# observability-best-practices
+# Observability Best Practices
 
 ## Welcome
 
@@ -6,33 +6,52 @@ This is the source for the [AWS Observability Best Practices site](https://aws-o
 
 ## How to run/develop this site
 
-This site is developed with `mkdocs` which is similar to Hugo with an auto-reload feature. Just save your progress and watch it refresh your browser.
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator. You need to install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) as a prerequisite.
 
-1) To get started with development, make sure you have a current version of `python` with `pip` installed.
-
-2) Install the following packages:
+### Installation
 
 ```
-pip install mkdocs
-pip install mkdocs-material
-pip install pymdown-extensions
+cd docusaurus
+$ (yarn | npm ) install
 ```
 
-For more details or assistance setting up, see:
-* **mkdocs** - https://www.mkdocs.org/user-guide/installation/#installing-mkdocs
-* **mkdocs-material** - https://squidfunk.github.io/mkdocs-material/getting-started/
-* **pymdown-extensions** - https://facelessuser.github.io/pymdown-extensions/installation/
-
-3) Build and run locally on http://127.0.0.1:8000/
+### Local Development
 
 ```
-mkdocs serve
+$ yarn start [or] npm run start
 ```
 
-If you want to Build and run Japanese content
+This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
+
+### Build
+
 ```
-mkdocs serve -f mkdocs.ja.yaml
+$ yarn build [or] npm run build
 ```
+
+This command generates static content into the `build` directory and can be served using any static contents hosting service.
+
+### Deployment
+
+Using SSH with yarn:
+```
+$ USE_SSH=true yarn deploy 
+```
+
+Using SSH with npm:
+```
+$ USE_SSH=true  npm run serve
+```
+
+Not using SSH:
+
+```
+$ GIT_USER=<Your GitHub username> yarn deploy
+```
+
+If you are using GitHub pages for hosting, this command is a convenient way to build the website and push to the `gh-pages` branch.
+
+
 
 ## Security
 

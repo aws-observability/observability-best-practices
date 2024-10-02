@@ -1,4 +1,6 @@
+import React from 'react';
 import clsx from 'clsx';
+import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
 
@@ -11,6 +13,7 @@ const FeatureList = [
         Guides were designed from the ground up to be easily followed and implemented, getting your cloud monitoring up and running quickly.
       </>
     ),
+    link: '/docs/guides',
   },
   {
     title: 'Signals',
@@ -20,6 +23,7 @@ const FeatureList = [
         Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators.
       </>
     ),
+    link: '/docs/signals/alarms',
   },
   {
     title: 'Tools',
@@ -29,6 +33,7 @@ const FeatureList = [
        Streamline your AWS monitoring with purpose-built solutions for efficient data collection, analysis, and visualization.
       </>
     ),
+    link: '/docs/tools/observability_accelerator',
   },
   {
     title: 'Recipes',
@@ -38,6 +43,7 @@ const FeatureList = [
         Implement proven AWS observability patterns to quickly solve common monitoring and troubleshooting challenges.
       </>
     ),
+    link: '/docs/recipes',
   },
   {
     title: 'FAQs',
@@ -47,6 +53,7 @@ const FeatureList = [
         Find quick answers to common AWS observability questions, clarifying key concepts and best practices.
       </>
     ),
+    link: '/docs/faq/adot',
   },
   {
     title: 'Patterns',
@@ -56,14 +63,17 @@ const FeatureList = [
         Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources.
       </>
     ),
+    link: '/docs/patterns/multiaccount',
   },
 ];
 
-function Feature({Svg, title, description}) {
+function Feature({Svg, title, description, link}) {
   return (
     <div className={clsx('col col--4')}>
       <div className="text--center">
-        <Svg className={styles.featureSvg} role="img" />
+        <Link to={link}>
+          <Svg className={styles.featureSvg} role="img" />
+        </Link>
       </div>
       <div className="text--center padding-horiz--md">
         <Heading as="h3">{title}</Heading>

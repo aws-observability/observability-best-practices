@@ -12,7 +12,7 @@ Benefits of undergoing the AWS OLA program includes,
 - **Reduce costs** by optimizing your cloud infrastructure which is one of the key aspects.
 - Model licensing scenarios, including license-included or BYOL instances, for flexibility in managing seasonal workloads and agile experimentation to **explore optimized licensing options** and hence eliminate unnecessary licensing costs.
 
-![OLA](../images/OLA.png)
+![OLA](../../images/OLA.png)
 
 ## AWS OLA for EEC2 Workloads
 
@@ -32,7 +32,7 @@ While the AWS OLA for EEC2 offers an assessment report for Amazon EC2 rightsizin
 
 Amazon EC2 Instances emit several metrics to Amazon CloudWatch by default. However, memory metrics isn’t one of the default metrics provided by Amazon EC2. Getting to know the memory metrics of Amazon EC2 helps understand the current memory utilization of your EC2 instances, so that the instances are neither under-provisioned nor over-provisioned. Under-provisioning of Amazon EC2 instances typically impairs the performance of the system or application, while over provisioning yields in wasteful expenditure. Memory heavy applications like Big Data Analytics, In-memory Databases, Real-time Streaming require you to monitor memory utilization on the instances for operational visibility.
 
-![CloudWatch Agent](../images/cw-agent.png)
+![CloudWatch Agent](../../images/cw-agent.png)
 
 ### Memory metrics collection from Amazon EC2 Instances
 
@@ -46,12 +46,12 @@ To collect memory metrics from [Amazon EC2 Instances](https://aws.amazon.com/ec2
 - Install CloudWatch agent on the required EC2 instance(s) (Windows or Linux) either [manually](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html) or using [Systems Manager Run Command](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html).
 - Configure CloudWatch agent to collect memory metrics and write to Amazon CloudWatch.
 
-![CloudWatch Metrics](../images/cw-metrics.png)
+![CloudWatch Metrics](../../images/cw-metrics.png)
 
 - View collected [metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html) and [logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) in the CloudWatch console.
 - Use CloudWatch Logs Insights to analyze log data
 
-![CloudWatch Metrics](../images/ec2-cloudwatch-metrics.png)
+![CloudWatch Metrics](../../images/ec2-cloudwatch-metrics.png)
 
 ### Memory metrics collection from Amazon EC2 Instances at scale
 

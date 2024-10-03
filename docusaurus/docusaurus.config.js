@@ -8,7 +8,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'AWS Observability best practices',
+  title: 'AWS Observability Best Practices',
   tagline: '🖥️ AWS Insights: Improving Cloud Observability 🚀',
   favicon: 'img/favicon.ico',
 

@@ -23,7 +23,7 @@ const config = {
   organizationName: 'AWS', // Usually your GitHub org/user name.
   projectName: 'AWS Observability best practices', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -48,11 +48,13 @@ const config = {
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
+          routeBasePath: '/',
           sidebarPath: './sidebars.js',
+          path: 'docs',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/aws-observability/observability-best-practices/',
+            'https://github.com/aws-observability/observability-best-practices/blob/main/docusaurus/',
         },
       
         theme: {

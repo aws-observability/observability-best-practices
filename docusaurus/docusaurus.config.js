@@ -50,7 +50,7 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
-          path: 'docs',
+          //path: 'docs',
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -69,8 +69,10 @@ const config = {
      [
        require.resolve("@easyops-cn/docusaurus-search-local"),
        ({
+         //docsDir: "docs",
          hashed: true,
-       //  language: ["en", "ja"],
+         indexPages: true,
+         language: ["en", "ja"],
          indexBlog: false,
        }),
      ],

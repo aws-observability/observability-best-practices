@@ -15,7 +15,7 @@ Start first with what your success criteria are. For example, if you run an e-co
 
 Regardless of your application, you must start with identifying your key metrics. Then *work backwards[^1]* from that to see what impacts it from an application or infrastructure perspective. For example, if high CPU on your web servers endangers customer satisfaction, and in-turn your sales, then monitoring CPU utilization is important!
 
-Note that cost is often an overlooked metric which impacts every business: if cost is higher than revenue, the business is at risk. If cost implications are considered early and continuously, systems can be designed to balance features, time-to-market, and efficiency. Also, you need to ensure that your costs have a measurable impact on your business and that your costs rise proportional to your profit. So, designate the cost as one of your key metrics and track it continuously.
+Note that cost is often an overlooked metric which impacts every business: if cost is higher than revenue, the business is at risk. If cost implications are considered early and continuously, systems can be designed to balance features, time-to-market, and efficiency. Also, you need to ensure that your costs have a measurable impact on your business and that your costs rise proportional to your profit. So, designate the cost as one of your key metrics and track it continuously. You can read [The Frugal Architect](https://www.thefrugalarchitect.com/) for further information.
 
 #### Know your objectives, and measure them!
 
@@ -32,7 +32,7 @@ Regardless of your metric data's original location or format, it must be maintai
 ![Example of a time series](../images/time_series.png)
 *Figure 1: example of a time series*
 
-Make the key metrics (especially cost) visible to engineers and relevant stakeholders, preferably through a screen in their office. This can foster sustainable practices such as tuning operations to trim costs. Also it can foster a healthy competition between teams which in turn increases productivity.
+Make the key metrics (especially cost) visible to engineers and relevant stakeholders, preferably through a screen in their office. This can foster sustainable practices such as tuning operations to trim costs. Also it can foster a healthy competition between teams which in turn increases productivity. You can read [The Frugal Architect](https://www.thefrugalarchitect.com/) for further information.
 
 ## Context propagation and tool selection
 

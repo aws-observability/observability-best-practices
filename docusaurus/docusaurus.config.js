@@ -56,12 +56,20 @@ const config = {
           editUrl:
             'https://github.com/aws-observability/observability-best-practices/blob/main/docusaurus/',
         },
-      
+        
         theme: {
           customCss: './src/css/custom.css',
         },
+        
+          gtag: {
+            trackingID: 'G-6Y0BGE0ZHE',
+            anonymizeIP: true,
+          },
+      
       }),
     ],
+   
+
   ],
 
   plugins: [

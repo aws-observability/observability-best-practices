@@ -7,6 +7,8 @@ import HomepageFeatures from '@site/src/components/HomepageFeatures';
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
 
+import { AwsRum } from 'aws-rum-web';
+
 function HomepageHeader() {
   const {siteConfig} = useDocusaurusContext();
   return (
@@ -30,6 +32,29 @@ function HomepageHeader() {
 
 export default function Home() {
   const {siteConfig} = useDocusaurusContext();
+  try {
+    const config = {
+      sessionSampleRate: 1,
+      identityPoolId: "us-east-2:27bab94f-d1e8-4816-a2b1-4b744240f6e0",
+      endpoint: "https://dataplane.rum.us-east-2.amazonaws.com",
+      telemetries: ["performance","errors","http"],
+      allowCookies: false,
+      enableXRay: false
+    };
+  
+    const APPLICATION_ID = 'a2880207-9afd-4af8-be67-12b15a338ccf';
+    const APPLICATION_VERSION = '1.0.0';
+    const APPLICATION_REGION = 'us-east-2';
+  
+    const awsRum = new AwsRum(
+      APPLICATION_ID,
+      APPLICATION_VERSION,
+      APPLICATION_REGION,
+      config
+    );
+  } catch (error) {
+    // Ignore errors thrown during CloudWatch RUM web client initialization
+  }
   return (
     <Layout
       title={`Hello from ${siteConfig.title}`}

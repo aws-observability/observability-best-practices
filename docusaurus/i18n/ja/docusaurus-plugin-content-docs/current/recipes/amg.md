@@ -1,38 +1,38 @@
 # Amazon Managed Grafana
 
-[Amazon Managed Grafana][amg-main] は、オープンソースの Grafana をベースにした、フルマネージドなサービスです。これにより、サーバーのプロビジョニング、ソフトウェアの構成と更新、Grafana を運用環境でセキュアにスケーリングするための重労働を行うことなく、メトリクス、ログ、トレースを分析できます。チームと可視化ダッシュボードを作成、探索、共有でき、複数のデータソースに接続できます。
+[Amazon Managed Grafana][amg-main] は、オープンソースの Grafana をベースにした完全マネージドサービスで、サーバーのプロビジョニング、ソフトウェアの構成と更新、本番環境での Grafana のセキュリティ対策やスケーリングの作業を行う必要がありません。複数のデータソースに接続し、チームとオブザーバビリティダッシュボードを作成、探索、共有できます。
 
-以下のレシピをご確認ください。
+次のレシピを確認してください:
 
 ## 基本
 
 - [はじめに][amg-gettingstarted]
-- [Terraform を使用した自動化][amg-tf-automation]
+- [Terraform を使った自動化][amg-tf-automation]
 
-## 認証とアクセスコントロール
+## 認証とアクセス制御
 
-- [アイデンティティプロバイダとの直接的な SAML 統合][amg-saml]
-- [シングルサインオンのためのアイデンティティプロバイダ(OneLogin、Ping Identity、Okta、Azure AD)の統合][amg-idps] 
-- [SAMLv2 を介した Google 認証の統合][amg-google-idps]
-- [カスタマーマネージド IAM ロールを使用したクロスアカウント Amazon Managed Grafana データソースの設定][amg-cross-account-access]
-- [Grafana Teams を使用した Amazon Managed Grafana でのきめ細かいアクセスコントロール][amg-grafana-teams]
+- [ID プロバイダーとの直接 SAML 統合][amg-saml]
+- [ID プロバイダー (OneLogin、Ping Identity、Okta、Azure AD) を SSO に統合][amg-idps]
+- [SAMLv2 経由で Google 認証を統合][amg-google-idps]
+- [カスタマー管理の IAM ロールを使用した Amazon Managed Grafana のクロスアカウントデータソースの設定][amg-cross-account-access]
+- [Grafana チームを使用した Amazon Managed Grafana の細かいアクセス制御][amg-grafana-teams]
 
 ## データソースとビジュアライゼーション
 
-- [Amazon Managed Grafana での Athena の使用][amg-plugin-athena]
-- [Amazon Managed Grafana での Redshift の使用][amg-plugin-redshift]
+- [Amazon Managed Grafana での Athena の利用][amg-plugin-athena]
+- [Amazon Managed Grafana での Redshift の利用][amg-plugin-redshift]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した statsd からのカスタムメトリクスの表示][amg-amp-statsd]
-- [顧客管理 IAM ロールを使用したクロスアカウント データソースの設定][amg-xacc-ds]
+- [カスタマー管理の IAM ロールを使用したクロスアカウントデータソースのセットアップ][amg-xacc-ds]
 
-## その他の資料
-- [ハイブリッド環境のモニタリング][amg-hybridenvs]
-- [規制対象のマルチテナント環境での Grafana と Loki の管理][grafana-loki-regenv]
-- [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere のモニタリング][amg-anywhere-monitoring]
-- [Getting Started ワークショップ][amg-oow]
+## その他
+- [ハイブリッド環境の監視][amg-hybridenvs]
+- [規制のある多テナント環境での Grafana と Loki の管理][grafana-loki-regenv]
+- [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere の監視][amg-anywhere-monitoring]
+- [入門ワークショップ][amg-oow]
 
 
-[amg-main]: https://aws.amazon.com/grafana/
-[amg-gettingstarted]: https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/
+[amg-main]: https://aws.amazon.com/jp/grafana/
+[amg-gettingstarted]: https://aws.amazon.com/jp/blogs/news/amazon-managed-grafana-getting-started/
 [amg-saml]: https://aws.amazon.com/blogs/mt/amazon-managed-grafana-supports-direct-saml-integration-with-identity-providers/
 [amg-idps]: https://aws.amazon.com/blogs/opensource/integrating-identity-providers-such-as-onelogin-ping-identity-okta-and-azure-ad-to-sso-into-aws-managed-service-for-grafana/
 [amg-google-idps]: recipes/amg-google-auth-saml.md

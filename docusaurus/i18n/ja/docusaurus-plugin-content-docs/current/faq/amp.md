@@ -1,43 +1,28 @@
-# Amazon Managed Service for Prometheus - よくある質問
+# Amazon Managed Service for Prometheus - FAQ
 
-1. **現在どの AWS リージョンがサポートされていますか? 他のリージョンからメトリクスを収集することは可能ですか?** サポートしているリージョンの最新リストは、[ドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html) をご覧ください。2023年にはすべての商用リージョンをサポートする計画です。優先順位をより適切に設定できるよう、サポートが必要なリージョンをお知らせください。特定のサポート対象リージョンにデータを送信することで、任意のリージョンからデータを収集できます。詳細はこちらのブログをご覧ください: [Amazon Managed Service for Prometheus のクロスリージョンメトリクス収集の設定](https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/)。
+1. **現在サポートされている AWS リージョンはどこですか。また、他のリージョンからメトリクスを収集することは可能ですか?** 現在サポートしているリージョョンの最新リストは、[ドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html)をご覧ください。2023 年中にすべての商用リージョンをサポートする予定です。優先的にサポートしてほしいリージョンがあれば教えてください。そうすれば、既存の製品機能リクエスト (PFR) の優先順位付けに役立ちます。サポートしているリージョンであれば、どのリージョンからでもデータを収集し、送信することができます。詳細については、次のブログをご覧ください。[Cross-region metrics collection for Amazon Managed Service for Prometheus](https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/)。
 
-1. **Cost Explorer や [CloudWatch の AWS 課金情報](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html) で課金やメータリングを確認するまでにどのくらい時間がかかりますか?**
-   取り込まれたメトリクス サンプルのブロックは、2 時間ごとに S3 にアップロードされるたびに即座に課金されます。Amazon Managed Service for Prometheus のメータリングと料金が報告されるまでに最大 3 時間かかる場合があります。
+2. **Cost Explorer または [CloudWatch での AWS 課金料金](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html)で課金やメータリングが表示されるまでにどのくらい時間がかかりますか?** 2 時間ごとに S3 にアップロードされた取り込みメトリクスサンプルのブロックは、すぐにメータリングされます。Amazon Managed Service for Prometheus の課金やメータリングが報告されるまでに最大 3 時間かかる場合があります。
 
-1. **Prometheus サービスは、クラスター (EKS/ECS) からメトリクスをスクレイピングできるだけのようですが、そうでしょうか?**
-   他のコンピュート環境に関するドキュメントが不足していることをお詫び申し上げます。Prometheus サーバーを使用して、[EC2 から Prometheus メトリクスをスクレイピング](https://aws.amazon.com/jp/blogs/news/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/)したり、Prometheus サーバーをインストールできるコンピュート環境ならどこからでもメトリクスを収集できます。リモートライトの設定と [AWS SigV4 プロキシ](https://github.com/awslabs/aws-sigv4-proxy) のセットアップが必要です。[EC2 ブログ](https://aws.amazon.com/jp/blogs/news/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/) の「aws-sigv4-proxy の実行」というセクションで、AWS SigV4 の実行方法を確認できます。他のコンピュート環境で AWS SigV4 を実行する方法を簡略化するためのドキュメントを追加する必要があります。
+3. **Prometheus サービスは、クラスター (EKS/ECS) からのメトリクスのスクレイピングしかできないようですが、これは正しいでしょうか?** ドキュメントに他のコンピューティング環境に関する情報がなく、申し訳ありません。[EC2 からの Prometheus メトリクス](https://aws.amazon.com/jp/blogs/news/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/)や、Prometheus サーバーをインストールできる他のコンピューティング環境からも、リモートライトを設定し、[AWS SigV4 プロキシ](https://github.com/awslabs/aws-sigv4-proxy)を設定すれば、Prometheus サーバーを使ってメトリクスをスクレイピングできます。[EC2 ブログ](https://aws.amazon.com/jp/blogs/news/using-amazon-managed-service-for-prometheus-to-monitor-ec2-environments/)には、「AWS SigV4 プロキシの実行」という項目があり、実行方法が示されています。他のコンピューティング環境で AWS SigV4 を実行する方法をドキュメントに追加する必要があります。
 
-1. **このサービスを Grafana に接続するにはどうすればよいでしょうか? 関連ドキュメントはありますか?**
-   Amazon Managed Service for Prometheus を PromQL を使用してクエリするために、Grafana で利用できるデフォルトの [Prometheus データソース](https://grafana.com/docs/grafana/latest/datasources/prometheus/) を使用します。以下のドキュメントとブログが開始するのに役立ちます。
+4. **このサービスを Grafana に接続するにはどうすればよいでしょうか。ドキュメントはありますか?** Grafana の [Prometheus データソース](https://grafana.com/docs/grafana/latest/datasources/prometheus/)を使って、PromQL で Amazon Managed Service for Prometheus を照会します。次のドキュメントとブログが役立つはずです。
+    1. [サービスドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-query.html)
+    2. [EC2 上の Grafana のセットアップ](https://aws.amazon.com/jp/blogs/news/setting-up-grafana-on-ec2-to-query-metrics-from-amazon-managed-service-for-prometheus/)
 
-   1. [サービスドキュメント](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-query.html)
-   1. [EC2 上での Grafana の設定](https://aws.amazon.com/jp/blogs/news/setting-up-grafana-on-ec2-to-query-metrics-from-amazon-managed-service-for-prometheus/)
+5. **Amazon Managed Service for Prometheus に送信されるサンプル数を減らすためのベストプラクティスは何ですか?** Amazon Managed Service for Prometheus に取り込まれるサンプル数を減らすには、スクレイプ間隔を延長する (30 秒から 1 分に変更するなど) か、スクレイピングしているシリーズの数を減らすことができます。スクレイプ間隔を変更した方が、シリーズ数を減らすよりも取り込まれるサンプル数への影響が大きく、スクレイプ間隔を 2 倍にすると取り込まれるサンプル数は半分になります。
 
-1. **Amazon Managed Service for Prometheus に送信されるサンプル数を減らすためのベストプラクティスは何ですか?**
-   Amazon Managed Service for Prometheus に取り込まれるサンプル数を減らすには、スクレイプ間隔を延長する (30 秒から 1 分に変更など) か、スクレイプする時系列の数を減らします。スクレイプ間隔を変更するほうが、時系列数を減らすよりもサンプル数に大きな影響を与えます。スクレイプ間隔を2倍にすると、取り込まれるサンプル量が半分になります。
+6. **CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するにはどうすればよいですか?** [CloudWatch メトリクススト リームを使って CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信する](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/)ことをおすすめします。この統合には次のような欠点があります。
+    1. Amazon Managed Service for Prometheus API を呼び出す Lambda 関数が必要
+    2. CloudWatch メトリクスを Amazon Managed Service for Prometheus に取り込む前に、メタデータ (AWS タグなど) を付加する機能がない
+    3. 名前空間でのみメトリクスをフィルタリングできる (十分に細かくない)。代替案として、Prometheus Exporter を使って CloudWatch メトリクスデータを Amazon Managed Service for Prometheus に送信することができます。(1) CloudWatch Exporter: CW ListMetrics および GetMetricStatistics (GMS) API を使用する Java ベースのスクレイピング。
 
-1. **CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するにはどうすればよいですか?**
-   CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するには、CloudWatch メトリクスストリームを利用することをおすすめします。この統合には、次のような短所があります。
+    [Yet Another CloudWatch Exporter (YACE)](https://github.com/nerdswords/yet-another-cloudwatch-exporter) は、CloudWatch から Amazon Managed Service for Prometheus にメトリクスを取得する別の選択肢です。これは、CW ListMetrics、GetMetricData (GMD)、GetMetricStatistics (GMS) API を使用する Go ベースのツールです。このツールを使う欠点は、エージェントをデプロイしてライフサイクルを自分で管理する必要があり、慎重に行う必要があることです。
 
-   1. Amazon Managed Service for Prometheus API を呼び出す Lambda 関数が必要
-   1. CloudWatch メトリクスにメタデータ (AWS タグなど) を追加してから Amazon Managed Service for Prometheus に取り込むことができない
-   1. メトリクスを名前空間でしかフィルタリングできない (細かい制御ができない)
+7. **どのバージョンの Prometheus と互換性がありますか?** Amazon Managed Service for Prometheus は [Prometheus 2.x](https://github.com/prometheus/prometheus/blob/main/RELEASE.md) と互換性があります。Amazon Managed Service for Prometheus は、データプレーンとしてオープンソースの [CNCF Cortex プロジェクト](https://cortexmetrics.io/)をベースにしています。Cortex は Prometheus との 100% の API 互換性を目指しています (/prometheus/* および /api/prom/* 以下)。Amazon Managed Service for Prometheus は、Prometheus 互換の PromQL クエリ、リモートライトメトリクス取り込み、Gauge、Counter、Summary、Histogram を含む既存のメトリクスタイプの Prometheus データモデルをサポートしています。現在、[すべての Cortex API](https://cortexmetrics.io/docs/api/) を公開していません。サポートしている互換 API のリストは[こちら](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-APIReference.html)にあります。Amazon Managed Service for Prometheus で必要な機能が不足している場合は、アカウントチームに連絡して新しい製品機能リクエスト (PFR) を作成するか、既存の PFR に影響を与えることができます。
 
-   代替策として、Prometheus Exporter を利用して CloudWatch メトリクスデータを Amazon Managed Service for Prometheus に送信できます。
+8. **Amazon Managed Service for Prometheus にメトリクスを取り込むためのコレクターとして何をおすすめしますか? Prometheus のエージェントモードを利用すべきでしょうか?** Prometheus サーバー (エージェントモードを含む)、OpenTelemetry エージェント、AWS Distro for OpenTelemetry エージェントを使って、メトリクスデータを Amazon Managed Service for Prometheus に送信することができます。AWS Distro for OpenTelemetry は、OpenTelemetry プロジェクトの下流ディストリビューションで、AWS によってパッケージ化およびセキュリティ対策が施されています。いずれでも構いません。チームのニーズと好みに最も合ったものを選んでください。
 
-   1. CloudWatch Exporter: CW ListMetrics API と GetMetricStatistics API を使用してスクレイピングする Java ベースのツール
-   1. [**Yet Another CloudWatch Exporter (YACE)**](https://github.com/nerdswords/yet-another-cloudwatch-exporter): CW ListMetrics API、GetMetricData API、GetMetricStatistics API を使用して CloudWatch からメトリクスを取得する Go ベースのツール
+9. **Amazon Managed Service for Prometheus のパフォーマンスは、ワークスペースのサイズによってどのように拡張しますか?** 現在、Amazon Managed Service for Prometheus は、単一のワークスペースで最大 200 万の有効な時系列をサポートしています。新しい上限を発表する際は、取り込みとクエリにおけるサービスのパフォーマンスと信頼性が維持されることを確認しています。ワークスペースの有効シリーズ数に関係なく、同じサイズのデータセットに対するクエリのパフォーマンスは低下しません。
 
-   この方法の短所は、エージェントをデプロイしてライフサイクルを管理する必要があることです。注意深く実装する必要があります。
-
-1. **どのバージョンの Prometheus と互換性がありますか?**
-   Amazon Managed Service for Prometheus は、[Prometheus 2.x](https://github.com/prometheus/prometheus/blob/main/RELEASE.md) と互換性があります。データプレーンとしてオープンソースの [CNCF Cortex プロジェクト](https://cortexmetrics.io/) をベースに構築されています。Cortex は Prometheus (/prometheus/* と /api/prom/* の下) と 100% API 互換を目指しています。Prometheus 互換の PromQL クエリ、リモートライトによるメトリクス取り込み、Gauge、Counter、Summary、Histogram などの既存のメトリクス タイプの Prometheus データモデルをサポートしています。現在、[すべての Cortex API](https://cortexmetrics.io/docs/api/) を公開しているわけではありません。サポートしている互換 API のリストは、[こちらで確認できます](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-APIReference.html)。Amazon Managed Service for Prometheus で必要な機能がない場合は、アカウント チームと連携して新規または既存の製品機能リクエスト (PFR) を開くことができます。
-
-1. **Amazon Managed Service for Prometheus にメトリクスを取り込むために推奨するコレクターは何ですか? Prometheus のエージェントモードを利用する必要がありますか?**
-   Prometheus サーバー(エージェントモードを含む)、OpenTelemetry エージェント、AWS Distro for OpenTelemetry エージェントのいずれも、Amazon Managed Service for Prometheus にメトリクスデータを送信するエージェントとして利用できます。AWS Distro for OpenTelemetry は、AWS によってパッケージ化および保護された OpenTelemetry プロジェクトのダウンストリーム配布です。3つのいずれかを選択できます。チームのニーズと好みに最も適したものを選んでください。
-
-1. **ワークスペースのサイズに応じて、Amazon Managed Service for Prometheus のパフォーマンスはどのようにスケールしますか?**
-   現在、Amazon Managed Service for Prometheus は、単一のワークスペースで最大 2 億のアクティブな時系列をサポートしています。新しい上限を発表する際は、サービスのパフォーマンスと信頼性が維持されることを確認しています。ワークスペース内のアクティブな時系列数に関係なく、同じデータセットに対するクエリのパフォーマンスが低下することはありません。
-
-1. **製品 FAQ** [https://aws.amazon.com/prometheus/faqs/](.)
+10. **製品 FAQ** [https://aws.amazon.com/jp/prometheus/faqs/](.)

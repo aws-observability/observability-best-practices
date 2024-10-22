@@ -1,10 +1,10 @@
 # Amazon Managed Streaming for Apache Kafka
 
-[Amazon Managed Streaming for Apache Kafka][msk-main](MSK) は、Apache Kafka を使用してストリーミングデータを処理するアプリケーションの構築と実行を簡単にする、完全マネージドなサービスです。Amazon MSK はクラスターの健全性を継続的に監視し、アプリケーションのダウンタイムなしで不健全なノードを自動的に交換します。さらに、Amazon MSK はデータの暗号化によって Apache Kafka クラスターを保護します。
+[Amazon Managed Streaming for Apache Kafka][msk-main] (MSK) は、Apache Kafka を使用してストリーミングデータを処理するアプリケーションを構築および実行するのを簡単にするフルマネージドサービスです。Amazon MSK は継続的にクラスターの健全性を監視し、アプリケーションをダウンタイムなしで自動的に不健全なノードを置き換えます。さらに、Amazon MSK は、データを静止時に暗号化することで Apache Kafka クラスターを保護します。
 
-以下のレシピをご確認ください:
+次のレシピをご覧ください:
 
 - [Amazon Managed Streaming for Apache Kafka: Prometheus によるオープンモニタリング][msk-prom]
 
-[msk-main]: https://aws.amazon.com/msk/
-[msk-prom]: https://docs.aws.amazon.com/msk/latest/developerguide/open-monitoring.html
+[msk-main]: https://aws.amazon.com/jp/msk/
+[msk-prom]: https://docs.aws.amazon.com/ja_jp/msk/latest/developerguide/open-monitoring.html

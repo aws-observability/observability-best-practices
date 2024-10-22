@@ -1,124 +1,117 @@
 # AWS における Databricks のモニタリングとオブザーバビリティのベストプラクティス
 
-Databricks は、データ分析や AI/ML ワークロードを管理するためのプラットフォームです。このガイドは、[AWS 上の Databricks](https://aws.amazon.com/solutions/partners/databricks/) を実行しているお客様が、AWS のネイティブサービスやオープンソースのマネージドサービスを使用してこれらのワークロードを監視するのを支援することを目的としています。
+Databricks はデータ分析と AI/ML ワークロードを管理するためのプラットフォームです。このガイドは、[AWS 上の Databricks](https://aws.amazon.com/jp/solutions/partners/databricks/) を実行しているお客様が、オブザーバビリティのための AWS ネイティブサービスまたは OpenSource 管理サービスを使用してこれらのワークロードを監視するのをサポートすることを目的としています。
 
 ## Databricks を監視する理由
 
-Databricks クラスタを管理する運用チームは、ワークロードのステータス、エラー、パフォーマンスのボトルネックを追跡するための統合されたカスタマイズされたダッシュボード;時間経過に伴うリソース使用量合計やエラー発生率などの望ましくない動作に対するアラート;根本原因分析のための集中ログ、および追加のカスタマイズされたメトリクスの抽出などの恩恵を受けます。
+Databricks クラスターを管理する運用チームは、統合されたカスタマイズ済みのダッシュボードを持つことで、ワークロードのステータス、エラー、パフォーマンスのボトルネックを追跡し、時間の経過に伴う総リソース使用量や、エラーの割合などの望ましくない動作に対するアラートを受け取り、さらにルートコース分析のための集中ロギングや、カスタマイズされた追加のメトリクスを抽出することができます。
 
-## モニタリングする項目
+## モニタリングすべき対象
 
-Databricks はクラスターインスタンスで Apache Spark を実行します。Spark にはメトリクスを公開するネイティブ機能があります。これらのメトリクスにより、ドライバー、ワーカー、クラスターで実行されているワークロードに関する情報が提供されます。
+Databricks は、クラスターインスタンス内で Apache Spark を実行しています。Apache Spark には、メトリクスを公開するネイティブ機能があります。これらのメトリクスから、ドライバー、ワーカー、およびクラスター内で実行されているワークロードに関する情報が得られます。
 
-Spark を実行しているインスタンスには、ストレージ、CPU、メモリ、ネットワーキングに関するその他の有用な情報があります。Databricks クラスターのパフォーマンスに影響を与え得る外部要因を理解することが重要です。インスタンスの多いクラスターの場合、ボトルネックと全体的な健全性を理解することも同様に重要です。
+Spark を実行しているインスタンスには、ストレージ、CPU、メモリー、ネットワークに関する有用な情報も含まれています。Databricks クラスターのパフォーマンスに影響を与える可能性のある外的要因を理解することが重要です。多数のインスタンスを持つクラスターの場合は、ボトルネックと全体的な健全性を把握することも重要です。
 
 ## モニタリングの方法
 
-コレクタとその依存関係をインストールするには、Databricks の init スクリプトが必要です。これらは、Databricks クラスタの各インスタンスの起動時に実行されるスクリプトです。
+コレクターとその依存関係をインストールするには、Databricks init スクリプトが必要です。これらは、Databricks クラスターの各インスタンスで起動時に実行されるスクリプトです。
 
-Databricks クラスターは、インスタンスプロファイルを使用してメトリクスとログを送信するアクセス許可も必要です。
+Databricks クラスターには、インスタンスプロファイルを使用してメトリクスとログを送信する権限も必要です。
 
-最後に、クラスタへの適切な参照に `testApp` を置き換えることにより、Databricks クラスターの Spark 構成でメトリクス名前空間を構成することがベストプラクティスです。
+最後に、Databricks クラスターの Spark 構成でメトリクスの名前空間を設定することが推奨されます。この際、`testApp` を適切なクラスター参照に置き換えてください。
 
 ![Databricks Spark Config](../../images/databricks_spark_config.png)
-*図 1: メトリクス名前空間の Spark 構成の例*
+*図 1: メトリクス名前空間の Spark 構成例*
 
-## DataBricks の優れたオブザーバビリティソリューションの主要部分
+## 優れた Observability ソリューションの主要な部分
 
-**1) メトリクス:** メトリクスとは、一定期間に測定されたアクティビティや特定のプロセスを記述する数値です。Databricks には次のような異なる種類のメトリクスがあります。
+**1) メトリクス:** メトリクスは、一定期間で測定された活動や特定のプロセスを表す数値です。Databricks におけるさまざまなメトリクスは以下のとおりです。
 
-CPU、メモリ、ディスク、ネットワークなどのシステムリソースレベルのメトリクス。 
-Custom Metrics Source、StreamingQueryListener、QueryExecutionListener を使用したアプリケーションメトリクス。 
-MetricsSystem によって公開されている Spark メトリクス。
+- システムリソースレベルのメトリクス (CPU、メモリ、ディスク、ネットワークなど)
+- Custom Metrics Source、StreamingQueryListener、QueryExecutionListener を使用したアプリケーションメトリクス
+- MetricsSystem によって公開される Spark メトリクス
 
-**2) ログ:** ログは発生した一連のイベントを表しており、それらについて線形的なストーリーを伝えます。Databricks には次のような異なる種類のログがあります。
+**2) ログ:** ログは発生したシリアルイベントの表現であり、それらについての直線的なストーリーを伝えます。Databricks におけるさまざまなログは以下のとおりです。
 
 - イベントログ
-- 監査ログ  
-- ドライバーログ: stdout、stderr、log4j カスタムログ(構造化ロギングを有効にする)
-- エグゼキューターログ: stdout、stderr、log4j カスタムログ(構造化ロギングを有効にする)
+- 監査ログ
+- ドライバーログ: stdout、stderr、log4j カスタムログ (構造化ロギングを有効化)
+- エグゼキューターログ: stdout、stderr、log4j カスタムログ (構造化ロギングを有効化)
 
-**3) トレース:** スタックトレースはエンドツーエンドの可視性を提供し、ステージ全体のフローを示します。これはエラーやパフォーマンスの問題を引き起こしているステージ/コードを特定するためのデバッグに役立ちます。
+**3) トレース:** スタックトレースは、エンドツーエンドの可視性を提供し、ステージを通じた全体の流れを示します。これは、エラーやパフォーマンス問題の原因となるステージ/コードを特定するためのデバッグに役立ちます。
 
-**4) ダッシュボード:** ダッシュボードは、アプリケーション/サービスのゴールデンメトリクスのすばらしい概要表示を提供します。
+**4) ダッシュボード:** ダッシュボードは、アプリケーション/サービスの主要なメトリクスの概要を提供します。
 
-**5) アラート:** アラートは、注意が必要な条件についてエンジニアに通知します。
+**5) アラート:** アラートは、注意を要する状況をエンジニアに通知します。
 
-## AWS ネイティブのオブザーバビリティオプション
+## AWS ネイティブなオブザーバビリティオプション
 
-Ganglia UIやLog Deliveryなどのネイティブソリューションは、システムメトリクスの収集やApache SparkTMメトリクスのクエリには最適なソリューションです。しかし、改善の余地がある領域もあります。
+Ganglia UI やログ配信などのネイティブソリューションは、システムメトリクスを収集したり、Apache Spark™ メトリクスを照会したりするのに優れたソリューションです。しかし、改善の余地がある部分もあります。
 
-- Ganglia はアラートをサポートしていません。 
-- Ganglia はログから導出されるメトリクス(例: ERRORログの成長率)をサポートしていません。
-- Gangliaを使用して、データの正確性、データの鮮度、エンドツーエンドのレイテンシに関連するSLO(Service Level Objectives)およびSLI(Service Level Indicators)を追跡したり、カスタムダッシュボードで視覚化したりすることができません。
+- Ganglia はアラートに対応していません。
+- Ganglia はログから派生したメトリクス (例: ERROR ログの増加率) を作成できません。
+- データの正確性、フレッシュ度、エンドツーエンドのレイテンシーに関連する SLO (Service Level Objectives) や SLI (Service Level Indicators) を追跡し、Ganglia で可視化するためのカスタムダッシュボードを使用できません。
 
-[Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) は、AWS上のDatabricksクラスターを監視および管理するための重要なツールです。クラスターのパフォーマンスに関する貴重な洞察を提供し、問題をすばやく特定および解決するのに役立ちます。DatabricksとCloudWatchの統合および構造化ロギングの有効化により、これらの領域を改善できます。CloudWatch Application Insightsを使用することで、ログに含まれるフィールドを自動的に検出できます。また、CloudWatch Logs Insightsには、より高速なデバッグと分析のための目的構築型クエリ言語があります。
+[Amazon CloudWatch](https://aws.amazon.com/jp/cloudwatch/) は、AWS 上の Databricks クラスターを監視および管理するための重要なツールです。クラスターのパフォーマンスに関する貴重な洞察を提供し、問題を迅速に特定して解決するのに役立ちます。Databricks と CloudWatch を統合し、構造化ログを有効にすることで、これらの領域を改善できます。CloudWatch Application Insights は、ログに含まれるフィールドを自動的に検出し、CloudWatch Logs Insights は高速なデバッグと分析のためのクエリ言語を提供します。
 
 ![Databricks With CloudWatch](../../images/databricks_cw_arch.png)
-*図2: Databricks CloudWatchアーキテクチャ*
+*図2: Databricks CloudWatch アーキテクチャ*
 
-CloudWatchを使用してDatabricksを監視する方法の詳細については、以下を参照してください。 
+Databricks を監視するための CloudWatch の使用方法の詳細については、以下を参照してください。
 [How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
 
-## オープンソースのオブザーバビリティオプション
+## オープンソースソフトウェアのオブザーバビリティオプション
 
-[Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) は、Prometheus 互換のマネージドサーバレスなモニタリングサービスで、メトリクスの保存や、そのメトリクスに基づいたアラートの管理を担当します。Prometheus は人気のオープンソースモニタリングテクノロジーで、Kubernetes に次いで Cloud Native Computing Foundation に属する 2 番目のプロジェクトです。
+[Amazon Managed Service for Prometheus](https://aws.amazon.com/jp/prometheus/) は、Prometheus 互換のマネージド型サーバーレスモニタリングサービスで、メトリクスの保存とメトリクスに基づくアラートの管理を行います。Prometheus は、Kubernetes に次いで Cloud Native Computing Foundation の第 2 のプロジェクトとして人気のあるオープンソースのモニタリングテクノロジーです。
 
-[Amazon Managed Grafana](https://aws.amazon.com/grafana/) は、Grafana のマネージドサービスです。Grafana は、時系列データの可視化に一般的に使用されるオープンソースのテクノロジーで、オブザーバビリティに利用されます。Grafana を使用することで、Amazon Managed Service for Prometheus、Amazon CloudWatch など、複数のソースからのデータを可視化できます。Databricks のメトリクスとアラートの可視化に利用します。
+[Amazon Managed Grafana](https://aws.amazon.com/jp/grafana/) は、Grafana のマネージドサービスです。Grafana は、オブザーバビリティに一般的に使用される時系列データの可視化のためのオープンソーステクノロジーです。Amazon Managed Service for Prometheus、Amazon CloudWatch などさまざまなソースからデータを可視化するために Grafana を使用できます。Databricks のメトリクスとアラートを可視化するために使用されます。
 
-[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) は、OpenTelemetry プロジェクトの AWS 対応ディストリビューションで、トレースとメトリクスの収集のためのオープンソース標準、ライブラリ、サービスを提供します。OpenTelemetry を通じて、Prometheus や StatsD など、複数のオブザーバビリティデータフォーマットを収集し、このデータをエンリッチして、CloudWatch や Amazon Managed Service for Prometheus などの複数のデスティネーションに送信できます。
+[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) は、トレースとメトリクスを収集するためのオープンソースの標準、ライブラリ、サービスを提供する OpenTelemetry プロジェクトの AWS サポート版です。OpenTelemetry を通じて、Prometheus や StatsD などさまざまなオブザーバビリティデータ形式を収集し、このデータを強化して、CloudWatch や Amazon Managed Service for Prometheus などさまざまな宛先に送信できます。
 
 ### ユースケース
 
-AWS ネイティブサービスは、Databricks クラスターを管理するために必要なオブザーバビリティを提供しますが、オープンソースのマネージドサービスを使用するのが最良の選択肢であるシナリオもあります。
+AWS ネイティブサービスは Databricks クラスターに必要なオブザーバビリティを提供しますが、オープンソースの管理サービスを使用する方が最適な場合もあります。
 
-Prometheus と Grafana は非常に人気のあるテクノロジーであり、すでに多くの企業で使用されています。オブザーバビリティのための AWS オープンソースサービスを使用すると、オペレーションチームは同じ既存のインフラ、同じクエリ言語、既存のダッシュボードとアラートを使用して、これらのサービスインフラ、スケーラビリティ、パフォーマンスを管理する大変な作業なしに、Databricks ワークロードを監視できます。
+Prometheus と Grafana はとても人気のある技術で、多くの企業ですでに使用されています。オブザーバビリティのための AWS オープンソースサービスを利用すれば、運用チームは既存のインフラストラクチャ、同じクエリ言語、既存のダッシュボードやアラートを使って Databricks ワークロードを監視できます。これらのサービスのインフラストラクチャ、スケーラビリティ、パフォーマンスを管理する手間はかかりません。
 
-ADOT は、CloudWatch と Prometheus などの異なるデスティネーションにメトリクスとトレースを送信する必要があるチーム、または OTLP と StatsD などの異なるタイプのデータソースで作業する必要があるチームにとって最良の選択肢です。
+ADOT は、メトリクスやトレースを CloudWatch や Prometheus など、さまざまな宛先に送信する必要があるチーム、または OTLP や StatsD などさまざまなデータソースを扱う必要があるチームにとって最適な選択肢です。
 
-最後に、Amazon Managed Grafana は CloudWatch と Prometheus を含む多数の異なるデータソースをサポートしており、複数のツールを使用することを選択したチームのデータを相関させるのに役立ちます。これにより、すべての Databricks クラスターのためのオブザーバビリティを可能にするテンプレートの作成と、インフラストラクチャとしてのコードを通じたプロビジョニングと構成を可能にする強力な API が実現します。
+最後に、Amazon Managed Grafana は CloudWatch や Prometheus を含む多くのデータソースをサポートしており、複数のツールを使用することを決めたチームのデータを相関させることができます。これにより、すべての Databricks クラスターのオブザーバビリティを可能にするテンプレートを作成したり、Infrastructure as Code を通じてプロビジョニングと構成を行うための強力な API を利用できます。
 
 ![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
-*図 3: Databricks オープンソース オブザーバビリティ アーキテクチャ*
+*図 3: Databricks オープンソースオブザーバビリティアーキテクチャ*
 
-AWS Managed Open Source Services for Observability を使用して Databricks クラスターからのメトリクスを観測するには、メトリクスとアラートの両方を可視化するための Amazon Managed Grafana ワークスペースと、Amazon Managed Grafana ワークスペースでデータソースとして構成されている Amazon Managed Service for Prometheus ワークスペースが必要です。
+AWS 管理オープンソースオブザーバビリティサービスを使って Databricks クラスターのメトリクスを監視するには、メトリクスとアラートの可視化に Amazon Managed Grafana ワークスペース、Amazon Managed Grafana ワークスペースのデータソースとして構成された Amazon Managed Service for Prometheus ワークスペースが必要です。
 
-収集する必要がある重要な 2 つの種類のメトリクスがあります: Spark メトリクスとノードメトリクスです。
+収集が必要な重要なメトリクスには 2 種類あります。Spark メトリクスとノードメトリクスです。
 
-Spark メトリクスには、クラスター内の現在のワーカー数やエグゼキューター数などの情報が含まれます。処理中にノード間でデータを交換するシャッフルや、データが RAM からディスクへ、ディスクから RAM へ移動するスピルなども含まれます。これらのメトリクスを公開するには、バージョン 3.0 以降で利用できるネイティブの Spark Prometheus を Databricks 管理コンソールを介して有効にし、`init_script` を介して構成する必要があります。
+Spark メトリクスには、クラスター内の現在のワーカー数やエグゼキューター数、処理中にノード間でデータをやり取りする際のシャッフル、RAM からディスクへ、ディスクから RAM へのデータ移動であるスピルなどの情報が含まれます。これらのメトリクスを公開するには、Spark ネイティブの Prometheus (バージョン 3.0 以降で利用可能) を Databricks 管理コンソールで有効化し、`init_script` で構成する必要があります。
 
-ディスク使用量、CPU 時間、メモリ、ストレージパフォーマンスなどのノードメトリクスを追跡するには、`node_exporter` を使用します。これは追加の構成なしで使用できますが、重要なメトリクスのみを公開する必要があります。
+ディスク使用量、CPU 時間、メモリ、ストレージパフォーマンスなどのノードメトリクスを追跡するには、`node_exporter` を使用します。`node_exporter` は追加の構成なしで使用できますが、重要なメトリクスのみを公開するようにする必要があります。
 
-各ノードに ADOT Collector をインストールする必要があります。これにより、Spark と `node_exporter` が公開するメトリクスをスクレイピングし、`cluster_name` などのメタデータを注入し、これらのメトリクスを Prometheus ワークスペースに送信します。
+ADOT コレクターをクラスターの各ノードにインストールし、Spark と `node_exporter` から公開されたメトリクスをスクレイピングし、これらのメトリクスをフィルタリングし、`cluster_name` などのメタデータを注入し、これらのメトリクスを Prometheus ワークスペースに送信する必要があります。
 
-ADOT Collector と `node_exporter` は両方とも、`init_script` を介してインストールおよび構成する必要があります。
+ADOT コレクターと `node_exporter` の両方を `init_script` を使ってインストールおよび構成する必要があります。
 
-Databricks クラスターは、Prometheus ワークスペースにメトリクスを書き込む権限を持つ IAM ロールで構成する必要があります。
+Databricks クラスターには、Prometheus ワークスペースにメトリクスを書き込む権限を持つ IAM ロールを設定する必要があります。
 
 ## ベストプラクティス
 
 ### 価値のあるメトリクスを優先する
 
-Spark と node_exporter はどちらも、同じメトリクスに対していくつかのフォーマットで多数のメトリクスを公開します。
-モニタリングとインシデント対応に役立つメトリクスをフィルタリングしないと、問題を検知するまでの平均時間が増加し、サンプルを保存するコストが増加し、価値のある情報が見つけづらく理解しづらくなります。
-OpenTelemetry プロセッサを使用することで、価値のあるメトリクスのみをフィルタリングして保持したり、意味のないメトリクスをフィルタリングしたり、AMP へ送信する前にメトリクスを集計および計算したりすることができます。
+Spark と node_exporter はどちらも多数のメトリクスを公開しており、同じメトリクスに対して複数の形式があります。モニタリングとインシデント対応に役立つメトリクスを選別しないと、問題の検出時間が長くなり、サンプルの保存コストが増加し、価値のある情報を見つけ理解するのが難しくなります。OpenTelemetry の Processors を使用すると、価値のあるメトリクスのみを選択して保持したり、意味のないメトリクスを除外したり、AMP に送信する前にメトリクスを集約して計算したりできます。
 
 ### アラート疲れを避ける
 
-有用なメトリクスが AMP に取り込まれたら、アラートの設定が不可欠です。
-ただし、すべてのリソース使用量のバーストに対してアラートを出すと、アラート疲れを引き起こす可能性があります。
-つまり、ノイズが多すぎるとアラートの重要度に対する信頼性が低下し、重要なイベントが検出されなくなるのです。
-AMP のアラートルールのグループ機能を使用して、あいまいさを避ける必要があります。
-つまり、複数の関連するアラートで個別の通知が生成されるのを避ける必要があります。
-また、アラートには適切な重要度を割り当てる必要があり、ビジネスの優先事項を反映する必要があります。
+価値のあるメトリクスが AMP に取り込まれると、アラートを設定することが不可欠です。ただし、リソース使用量の一時的な増加すべてにアラートを設定すると、アラート疲れを引き起こす可能性があります。つまり、ノイズが多すぎると、アラートの重大度に対する信頼性が低下し、重要なイベントが見逃されてしまいます。AMP のアラートルールのグループ化機能を使用すると、複数の関連するアラートが個別の通知を生成するのを避けられます。また、アラートには適切な重大度を設定し、ビジネスの優先順位を反映させる必要があります。
 
-### Amazon Managed Grafana ダッシュボードの再利用
+### Amazon Managed Grafana のダッシュボードを再利用する
 
-Amazon Managed Grafana は、Grafana のネイティブテンプレート機能を利用して、すべての既存および新しい Databricks クラスターのダッシュボードを作成できるようにしています。これにより、各クラスターごとに視覚化を手動で作成および保守する必要がなくなります。この機能を使用するには、クラスターごとにこれらのメトリクスをグループ化するために、メトリクスに正しいラベルが付いていることが重要です。ここでも、OpenTelemetry プロセッサを使用することで実現できます。
+Amazon Managed Grafana は、Grafana のネイティブテンプレート機能を活用しています。これにより、既存および新規の Databricks クラスターすべてに対してダッシュボードを作成できます。各クラスターごとに可視化を手動で作成し、維持する必要がなくなります。この機能を使用するには、メトリクスに適切なラベルを付けてメトリクスをクラスターごとにグループ化することが重要です。これも OpenTelemetry の Processors で可能です。
 
-## 参考文献とその他の情報
+## 参考資料と詳細情報
 
 - [Amazon Managed Service for Prometheus ワークスペースの作成](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-create-workspace.html)
-- [Amazon Managed Grafana ワークスペースの作成](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)  
+- [Amazon Managed Grafana ワークスペースの作成](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/Amazon-Managed-Grafana-create-workspace.html)
 - [Amazon Managed Service for Prometheus データソースの設定](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/prometheus-data-source.html)
-- [Databricks 初期化スクリプト](https://docs.databricks.com/clusters/init-scripts.html)
+- [Databricks Init Scripts](https://docs.databricks.com/clusters/init-scripts.html)

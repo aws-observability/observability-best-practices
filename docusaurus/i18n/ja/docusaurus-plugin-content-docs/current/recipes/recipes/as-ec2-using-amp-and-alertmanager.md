@@ -1,20 +1,22 @@
 # Amazon Managed Service for Prometheus とアラートマネージャーを使用した Amazon EC2 の自動スケーリング
 
-お客様は、既存の Prometheus ワークロードをクラウドに移行し、クラウドが提供するすべての機能を利用したいと考えています。AWS には Amazon [EC2 Auto Scaling](https://aws.amazon.com/ec2/autoscaling/) のようなサービスがあり、これにより CPU やメモリ利用率などのメトリクスに基づいて [Amazon Elastic Compute Cloud (Amazon EC2)](https://aws.amazon.com/pm/ec2/) インスタンスをスケールアウトできます。Prometheus メトリクスを使用するアプリケーションは、モニタリングスタックを置き換える必要なく、EC2 Auto Scaling と簡単に統合できます。この投稿では、[Amazon Managed Service for Prometheus アラートマネージャー](https://aws.amazon.com/prometheus/) と連携するように Amazon EC2 Auto Scaling を設定する方法を説明します。このアプローチにより、Prometheus ベースのワークロードをクラウドに移行しながら、自動スケーリングなどのサービスを活用できます。
+お客様は、既存の Prometheus ワークロードをクラウドに移行し、クラウドが提供するすべての機能を活用したいと考えています。AWS には、[Amazon EC2 Auto Scaling](https://aws.amazon.com/jp/ec2/autoscaling/) のようなサービスがあり、CPU やメモリ使用率などのメトリクスに基づいて [Amazon Elastic Compute Cloud (Amazon EC2)](https://aws.amazon.com/jp/pm/ec2/) インスタンスをスケールアウトできます。Prometheus メトリクスを使用するアプリケーションは、監視スタックを置き換える必要なく、EC2 Auto Scaling に簡単に統合できます。この記事では、[Amazon Managed Service for Prometheus Alert Manager](https://aws.amazon.com/jp/prometheus/) と連携するように Amazon EC2 Auto Scaling を設定する方法を説明します。このアプローチにより、Prometheus ベースのワークロードをクラウドに移行しながら、自動スケーリングなどのサービスを活用できます。
 
-Amazon Managed Service for Prometheus は、[PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/) を使用する[アラートルール](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-Ruler.html)をサポートしています。[Prometheus アラートルールのドキュメント](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/) には、有効なアラートルールの構文と例が記載されています。同様に、Prometheus アラートマネージャーのドキュメントには、有効なアラートマネージャー構成の [構文](https://prometheus.io/docs/prometheus/latest/configuration/template_reference/) と [例](https://prometheus.io/docs/prometheus/latest/configuration/template_examples/) が参照されています。
+Amazon Managed Service for Prometheus は、[PromQL](https://prometheus.io/docs/prometheus/latest/querying/basics/) を使用する[アラートルール](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-Ruler.html)をサポートしています。[Prometheus アラートルールのドキュメント](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/)には、有効なアラートルールの構文と例が記載されています。同様に、Prometheus アラートマネージャーのドキュメントには、有効なアラートマネージャー設定の[構文](https://prometheus.io/docs/prometheus/latest/configuration/template_reference/)と[例](https://prometheus.io/docs/prometheus/latest/configuration/template_examples/)が記載されています。
 
-## ソリューションの概要
 
-まず、Amazon EC2 Auto Scaling の [Auto Scaling グループ](https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/auto-scaling-groups.html) という概念を簡単に確認しましょう。これは Amazon EC2 インスタンスの論理的なコレクションです。Auto Scaling グループは、事前定義された起動テンプレートに基づいて EC2 インスタンスを起動できます。[起動テンプレート](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-launch-templates.html) には、AMI ID、インスタンスタイプ、ネットワーク設定、[AWS Identity and Access Management (IAM)](https://aws.amazon.com/jp/iam/) インスタンスプロファイルなど、Amazon EC2 インスタンスの起動に使用される情報が含まれています。
 
-Amazon EC2 Auto Scaling グループには、[最小サイズ、最大サイズ、および希望容量](https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html) の概念があります。 Amazon EC2 Auto Scaling が Auto Scaling グループの現在の実行容量が希望容量よりも上または下回っていることを検出すると、必要に応じて自動的にスケールアウトまたはスケールインします。 このスケーリングアプローチにより、ワークロード内でのエラスティシティを利用しながら、容量とコストの両方を制限することができます。
+## ソリューション概要
 
-このソリューションをデモンストレーションするために、2つのAmazon EC2インスタンスを含むAmazon EC2 Auto Scalingグループを作成しました。 これらのインスタンスは、[インスタンスメトリクスをAmazon Managed Service for Prometheusワークスペースにリモートライト](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-ingest-metrics-remote-write-EC2.html)します。 Auto Scalingグループの最小サイズを2に設定して高可用性を維持し、グループの最大サイズを10に設定してコストを抑えています。 トラフィックがこのソリューションに多くヒットするにつれて、負荷に対応するために自動的に追加のAmazon EC2インスタンスが追加されます。これは、Amazon EC2 Auto Scalingグループの最大サイズまでです。 負荷が減少すると、Amazon EC2 Auto Scalingグループがグループの最小サイズに達するまで、それらのAmazon EC2インスタンスが終了されます。 このアプローチにより、クラウドのエラスティシティを利用することでパフォーマンスの高いアプリケーションを実現できます。
+まず、Amazon EC2 Auto Scaling の [Auto Scaling グループ](https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/auto-scaling-groups.html) の概念について簡単に確認しましょう。これは Amazon EC2 インスタンスの論理的な集合です。Auto Scaling グループは、事前に定義された起動テンプレートに基づいて EC2 インスタンスを起動できます。[起動テンプレート](https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/ec2-launch-templates.html) には、Amazon EC2 インスタンスの起動に使用される情報が含まれており、AMI ID、インスタンスタイプ、ネットワーク設定、[AWS Identity and Access Management (IAM)](https://aws.amazon.com/jp/iam/) インスタンスプロファイルなどが含まれます。
 
-より多くのリソースをスクレイピングするにつれて、単一のPrometheusサーバーの機能をすぐに圧倒する可能性があることに注意してください。 ワークロードと線形にPrometheusサーバーをスケーリングすることで、この状況を回避できます。 このアプローチにより、必要な粒度でメトリクスデータを収集できることが保証されます。
+Amazon EC2 Auto Scaling グループには、[最小サイズ、最大サイズ、希望容量](https://docs.aws.amazon.com/ja_jp/autoscaling/ec2/userguide/what-is-amazon-ec2-auto-scaling.html) の概念があります。Amazon EC2 Auto Scaling は、Auto Scaling グループの現在の実行容量が希望容量を上回るか下回ると検出すると、必要に応じて自動的にスケールアウトまたはスケールインします。このスケーリングアプローチにより、容量とコストの両方に制限を設けながら、ワークロード内の弾力性を活用できます。
 
-PrometheusワークロードのAuto Scalingをサポートするために、次のルールを使用してAmazon Managed Service for Prometheusワークスペースを作成しました。
+このソリューションを実証するために、2 つの Amazon EC2 インスタンスを含む Amazon EC2 Auto Scaling グループを作成しました。これらのインスタンスは、[インスタンスメトリクスをリモートで書き込み](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-onboard-ingest-metrics-remote-write-EC2.html)、Amazon Managed Service for Prometheus ワークスペースに送信します。Auto Scaling グループの最小サイズを 2 に設定し（高可用性を維持するため）、グループの最大サイズを 10 に設定しました（コスト管理のため）。トラフィックが増加すると、負荷をサポートするために追加の Amazon EC2 インスタンスが自動的に追加され、Amazon EC2 Auto Scaling グループの最大サイズまで拡張されます。負荷が減少すると、これらの Amazon EC2 インスタンスは終了し、Amazon EC2 Auto Scaling グループがグループの最小サイズに達するまで縮小します。このアプローチにより、クラウドの弾力性を活用してパフォーマンスの高いアプリケーションを実現できます。
+
+スクレイピングするリソースが増えるにつれて、単一の Prometheus サーバーの能力をすぐに圧倒してしまう可能性があることに注意してください。この状況を回避するには、Prometheus サーバーをワークロードに合わせて線形にスケールさせることができます。このアプローチにより、希望する粒度でメトリクスデータを収集できます。
+
+Prometheus ワークロードの Auto Scaling をサポートするために、以下のルールを持つ Amazon Managed Service for Prometheus ワークスペースを作成しました：
 
 ` YAML `
 ```
@@ -42,9 +44,9 @@ groups:
 
 ```
 
-このルールセットは、`HostHighCpuLoad` と `HostLowCpuLoad` ルールを作成します。 これらのアラートは、5分間のCPU使用率が60%を超えるか30%未満の場合にトリガーされます。
+このルールセットは、` HostHighCpuLoad ` と ` HostLowCpuLoad ` のルールを作成します。これらのアラートは、5 分間の CPU 使用率が 60% を超えるか 30% 未満になると発生します。
 
-アラートが発生した後、アラートマネージャーはメッセージをAmazon SNSトピックに転送し、`alert_type` (アラート名) と `event_type` (scale_downまたはscale_up) を渡します。
+アラートが発生すると、アラートマネージャーはメッセージを Amazon SNS トピックに転送し、` alert_type `（アラート名）と ` event_type `（scale_down または scale_up）を渡します。
 
 ` YAML `
 ```
@@ -66,9 +68,9 @@ alertmanager_config: |
 
 ```
 
-[Lambda](https://aws.amazon.com/jp/lambda/) 関数が Amazon SNS トピックにサブスクライブされています。 Lambda 関数には、Amazon SNS メッセージを検査して `scale_up` または `scale_down` イベントが発生する必要があるかどうかを判断するロジックを記述しました。 次に、Lambda 関数は Amazon EC2 Auto Scaling グループの希望容量を増減します。 Amazon EC2 Auto Scaling グループは容量の変更要求を検出し、Amazon EC2 インスタンスを呼び出すか解放します。
+AWS [Lambda](https://aws.amazon.com/jp/lambda/) 関数が Amazon SNS トピックにサブスクライブされています。Lambda 関数には、Amazon SNS メッセージを検査して ` scale_up ` または ` scale_down ` イベントを決定するロジックを記述しました。その後、Lambda 関数は Amazon EC2 Auto Scaling グループの希望容量を増減します。Amazon EC2 Auto Scaling グループは容量の変更要求を検出し、Amazon EC2 インスタンスを起動または終了します。
 
-Auto Scaling をサポートするための Lambda コードは次のとおりです。
+Auto Scaling をサポートする Lambda コードは以下の通りです：
 
 ` Python `
 ```
@@ -108,51 +110,57 @@ def get_desired_instance_count(scale_type):
 
 ```
 
-完全なアーキテクチャは、次の図で確認できます。
+完全なアーキテクチャは以下の図で確認できます。
 
-![Architecture](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager3.png)
+![アーキテクチャ](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager3.png)
+
+
 
 ## ソリューションのテスト
 
-このソリューションを自動プロビジョニングするための AWS CloudFormation テンプレートを起動できます。
+AWS CloudFormation テンプレートを起動して、このソリューションを自動的にプロビジョニングできます。
 
-スタックの前提条件:
+スタックの前提条件：
 
-* [Amazon Virtual Private Cloud (Amazon VPC)](https://aws.amazon.com/vpc/)
+* [Amazon Virtual Private Cloud (Amazon VPC)](https://aws.amazon.com/jp/vpc/)
 * アウトバウンドトラフィックを許可する AWS セキュリティグループ
 
-ダウンロードしてテンプレートをアカウントに設定するには、「Download Launch Stack Template」リンクを選択します。設定プロセスの一環として、Amazon EC2 インスタンスに関連付けるサブネットとセキュリティグループを指定する必要があります。詳細については、次の図を参照してください。
+Download Launch Stack Template リンクを選択して、テンプレートをダウンロードし、アカウントでセットアップします。設定プロセスの一部として、Amazon EC2 インスタンスに関連付けるサブネットとセキュリティグループを指定する必要があります。詳細については、次の図を参照してください。
 
-[## テンプレートのダウンロードとスタックの起動](https://prometheus-autoscale.s3.amazonaws.com/prometheus-autoscale.template)
+[## Download Launch Stack Template ](https://prometheus-autoscale.s3.amazonaws.com/prometheus-autoscale.template)
 
-![スタックの起動](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager4.png)
+![Launch Stack](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager4.png)
 
-これは CloudFormation スタックの詳細画面で、スタック名が prometheus-autoscale に設定されています。スタックパラメータには、Prometheus の Linux インストーラーの URL、Prometheus 用 Linux Node Exporter の URL、ソリューションで使用されるサブネットとセキュリティグループ、使用する AMI とインスタンスタイプ、Amazon EC2 オートスケーリンググループの最大容量が含まれます。
+これは CloudFormation スタックの詳細画面で、スタック名が prometheus-autoscale に設定されています。スタックパラメータには、Prometheus の Linux インストーラーの URL、Prometheus の Linux Node Exporter の URL、ソリューションで使用されるサブネットとセキュリティグループ、使用する AMI とインスタンスタイプ、Amazon EC2 Auto Scaling グループの最大容量が含まれています。
 
-スタックのデプロイには約 8 分かかります。完了すると、作成された Amazon EC2 オートスケーリンググループで実行されている 2 つの Amazon EC2 インスタンスがデプロイされていることがわかります。このソリューションが Amazon Managed Service for Prometheus アラートマネージャーによって自動スケーリングすることを検証するには、[AWS Systems Manager Run Command](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/execute-remote-commands.html) と [AWSFIS-Run-CPU-Stress automation document](https://docs.aws.amazon.com/ja_jp/fis/latest/userguide/actions-ssm-agent.html#awsfis-run-cpu-stress) を使用して Amazon EC2 インスタンスに負荷をかけます。
+スタックのデプロイには約 8 分かかります。完了すると、デプロイされて実行中の 2 つの Amazon EC2 インスタンスが、作成された Amazon EC2 Auto Scaling グループ内にあることがわかります。このソリューションが Amazon Managed Service for Prometheus Alert Manager を介して自動スケーリングすることを検証するために、[AWS Systems Manager Run Command](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/execute-remote-commands.html) と [AWSFIS-Run-CPU-Stress 自動化ドキュメント](https://docs.aws.amazon.com/ja_jp/fis/latest/userguide/actions-ssm-agent.html) を使用して Amazon EC2 インスタンスに負荷をかけます。
 
-Amazon EC2 オートスケーリンググループの CPU にストレスがかかると、アラートマネージャーがこれらのアラートを発行し、Lambda 関数がオートスケーリンググループをスケールアップするよう応答します。 CPU 消費が減少すると、Amazon Managed Service for Prometheus ワークスペースの低 CPU アラートが発生し、アラートマネージャーがアラートを Amazon SNS トピックに発行し、Lambda 関数がオートスケーリンググループをスケールダウンするよう応答します。これは次の図のようにデモンストレーションされます。
+Amazon EC2 Auto Scaling グループの CPU にストレスがかかると、アラートマネージャーがこれらのアラートを発行し、Lambda 関数が Auto Scaling グループをスケールアップすることで応答します。CPU 消費が減少すると、Amazon Managed Service for Prometheus ワークスペースの低 CPU アラートが発生し、アラートマネージャーが Amazon SNS トピックにアラートを発行し、Lambda 関数が Auto Scaling グループをスケールダウンすることで応答します。これを次の図で示します。
 
-![ダッシュボード](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager5.png)
+![Dashboard](../images/ec2-autoscaling-amp-alertmgr/as-ec2-amp-alertmanager5.png)
 
-Grafana ダッシュボードには、CPU が 100% にスパイクしたことを示すラインがあります。 CPU は高いですが、インスタンス数が 2 から 10 にステップアップしたことを示すもう 1 つのラインがあります。 CPU が減少すると、インスタンス数はゆっくりと 2 に戻ります。
+Grafana ダッシュボードには、CPU が 100% にスパイクしたことを示す線があります。CPU が高くなっていますが、別の線はインスタンス数が 2 から 10 に段階的に増加したことを示しています。CPU が減少すると、インスタンス数はゆっくりと 2 に戻ります。
+
+
 
 ## コスト
 
-Amazon Managed Service for Prometheus は、取り込まれたメトリクス、保存されたメトリクス、クエリされたメトリクスに基づいて課金されます。 最新の価格と価格の例については、[Amazon Managed Service for Prometheus の価格ページ](https://aws.amazon.com/prometheus/pricing/)を参照してください。
+Amazon Managed Service for Prometheus の価格は、取り込まれたメトリクス、保存されたメトリクス、クエリされたメトリクスに基づいて設定されています。最新の価格設定と価格例については、[Amazon Managed Service for Prometheus の価格ページ](https://aws.amazon.com/jp/prometheus/pricing/)をご覧ください。
 
-Amazon SNS は、月間の API リクエストの数に基づいて課金されます。 Amazon SNS と Lambda 間のメッセージ配信は無料ですが、Amazon SNS と Lambda 間で転送されたデータ量については課金されます。 最新の Amazon SNS の価格の詳細は、[こちら](https://aws.amazon.com/sns/pricing/)を参照してください。
+Amazon SNS の価格は、月間の API リクエスト数に基づいて設定されています。Amazon SNS と Lambda 間のメッセージ配信は無料ですが、Amazon SNS と Lambda 間のデータ転送量に対して課金されます。[最新の Amazon SNS の価格詳細](https://aws.amazon.com/jp/sns/pricing/)をご覧ください。
 
-Lambda は、関数の実行時間と関数へのリクエスト数に基づいて課金されます。 最新の AWS Lambda の価格の詳細は、[こちら](https://aws.amazon.com/lambda/pricing/)を参照してください。
+Lambda の価格は、関数の実行時間と関数へのリクエスト数に基づいて設定されています。[最新の AWS Lambda の価格詳細](https://aws.amazon.com/jp/lambda/pricing/)をご覧ください。
 
-Amazon EC2 Auto Scaling の使用には、[追加料金はありません](https://aws.amazon.com/ec2/autoscaling/pricing/)。
+Amazon EC2 Auto Scaling の使用に対する[追加料金はありません](https://aws.amazon.com/jp/ec2/autoscaling/pricing/)。
+
+
 
 ## まとめ
 
-Amazon Managed Service for Prometheus、アラートマネージャー、Amazon SNS、Lambda を使用することで、Amazon EC2 Auto Scaling グループのスケーリングアクティビティを制御できます。この投稿のソリューションは、Amazon EC2 Auto Scaling を利用しながら、既存の Prometheus ワークロードを AWS に移行する方法を示しています。アプリケーションへの負荷が増加すると、デマンドに合わせてシームレスにスケールアウトします。 
+Amazon Managed Service for Prometheus、Alert Manager、Amazon SNS、Lambda を使用することで、Amazon EC2 Auto Scaling グループのスケーリングアクティビティを制御できます。このポストで紹介したソリューションは、既存の Prometheus ワークロードを AWS に移行しながら、Amazon EC2 Auto Scaling を活用する方法を示しています。アプリケーションの負荷が増加すると、需要に応じてシームレスにスケールします。
 
-この例では、Amazon EC2 Auto Scaling グループは CPU に基づいてスケールしましたが、ワークロードからの Prometheus メトリクスについて同様のアプローチを取ることができます。このアプローチにより、スケーリングアクションを細かく制御できるため、最もビジネス価値の高いメトリクスでワークロードをスケールできることが保証されます。
+この例では、Amazon EC2 Auto Scaling グループは CPU に基づいてスケールしましたが、ワークロードからの任意の Prometheus メトリクスに対して同様のアプローチを取ることができます。このアプローチにより、スケーリングアクションをきめ細かく制御でき、最も大きなビジネス価値を提供するメトリクスに基づいてワークロードをスケールできます。
 
-過去のブログ投稿では、[Amazon Managed Service for Prometheus アラートマネージャーを使用して PagerDuty でアラートを受信する方法](https://aws.amazon.com/blogs/mt/using-amazon-managed-service-for-prometheus-alert-manager-to-receive-alerts-with-pagerduty/)や、[Amazon Managed Service for Prometheus を Slack と統合する方法](https://aws.amazon.com/blogs/mt/how-to-integrate-amazon-managed-service-for-prometheus-with-slack/)も示しました。これらのソリューションは、ワークスペースからのアラートを最も有用な方法で受信する方法を示しています。
+以前のブログ投稿では、[Amazon Managed Service for Prometheus の Alert Manager を使用して PagerDuty でアラートを受信する方法](https://aws.amazon.com/blogs/mt/using-amazon-managed-service-for-prometheus-alert-manager-to-receive-alerts-with-pagerduty/)や、[Amazon Managed Service for Prometheus を Slack と統合する方法](https://aws.amazon.com/blogs/mt/how-to-integrate-amazon-managed-service-for-prometheus-with-slack/)についても紹介しました。これらのソリューションは、ワークスペースからのアラートを最も有用な方法で受信する方法を示しています。
 
-次のステップとして、Amazon Managed Service for Prometheus の[独自のルール構成ファイルの作成方法](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-rules-upload.html)や、[アラートレシーバーの設定方法](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alertmanager-receiver.html)を参照してください。また、アラートマネージャー内で使用できるアラートルールの良い例として、[Awesome Prometheus alerts](https://awesome-prometheus-alerts.grep.to/alertmanager) をチェックアウトしてください。
+次のステップとして、Amazon Managed Service for Prometheus 用の[独自のルール設定ファイルを作成する方法](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-rules-upload.html)を確認し、独自の[アラートレシーバー](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-receiver.html)をセットアップしてください。さらに、Alert Manager 内で使用できるアラートルールの優れた例については、[Awesome Prometheus alerts](https://awesome-prometheus-alerts.grep.to/alertmanager) をチェックしてください。

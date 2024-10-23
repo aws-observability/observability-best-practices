@@ -22,6 +22,11 @@ $ (yarn | npm ) install
 $ yarn start [or] npm run start
 ```
 
+japanese i18n server
+```
+$ yarn start -l ja [or] npm run start -l ja
+```
+
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
 ### Build
@@ -56,7 +61,7 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+See [CONTRIBUTING](../CONTRIBUTING.md#security-issue-notifications) for more information.
 
 ## License
 

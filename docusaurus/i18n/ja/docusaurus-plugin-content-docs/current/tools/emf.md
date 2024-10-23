@@ -1,15 +1,16 @@
-# 組み込みメトリクスフォーマット
+# 埋め込みメトリクスフォーマット
 
-CloudWatch 組み込みメトリクスフォーマット(EMF) は、構造化されたログイベントに埋め込まれたメトリクス値を CloudWatch Logs が自動的に抽出するように指示するために使用される JSON 仕様です。抽出されたメトリクス値をグラフ化したり、アラームを作成したりすることができます。EMF を使用すると、CloudWatch ログとしてプッシュされ、CloudWatch でメトリクスとして発見されるメトリクス関連データを指定できます。
+CloudWatch 埋め込みメトリクスフォーマット (EMF) は、構造化されたログイベントに埋め込まれたメトリクス値を自動的に抽出するよう CloudWatch Logs に指示するための JSON 仕様です。CloudWatch を使用して、抽出されたメトリクス値のグラフ化やアラームの作成を行うことができます。EMF を使用すると、CloudWatch ログの形式でメトリクス関連データをプッシュし、CloudWatch でメトリクスとして検出されるようにすることができます。
 
-以下は EMF のサンプルと JSON スキーマです。
+以下は EMF フォーマットのサンプルと JSON スキーマです：
+
 ```
 	{
 	  "_aws": {
 	    "Timestamp": 1574109732004,
 	    "CloudWatchMetrics": [
 	      {
-	        "Namespace": "lambda-function-metrics", 
+	        "Namespace": "lambda-function-metrics",
 	        "Dimensions": [
 	          [
 	            "functionVersion"
@@ -18,7 +19,7 @@ CloudWatch 組み込みメトリクスフォーマット(EMF) は、構造化さ
 	        "Metrics": [
 	          {
 	            "Name": "time",
-	            "Unit": "ミリ秒" 
+	            "Unit": "Milliseconds"
 	          }
 	        ]
 	      }
@@ -29,4 +30,5 @@ CloudWatch 組み込みメトリクスフォーマット(EMF) は、構造化さ
 	  "requestId": "989ffbf8-9ace-4817-a57c-e4dd734019ee"
 	}
 ```
-したがって、EMF の助けを借りて、PutMetricData API 呼び出しを手動で行う必要なく、高基数メトリクスを送信できます。
+
+このように、EMF を使用することで、手動で PutMetricData API を呼び出す必要なく、高カーディナリティのメトリクスを送信することができます。

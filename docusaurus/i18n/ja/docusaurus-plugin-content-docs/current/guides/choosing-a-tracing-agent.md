@@ -1,34 +1,37 @@
 # トレーシングエージェントの選択
 
-## 正しいエージェントの選択
 
-AWS は直接、[トレース](../signals/traces/) 収集のための 2 つのツールセット(さらにたくさんの[オブザーバビリティパートナー](https://aws.amazon.com/products/management-and-governance/partners/) もあります)をサポートしています。
 
-* [AWS Distro for OpenTelemetry](https://aws-otel.github.io/)。一般的に ADOT と呼ばれます
-* X-Ray の [SDK](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) と [デーモン](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)
 
-使用するツールまたはツールの選択は、オブザーバビリティソリューションを進化させるにつれて行う主要な決定事項です。これらのツールは相互に排他的ではなく、必要に応じて混在させることができます。この選択を行うためのベストプラクティスがあります。しかし、まず [OpenTelemetry (OTEL)](https://opentelemetry.io/) の現状を理解する必要があります。 
+## 適切なエージェントの選択
 
-OTEL は現在、業界標準のオブザーバビリティシグナリングの仕様であり、3 つのコアシグナルタイプのそれぞれの定義、[メトリクス](../signals/metrics/)、[トレース](../signals/traces/)、[ログ](../signals/logs)が含まれています。ただし、OTEL は常に存在していたわけではなく、[OpenMetrics](https://openmetrics.io) や [OpenTracing](https://opentracing.io) などの以前の仕様から進化してきました。オブザーバビリティベンダーは、最近数年間で OpenTelemetry Line Protocol (OTLP) を公開サポートし始めました。
+AWS は、[トレース](../signals/traces/) 収集のために 2 つのツールセットを直接サポートしています（さらに、多数の [オブザーバビリティパートナー](https://aws.amazon.com/jp/products/management-and-governance/partners/) もあります）：
 
-AWS X-Ray や CloudWatch は OTEL 仕様よりも前に存在しており、他の主要なオブザーバビリティソリューションも同様です。ただし、AWS X-Ray サービスは、ADOT を使用した OTEL トレースを簡単に受け入れます。ADOT には X-Ray や他の ISV ソリューションに直接テレメトリを送信するための統合がすでに組み込まれています。
+* [AWS Distro for OpenTelemetry](https://aws-otel.github.io/)（一般に ADOT と呼ばれます）
+* X-Ray の [SDK](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-instrumenting-your-app.html) と [デーモン](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-daemon.html)
 
-トランザクショントレースソリューションには、シグナルを収集するためにエージェントとアプリケーションへの統合が必要です。これにより、テスト、メンテナンス、アップグレードが必要なライブラリの形での 技術的負債 が発生し、将来ソリューションを変更する場合に再構築が必要になる可能性があります。
+オブザーバビリティソリューションを発展させる際に、どのツールを使用するかの選択は重要な決定事項です。これらのツールは相互に排他的ではなく、必要に応じて組み合わせることができます。また、この選択には最適な方法があります。しかし、まず [OpenTelemetry (OTEL)](https://opentelemetry.io/) の現状を理解する必要があります。
 
-X-Ray に含まれる SDK は、AWS が提供する緊密に統合されたインスツルメンテーションソリューションの一部です。ADOT は、X-Ray が多数のトレースソリューションのひとつにすぎない、より広範な業界ソリューションの一部です。X-Ray を使用したエンドツーエンドのトレースは、どちらのアプローチでも実装できますが、最も有用なアプローチを決定するためには違いを理解することが重要です。
+OTEL は、オブザーバビリティシグナリングの現在の業界標準仕様であり、3 つの主要なシグナルタイプ（[メトリクス](../signals/metrics/)、[トレース](../signals/traces/)、[ログ](../signals/logs)）の定義を含んでいます。しかし、OTEL は常に存在していたわけではなく、[OpenMetrics](https://openmetrics.io) や [OpenTracing](https://opentracing.io) などの以前の仕様から進化してきました。オブザーバビリティベンダーは近年、OpenTelemetry Line Protocol (OTLP) のオープンサポートを開始しました。
+
+AWS X-Ray と CloudWatch は OTEL 仕様以前からあり、他の主要なオブザーバビリティソリューションも同様です。しかし、AWS X-Ray サービスは ADOT を使用して OTEL トレースを容易に受け入れます。ADOT には、X-Ray に直接テレメトリを送信するための統合機能が既に組み込まれており、他の ISV ソリューションにも対応しています。
+
+トランザクショントレースソリューションには、シグナルを収集するためのエージェントとアプリケーションへの統合が必要です。これにより、テスト、メンテナンス、アップグレードが必要なライブラリの形で [技術的負債](../faq/#what-is-technical-debt) が生じ、将来ソリューションを変更する場合には再ツール化が必要になる可能性があります。
+
+X-Ray に含まれる SDK は、AWS が提供する緊密に統合された計装ソリューションの一部です。ADOT は、X-Ray が多くのトレースソリューションの 1 つに過ぎない、より広範な業界ソリューションの一部です。どちらのアプローチでも X-Ray でエンドツーエンドのトレースを実装できますが、最も有用なアプローチを決定するには、その違いを理解することが重要です。
 
 :::info
-	アプリケーションを次の場合は AWS Distro for OpenTelemetry でインスツルメンテーションすることをお勧めします。
+	以下が必要な場合は、AWS Distro for OpenTelemetry でアプリケーションを計装することをお勧めします：
 
-    * コードを再度インスツルメンテーションすることなく、複数の異なるトレースバックエンドにトレースを送信できる必要がある場合。 たとえば、X-Ray コンソールの使用から [Zipkin](https://zipkin.io) への移行の場合、コレクターの構成のみが変更され、アプリケーションコードは変更されません。
+    * コードを再計装することなく、複数の異なるトレースバックエンドにトレースを送信する機能。例えば、X-Ray コンソールの使用から [Zipkin](https://zipkin.io) に移行する場合、コレクターの設定のみを変更し、アプリケーションコードは変更しません。
 
-    * OpenTelemetry コミュニティによってメンテナンスされている、各言語の多数のライブラリインスツルメンテーションのサポート。
+    * OpenTelemetry コミュニティによって維持される、各言語の多数のライブラリ計装のサポート。
 :::
 
 :::info
-	アプリケーションへのインスツルメンテーションに X-Ray SDK を選択することをお勧めする場合
+	以下が必要な場合は、アプリケーションの計装に X-Ray SDK を選択することをお勧めします：
 
-    * 緊密に統合されたシングルベンダーソリューションが必要な場合。
+    * 緊密に統合された単一ベンダーソリューション。
 
-    * Node.js、Python、Ruby、.NET を使用している場合、X-Ray コンソールから集中サンプリングルールを構成し、複数のホストで自動的に使用する機能を含む、X-Ray との統合。
+    * X-Ray の集中サンプリングルールとの統合。Node.js、Python、Ruby、または .NET を使用する場合、X-Ray コンソールからサンプリングルールを設定し、複数のホストで自動的に使用する機能を含みます。
 :::

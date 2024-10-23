@@ -1,53 +1,62 @@
-# AWS Observability サービスとコスト
+# AWS オブザーバビリティサービスとコスト
 
-オブザーバビリティスタックへの投資に伴い、定期的にオブザーバビリティ製品の**コスト**をモニタリングすることが重要です。これにより、必要なコストのみが発生していることと、不要なリソースの過剰支出がないことを確認できます。
+オブザーバビリティスタックに投資する際、オブザーバビリティ製品の**コスト**を定期的に監視することが重要です。これにより、必要なコストのみを発生させ、不要なリソースに過剰な支出をしていないことを確認できます。
+
+
+
 
 ## コスト最適化のための AWS ツール
 
-ほとんどの組織の主要な焦点は、クラウド上での IT インフラストラクチャのスケーリングにあるものの、実際の、または今後のクラウド支出を制御できず、準備ができておらず、認識していないことが多いです。時間の経過とともにコストを追跡、報告、分析するのに役立つように、AWS はいくつかのコスト最適化ツールを提供しています。
+多くの組織の主な焦点は、クラウド上で IT インフラストラクチャをスケーリングすることにあります。しかし、通常はそれが制御されておらず、準備不足で、実際のクラウド支出や今後の支出について認識していません。時間の経過とともにコストを追跡、報告、分析するのに役立つように、AWS はいくつかのコスト最適化ツールを提供しています：
 
-[AWS Cost Explorer][cost-explorer] - 時間の経過とともに AWS の支出パターンを確認し、将来のコストを予測し、さらなる調査が必要な領域を特定し、リザーブドインスタンスの利用状況を観察し、リザーブドインスタンスのカバレッジを観察し、リザーブドインスタンスの推奨を取得します。
+[AWS Cost Explorer][cost-explorer] – 時間の経過とともに AWS の支出パターンを確認し、将来のコストを予測し、さらなる調査が必要な領域を特定し、リザーブドインスタンスの使用状況を観察し、リザーブドインスタンスのカバレッジを観察し、リザーブドインスタンスの推奨事項を受け取ることができます。
 
-[AWS Cost and Usage Report(CUR)][CUR] - アカウント間の時間単位の AWS 使用状況を詳細に示す生データファイル。AWS Cost and Usage Report には、使用しているサービスに応じて入力される動的な列があります。
+[AWS コストと使用状況レポート (CUR)][CUR] – アカウント全体の AWS の時間単位の使用状況を詳細に示す生データファイルで、Do-It-Yourself (DIY) 分析に使用されます。AWS コストと使用状況レポートには、使用しているサービスに応じて動的に変化する列があります。
 
-## アーキテクチャの概要: AWS コストと使用状況レポートの視覚化
 
-Amazon Managed Grafana または Amazon QuickSight で、AWS のコストと使用状況のダッシュボードを構築できます。次のアーキテクチャ図は、両方のソリューションを示しています。
 
-![Architecture diagram](../../../images/cur-architecture.png)
+## アーキテクチャの概要：AWS コストと使用状況レポートの可視化
+
+AWS のコストと使用状況のダッシュボードは、Amazon Managed Grafana または Amazon QuickSight で構築できます。以下のアーキテクチャ図は、両方のソリューションを示しています。
+
+![アーキテクチャ図](../../../images/cur-architecture.png)
 *アーキテクチャ図*
 
-## クラウドインテリジェンスダッシュボード
 
-[クラウドインテリジェンスダッシュボード][cid] は、AWS コストと使用状況レポート (CUR) をベースに構築された [Amazon QuickSight][quicksight] ダッシュボードのコレクションです。 これらのダッシュボードは、自身のコスト管理と最適化 (FinOps) ツールとして機能します。 AWS の使用状況とコストの詳細なビューを取得するのに役立つ、詳細で粒度の細かい推奨駆動型のダッシュボードが得られます。
+
+## Cloud Intelligence Dashboards
+
+[Cloud Intelligence Dashboards][cid] は、AWS コストと使用状況レポート (CUR) を基に構築された [Amazon QuickSight][quicksight] ダッシュボードのコレクションです。これらのダッシュボードは、独自のコスト管理と最適化 (FinOps) ツールとして機能します。詳細で粒度の高い、推奨事項に基づいたダッシュボードを通じて、AWS の使用状況とコストの詳細なビューを得ることができます。
+
+
+
 
 ### 実装
 
-1.	[Amazon Athena][amazon-athnea] インテグレーションを有効にした [CUR レポート][cur-report] を作成します。
-*初期設定時に、AWS が Amazon S3 バケットにレポートの配信を開始するまでに最大 24 時間かかる場合があります。レポートは 1 日に 1 度配信されます。Athena インテグレーションのために設定した Cost and Usage Report を Athena と統合し、ストリームライン化および自動化するために、AWS はいくつかの主要リソースとレポート用の AWS CloudFormation テンプレートを提供しています。*
+1. [Amazon Athena][amazon-athnea] との統合を有効にした [CUR レポート][cur-report] を作成します。
+*初期設定時、AWS が Amazon S3 バケットにレポートの配信を開始するまでに最大 24 時間かかる場合があります。レポートは 1 日 1 回配信されます。Cost and Usage Reports と Athena の統合を効率化および自動化するために、AWS は Athena 統合用に設定したレポートとともにいくつかの主要リソースを含む AWS CloudFormation テンプレートを提供しています。*
 
-2.	[AWS CloudFormation テンプレート][cloudformation] をデプロイします。
-*このテンプレートには、AWS Glue クローラー、AWS Glue データベース、AWS Lambda イベントが含まれています。この時点で、Athena のテーブルを使用して CUR データにクエリを実行できるようになります。*
+2. [AWS CloudFormation テンプレート][cloudformation] をデプロイします。
+*このテンプレートには、AWS Glue クローラー、AWS Glue データベース、AWS Lambda イベントが含まれています。この時点で、CUR データは Amazon Athena のテーブルを通じてクエリ可能になります。*
 
-    - [Amazon Athena][athena-query] を使用して CUR データに直接クエリを実行します。  
-*データに対して Athena クエリを実行するには、まず Athena コンソールを使用して AWS がデータの更新を行っているかどうかを確認し、次に Athena コンソールでクエリを実行します。*
+    - [Amazon Athena][athena-query] を使用して CUR データに対して直接クエリを実行します。
+*Athena クエリをデータに対して実行するには、まず Athena コンソールを使用して AWS がデータを更新中かどうかを確認し、その後 Athena コンソールでクエリを実行します。*
 
-3.	Cloud Intelligence ダッシュボードをデプロイします。
-    - 手動デプロイの場合は、AWS Well-Architected の **[Cost Optimization ラボ][cost-optimization-lab]** を参照してください。
-    - 自動デプロイの場合は、[GitHub リポジトリ][GitHub-repo] を参照してください。
+3. Cloud Intelligence ダッシュボードをデプロイします。
+    - 手動デプロイについては、AWS Well-Architected の **[コスト最適化ラボ][cost-optimization-lab]** を参照してください。
+    - 自動デプロイについては、[GitHub リポジトリ][GitHub-repo] を参照してください。
 
-Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって大変便利です。しかし、お客様からよくいただくご質問の 1 つが、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS Observability 製品の組織全体のコストをどのように把握できるかという点です。
+Cloud Intelligence ダッシュボードは、財務チーム、経営陣、IT マネージャーにとって優れたツールです。しかし、顧客からよく寄せられる質問の 1 つは、Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus、Amazon Managed Grafana などの個々の AWS オブザーバビリティ製品の組織全体のコストについての洞察を得る方法です。
 
-次のセクションでは、これらの製品のコストと使用状況を深く掘り下げます。 あらゆる規模の企業がこの積極的なアプローチをクラウドコスト最適化戦略に採用し、クラウドコスト分析とデータドリブンの意思決定を通じて、パフォーマンスへの影響や運用上のオーバーヘッドなしにビジネス効率を向上させることができます。
+次のセクションでは、これらの各製品のコストと使用状況について詳しく説明します。あらゆる規模の企業が、パフォーマンスへの影響や運用上のオーバーヘッドなしに、このプロアクティブなクラウドコスト最適化戦略を採用し、クラウドコスト分析とデータ駆動型の意思決定を通じてビジネス効率を向上させることができます。
 
-
-[cost-explorer]: https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/ce-what-is.html
-[CUR]: https://docs.aws.amazon.com/cur/latest/userguide/what-is-cur.html
+[cost-explorer]: https://docs.aws.amazon.com/ja_jp/awsaccountbilling/latest/aboutv2/ce-what-is.html
+[CUR]: https://docs.aws.amazon.com/ja_jp/cur/latest/userguide/what-is-cur.html
 [cid]: https://wellarchitectedlabs.com/cost/200_labs/200_cloud_intelligence/
-[quicksight]: https://aws.amazon.com/quicksight/
-[cur-report]: https://docs.aws.amazon.com/cur/latest/userguide/cur-create.html
-[amazon-athnea]: https://aws.amazon.com/athena/
-[cloudformation]: https://docs.aws.amazon.com/cur/latest/userguide/use-athena-cf.html
-[athena-query]: https://docs.aws.amazon.com/cur/latest/userguide/cur-ate-run.html
+[quicksight]: https://aws.amazon.com/jp/quicksight/
+[cur-report]: https://docs.aws.amazon.com/ja_jp/cur/latest/userguide/cur-create.html
+[amazon-athnea]: https://aws.amazon.com/jp/athena/
+[cloudformation]: https://docs.aws.amazon.com/ja_jp/cur/latest/userguide/use-athena-cf.html
+[athena-query]: https://docs.aws.amazon.com/ja_jp/cur/latest/userguide/cur-ate-run.html
 [cost-optimization-lab]: https://www.wellarchitectedlabs.com/cost/200_labs/200_cloud_intelligence/
 [GitHub-repo]: https://github.com/aws-samples/aws-cudos-framework-deployment

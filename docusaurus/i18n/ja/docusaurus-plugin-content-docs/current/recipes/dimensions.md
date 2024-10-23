@@ -1,86 +1,108 @@
 # ディメンション
 
-このサイトのコンテキストでは、オブザーバビリティ空間を 6 つのディメンションに沿って考えます。
-各ディメンションを独立して見ることは、合成的な視点から有益です。つまり、プログラミング言語などの開発者関連の側面や、コンテナや Lambda 関数などのランタイム環境などの運用上のトピックを含む、特定のワークロードに対して具体的なオブザーバビリティソリューションを構築しようとしている場合です。
+このサイトのコンテキストでは、オブザーバビリティの領域を 6 つのディメンションで考えます。
+各ディメンションを独立して見ることは、総合的な観点から有益です。
+つまり、特定のワークロードに対して具体的なオブザーバビリティソリューションを構築しようとする際に役立ちます。
+これには、使用するプログラミング言語などの開発者関連の側面や、コンテナや Lambda 関数などのランタイム環境といった運用上のトピックが含まれます。
 
 ![o11y space](images/o11y-space.png)
 
-
 :::note
-    ここで言うシグナルとは、ログエントリ、メトリクス、トレースを含むあらゆる種類のオブザーバビリティデータとメタデータポイントのことです。
-    より具体的である必要がある場合を除き、「シグナル」という用語を使用し、コンテキストからどのような制限が適用される可能性があるかが明らかである必要があります。
+    「シグナルとは何か？」
+    ここでシグナルと言う場合、ログエントリ、メトリクス、トレースを含む、あらゆる種類のオブザーバビリティデータとメタデータポイントを指します。
+    特に指定する必要がない限り、「シグナル」という用語を使用し、コンテキストから適用される制限が明確になるはずです。
 :::
 
-次に、6 つのディメンションを 1 つずつ見ていきましょう。
+それでは、6 つのディメンションを一つずつ見ていきましょう：
 
-## デスティネーション
 
-このディメンションでは、長期ストレージやシグナルを消費できるグラフィカルインターフェイスなど、あらゆる種類のシグナルデスティネーションを考慮します。開発者としては、サービスのトラブルシューティングのためにシグナルを発見、検索、相関付けできる UI や API にアクセスしたいと考えています。インフラストラクチャまたはプラットフォームの役割では、インフラストラクチャの状態を理解するためにシグナルを管理、発見、検索、相関付けできる UI や API にアクセスしたいと考えています。
 
-![Grafana スクリーンショット](images/grafana.png)
+## 出力先
 
-最終的に、これは人間の視点から見て最も興味深いディメンションです。
-しかし、メリットを享受できるようになるためには、まず少し作業を投資する必要があります。ソフトウェアと外部依存関係を計装化し、シグナルをデスティネーションにインジェストする必要があります。
+この次元では、長期保存やシグナルを利用するためのグラフィカルインターフェースなど、あらゆる種類のシグナルの出力先を考慮します。開発者として、サービスのトラブルシューティングを行うために、シグナルを発見、検索、相関させることができる UI や API へのアクセスが必要です。インフラストラクチャやプラットフォームの役割では、インフラストラクチャの状態を理解するために、シグナルを管理、発見、検索、相関させることができる UI や API へのアクセスが必要です。
 
-では、シグナルはどのようにしてデスティネーションに到達するのでしょうか。ご質問いただきありがとうございます。それは...
+![Grafana のスクリーンショット](images/grafana.png)
+
+究極的に、これは人間の観点から最も興味深い次元です。しかし、その恩恵を受けるためには、まず少し作業が必要です。ソフトウェアと外部依存関係に計装を施し、シグナルを出力先に取り込む必要があります。
+
+では、シグナルはどのようにして出力先に到達するのでしょうか？ お尋ねいただいてありがとうございます。それは…
+
+
 
 ## エージェント
 
-シグナルがどのように収集され、分析にルーティングされるか。シグナルは2つのソースから来る可能性があります。1つはアプリケーションのソースコード([言語]のセクションも参照)、もう1つはデータストアに管理されている状態やVPCなどのインフラストラクチャなど、アプリケーションが依存するものです([インフラとデータ]のセクションも参照)。
+シグナルがどのように収集され、分析にルーティングされるかについて説明します。
+シグナルは 2 つのソースから得られます。
+1 つはアプリケーションのソースコード (言語のセクションも参照)、もう 1 つはアプリケーションが依存するもの、つまりデータストアで管理される状態や VPC などのインフラストラクチャ (インフラとデータのセクションも参照) です。
+
+エージェントは、シグナルの収集と取り込みに使用するテレメトリの一部です。
+テレメトリのもう一部は、計装されたアプリケーションやデータベースなどのインフラ要素です。
 
 
 
-## 言語
+## プログラミング言語
 
-このディメンションは、サービスやアプリケーションの記述に使用するプログラミング言語に関係しています。ここでは、[X-Ray SDK][xraysdks] や OpenTelemetry が [instrumentation][otelinst] のコンテキストで提供するものなどの SDK やライブラリを扱っています。ログやメトリクスなどの特定のシグナルタイプについて、o11y ソリューションが選択したプログラミング言語をサポートしていることを確認する必要があります。
+この次元は、サービスやアプリケーションを作成するために使用するプログラミング言語に関するものです。
+ここでは、[X-Ray SDK][xraysdks] や OpenTelemetry が [計装][otelinst] の文脈で提供するような SDK やライブラリを扱います。
+ログやメトリクスなどの特定のシグナルタイプに対して、選択したプログラミング言語をオブザーバビリティソリューションがサポートしていることを確認する必要があります。
+
+
 
 ## インフラストラクチャとデータベース
 
-このディメンションでは、サービスが実行されている VPC などのインフラストラクチャや RDS、DynamoDB、SQS などのデータストアといった、アプリケーションの外部の依存関係のすべてを意味します。
+この次元では、サービスが実行されている VPC のようなインフラストラクチャや、RDS や DynamoDB のようなデータストア、SQS のようなキューなど、アプリケーション外部の依存関係を意味します。
 
 :::tip
-    "共通点"
-    このディメンションのすべてのソースが共通しているのは、アプリケーション(およびアプリケーションが実行されるコンピュート環境)の外部に位置しており、不透明なボックスとして扱わなければならないことです。
+    「共通点」
+    この次元のすべてのソースに共通しているのは、アプリケーション（およびアプリが実行されるコンピューティング環境）の外部に位置しており、不透明なボックスとして扱う必要があるということです。
 :::
-このディメンションには以下が含まれますが、これらに限定されません。
 
-- AWS インフラストラクチャー、例えば [VPC フローログ][vpcfl] など。
-- [Kubernetes コントロールプレーンログ][kubecpl] などのセカンダリ API。  
+この次元には以下が含まれますが、これらに限定されません：
+
+- AWS インフラストラクチャ、例えば [VPC フローログ][vpcfl]。
+- [Kubernetes コントロールプレーンログ][kubecpl] のような二次的な API。
 - [S3][s3mon]、[RDS][rdsmon]、[SQS][sqstrace] などのデータストアからのシグナル。
+
+
 
 ## コンピュートユニット
 
-コードをパッケージ化、スケジュール設定、実行する方法です。例えば、Lambda では関数がそれに該当し、[ECS][ecs] と [EKS][eks] では、それぞれタスク(ECS)内またはポッド(EKS)内で実行されるコンテナがユニットとなります。Kubernetes のようなコンテナ化された環境では、テレメトリのデプロイについて次の2つのオプションがよく利用できます。サイドカーとして、またはノード(インスタンス)ごとのデーモンプロセスとしてです。
+コードをパッケージ化し、スケジュールし、実行する方法です。例えば、Lambda では関数であり、[ECS][ecs] と [EKS][eks] では、それぞれタスク (ECS) または Pod (EKS) で実行されるコンテナがそのユニットとなります。
+Kubernetes のようなコンテナ化された環境では、テレメトリーのデプロイメントに関して、通常 2 つのオプションがあります：サイドカーとして、または各ノード (インスタンス) 上のデーモンプロセスとしてです。
+
+
 
 ## コンピュートエンジン
 
-このディメンションは、ベースとなるランタイム環境を指します。これは、EC2 インスタンスなどの場合はプロビジョニングおよびパッチ適用の責任がある一方で、Fargate や Lambda などのサーバーレスオファリングの場合はそうでない場合があります。使用するコンピュートエンジンに応じて、テレメトリの部分はすでにオファリングの一部となっている場合があります。たとえば、[Fargate 上の EKS][firelensef] には Fluent Bit を介したログルーティングが統合されています。
+このディメンションは、基本的なランタイム環境を指します。これは、(例えば EC2 インスタンスの場合のように) プロビジョニングとパッチ適用が必要な場合もあれば、(Fargate や Lambda などのサーバーレスオファリングの場合のように) 必要ない場合もあります。使用するコンピュートエンジンによっては、テレメトリー部分がすでにオファリングの一部となっている場合があります。例えば、[Fargate 上の EKS][firelensef] には Fluent Bit を介したログルーティングが統合されています。
 
 
-[aes]: https://aws.amazon.com/elasticsearch-service/ "Amazon Elasticsearch Service"
+[aes]: https://aws.amazon.com/jp/elasticsearch-service/ "Amazon Elasticsearch Service"
 [adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
-[amg]: https://aws.amazon.com/grafana/ "Amazon Managed Grafana"
-[amp]: https://aws.amazon.com/prometheus/ "Amazon Managed Service for Prometheus" 
-[batch]: https://aws.amazon.com/batch/ "AWS Batch"
-[beans]: https://aws.amazon.com/elasticbeanstalk/ "AWS Elastic Beanstalk"
-[cw]: https://aws.amazon.com/cloudwatch/ "Amazon CloudWatch"
+[amg]: https://aws.amazon.com/jp/grafana/ "Amazon Managed Grafana"
+[amp]: https://aws.amazon.com/jp/prometheus/ "Amazon Managed Service for Prometheus"
+[batch]: https://aws.amazon.com/jp/batch/ "AWS Batch"
+[beans]: https://aws.amazon.com/jp/elasticbeanstalk/ "AWS Elastic Beanstalk"
+[cw]: https://aws.amazon.com/jp/cloudwatch/ "Amazon CloudWatch"
 [dimensions]: ../dimensions
-[ec2]: https://aws.amazon.com/ec2/ "Amazon EC2"
-[ecs]: https://aws.amazon.com/ecs/ "Amazon Elastic Container Service" 
-[eks]: https://aws.amazon.com/eks/ "Amazon Elastic Kubernetes Service"
-[fargate]: https://aws.amazon.com/fargate/ "AWS Fargate" 
+[ec2]: https://aws.amazon.com/jp/ec2/ "Amazon EC2"
+[ecs]: https://aws.amazon.com/jp/ecs/ "Amazon Elastic Container Service"
+[eks]: https://aws.amazon.com/jp/eks/ "Amazon Elastic Kubernetes Service"
+[fargate]: https://aws.amazon.com/jp/fargate/ "AWS Fargate"
 [fluentbit]: https://fluentbit.io/ "Fluent Bit"
 [firelensef]: https://aws.amazon.com/blogs/containers/fluent-bit-for-amazon-eks-on-aws-fargate-is-here/ "Fluent Bit for Amazon EKS on AWS Fargate is here"
 [jaeger]: https://www.jaegertracing.io/ "Jaeger"
-[kafka]: https://kafka.apache.org/ "Apache Kafka" 
-[kubecpl]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html "Amazon EKS control plane logging"
-[lambda]: https://aws.amazon.com/lambda/ "AWS Lambda"
-[lightsail]: https://aws.amazon.com/lightsail/ "Amazon Lightsail"
+[kafka]: https://kafka.apache.org/ "Apache Kafka"
+[kubecpl]: https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html "Amazon EKS control plane logging"
+[lambda]: https://aws.amazon.com/jp/lambda/ "AWS Lambda"
+[lightsail]: https://aws.amazon.com/jp/lightsail/ "Amazon Lightsail"
+[otel]: https://opentelemetry.io/ "OpenTelemetry"
+[otelinst]: https://opentelemetry.io/docs/concepts/instrumenting/
 [promex]: https://prometheus.io/docs/instrumenting/exporters/ "Prometheus exporters and integrations"
-[rdsmon]: https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html "Logging and monitoring in Amazon RDS"
-[s3]: https://aws.amazon.com/s3/ "Amazon S3" 
-[s3mon]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html "Logging and monitoring in Amazon S3"
-[sqstrace]: https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html "Amazon SQS and AWS X-Ray"
-[vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html "VPC Flow Logs"
-[xray]: https://aws.amazon.com/xray/ "AWS X-Ray" 
-[xraysdks]: https://docs.aws.amazon.com/xray/index.html
+[rdsmon]: https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/Overview.LoggingAndMonitoring.html "Logging and monitoring in Amazon RDS"
+[s3]: https://aws.amazon.com/jp/s3/ "Amazon S3"
+[s3mon]: https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/s3-incident-response.html "Logging and monitoring in Amazon S3"
+[sqstrace]: https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-services-sqs.html "Amazon SQS and AWS X-Ray"
+[vpcfl]: https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/flow-logs.html "VPC Flow Logs"
+[xray]: https://aws.amazon.com/jp/xray/ "AWS X-Ray"
+[xraysdks]: https://docs.aws.amazon.com/ja_jp/xray/index.html

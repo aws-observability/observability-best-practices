@@ -1,16 +1,25 @@
 # インフラストラクチャとデータベース
 
+
+
+
 ## ネットワーキング
 
-- [Application Load Balancer をモニタリングする][alb-docs]
-- [Network Load Balancer をモニタリングする][nlb-docs] 
+- [Application Load Balancer のモニタリング][alb-docs]
+- [Network Load Balancer のモニタリング][nlb-docs]
 - [VPC フローログ][vpcfl]
 - [Amazon Elasticsearch Service を使用した VPC フローログの分析][vpcf-ws]
 
+
+
+
 ## コンピューティング
 
-- [Amazon EKS コントロールプレーンログ][eks-cp]
+- [Amazon EKS コントロールプレーンのロギング][eks-cp]
 - [AWS Lambda のモニタリングとオブザーバビリティ][lambda-docs]
+
+
+
 
 ## データベース、ストレージ、キュー
 
@@ -20,18 +29,20 @@
 - [Amazon S3 でのログ記録とモニタリング][s3mon]
 - [Amazon SQS と AWS X-Ray][sqstrace]
 
+
+
 ## その他
 
-- [Prometheus exporters][prometheus-exporters]
+- [Prometheus エクスポーター][prometheus-exporters]
 
-[alb-docs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-monitoring.html
-[nlb-docs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-monitoring.html 
-[vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
-[eks-cp]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
-[lambda-docs]: https://docs.aws.amazon.com/lambda/latest/operatorguide/monitoring-observability.html
+[alb-docs]: https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/load-balancer-monitoring.html
+[nlb-docs]: https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/network/load-balancer-monitoring.html
+[vpcfl]: https://docs.aws.amazon.com/ja_jp/vpc/latest/userguide/flow-logs.html
+[eks-cp]: https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html
+[lambda-docs]: https://docs.aws.amazon.com/ja_jp/lambda/latest/operatorguide/monitoring-observability.html
 [rds]: rds.md
 [ddb]: dynamodb.md
 [msk]: msk.md
-[s3mon]: https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-incident-response.html 
-[sqstrace]: https://docs.aws.amazon.com/xray/latest/devguide/xray-services-sqs.html
+[s3mon]: https://docs.aws.amazon.com/ja_jp/AmazonS3/latest/userguide/s3-incident-response.html
+[sqstrace]: https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-services-sqs.html
 [prometheus-exporters]: https://prometheus.io/docs/instrumenting/exporters/

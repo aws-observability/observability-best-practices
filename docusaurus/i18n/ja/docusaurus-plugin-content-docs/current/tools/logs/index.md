@@ -1,88 +1,104 @@
-# ログ記録
+# ロギング
 
-ログツールの選択は、データ送信、フィルタリング、保持、キャプチャ、およびデータを生成するアプリケーションとの統合に対する要件に関連しています。
-オブザーバビリティのために Amazon Web Services を使用する場合(オンプレミスでホストしているか、別のクラウド環境でホストしているかに関係なく)、[CloudWatch エージェント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) や [Fluentd](https://www.fluentd.org/) などの別のツールを利用して、分析のためのログデータを送信できます。
+ロギングツールの選択は、データの送信、フィルタリング、保持、キャプチャ、およびデータを生成するアプリケーションとの統合に関する要件に結びついています。オブザーバビリティのために Amazon Web Services を使用する場合（[オンプレミス](../../faq#what-is-a-cloud-first-approach)や他のクラウド環境でホストしているかどうかに関わらず）、[CloudWatch エージェント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)や [Fluentd](https://www.fluentd.org/) などの他のツールを活用して、分析用のログデータを送信できます。
 
-ここでは、ログ記録のための CloudWatch エージェントの実装に関するベストプラクティスと、AWS コンソールまたは API での CloudWatch Logs の使用について詳しく説明します。
+ここでは、ロギングのための CloudWatch エージェントの実装のベストプラクティスと、AWS コンソールまたは API 内での CloudWatch Logs の使用について詳しく説明します。
+
 :::info
-	CloudWatch エージェントは、[メトリクスデータ](../../signals/metrics/) を CloudWatch に配信するためにも使用できます。実装の詳細については、[メトリクス](../../tools/metrics/) ページを参照してください。OpenTelemetry や X-Ray クライアント SDK からの[トレース](../../signals/traces.md) を収集し、[AWS X-Ray](../../tools/xray.md) に送信するためにも使用できます。
+CloudWatch エージェントは、[メトリクスデータ](../../signals/metrics/)を CloudWatch に送信するためにも使用できます。実装の詳細については、[メトリクス](../../tools/metrics/)ページをご覧ください。また、OpenTelemetry や X-Ray クライアント SDK からの[トレース](../../signals/traces.md)を収集し、[AWS X-Ray](../../tools/xray.md) に送信するためにも使用できます。
 :::
-## CloudWatch エージェントによるログの収集
+
+
+
+## CloudWatch エージェントを使用したログの収集
+
+
+
 
 ### 転送
 
-クラウドファーストのアプローチ でオブザーバビリティを実現する場合、原則として、ログを取得するためにマシンにログインする必要がある場合は、アンチパターンが存在していることになります。ワークロードは、ログ分析システムに対して、リアルタイムに近い形でログデータをマシンの外部に出力する必要があります。イベント発生から転送までのレイテンシは、ワークロードに障害が発生した場合に、その時点の情報が失われる可能性を表しています。
+[クラウドファーストアプローチ](../../faq#what-is-a-cloud-first-approach) をオブザーバビリティに適用する場合、原則として、ログを取得するためにマシンにログインする必要がある場合は、アンチパターンとなります。ワークロードは、ログデータをほぼリアルタイムで外部のログ分析システムに送信する必要があります。その送信と元のイベントとの間の遅延は、ワークロードに災害が発生した場合に、特定時点の情報が失われる可能性を意味します。
 
-アーキテクトとして、ログデータの許容可能な損失を判断し、これに合わせて CloudWatch エージェントの [`force_flush_interval`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) を調整する必要があります。
+アーキテクトとして、ログデータの許容可能な損失を決定し、CloudWatch エージェントの [`force_flush_interval`](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html) を適切に調整する必要があります。
 
-`force_flush_interval` は、バッファサイズに達した場合を除き、一定の間隔でログデータをデータプレーンに送信するようエージェントに指示します。バッファサイズに達した場合は、すべてのバッファされたログを直ちに送信します。
+`force_flush_interval` は、バッファサイズに達しない限り、エージェントに定期的にログデータをデータプレーンに送信するよう指示します。バッファサイズに達した場合は、バッファリングされたすべてのログを即座に送信します。
 
 :::tip
-	エッジデバイスは、低レイテンシーの AWS 内ワークロードとは要件が大きく異なる場合があり、`force_flush_interval` の設定を長くする必要があるかもしれません。例えば、低帯域幅のインターネット接続を使用している IoT デバイスの場合、ログのフラッシュは 15 分ごとに実行するだけで十分な場合があります。 
+エッジデバイスは、低遅延の AWS 内ワークロードとは大きく異なる要件を持つ場合があり、より長い `force_flush_interval` 設定が必要になる場合があります。例えば、低帯域幅のインターネット接続を使用する IoT デバイスでは、15 分ごとにログをフラッシュするだけで十分な場合があります。
+:::
+:::info
+コンテナ化されたワークロードやステートレスなワークロードは、ログのフラッシュ要件に特に敏感である場合があります。例えば、いつでもスケールインできるステートレスな Kubernetes アプリケーションや EC2 フリートを考えてみてください。これらのリソースが突然終了した場合、将来的にログを抽出する方法がなくなり、ログが失われる可能性があります。通常、これらのシナリオには標準の `force_flush_interval` が適していますが、必要に応じて短縮することもできます。
 :::
 
-:::info
-	コンテナ化されたステートレスなワークロードや EC2 フリートは、ログフラッシュの要件に特に敏感である可能性があります。いつでもスケールインできるステートレスな Kubernetes アプリケーションや EC2 フリートを考えてみましょう。これらのリソースが突然終了したときにログの損失が発生する可能性があり、将来的にマシンからログを抽出する方法がなくなります。これらのシナリオでは、通常、標準の `force_flush_interval` が適していますが、必要に応じて低くすることもできます。
-:::
+
 
 ### ロググループ
 
-CloudWatch Logs では、アプリケーションに論理的に適用されるログのコレクションは、単一の[ロググループ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html)に配信する必要があります。そのロググループ内では、ログストリームを作成するソースシステム間で*共通性*がある必要があります。
+CloudWatch Logs 内では、アプリケーションに論理的に適用されるログの各コレクションを、単一の[ロググループ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html)に配信する必要があります。そのロググループ内では、ログストリームを作成するソースシステム間に*共通性*を持たせることが重要です。
 
-LAMP スタックを考えてみましょう。Apache、MySQL、PHP アプリケーション、ホスティング Linux オペレーティングシステムからのログは、それぞれ別個のロググループに属します。
+LAMP スタックを例に考えてみましょう。Apache、MySQL、PHP アプリケーション、ホスティング Linux オペレーティングシステムからのログは、それぞれ別のロググループに属することになります。
 
-このグループ化は重要であり、同じ保持期間、暗号化キー、メトリクスフィルター、サブスクリプションフィルター、Contributor Insights ルールをグループで扱えるようになります。
+このグループ化は非常に重要です。これにより、同じ保持期間、暗号化キー、メトリクスフィルター、サブスクリプションフィルター、Contributor Insights ルールを使用してグループを扱うことができます。
+
 :::info
-	ロググループ内のログストリーム数に制限はありません。また、CloudWatch Logs Insights クエリー1つでアプリケーションのすべてのログを検索できます。Kubernetes サービスの各 Pod や、EC2 フリートの各インスタンスごとに個別のログストリームを持つのが一般的なパターンです。
+ロググループ内のログストリーム数に制限はありません。また、単一の CloudWatch Logs Insights クエリで、アプリケーションのログ全体を検索できます。Kubernetes サービスの各 Pod や、フリート内の各 EC2 インスタンスに対して別々のログストリームを持つことは、標準的なパターンです。
 :::
 
 :::info
-	ロググループのデフォルトの保持期間は*無期限*です。ベストプラクティスは、ロググループを作成するタイミングで保持期間を設定することです。
-	
-	これを CloudWatch コンソールでいつでも設定できますが、ベストプラクティスは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kit など)を使用したロググループ作成時に同時に設定するか、CloudWatch エージェント構成内の `retention_in_days` 設定を使用することです。
-	
-	いずれのアプローチも、ログの保持期間をプロアクティブに設定し、プロジェクトのデータ保持要件に合わせて設定できます。
+ロググループのデフォルトの保持期間は*無期限*です。ベストプラクティスは、ロググループ作成時に保持期間を設定することです。
+
+CloudWatch コンソールでいつでも設定できますが、ベストプラクティスは、インフラストラクチャ as コード（CloudFormation、Cloud Development Kit など）を使用してロググループ作成と同時に設定するか、CloudWatch エージェント設定内の `retention_in_days` 設定を使用することです。
+
+いずれのアプローチでも、ログ保持期間をプロアクティブに設定でき、プロジェクトのデータ保持要件に合わせることができます。
 :::
 
 :::info
-	ロググループデータは、CloudWatch Logs で常に暗号化されます。デフォルトでは、CloudWatch Logs は保管中のログデータに対して`サーバーサイド`の暗号化を使用します。代替として、この暗号化に AWS Key Management Service を使用できます。 [AWS KMS を使用した暗号化](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html) は、ロググループレベルで有効になり、KMS キーをロググループに関連付けることによって、ロググループの作成時または作成後に行います。これは、インフラストラクチャ as コード(CloudFormation、Cloud Development Kit など)で構成できます。
-	
-	CloudWatch Logs のキー管理に AWS Key Management Service を使用するには、追加の構成とユーザーへのキーへのアクセス許可の付与が必要です[^1]。
+ロググループデータは、CloudWatch Logs では常に暗号化されています。デフォルトでは、CloudWatch Logs は保存時のログデータに対して `サーバーサイド` 暗号化を使用します。代替として、この暗号化に AWS Key Management Service を使用することもできます。[AWS KMS を使用した暗号化](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html)は、ロググループレベルで有効化され、ロググループの作成時または作成後に KMS キーを関連付けることで設定できます。これはインフラストラクチャ as コード（CloudFormation、Cloud Development Kit など）を使用して設定できます。
+
+CloudWatch Logs のキー管理に AWS Key Management Service を使用するには、追加の設定とユーザーへのキーへのアクセス許可の付与が必要です。[^1]
 :::
 
-### ログフォーマット
 
-CloudWatch Logs には、インジェスト時にログフィールドを自動的に検出し、JSON データをインデックスする機能があります。この機能により、アドホッククエリとフィルタリングが容易になり、ログデータの使いやすさが向上します。ただし、自動インデックスは構造化データにのみ適用されることに注意が必要です。非構造化ログデータは自動的にインデックス化されませんが、CloudWatch Logs に配信することができます。
 
-非構造化ログでも、正規表現を使用した `parse` コマンドで検索やクエリを実行できます。
+### ログのフォーマット
+
+CloudWatch Logs には、取り込み時に自動的にログフィールドを検出し、JSON データをインデックス化する機能があります。
+この機能により、アドホックなクエリやフィルタリングが容易になり、ログデータの使いやすさが向上します。
+ただし、自動インデックス化は構造化されたデータにのみ適用されることに注意してください。
+非構造化ログデータは自動的にインデックス化されませんが、CloudWatch Logs に配信することは可能です。
+
+非構造化ログは、`parse` コマンドを使用して正規表現で検索やクエリを行うことができます。
 
 :::info
-	CloudWatch Logs を使用する場合のログフォーマットのベストプラクティスは次のとおりです。
+	CloudWatch Logs を使用する際のログ形式に関する 2 つのベストプラクティス：
 
-	1. Log4j、`python-json-logger`、フレームワークのネイティブ JSON エミッタなどの構造化ログフォーマッタを使用します。
-	2. ログ先に1イベントごとに1行のログを送信します。
+	1. [Log4j](https://logging.apache.org/log4j/2.x/)、[`python-json-logger`](https://pypi.org/project/python-json-logger/)、またはフレームワークのネイティブ JSON エミッターなど、構造化されたログフォーマッターを使用する。
+	2. ログの送信先に 1 イベントにつき 1 行のログを送信する。
 
-	複数行の JSON ログを送信する場合、各行が1つのイベントとして解釈されることに注意してください。
+	複数行の JSON ログを送信する場合、各行が 1 つのイベントとして解釈されることに注意してください。
 :::
+
+
+
 ### `stdout` の処理
 
-ログシグナ のページで説明したように、ベストプラクティスはログシステムを生成アプリケーションから切り離すことです。
-ただし、`stdout` からファイルにデータを送信するパターンは、多くのプラットフォームで一般的です。
-Kubernetesや[Amazon Elastic Container Service](https://aws.amazon.com/ecs/)などのコンテナオーケストレーションシステムは、この`stdout`からログファイルへの配信を自動的に管理し、各ログをコレクタから収集できるようにします。
-その後、CloudWatch エージェントがこのファイルをリアルタイムで読み取り、ロググループに代わってデータを転送します。
+[ログシグナル](../../signals/logs/#log-to-stdout) のページで説明したように、ベストプラクティスはロギングシステムを生成アプリケーションから切り離すことです。しかし、`stdout` からファイルにデータを送信することは、多くの (ほとんどの) プラットフォームで一般的なパターンです。Kubernetes や [Amazon Elastic Container Service](https://aws.amazon.com/jp/ecs/) などのコンテナオーケストレーションシステムは、この `stdout` からログファイルへの配信を自動的に管理し、コレクターから各ログを収集できるようにします。CloudWatch エージェントは、このファイルをリアルタイムで読み取り、データをロググループに転送します。
 
 :::info
-	できるだけ、`stdout`への簡易アプリケーションログとエージェントによる収集というパターンを利用してください。
+	可能な限り、アプリケーションのログを `stdout` に簡素化し、エージェントによる収集というパターンを使用してください。
 :::
+
+
+
 ### ログのフィルタリング
 
-ログをフィルタリングする理由はさまざまです。個人データの永続的な保存を防ぐことや、特定の のデータのみをキャプチャすることなどがあります。いずれにせよ、ベストプラクティスは、できるだけ発信元のシステムに近いところでこのフィルタリングを実行することです。CloudWatch の場合、これは分析のために CloudWatch Logs にデータが配信される*前に*意味します。CloudWatch エージェントは、このフィルタリングを実行できます。
+個人データの永続的な保存を防ぐ、または特定のログレベルのデータのみを取得するなど、ログをフィルタリングする理由は多くあります。いずれの場合も、ベストプラクティスは発生元のシステムにできるだけ近い場所でこのフィルタリングを実行することです。CloudWatch の場合、これは分析のために CloudWatch Logs にデータが配信される *前* を意味します。CloudWatch エージェントはこのフィルタリングを実行できます。
 
 :::info
-	[`filters`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) 機能を使用して、必要なログレベルを`include`し、望ましくないパターン(クレジットカード番号、電話番号など)を`exclude`します。
+	[`filters`](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html) 機能を使用して、必要なログレベルを `include` し、クレジットカード番号や電話番号など、望ましくないことがわかっているパターンを `exclude` します。
 :::
 :::tip
-	ログに漏れる可能性のある特定の形式の既知のデータをフィルタリングすることは時間がかかり、エラーが発生しやすい場合があります。ただし、特定のタイプの望ましくないデータ(クレジットカード番号、社会保障番号など)を扱うワークロードの場合、これらのレコードのフィルタを持つことで、将来的に潜在的に破壊的なコンプライアンスの問題を防ぐことができます。たとえば、社会保障番号を含むすべてのレコードをドロップする単純な構成は次のとおりです:
+	ログに漏れる可能性のある既知のデータの特定の形式をフィルタリングすることは、時間がかかり、エラーが発生しやすい場合があります。ただし、特定の種類の望ましくない既知のデータ（クレジットカード番号、社会保障番号など）を扱うワークロードの場合、これらのレコードのフィルターを設けることで、将来的に潜在的に深刻なコンプライアンス問題を防ぐことができます。例えば、社会保障番号を含むすべてのレコードを削除することは、次のような簡単な設定で可能です：
 
 	```
 	"filters": [
@@ -94,74 +110,96 @@ Kubernetesや[Amazon Elastic Container Service](https://aws.amazon.com/ecs/)な�
     ```
 :::
 
-### 複数行ログ
 
-すべてのログ記録におけるベストプラクティスは、ディスクリートなログイベントごとに 1 行が出力される 構造化ログ を使用することです。
-ただし、このオプションがないレガシーアプリケーションや ISV サポートアプリケーションが多数あります。
-これらのワークロードの場合、マルチライン対応プロトコルを使用して出力されない限り、CloudWatch Logs は各行をユニークなイベントとして解釈します。
-CloudWatch エージェントは、[`multi_line_start_pattern`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) ディレクティブを使用してこれを実行できます。
 
-:::info
-	`multi_line_start_pattern` ディレクティブを使用して、マルチラインログを CloudWatch Logs に取り込む負担を軽減します。
-:::
-### ログ記録クラスの設定
+### マルチライン ロギング
 
-CloudWatch Logs には、[クラス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html) が 2 つあります。
-
-- CloudWatch Logs 標準ログクラスは、リアルタイム監視が必要なログや、頻繁にアクセスするログに適した機能豊富なオプションです。
-
-- CloudWatch Logs アクセス頻度の低いログクラスは、ログをコスト効率よく統合するために使用できる新しいログクラスです。このログクラスには、管理対象の取り込み、ストレージ、クロスアカウントのログ分析、暗号化が含まれており、GB 当たりの取り込み価格が低くなっています。アクセス頻度の低いログクラスは、アドホッククエリと事後的なフォレンジック分析に適しています。
-
+すべてのロギングのベストプラクティスは、個別のログイベントごとに 1 行を出力する[構造化ロギング](../../signals/logs/#structured-logging-is-key-to-success)を使用することです。
+しかし、この選択肢がない多くのレガシーアプリケーションや ISV サポートのアプリケーションが存在します。
+これらのワークロードでは、マルチライン対応のプロトコルを使用して出力しない限り、CloudWatch Logs は各行を個別のイベントとして解釈します。
+CloudWatch エージェントは [`multi_line_start_pattern`](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html) ディレクティブを使用してこれを実行できます。
 
 :::info
-	`log_group_class` ディレクティブを使用して、新しいロググループに使用するロググループクラスを指定します。有効な値は **STANDARD** と **INFREQUENT_ACCESS** です。このフィールドを省略した場合、エージェントはデフォルトで **STANDARD** を使用します。
+	`multi_line_start_pattern` ディレクティブを使用して、マルチライン ロギングを CloudWatch Logs に取り込む負担を軽減します。
 :::
+
+
+
+### ロギングクラスの設定
+
+CloudWatch Logs は、ロググループに対して 2 つの[クラス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CloudWatch_Logs_Log_Classes.html)を提供しています：
+
+- CloudWatch Logs Standard ログクラスは、リアルタイムモニタリングが必要なログや頻繁にアクセスするログに適した、フル機能のオプションです。
+
+- CloudWatch Logs Infrequent Access ログクラスは、ログを費用対効果の高い方法で統合するために使用できる新しいログクラスです。このログクラスは、管理された取り込み、ストレージ、クロスアカウントログ分析、暗号化などの CloudWatch Logs の機能のサブセットを、GB あたりのより低い取り込み価格で提供します。Infrequent Access ログクラスは、アドホックなクエリやアクセス頻度の低いログに対する事後的なフォレンジック分析に最適です。
+
+:::info
+新しいロググループに使用するロググループクラスを指定するには、`log_group_class` ディレクティブを使用します。有効な値は **STANDARD** と **INFREQUENT_ACCESS** です。このフィールドを省略した場合、エージェントはデフォルトの **STANDARD** を使用します。
+:::
+
+
+
 ## CloudWatch Logs での検索
 
-### クエリのスコープを管理してコストを抑える
 
-CloudWatch Logs にデータが配信されたら、必要に応じて検索できます。CloudWatch Logs はスキャンされたデータ量に応じて課金されることに注意してください。データスキャンを抑える戦略があり、これによってスキャンされるデータ量を減らすことができます。
+
+
+### クエリスコープによるコスト管理
+
+CloudWatch Logs にデータが配信されると、必要に応じてそのデータを検索できるようになります。ただし、CloudWatch Logs はスキャンされたデータ量に応じて課金されることに注意してください。クエリスコープを管理するための戦略があり、これによりスキャンされるデータ量を削減できます。
 
 :::info
-	ログの検索時には、日時の範囲が適切であることを確認してください。CloudWatch Logs では相対的または絶対的な時間範囲をスキャンのために設定できます。*前日のエントリーのみを探している場合、今日のログをスキャンする必要はありません!*
-	1 つのクエリで複数のロググループを検索できますが、そうするとスキャンされるデータ量が多くなります。対象とする必要があるロググループを特定したら、クエリのスコープをそれに合わせて縮小してください。
+	ログを検索する際は、適切な時間と日付の範囲を設定してください。CloudWatch Logs では、スキャンの相対的または絶対的な時間範囲を設定できます。*前日のエントリのみを探している場合、今日のログのスキャンを含める必要はありません！*
+:::
+
+:::info
+	1 つのクエリで複数のロググループを検索できますが、そうすることでスキャンされるデータ量が増加します。対象とするロググループを特定したら、それに合わせてクエリスコープを絞り込んでください。
 :::
 
 :::tip
-	各クエリが実際にスキャンしたデータ量は、CloudWatch コンソールから直接確認できます。このアプローチにより、効率的なクエリを作成できます。
+	各クエリが実際にスキャンするデータ量は、CloudWatch コンソールから直接確認できます。このアプローチは、効率的なクエリを作成するのに役立ちます。
 
 	![CloudWatch Logs コンソールのプレビュー](../../images/cwl1.png)
 :::
 
-### 他のユーザーとのクエリの共有
 
-[CloudWatch Logs のクエリ構文](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html) は複雑ではありませんが、特定のクエリを最初から作成することは時間がかかる場合があります。同じ AWS アカウント内の他のユーザーとの間で適切に記述されたクエリを共有することで、アプリケーションログの調査を効率化できます。これは、[AWS Management Console](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) から直接、または [CloudFormation](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html) や [AWS CDK](https://docs.aws.amazon.com/ja_jp/cdk/api/v2/docs/aws-cdk-lib.aws_logs.CfnQueryDefinition.html) を使用してプログラムで実現できます。これにより、ログデータを分析する必要がある他のユーザーの再作業が軽減されます。 
+
+### 成功したクエリを他のユーザーと共有する
+
+[CloudWatch Logs のクエリ構文](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html) は複雑ではありませんが、特定のクエリをゼロから作成するのは時間がかかる場合があります。同じ AWS アカウント内の他のユーザーと適切に作成されたクエリを共有することで、アプリケーションログの調査を効率化できます。これは [AWS マネジメントコンソール](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) から直接、または [CloudFormation](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/aws-resource-logs-querydefinition.html) や [AWS CDK](https://docs.aws.amazon.com/ja_jp/cdk/api/v2/docs/aws-cdk-lib.aws_logs.CfnQueryDefinition.html) を使用してプログラム的に実現できます。これにより、ログデータを分析する必要がある他のユーザーの再作業量を減らすことができます。
 
 :::info
-	頻繁に繰り返し使用されるクエリを CloudWatch Logs に保存することで、ユーザーに対して事前入力された状態で提供できます。
+	頻繁に繰り返されるクエリを CloudWatch Logs に保存して、ユーザーのために事前に入力できるようにします。
 
-	![CloudWatch Logs クエリエディタページ](../../images/cwl2.png)
+	![CloudWatch Logs クエリエディターページ](../../images/cwl2.png)
 :::
+
+
+
 ### パターン分析
 
-CloudWatch Logs Insights は、ログをクエリするときに機械学習アルゴリズムを使用してパターンを見つけます。パターンは、ログフィールド間で繰り返し発生する共有テキスト構造です。大量のログイベントがごく少数のパターンに圧縮できることが多いため、パターンは大規模なログセットの分析に役立ちます。[^2]
+CloudWatch Logs Insights は、ログをクエリする際に機械学習アルゴリズムを使用してパターンを見つけます。パターンとは、ログフィールド間で繰り返し発生する共通のテキスト構造です。パターンは、多数のログイベントを少数のパターンに圧縮できることが多いため、大規模なログセットを分析する際に役立ちます。[^2]
 
 :::info
-	パターンを使用して、ログデータを自動的にパターンにクラスタリングします。
-	![CloudWatch Logs クエリのパターン例](../../images/pattern_analysis.png)
-:::
-### 前の期間との比較(diff)
+	pattern を使用して、ログデータを自動的にパターンにクラスタリングします。
 
-CloudWatch Logs Insights では、エラーの検出やトレンドの特定に役立つように、時間の経過とともにログイベントの変化を比較できます。比較クエリはパターンを明らかにし、迅速なトレンド分析を容易にします。また、より深い調査のためにサンプルの生ログイベントを調べることができます。クエリは、選択した期間と同じ長さの比較期間の2つの期間に対して分析されます [^3]。
+	![CloudWatch Logs クエリパターンの例](../../images/pattern_analysis.png)
+:::
+
+
+
+### 前の時間範囲との比較 (diff)
+
+CloudWatch Logs Insights では、時間の経過に伴うログイベントの変化を比較することができ、エラーの検出やトレンドの特定に役立ちます。比較クエリはパターンを明らかにし、迅速なトレンド分析を可能にします。また、より深い調査のために生のログイベントのサンプルを調べることもできます。クエリは、選択された期間と同じ長さの比較期間の 2 つの時間帯に対して分析されます。[^3]
 
 :::info
-	`diff` コマンドを使用して、時間の経過とともにログイベントの変化を比較してください。
+	`diff` コマンドを使用して、時間の経過に伴うログイベントの変化を比較します。
 
-	![CloudWatch Logs のクエリの差分例](../../images/diff-query.png)
+	![CloudWatch Logs クエリの差分の例](../../images/diff-query.png)
 :::
 
-[^1]: アクセス権限を持つ CloudWatch Logs ロググループの暗号化の実際的な例については、[How to search through your AWS Systems Manager Session Manager console logs – Part 1](https://aws.amazon.com/blogs/mt/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/) を参照してください。
+[^1]: CloudWatch Logs のロググループの暗号化とアクセス権限の実践的な例については、[AWS Systems Manager Session Manager コンソールログの検索方法 - パート 1](https://aws.amazon.com/jp/blogs/news/how-to-search-through-your-aws-systems-manager-session-manager-console-logs-part-1/) を参照してください。
 
-[^2]: より詳細なインサイトについては、[CloudWatch Logs Insights Pattern Analysis](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html) を参照してください。
+[^2]: より詳細な洞察については、[CloudWatch Logs Insights パターン分析](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html) を参照してください。
 
-[^3]: 詳細については、[CloudWatch Logs Insigts Compare(diff) with previous ranges](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html) を参照してください。
+[^3]: 詳細については、[CloudWatch Logs Insights 前の範囲との比較 (diff)](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html) を参照してください。

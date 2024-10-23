@@ -2,15 +2,19 @@
 sidebar_position: 5
 ---
 
+
+
 # サイトをデプロイする
 
-Docusaurus は **静的サイトジェネレーター** (または **[Jamstack](https://jamstack.org/)** と呼ばれています)です。
+Docusaurus は **静的サイトジェネレーター** (または **[Jamstack](https://jamstack.org/)** とも呼ばれます) です。
 
-シンプルな **静的 HTML、JavaScript、CSS ファイル** としてサイトをビルドします。
+サイトをシンプルな **静的 HTML、JavaScript、CSS ファイル** としてビルドします。
+
+
 
 ## サイトをビルドする
 
-**本番用に**サイトをビルドします:
+サイトを **本番用に** ビルドします：
 
 ```bash
 npm run build
@@ -18,14 +22,16 @@ npm run build
 
 静的ファイルは `build` フォルダに生成されます。
 
-## サイトをデプロイする
 
-プロダクションビルドをローカルでテストします:
+
+## サイトのデプロイ
+
+ローカルで本番ビルドをテストします：
 
 ```bash
 npm run serve
 ```
 
-`build` フォルダが [http://localhost:3000/](http://localhost:3000/) で提供されます。
+これで `build` フォルダが [http://localhost:3000/](http://localhost:3000/) で提供されます。
 
-これで `build` フォルダを **ほぼどこにでも** 簡単に、**無料** または非常に低コストでデプロイできます (**[デプロイガイド](https://docusaurus.io/docs/deployment)** を読んでください)。
+`build` フォルダを**ほぼどこにでも**簡単に、**無料**または非常に低コストでデプロイできるようになりました（**[デプロイメントガイド](https://docusaurus.io/docs/deployment)** をお読みください）。

@@ -1,26 +1,24 @@
 # Amazon Managed Service for Prometheus
 
-[Amazon Managed Service for Prometheus][amp-main] (AMP) は、コンテナ化されたアプリケーションを大規模に監視するのに便利な、Prometheus 互換の監視サービスです。
-AMP を使えば、運用メトリクスの取り込み、ストレージ、クエリを管理するために必要なインフラストラクチャを管理することなく、Prometheus クエリ言語 (PromQL) を使ってコンテナ化されたワークロードのパフォーマンスを監視できます。
+[Amazon Managed Service for Prometheus][amp-main] (AMP) は、Prometheus 互換の監視サービスで、コンテナ化されたアプリケーションを大規模に監視することを容易にします。
+AMP を使用すると、Prometheus クエリ言語 (PromQL) を使用して、コンテナ化されたワークロードのパフォーマンスを監視できます。その際、運用メトリクスの取り込み、保存、クエリを管理するために必要な基盤インフラストラクチャを管理する必要はありません。
 
-以下のレシピをご覧ください。
+以下のレシピをご覧ください：
 
-- [AMP の概要][amp-gettingstarted]
-- [EC2 上の EKS で ADOT を使って AMP に取り込み、AMG で可視化する](recipes/ec2-eks-metrics-go-adot-ampamg.md)
-- [AMP への クロスアカウント取り込みを設定する][amp-xaccount]
-- [AMP を使った ECS からのメトリクス収集][amp-ecs-metrics]
-- [AMP 用の Grafana Cloud Agent を設定する][amp-gcwa]
-- [AMP ワークスペースのクロスリージョンメトリクス収集を設定する][amp-xregion-metrics]
+- [AMP の使用開始][amp-gettingstarted]
+- [EC2 上の EKS で ADOT を使用して AMP にデータを取り込み、AMG で可視化する](recipes/ec2-eks-metrics-go-adot-ampamg.md)
+- [AMP へのクロスアカウント取り込みの設定][amp-xaccount]
+- [AMP を使用した ECS からのメトリクス収集][amp-ecs-metrics]
+- [AMP 用の Grafana Cloud Agent の設定][amp-gcwa]
+- [AMP ワークスペース用のクロスリージョンメトリクス収集の設定][amp-xregion-metrics]
 - [EKS 上の自己ホスト型 Prometheus から AMP への移行のベストプラクティス][amp-migration]
-- [AMP の概要ワークショップ][amp-oow]
-- [Firehose と AWS Lambda を使って CloudWatch メトリクスストリームを Amazon Managed Service for Prometheus にエクスポートする](recipes/lambda-cw-metrics-go-amp.md)
-- [Terraform を使って Amazon Managed Service for Prometheus をデプロイし、Alert Manager を設定する](recipes/amp-alertmanager-terraform.md)
-- [Amazon Managed Prometheus と Amazon Managed Grafana を使って EKS 上の Istio を監視する][amp-istio-monitoring]
-- [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使って Amazon EKS Anywhere を監視する][amp-anywhere-monitoring]
+- [AMP 使用開始のためのワークショップ][amp-oow]
+- [Firehose と AWS Lambda を介した CloudWatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
+- [Amazon Managed Service for Prometheus のデプロイと Alert Manager の設定のための Infrastructure as Code としての Terraform](recipes/amp-alertmanager-terraform.md)
+- [Amazon Managed Prometheus と Amazon Managed Grafana を使用した EKS 上の Istio の監視][amp-istio-monitoring]
+- [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere の監視][amp-anywhere-monitoring]
 - [Amazon EKS Observability Accelerator の紹介][eks-accelerator]
-- [AMP と Amazon Managed Grafana で Prometheus mixin ダッシュボードをインストールする](recipes/amp-mixin-dashboards.md)
-- [Amazon Managed Service for Prometheus と Alert Manager を使って Amazon EC2 を自動スケーリングする](recipes/as-ec2-using-amp-and-alertmanager.md)
-
+- [AMP と Amazon Managed Grafana を使用した Prometheus mixin ダッシュボードのインストール](recipes/amp-mixin-dashboards.md)
 [amp-main]: https://aws.amazon.com/jp/prometheus/
 [amp-gettingstarted]: https://aws.amazon.com/blogs/mt/getting-started-amazon-managed-service-for-prometheus/
 [amp-xaccount]: https://aws.amazon.com/blogs/opensource/setting-up-cross-account-ingestion-into-amazon-managed-service-for-prometheus/
@@ -32,3 +30,4 @@ AMP を使えば、運用メトリクスの取り込み、ストレージ、ク�
 [amp-istio-monitoring]: https://aws.amazon.com/blogs/mt/monitor-istio-on-eks-using-amazon-managed-prometheus-and-amazon-managed-grafana/
 [amp-anywhere-monitoring]: https://aws.amazon.com/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [eks-accelerator]: recipes/eks-observability-accelerator.md
+- [Amazon Managed Service for Prometheus と Alert Manager を使用した Amazon EC2 の自動スケーリング](recipes/as-ec2-using-amp-and-alertmanager.md)

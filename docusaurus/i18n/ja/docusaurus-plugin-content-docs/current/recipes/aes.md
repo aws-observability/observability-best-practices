@@ -1,18 +1,18 @@
 # Amazon OpenSearch Service
 
-[Amazon OpenSearch Service][aes-main] (AOS) は、Amazon Elasticsearch Service の後継サービスで、インタラクティブなログ分析、リアルタイムのアプリケーションモニタリング、Webサイト検索などを簡単に行えるようにします。OpenSearch は、Elasticsearch から派生したオープンソースの分散型検索・分析スイートです。最新バージョンの OpenSearch、19 バージョンの Elasticsearch (1.5 から 7.10 バージョン) のサポート、OpenSearch Dashboards と Kibana (1.5 から 7.10 バージョン) による可視化機能を提供しています。
+[Amazon OpenSearch Service][aes-main] (AOS) は、Amazon Elasticsearch Service の後継サービスで、インタラクティブなログ分析、リアルタイムアプリケーションモニタリング、ウェブサイト検索などを簡単に実行できるようにします。OpenSearch は、Elasticsearch から派生したオープンソースの分散型検索および分析スイートです。OpenSearch の最新バージョン、Elasticsearch の 19 バージョン（1.5 から 7.10 まで）のサポート、そして OpenSearch Dashboards と Kibana（1.5 から 7.10 バージョン）を利用した可視化機能を提供しています。
 
-以下のレシピをご覧ください:
+以下のレシピをチェックしてください：
 
-- [AOS チュートリアル: クイックスタートガイド][aos-tut]
-- [AOS の開始方法: ドメインのサイズを決める][aos-gs]
-- [AOS の開始方法][aes-ws]
-- [AOS を使ったログ分析][loan-ws]
-- [Open Distro for Elasticsearch の開始方法][od-ws]
+- [AOS チュートリアル：クイックスタートガイド][aos-tut]
+- [AOS を始める：ドメインの T シャツサイズ設定][aos-gs]
+- [AOS 入門][aes-ws]
+- [AOS を使用したログ分析][loan-ws]
+- [Open Distro for Elasticsearch 入門][od-ws]
 - [機械学習でデータを理解する][ml-ws]
 - [CloudTrail ログを AOS に送信する][ct-ws]
-- [AOS を使った DynamoDB データの検索][bs-ws]
-- [AOS でのトレース分析の開始方法][tracing-aes]
+- [AOS を使用した DynamoDB データの検索][bs-ws]
+- [AOS でのトレース分析入門][tracing-aes]
 
 [aes-main]: https://aws.amazon.com/jp/opensearch-service/
 [aos-gs]: https://aws.amazon.com/blogs/big-data/get-started-with-amazon-opensearch-service-t-shirt-size-your-domain/

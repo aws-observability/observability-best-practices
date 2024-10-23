@@ -1,22 +1,32 @@
 # AWS Lambda
 
-[AWS Lambda][lambda-main] は、サーバーのプロビジョニングやサーバー管理、ワークロード対応のクラスタースケーリングロジック、イベント統合の保守、ランタイムの管理をすることなく、コードを実行できるサーバーレスコンピューティングサービスです。
+[AWS Lambda][lambda-main] は、サーバーレスのコンピューティングサービスです。
+サーバーのプロビジョニングや管理、ワークロードを意識したクラスタースケーリングロジックの作成、イベント統合の維持、ランタイムの管理を行うことなく、コードを実行できます。
 
-次のレシピを確認してください:
+以下のレシピをご覧ください：
+
+
+
 
 ## ログ
 
-- [サーバーレスアプリケーションをデプロイしてモニタリングする][aes-ws]
+- [サーバーレスアプリケーションのデプロイと監視][aes-ws]
+
+
+
 
 ## メトリクス
 
 - [CloudWatch Lambda Insights の紹介][lambda-cwi]
 - [Firehose と AWS Lambda を使用して CloudWatch メトリクスストリームを Amazon Managed Service for Prometheus にエクスポートする](recipes/lambda-cw-metrics-go-amp.md)
 
+
+
+
 ## トレース
 
-- [AWS Distro for OpenTelemetry Lambda レイヤーを使用して Python アプリケーションを自動インストゥルメント化する][lambda-layer-python-xray-adot]
-- [OpenTelemetry を使用して AWS X-Ray で AWS Lambda 関数をトレースする][lambda-xray-adot]
+- [AWS Distro for OpenTelemetry Lambda レイヤーを使用した Python アプリケーションの自動計装][lambda-layer-python-xray-adot]
+- [OpenTelemetry を使用した AWS X-Ray での AWS Lambda 関数のトレース][lambda-xray-adot]
 
 [lambda-main]: https://aws.amazon.com/jp/lambda/
 [aes-ws]: https://bookstore.aesworkshops.com/

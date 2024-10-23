@@ -1,16 +1,25 @@
 # インフラストラクチャとデータベース
 
+
+
+
 ## ネットワーキング
 
-- [Application Load Balancer をモニタリングする][alb-docs]
-- [Network Load Balancer をモニタリングする][nlb-docs]
+- [Application Load Balancer のモニタリング][alb-docs]
+- [Network Load Balancer のモニタリング][nlb-docs]
 - [VPC フローログ][vpcfl]
 - [Amazon Elasticsearch Service を使用した VPC フローログの分析][vpcf-ws]
 
+
+
+
 ## コンピューティング
 
-- [Amazon EKS コントロールプレーンのログ][eks-cp]
+- [Amazon EKS コントロールプレーンのロギング][eks-cp]
 - [AWS Lambda のモニタリングとオブザーバビリティ][lambda-docs]
+
+
+
 
 ## データベース、ストレージ、キュー
 
@@ -19,6 +28,8 @@
 - [Amazon Managed Streaming for Apache Kafka][msk]
 - [Amazon S3 でのログ記録とモニタリング][s3mon]
 - [Amazon SQS と AWS X-Ray][sqstrace]
+
+
 
 ## その他
 

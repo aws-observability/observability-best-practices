@@ -1,84 +1,83 @@
-# Kubecost の使用
-Kubecost は、Kubernetes 環境での支出とリソース効率の可視化をユーザーに提供します。概して、Amazon EKS のコスト監視は Kubecost とともにデプロイされ、オープンソースのモニタリングシステムおよび時系列データベースである Prometheus が含まれます。Kubecost は Prometheus からメトリクスを読み取り、コスト割り当て計算を実行し、メトリクスを Prometheus に書き戻します。最後に、Kubecost フロントエンドが Prometheus からメトリクスを読み取り、Kubecost ユーザーインターフェイス (UI) に表示します。このアーキテクチャは次の図で示されています。
+# Using Kubecost
+Kubecost provides customers with visibility into spend and resource efficiency in Kubernetes environments. At a high level, Amazon EKS cost monitoring is deployed with Kubecost, which includes Prometheus, an open-source monitoring system and time series database. Kubecost reads metrics from Prometheus then performs cost allocation calculations and writes the metrics back to Prometheus. Finally, the Kubecost front end reads metrics from Prometheus and shows them on the Kubecost user interface (UI). The architecture is illustrated by the following diagram:
 
 ![Architecture](../../images/kubecost-architecture.png)
 
-## Kubecost を使用する理由
-お客様がアプリケーションをモダナイズし、Amazon EKS を使用してワークロードをデプロイすると、アプリケーションの実行に必要なコンピューティングリソースを統合することで効率化が図れます。しかし、この利用効率の向上は、アプリケーションコストの測定が困難になるというトレードオフがあります。現在、テナントごとにコストを分配するには、次のいずれかの方法を使用できます。
+## Reasons to use Kubecost
+As customers modernize their applications and deploy workloads using Amazon EKS, they gain efficiencies by consolidating the compute resources required to run their applications. However, this utilization efficiency comes at a tradeoff of increased difficulty measuring application costs. Today, you can use one of these methods to distribute costs by tenant:
 
-* ハードマルチテナンシー - 専用の AWS アカウントで個別の EKS クラスターを実行します。
-* ソフトマルチテナンシー - 共有 EKS クラスター内で複数のノードグループを実行します。
-* 消費ベースの課金 - 共有 EKS クラスター内で発生したコストを、リソース消費量に基づいて計算します。
+* Hard multi-tenancy — Run separate EKS clusters in dedicated AWS accounts.
+* Soft multi-tenancy — Run multiple node groups in a shared EKS cluster.
+* Consumption based billing — Use resource consumption to calculate the cost incurred in a shared EKS cluster.
 
-ハードマルチテナンシーでは、ワークロードが個別の EKS クラスターにデプロイされるため、各テナントの支出を判断するためのレポートを実行することなく、クラスターとその依存関係に発生したコストを特定できます。
-ソフトマルチテナンシーでは、[Node Selectors](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) や [Node Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) などの Kubernetes 機能を使用して、Kubernetes スケジューラにテナントのワークロードを専用ノードグループ上で実行するよう指示できます。ノードグループの EC2 インスタンスに識別子 (製品名やチーム名など) を付けてタグ付けし、[タグ](https://docs.aws.amazon.com/ja_jp/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) を使ってコストを分配できます。
-上記 2 つのアプローチの欠点は、未使用の容量が発生する可能性があり、密に詰め込まれたクラスターを実行する際に得られるコスト削減のメリットを最大限に活用できない点です。Elastic Load Balancing やネットワーク転送料金などの共有リソースのコストを割り当てる方法も必要です。
+With Hard multi-tenancy, workloads get deployed in separate EKS clusters and you can identify the cost incurred for the cluster and its dependencies without having to run reports to determine each tenant’s spend.
+With Soft multi-tenancy, you can use Kubernetes features like [Node Selectors](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#nodeselector) and [Node Affinity](https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/#affinity-and-anti-affinity) to instruct Kubernetes Scheduler to run a tenant’s workload on dedicated node groups. You can tag the EC2 instances in a node group with an identifier (like product name or team name) and use [tags](https://docs.aws.amazon.com/awsaccountbilling/latest/aboutv2/cost-alloc-tags.html) to distribute costs.
+A downside of the above two approach is that you may end up with unused capacity and may not fully utilize the cost savings that come when you run a densely packed cluster. You still need ways to allocate cost of shared resources like Elastic Load Balancing, network transfer charges.
 
-マルチテナント Kubernetes クラスターでコストを追跡する最も効率的な方法は、ワークロードが消費したリソースの量に基づいてコストを分配することです。このパターンを使用すると、異なるワークロードがノードを共有できるため、ノード上の Pod 密度を高めることができ、EC2 インスタンスの利用率を最大化できます。しかし、ワークロードやネームスペースごとにコストを計算することは難しい課題です。ワークロードのコスト責任を理解するには、一定期間に消費または予約されたすべてのリソースを集計し、リソースのコストと使用期間に基づいて料金を評価する必要があります。これが、Kubecost が取り組んでいる課題そのものです。
+The most efficient way to track costs in multi-tenant Kubernetes clusters is to distribute incurred costs based on the amount of resources consumed by workloads. This pattern allows you to maximize the utilization of your EC2 instances because different workloads can share nodes, which allows you to increase the pod-density on your nodes. However, calculating costs by workload or namespaces is a challenging task. Understanding the cost-responsibility of a workload requires aggregating all the resources consumed or reserved during a time-frame, and evaluating the charges based on the cost of the resource and the duration of the usage. This is the exact challenge that Kubecost is dedicated to tackling.
 
-tip
-    Kubecost の実践的な経験を得るには、[One Observability ワークショップ](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics) をご覧ください。
+:::tip
+    Take a look at our [One Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics) to get a hands-on experience on Kubecost.
+:::
 
-
-## 推奨事項
-
-### コスト割り当て
-Kubecost のコスト割り当てダッシュボードを使用すると、namespace、k8s ラベル、サービスなどの Kubernetes ネイティブコンセプト全体にわたる割り当て済み支出と最適化の機会を素早く確認できます。また、チーム、製品/プロジェクト、部門、環境などの組織概念にコストを割り当てることもできます。日付範囲やフィルタを変更して、特定のワークロードに関する洞察を得たり、レポートを保存したりできます。Kubernetes のコストを最適化するには、効率とクラスターのアイドルコストに注目する必要があります。
+## Recommendations
+### Cost Allocation
+The Kubecost Cost Allocation dashboard allows you to quickly see allocated spend and optimization opportunity across all native Kubernetes concepts, e.g. namespace, k8s label, and service. It also allows for allocating cost to organizational concepts like team, product/project, department, or environment. You can modify Date range, filters to derive insights about specific workload and save the report. To optimize the Kubernetes cost, you should be paying attention to the efficiency and cluster idle costs.
 
 ![Allocations](../../images/allocations.png)
 
-### 効率性
+### Efficiency
 
-Pod リソースの効率性は、一定の時間枠内におけるリソース使用量とリソース要求の比率として定義されます。コストで加重されており、次のように表すことができます。
-
+Pod resource efficiency is defined as the resource utilization versus the resource request over a given time window. It is cost-weighted and can be expressed as follows:
 ```
 (((CPU Usage / CPU Requested) * CPU Cost) + ((RAM Usage / RAM Requested) * RAM Cost)) / (RAM Cost + CPU Cost)
 ```
+where CPU Usage = rate(container_cpu_usage_seconds_total) over the time window RAM Usage = avg(container_memory_working_set_bytes) over the time window
 
-ここで、CPU 使用量 = 時間枠内の rate(container_cpu_usage_seconds_total)、RAM 使用量 = 時間枠内の avg(container_memory_working_set_bytes)
+As explicit RAM, CPU or GPU prices are not provided by AWS, the Kubecost model falls back to the ratio of base CPU, GPU and RAM price inputs supplied. The default values for these parameters are based on the marginal resource rates of the cloud provider, but they can be customized within Kubecost. These base resource (RAM/CPU/GPU) prices are normalized to ensure the sum of each component is equal to the total price of the node provisioned, based on billing rates from your provider
 
-AWS では明示的な RAM、CPU、GPU の価格が提供されていないため、Kubecost モデルは基本の CPU、GPU、RAM 価格入力の比率に代わります。これらのパラメータのデフォルト値は、クラウドプロバイダーの限界リソース料金に基づいていますが、Kubecost 内でカスタマイズすることができます。これらの基本リソース (RAM/CPU/GPU) の価格は、プロバイダーの課金レートに基づいて、各コンポーネントの合計がプロビジョニングされたノードの総価格と等しくなるように正規化されています。
+It is the responsibility of each service team to move towards maximum efficiency and fine tune the workloads to achieve the goal.
 
-各サービスチームは、最大の効率性を目指し、ワークロードを細かく調整してその目標を達成する責任があります。
-
-### アイドルコスト
-クラスターのアイドルコストとは、割り当てられたリソースのコストとそれらが実行されるハードウェアのコストの差と定義されます。割り当ては、使用量とリクエストの最大値として定義されます。以下のように表すこともできます。
+### Idle Cost
+Cluster idle cost is defined as the difference between the cost of allocated resources and the cost of the hardware they run on. Allocation is defined as the max of usage and requests. It can also be expressed as follows:
 ```
 idle_cost = sum(node_cost) - (cpu_allocation_cost + ram_allocation_cost + gpu_allocation_cost)
 ```
-ここで、割り当て = max(リクエスト、使用量)
+where allocation = max(request, usage)
 
-したがって、アイドルコストは、Kubernetes スケジューラが既存のワークロードを中断することなくポッドをスケジュールできるスペースのコストとも考えられますが、現在はそうなっていません。ワークロード、クラスター、ノードごとに分配できます。設定方法によって異なります。
+So, idle costs can also be thought of as the cost of the space that the Kubernetes scheduler could schedule pods, without disrupting any existing workloads, but it is not currently. It can be distributed to the workloads or cluster or by nodes depending on how you want to configure.
 
-### ネットワークコスト
 
-Kubecost は、ネットワーク転送コストを生成するワークロードにそのコストを割り当てるためのベストエフォートを行います。ネットワークコストを正確に判断する方法は、[AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations) と [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration) の組み合わせを使用することです。
+### Network Cost
 
-効率スコアとアイドルコストを考慮して、ワークロードを微調整し、クラスターを最大限に活用することが重要です。これにより、次のトピックであるクラスターのサイズ調整に移ることができます。
+Kubecost uses best-effort to allocate network transfer costs to the workloads generating those costs. The accurate way of determining the network cost is by using the combination of  [AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations) and [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration). 
 
-### ワークロードの適正化
+You would want to take into account your efficiency score and Idle cost to fine tune the workloads to ensure you utilize the cluster to its complete potential. This takes us to the next topic namely Cluster right-sizing.
 
-Kubecost は、Kubernetes ネイティブのメトリクスに基づいて、ワークロードの適正化に関する推奨事項を提供します。kubecost UI の Savings パネルは、適正化を始めるのに最適な場所です。
+### Right-Sizing Workloads
+
+Kubecost provides right-sizing recommendations for your workloads based on Kubernetes-native metrics. The savings panel in the kubecost UI is a great place to start.
 
 ![Savings](../../images/savings.png)
 
 ![Right-sizing](../../images/right-sizing.png)
 
-Kubecost は以下の点について推奨事項を提供できます。
+Kubecost can give you recommendations on:
 
-* コンテナリクエストの過剰プロビジョニングと不足プロビジョニングの両方を考慮したコンテナリクエストの適正化
-* 未使用の容量への過剰支出を停止するためのクラスターノードの数とサイズの調整
-* 有意な量のトラフィックを送受信しないポッドのスケールダウン、削除、リサイズ
-* スポットノードに適したワークロードの特定
-* どのポッドからも使用されていないボリュームの特定
+* Right sizing container request by taking a look at both over-provisioned and under-provisioned container request
+* Adjust the number and size of the cluster nodes to stop over-spending on unused capacity
+* Scale down, delete / resize pods that don’t send or receive meaningful rate of traffic
+* Identifying workloads ready for spot nodes
+* Identifying volumes that are unused by any pods
 
-Kubecost には、Cluster Controller コンポーネントが有効になっている場合、コンテナリソースリクエストに関する推奨事項を自動的に実装する機能もあります。自動リクエスト適正化を使用すると、過剰な YAML やわずらわしい kubectl コマンドをテストすることなく、クラスター全体でリソース割り当ての最適化を即座に行えます。クラスター内のリソースの過剰割り当てを簡単に排除でき、クラスターの適正化やその他の最適化による大幅な節約の道が開かれます。
 
-### Amazon Managed Service for Prometheus と Kubecost の統合
+Kubecost also has a pre-release feature that can automatically implement its recommendations for container resource requests if you have the Cluster Controller component enabled. Using automatic request right-sizing allows you to instantly optimize resource allocation across your entire cluster, without testing excessive YAML or complicated kubectl commands. You can easily eliminate resource over-allocation in your cluster, which paves the way for vast savings via cluster right-sizing and other optimizations.
 
-Kubecost は、オープンソースの Prometheus プロジェクトを時系列データベースとして利用し、Prometheus 内のデータを後処理してコスト割り当て計算を行います。クラスターのサイズやワークロードのスケールによっては、Prometheus サーバーがメトリクスをスクレイピングおよび保存することが過剰な負荷になる可能性があります。そのような場合は、管理対象の Prometheus 互換のモニタリングサービスである Amazon Managed Service for Prometheus を使用して、メトリクスを確実に保存し、大規模な Kubernetes コストを簡単に監視できるようにします。
+### Integrating Kubecost with Amazon Managed Service for Prometheus
 
-[Kubecost サービスアカウントの IAM ロール](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/iam-roles-for-service-accounts.html)をセットアップする必要があります。クラスターの OIDC プロバイダーを使用して、クラスターのサービスアカウントに IAM 権限を付与します。kubecost-cost-analyzer と kubecost-prometheus-server サービスアカウントに適切な権限を付与する必要があります。これらは、ワークスペースからメトリクスを送受信するために使用されます。コマンドラインで次のコマンドを実行します。
+Kubecost leverages the open-source Prometheus project as a time series database and post-processes the data in Prometheus to perform cost allocation calculations. Depending on the cluster size and scale of the workload, it could be overwhelming for a Prometheus server to scrape and store the metrics. In such case, you can use the Amazon Managed Service for Prometheus, a managed Prometheus-compatible monitoring service to store the metrics reliably and enable you to easily monitor Kubernetes cost at scale.
+
+You must setup [IAM roles for Kubecost service accounts](https://docs.aws.amazon.com/eks/latest/userguide/iam-roles-for-service-accounts.html). Using the OIDC provider for the cluster, you grant IAM permissions to your cluster’s service accounts. You must grant appropriate permissions to the kubecost-cost-analyzer and kubecost-prometheus-server service accounts. These will be used to send and retrieve metrics from the workspace. Run the following commands on the command line:
 
 ```
 eksctl create iamserviceaccount \ 
@@ -101,9 +100,9 @@ eksctl create iamserviceaccount \
 --approve
 
 ```
-`CLUSTER_NAME` は Kubecost をインストールする Amazon EKS クラスターの名前で、"REGION" は Amazon EKS クラスターのリージョンです。
+`CLUSTER_NAME` is the name of the Amazon EKS cluster where you want to install Kubecost and "REGION" is the region of the Amazon EKS cluster.
 
-完了したら、次のように Kubecost の Helm チャートをアップグレードする必要があります。
+Once complete, you will have to upgrade the Kubecost helm chart as below :
 ```
 helm upgrade -i kubecost \
 oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
@@ -113,19 +112,18 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 --set global.amp.prometheusServerEndpoint=${QUERYURL} \
 --set global.amp.remoteWriteService=${REMOTEWRITEURL}
 ```
-</region></cluster_name></region></cluster_name>
+### Accessing Kubecost UI
 
-### Kubecost UI へのアクセス
+Kubecost provides a web dashboard that you can access either through kubectl port-forward, an ingress, or a load balancer. The enterprise version of Kubecost also supports restricting access to the dashboard using [SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) and providing varying level of access. For example, restricting team’s view to only the products they are responsible for.
 
-Kubecost には Web ダッシュボードがあり、kubectl port-forward、Ingress、ロードバランサーのいずれかを通じてアクセスできます。Kubecost のエンタープライズ版では、ダッシュボードへのアクセスを [SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) で制限し、アクセスレベルを変更することもできます。たとえば、チームの閲覧を担当製品のみに制限することができます。
+In AWS environment, consider using the [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) to expose Kubecost and use [Amazon Cognito](https://aws.amazon.com/cognito/) for authentication, authorization, and user management. You can learn more on this [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/)
 
-AWS 環境では、Kubecost を公開するために [AWS Load Balancer Controller](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/aws-load-balancer-controller.html) を使用し、認証、認可、ユーザー管理には [Amazon Cognito](https://aws.amazon.com/jp/cognito/) を使用することを検討してください。詳細は、[How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/) をご覧ください。
 
-### マルチクラスタービュー
+### Multi-cluster view
 
-FinOps チームは、EKS クラスタをレビューし、ビジネスオーナーに推奨事項を共有したいと考えています。大規模に運用する場合、各クラスタにログインして推奨事項を確認するのは困難になります。マルチクラスタを使用すると、グローバルにすべてのクラスタコストを集約したシングルペインのガラスビューを持つことができます。Kubecost では、複数のクラスタ環境に対して、Kubecost Free、Kubecost Business、Kubecost Enterprise の 3 つのオプションをサポートしています。Free モードと Business モードでは、クラウド請求の照合は各クラスタレベルで実行されます。Enterprise モードでは、クラウド請求の照合は、Kubecost UI を提供する主要クラスタと、メトリクスが格納される共有バケットで実行されます。
-メトリクスの保持期間が無制限になるのは、Enterprise モードを使用する場合のみであることに注意が必要です。
+Your FinOps team would want to review the EKS cluster to share recommendations with business owners. When operating at large scale, it becomes challenging for the teams to log into each cluster to view the recommendations. Multi cluster allows you to have  a single-pane-of-glass view into all aggregated cluster costs globally.  There are three options that Kubecost supports for environments with multiple clusters: Kubecost Free, Kubecost Business, and Kubecost enterprise. In the free and business mode, the cloud-billing reconciliation will be performed at each cluster level. In the enterprise mode, the cloud billing reconciliation will be performed in a primary cluster that serves the kubecost UI and uses the shared bucket where the metrics are stored.
+It is important to note that metrics retention is unlimited only when you use enterprise mode.
 
-### 参考資料
-* [One Observability ワークショップでの Kubecost ハンズオンエクスペリエンス](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics)
-* [ブログ - Kubecost を Amazon Managed Service for Prometheus と統合する](https://aws.amazon.com/blogs/mt/integrating-kubecost-with-amazon-managed-service-for-prometheus/)
+### References
+* [Hands-On Kubecost experience on One Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics)
+* [Blog - Integrating Kubecost with Amazon Managed Service for Prometheus](https://aws.amazon.com/blogs/mt/integrating-kubecost-with-amazon-managed-service-for-prometheus/)

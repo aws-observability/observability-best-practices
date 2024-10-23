@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - main
+      - japanese-202410
 permissions:
   contents: write
 jobs:

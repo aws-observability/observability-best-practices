@@ -1,13 +1,13 @@
 # Amazon Relational Database Service
 
-[Amazon Relational Database Service][rds-main] (RDS) は、クラウド上でリレーショナルデータベースを簡単に設定、運用、スケーリングできるようにします。コスト効率の高い拡張可能な容量を提供し、ハードウェアのプロビジョニング、データベース設定、パッチ適用、バックアップなどの時間のかかる管理タスクを自動化します。
+[Amazon Relational Database Service][rds-main]（RDS）は、クラウド上でリレーショナルデータベースを簡単にセットアップ、運用、スケーリングすることができます。コスト効率の良い拡張可能なキャパシティを提供しながら、ハードウェアのプロビジョニング、データベースのセットアップ、パッチ適用、バックアップなどの時間のかかる管理タスクを自動化します。
 
-以下のレシピをご覧ください。
+以下のレシピをチェックしてください：
 
-- [CloudWatch Logs、Lambda、SNS を使用して RDS の予防的データベースモニタリングを構築する][rds-cw-sns]
-- [CloudWatch を使用して RDS for PostgreSQL と Aurora for PostgreSQL のデータベースログエラーを監視し、通知を設定する][rds-pg-au]
-- [Amazon RDS におけるログ記録とモニタリング][rds-mon]
-- [Performance Insights メトリクスを CloudWatch に公開する][rds-pi-cw]
+- [CloudWatch Logs、Lambda、SNS を使用した RDS のプロアクティブなデータベース監視の構築][rds-cw-sns]
+- [RDS for PostgreSQL と Aurora for PostgreSQL のデータベースログエラーの監視と CloudWatch を使用した通知の設定][rds-pg-au]
+- [Amazon RDS でのログ記録と監視][rds-mon]
+- [CloudWatch に公開される Performance Insights メトリクス][rds-pi-cw]
 
 [rds-main]: https://aws.amazon.com/jp/rds/
 [rds-cw-sns]: https://aws.amazon.com/blogs/database/build-proactive-database-monitoring-for-amazon-rds-with-amazon-cloudwatch-logs-aws-lambda-and-amazon-sns/

@@ -48,7 +48,7 @@ Gartner によると、2025 年までに新しいデジタルワークロード�
 
 ## 参考文献：
 
-1. AWS ドキュメント：「複数の AWS アカウントのモニタリング」(https://docs.aws.amazon.com/ja_jp/solutions/latest/multi-account-monitoring/welcome.html)
+1. AWS ドキュメント：「複数の AWS アカウントのモニタリング」(https://docs.aws.amazon.com/solutions/latest/multi-account-monitoring/welcome.html)
 2. Gartner リサーチ：「2023 年のクラウド採用トレンドと主要な考慮事項」(https://www.gartner.com/en/documents/4009858)
 3. Cloud Conformity レポート：「クラウドにおける AWS セキュリティとコンプライアンスの現状」(https://www.cloudconformity.com/knowledge-base/the-state-of-aws-security-and-compliance-in-the-cloud.html)
 4. Forrester リサーチ：「AWS クラウドガバナンスソリューションの総経済的影響™」(https://d1.awsstatic.com/

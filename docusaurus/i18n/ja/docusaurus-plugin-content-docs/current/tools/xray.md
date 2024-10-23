@@ -13,12 +13,12 @@ X-Ray を使用したサンプリングルールは、AWS コンソール、ロ�
 
 以下の各基準に対して、個別にサンプルレートを設定できます：
 
-* サービス名（例：billing、payments）
-* サービスタイプ（例：EC2、Container）
-* HTTP メソッド
-* URL パス
-* リソース ARN
-* ホスト（例：www.example.com）
+* Service name (e.g. billing, payments)
+* Service type (e.g. EC2, Container)
+* HTTP method
+* URL path
+* Resource ARN
+* Host (e.g. www.example.com)
 
 ベストプラクティスは、問題の診断とパフォーマンスプロファイルの理解に十分なデータを収集しつつ、管理不能なほど多くのデータを収集しないサンプルレートを設定することです。例えば、ランディングページのトラフィックの 1% をサンプリングし、支払いページへのリクエストの 10% をサンプリングすることは、強力なオブザーバビリティの実践に適しています。
 

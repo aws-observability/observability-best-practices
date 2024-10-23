@@ -18,7 +18,7 @@ IT において、すべてのプロジェクト、デプロイメント、セ�
 > すべての変更はビジネス価値を提供すべきです。
 
 — ITIL サービストランジション、AXELOS、2011年、44ページ。  
-— [Change Management in the Cloud AWS ホワイトペーパー](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/change-management-in-the-cloud/change-management-in-the-cloud.html) を参照
+— [Change Management in the Cloud AWS ホワイトペーパー](https://docs.aws.amazon.com/whitepapers/latest/change-management-in-the-cloud/change-management-in-the-cloud.html) を参照
 
 ミッションとビジネス価値が重要なのは、それらがあなたの行うすべてのことに情報を与えるべきだからです。オブザーバビリティには多くの利点があります。これらには以下が含まれます：
 

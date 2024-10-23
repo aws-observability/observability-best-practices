@@ -41,7 +41,7 @@ Amazon EKS クラスターは、Kubernetes クラスター用の高可用性で�
 * **コントローラーマネージャー (`controllerManager`)** – コントローラーマネージャーは、Kubernetes に付属する主要な制御ループを管理します。詳細については、Kubernetes ドキュメントの [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) を参照してください。
 * **スケジューラー (`scheduler`)** – スケジューラーコンポーネントは、クラスター内でポッドをいつどこで実行するかを管理します。詳細については、Kubernetes ドキュメントの [kube-scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/) を参照してください。
 
-[コントロールプレーンログの有効化と無効化](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html,Enabling%20and%20disabling%20control%20plane%20logs,-By%20default%2C%20cluster) セクションに従って、AWS コンソールまたは AWS CLI を通じてコントロールプレーンログを有効にしてください。
+[コントロールプレーンログの有効化と無効化](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html#enabling-control-plane-log-export) セクションに従って、AWS コンソールまたは AWS CLI を通じてコントロールプレーンログを有効にしてください。
 
 
 

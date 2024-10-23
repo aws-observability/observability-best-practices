@@ -71,7 +71,7 @@ AWS アカウント内のリソースの在庫詳細、リソースのパフォ�
 
 [CloudWatch Container Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) は、コンテナ化されたアプリケーションとマイクロサービスからメトリクスとログを収集、集約、要約します。Container Insights は、Amazon Elastic Container Service (Amazon ECS)、Amazon Elastic Kubernetes Service (Amazon EKS)、および Amazon EC2 上の Kubernetes プラットフォームで利用できます。Container Insights は、Amazon ECS と Amazon EKS の両方で Fargate にデプロイされたクラスターからのメトリクス収集をサポートしています。CloudWatch は、CPU、メモリ、ディスク、ネットワークなど多くのリソースのメトリクスを自動的に収集し、また、コンテナの再起動失敗などの診断情報を提供して、問題の分離と迅速な解決を支援します。
 
-CloudWatch は、[埋め込みメトリクスフォーマット](https://aws-observability.github.io/observability-best-practices/guides/signal-collection/emf/) を使用して、クラスター、ノード、Pod、タスク、サービスレベルで集約されたメトリクスを CloudWatch メトリクスとして作成します。これは、高カーディナリティデータを大規模に取り込み、保存できる構造化された JSON スキーマを使用するパフォーマンスログイベントです。Container Insights が収集するメトリクスは、[CloudWatch 自動ダッシュボード](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で利用でき、CloudWatch コンソールの Metrics セクションでも表示できます。
+CloudWatch は、[埋め込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/) を使用して、クラスター、ノード、Pod、タスク、サービスレベルで集約されたメトリクスを CloudWatch メトリクスとして作成します。これは、高カーディナリティデータを大規模に取り込み、保存できる構造化された JSON スキーマを使用するパフォーマンスログイベントです。Container Insights が収集するメトリクスは、[CloudWatch 自動ダッシュボード](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で利用でき、CloudWatch コンソールの Metrics セクションでも表示できます。
 
 ![Container Insights](../images/Container_Insights_CW_Automatic_DB.png)
 
@@ -79,7 +79,7 @@ CloudWatch は、[埋め込みメトリクスフォーマット](https://aws-obs
 
 #### 自動ダッシュボードにおける Lambda Insights
 
-[CloudWatch Lambda Insights](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/monitoring-insights.html) は、AWS Lambda などのサーバーレスアプリケーション向けのモニタリングおよびトラブルシューティングソリューションで、Lambda 関数用の動的な[自動ダッシュボード](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html)を作成します。また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスや、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約し、Lambda 関数の問題を分離して迅速に解決するのに役立ちます。[Lambda Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能で、有効にすると[埋め込みメトリクスフォーマット](https://aws-observability.github.io/observability-best-practices/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントを必要としません。
+[CloudWatch Lambda Insights](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/monitoring-insights.html) は、AWS Lambda などのサーバーレスアプリケーション向けのモニタリングおよびトラブルシューティングソリューションで、Lambda 関数用の動的な[自動ダッシュボード](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html)を作成します。また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスや、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約し、Lambda 関数の問題を分離して迅速に解決するのに役立ちます。[Lambda Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能で、有効にすると[埋め込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントを必要としません。
 
 ![Lambda Insights](../images/Lambda_Insights_CW_Automatic_DB.png)
 

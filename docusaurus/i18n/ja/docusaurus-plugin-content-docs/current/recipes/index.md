@@ -43,7 +43,7 @@
 - **送信先別**：テレメトリと分析をカバー
 - **タスク**：異常検出、アラート、トラブルシューティングなどをカバー
 
-[次元についてさらに学ぶ …](https://aws-observability.github.io/observability-best-practices/recipes/dimensions/)
+[次元についてさらに学ぶ …](/observability-best-practices/ja/recipes/dimensions/)
 
 
 
@@ -74,7 +74,7 @@
 このサイトのレシピは、ベストプラクティスのコレクションです。さらに、レシピで使用しているオープンソースプロジェクトの状況やマネージドサービスについて、より詳しく学べる場所がいくつかあります。以下をチェックしてみてください：
 
 - [observability @ aws][o11yataws]：AWS の人々がプロジェクトやサービスについて語るプレイリスト。
-- [AWS オブザーバビリティワークショップ](https://aws-observability.github.io/observability-best-practices/recipes/workshops/)：構造化された方法でサービスを試すことができます。
+- [AWS オブザーバビリティワークショップ](/observability-best-practices/ja/recipes/workshops/)：構造化された方法でサービスを試すことができます。
 - [AWS モニタリングとオブザーバビリティ][o11yhome]のホームページ：ケーススタディやパートナーへのリンクがあります。
 
 [aes]: aes.md "Amazon Elasticsearch Service"

@@ -67,7 +67,7 @@
 
 6. [AWS Resilience Hub](https://aws.amazon.com/jp/resilience-hub/) を活用して、定義された RTO と RPO に対してアプリケーションを分析します。[AWS Fault Injection Simulator](https://aws.amazon.com/jp/fis/) などのツールを使用した制御された実験を行い、可用性、レイテンシー、ビジネス継続性の要件が満たされているかを検証します。追加の Well-Architected レビューとサービス固有の詳細な分析を実施し、ワークロードが AWS のベストプラクティスに従ってビジネス要件を満たすように設計されていることを確認します。
 
-7. 詳細については、[AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) ガイダンスの他のセクション、AWS Cloud Adoption Framework：[運用の視点](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-caf-operations-perspective/observability.html)ホワイトペーパー、および AWS Well-Architected Framework 運用エクセレンスの柱ホワイトペーパーの「[ワークロードの健全性の理解](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」に関するコンテンツを参照してください。
+7. 詳細については、[AWS Observability Best Practices](/observability-best-practices/ja/) ガイダンスの他のセクション、AWS Cloud Adoption Framework：[運用の視点](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-caf-operations-perspective/observability.html)ホワイトペーパー、および AWS Well-Architected Framework 運用エクセレンスの柱ホワイトペーパーの「[ワークロードの健全性の理解](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」に関するコンテンツを参照してください。
 
 
 

@@ -64,7 +64,7 @@
 多くの企業がこのステージに陥っており、次のステップに進むべきかを認識していないことがわかります。
 組織を次のレベルに進めるために取れる具体的なアクションは以下の通りです：
 1) システムのアーキテクチャ設計を定期的にレビューし、影響とダウンタイムを減らすためのポリシーとプラクティスを導入し、アラートを減らす。
-2) アクショナブルな [KPI](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators/) を定義し、アラートの発見に価値のあるコンテキストを追加し、重大度/緊急度によって分類し、異なるツールやチームに送信してエンジニアが問題をより迅速に解決できるようにすることで、アラート疲れを防ぐ。
+2) アクショナブルな [KPI](/observability-best-practices/ja/guides/operational/business/key-performance-indicators/) を定義し、アラートの発見に価値のあるコンテキストを追加し、重大度/緊急度によって分類し、異なるツールやチームに送信してエンジニアが問題をより迅速に解決できるようにすることで、アラート疲れを防ぐ。
 
 これらのアラートを定期的に分析し、一般的に繰り返されるアラートに対する修復を自動化します。
 アラートの発見を関連チームと共有・伝達し、運用とプロセスの改善にフィードバックを提供します。
@@ -197,7 +197,7 @@ AWS ネイティブおよびオープンソースのソリューションを用�
 ## 参考リソース
 
 - [効果的なオブザーバビリティ戦略の構築](https://youtu.be/7PQv9eYCJW8?si=gsn0qPyIMhrxU6sy) - AWS re\:Invent 2023
-- [AWS オブザーバビリティのベストプラクティス](https://aws-observability.github.io/observability-best-practices/)
+- [AWS オブザーバビリティのベストプラクティス](/observability-best-practices/ja/)
 - [オブザーバビリティとは何か、なぜ重要なのか？](https://aws.amazon.com/blogs/mt/what-is-observability-and-why-does-it-matter-part-1/)
 - [オブザーバビリティ戦略をどのように開発するか？](https://aws.amazon.com/blogs/mt/how-to-develop-an-observability-strategy/)
 - [AWS における深層アプリケーションオブザーバビリティのガイダンス](https://aws.amazon.com/jp/solutions/guidance/deep-application-observability-on-aws/)

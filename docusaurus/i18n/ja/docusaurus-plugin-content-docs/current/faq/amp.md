@@ -17,7 +17,7 @@
     Amazon Managed Service for Prometheus に取り込まれるサンプル数を減らすには、スクレイプ間隔を延長する（例：30 秒から 1 分に変更）か、スクレイプするシリーズの数を減らすことができます。スクレイプ間隔の変更は、シリーズ数の削減よりもサンプル数に大きな影響を与え、スクレイプ間隔を 2 倍にすると取り込まれるサンプル量が半分になります。
 
 6. **CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するにはどうすればよいですか？**
-    [CloudWatch メトリクスストリームを使用して CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信する](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/) ことをお勧めします。この統合の潜在的な短所は以下の通りです：
+    [CloudWatch メトリクスストリームを使用して CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信する](/observability-best-practices/ja/recipes/recipes/lambda-cw-metrics-go-amp/) ことをお勧めします。この統合の潜在的な短所は以下の通りです：
     1. Amazon Managed Service for Prometheus API を呼び出すために Lambda 関数が必要
     2. CloudWatch メトリクスを Amazon Managed Service for Prometheus に取り込む前にメタデータ（AWS タグなど）で強化する機能がない
     3. メトリクスは名前空間でのみフィルタリングできる（十分に細かくない）

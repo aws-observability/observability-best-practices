@@ -78,9 +78,9 @@ The same architecture can also be used for collecting traces. In this case, inst
 **Advantages**
 
 * Minimal scaling concerns
-* Configuring High-Availability is a challenge
-* Too many copies of Collector in use
-* Can be easy for Logs support
+* High availability configuration options
+* Flexibility in Collector deployment
+* Simplified log support process
 
 **Disadvantages**
 

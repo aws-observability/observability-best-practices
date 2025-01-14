@@ -25,7 +25,7 @@
     これは活発に開発が進められている分野で、2023 年には成熟すると予想しています。詳細については、OpenTelemetry のアップストリームドキュメントの [管理](https://opentelemetry.io/docs/collector/management/) をご覧ください。特に [Open Agent Management Protocol (OpAMP)](https://opentelemetry.io/docs/collector/management/#opamp) に注目してください。
 
 9. **ADOT コレクターの健全性とパフォーマンスをどのようにモニタリングしますか？**
-    1. [コレクターのモニタリング](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/monitoring.md) - ポート 8080 で公開されるデフォルトのメトリクスを Prometheus レシーバーでスクレイピングできます。
+    1. [コレクターのモニタリング](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/observability.md) - ポート 8080 で公開されるデフォルトのメトリクスを Prometheus レシーバーでスクレイピングできます。
     2. [Node Exporter](https://prometheus.io/docs/guides/node-exporter/) を使用すると、コレクターが実行されているノード、Pod、オペレーティングシステムに関する様々なパフォーマンスと健全性のメトリクスも提供されます。
     3. [Kube-state-metrics (KSM)](https://github.com/kubernetes/kube-state-metrics) は、コレクターに関する興味深いイベントを生成することもできます。
     4. [Prometheus の `up` メトリクス](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)

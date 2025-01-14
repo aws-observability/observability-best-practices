@@ -39,8 +39,7 @@ According to Gartner, by 2025, more than 95% of new digital workloads will be de
 
 ## References:
 
-1. AWS Documentation: "Monitoring Multiple AWS Accounts" (https://docs.aws.amazon.com/solutions/latest/multi-account-monitoring/welcome.html)
-2. Gartner Research: "Cloud Adoption Trends and Key Considerations for 2023" (https://www.gartner.com/en/documents/4009858)
-3. Cloud Conformity Report: "The State of AWS Security and Compliance in the Cloud" (https://www.cloudconformity.com/knowledge-base/the-state-of-aws-security-and-compliance-in-the-cloud.html)
-4. Forrester Research: "The Total Economic Impact™ Of AWS Cloud Governance Solutions" (https://d1.awsstatic.com/
-5. How Audible used Amazon CloudWatch cross-account observability to resolve severity tickets faster (https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/)
+1. AWS Documentation: "CloudWatch cross-account observability" (https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html)
+2. Cloud Conformity Report: "The State of AWS Security and Compliance in the Cloud" (https://www.trendmicro.com/cloudoneconformity/knowledge-base/aws/)
+3. Forrester Research: "The Total Economic Impact™ Of AWS Cloud Operations" (https://pages.awscloud.com/rs/112-TZM-766/images/GEN_forrester-tei-cloud-ops_May-2022.pdf)
+4. How Audible used Amazon CloudWatch cross-account observability to resolve severity tickets faster (https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/)

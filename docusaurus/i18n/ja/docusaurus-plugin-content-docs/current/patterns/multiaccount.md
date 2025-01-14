@@ -49,7 +49,6 @@ Gartner によると、2025 年までに新しいデジタルワークロード�
 ## 参考文献：
 
 1. AWS ドキュメント：「複数の AWS アカウントのモニタリング」(https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html)
-2. Gartner リサーチ：「2023 年のクラウド採用トレンドと主要な考慮事項」(https://www.gartner.com/en/documents/4009858)
-3. Cloud Conformity レポート：「クラウドにおける AWS セキュリティとコンプライアンスの現状」(https://www.trendmicro.com/cloudoneconformity/knowledge-base/aws/)
-4. Forrester リサーチ：「AWS クラウドガバナンスソリューションの総経済的影響™」(https://pages.awscloud.com/rs/112-TZM-766/images/GEN_forrester-tei-cloud-ops_May-2022.pdf)
-5. Audible が Amazon CloudWatch クロスアカウントオブザーバビリティを使用して重大度チケットをより迅速に解決した方法 (https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/)
+2. Cloud Conformity レポート：「クラウドにおける AWS セキュリティとコンプライアンスの現状」(https://www.trendmicro.com/cloudoneconformity/knowledge-base/aws/)
+3. Forrester リサーチ：「AWS クラウドガバナンスソリューションの総経済的影響™」(https://pages.awscloud.com/rs/112-TZM-766/images/GEN_forrester-tei-cloud-ops_May-2022.pdf)
+4. Audible が Amazon CloudWatch クロスアカウントオブザーバビリティを使用して重大度チケットをより迅速に解決した方法 (https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/)

@@ -6,7 +6,7 @@ Yes, this functionality was introduced with the GA launch for metrics support in
 
 ## Can I use the ADOT collector to collect logs and ingest them into Amazon CloudWatch or Amazon OpenSearch?
 
-Not yet but we’re working on stabilizing logs upstream in OpenTelemetry and when the time comes, potentially later in 2023 or early 2024 we will support logs in ADOT, see also the [public roadmap entry](https://github.com/aws-observability/aws-otel-community/issues/11)
+Yes. [Log support](https://aws.amazon.com/about-aws/whats-new/2023/11/logs-support-aws-distro-opentelemetry/) has been available since Nov 22, 2023. You can view the [Logging Exporter](https://aws-otel.github.io/docs/components/misc-exporters) page for more details.
 
 ## Where can I find resource usage and performance details on the ADOT collector?
 
@@ -22,7 +22,7 @@ The ADOT collector is configured using YAML configuration files that are stored 
 
 ## Can I do advanced sampling in the ADOT collector?
 
-We’re working on it, please subscribe to the public [roadmap entry](https://github.com/aws-observability/aws-otel-collector/issues/1135) to keep up to date.
+Yes. [Advanced Sampling](https://aws.amazon.com/about-aws/whats-new/2023/05/aws-distro-opentelemetry-advanced-sampling/) launched May 15, 2023. View the [Getting Started with Advanced Sampling using AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/getting-started/advanced-sampling) page for more details.
 
 ## Any tips how to scale the ADOT collector?
 
@@ -30,7 +30,7 @@ Yes! See the upstream OpenTelemetry docs on [Scaling the Collector](https://open
 
 ## I have a fleet of ADOT collectors, how can I manage them?
 
-This is an area of active development and  we expect that it will mature in 2023, see the upstream OpenTelemetry docs on [Management](https://opentelemetry.io/docs/collector/management/) for more details, specifically on the [Open Agent Management Protocol (OpAMP)](https://opentelemetry.io/docs/collector/management/#opamp).
+This is an area of active development and we expect that it will mature in 2023, see the upstream OpenTelemetry docs on [Management](https://opentelemetry.io/docs/collector/management/) for more details, specifically on the [Open Agent Management Protocol (OpAMP)](https://opentelemetry.io/docs/collector/management/#opamp).
 
 ## How do you monitor the health and performance of the ADOT collector?
 

@@ -32,5 +32,5 @@ You can adjust the sampling rules to capture significantly increased amount of t
 
 Yes, you can use the [X-Ray sampling APIs](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-sampling.html) to make adjustments dynamically as necessary. See this [blog for a use-case based explanation](https://aws.amazon.com/blogs/mt/dynamically-adjusting-x-ray-sampling-rules/).
 
-**Product FAQ:** [https://aws.amazon.com/cloudwatch/faqs/](https://aws.amazon.com/cloudwatch/faqs/)
+**Product FAQ:** [https://aws.amazon.com/xray/faqs/](https://aws.amazon.com/xray/faqs/)
 

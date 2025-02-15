@@ -40,5 +40,5 @@ This is an area of active development and  we expect that it will mature in 2023
 4. [Prometheus `up` metric](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)
 5. A simple Grafana dashboard to get started: [https://grafana.com/grafana/dashboards/12553]()
 
-**Product FAQ:** [https://aws.amazon.com/cloudwatch/faqs/](https://aws.amazon.com/cloudwatch/faqs/)
+**Product FAQ:** [https://aws.amazon.com/otel/faqs/](https://aws.amazon.com/otel/faqs/)
 

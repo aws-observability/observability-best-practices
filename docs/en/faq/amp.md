@@ -44,4 +44,4 @@ We support the usage of Prometheus servers inclusive of agent mode, the OpenTele
 
 Currently, Amazon Managed Service for Prometheus supports up to 200M active time series in a single workspace. When we announce a new max limit, we’re ensuring that the performance and reliability properties of the service continue to be maintained across ingest and query. Queries across the same size dataset should not see a performance degradation regardless of the number of active series in a workspace.
 
-**Product FAQ:** [https://aws.amazon.com/cloudwatch/faqs/](https://aws.amazon.com/cloudwatch/faqs/)
+**Product FAQ:** [https://aws.amazon.com/prometheus/faqs/](https://aws.amazon.com/prometheus/faqs/)

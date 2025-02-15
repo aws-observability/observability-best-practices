@@ -55,4 +55,4 @@ Amazon Managed Grafana is integrated with [AWS CloudTrail](https://docs.aws.amaz
 
 For additional information on Amazon Managed Grafana customers can read the AWS [Documentation](https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html), go through the AWS Observability Workshop on [Amazon Managed Grafana](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amg) and also check the [product page](https://aws.amazon.com/grafana/) to know the [features](https://aws.amazon.com/grafana/features/?nc=sn&loc=2), [pricing](https://aws.amazon.com/grafana/pricing/?nc=sn&loc=3) details, latest [blog posts](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Latest_blog_posts) and [videos](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Videos).
 
-**Product FAQ:** [https://aws.amazon.com/cloudwatch/faqs/](https://aws.amazon.com/cloudwatch/faqs/)
+**Product FAQ:** [https://aws.amazon.com/grafana/faqs/](https://aws.amazon.com/grafana/faqs/)

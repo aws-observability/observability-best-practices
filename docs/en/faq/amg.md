@@ -10,7 +10,7 @@
 
 Current list of supported Regions is available in the [Supported Regions section in the documentation.](https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html#AMG-supported-Regions)
 
-## We have multiple AWS accounts in multiple regions in our Organization, does Amazon Managed Grafana work for these scenarios
+## We have multiple AWS accounts in multiple regions in our Organization, does Amazon Managed Grafana work for these scenarios?
 
 Amazon Managed Grafana integrates with [AWS Organizations](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html) to discover AWS accounts and resources in Organizational Units (OUs). With AWS Organizations customers can [centrally manage data source configuration and permission settings](https://docs.aws.amazon.com/grafana/latest/userguide/AMG-and-Organizations.html) for multiple AWS accounts.
 

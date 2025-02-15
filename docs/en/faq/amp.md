@@ -2,10 +2,9 @@
 
 ## Which AWS Regions are supported currently and is it possible to collect metrics from other regions?
 
-See our [documentation](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html) for updated list of Regions that we support. We plan to support all commercial regions in 2023. Please let us know which regions you would like so that we can better prioritize our existing Product Feature Requests (PFRs). You can always collect data from any regions and send it to a specific region that we support. Here’s a blog for more details: [Cross-region metrics collection for Amazon Managed Service for Prometheus](https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/).
+See our [documentation](https://docs.aws.amazon.com/prometheus/latest/userguide/what-is-Amazon-Managed-Service-Prometheus.html) for updated list of Regions that we support. Please let us know which regions you would like so that we can better prioritize our existing Product Feature Requests (PFRs). You can always collect data from any regions and send it to a specific region that we support. Here’s a blog for more details: [Cross-region metrics collection for Amazon Managed Service for Prometheus](https://aws.amazon.com/blogs/opensource/set-up-cross-region-metrics-collection-for-amazon-managed-service-for-prometheus-workspaces/).
 
-**How long does it take to see metering and/or billing in Cost Explorer or **
- [CloudWatch as AWS billing charges](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html)?**
+## How long does it take to see metering and/or billing in Cost Explorer or [CloudWatch as AWS billing charges](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/gs_monitor_estimated_charges_with_cloudwatch.html)?
 
 We meter blocks of ingested metric samples as soon as they are uploaded to S3 every 2 hours. It can take up to 3 hours to see metering and charges reported for Amazon Managed Service for Prometheus.
 

@@ -6,7 +6,7 @@ Technically, that’s not ADOT but AWS X-Ray. We are working on expanding the nu
 
 ## Will I be able to use the W3C trace header to ingest spans into AWS X-Ray using ADOT?
 
-Yes, later in 2023. We’re working on supporting W3C trace context propagation. 
+Yes. [W3c trace header](https://aws.amazon.com/about-aws/whats-new/2023/10/aws-x-ray-w3c-format-trace-ids-distributed-tracing/) was released on Oct 27th 2023.
 
 ## Can I trace requests across Lambda functions when SQS is involved in the middle?
 

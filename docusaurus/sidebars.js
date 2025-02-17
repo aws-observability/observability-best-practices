@@ -234,6 +234,7 @@ module.exports = {
         'tools/synthetics',
         'tools/slos',
         'tools/xray',
+        'tools/cloudwatch_cross_account_observability',
       ],
     }],
     recipes:[{

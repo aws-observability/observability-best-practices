@@ -187,8 +187,10 @@ module.exports = {
           ],
         },
         'guides/observability-maturity-model',
+        'guides/cloudwatch_cross_account_observability',
       ],
-    }],
+    },
+    ],
     sigals:[{
       type: 'category',
       label: 'Data types',

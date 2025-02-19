@@ -4,7 +4,7 @@ AWS X-Ray のコストと使用状況のビジュアルを利用することで�
 
 コストと使用状況データを可視化し分析するには、カスタムの Athena ビューを作成する必要があります。
 
-1. 続行する前に、[実装の概要][cid-implement] で言及されている CUR の作成（ステップ #1）と AWS Conformation Template のデプロイ（ステップ #2）を完了していることを確認してください。
+1. 続行する前に、[実装の概要][cid-implement] で言及されている CUR の作成（ステップ #1）と AWS CloudFormation Template のデプロイ（ステップ #2）を完了していることを確認してください。
 
 2. 次に、以下のクエリを使用して新しい Amazon Athena [ビュー][view] を作成します。このクエリは、組織内のすべての AWS アカウントにわたる Amazon Managed Grafana のコストと使用状況を取得します。
 

@@ -4,7 +4,7 @@ Amazon Managed Service for Prometheus のコストと使用状況のビジュア
 
 コストと使用状況データを視覚化および分析するには、カスタム Athena ビューを作成する必要があります。
 
-1. 処理を進める前に、[Implementation overview][cid-implement] で言及されている CUR (ステップ #1) を作成し、AWS Conformation テンプレート (ステップ #2) をデプロイしたことを確認してください。
+1. 処理を進める前に、[Implementation overview][cid-implement] で言及されている CUR (ステップ #1) を作成し、AWS CloudFormation テンプレート (ステップ #2) をデプロイしたことを確認してください。
 
 2. 次に、以下のクエリを使用して、新しい Amazon Athena [view][view] を作成します。このクエリは、Organization 内のすべての AWS アカウントにわたる Amazon Managed Service for Prometheus のコストと使用状況を取得します。
 

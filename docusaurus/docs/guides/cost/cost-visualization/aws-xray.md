@@ -4,7 +4,7 @@ AWS X-Ray cost and usage visuals will allow you to gain insights into cost of in
 
 To visualize and analyze the cost and usage data, you need to create a custom Athena view.
 
-1.	Before proceeding, make sure that you’ve created the CUR (step #1) and deployed the AWS Conformation Template (step #2) mentioned in the [Implementation overview][cid-implement].
+1.	Before proceeding, make sure that you’ve created the CUR (step #1) and deployed the AWS CloudFormation Template (step #2) mentioned in the [Implementation overview][cid-implement].
 
 2.	Now, Create a new Amazon Athena [view][view] by using the following query. This query fetches cost and usage of Amazon Managed Grafana across all the AWS Accounts in your Organization.
 

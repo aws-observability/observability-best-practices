@@ -34,7 +34,7 @@ This is an area of active development and we expect that it will mature in 2023,
 
 ## How do you monitor the health and performance of the ADOT collector?
 
-1. [Monitoring the collector](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/monitoring.md) - default metrics exposed on port 8080 that can be scraped by the Prometheus receiver
+1. [Monitoring the collector](https://github.com/open-telemetry/opentelemetry-collector/blob/main/docs/observability.md) - default metrics exposed on port 8080 that can be scraped by the Prometheus receiver
 2. Using the [Node Exporter](https://prometheus.io/docs/guides/node-exporter/), running node exporter would also provide several performance and health metrics about the node, pod, and operating system the collector is running in.
 3. [Kube-state-metrics (KSM)](https://github.com/kubernetes/kube-state-metrics), KSM can also produce interesting events about the collector.
 4. [Prometheus `up` metric](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)

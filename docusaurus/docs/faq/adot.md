@@ -38,7 +38,7 @@ This is an area of active development and we expect that it will mature in 2023,
 2. Using the [Node Exporter](https://prometheus.io/docs/guides/node-exporter/), running node exporter would also provide several performance and health metrics about the node, pod, and operating system the collector is running in.
 3. [Kube-state-metrics (KSM)](https://github.com/kubernetes/kube-state-metrics), KSM can also produce interesting events about the collector.
 4. [Prometheus `up` metric](https://github.com/open-telemetry/opentelemetry-collector/pull/2918)
-5. A simple Grafana dashboard to get started: [https://grafana.com/grafana/dashboards/12553]()
+5. A simple Grafana dashboard to get started: [https://grafana.com/grafana/dashboards/12553](https://grafana.com/grafana/dashboards/12553)
 
 **Product FAQ:** [https://aws.amazon.com/otel/faqs/](https://aws.amazon.com/otel/faqs/)
 

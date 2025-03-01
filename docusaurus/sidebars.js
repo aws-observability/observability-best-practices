@@ -217,6 +217,7 @@ module.exports = {
           items: [
             'tools/logs/index',
             'tools/logs/logs-insights-examples',
+            'tools/logs/contributor_insights/contributor_insights',
             {
               type: 'category',
               label: 'Data Protection',

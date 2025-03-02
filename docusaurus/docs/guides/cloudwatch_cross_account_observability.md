@@ -106,7 +106,6 @@ In the previous steps, we configured the Monitoring account sink to be linked wi
 
 If you were to configure using AWS Organizations, you would end up with a Configuration Policy applied to the Monitoring account sink that doesn't require further modifications, as you would trust all AWS accounts within your AWS organization to create or update links based on the PrincipalOrgID condition. Such a sample policy can be found below:
 
-<a id="organization-sample-policy">
 ```
 {
     "Version": "2012-10-17",
@@ -134,7 +133,7 @@ If you were to configure using AWS Organizations, you would end up with a Config
     ]
 }
 ```
-</a>
+
 
 ### Step 2: Link the source accounts
 

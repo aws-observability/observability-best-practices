@@ -134,6 +134,12 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'persona/cloud_engineer',
+            position: 'left',
+            label: 'Persona',
+          },
+          {
+            type: 'doc',
             docId: 'contributors',
             position: 'left',
             label: 'Contributors',

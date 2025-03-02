@@ -65,6 +65,16 @@ const FeatureList = [
     ),
     link: '/patterns/multiaccount',
   },
+  {
+    title: 'CloudOps',
+    Svg: require('@site/static/img/cloudops.svg').default,
+    description: (
+      <>
+        Want to know the Cloud Operations best practices? Here you go.
+      </>
+    ),
+    link: 'https://aws-samples.github.io/cloud-operations-best-practices/',
+  },
 ];
 
 function Feature({Svg, title, description, link}) {

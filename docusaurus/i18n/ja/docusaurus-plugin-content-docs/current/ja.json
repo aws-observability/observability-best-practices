@@ -7,6 +7,7 @@
   "navbar.recipes": "レシピ",
   "navbar.faq": "FAQ",
   "navbar.patterns": "パートナー",
+  "navbar.persona": "persona",
   "navbar.contributors": "貢献者",
   "footer.copyright": "Built with ❤️ at AWS. <br/> © ${new Date().getFullYear()}.  Amazon.com, Inc. or its affiliates. All Rights Reserved."
 }

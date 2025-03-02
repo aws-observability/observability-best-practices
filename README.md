@@ -1,4 +1,4 @@
-# Observability Best Practices
+# AWS Observability Best Practices
 
 ## Welcome
 
@@ -6,7 +6,8 @@ This is the source for the [AWS Observability Best Practices site](https://aws-o
 
 ## How to run/develop this site
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator. You need to install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) as a prerequisite.
+This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+You need to install [npm](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm) as a prerequisite.
 
 ### Installation
 
@@ -17,6 +18,12 @@ $ (yarn | npm ) install
 
 ### Local Development
 
+Build
+```
+$ yarn build [or] npm run build
+```
+
+Start
 ```
 $ yarn start [or] npm run start
 ```
@@ -28,7 +35,8 @@ $ yarn start -l ja [or] npm run start -l ja
 
 This command starts a local development server and opens up a browser window. Most changes are reflected live without having to restart the server.
 
-### Build
+### Contribute
+Ensure that the build is succeeding without any broken links
 
 ```
 $ yarn build [or] npm run build
@@ -60,7 +68,7 @@ If you are using GitHub pages for hosting, this command is a convenient way to b
 
 ## Security
 
-See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
+See [CONTRIBUTING](../CONTRIBUTING.md#security-issue-notifications) for more information.
 
 ## License
 

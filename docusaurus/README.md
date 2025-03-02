@@ -1,4 +1,4 @@
-# Observability Best Practices
+# AWS Observability Best Practices
 
 ## Welcome
 
@@ -37,6 +37,7 @@ This command starts a local development server and opens up a browser window. Mo
 
 ### Contribute
 Ensure that the build is succeeding without any broken links
+
 ```
 $ yarn build [or] npm run build
 ```

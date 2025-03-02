@@ -70,7 +70,7 @@ const FeatureList = [
     Svg: require('@site/static/img/cloudops.svg').default,
     description: (
       <>
-        Want to know the Cloud Operations best practices? Here you go.
+        Learn the AWS Cloud Operations Best Practices.
       </>
     ),
     link: 'https://aws-samples.github.io/cloud-operations-best-practices/',

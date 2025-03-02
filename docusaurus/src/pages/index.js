@@ -57,8 +57,8 @@ export default function Home() {
   }
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Observability best practices">
+      title={`${siteConfig.title}`}
+      description="AWS Observability best practices">
       <HomepageHeader />
       <main>
         <HomepageFeatures />

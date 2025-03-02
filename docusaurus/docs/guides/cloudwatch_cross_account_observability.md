@@ -193,7 +193,7 @@ AWS CloudWatch cross-account observability enables centralized monitoring and tr
 
 - AWS Organizations enabled, with member accounts properly included[^4].  
 - Permissions to deploy AWS CloudFormation StackSets[^5] in child accounts, including IAM roles with adequate CloudFormation actions allowed to create links[^3].  
-- A monitoring account with a configured [sink policy](#organization-sample-policy) that permits source accounts within your organization (or specific OUs) to create and update observability links[^6].
+- A monitoring account with a configured  that permits source accounts within your organization (or specific OUs) to create and update observability links[^6].
 
 AWS CloudFormation StackSets automates the deployment of necessary service-linked roles and observability configurations in all member accounts. With auto-deployment enabled, newly created AWS accounts automatically inherit the required observability settings, reducing administrative overhead while maintaining uniform monitoring practices throughout your AWS environment.
 

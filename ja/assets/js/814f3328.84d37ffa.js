@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkobservability_best_practices=self.webpackChunkobservability_best_practices||[]).push([[7472],{55513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome","permalink":"/observability-best-practices/ja/blog/welcome","unlisted":false}]}')}}]);

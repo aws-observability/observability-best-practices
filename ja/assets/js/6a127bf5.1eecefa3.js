@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkobservability_best_practices=self.webpackChunkobservability_best_practices||[]).push([[8945],{30331:e=>{e.exports=JSON.parse('{"authors":[{"name":"Siva Guruvareddiar","title":"Maintainer of AWS Best Practices","url":"https://github.com/sguruvar","imageURL":"https://github.com/sguruvar.png","key":"sguruvar","page":null,"count":1}]}')}}]);

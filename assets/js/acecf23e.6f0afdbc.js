@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkobservability_best_practices=self.webpackChunkobservability_best_practices||[]).push([[1903],{1912:s=>{s.exports=JSON.parse('{"blogBasePath":"/observability-best-practices/blog","blogTitle":"Blog","authorsListPath":"/observability-best-practices/blog/authors"}')}}]);

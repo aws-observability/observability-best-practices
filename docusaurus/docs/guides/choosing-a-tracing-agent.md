@@ -13,7 +13,7 @@ OTEL is the current industry standard specification for observabillity signallin
 
 AWS X-Ray and CloudWatch pre-date the OTEL specification, as do other leading observability solutions. However, the AWS X-Ray service readily accepts OTEL traces using ADOT. ADOT has the integrations already built into it to emit telemetry into X-Ray directly, as well as to other ISV solutions.
 
-Any transaction tracing solution requires an agent and an integration into the underlying application in order to collect signals. And this, in turn, creates [technical debt](../faq/#what-is-technical-debt) in the form of libraries that must be tested, maintained, and upgraded, as well as possibly retooling if you choose to change your solution in the future.
+Any transaction tracing solution requires an agent and an integration into the underlying application in order to collect signals. And this, in turn, creates technical debt in the form of libraries that must be tested, maintained, and upgraded, as well as possibly retooling if you choose to change your solution in the future.
 
 The SDKs included with X-Ray are part of a tightly integrated instrumentation solution offered by AWS. ADOT is part of a broader industry solution in which X-Ray is only one of many tracing solutions. You can implement end-to-end tracing in X-Ray using either approach, but it’s important to understand the differences in order to determine the most useful approach for you.
 

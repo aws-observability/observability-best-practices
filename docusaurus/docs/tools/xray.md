@@ -34,7 +34,7 @@ As a rule, capturing transaction traces should never create an onerous load on y
 The X-Ray daemon is intended to offload the effort of sending telemetry to the X-Ray dataplane for analysis. As such, it should not consume too many resources on the server, container, or instance on which the source application runs.
 
 :::info
-	The best practice is to run the X-Ray daemon on another instance or container, thereby enforcing the [separation of concerns](../faq/#what-is-the-separation-of-concerns) and allowing your source system to be unencumbered. 
+	The best practice is to run the X-Ray daemon on another instance or container, thereby enforcing the separation of concerns and allowing your source system to be unencumbered. 
 :::
 
 :::info

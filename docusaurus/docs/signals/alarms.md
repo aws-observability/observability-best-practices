@@ -27,7 +27,7 @@ For example, if you operate a web site that requires fast response times, create
 
 ## Beware of the "everything is OK alarm"
 
-Likewise, a common pattern is the "everything is OK" alarm, when operators are so used to getting constant alerts that they only notice when things suddenly go silent! This is a very dangerous mode to operate in, and a pattern that works against [operational excellence](../faq/#what-is-operational-excellence).
+Likewise, a common pattern is the "everything is OK" alarm, when operators are so used to getting constant alerts that they only notice when things suddenly go silent! This is a very dangerous mode to operate in, and a pattern that works against operational excellence.
 
 :::warning
 	The "everything is OK alarm" usually requries a human to interpret it! This makes patterns like self-healing applications impossible.[^1]

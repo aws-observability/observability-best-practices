@@ -306,7 +306,7 @@ module.exports = {
       type: 'category',
       label: 'FAQ',
       items: [
-        'faq/faq',
+        'faq/general',
         'faq/cloudwatch',
         'faq/x-ray',
         'faq/amp',

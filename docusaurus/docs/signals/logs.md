@@ -133,5 +133,5 @@ Where possible, applications shouould log to `stdout` rather than to a fixed loc
 :::
 
 :::info
-	Decoupling your application from your log management lets you adapt and evolve your solution without code changes, thereby minimizing the potential [blast radius](../faq/#what-is-a-blast-radius) of changes made to your environment.
+	Decoupling your application from your log management lets you adapt and evolve your solution without code changes, thereby minimizing the potential blast radius of changes made to your environment.
 :::

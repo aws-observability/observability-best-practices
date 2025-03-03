@@ -9,7 +9,7 @@ import {themes as prismThemes} from 'prism-react-renderer';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'AWS Observability Best Practices',
-  tagline: '🖥️ AWS Insights: Improving Cloud Observability 🚀',
+  tagline: '🖥️ Improve AWS Cloud Observability 🚀',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -104,7 +104,7 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'signals/alarms',
+            docId: 'signals/logs',
             position: 'left',
             label: 'Signals',
           },
@@ -122,13 +122,13 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'faq/adot',
+            docId: 'faq/general',
             position: 'left',
             label: 'FAQ',
           },
           {
             type: 'doc',
-            docId: 'patterns/multiaccount',
+            docId: 'patterns/Tracing/xrayec2',
             position: 'left',
             label: 'Patterns',
           },

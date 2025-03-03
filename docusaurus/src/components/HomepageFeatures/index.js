@@ -23,7 +23,7 @@ const FeatureList = [
         Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators.
       </>
     ),
-    link: '/signals/alarms',
+    link: '/signals/logs',
   },
   {
     title: 'Tools',
@@ -53,7 +53,7 @@ const FeatureList = [
         Find quick answers to common AWS observability questions, clarifying key concepts and best practices.
       </>
     ),
-    link: '/faq/adot',
+    link: '/faq/general',
   },
   {
     title: 'Patterns',
@@ -63,7 +63,7 @@ const FeatureList = [
         Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources.
       </>
     ),
-    link: '/patterns/multiaccount',
+    link: '/patterns/Tracing/xrayec2',
   },
   {
     title: 'CloudOps',

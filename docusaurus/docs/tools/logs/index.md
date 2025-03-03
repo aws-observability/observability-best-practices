@@ -1,6 +1,6 @@
 # Logging
 
-The selection of logging tools is tied to your requirements for data transmission, filtering, retention, capture, and integration with the applications that generate your data. When using Amazon Web Services for observability (regardless whether you host [on-premises](../../faq#what-is-a-cloud-first-approach) or in another cloud environment), you can leverage the [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) or another tool such as [Fluentd](https://www.fluentd.org/) to emit logging data for analysis.
+The selection of logging tools is tied to your requirements for data transmission, filtering, retention, capture, and integration with the applications that generate your data. When using Amazon Web Services for observability (regardless whether you host on-premises or in another cloud environment), you can leverage the [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) or another tool such as [Fluentd](https://www.fluentd.org/) to emit logging data for analysis.
 
 Here we will expand on the best practices for implementing the CloudWatch agent for logging, and the use of CloudWatch Logs within the AWS console or APIs.
 

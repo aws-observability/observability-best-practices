@@ -1,6 +1,8 @@
 # Cloud Engineer 
 
-Welcome to the Observability Best pratices guide for Cloud Engineer! This document provides you with best practices, tips, and examples for effectively managing your Observability AWS resources across different expertise levels. Whether you're just starting or are an experienced Cloud Engineer.
+As Cloud Engineers managing complex AWS infrastructure, observability is essential to maintaining reliable and efficient operations. In today's world of microservices, containers, and serverless architectures, having clear visibility into our systems is critical for success.
+
+This guide explores key observability best practices for Cloud Engineers, focusing on practical strategies to monitor, troubleshoot, and optimize AWS environments at scale. 
 
 ---
 

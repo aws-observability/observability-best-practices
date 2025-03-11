@@ -49,9 +49,9 @@ For containerized applications and Kubernetes environments:
 
 To enhance security observability in your pipelines:
 
-- Integrate [Amazon Inspector](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch/#aws-security-hub) into your CI/CD process for automated vulnerability assessments.
+- Integrate [Amazon Inspector](https://aws.amazon.com/inspector/) into your CI/CD process for automated vulnerability assessments.
 
-- Implement [AWS Security Hub](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch/#aws-security-hub) to aggregate and prioritize security alerts across your AWS accounts.
+- Implement [AWS Security Hub](https://aws.amazon.com/security-hub/) to aggregate and prioritize security alerts across your AWS accounts.
 
 - Use [AWS Config](https://docs.aws.amazon.com/config/latest/developerguide/aws-config-managed-rules-cloudformation-templates.html) to track resource configurations and changes. Set up Config rules to automatically evaluate compliance with your defined standards.
 
@@ -63,7 +63,7 @@ To enhance security observability in your pipelines:
 
 To enhance your testing processes with observability:
 
-- Implement [CloudWatch Synthetics](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch/#cloudwatch-synthetics) to create canaries that continuously test your APIs and user journeys.
+- Implement [CloudWatch Synthetics](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/Welcome.html) to create canaries that continuously test your APIs and user journeys.
 
 - Use AWS CodeBuild to run your test suites and publish test results as CloudWatch metrics for trend analysis.
 
@@ -77,7 +77,7 @@ To enhance your testing processes with observability:
 
 For observability driven release management:
 
-- Use [AWS CodeDeploy](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch/#aws-codedeploy) for managed deployments, leveraging its integration with CloudWatch for deployment monitoring .
+- Use [AWS CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) for managed deployments, leveraging its integration with CloudWatch for deployment monitoring .
 
 - Perform canary deployments, gradually rolling out new versions to a small subset of your infrastructure. [Monitor the canary deployments](https://aws.amazon.com/blogs/containers/create-a-pipeline-with-canary-deployments-for-amazon-ecs-using-aws-app-mesh/) closely using CloudWatch and X-Ray to catch any issues before full deployment. 
 

@@ -138,7 +138,7 @@ Developers use observability for several key purposes:
         - Required alerts 
         - List of dashboards to be created or updated
 - **Blamesless retrospectives:**
-    - After every incident, conduct a [blameless retrospective](https://www.atlassian.com/incident-management/postmortem/blameless) to look for opportunities to improve processes or add automation. Always factor in cost of change and ensure you leave each post mortem exercise with at least one agreed upon actionable item which also has a timeline for completion associated with it.
+    - After every incident, conduct a blameless retrospective to look for opportunities to improve processes or add automation. Always factor in cost of change and ensure you leave each post mortem exercise with at least one agreed upon actionable item which also has a timeline for completion associated with it.
 - **Operational Readiness Reviews:** 
     - Participate in operational readiness reviews with the platform and operations team to identify gaps in observability posture - this can be a checklist and a mandatory exercise before deployments to production. For large organisations with multiple teams, to avoid this process becoming a bottleneck, conduct these periodically, per new feature and release cadence.
 - **Recommendations:**

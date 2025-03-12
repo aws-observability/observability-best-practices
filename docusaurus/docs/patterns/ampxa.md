@@ -9,7 +9,7 @@ To create a scraper in a cross-account setup when your Amazon EKS cluster from w
 ## High Level Architecture
 
 ![AMP Managed Collector Cross Account Scraping](./images/ampxa-arch.png)
-*Figure 1: AMP Managed Collector Cross Account Scraping*
+*Figure 1: AMP Managed Collector Cross Account Scraping, Collector Infrastructure is Completely Managed by AWS*
 
 In this architecture we create scrapers in the account where the EKS workload exists. The scrapers can assume a role in the target account in order to push data to the AMP workspace in the target account.
 

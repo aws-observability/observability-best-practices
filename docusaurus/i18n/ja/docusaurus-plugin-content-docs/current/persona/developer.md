@@ -53,21 +53,28 @@ Developers use observability for several key purposes:
 - Use the embedded metric format(EMF) to embed metrics within logs, reducing the number of API calls to the Observability platform, reducing cost. 
     - Avoid using EMF for metrics with high cardinality dimensions such as requestId
 - **Alerts:** 
-    - Use anomaly detection to avoid setting rigid thresholds for alerts
-    - Use metric math and combination alerts to reduce the number of alerts that are generated
-    - Only alert when a SLO is at risk of/is failing 
+    - Use anomaly detection to avoid setting rigid thresholds for alerts. This can avoid the overhead of updating the thresholds as the system usage changes over time and reduce alert noise.
+    - Use metric math and combination alerts to reduce the number of individual alerts that are generated for a particular failure. 
+    - Only alert when a SLO is at risk of/is failing. This can avoid your team being woken unnecessarily and reduce the cognitive and context overload
     - Only alert if someone can take action on notification of failure
     - Automate resolution of the alert where possible. For example, leverage the native platform configuration like autoscaling, automatic failover to replica or standby instance, etc.
-    - Add adequate context to the alert notification to ensure that the person who is notified can quickly identify the dashboards to look at, playbook to use 
+    - Add adequate context to the alert notification to ensure that the person who is notified can quickly identify the dashboards to look at, playbook to use and service that is impacted
 - **Dashboards:**
-    - Create dashboard(s) per persona/stakeholder 
-    - Use a consistent timezone across all dashboards
+    - Create one or more dashboards per persona/stakeholder. 
+        - Application developers would require enough context to diagnose issues, understand the performance of the application
+        - Platform engineers would require dashboards with context to identify the impact to SLOs and infrastructure components requiring attention and their impact on services using them 
+        - Product managers would require dashboards showing the user journey, product feature usage metrics, adoption rates, abandonment points, etc
+        - Business stakeholders would be interested in widgets demonstrating product adoption rates, subscriber fall off or anything that can be related to impacting business performance and revenue
+    - Use a consistent timezone across all dashboards eg. UTC 
     - Use the same time range across all widgets on a dashboard
     - Use annotations to add more context to dashboards
-    - Ensure only widgets which add context to aid in error resolutions are on the dashboard
+    - Ensure only widgets which add context to aid in error resolutions are on the dashboard. Too many widgets can add noise and cognitive overload, that leads to higher MTTR
+        - Move other nice to have widgets to another dashboard or to the bottom of the dashboard if there are not already too many widgets. Too many widgets will impact the load time and result in higher stress and cognitive overload.
     - Ensure the entire dashboard fits on a single screen and trends are visible with the resolution and screen size of a laptop
     - Have a widget with a description of the dashboard and guidance on how to use the dashboard
     - Configure and display thresholds on widgets
+    - Do not stuff more metrics into a single widget which can result in trends and spikes being smoothed and defeat the purpose. This also makes diangosis hard.
+    - Use dynamically adjusted Y-axis to allow for trends and spikes to be visible
 - **Recommendations:**
     - **Controlling Cost:**
         - **Identify Stakeholders:** 
@@ -89,17 +96,39 @@ Developers use observability for several key purposes:
         - Allocate a portion of each release to improve signals, tweak alert thresholds and dashboards based on gaps identified during retrospectives and roster observations 
         - Prioritize fixing the root cause of a recurring alert based on effort to resolve and number of times the alert triggers
 
-## Profiling and performance optimization - TODO
-- RUM
-- Synthetics
-- XRay 
-- OTEL SDK - auto vs manual instrumentation
+## Profiling and performance optimization
+- **Real User Monitoring(RUM):**
+    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/) or New Relic to monitor real user interactions and identify performance bottlenecks. Focus on key conversion points and measure both technical performance as well as business outcomes (conversion rates, abandonment points).
+    - Prioritize monitoring of critical user paths like checkout flows and registration processes. 
+    - Establish baseline performance and user behavior to quickly be able to identify anomalies and trends that may impact business outcomes
+- **Synthetics:**
+    - Employ tools like [Amazon Cloudwatch Synthetics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html) to simulate user interactions and test application performance under various conditions. Synthetic canaries can help identify issues before user impact is detected.
+    - Validate health checks and system uptime with Synthetic canaries.
+- **Profiling tools:**
+    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/) for profiling to identify performance bottlenecks and optimize resource utilization
+    - Set dynamic sampling rates that adjust based on traffic patterns and maintain adequate retention of error traces and outliers. This ensures comprehensive visibility into critical issues while managing data volume and costs effectively.
+    - Use tail sampling to configure your collector with multiple sampling policies that prioritize high-value traces based on error status, duration thresholds, and custom attributes. This will ensure that the traces sampled include the ones that will be of most value
+- **OpenTelemetry:**
+    - Use [OpenTelemetry](https://opentelemetry.io/) for auto-instrumentation to simplify the collection of performance metrics and traces. Validate the telemetry provided by auto instrumentation before adding manual instrumentation and then look to tune the auto instrumentation based on requirements to control signals and cost.
 
-## Error handling and debugging techniques - TODO 
-- Q Developer for Operational Investigations 
-- Playbooks and run books 
-- Service Map 
-- Tuning XRay Sampling rules
+## Error handling and debugging techniques 
+- **General:**
+    - Design retry mechanisms with exponential backoff for transient failures. Implement [circuit breakers](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html) for external dependencies. This is particularly helpful in distributed systems and prevents excessive load on the downstream component/service. This may not be applicable in all scenarios so do perform due diligence before adopting this design.
+    - Create fallback mechanisms for critical operations and maintain clear rollback procedures for failed transactions. 
+    - Add input validation at all entry points. 
+    - Ensure retryable operations are idempotent. 
+- **Logging:**
+    - Maintain a repository of saved [Cloudwatch Log Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) queries. Use folders to group the queries 
+    - Don't silence errors. Always log or handle appropriately.
+    - Add a form of identification like correlation id or request id to the logs in addition to any other relevant context.
+- **Playbooks and runbooks:**
+    - When writing playbooks, include clear actionable steps with permissions required, tools and expected outcomes. 
+    - Include verification steps, rollback procedures, and links to relevant dashboards in playbooks and run books. 
+    - Version playbooks and update them after incidents including the learnings and key insights.
+- **Tuning sampling rules:**
+    - Implement dynamic sampling rules based on service criticality and traffic patterns. 
+    - Set higher sampling rates for error conditions and business-critical paths.
+    - Review and adjust sampling rules regularly based on operational needs and cost considerations.
 
 ## Code reviews and collaboration strategies
 - **Ticket elaboration:**

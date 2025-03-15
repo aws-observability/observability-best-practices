@@ -278,6 +278,26 @@ module.exports = {
           items: [
             'recipes/java',
             'recipes/nodejs',
+            {
+              type: 'category',
+              label: '.NET',
+              items: [
+                {
+                  type: 'category',
+                  label: 'AWS Native',
+                  items: [
+                    'recipes/cw', // Update this
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: 'Open Source',
+                  items: [
+                    'recipes/dotnet/open-source/opentelemetry'
+                  ],
+                }
+              ],
+            },
           ],
         },
         {

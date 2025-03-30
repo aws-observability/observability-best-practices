@@ -17,26 +17,47 @@ In this architecture we create scrapers in the account where the EKS workload ex
 
 ```
 {
-    "Effect": "Allow",
-    "Principal": {
-    "Service": [
-        "scraper.aps.amazonaws.com"
-     ]
-    },
-    "Action": "sts:AssumeRole",
-    "Condition": {
-        "ArnEquals": {
-            "aws:SourceArn": "$SCRAPER_ARN"
-        },
-        "StringEquals": {
-            "AWS:SourceAccount": "$ACCOUNT_ID"
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "scraper.aps.amazonaws.com"
+            },
+            "Action": "sts:AssumeRole",
+            "Condition": {
+                "ArnEquals": {
+                    "aws:SourceArn": "$SCRAPER_ARN"
+                },
+                "StringEquals": {
+                    "AWS:SourceAccount": "$ACCOUNT_ID"
+                }
+            }
         }
-    }
+    ]
 }
 ```
+
+You also need an assume role permissions policy:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "$TARGET_ACCOUNT_ROLE_ARN"
+        }
+    ]
+}
+```
+
 :::warning
 
-We have to make the IAM constructs before we can actually make the scraper. Therefore at this point the $SCRAPER_ARN is just a placeholder field. After we create the scraper we will go back and update it.
+We have to make the IAM constructs before we can actually make the scraper. Therefore at this point the $SCRAPER_ARN is just a placeholder field. After we create the scraper we will go back and update it. The $TARGET_ACCOUNT_ROLE_ARN also does not exist until step 2 is completed.
 
 :::
 

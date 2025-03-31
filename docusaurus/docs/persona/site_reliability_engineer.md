@@ -1,4 +1,4 @@
-# Site Reliability Engineers & Observability
+# Site Reliability Engineers
 
 Site reliability engineering (SRE) is a software engineering practice that focuses on improving the reliability and performance of software systems. One of the key goals of SRE is to improve software system reliability in areas like availability, performance, latency, efficiency, capacity, and incident response. Some of the metrics that SRE teams measure to validate their goals against are Service Level Agreements (SLA), Service Level Objectives (SLO), Service Level Indicators (SLI) and Error budgets. 
 

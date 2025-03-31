@@ -106,6 +106,11 @@ CloudWatch Logs offers two [classes](https://docs.aws.amazon.com/AmazonCloudWatc
 :::info
 	Use the `log_group_class` directive to specify which log group class to use for the new log group. Valid values are **STANDARD** and **INFREQUENT_ACCESS**. If you omit this field, the default of **STANDARD** is used by the agent.
 :::
+
+#### Auditing existing logs for proper class designation
+
+CloudWatch logs Infrequent Access tier log class utilizes a subset of CloudWatch logging capabilities. It is recommended to audit existing log groups to check if any standard log groups could be re-created as Infrequent Access log groups. A good way to do this is running the [log-ia-checker](https://github.com/aws-observability/log-ia-checker) cli tool. This tool will analyze all the log groups in a given region and provide an output of logs that can be transitioned to Infrequent Access.
+
 ## Search with CloudWatch Logs
 
 ### Manage costs with query scoping
@@ -161,4 +166,3 @@ CloudWatch Logs Insights enables comparison of log event changes over time, aidi
 [^2]: See [CloudWatch Logs Insights Pattern Analysis](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Patterns.html) for more detailed insights.
 
 [^3]: See [CloudWatch Logs Insigts Compare(diff) with previous ranges](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_Compare.html) for more information.
-

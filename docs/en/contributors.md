@@ -16,6 +16,7 @@ people:
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
+| Ashish Ranjan       |                             |                   |                    |
 
 
 Note that all recipes published on this site are available via the

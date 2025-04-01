@@ -1,4 +1,4 @@
-# Monitoring Free IP in customers subnet
+# Monitoring Free IP in Subnet
 
 In this recipe we show you how to setup monitoring stack to monitor for available IPs in the subnet.
 

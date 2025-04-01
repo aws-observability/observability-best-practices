@@ -28,4 +28,4 @@ The logs for the lambda can be found in the Cloudwatch log group `/aws/lambda/Vp
  * `cdk diff`        compare deployed stack with current state
  * `cdk synth`       emits the synthesized CloudFormation template
 
- [Link to Recipe](https://aws-observability.github.io/observability-best-practices/recipes/recipes/subnet-free-ip-monitoring/)
+ [Link to Recipe](https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-subnet-free-ip-monitoring/)

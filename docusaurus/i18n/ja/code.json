@@ -1,0 +1,30 @@
+{
+  "featureList.guides.description": {
+    "message": "ガイドは、簡単にフォローして実装できるようにゼロから設計されており、クラウドモニタリングを迅速に稼働させることができます。",
+    "description": "Guides were designed from the ground up to be easily followed and implemented, getting your cloud monitoring up and running quickly."
+  },
+  "featureList.signals.description": {
+    "message": "主要なメトリクス、ログ、パフォーマンス指標を通じて、AWS 環境に関する包括的な洞察を得ることができます。",
+    "description": "Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators."
+  },
+  "featureList.tools.description": {
+    "message": "効率的なデータ収集、分析、視覚化のための専用ソリューションを使用して、AWS モニタリングを合理化します。",
+    "description": "Streamline your AWS monitoring with purpose-built solutions for efficient data collection, analysis, and visualization."
+  },
+  "featureList.recipes.description": {
+    "message": "実証済みの AWS オブザーバビリティパターンを実装して、一般的なモニタリングとトラブルシューティングの課題を迅速に解決します。",
+    "description": "Implement proven AWS observability patterns to quickly solve common monitoring and troubleshooting challenges."
+  },
+  "featureList.faqs.description": {
+    "message": "AWS のオブザーバビリティに関する一般的な質問への回答を短時間で確認し、主要な概念とベストプラクティスを明らかにしています。",
+    "description": "Find quick answers to common AWS observability questions, clarifying key concepts and best practices."
+  },
+  "featureList.patterns.description": {
+    "message": "包括的でわかりやすい教育リソースを通じて、AWS オブザーバビリティの実装を段階的に学べます。",
+    "description": "Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources."
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS クラウド運用のベストプラクティスを学べます。",
+    "description": "Learn the AWS Cloud Operations Best Practices."
+  }
+}

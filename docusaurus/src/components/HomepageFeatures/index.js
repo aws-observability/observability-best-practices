@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import Heading from '@theme/Heading';
 import styles from './styles.module.css';
+import Translate from '@docusaurus/Translate';
 
 const FeatureList = [
   {
@@ -10,7 +11,9 @@ const FeatureList = [
     Svg: require('@site/static/img/guide.svg').default,
     description: (
       <>
-        Guides were designed from the ground up to be easily followed and implemented, getting your cloud monitoring up and running quickly.
+        <Translate id="featureList.guides.description">
+            Guides were designed from the ground up to be easily followed and implemented, getting your cloud monitoring up and running quickly.
+        </Translate>
       </>
     ),
     link: '/guides',
@@ -20,7 +23,9 @@ const FeatureList = [
     Svg: require('@site/static/img/signals.svg').default,
     description: (
       <>
-        Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators.
+        <Translate id="featureList.signals.description">
+          Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators.
+        </Translate>
       </>
     ),
     link: '/signals/logs',
@@ -30,7 +35,9 @@ const FeatureList = [
     Svg: require('@site/static/img/tools.svg').default,
     description: (
       <>
-       Streamline your AWS monitoring with purpose-built solutions for efficient data collection, analysis, and visualization.
+        <Translate id="featureList.tools.description">
+          Streamline your AWS monitoring with purpose-built solutions for efficient data collection, analysis, and visualization.
+        </Translate>
       </>
     ),
     link: '/tools/observability_accelerator',
@@ -40,7 +47,9 @@ const FeatureList = [
     Svg: require('@site/static/img/recipes.svg').default,
     description: (
       <>
-        Implement proven AWS observability patterns to quickly solve common monitoring and troubleshooting challenges.
+        <Translate id="featureList.recipes.description">
+          Implement proven AWS observability patterns to quickly solve common monitoring and troubleshooting challenges.
+        </Translate>
       </>
     ),
     link: '/recipes',
@@ -50,7 +59,9 @@ const FeatureList = [
     Svg: require('@site/static/img/faq.svg').default,
     description: (
       <>
-        Find quick answers to common AWS observability questions, clarifying key concepts and best practices.
+        <Translate id="featureList.faqs.description">
+          Find quick answers to common AWS observability questions, clarifying key concepts and best practices.
+        </Translate>
       </>
     ),
     link: '/faq/general',
@@ -60,7 +71,9 @@ const FeatureList = [
     Svg: require('@site/static/img/patterns.svg').default,
     description: (
       <>
-        Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources.
+        <Translate id="featureList.patterns.description">
+          Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources.
+        </Translate>
       </>
     ),
     link: '/patterns/Tracing/xrayec2',
@@ -70,7 +83,9 @@ const FeatureList = [
     Svg: require('@site/static/img/cloudops.svg').default,
     description: (
       <>
-        Learn the AWS Cloud Operations Best Practices.
+        <Translate id="featureList.cloudOps.description">
+          Learn the AWS Cloud Operations Best Practices.
+        </Translate>
       </>
     ),
     link: 'https://aws-samples.github.io/cloud-operations-best-practices/',

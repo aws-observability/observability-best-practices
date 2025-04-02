@@ -1,87 +1,116 @@
-# Security Professionals
+# セキュリティの専門家
 
-Security professionals in organizations operate across diverse roles and responsibilities, each requiring various skill sets and tools to protect cloud infrastructure, application and resources effectively. From Security Architects who design robust cloud security frameworks to Security Operations teams who [monitor and respond](https://aws.amazon.com/cloudops/monitoring-and-observability/) to threats, your security journey with AWS demands role-specific best practices and tooling.
+組織のセキュリティの専門家は、クラウドインフラストラクチャ、アプリケーション、リソースを効果的に保護するために、さまざまな役割と責任を担っており、それぞれに異なるスキルセットとツールが必要です。堅牢なクラウドセキュリティフレームワークを設計するセキュリティアーキテクトから、脅威を[監視して対応する](https://aws.amazon.com/jp/cloudops/monitoring-and-observability/)セキュリティオペレーションチームまで、AWS でのセキュリティの取り組みには、役割に応じたベストプラクティスとツールが必要です。
 
-This guide outlines tailored security approaches for key security personas: Security Architects focus on implementing the [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)'s security pillar and designing secure landing zones, Security Operations teams utilize AWS Security Hub and Amazon GuardDuty for threat detection and response, Compliance Managers leverage AWS Audit Manager and AWS Config for maintaining regulatory standards, and Security Engineers implement infrastructure security using services such as AWS IAM, AWS KMS, and AWS Network Firewall.
+このガイドでは、主要なセキュリティペルソナに合わせたセキュリティアプローチを説明します。セキュリティアーキテクトは [AWS Well-Architected Framework](https://aws.amazon.com/jp/architecture/well-architected/) のセキュリティの柱の実装とセキュアなランディングゾーンの設計に焦点を当て、セキュリティオペレーションチームは AWS Security Hub と Amazon GuardDuty を使用して脅威の検出と対応を行い、コンプライアンスマネージャーは AWS Audit Manager と AWS Config を活用して規制基準を維持し、セキュリティエンジニアは AWS IAM、AWS KMS、AWS Network Firewall などのサービスを使用してインフラストラクチャのセキュリティを実装します。
 
-Understanding these persona-specific requirements helps organizations build comprehensive security programs that address the unique challenges and responsibilities of each security role while maintaining a strong security posture across your AWS environments.
+これらのペルソナ固有の要件を理解することで、組織は各セキュリティ役割に固有の課題と責任に対処しながら、AWS 環境全体で強力なセキュリティ態勢を維持する包括的なセキュリティプログラムを構築できます。
 
-## Secure coding practices and secure development lifecycle
 
-AWS emphasizes security as a foundational element of software development through its "security by design" principles. You can implement [secure coding practices](https://aws-observability.github.io/observability-best-practices/persona/developer), which integrates security controls and compliance requirements throughout the development lifecycle. These practices align with industry standards such as OWASP Top 10 and help maintain a robust security posture throughout your application lifecycle.
 
-- Implementing infrastructure as code (IaC) to ensure consistent, version-controlled security configurations, using AWS CodeBuild with integrated security scanning, and deploying AWS CodePipeline for automated security testing.
 
-- [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/) guides you in understanding security responsibilities, while services such as Amazon CodeGuru Reviewer automatically identify security vulnerabilities and suggest remediation steps.
+## セキュアなコーディング手法とセキュアな開発ライフサイクル
 
-- AWS recommends implementing security controls across all phases - from design and development through testing, deployment, and maintenance. Key practices include using AWS Secrets Manager for secure credentials handling, implementing AWS WAF for application protection, and utilizing Amazon Inspector for continuous security assessments.
+AWS は「セキュリティバイデザイン」の原則を通じて、ソフトウェア開発の基礎的な要素としてセキュリティを重視しています。[セキュアなコーディング手法](https://aws-observability.github.io/observability-best-practices/persona/developer) を実装することで、開発ライフサイクル全体を通してセキュリティ管理とコンプライアンス要件を統合できます。これらの手法は OWASP Top 10 などの業界標準に準拠し、アプリケーションのライフサイクル全体を通して堅牢なセキュリティ態勢を維持するのに役立ちます。
 
-## Identity and access management best practices
+- Infrastructure as Code (IaC) を実装して、一貫性のあるバージョン管理されたセキュリティ設定を確保し、セキュリティスキャンを統合した AWS CodeBuild を使用し、自動化されたセキュリティテスト用に AWS CodePipeline をデプロイします。
 
-AWS recommends implementing the principle of least privilege as the cornerstone of your Identity and Access Management (IAM) strategy. You should start by creating individual IAM users instead of using the root account for your day to day cloud operations, implementing strong password policies, and rotating credentials regularly. AWS validates the use of multi-factor authentication (MFA) for privileged users and the root account, particularly for sensitive operations.
+- [AWS 責任共有モデル](https://aws.amazon.com/jp/compliance/shared-responsibility-model/) がセキュリティ責任の理解を導き、Amazon CodeGuru Reviewer などのサービスがセキュリティ脆弱性を自動的に特定し、修復手順を提案します。
 
-- AWS Organizations lets you centrally manage and govern multiple accounts while using Service Control Policies (SCPs) & Resource Control Policies (RCPs) to establish guardrails for permissions across your organization. For granular access control, you can use attribute-based access control (ABAC) with IAM tags, reducing the number of policies you need to maintain.
+- AWS は、設計から開発、テスト、デプロイ、保守までのすべてのフェーズでセキュリティ管理を実装することを推奨しています。主要な手法には、AWS Secrets Manager を使用した安全な認証情報の取り扱い、AWS WAF を使用したアプリケーション保護、Amazon Inspector を使用した継続的なセキュリティ評価の実施などがあります。
 
-- You can streamline access management by using AWS IAM Identity Center (formerly AWS Single Sign-On) to centrally manage access across AWS accounts and business applications.
 
-- Regular access reviews using AWS IAM Access Analyzer help identify and remove unused permissions, while AWS CloudTrail provides detailed API activity logging for security analysis and compliance auditing.
 
-These practices align with the AWS Well-Architected Framework's [security pillar](https://docs.aws.amazon.com/wellarchitected/latest/security-pillar/welcome.html) and help maintain a strong security posture while managing identities at scale.
 
-## Data encryption and protection guidelines
+## ID とアクセス管理のベストプラクティス
 
-AWS provides comprehensive data protection capabilities through a defense-in-depth approach, emphasizing encryption both at rest and in transit.
+AWS では、ID とアクセス管理 (IAM) 戦略の基礎として、最小権限の原則を実装することを推奨しています。
+日々のクラウド運用では、ルートアカウントを使用する代わりに、個別の IAM ユーザーを作成することから始め、強力なパスワードポリシーを実装し、認証情報を定期的にローテーションする必要があります。
+AWS は、特に機密性の高い操作において、特権ユーザーとルートアカウントに対する多要素認証 (MFA) の使用を推奨しています。
 
-- You can protect data at rest using AWS Key Management Service (AWS KMS) to create and control encryption keys, while AWS Certificate Manager (ACM) helps secure data in transit with TLS certificates.
+- AWS Organizations を使用すると、複数のアカウントを一元的に管理し、サービスコントロールポリシー (SCP) とリソースコントロールポリシー (RCP) を使用して、組織全体の権限に対するガードレールを確立できます。
+きめ細かなアクセス制御には、IAM タグを使用した属性ベースのアクセス制御 (ABAC) を使用でき、維持が必要なポリシーの数を削減できます。
 
-- For your Amazon S3 data, you can implement server-side encryption using AWS KMS keys (SSE-KMS), S3-managed keys (SSE-S3), or customer-provided keys (SSE-C). AWS recommends encrypting Amazon EBS volumes, RDS instances, and DynamoDB tables by default, using either AWS managed keys or customer managed keys based on your compliance requirements.
+- AWS IAM Identity Center (旧 AWS Single Sign-On) を使用して、AWS アカウントとビジネスアプリケーション全体のアクセスを一元的に管理できます。
 
-- To maintain data sovereignty, you can use AWS CloudHSM for hardware-based key storage and AWS Macie to automatically discover and protect sensitive data. When transferring data, AWS PrivateLink provides secure connectivity to AWS services without using the public internet, while AWS Transfer Family ensures secure file transfers using SFTP, FTPS, and FTP protocols.
+- AWS IAM Access Analyzer を使用した定期的なアクセスレビューにより、未使用の権限を特定して削除できます。また、AWS CloudTrail はセキュリティ分析とコンプライアンス監査のための詳細な API アクティビティログを提供します。
 
-- Additionally, implementing Amazon S3 Object Lock and versioning helps protect against accidental or malicious deletion, while AWS Backup creates encrypted backups across your AWS resources. These encryption mechanisms align with compliance standards such as HIPAA, PCI DSS, and GDPR.
+これらのプラクティスは、AWS Well-Architected Framework の[セキュリティの柱](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/security-pillar/welcome.html)に沿っており、大規模な ID 管理を行いながら強力なセキュリティ態勢を維持するのに役立ちます。
 
-## Compliance and risk management frameworks
 
-AWS maintains a robust compliance and risk management program that aligns with global standards and regulations while providing you with tools and resources for your own compliance journey. The AWS Compliance Program helps you understand the comprehensive controls AWS implements through third-party audits, certifications, and attestations such as ISO 27001, SOC reports, and PCI DSS.
 
-- You can use AWS Audit Manager to continuously assess your AWS usage against industry standards and internal policies, while AWS Config provides detailed resource configuration tracking and compliance monitoring.
+## データの暗号化と保護のガイドライン
 
-- For regulated industries, AWS Control Tower helps establish and maintain a secure, compliant multi-account environment using guardrails based on AWS best practices.
+AWS は、多層防御アプローチを通じて包括的なデータ保護機能を提供し、保管時および転送時の暗号化を重視しています。
 
-- The AWS Security Hub centralizes security findings and compliance checks across accounts, integrating with services like Amazon Inspector for automated security assessments and Amazon GuardDuty for threat detection.
+- AWS Key Management Service (AWS KMS) を使用して暗号化キーを作成および制御することで保管時のデータを保護し、AWS Certificate Manager (ACM) は TLS 証明書を使用して転送時のデータを保護します。
 
-- AWS Artifact provides on-demand access to security and compliance reports, allowing you to demonstrate compliance to auditors. The AWS Risk and Compliance whitepaper outlines the AWS shared responsibility model, helping you understand which compliance requirements AWS manages and which ones remain your responsibility.
+- Amazon S3 データについては、AWS KMS キー (SSE-KMS)、S3 管理キー (SSE-S3)、またはお客様提供のキー (SSE-C) を使用してサーバー側の暗号化を実装できます。AWS では、コンプライアンス要件に応じて、AWS マネージドキーまたはカスタマーマネージドキーを使用して、Amazon EBS ボリューム、RDS インスタンス、DynamoDB テーブルをデフォルトで暗号化することを推奨しています。
 
-These tools and frameworks support various regulatory requirements including HIPAA, GDPR, FedRAMP, and regional data protection laws.
+- データの主権を維持するために、AWS CloudHSM をハードウェアベースのキーストレージとして使用し、AWS Macie を使用して機密データを自動的に検出および保護できます。データ転送時には、AWS PrivateLink を使用してパブリックインターネットを使用せずに AWS サービスへの安全な接続を提供し、AWS Transfer Family は SFTP、FTPS、FTP プロトコルを使用して安全なファイル転送を確保します。
 
-## Vulnerability management and penetration testing strategies
+- さらに、Amazon S3 Object Lock とバージョニングを実装することで、偶発的または悪意のある削除から保護し、AWS Backup は AWS リソース全体で暗号化されたバックアップを作成します。これらの暗号化メカニズムは、HIPAA、PCI DSS、GDPR などのコンプライアンス基準に準拠しています。
 
-AWS supports comprehensive vulnerability management and penetration testing through a structured approach that combines automated tools with manual assessment capabilities.
 
-- You can conduct permitted penetration testing on your AWS infrastructure without prior approval for eight specific services, including Amazon EC2 instances, NAT Gateways, and Elastic Load Balancers. AWS Inspector automatically assesses applications for vulnerabilities and deviations from security best practices, while Amazon GuardDuty provides continuous security monitoring to detect threats and unauthorized behavior.
 
-- For container security, Amazon ECR scanning helps identify vulnerabilities in container images, and AWS Systems Manager Patch Manager automates the patch management process across your AWS resources. You can strengthen your security posture using AWS Security Hub to aggregate and prioritize security findings from multiple AWS services and partner tools. AWS also recommends implementing Amazon Detective to analyze and visualize security data for deeper investigation of potential security issues.
+## コンプライアンスとリスク管理フレームワーク
 
-- For web applications, AWS WAF helps protect against common exploitation techniques, while AWS Shield provides DDoS protection. The AWS Marketplace offers additional third-party security tools for vulnerability scanning and penetration testing that integrate with your AWS environment.
+AWS は、グローバルな標準と規制に準拠した堅牢なコンプライアンスとリスク管理プログラムを維持しながら、お客様独自のコンプライアンスの取り組みのためのツールとリソースを提供しています。
+AWS コンプライアンスプログラムは、ISO 27001、SOC レポート、PCI DSS などのサードパーティ監査、認証、証明を通じて AWS が実装する包括的な管理を理解するのに役立ちます。
 
-Regular security assessments should follow the AWS Acceptable Use Policy and Security Testing guidelines to maintain compliance while identifying potential vulnerabilities.
+- AWS Audit Manager を使用して、業界標準と内部ポリシーに対する AWS の使用状況を継続的に評価できます。また、AWS Config は詳細なリソース構成の追跡とコンプライアンスの監視を提供します。
 
-## Incident response and threat hunting techniques
+- 規制対象業界向けに、AWS Control Tower は AWS のベストプラクティスに基づくガードレールを使用して、安全でコンプライアンスに準拠したマルチアカウント環境の確立と維持を支援します。
 
-AWS provides a comprehensive framework for incident response and proactive threat hunting through integrated security services and automation capabilities.
+- AWS Security Hub は、アカウント全体のセキュリティ調査結果とコンプライアンスチェックを一元化し、自動セキュリティ評価のための Amazon Inspector や脅威検出のための Amazon GuardDuty などのサービスと統合します。
 
-- You can implement AWS Security Hub as your central command center for security alerts, while Amazon GuardDuty uses machine learning to perform continuous threat detection across your AWS accounts and workloads.
+- AWS Artifact は、セキュリティとコンプライアンスレポートのオンデマンドアクセスを提供し、監査人へのコンプライアンスの実証を可能にします。AWS リスクとコンプライアンスホワイトペーパーは、AWS 共有責任モデルの概要を説明し、AWS が管理するコンプライアンス要件とお客様の責任として残る要件を理解するのに役立ちます。
 
-- For incident response automation, you can use AWS Systems Manager Incident Manager to manage, resolve, and analyze security incidents with predefined response plans and automated runbooks.
+これらのツールとフレームワークは、HIPAA、GDPR、FedRAMP、および地域のデータ保護法を含む様々な規制要件をサポートしています。
 
-- Amazon Detective helps you analyze and visualize security data to identify the root cause of potential security issues, while AWS CloudWatch Logs Insights enables real-time log analysis for threat hunting.
 
-- The AWS CloudTrail Lake feature allows you to run SQL-based queries across your API activity history for forensic investigations.
 
-- You can enhance your security posture by implementing Amazon EventBridge for automated response to security events, and AWS Lambda for serverless incident remediation. AWS recommends establishing [VPC Flow Logs for network observability](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs) and DNS Query Logging for network traffic analysis, while AWS Config records resource configurations for compliance analysis and incident investigation.
 
-These capabilities integrate with your existing security information and event management (SIEM) solutions through Amazon Kinesis Data Firehose, enabling centralized security monitoring and automated incident response workflows.
+## 脆弱性管理と侵入テスト戦略
 
-## Conclusion
+AWS は、自動化ツールと手動評価機能を組み合わせた体系的なアプローチにより、包括的な脆弱性管理と侵入テストをサポートしています。
 
-By implementing these security services, tools and practices supporting security personas in an organization, customers can better protect their AWS workloads while empowering your security teams to work more effectively. Start by identifying your organization's key security personas, then map their responsibilities to the appropriate AWS services and tools. Remember to regularly review and update these role-based security practices as your cloud environment evolves. You can use AWS Security Hub and AWS Organizations to maintain visibility across accounts and automate security checks based on persona requirements. For more guidance on implementing security best practices, connect with AWS account team who can help you design a comprehensive security strategy tailored to your organization's needs.
+- Amazon EC2 インスタンス、NAT Gateway、Elastic Load Balancer を含む 8 つの特定のサービスについては、事前承認なしで許可された侵入テストを実施できます。AWS Inspector は、アプリケーションの脆弱性とセキュリティのベストプラクティスからの逸脱を自動的に評価し、Amazon GuardDuty は脅威や不正な動作を検出するための継続的なセキュリティ監視を提供します。
+
+- コンテナセキュリティについては、Amazon ECR スキャンがコンテナイメージの脆弱性を特定し、AWS Systems Manager Patch Manager が AWS リソース全体のパッチ管理プロセスを自動化します。AWS Security Hub を使用することで、複数の AWS サービスやパートナーツールからのセキュリティ調査結果を集約し、優先順位付けすることでセキュリティ態勢を強化できます。また AWS では、潜在的なセキュリティ問題をより深く調査するために、Amazon Detective を実装することを推奨しています。
+
+- Web アプリケーションについては、AWS WAF が一般的な攻撃手法から保護し、AWS Shield が DDoS 保護を提供します。AWS Marketplace では、AWS 環境と統合する脆弱性スキャンや侵入テストのための追加のサードパーティセキュリティツールを提供しています。
+
+定期的なセキュリティ評価は、潜在的な脆弱性を特定しながらコンプライアンスを維持するために、AWS 利用規約とセキュリティテストガイドラインに従う必要があります。
+
+
+
+## インシデント対応と脅威ハンティング技術
+
+AWS は、統合されたセキュリティサービスと自動化機能を通じて、インシデント対応と積極的な脅威ハンティングのための包括的なフレームワークを提供しています。
+
+- AWS Security Hub をセキュリティアラートの中央管理センターとして実装し、Amazon GuardDuty は機械学習を使用して AWS アカウントとワークロード全体で継続的な脅威検出を実行できます。
+
+- インシデント対応の自動化には、AWS Systems Manager Incident Manager を使用して、事前定義された対応計画と自動化されたランブックでセキュリティインシデントを管理、解決、分析できます。
+
+- Amazon Detective は、潜在的なセキュリティ問題の根本原因を特定するためのセキュリティデータの分析と可視化を支援し、AWS CloudWatch Logs Insights は脅威ハンティングのためのリアルタイムログ分析を可能にします。
+
+- AWS CloudTrail Lake 機能を使用すると、フォレンジック調査のために API アクティビティ履歴全体に対して SQL ベースのクエリを実行できます。
+
+- Amazon EventBridge を使用してセキュリティイベントへの自動応答を実装し、AWS Lambda でサーバーレスインシデント修復を行うことで、セキュリティ態勢を強化できます。AWS では、ネットワークの可観測性のための [VPC Flow Logs](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs) と、ネットワークトラフィック分析のための DNS クエリログの確立を推奨しています。また、AWS Config はコンプライアンス分析とインシデント調査のためのリソース構成を記録します。
+
+これらの機能は、Amazon Kinesis Data Firehose を通じて既存のセキュリティ情報およびイベント管理 (SIEM) ソリューションと統合され、集中的なセキュリティ監視と自動化されたインシデント対応ワークフローを実現します。
+
+
+
+## まとめ
+
+組織内のセキュリティペルソナをサポートするこれらのセキュリティサービス、ツール、プラクティスを実装することで、お客様はセキュリティチームの効率的な業務を可能にしながら、AWS ワークロードをより適切に保護できます。
+
+まず組織の主要なセキュリティペルソナを特定し、その責任を適切な AWS サービスとツールにマッピングすることから始めます。
+
+クラウド環境の進化に合わせて、これらのロールベースのセキュリティプラクティスを定期的にレビューし、更新することを忘れないでください。
+
+AWS Security Hub と AWS Organizations を使用して、アカウント全体の可視性を維持し、ペルソナの要件に基づいてセキュリティチェックを自動化できます。
+
+セキュリティのベストプラクティスの実装に関する詳細なガイダンスについては、AWS アカウントチームにご相談ください。アカウントチームは、お客様の組織のニーズに合わせた包括的なセキュリティ戦略の設計をサポートします。

@@ -1,35 +1,35 @@
 # Amazon Elastic Container Service
 
-[Amazon Elastic Container Service][ecs-main] (ECS) は、コンテナ化されたアプリケーションの簡単なデプロイ、管理、スケーリングを支援する、フルマネージドのコンテナオーケストレーションサービスです。AWS の他のサービスと深く統合されています。
+[Amazon Elastic Container Service][ecs-main] (ECS) は、フルマネージド型のコンテナオーケストレーションサービスです。コンテナ化されたアプリケーションの簡単なデプロイ、管理、スケーリングを可能にし、AWS の他のサービスと深く統合されています。
 
-以下のレシピをコンピューティングエンジン別にグループ化して確認してください：
+以下のレシピを、コンピュートエンジン別にご確認ください：
 
 
 
 
 ## 一般
 
-- [ECS における AWS Distro for OpenTelemetry Collector のデプロイパターン][adot-patterns-ecs]
-- [AWS Distro for OpenTelemetry を使用した Amazon ECS モニタリングのセットアップの簡素化][ecs-adot-integration]
+- [AWS Distro for OpenTelemetry Collector と ECS を使用したデプロイパターン][adot-patterns-ecs]
+- [AWS Distro for OpenTelemetry による Amazon ECS モニタリングのセットアップの簡素化][ecs-adot-integration]
 
 
 
 
-## EC2 上の ECS
+## ECS on EC2
 
 
 
 
 ### ログ
 
-- [内部構造: Amazon ECS タスク用の FireLens][firelens-uth]
+- [内部構造: Amazon ECS タスク向け FireLens][firelens-uth]
 
 
 
 
 ### メトリクス
 
-- [Amazon ECS でのクロスアカウントメトリクス収集に AWS Distro for OpenTelemetry コレクターを使用する][adot-xaccount-metrics]
+- [Amazon ECS でのクロスアカウントメトリクス収集のための AWS Distro for OpenTelemetry コレクターの使用][adot-xaccount-metrics]
 - [Amazon Managed Service for Prometheus を使用した ECS からのメトリクス収集][ecs-amp]
 - [AWS App Mesh から Amazon CloudWatch への Envoy メトリクスの送信][ecs-appmesh-cw]
 
@@ -43,7 +43,7 @@
 
 ### ログ
 
-- [Amazon ECS と AWS Fargate 上の FireLens 用のサンプルロギングアーキテクチャ（Fluent Bit 使用）][firelens-fb]
+- [Amazon ECS と AWS Fargate で Fluent Bit を使用した FireLens のサンプルログアーキテクチャ][firelens-fb]
 
 
 [ecs-main]: https://aws.amazon.com/jp/ecs/

@@ -1,24 +1,24 @@
 # Amazon CloudWatch
 
-[Amazon CloudWatch][cw-main] (CW) は、DevOps エンジニア、開発者、サイト信頼性エンジニア (SRE)、IT マネージャー向けに構築されたモニタリングおよびオブザーバビリティサービスです。
-CloudWatch は、ログ、メトリクス、イベントの形式でモニタリングおよび運用データを収集し、AWS リソース、アプリケーション、AWS 上および オンプレミスサーバーで実行されるサービスの統合ビューを提供します。
+[Amazon CloudWatch][cw-main] (CW) は、DevOps エンジニア、開発者、サイト信頼性エンジニア (SRE)、IT マネージャー向けに構築されたモニタリングとオブザーバビリティのサービスです。
+CloudWatch は、ログ、メトリクス、イベントの形式でモニタリングと運用データを収集し、AWS リソース、アプリケーション、AWS 上および オンプレミスサーバーで実行されるサービスの統合されたビューを提供します。
 
-以下のレシピをご覧ください：
+以下のレシピをご確認ください：
 
 - [CW Logs、Lambda、SNS を使用した RDS のプロアクティブなデータベースモニタリングの構築][rds-cw]
 - [EKS における Kubernetes ネイティブ開発者向けの CloudWatch 中心のオブザーバビリティの実装][swa-eks-cw]
-- [CW Synthetics を使用した Canary の作成][cw-synths]
-- [ログのクエリに使用する Cloudwatch Logs Insights][cw-logsi]
+- [CW Synthetics による Canary の作成][cw-synths]
+- [ログのクエリに使用する CloudWatch Logs Insights][cw-logsi]
 - [Lambda Insights][cw-lambda]
-- [CloudWatch を使用した異常検出][cw-am]
-- [CloudWatch を使用したメトリクスアラーム][cw-alarms]
+- [CloudWatch による異常検知][cw-am]
+- [CloudWatch によるメトリクスアラーム][cw-alarms]
 - [バックプレッシャーを回避するためのコンテナログオプションの選択][cw-fluentbit]
-- [ECS および EKS 上の AWS Distro for OpenTelemetry を使用した CloudWatch Container Insights Prometheus サポートの導入][cwci-adot]
-- [CW Container Insights を使用した ECS コンテナ化アプリケーションおよびマイクロサービスのモニタリング][cwci-ecs]
-- [CW Container Insights を使用した EKS コンテナ化アプリケーションおよびマイクロサービスのモニタリング][cwci-eks]
-- [Firehose と AWS Lambda を使用した Cloudwatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
-- [KEDA と Amazon CloudWatch を使用した Kubernetes ワークロードのプロアクティブな自動スケーリング][cw-keda-eks-scaling]
-- [リソースタグでフィルタリングされたメトリクスの集計と可視化に Amazon CloudWatch Metrics Explorer を使用する][metrics-explorer-filter-by-tags]
+- [ECS と EKS における AWS Distro for OpenTelemetry を使用した CloudWatch Container Insights Prometheus サポートの紹介][cwci-adot]
+- [CW Container Insights を使用した ECS コンテナ化アプリケーションとマイクロサービスのモニタリング][cwci-ecs]
+- [CW Container Insights を使用した EKS コンテナ化アプリケーションとマイクロサービスのモニタリング][cwci-eks]
+- [Firehose と AWS Lambda を使用した CloudWatch メトリクスストリームの Amazon Managed Service for Prometheus へのエクスポート](recipes/lambda-cw-metrics-go-amp.md)
+- [KEDA と Amazon CloudWatch を使用した Kubernetes ワークロードのプロアクティブなオートスケーリング][cw-keda-eks-scaling]
+- [リソースタグでフィルタリングされたメトリクスの集計と可視化のための Amazon CloudWatch メトリクスエクスプローラーの使用][metrics-explorer-filter-by-tags]
 
 
 [cw-main]: https://aws.amazon.com/jp/cloudwatch/

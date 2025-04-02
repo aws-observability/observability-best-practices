@@ -28,11 +28,11 @@
 
 # メトリクス収集
 
-EKS クラスターからのメトリクス収集は、[3 つのコンポーネント](https://aws-observability.github.io/observability-best-practices/recipes/telemetry/)で構成されています：
+EKS クラスターからのメトリクス収集は、[3 つのコンポーネント](/observability-best-practices/ja/recipes/telemetry/)で構成されています：
 
 1. ソース：このガイドに記載されているようなメトリクスの発生源。
-2. エージェント：EKS 環境で実行されるアプリケーションで、一般的にエージェントと呼ばれ、メトリクスの監視データを収集し、2 番目のコンポーネントにプッシュします。このコンポーネントの例として、[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) や [CloudWatch Agent](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/) があります。
-3. 送信先：監視データの保存と分析ソリューションで、このコンポーネントは通常、[時系列形式のデータ](https://aws-observability.github.io/observability-best-practices/signals/metrics/)に最適化されたデータサービスです。このコンポーネントの例として、[Amazon Managed Service for Prometheus](https://aws.amazon.com/jp/prometheus/) や [AWS CloudWatch](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
+2. エージェント：EKS 環境で実行されるアプリケーションで、一般的にエージェントと呼ばれ、メトリクスの監視データを収集し、2 番目のコンポーネントにプッシュします。このコンポーネントの例として、[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/) や [CloudWatch Agent](/observability-best-practices/ja/tools/cloudwatch_agent/) があります。
+3. 送信先：監視データの保存と分析ソリューションで、このコンポーネントは通常、[時系列形式のデータ](/observability-best-practices/ja/signals/metrics/)に最適化されたデータサービスです。このコンポーネントの例として、[Amazon Managed Service for Prometheus](https://aws.amazon.com/jp/prometheus/) や [AWS CloudWatch](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html) があります。
 
 注：このセクションでは、設定例は [AWS Observability Accelerator](https://aws-observability.github.io/terraform-aws-observability-accelerator/) の関連セクションへのリンクとなっています。これは、EKS メトリクス収集の実装に関する最新のガイダンスと例を確実に入手できるようにするためです。
 
@@ -46,7 +46,7 @@ ADOT は [EKS Managed Add-ons](https://docs.aws.amazon.com/ja_jp/eks/latest/user
 
 AWS は、ADOT アドオンが Amazon EKS と互換性があることを検証しており、最新のバグ修正とセキュリティパッチで定期的に更新されています。
 
-[ADOT のベストプラクティスと詳細情報はこちら。](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector/)
+[ADOT のベストプラクティスと詳細情報はこちら。](/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector/)
 
 
 
@@ -174,7 +174,7 @@ ADOT コレクターパイプラインは、Prometheus Remote Write 機能を使
 
 完全なベストプラクティスのコレクター設定、ADOT パイプライン設定、Prometheus スクレイプ設定は、[Observability Accelerator の Helm Chart](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml) で確認できます。
 
-AMP の設定と使用に関するベストプラクティスは[こちら](https://aws-observability.github.io/observability-best-practices/recipes/amp/)をご覧ください。
+AMP の設定と使用に関するベストプラクティスは[こちら](/observability-best-practices/ja/recipes/amp/)をご覧ください。
 
 
 

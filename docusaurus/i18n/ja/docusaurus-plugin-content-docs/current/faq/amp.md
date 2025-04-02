@@ -43,7 +43,7 @@ Amazon Managed Service for Prometheus に取り込まれるサンプル数を削
 
 ## CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信するにはどうすればよいですか？
 
-[CloudWatch メトリクスストリームを使用して CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信する](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/) ことをお勧めします。この統合には以下のような制限があります。
+[CloudWatch メトリクスストリームを使用して CloudWatch メトリクスを Amazon Managed Service for Prometheus に送信する](/observability-best-practices/ja/recipes/recipes/lambda-cw-metrics-go-amp/) ことをお勧めします。この統合には以下のような制限があります。
 
 1. Amazon Managed Service for Prometheus API を呼び出すために Lambda 関数が必要です。
 1. CloudWatch メトリクスを Amazon Managed Service for Prometheus に取り込む前にメタデータ (AWS タグなど) で強化する機能がありません。

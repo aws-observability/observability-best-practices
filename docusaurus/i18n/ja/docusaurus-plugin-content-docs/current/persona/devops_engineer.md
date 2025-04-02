@@ -11,14 +11,14 @@ CI/CD パイプラインをオブザーバビリティで最適化するには�
  
 - CI/CD の信頼性、可用性、パフォーマンスを維持するために、[パイプライン](https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/monitoring.html)、[ビルド](https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/monitoring-builds.html)、[デプロイ](https://docs.aws.amazon.com/ja_jp/codedeploy/latest/userguide/monitoring.html) のモニタリングを実装します。
 
-- 重要な CI/CD イベントに対して [CloudWatch アラーム](https://aws-observability.github.io/observability-best-practices/tools/alarms) を作成します。Amazon SNS を使用して通知を設定し、パイプラインの失敗や長時間実行されているステージをチームに通知します。
+- 重要な CI/CD イベントに対して [CloudWatch アラーム](/observability-best-practices/ja/tools/alarms) を作成します。Amazon SNS を使用して通知を設定し、パイプラインの失敗や長時間実行されているステージをチームに通知します。
 
      * [CodeBuild での CloudWatch アラーム](https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/codebuild_cloudwatch_alarms.html) を設定します。
      * [CodeDeploy での CloudWatch アラーム](https://docs.aws.amazon.com/ja_jp/codedeploy/latest/userguide/monitoring-create-alarms.html) を設定します。
  
-- [AWS X-Ray](https://aws-observability.github.io/observability-best-practices/tools/xray/) を使用してパイプラインを計測し、CI/CD パイプラインのステージ全体でリクエストをトレースします。
+- [AWS X-Ray](/observability-best-practices/ja/tools/xray/) を使用してパイプラインを計測し、CI/CD パイプラインのステージ全体でリクエストをトレースします。
 
-- [CodeBuild](https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/monitoring-metrics.html)、[CodeDeploy](https://docs.aws.amazon.com/ja_jp/codedeploy/latest/userguide/monitoring-cloudwatch.html)、[パイプライン](https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/metrics-dimensions.html) の主要なメトリクスを追跡するために、統合された [CloudWatch ダッシュボード](https://aws-observability.github.io/observability-best-practices/tools/dashboards) を作成します。
+- [CodeBuild](https://docs.aws.amazon.com/ja_jp/codebuild/latest/userguide/monitoring-metrics.html)、[CodeDeploy](https://docs.aws.amazon.com/ja_jp/codedeploy/latest/userguide/monitoring-cloudwatch.html)、[パイプライン](https://docs.aws.amazon.com/ja_jp/codepipeline/latest/userguide/metrics-dimensions.html) の主要なメトリクスを追跡するために、統合された [CloudWatch ダッシュボード](/observability-best-practices/ja/tools/dashboards) を作成します。
 
 
 
@@ -26,11 +26,11 @@ CI/CD パイプラインをオブザーバビリティで最適化するには�
 
 IaC ワークフローで効果的なオブザーバビリティを実現するために：
 
-- [AWS CloudFormation](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/AWS_CloudWatch.html) テンプレートに [CloudWatch アラーム](https://aws-observability.github.io/observability-best-practices/tools/alarms) と [ダッシュボード](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch-dashboard) を組み込みます。これにより、すべての環境で一貫したモニタリングが確保されます。
+- [AWS CloudFormation](https://docs.aws.amazon.com/ja_jp/AWSCloudFormation/latest/UserGuide/AWS_CloudWatch.html) テンプレートに [CloudWatch アラーム](/observability-best-practices/ja/tools/alarms) と [ダッシュボード](/observability-best-practices/ja/tools/cloudwatch-dashboard) を組み込みます。これにより、すべての環境で一貫したモニタリングが確保されます。
 
-- 集中ログ管理を実装します：Amazon CloudWatch Logs や [Amazon OpenSearch Service](https://aws-observability.github.io/observability-best-practices/recipes/aes) を使用して[集中ログソリューション](https://aws-observability.github.io/observability-best-practices/patterns/multiaccount)をセットアップします。IaC テンプレートの一部としてログ保持ポリシーとロググループを定義します。
+- 集中ログ管理を実装します：Amazon CloudWatch Logs や [Amazon OpenSearch Service](/observability-best-practices/ja/recipes/aes) を使用して[集中ログソリューション](/observability-best-practices/ja/patterns/multiaccount)をセットアップします。IaC テンプレートの一部としてログ保持ポリシーとロググループを定義します。
 
-- セキュリティとパフォーマンス分析のためのネットワークトラフィック情報を取得するために、IaC を使用して [VPC フローログ](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs)を設定します。
+- セキュリティとパフォーマンス分析のためのネットワークトラフィック情報を取得するために、IaC を使用して [VPC フローログ](/observability-best-practices/ja/patterns/vpcflowlogs)を設定します。
 
 - より良いリソース管理と、より詳細なモニタリングとコスト配分を可能にするために、[IaC テンプレート](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/tagging-best-practices/implementing-and-enforcing-tagging.html)で一貫したタグ付け戦略を使用します。
 
@@ -43,13 +43,13 @@ IaC ワークフローで効果的なオブザーバビリティを実現する�
 
 コンテナ化されたアプリケーションと Kubernetes 環境では、以下を実施します：
 
-- 包括的なコンテナとクラスターのモニタリングのために、[Amazon EKS と Container Insights](https://aws-observability.github.io/observability-best-practices/guides/containers/aws-native/eks/amazon-cloudwatch-container-insights) を実装します。
+- 包括的なコンテナとクラスターのモニタリングのために、[Amazon EKS と Container Insights](/observability-best-practices/ja/guides/containers/aws-native/eks/amazon-cloudwatch-container-insights) を実装します。
 
-- コンテナ化されたアプリケーションからテレメトリーデータを収集してエクスポートするために、[AWS Distro for OpenTelemetry](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) を使用します。
+- コンテナ化されたアプリケーションからテレメトリーデータを収集してエクスポートするために、[AWS Distro for OpenTelemetry](/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector) を使用します。
 
-- 高度なメトリクス収集と可視化のために、EKS 上で [Prometheus と Grafana](https://aws-observability.github.io/observability-best-practices/patterns/eksampamg) を実装します。セットアップと管理を容易にするために Amazon Managed Grafana サービスを使用します。
+- 高度なメトリクス収集と可視化のために、EKS 上で [Prometheus と Grafana](/observability-best-practices/ja/patterns/eksampamg) を実装します。セットアップと管理を容易にするために Amazon Managed Grafana サービスを使用します。
 
-- Kubernetes のデプロイメントのために、Flux や ArgoCD などのツールを使用して [GitOps](https://aws-observability.github.io/observability-best-practices/guides/operational/gitops-with-amg/#introduction-to-gitops) を実装します。これらのツールを CloudWatch と統合して、GitOps ワークフローの同期状態と健全性をモニタリングします。
+- Kubernetes のデプロイメントのために、Flux や ArgoCD などのツールを使用して [GitOps](/observability-best-practices/ja/guides/operational/gitops-with-amg/#introduction-to-gitops) を実装します。これらのツールを CloudWatch と統合して、GitOps ワークフローの同期状態と健全性をモニタリングします。
 
 
 
@@ -79,7 +79,7 @@ IaC ワークフローで効果的なオブザーバビリティを実現する�
 
 - テストフェーズでパフォーマンスの洞察を得るために、テスト環境で [AWS X-Ray トレース](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-console-traces.html) を実装します。
 
-- Amazon CloudWatch [RUM](https://aws-observability.github.io/observability-best-practices/tools/rum)（Real User Monitoring）を活用して、アプリケーションとの実際のユーザーインタラクションからユーザーエクスペリエンスデータを収集・分析します。
+- Amazon CloudWatch [RUM](/observability-best-practices/ja/tools/rum)（Real User Monitoring）を活用して、アプリケーションとの実際のユーザーインタラクションからユーザーエクスペリエンスデータを収集・分析します。
 
 - [AWS Fault Injection Simulator](https://aws.amazon.com/blogs/mt/chaos-engineering-leveraging-aws-fault-injection-simulator-in-a-multi-account-aws-environment/) を使用してカオスエンジニアリングを実践します。シミュレートした障害の影響をモニタリングして、[システムの回復性を向上](https://aws.amazon.com/jp/blogs/news/monitor-and-improve-your-application-resiliency-with-resilience-hub/)させます。
 
@@ -95,9 +95,9 @@ IaC ワークフローで効果的なオブザーバビリティを実現する�
 
 - 事前に定義されたモニタリングのしきい値を超えた場合、[自動的にロールバック](https://docs.aws.amazon.com/ja_jp/codedeploy/latest/userguide/deployments-rollback-and-redeploy.html) して前回の安定バージョンに戻るようにデプロイメントを設定します。
 
-- Amazon CloudWatch [RUM](https://aws-observability.github.io/observability-best-practices/tools/rum)（Real User Monitoring）を使用して、実際のユーザーセッションからパフォーマンスデータを収集・分析します。これにより、リリースがエンドユーザーエクスペリエンスに与える影響についての洞察が得られます。
+- Amazon CloudWatch [RUM](/observability-best-practices/ja/tools/rum)（Real User Monitoring）を使用して、実際のユーザーセッションからパフォーマンスデータを収集・分析します。これにより、リリースがエンドユーザーエクスペリエンスに与える影響についての洞察が得られます。
 
-- リリース後の異常やパフォーマンスの問題をすぐにチームに通知するために、[CloudWatch Alarms](https://aws-observability.github.io/observability-best-practices/tools/alarms) を設定します。タイムリーな通知のために、これらのアラームを Amazon SNS と統合します。
+- リリース後の異常やパフォーマンスの問題をすぐにチームに通知するために、[CloudWatch Alarms](/observability-best-practices/ja/tools/alarms) を設定します。タイムリーな通知のために、これらのアラームを Amazon SNS と統合します。
 
 - AI を活用したインサイトとして、[Amazon DevOps Guru](https://aws.amazon.com/jp/blogs/news/amazon-devops-guru-machine-learning-powered-service-identifies-application-errors-and-fixes/) を使用し、運用上の問題を自動的に検出し、リリース後のアプリケーションの健全性とパフォーマンスを改善するための ML ベースの推奨事項を受け取ります。
 

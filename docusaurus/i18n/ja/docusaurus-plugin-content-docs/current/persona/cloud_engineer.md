@@ -15,16 +15,16 @@
 
 | レベル | カテゴリ | 説明 | ヒントと例 | 追加情報 |
 |-------|---------|------|------------|-----------|
-| **基本** | [支出の追跡](https://aws-observability.github.io/observability-best-practices/guides/cost/cost-visualization/cost) | ビジネス活動がコストに与える影響を監視するためのダッシュボードを設定 | **例：** マーケティングキャンペーンがサーバーコストに与える影響を監視 | **プロのヒント：** 基本的な日次コスト追跡から始める  
+| **基本** | [支出の追跡](/observability-best-practices/ja/guides/cost/cost-visualization/cost) | ビジネス活動がコストに与える影響を監視するためのダッシュボードを設定 | **例：** マーケティングキャンペーンがサーバーコストに与える影響を監視 | **プロのヒント：** 基本的な日次コスト追跡から始める  
 **よくある失敗：** アラートを設定しないこと |
-| **基本** | [予算管理](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators) | プロジェクトコストを測定するための支出制限を設定 | **ヒント：** 各部門やサービスごとの予算設定に焦点を当てる | **推奨事項：** 明確な予算配分を確立する |
-| **中級** | [リソースタグ付け](https://aws-observability.github.io/observability-best-practices/recipes/recipes/metrics-explorer-filter-by-tags) | チームやプロジェクトごとのリソース使用状況を追跡するためのタグ付けを実装 | **クイックウィン：** 以下の 3 つのタグから始める：  
+| **基本** | [予算管理](/observability-best-practices/ja/guides/operational/business/key-performance-indicators) | プロジェクトコストを測定するための支出制限を設定 | **ヒント：** 各部門やサービスごとの予算設定に焦点を当てる | **推奨事項：** 明確な予算配分を確立する |
+| **中級** | [リソースタグ付け](/observability-best-practices/ja/recipes/recipes/metrics-explorer-filter-by-tags) | チームやプロジェクトごとのリソース使用状況を追跡するためのタグ付けを実装 | **クイックウィン：** 以下の 3 つのタグから始める：  
 1. プロジェクト  
 2. 環境  
 3. オーナー | **ご存知ですか？** タグ付けを実装することで 20-30% のコスト削減が可能です |
-| **中級** | [コストと使用状況の可視化](https://aws-observability.github.io/observability-best-practices/guides/cost/cost-visualization/cost) | 必要なコストのみを発生させ、不要なリソースに過剰な支出をしていないことを確認 | **例：** より詳細なコスト追跡のためのダッシュボードを設定 | **プロのヒント：** AWS が提供する様々な[コスト最適化ツール](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/cost-optimization-laying-the-foundation/reporting-cost-optimization-tools.html)を考慮する |
+| **中級** | [コストと使用状況の可視化](/observability-best-practices/ja/guides/cost/cost-visualization/cost) | 必要なコストのみを発生させ、不要なリソースに過剰な支出をしていないことを確認 | **例：** より詳細なコスト追跡のためのダッシュボードを設定 | **プロのヒント：** AWS が提供する様々な[コスト最適化ツール](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/cost-optimization-laying-the-foundation/reporting-cost-optimization-tools.html)を考慮する |
 | **上級** | [スマートなコスト管理](https://community.aws/content/2muS34cXUidGfdzpd5EkpCcphLc/aws-serverless-how-to-stop-ec2-using-event-bridge-and-lambda) | 不要な支出を制限するタスクを自動化 | **例：** 非本番環境のサーバーを営業時間外に停止 | **プロのヒント：** 非本番環境から始める |
-| **上級** | [戦略的実装](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators) | KPI を確立し、FinOps Foundation の原則を実装 | コスト最適化 KPI を作成し、時間とともに追跡 | **プロのヒント：**「ユニットエコノミクス」KPI から始める - ビジネスアウトプットあたりのコスト（取引あたりのコスト、顧客あたりのコスト、サービスあたりのコストなど）を測定する。  
+| **上級** | [戦略的実装](/observability-best-practices/ja/guides/operational/business/key-performance-indicators) | KPI を確立し、FinOps Foundation の原則を実装 | コスト最適化 KPI を作成し、時間とともに追跡 | **プロのヒント：**「ユニットエコノミクス」KPI から始める - ビジネスアウトプットあたりのコスト（取引あたりのコスト、顧客あたりのコスト、サービスあたりのコストなど）を測定する。  
 
 **ご存知ですか？** 覚えておいてください：最適な KPI は、クラウド支出をビジネス成果に直接結びつけるものです。これにより、ROI の実証が容易になり、FinOps イニシアチブへの賛同を得やすくなります。 |
 
@@ -46,10 +46,10 @@
 
 | レベル | コンポーネント              | 説明                                                        | ヒントと例                                               | 追加の注意事項                    |
 |-------|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
-| **基本** | [アプリケーションの監視](https://aws-observability.github.io/observability-best-practices/tools/dashboards)          | 厳選された履歴データを集約し、他の関連データと並べて表示 | **例：** 異なるリージョンのユーザーが遅延を経験しているかを確認 | **よくある落とし穴：** 監視ツールの一元化が不足している |
-| **中級** | [接続ポイントの追跡](https://aws-observability.github.io/observability-best-practices/signals/traces)  | アプリケーションの異なる部分がどのように通信しているかを監視 | **クイックウィン：** 最も重要なサービスのパフォーマンス追跡から始める | **ご存知ですか？** ほとんどの障害はサービス間通信の失敗によって発生します |
-| **上級** | [パフォーマンスのテスト](https://aws-observability.github.io/observability-best-practices/tools/synthetics)     | 顧客の視点からアプリケーションをテストおよびシミュレートして、その体験を理解 | **例：** アプリケーションのエンドポイントに対して合成テストを実行 | **プロのヒント：** ユーザーセッションからきめ細かな [パフォーマンスインサイト](https://aws-observability.github.io/observability-best-practices/tools/rum) のためのクライアントサイドデータを収集 |
-| **上級** | [可用性の目標を設定し実施](https://aws-observability.github.io/observability-best-practices/tools/slos)     | アプリケーションの許容可能な健全性と可用性を確立する SLO を評価 | リアルタイムモニタリングとクイックトラブルシューティングに使用 | **プロのヒント：** 組織のオブザーバビリティの [成熟度](https://aws-observability.github.io/observability-best-practices/guides/observability-maturity-model) を定期的に評価
+| **基本** | [アプリケーションの監視](/observability-best-practices/ja/tools/dashboards)          | 厳選された履歴データを集約し、他の関連データと並べて表示 | **例：** 異なるリージョンのユーザーが遅延を経験しているかを確認 | **よくある落とし穴：** 監視ツールの一元化が不足している |
+| **中級** | [接続ポイントの追跡](/observability-best-practices/ja/signals/traces)  | アプリケーションの異なる部分がどのように通信しているかを監視 | **クイックウィン：** 最も重要なサービスのパフォーマンス追跡から始める | **ご存知ですか？** ほとんどの障害はサービス間通信の失敗によって発生します |
+| **上級** | [パフォーマンスのテスト](/observability-best-practices/ja/tools/synthetics)     | 顧客の視点からアプリケーションをテストおよびシミュレートして、その体験を理解 | **例：** アプリケーションのエンドポイントに対して合成テストを実行 | **プロのヒント：** ユーザーセッションからきめ細かな [パフォーマンスインサイト](/observability-best-practices/ja/tools/rum) のためのクライアントサイドデータを収集 |
+| **上級** | [可用性の目標を設定し実施](/observability-best-practices/ja/tools/slos)     | アプリケーションの許容可能な健全性と可用性を確立する SLO を評価 | リアルタイムモニタリングとクイックトラブルシューティングに使用 | **プロのヒント：** 組織のオブザーバビリティの [成熟度](/observability-best-practices/ja/guides/observability-maturity-model) を定期的に評価
 
 
 
@@ -69,9 +69,9 @@
 
 | レベル | コンポーネント | 説明 | ヒントと例 | 追加のメモ |
 |-------|--------------|------|------------|------------|
-| **基本** | [セキュリティの一元管理](https://aws-observability.github.io/observability-best-practices/patterns/multiaccount) | すべてのセキュリティログを 1 か所に集約し、簡単にアクセスして分析できるようにします | **例：** 機密データとリソースへのすべてのアクセスを追跡 | **プロのヒント：** ログイン試行とアクセスパターンの追跡から始めましょう |
-| **中級** | [テレメトリーデータ収集の拡張](https://aws-observability.github.io/observability-best-practices/recipes/telemetry) | トラブルシューティングと監査セッションに役立つ追加の[属性](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/ecs/best-practices-metrics-collection-1)を含めます | **実装：** アプリケーションのバックエンドコードからテレメトリーデータを実装 | **例：** ユーザーがログインしたブラウザ名を送信 |
-| **上級** | [変更のモニタリング](https://aws-observability.github.io/observability-best-practices/recipes/anomaly-detection) | 内部および外部のソースからのワークロードの急激な変更を追跡します | **クイックウィン：** 予期しないログインパターンやユーザーアクティビティのアラートを設定 | **よくある落とし穴：** 静的なアラームしきい値のみに依存すること |
+| **基本** | [セキュリティの一元管理](/observability-best-practices/ja/patterns/multiaccount) | すべてのセキュリティログを 1 か所に集約し、簡単にアクセスして分析できるようにします | **例：** 機密データとリソースへのすべてのアクセスを追跡 | **プロのヒント：** ログイン試行とアクセスパターンの追跡から始めましょう |
+| **中級** | [テレメトリーデータ収集の拡張](/observability-best-practices/ja/recipes/telemetry) | トラブルシューティングと監査セッションに役立つ追加の[属性](/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection-1)を含めます | **実装：** アプリケーションのバックエンドコードからテレメトリーデータを実装 | **例：** ユーザーがログインしたブラウザ名を送信 |
+| **上級** | [変更のモニタリング](/observability-best-practices/ja/recipes/anomaly-detection) | 内部および外部のソースからのワークロードの急激な変更を追跡します | **クイックウィン：** 予期しないログインパターンやユーザーアクティビティのアラートを設定 | **よくある落とし穴：** 静的なアラームしきい値のみに依存すること |
 
 
 
@@ -89,10 +89,10 @@
 
 | レベル | コンポーネント              | 説明                                                        | ヒントと例                                                    | 追加情報                    |
 |-------|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
-| **基本** | [ページ速度の追跡](https://aws-observability.github.io/observability-best-practices/tools/rum)         | 実際のユーザーに対するページの読み込み速度をモニタリング | **例:** トラフィックのピーク時に決済ページが遅くなっていないか確認 | **プロのヒント:** 最も重要なユーザージャーニーから始める |
-| **中級** | [外部要因の影響を受けるユーザーパターンの監視](https://aws-observability.github.io/observability-best-practices/tools/internet_monitor)       | サービスとのユーザーインタラクションに影響を与える追加要素を追跡  | **例:** インターネットプロバイダーと場所  
+| **基本** | [ページ速度の追跡](/observability-best-practices/ja/tools/rum)         | 実際のユーザーに対するページの読み込み速度をモニタリング | **例:** トラフィックのピーク時に決済ページが遅くなっていないか確認 | **プロのヒント:** 最も重要なユーザージャーニーから始める |
+| **中級** | [外部要因の影響を受けるユーザーパターンの監視](/observability-best-practices/ja/tools/internet_monitor)       | サービスとのユーザーインタラクションに影響を与える追加要素を追跡  | **例:** インターネットプロバイダーと場所  
 **クイックウィン:** 基本的なページ読み込み時間のモニタリングから始める | **ご存知ですか？** ページ読み込み時間のわずかな遅延が、ユーザーの継続利用に大きな影響を与える可能性があります |
-| **上級** | [詳細なネットワーク使用状況分析](https://aws-observability.github.io/observability-best-practices/recipes/infra)       | ネットワークフローのアクティビティとステータスを詳細に評価・分析 | **例:** [Network Synthetics](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/what-is-network-monitor.html) と [Network Flow Monitor](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html) | より深いネットワークインタラクションとユーザー行動を追跡 |
+| **上級** | [詳細なネットワーク使用状況分析](/observability-best-practices/ja/recipes/infra)       | ネットワークフローのアクティビティとステータスを詳細に評価・分析 | **例:** [Network Synthetics](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/what-is-network-monitor.html) と [Network Flow Monitor](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html) | より深いネットワークインタラクションとユーザー行動を追跡 |
 
 
 
@@ -111,12 +111,12 @@
 
 | レベル | コンポーネント | 説明 | ヒントと例 | 追加情報 |
 |-------|-----------|-------------|-----------------|------------------|
-| **基本** | [Lambda 関数のベストプラクティス](https://aws-observability.github.io/observability-best-practices/guides/serverless/aws-native/lambda-based-observability) | Lambda の主要なメトリクスと実行統計をモニタリング | **例：** 呼び出し回数、実行時間、エラー率を追跡  
+| **基本** | [Lambda 関数のベストプラクティス](/observability-best-practices/ja/guides/serverless/aws-native/lambda-based-observability) | Lambda の主要なメトリクスと実行統計をモニタリング | **例：** 呼び出し回数、実行時間、エラー率を追跡  
 **クイックウィン：** Lambda インサイトのための CloudWatch ダッシュボードを設定 | **プロのヒント：** コストを最適化するためにコールドスタートとメモリ使用率をモニタリング |
 | **中級** | [イベントソースのモニタリング](https://docs.aws.amazon.com/ja_jp/lambda/latest/dg/monitoring-metrics.html) | イベントソースと統合のパフォーマンスを追跡 | **例：** SQS キューの深さ、API Gateway のレイテンシーをモニタリング  
 **クイックウィン：** 失敗したイベントのためのデッドレターキューを設定 | **ご存知ですか？** 適切なイベントソースのモニタリングはカスケード障害を防ぐことができます |
-| **上級** | [提供される要約インサイト](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-services-lambda.html) | CloudWatch の特殊なインサイトツールを活用して、サーバーレスおよびコンテナ化されたアプリケーションのワークロードパフォーマンス、リソース使用率、運用パターンに関する自動化された詳細な分析を取得します。 | **例：** [Lambda Insights](https://aws-observability.github.io/observability-best-practices/guides/serverless/aws-native/lambda-based-observability#use-cloudwatch-lambda-insights-to-monitor-system-level-metrics)  
-[Container Insights](https://aws-observability.github.io/observability-best-practices/patterns/adoteksfargate) | AWS CloudFormation を使用してアカウントレベルで Lambda Insights を有効にし、すべての新しい Lambda 関数の詳細なメトリクスを自動的に収集します。また、[Contributor Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) を使用して、最も消費の多いリソースとボトルネックの可能性を特定します。 |
+| **上級** | [提供される要約インサイト](https://docs.aws.amazon.com/ja_jp/xray/latest/devguide/xray-services-lambda.html) | CloudWatch の特殊なインサイトツールを活用して、サーバーレスおよびコンテナ化されたアプリケーションのワークロードパフォーマンス、リソース使用率、運用パターンに関する自動化された詳細な分析を取得します。 | **例：** [Lambda Insights](/observability-best-practices/ja/guides/serverless/aws-native/lambda-based-observability#use-cloudwatch-lambda-insights-to-monitor-system-level-metrics)  
+[Container Insights](/observability-best-practices/ja/patterns/adoteksfargate) | AWS CloudFormation を使用してアカウントレベルで Lambda Insights を有効にし、すべての新しい Lambda 関数の詳細なメトリクスを自動的に収集します。また、[Contributor Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) を使用して、最も消費の多いリソースとボトルネックの可能性を特定します。 |
 
 
 

@@ -86,7 +86,7 @@
 また、問題のデバッグに予想以上の認知的な時間と労力がかかるため、インシデント対応が長引きます。
 さらに、運用を圧迫するデータ過負荷の状況も発生しがちです。
 多くの企業は、次のステップが見えないまま、このステージで足踏みしている状態にあります。
-組織を次のレベルに進めるために取れる具体的なアクションは以下の通りです：1) システムのアーキテクチャ設計を定期的にレビューし、影響とダウンタイムを減らしアラートを少なくするためのポリシーとプラクティスを導入する。2) アクション可能な [KPI](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators/) を定義し、アラートの発見事項に価値のあるコンテキストを追加し、重要度/緊急度で分類し、異なるツールやチームに送信することで、エンジニアが問題をより迅速に解決できるようにしてアラート疲れを防ぐ。
+組織を次のレベルに進めるために取れる具体的なアクションは以下の通りです：1) システムのアーキテクチャ設計を定期的にレビューし、影響とダウンタイムを減らしアラートを少なくするためのポリシーとプラクティスを導入する。2) アクション可能な [KPI](/observability-best-practices/ja/guides/operational/business/key-performance-indicators/) を定義し、アラートの発見事項に価値のあるコンテキストを追加し、重要度/緊急度で分類し、異なるツールやチームに送信することで、エンジニアが問題をより迅速に解決できるようにしてアラート疲れを防ぐ。
 
 これらのアラートを定期的に分析し、頻繁に発生する一般的なアラートに対する修復を自動化します。
 アラートの発見事項を関連チームと共有・伝達し、運用とプロセスの改善に関するフィードバックを提供します。
@@ -271,7 +271,7 @@ AWS ネイティブおよびオープンソースのソリューションによ�
 ## 参考リソース
 
 - [効果的なオブザーバビリティ戦略の構築](https://youtu.be/7PQv9eYCJW8?si=gsn0qPyIMhrxU6sy) - AWS re\:Invent 2023
-- [AWS オブザーバビリティのベストプラクティス](https://aws-observability.github.io/observability-best-practices/)
+- [AWS オブザーバビリティのベストプラクティス](/observability-best-practices/ja/)
 - [オブザーバビリティとは何か、なぜ重要なのか？](https://aws.amazon.com/blogs/mt/what-is-observability-and-why-does-it-matter-part-1/)
 - [オブザーバビリティ戦略の開発方法](https://aws.amazon.com/blogs/mt/how-to-develop-an-observability-strategy/)
 - [AWS における深いアプリケーションオブザーバビリティのガイダンス](https://aws.amazon.com/jp/solutions/guidance/deep-application-observability-on-aws/)

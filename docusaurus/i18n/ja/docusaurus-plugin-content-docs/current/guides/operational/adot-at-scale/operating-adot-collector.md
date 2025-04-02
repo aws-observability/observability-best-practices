@@ -130,7 +130,7 @@ scrape_configs:
 ターゲットの数、スクレイプ可能なメトリクスなどに応じて、コレクターのリソースを適切に調整する必要があります。
 これにより、コレクターのリソース不足を防ぎ、シグナル収集の問題を回避できます。
 
-[このトピックの詳細については、こちらのガイドをご覧ください。](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
+[このトピックの詳細については、こちらのガイドをご覧ください。](/observability-best-practices/ja/guides/containers/oss/eks/best-practices-metrics-collection)
 
 以下のアーキテクチャは、メトリクスとトレースを収集するために、ワークロードノードとは別のノードにコレクターをデプロイする方法を示しています。
 

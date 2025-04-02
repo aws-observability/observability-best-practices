@@ -43,7 +43,7 @@
 - **By Destination**：テレメトリとアナリティクスをカバー
 - **Tasks**：異常検知、アラート、トラブルシューティングなどをカバー
 
-[ディメンションについてさらに学ぶ …](https://aws-observability.github.io/observability-best-practices/recipes/dimensions/)
+[ディメンションについてさらに学ぶ …](/observability-best-practices/ja/recipes/dimensions/)
 
 
 
@@ -75,7 +75,7 @@
 さらに、レシピで使用しているオープンソースプロジェクトの状況や、マネージドサービスについて詳しく学べる場所がいくつかありますので、以下をご確認ください：
 
 - [observability @ aws][o11yataws] - AWS のスタッフがプロジェクトやサービスについて説明するプレイリスト。
-- [AWS observability workshops](https://aws-observability.github.io/observability-best-practices/recipes/workshops/) - 構造化された方法でサービスを試すことができます。
+- [AWS observability workshops](/observability-best-practices/ja/recipes/workshops/) - 構造化された方法でサービスを試すことができます。
 - [AWS monitoring and observability][o11yhome] - ケーススタディやパートナー情報へのリンクがあるホームページ。
 
 [aes]: aes.md "Amazon Elasticsearch Service"

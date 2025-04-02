@@ -37,10 +37,10 @@
 
 このサイトは 4 つのカテゴリーで構成されています：
 
-1. [ダッシュボード、アプリケーションパフォーマンスモニタリング、コンテナなどのソリューション別のベストプラクティス](https://aws-observability.github.io/observability-best-practices/guides/)
-1. [ログやトレースなど、異なるデータタイプの使用に関するベストプラクティス](https://aws-observability.github.io/observability-best-practices/signals/logs/)
-1. [特定の AWS ツールに関するベストプラクティス（ただし、これらは他のベンダー製品にも大部分が適用可能です）](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)
-1. [AWS でのオブザーバビリティに関する厳選されたレシピ](https://aws-observability.github.io/observability-best-practices/recipes/)
+1. [ダッシュボード、アプリケーションパフォーマンスモニタリング、コンテナなどのソリューション別のベストプラクティス](/observability-best-practices/ja/guides/)
+1. [ログやトレースなど、異なるデータタイプの使用に関するベストプラクティス](/observability-best-practices/ja/signals/logs/)
+1. [特定の AWS ツールに関するベストプラクティス（ただし、これらは他のベンダー製品にも大部分が適用可能です）](/observability-best-practices/ja/tools/cloudwatch_agent/)
+1. [AWS でのオブザーバビリティに関する厳選されたレシピ](/observability-best-practices/ja/recipes/)
 
 :::info
 このサイトは、AWS とお客様が解決してきた実際のユースケースに基づいています。

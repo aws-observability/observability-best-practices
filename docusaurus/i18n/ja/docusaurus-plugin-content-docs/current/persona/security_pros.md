@@ -11,7 +11,7 @@
 
 ## セキュアなコーディング手法とセキュアな開発ライフサイクル
 
-AWS は「セキュリティバイデザイン」の原則を通じて、ソフトウェア開発の基礎的な要素としてセキュリティを重視しています。[セキュアなコーディング手法](https://aws-observability.github.io/observability-best-practices/persona/developer) を実装することで、開発ライフサイクル全体を通してセキュリティ管理とコンプライアンス要件を統合できます。これらの手法は OWASP Top 10 などの業界標準に準拠し、アプリケーションのライフサイクル全体を通して堅牢なセキュリティ態勢を維持するのに役立ちます。
+AWS は「セキュリティバイデザイン」の原則を通じて、ソフトウェア開発の基礎的な要素としてセキュリティを重視しています。[セキュアなコーディング手法](/observability-best-practices/ja/persona/developer) を実装することで、開発ライフサイクル全体を通してセキュリティ管理とコンプライアンス要件を統合できます。これらの手法は OWASP Top 10 などの業界標準に準拠し、アプリケーションのライフサイクル全体を通して堅牢なセキュリティ態勢を維持するのに役立ちます。
 
 - Infrastructure as Code (IaC) を実装して、一貫性のあるバージョン管理されたセキュリティ設定を確保し、セキュリティスキャンを統合した AWS CodeBuild を使用し、自動化されたセキュリティテスト用に AWS CodePipeline をデプロイします。
 
@@ -97,7 +97,7 @@ AWS は、統合されたセキュリティサービスと自動化機能を通�
 
 - AWS CloudTrail Lake 機能を使用すると、フォレンジック調査のために API アクティビティ履歴全体に対して SQL ベースのクエリを実行できます。
 
-- Amazon EventBridge を使用してセキュリティイベントへの自動応答を実装し、AWS Lambda でサーバーレスインシデント修復を行うことで、セキュリティ態勢を強化できます。AWS では、ネットワークの可観測性のための [VPC Flow Logs](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs) と、ネットワークトラフィック分析のための DNS クエリログの確立を推奨しています。また、AWS Config はコンプライアンス分析とインシデント調査のためのリソース構成を記録します。
+- Amazon EventBridge を使用してセキュリティイベントへの自動応答を実装し、AWS Lambda でサーバーレスインシデント修復を行うことで、セキュリティ態勢を強化できます。AWS では、ネットワークの可観測性のための [VPC Flow Logs](/observability-best-practices/ja/patterns/vpcflowlogs) と、ネットワークトラフィック分析のための DNS クエリログの確立を推奨しています。また、AWS Config はコンプライアンス分析とインシデント調査のためのリソース構成を記録します。
 
 これらの機能は、Amazon Kinesis Data Firehose を通じて既存のセキュリティ情報およびイベント管理 (SIEM) ソリューションと統合され、集中的なセキュリティ監視と自動化されたインシデント対応ワークフローを実現します。
 

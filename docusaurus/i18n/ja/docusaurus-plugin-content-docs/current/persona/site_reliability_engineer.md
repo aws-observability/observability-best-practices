@@ -186,7 +186,7 @@ SLO (Service Level Objective) は、SLI を使用して設定される目標値�
 
 ## 参考資料
 - [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US)
-- [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)
+- [AWS Observability Best Practices](/observability-best-practices/ja/)
 - [Amazon CloudWatch Intelligent Operations](https://aws.amazon.com/jp/cloudwatch/features/intelligent-operations/)
 - [Resilience analysis framework](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/resilience-analysis-framework/introduction.html)
 - [Chaos Engineering with AWS Fault Injection Simulator](https://aws.amazon.com/jp/blogs/news/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/)

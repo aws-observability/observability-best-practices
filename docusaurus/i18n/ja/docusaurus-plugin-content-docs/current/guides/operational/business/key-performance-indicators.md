@@ -83,7 +83,7 @@ CloudWatch メトリクス (または Prometheus メトリクスなどの他の�
 [AWS Fault Injection Simulator](https://aws.amazon.com/jp/fis/) などのツールを使用した制御された実験を使用して、可用性、レイテンシー、事業継続性の要件が満たされているかを検証します。
 追加の Well-Architected レビューとサービス固有の詳細な分析を実施して、ワークロードが AWS のベストプラクティスに従ってビジネス要件を満たすように設計されていることを確認します。
 
-7. 詳細については、[AWS オブザーバビリティのベストプラクティス](https://aws-observability.github.io/observability-best-practices/)ガイダンス、AWS Cloud Adoption Framework: [運用の観点](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-caf-operations-perspective/observability.html)ホワイトペーパー、および AWS Well-Architected Framework オペレーショナルエクセレンスの柱ホワイトペーパーの「[ワークロードの健全性の理解](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」に関するコンテンツの他のセクションを参照してください。
+7. 詳細については、[AWS オブザーバビリティのベストプラクティス](/observability-best-practices/ja/)ガイダンス、AWS Cloud Adoption Framework: [運用の観点](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-caf-operations-perspective/observability.html)ホワイトペーパー、および AWS Well-Architected Framework オペレーショナルエクセレンスの柱ホワイトペーパーの「[ワークロードの健全性の理解](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)」に関するコンテンツの他のセクションを参照してください。
 
 
 

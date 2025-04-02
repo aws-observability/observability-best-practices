@@ -81,7 +81,7 @@ Container Insights は、Amazon Elastic Container Service (Amazon ECS)、Amazon 
 Container Insights は、Amazon ECS と Amazon EKS の両方で Fargate にデプロイされたクラスターからのメトリクス収集をサポートしています。
 CloudWatch は、CPU、メモリ、ディスク、ネットワークなどの多くのリソースのメトリクスを自動的に収集し、コンテナの再起動失敗などの診断情報も提供して、問題の特定と迅速な解決を支援します。
 
-CloudWatch は、[埋め込みメトリクスフォーマット](https://aws-observability.github.io/observability-best-practices/guides/signal-collection/emf/) を使用して、クラスター、ノード、Pod、タスク、サービスレベルの集約メトリクスを CloudWatch メトリクスとして作成します。
+CloudWatch は、[埋め込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/) を使用して、クラスター、ノード、Pod、タスク、サービスレベルの集約メトリクスを CloudWatch メトリクスとして作成します。
 これは、高カーディナリティデータをスケーラブルに取り込み、保存できる構造化された JSON スキーマを使用するパフォーマンスログイベントです。
 Container Insights が収集するメトリクスは、[CloudWatch 自動ダッシュボード](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/cloudwatch-dashboards-visualizations.html) で利用でき、CloudWatch コンソールのメトリクスセクションでも表示できます。
 
@@ -96,7 +96,7 @@ Container Insights が収集するメトリクスは、[CloudWatch 自動ダッ�
 
 また、CPU 時間、メモリ、ディスク、ネットワークなどのシステムレベルのメトリクスや、コールドスタートや Lambda ワーカーのシャットダウンなどの診断情報を収集、集約、要約して、Lambda 関数の問題を特定し、迅速に解決するのに役立ちます。
 
-[Lambda Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能です。有効にすると、[埋め込みメトリクスフォーマット](https://aws-observability.github.io/observability-best-practices/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントを必要としません。
+[Lambda Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) は、関数レベルでレイヤーとして提供される Lambda 拡張機能です。有効にすると、[埋め込みメトリクスフォーマット](/observability-best-practices/ja/guides/signal-collection/emf/)を使用してログイベントからメトリクスを抽出し、エージェントを必要としません。
 
 ![Lambda Insights](../images/Lambda_Insights_CW_Automatic_DB.png)
 

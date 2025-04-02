@@ -10,8 +10,8 @@
 
 
 ## ベストプラクティス
-モニタリングには CloudWatch の[ログ](https://aws-observability.github.io/observability-best-practices/tools/logs/)、[メトリクス](https://aws-observability.github.io/observability-best-practices/tools/metrics)、[トレース](https://aws-observability.github.io/observability-best-practices/tools/xray)を使用します。
-すべてのリソースにタグ付け戦略を実装し、重要なイベントのメトリクスフィルターを作成し、[異常検知](https://aws-observability.github.io/observability-best-practices/tools/metrics#anomaly-detection)をセットアップし、[CloudWatch アラーム](https://aws-observability.github.io/observability-best-practices/tools/alarms)を使用してアラートのしきい値を設定します。
+モニタリングには CloudWatch の[ログ](/observability-best-practices/ja/tools/logs/)、[メトリクス](/observability-best-practices/ja/tools/metrics)、[トレース](/observability-best-practices/ja/tools/xray)を使用します。
+すべてのリソースにタグ付け戦略を実装し、重要なイベントのメトリクスフィルターを作成し、[異常検知](/observability-best-practices/ja/tools/metrics#anomaly-detection)をセットアップし、[CloudWatch アラーム](/observability-best-practices/ja/tools/alarms)を使用してアラートのしきい値を設定します。
 
 
 
@@ -31,9 +31,9 @@ Amazon CloudWatch との統合により、AWS は詳細なトレーニングパ�
 
 [Amazon SageMaker Model Monitor](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/how-it-works-model-monitor.html) は、本番環境のマシンラーニングモデルを継続的にモニタリングします。
 データドリフトや異常などのモデル品質の偏差が発生した場合に通知する自動アラートシステムを提供します。
-このシステムは [Amazon CloudWatch Logs](https://aws-observability.github.io/observability-best-practices/tools/logs/#search-with-cloudwatch-logs) と統合されており、モニタリングデータを収集し、デプロイされたモデルの早期検出と予防的なメンテナンスを可能にします。
+このシステムは [Amazon CloudWatch Logs](/observability-best-practices/ja/tools/logs/#search-with-cloudwatch-logs) と統合されており、モニタリングデータを収集し、デプロイされたモデルの早期検出と予防的なメンテナンスを可能にします。
 
-CloudWatch メトリクスまたは [ADOT](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) と [Amazon OpenSearch Service (OpenSearch Service)](https://aws-observability.github.io/observability-best-practices/patterns/opensearch) などのサービスを使用して、精度やレイテンシーなどのモデル予測エンドポイントメトリクスを集約・分析するメカニズムを作成します。
+CloudWatch メトリクスまたは [ADOT](/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector) と [Amazon OpenSearch Service (OpenSearch Service)](/observability-best-practices/ja/patterns/opensearch) などのサービスを使用して、精度やレイテンシーなどのモデル予測エンドポイントメトリクスを集約・分析するメカニズムを作成します。
 OpenSearch Service は、ダッシュボードと可視化のために Kibana をサポートしています。
 トレーサビリティにより、現在の運用パフォーマンスに影響を与える可能性のある変更を分析できます。
 
@@ -41,8 +41,8 @@ OpenSearch Service は、ダッシュボードと可視化のために Kibana �
 
 ### インフラストラクチャのモニタリング
 AWS はリソース使用率、ストレージパターン、計算効率について深い可視性を提供します。
-CloudWatch Metrics と [OpenTelemetry](https://aws-observability.github.io/observability-best-practices/patterns/otel) は、CPU 使用率、メモリ割り当て、I/O 操作に関するリアルタイムデータを収集し、CloudWatch Logs は分析のためにログデータを集約します。
-[AWS X-Ray](https://aws-observability.github.io/observability-best-practices/tools/xray) は、ML パイプラインのステージ全体でサービスの依存関係を追跡し、システムのボトルネックを特定することで、効率的なリソースの最適化とコスト管理を可能にします。
+CloudWatch Metrics と [OpenTelemetry](/observability-best-practices/ja/patterns/otel) は、CPU 使用率、メモリ割り当て、I/O 操作に関するリアルタイムデータを収集し、CloudWatch Logs は分析のためにログデータを集約します。
+[AWS X-Ray](/observability-best-practices/ja/tools/xray) は、ML パイプラインのステージ全体でサービスの依存関係を追跡し、システムのボトルネックを特定することで、効率的なリソースの最適化とコスト管理を可能にします。
 
 
 
@@ -55,16 +55,16 @@ AWS CloudTrail は、規制コンプライアンスとガバナンスに不可�
 
 
 ### ビジネスインパクト分析
-CloudWatch の[カスタムメトリクス](https://aws-observability.github.io/observability-best-practices/tools/metrics#collecting-metrics)は、ビジネス固有の KPI を追跡し、QuickSight ダッシュボードを通じて ML イニシアチブの ROI をリアルタイムで可視化できます。
+CloudWatch の[カスタムメトリクス](/observability-best-practices/ja/tools/metrics#collecting-metrics)は、ビジネス固有の KPI を追跡し、QuickSight ダッシュボードを通じて ML イニシアチブの ROI をリアルタイムで可視化できます。
 Amazon QuickSight は、技術的なメトリクスをビジネスインサイトに変換し、ML のパフォーマンスをビジネス KPI に結びつけるインタラクティブなダッシュボードを作成します。
-Amazon CloudWatch [ServiceLens](https://aws-observability.github.io/observability-best-practices/tools/rum#enable-active-tracing) は、ユーザーエクスペリエンスへの影響を監視するのに役立ちます。
+Amazon CloudWatch [ServiceLens](/observability-best-practices/ja/tools/rum#enable-active-tracing) は、ユーザーエクスペリエンスへの影響を監視するのに役立ちます。
 
 
 
 
 ## 参考資料
 - [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US)
-- [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)
+- [AWS Observability Best Practices](/observability-best-practices/ja/)
 - [AWS Well-Architected Framework Machine Learning Lens](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/machine-learning-lens/machine-learning-lens.html)
 - [Sagemaker Logging and Monitoring](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/sagemaker-incident-response.html)
 - Amazon CloudWatch を使用した [Amazon SageMaker AI のモニタリング用メトリクス](https://docs.aws.amazon.com/ja_jp/sagemaker/latest/dg/monitoring-cloudwatch.html)

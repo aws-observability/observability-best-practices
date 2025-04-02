@@ -9,7 +9,7 @@ Amazon CloudWatch や AWS X-Ray などの AWS オブザーバビリティツー�
 それは、ユーザーエクスペリエンスの向上、開発者の生産性の向上、Service Level Objective (SLO) の達成、ビジネス収益の増加、またはアプリケーションの種類に応じた他の特定の目標かもしれません。
 そのため、これらの主要な目標を明確に定義し、それらをどのように測定するかを確立してください。
 そこから Working Backwards してオブザーバビリティ戦略を設計します。
-詳細については、「[Monitor what matters](https://aws-observability.github.io/observability-best-practices/guides/#monitor-what-matters)」を参照してください。
+詳細については、「[Monitor what matters](/observability-best-practices/ja/guides/#monitor-what-matters)」を参照してください。
 
 
 

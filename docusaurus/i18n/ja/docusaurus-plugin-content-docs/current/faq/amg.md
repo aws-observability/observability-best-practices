@@ -61,7 +61,7 @@ Amazon Managed Grafana は [AWS CloudFormation と統合](https://docs.aws.amazo
 
 
 ## 私の組織は自動化に Terraform を使用しています。Amazon Managed Grafana は Terraform をサポートしていますか？
-はい、Amazon Managed Grafana は [自動化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest) のために [Terraform をサポート](https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-automation-tf/) しています。
+はい、Amazon Managed Grafana は [自動化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest) のために [Terraform をサポート](/observability-best-practices/ja/recipes/recipes/amg-automation-tf/) しています。
 
 > 例: [Terraform サポートのリファレンス実装](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/examples/managed-grafana-workspace)
 

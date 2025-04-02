@@ -34,6 +34,7 @@ Check out the following recipes:
 - [Managing Grafana and Loki in a regulated multitenant environment][grafana-loki-regenv]
 - [Monitoring Amazon EKS Anywhere using Amazon Managed Service for Prometheus and Amazon Managed Grafana][amg-anywhere-monitoring]
 - [Workshop for Getting Started][amg-oow]
+- [Monitoring free IP in Subnet][amg-subnet-free-ip-monitoring]
 
 
 [amg-main]: https://aws.amazon.com/grafana/
@@ -52,4 +53,5 @@ Check out the following recipes:
 [amg-anywhere-monitoring]: https://aws.amazon.com/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-amp-statsd]: https://aws.amazon.com/blogs/mt/viewing-custom-metrics-from-statsd-with-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-grafana-teams]: https://aws.amazon.com/blogs/mt/fine-grained-access-control-in-amazon-managed-grafana-using-grafana-teams/
+[amg-subnet-free-ip-monitoring]: https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-subnet-free-ip-monitoring/
 

@@ -16,7 +16,7 @@ people:
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
-| Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan
+| Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan     | Xavier Figueroa
 
 
 

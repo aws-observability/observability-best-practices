@@ -47,7 +47,7 @@ AWS はコントロールプレーンノードの健全性を管理し、[Kubern
 * **コントローラーマネージャー (`controllerManager`)** – コントローラーマネージャーは、Kubernetes に付属するコアコントロールループを管理します。詳細については、Kubernetes ドキュメントの [kube-controller-manager](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-controller-manager/) を参照してください。
 * **スケジューラー (`scheduler`)** – スケジューラーコンポーネントは、クラスター内の Pod をいつどこで実行するかを管理します。詳細については、Kubernetes ドキュメントの [kube-scheduler](https://kubernetes.io/docs/reference/command-line-tools-reference/kube-scheduler/) を参照してください。
 
-[コントロールプレーンログの有効化と無効化](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html,Enabling%20and%20disabling%20control%20plane%20logs,-By%20default%2C%20cluster) のセクションに従って、AWS コンソールまたは AWS CLI を使用してコントロールプレーンログを有効にしてください。
+[コントロールプレーンログの有効化と無効化](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/control-plane-logs.html#:~:text=the%20Kubernetes%20documentation.-,Enabling%20and%20disabling%20control%20plane%20logs,-By%20default%2C%20cluster) のセクションに従って、AWS コンソールまたは AWS CLI を使用してコントロールプレーンログを有効にしてください。
 
 
 

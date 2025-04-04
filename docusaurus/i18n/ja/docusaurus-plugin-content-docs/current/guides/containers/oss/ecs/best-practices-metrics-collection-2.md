@@ -190,7 +190,7 @@ service:
 
 
 ### Amazon CloudWatch へのメトリクスデータの送信
-また、以下の設定の *exporters* セクションに示すように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemf/README.md) を使用してメトリクスデータを Amazon CloudWatch に送信することもできます。
+また、以下の設定の *exporters* セクションに示すように、コレクターパイプラインで [Amazon CloudWatch EMF Exporter](https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/exporter/awsemfexporter) を使用してメトリクスデータを Amazon CloudWatch に送信することもできます。
 
 このエクスポーターは、メトリクスデータをパフォーマンスログイベントとして CloudWatch に送信します。
 エクスポーターの *metric_declaration* フィールドは、生成される埋め込みメトリクスフォーマットを持つログの配列を指定するために使用されます。

@@ -63,10 +63,10 @@ CloudWatch エージェントで使用する [一時的な AWS アクセスト�
 
 [^1]: CloudWatch エージェントの使用とデプロイメントのガイダンスを提供するブログについては、[Getting started with open source Amazon CloudWatch Agent](https://aws.amazon.com/blogs/opensource/getting-started-with-open-source-amazon-cloudwatch-agent/) をご覧ください。
 
-[^2]: [オンプレミスおよび他のクラウド環境で実行されるエージェントの認証情報設定に関するガイダンス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first)
+[^2]: [ オンプレミスおよび他のクラウド環境で実行されるエージェントの認証情報設定に関するガイダンス ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-iam_user-first)
 
 [^3]: [CloudWatch エンドポイントへの接続性を確認する方法](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-commandline-fleet.html#install-CloudWatch-Agent-internet-access-first-cmd)
 
-[^4]: [オンプレミスのプライベート接続に関するブログ](https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/)
+[^4]: [ オンプレミスのプライベート接続に関するブログ ](https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/)
 
 [^5]: オブザーバビリティに関連するすべての AWS API の使用は、通常 [インスタンスプロファイル](https://docs.aws.amazon.com/ja_jp/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html) によって実現されます。これは AWS で実行されているインスタンスとコンテナに一時的なアクセス認証情報を付与するメカニズムです。

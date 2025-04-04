@@ -11,6 +11,7 @@ Docusaurus は、ドキュメントの複数のバージョンを管理できま
 
 
 
+
 ## ドキュメントのバージョンを作成する
 
 プロジェクトのバージョン 1.0 をリリースします：
@@ -21,10 +22,10 @@ npm run docusaurus docs:version 1.0
 
 `docs` フォルダが `versioned_docs/version-1.0` にコピーされ、`versions.json` が作成されます。
 
-これで、ドキュメントには 2 つのバージョンがあります：
+これでドキュメントには 2 つのバージョンが存在します：
 
-- `1.0` は `http://localhost:3000/docs/` にあり、バージョン 1.0 のドキュメントです
-- `current` は `http://localhost:3000/docs/next/` にあり、**今後リリース予定の未公開ドキュメント**です
+- バージョン 1.0 のドキュメントは `http://localhost:3000/docs/` にあります
+- **今後リリース予定の未公開ドキュメント** は `http://localhost:3000/docs/next/` の `current` にあります
 
 
 
@@ -33,7 +34,7 @@ npm run docusaurus docs:version 1.0
 
 バージョン間をシームレスに移動するために、バージョンドロップダウンを追加します。
 
-`docusaurus.config.js` ファイルを以下のように修正します：
+`docusaurus.config.js` ファイルを以下のように変更します：
 
 ```js title="docusaurus.config.js"
 export default {
@@ -59,7 +60,7 @@ export default {
 
 ## 既存のバージョンを更新する
 
-バージョン管理されたドキュメントは、それぞれのフォルダ内で編集することができます：
+バージョン管理されたドキュメントは、それぞれのフォルダで編集することができます：
 
 - `versioned_docs/version-1.0/hello.md` は `http://localhost:3000/docs/hello` を更新します
 - `docs/hello.md` は `http://localhost:3000/docs/next/hello` を更新します

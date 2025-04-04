@@ -1,160 +1,178 @@
-# Developers
-Observability is crucial for developers as it enhances productivity, improves application performance, and drives business success through better decision-making and faster issue resolution. This guide provides best practices and recommendations for leveraging observability effectively.
-
-## Why Observability Matters for Developers 
-Developers use observability for several key purposes:
-- **Quick Issue Identification and Resolution:**
-    - Observability allows developers to identify and diagnose issues quickly, reducing the time to resolve problems (MTTR) and improving overall software delivery performance
-    - It helps developers understand how their systems behave in production, enabling them to make informed decisions and improve operations
-- **Improve Customer Experience:**
-    - By analyzing system behavior, developers can optimize performance and reliability, leading to better customer experiences and increased user satisfaction
-    - Observability tools help monitor user interactions, allowing developers to identify and address UI/UX issues promptly
-- **Enhanced Team Efficiency and Innovation:**
-    - Observability platforms provide a single source of truth for operational data, facilitating cross-team collaboration and reducing troubleshooting time
-    - Developers can focus more on innovation and less on manual debugging, thanks to automated insights and alerts
-- **Data-Driven Decision Making:**
-    - Observability provides detailed insights into system performance, enabling developers to make data-driven decisions about code improvements and resource allocation
-    - It helps organizations optimize investments and accelerate time to market by identifying areas for improvement
-- **Complexity Management:**
-    - Observability helps manage the complexity of modern cloud-native and multi-cloud environments by providing a comprehensive view of system interdependencies
-    - It allows developers to distill complexity and focus on relevant data, promoting more efficient development processes
-
-## Best practices for code quality
-- **Monitor Issue Tracking Metrics:**
-    - Use tools like JIRA or Trello or other issue tracking platforms to track metrics such as:
-        - How many times a ticket moves from code review to test review and back to in progress. A high number may indicate lack of skills, high complexity, or inadequate tooling.
-        - How many times a ticket is blocked due to external dependencies. A high number could indicate high coupling between dependencies and/or high complexity.
-    - **Recommendations:**
-        - Use a tool like [Amazon Q Developer](https://aws.amazon.com/q/developer) to boost productivity and code quality with automated code reviews. Amazon Q Developer can speed up software development tasks by up to 80%, contributes to higher-quality code by reducing the likelihood of human error during rapid development cycles.
-        - Schedule regular reviews of metrics as part of retrospectives to identify improvements and foster a mindset of continuous improvement
-        
-- **Instrument Code for Performance Metrics:**
-    - Instrument your code to be able to measure the following which provide an indirect measure of code quality by assessing the performance efficiency and scalability of the code implementation 
-        - **RED Method:** Monitor Requests, Errors, and Duration for microservices. This provides insights into service performance and reliability.
-        - **USE Method:** Track Utilization, Saturation, and Errors for system resources. This helps identify bottlenecks and resource constraints.
-    - Add instrumentation around calls to all external dependencies in the request processing path, like other services, database, cache, etc.. This can provide you with required information to investigate sudden changes in request processing time as well as enable faster identification of the root cause of an issue
-    - **Recommendations:** 
-        - Set a SLO(Service Level Objective) on the request latency and error rate and use that to drive improvements for better quality and performance
-        - Add validation of instrumentation to automated tests that exercise critical data flow and request processing paths
-        - Build an automated load test task to create a baseline of system performance and code quality measure
-        - Ensure instrumentation has added context to be able to identify performance impact of a single request
-        - Configure and make use of auto-instrumentation provided by the SDKs to reduce the manual work involved with adding instrumentation
+# 開発者向け
+オブザーバビリティは、開発者の生産性を向上させ、アプリケーションのパフォーマンスを改善し、より良い意思決定と迅速な問題解決によってビジネスの成功を促進するため、開発者にとって非常に重要です。
+このガイドでは、オブザーバビリティを効果的に活用するためのベストプラクティスと推奨事項を提供します。
 
 
-## Efficient logging and monitoring
-- Use structured log formats eg. json. For existing applications, consider using log transformation features to inject more context, add or remove fields
-- Use wide event format containing adequate metadata to be able to derive meaninful signals and cross correlate across the signals.
-- Use OpenTelemetry or ADOT SDKs which inject additional context into the logs which enables cross signal correlation and reduction in Mean Time To Identify(MTTI) therefore reducing Mean Time To Recover(MTTR)
-- Use log levels appropriately - these can help you control the volume of logs and therefore the cost of ingestion. 
-    - Use ERROR for any unexpected and expected error conditions. Add as much additional context to be able to accelerate root cause analysis.
-    - Use INFO for general run time events like user login, which can provide context and are important
-    - Use DEBUG for logging the calls in the processing path to get a deeper understanding of the application's flow and states. 
-- Avoid logging any data that may be considered sensitive such as PII or PHI. Where the requirement exists, consider using the data protection policy or redacting the data on ingestion. Use IAM policies to control who can view the raw data.
-- Use the embedded metric format(EMF) to embed metrics within logs, reducing the number of API calls to the Observability platform, reducing cost. 
-    - Avoid using EMF for metrics with high cardinality dimensions such as requestId
-- **Alerts:** 
-    - Use anomaly detection to avoid setting rigid thresholds for alerts. This can avoid the overhead of updating the thresholds as the system usage changes over time and reduce alert noise.
-    - Use metric math and combination alerts to reduce the number of individual alerts that are generated for a particular failure. 
-    - Only alert when a SLO is at risk of/is failing. This can avoid your team being woken unnecessarily and reduce the cognitive and context overload
-    - Only alert if someone can take action on notification of failure
-    - Automate resolution of the alert where possible. For example, leverage the native platform configuration like autoscaling, automatic failover to replica or standby instance, etc.
-    - Add adequate context to the alert notification to ensure that the person who is notified can quickly identify the dashboards to look at, playbook to use and service that is impacted
-- **Dashboards:**
-    - Create one or more dashboards per persona/stakeholder. 
-        - Application developers would require enough context to diagnose issues, understand the performance of the application
-        - Platform engineers would require dashboards with context to identify the impact to SLOs and infrastructure components requiring attention and their impact on services using them 
-        - Product managers would require dashboards showing the user journey, product feature usage metrics, adoption rates, abandonment points, etc
-        - Business stakeholders would be interested in widgets demonstrating product adoption rates, subscriber fall off or anything that can be related to impacting business performance and revenue
-    - Use a consistent timezone across all dashboards eg. UTC 
-    - Use the same time range across all widgets on a dashboard
-    - Use annotations to add more context to dashboards
-    - Ensure only widgets which add context to aid in error resolutions are on the dashboard. Too many widgets can add noise and cognitive overload, that leads to higher MTTR
-        - Move other nice to have widgets to another dashboard or to the bottom of the dashboard if there are not already too many widgets. Too many widgets will impact the load time and result in higher stress and cognitive overload.
-    - Ensure the entire dashboard fits on a single screen and trends are visible with the resolution and screen size of a laptop
-    - Have a widget with a description of the dashboard and guidance on how to use the dashboard
-    - Configure and display thresholds on widgets
-    - Do not stuff more metrics into a single widget which can result in trends and spikes being smoothed and defeat the purpose. This also makes diangosis hard.
-    - Use dynamically adjusted Y-axis to allow for trends and spikes to be visible
-- **Recommendations:**
-    - **Controlling Cost:**
-        - **Identify Stakeholders:** 
-            - Determine the different personas interested in feature performance, such as functionality, availability, security, cost, sales, and product usage.
-            - Stakeholders can include development teams, end customers, internal business stakeholders, platform operations teams, or application developers.
-        - **Identify key outcomes:**
-            - For each stakeholder, define quantifiable outcomes (e.g., error rates, request processing duration, number of logins per minute, number of products purchased per minute, number of abandoned carts, etc) that are typically measured using Service Level Objectives (SLOs).
-            - Use these SLOs per persona to identify required instrumentation
-        - **Choose the right signal:**
-            - A wide log with enough context can be converted into metrics and traces giving one source of truth, controlling cost and enabling signal correlation
-            - Run an [Observability Strategy Workshop](https://catalog.us-east-1.prod.workshops.aws/workshops/e31f4fcc-1944-4e46-815d-26fc9eafabce/en-US/5-practical-examples/5-1petstore-site-exercise/scenario1) to identify the right signals to be instrumentated into the application
-    - **Choose the right signal:**
-        - Logs and traces help you find out the root cause of a failure or unexpected behaviour. Ensure to add logs which can help you answer questions like "why did a particular request fail?" or "what would I need to know for the SLO related to request duration if there is an increase in the p50 or p99 for the request processing time?"
-        - Metrics are good to understand baseline performance, predict trends and anomalies. They can proactively give you an indication of something not working as expected. Custom metrics are however expensive. 
-    - **Reduce Alert Fatigue:**
-        - Depending on the configuration, alerts can proactively or reactively highlight an issue in the system. Too many alerts can lead to alert fatigue and inefficient teams, leading to bad code quality and product delivery. 
-    - **Periodic Reviews and Continuous Improvement:**
-        - Have a periodic roster for a member on the team to monitor the dashboards and report on any new trends or patterns identified.
-        - Allocate a portion of each release to improve signals, tweak alert thresholds and dashboards based on gaps identified during retrospectives and roster observations 
-        - Prioritize fixing the root cause of a recurring alert based on effort to resolve and number of times the alert triggers
 
-## Profiling and performance optimization
-- **Real User Monitoring(RUM):**
-    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/) or New Relic to monitor real user interactions and identify performance bottlenecks. Focus on key conversion points and measure both technical performance as well as business outcomes (conversion rates, abandonment points).
-    - Prioritize monitoring of critical user paths like checkout flows and registration processes. 
-    - Establish baseline performance and user behavior to quickly be able to identify anomalies and trends that may impact business outcomes
+
+## 開発者にとってオブザーバビリティが重要な理由
+開発者は以下の主要な目的でオブザーバビリティを使用します：
+- **迅速な問題の特定と解決：**
+    - オブザーバビリティにより、開発者は問題を素早く特定して診断でき、問題解決までの時間 (MTTR) を短縮し、ソフトウェアデリバリーのパフォーマンスを全体的に向上させることができます
+    - 本番環境でのシステムの動作を理解し、十分な情報に基づいた意思決定と運用改善を可能にします
+- **顧客体験の向上：**
+    - システムの動作を分析することで、パフォーマンスと信頼性を最適化し、より良い顧客体験とユーザー満足度の向上につながります
+    - オブザーバビリティツールを使用してユーザーの操作を監視し、UI/UX の問題を迅速に特定して対処できます
+- **チームの効率性とイノベーションの向上：**
+    - オブザーバビリティプラットフォームは運用データの単一の情報源を提供し、チーム間のコラボレーションを促進し、トラブルシューティングの時間を短縮します
+    - 自動化されたインサイトとアラートにより、開発者は手動でのデバッグに費やす時間を減らし、イノベーションにより多くの時間を費やすことができます
+- **データに基づく意思決定：**
+    - オブザーバビリティはシステムパフォーマンスに関する詳細なインサイトを提供し、コードの改善やリソース割り当てに関するデータ駆動の意思決定を可能にします
+    - 改善が必要な領域を特定することで、組織の投資を最適化し、市場投入までの時間を短縮できます
+- **複雑性の管理：**
+    - オブザーバビリティは、システムの相互依存関係を包括的に可視化することで、最新のクラウドネイティブおよびマルチクラウド環境の複雑性を管理するのに役立ちます
+    - 複雑性を整理し、関連するデータに焦点を当てることで、より効率的な開発プロセスを促進します
+
+
+
+## コード品質のベストプラクティス
+- **課題追跡メトリクスのモニタリング:**
+    - JIRA や Trello などの課題追跡プラットフォームを使用して、以下のようなメトリクスを追跡します:
+        - チケットがコードレビューからテストレビューに移動し、進行中に戻る回数。高い数値は、スキル不足、高い複雑性、または不適切なツールの使用を示す可能性があります。
+        - チケットが外部依存関係によってブロックされる回数。高い数値は、依存関係間の高い結合度や高い複雑性を示す可能性があります。
+    - **推奨事項:**
+        - [Amazon Q Developer](https://aws.amazon.com/jp/q/developer) のようなツールを使用して、自動コードレビューで生産性とコード品質を向上させます。Amazon Q Developer は、ソフトウェア開発タスクの速度を最大 80% 向上させ、急速な開発サイクル中のヒューマンエラーの可能性を減らすことでコード品質の向上に貢献します。
+        - 改善点を特定し、継続的な改善の考え方を育むために、レトロスペクティブの一環としてメトリクスの定期的なレビューをスケジュールします。
+
+- **パフォーマンスメトリクス用のコード計装:**
+    - コードの実装のパフォーマンス効率とスケーラビリティを評価することで、コード品質の間接的な測定を可能にするために、以下を測定できるようにコードを計装します。
+        - **RED メソッド:** マイクロサービスのリクエスト、エラー、所要時間をモニタリングします。これにより、サービスのパフォーマンスと信頼性に関する洞察が得られます。
+        - **USE メソッド:** システムリソースの使用率、飽和度、エラーを追跡します。これにより、ボトルネックとリソースの制約を特定できます。
+    - 他のサービス、データベース、キャッシュなど、リクエスト処理パスにおけるすべての外部依存関係への呼び出しの周りに計装を追加します。これにより、リクエスト処理時間の突然の変化を調査するために必要な情報を提供し、問題の根本原因をより迅速に特定できます。
+    - **推奨事項:** 
+        - リクエストのレイテンシーとエラー率に SLO (Service Level Objective) を設定し、それを使用してより良い品質とパフォーマンスのための改善を推進します。
+        - 重要なデータフローとリクエスト処理パスを実行する自動テストに計装の検証を追加します。
+        - システムパフォーマンスとコード品質測定のベースラインを作成する自動負荷テストタスクを構築します。
+        - 単一のリクエストのパフォーマンスへの影響を特定できるように、計装に文脈を追加します。
+        - 計装の追加に関連する手動作業を減らすために、SDK が提供する自動計装を設定して活用します。
+
+
+
+
+## 効率的なロギングとモニタリング
+- json などの構造化されたログフォーマットを使用します。既存のアプリケーションでは、ログ変換機能を使用してより多くのコンテキストを注入し、フィールドを追加または削除することを検討してください。
+- 意味のあるシグナルを導き出し、シグナル間で相関関係を取れるように、十分なメタデータを含む広範なイベントフォーマットを使用します。
+- OpenTelemetry または ADOT SDK を使用して、シグナル間の相関関係を可能にし、問題特定時間 (MTTI) を短縮し、結果として復旧時間 (MTTR) を短縮するための追加コンテキストをログに注入します。
+- ログレベルを適切に使用します - これによりログの量を制御し、取り込みのコストを抑えることができます。
+    - ERROR は、予期しない、および予期される全てのエラー状態に使用します。根本原因分析を加速できるように、できるだけ多くの追加コンテキストを加えます。
+    - INFO は、ユーザーログインなどの一般的な実行時イベントに使用します。これらはコンテキストを提供し、重要です。
+    - DEBUG は、アプリケーションのフローと状態をより深く理解するために、処理パス内の呼び出しをログに記録するために使用します。
+- PII や PHI などの機密性の高いデータのログ記録は避けます。要件がある場合は、データ保護ポリシーの使用や、取り込み時のデータの編集を検討してください。IAM ポリシーを使用して、生データを閲覧できる人を制御します。
+- 埋め込みメトリクスフォーマット (EMF) を使用してログ内にメトリクスを埋め込み、オブザーバビリティプラットフォームへの API 呼び出し回数を減らし、コストを削減します。
+    - requestId などのカーディナリティの高いディメンションを持つメトリクスには EMF を使用しないでください。
+- **アラート:**
+    - 異常検出を使用して、アラートの厳格なしきい値設定を避けます。これにより、システムの使用状況が時間とともに変化した場合のしきい値更新のオーバーヘッドを避け、アラートノイズを減らすことができます。
+    - Metric Math と組み合わせアラートを使用して、特定の障害に対して生成される個々のアラートの数を減らします。
+    - SLO が危険にさらされているか、失敗している場合にのみアラートを発生させます。これにより、チームが不必要に起こされることを避け、認知的およびコンテキストの過負荷を減らすことができます。
+    - 障害通知に対してアクションを取れる人がいる場合にのみアラートを発生させます。
+    - 可能な場合はアラートの解決を自動化します。例えば、オートスケーリング、レプリカやスタンバイインスタンスへの自動フェイルオーバーなど、ネイティブのプラットフォーム設定を活用します。
+    - 通知を受けた人が、確認すべきダッシュボード、使用すべきプレイブック、影響を受けるサービスを素早く特定できるように、アラート通知に十分なコンテキストを追加します。
+- **ダッシュボード:**
+    - ペルソナ/ステークホルダーごとに 1 つ以上のダッシュボードを作成します。
+        - アプリケーション開発者は、問題を診断し、アプリケーションのパフォーマンスを理解するのに十分なコンテキストが必要です。
+        - プラットフォームエンジニアは、SLO への影響と注意が必要なインフラストラクチャコンポーネント、およびそれらを使用するサービスへの影響を特定するためのコンテキストを含むダッシュボードが必要です。
+        - プロダクトマネージャーは、ユーザージャーニー、製品機能の使用状況メトリクス、採用率、離脱ポイントなどを示すダッシュボードが必要です。
+        - ビジネスステークホルダーは、製品採用率、購読者の離脱、またはビジネスパフォーマンスと収益に影響を与える可能性のあるものを示すウィジェットに関心があります。
+    - すべてのダッシュボードで一貫したタイムゾーン（例：UTC）を使用します。
+    - ダッシュボード上のすべてのウィジェットで同じ時間範囲を使用します。
+    - 注釈を使用してダッシュボードにより多くのコンテキストを追加します。
+    - エラー解決を支援するコンテキストを追加するウィジェットのみがダッシュボードにあることを確認します。ウィジェットが多すぎると、ノイズと認知的過負荷が増え、MTTR が高くなります。
+        - その他のあると便利なウィジェットは、別のダッシュボードに移動するか、すでに多すぎるウィジェットがない場合はダッシュボードの下部に移動します。ウィジェットが多すぎると、読み込み時間に影響し、ストレスと認知的過負荷が高くなります。
+    - ダッシュボード全体が 1 つの画面に収まり、ラップトップの解像度と画面サイズでトレンドが表示されることを確認します。
+    - ダッシュボードの説明とその使用方法に関するガイダンスを含むウィジェットを用意します。
+    - ウィジェットにしきい値を設定して表示します。
+    - トレンドやスパイクが平滑化され、目的を損なう可能性のある単一のウィジェットに多くのメトリクスを詰め込まないでください。これは診断も困難にします。
+    - トレンドとスパイクを表示できるように、動的に調整される Y 軸を使用します。
+- **推奨事項:**
+    - **コスト管理:**
+        - **ステークホルダーの特定:**
+            - 機能性、可用性、セキュリティ、コスト、販売、製品使用などの機能パフォーマンスに関心のある異なるペルソナを特定します。
+            - ステークホルダーには、開発チーム、エンドカスタマー、社内のビジネスステークホルダー、プラットフォーム運用チーム、アプリケーション開発者が含まれます。
+        - **主要な成果の特定:**
+            - 各ステークホルダーに対して、通常 Service Level Objectives (SLO) を使用して測定される定量化可能な成果（エラー率、リクエスト処理時間、1 分あたりのログイン数、1 分あたりの購入製品数、放棄されたカートの数など）を定義します。
+            - これらのペルソナごとの SLO を使用して、必要な計測を特定します。
+        - **適切なシグナルの選択:**
+            - 十分なコンテキストを持つ広範なログは、メトリクスとトレースに変換でき、単一の真実のソースを提供し、コストを制御し、シグナルの相関関係を可能にします。
+            - [オブザーバビリティ戦略ワークショップ](https://catalog.us-east-1.prod.workshops.aws/workshops/e31f4fcc-1944-4e46-815d-26fc9eafabce/en-US/5-practical-examples/5-1petstore-site-exercise/scenario1) を実行して、アプリケーションに組み込むべき適切なシグナルを特定します。
+    - **適切なシグナルの選択:**
+        - ログとトレースは、障害や予期しない動作の根本原因を見つけるのに役立ちます。「特定のリクエストが失敗した理由は？」や「リクエスト処理時間の p50 または p99 が増加した場合、リクエスト処理時間に関連する SLO について知る必要があることは何か？」といった質問に答えるのに役立つログを追加してください。
+        - メトリクスは、ベースラインのパフォーマンスを理解し、トレンドと異常を予測するのに適しています。これらは、何かが期待通りに機能していないことを事前に示すことができます。ただし、カスタムメトリクスは高価です。
+    - **アラート疲れの軽減:**
+        - 設定に応じて、アラートはシステムの問題を事前または事後に強調表示できます。アラートが多すぎると、アラート疲れと非効率的なチームにつながり、コード品質と製品提供の質が低下する可能性があります。
+    - **定期的なレビューと継続的な改善:**
+        - チームのメンバーがダッシュボードを監視し、特定された新しいトレンドやパターンを報告するための定期的なローテーションを設けます。
+        - レトロスペクティブとローテーション観察で特定されたギャップに基づいて、シグナルの改善、アラートしきい値の調整、ダッシュボードの改善のために、各リリースの一部を割り当てます。
+        - 解決に必要な労力とアラートのトリガー回数に基づいて、繰り返し発生するアラートの根本原因の修正を優先順位付けします。
+
+
+
+## プロファイリングとパフォーマンスの最適化
+- **リアルユーザーモニタリング (RUM):**
+    - [AWS X-Ray](https://aws.amazon.com/jp/xray/) や New Relic などのツールを使用して、実際のユーザーインタラクションを監視し、パフォーマンスのボトルネックを特定します。主要なコンバージョンポイントに焦点を当て、技術的なパフォーマンスとビジネス成果（コンバージョン率、離脱ポイント）の両方を測定します。
+    - 決済フローや登録プロセスなどの重要なユーザーパスの監視を優先します。
+    - ベースラインとなるパフォーマンスとユーザー行動を確立し、ビジネス成果に影響を与える可能性のある異常や傾向を素早く特定できるようにします。
 - **Synthetics:**
-    - Employ tools like [Amazon Cloudwatch Synthetics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html) to simulate user interactions and test application performance under various conditions. Synthetic canaries can help identify issues before user impact is detected.
-    - Validate health checks and system uptime with Synthetic canaries.
-- **Profiling tools:**
-    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/) for profiling to identify performance bottlenecks and optimize resource utilization
-    - Set dynamic sampling rates that adjust based on traffic patterns and maintain adequate retention of error traces and outliers. This ensures comprehensive visibility into critical issues while managing data volume and costs effectively.
-    - Use tail sampling to configure your collector with multiple sampling policies that prioritize high-value traces based on error status, duration thresholds, and custom attributes. This will ensure that the traces sampled include the ones that will be of most value
+    - [Amazon Cloudwatch Synthetics](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html) などのツールを使用して、様々な条件下でユーザーインタラクションをシミュレートし、アプリケーションのパフォーマンスをテストします。Synthetic Canary は、ユーザーへの影響が検出される前に問題を特定するのに役立ちます。
+    - Synthetic Canary を使用してヘルスチェックとシステムの稼働時間を検証します。
+- **プロファイリングツール:**
+    - [AWS X-Ray](https://aws.amazon.com/jp/xray/) などのツールを使用してプロファイリングを行い、パフォーマンスのボトルネックを特定し、リソース使用率を最適化します。
+    - トラフィックパターンに基づいて動的にサンプリングレートを調整し、エラートレースと外れ値の適切な保持を維持します。これにより、データ量とコストを効果的に管理しながら、重要な問題への包括的な可視性を確保します。
+    - テールサンプリングを使用して、エラーステータス、期間のしきい値、カスタム属性に基づいて高価値のトレースを優先する複数のサンプリングポリシーでコレクターを設定します。これにより、最も価値のあるトレースがサンプリングに含まれることが保証されます。
 - **OpenTelemetry:**
-    - Use [OpenTelemetry](https://opentelemetry.io/) for auto-instrumentation to simplify the collection of performance metrics and traces. Validate the telemetry provided by auto instrumentation before adding manual instrumentation and then look to tune the auto instrumentation based on requirements to control signals and cost.
+    - [OpenTelemetry](https://opentelemetry.io/) を使用して自動計装を行い、パフォーマンスメトリクスとトレースの収集を簡素化します。手動計装を追加する前に自動計装によって提供されるテレメトリを検証し、その後、シグナルとコストを制御するための要件に基づいて自動計装を調整します。
 
-## Error handling and debugging techniques 
-- **General:**
-    - Design retry mechanisms with exponential backoff for transient failures. Implement [circuit breakers](https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html) for external dependencies. This is particularly helpful in distributed systems and prevents excessive load on the downstream component/service. This may not be applicable in all scenarios so do perform due diligence before adopting this design.
-    - Create fallback mechanisms for critical operations and maintain clear rollback procedures for failed transactions. 
-    - Add input validation at all entry points. 
-    - Ensure retryable operations are idempotent. 
-- **Logging:**
-    - Maintain a repository of saved [Cloudwatch Log Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) queries. Use folders to group the queries 
-    - Don't silence errors. Always log or handle appropriately.
-    - Add a form of identification like correlation id or request id to the logs in addition to any other relevant context.
-- **Playbooks and runbooks:**
-    - When writing playbooks, include clear actionable steps with permissions required, tools and expected outcomes. 
-    - Include verification steps, rollback procedures, and links to relevant dashboards in playbooks and run books. 
-    - Version playbooks and update them after incidents including the learnings and key insights.
-- **Tuning sampling rules:**
-    - Implement dynamic sampling rules based on service criticality and traffic patterns. 
-    - Set higher sampling rates for error conditions and business-critical paths.
-    - Review and adjust sampling rules regularly based on operational needs and cost considerations.
 
-## Code reviews and collaboration strategies
-- **Ticket elaboration:**
-    - Identify Observability requirements as part of the feature elaboration process. This may include 
-        - Impacted Stakeholders and related SLOs
-        - Required telemetry/signals
-        - Required alerts 
-        - List of dashboards to be created or updated
-- **Blamesless retrospectives:**
-    - After every incident, conduct a blameless retrospective to look for opportunities to improve processes or add automation. Always factor in cost of change and ensure you leave each post mortem exercise with at least one agreed upon actionable item which also has a timeline for completion associated with it.
-- **Operational Readiness Reviews:** 
-    - Participate in operational readiness reviews with the platform and operations team to identify gaps in observability posture - this can be a checklist and a mandatory exercise before deployments to production. For large organisations with multiple teams, to avoid this process becoming a bottleneck, conduct these periodically, per new feature and release cadence.
-- **Recommendations:**
-    - Use a tool like [AWS Systems Manager Incident Manager](https://docs.aws.amazon.com/incident-manager/latest/userguide/analysis.html) to help guide you through the post-incident analysis
-    - Refer the [Operational Readiness Review](https://docs.aws.amazon.com/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html) for inspiration on questions to include in your operational readiness review checklist or process. 
-    - Always share learnings from retrospectives, operational readiness reviews - this could be via a wiki or mail group subscriptions
 
-## API design and documentation guidelines
-- **Versioning:**
-    - Ensure APIs are versioned and the version is added as context for every request processed
-    - Where sending custom metrics, add a dimension on the version if applicable
-    - Add an annotation or identifier on dashboards to clearly distinguish a cutover from one version to another 
-    - Ensure you track the requests to each version and a widget to visualize usage of the versions. This is to ascertain that requests are being routed as expected and also to reduce the time to identify the root cause. This can provide increased confidence when deprecating and removing an older version
-- **Backwards Compatibilty:**
-    - Ensure there are no requests to older versions before removing the code paths related to an older API version
-- **Batch APIs:**
-    - Emit signals for the status of each individual request as well as for the overall batch request
-    - Ensure context is added to the logs identifying the batch request id and individual request
+## エラー処理とデバッグ技法
+- **一般:**
+    - 一時的な障害に対して指数関数的バックオフを伴うリトライメカニズムを設計します。外部依存関係に対して[サーキットブレーカー](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/cloud-design-patterns/circuit-breaker.html)を実装します。これは分散システムで特に有効で、下流のコンポーネント/サービスへの過剰な負荷を防ぎます。すべてのシナリオに適用できるわけではないため、この設計を採用する前に適切な検討を行ってください。
+    - 重要な操作にはフォールバックメカニズムを作成し、失敗したトランザクションに対する明確なロールバック手順を維持します。
+    - すべてのエントリーポイントで入力バリデーションを追加します。
+    - リトライ可能な操作は冪等性を確保します。
+- **ロギング:**
+    - 保存した [CloudWatch Log Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Saving-Queries.html) クエリのリポジトリを維持します。フォルダを使用してクエリをグループ化します。
+    - エラーを抑制しないでください。常に適切にログを記録するか処理してください。
+    - その他の関連コンテキストに加えて、相関 ID やリクエスト ID などの識別子をログに追加します。
+- **プレイブックとランブック:**
+    - プレイブックを作成する際は、必要な権限、ツール、期待される結果を含む明確なアクションステップを含めます。
+    - プレイブックとランブックには、検証手順、ロールバック手順、関連するダッシュボードへのリンクを含めます。
+    - プレイブックをバージョン管理し、インシデント後に学びと重要な洞察を含めて更新します。
+- **サンプリングルールの調整:**
+    - サービスの重要度とトラフィックパターンに基づいて動的なサンプリングルールを実装します。
+    - エラー条件とビジネスクリティカルなパスに対してより高いサンプリングレートを設定します。
+    - 運用上のニーズとコストを考慮して、サンプリングルールを定期的に見直し調整します。
 
+
+
+## コードレビューとコラボレーション戦略
+- **チケットの詳細化：**
+    - 機能の詳細化プロセスの一部としてオブザーバビリティの要件を特定します。これには以下が含まれます：
+        - 影響を受けるステークホルダーと関連する SLO
+        - 必要なテレメトリ/シグナル
+        - 必要なアラート
+        - 作成または更新が必要なダッシュボードのリスト
+- **ブレームレス（非難なし）レトロスペクティブ：**
+    - インシデント発生後は必ずブレームレスレトロスペクティブを実施し、プロセスの改善や自動化の追加機会を探します。
+    - 変更のコストを常に考慮し、ポストモーテム（事後分析）の際には、必ず実行可能な項目を少なくとも 1 つ合意し、その完了までの期限を設定してください。
+- **運用準備状況レビュー：**
+    - プラットフォームチームと運用チームと共に運用準備状況レビューに参加し、オブザーバビリティ体制のギャップを特定します。
+    - これはチェックリストとして、本番環境へのデプロイ前の必須の演習となります。
+    - 複数のチームを持つ大規模な組織では、このプロセスがボトルネックとなることを避けるため、新機能やリリースのサイクルに応じて定期的に実施します。
+- **推奨事項：**
+    - インシデント後の分析をガイドするために、[AWS Systems Manager Incident Manager](https://docs.aws.amazon.com/ja_jp/incident-manager/latest/userguide/analysis.html) のようなツールを使用します。
+    - 運用準備状況レビューのチェックリストやプロセスに含める質問の参考として、[Operational Readiness Review](https://docs.aws.amazon.com/ja_jp/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html) を参照してください。
+    - レトロスペクティブや運用準備状況レビューから得られた知見は、常に wiki やメーリングリストを通じて共有してください。
+
+
+
+## API の設計とドキュメントのガイドライン
+- **バージョニング:**
+    - API にはバージョンを付与し、処理される全てのリクエストにバージョンをコンテキストとして追加します
+    - カスタムメトリクスを送信する場合、該当する場合はディメンションにバージョンを追加します
+    - ダッシュボードには、あるバージョンから別のバージョンへの切り替えを明確に区別できるよう、注釈または識別子を追加します
+    - 各バージョンへのリクエストを追跡し、バージョンの使用状況を可視化するウィジェットを追加します。これは、リクエストが期待通りにルーティングされていることを確認し、根本原因の特定時間を短縮するためです。これにより、古いバージョンを廃止して削除する際の信頼性が向上します
+- **後方互換性:**
+    - 古い API バージョンに関連するコードパスを削除する前に、古いバージョンへのリクエストがないことを確認します
+- **バッチ API:**
+    - 個々のリクエストのステータスとバッチリクエスト全体のシグナルを発行します
+    - ログにバッチリクエスト ID と個別リクエストを識別するコンテキストを追加します

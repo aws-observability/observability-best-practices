@@ -1,99 +1,109 @@
-# 既存の EC2 ワークロードに対する OLA
+# 既存の EC2 ワークロードのための OLA
 
 
 
 
 ## AWS OLA プログラム
 
-[AWS Optimization and Licensing Assessment (AWS OLA)](https://aws.amazon.com/jp/optimization-and-licensing-assessment/) は、お客様にワークロードをクラウドに移行し、リソースのコストを最適化するための最適なアプローチを提供します。これは無償のプログラムで、お客様が新規および既存のワークロードを分析し、オンプレミスおよびクラウド環境を評価してリソース割り当て、サードパーティライセンス、アプリケーションの依存関係を最適化し、リソース効率を向上させ、コンピューティングコストの削減の可能性を探ることを支援することを目的としています。
+[AWS Optimization and Licensing Assessment (AWS OLA)](https://aws.amazon.com/jp/optimization-and-licensing-assessment/) は、お客様がワークロードをクラウドに移行し、リソースのコストを最適化するための最適なアプローチを提供します。これは無償のプログラムで、新規および既存のワークロードを分析し、オンプレミスおよびクラウド環境を評価して、リソースの割り当て、サードパーティライセンス、アプリケーションの依存関係を最適化し、リソース効率を向上させ、コンピューティングコストの削減を支援することを目的としています。
 
-このプロセスで収集されたデータを通じて、AWS OLA プログラムは包括的なレポートを提供し、お客様はこれを使用してクラウドジャーニーと移行に関する十分な情報に基づいた決定を下すことができます。このレポートは、実際のリソース使用状況、既存のライセンス権利に基づいてデプロイメントオプションをモデル化し、柔軟なライセンスオプションを通じて潜在的なコスト削減を発見するのに役立ちます。
+このプロセスで収集されたデータを通じて、AWS OLA プログラムは包括的なレポートを提供し、お客様はクラウドジャーニーと移行に関する十分な情報に基づいた意思決定を行うことができます。このレポートは、実際のリソース使用状況、既存のライセンス権利に基づいてデプロイメントオプションをモデル化し、柔軟なライセンスオプションを通じて潜在的なコスト削減を発見するのに役立ちます。
 
-AWS OLA プログラムを受けることの利点には以下が含まれます：
+AWS OLA プログラムを利用する利点には以下が含まれます：
 
-- ツールベースの発見アプローチを用いて、ワークロードの**リソース割り当てを適切にサイズ調整**します。これにより、コンピューティングリソースに関する洞察が得られ、各ワークロードに最適な Amazon Elastic Compute Cloud (Amazon EC2)、Amazon Relational Database Service (Amazon RDS)、または VMware Cloud on AWS のインスタンスサイズとタイプを特定するのに役立ちます。
-- クラウドインフラストラクチャを最適化することで、重要な側面の一つである**コストを削減**します。
-- ライセンス込みインスタンスや BYOL インスタンスを含むライセンスシナリオをモデル化し、季節的なワークロードの管理や俊敏な実験に柔軟性を持たせ、**最適化されたライセンスオプションを探索**し、不要なライセンスコストを排除します。
+- ツールベースの調査アプローチによる **リソース割り当ての適正化** を行い、コンピューティングリソースに関する洞察を提供し、各ワークロードに最適な Amazon Elastic Compute Cloud (Amazon EC2)、Amazon Relational Database Service (Amazon RDS)、または VMware Cloud on AWS インスタンスのサイズとタイプを特定するのに役立ちます。
+- クラウドインフラストラクチャを最適化することで、重要な側面の 1 つである **コストの削減** を実現します。
+- ライセンス込みインスタンスや BYOL インスタンスを含むライセンスシナリオをモデル化し、季節的なワークロードとアジャイルな実験の柔軟性を確保し、**最適化されたライセンスオプションを検討** して、不要なライセンスコストを削減します。
 
 ![OLA](../../images/OLA.png)
 
 
 
-## EEC2 ワークロード向け AWS OLA
 
-AWS OLA（最適化とライセンス評価）は、既存の EC2 ワークロードのコスト最適化に焦点を当てており、「**EEC2 向け AWS OLA**」と呼ばれています。これは、**既存の EC2 ワークロード**評価のための AWS OLA（最適化とライセンス評価）です。
+## EC2 ワークロード向け AWS OLA
 
-EEC2 向け AWS OLA は、[AWS Compute Optimizer](https://aws.amazon.com/jp/compute-optimizer/) を活用して、[AWS エンタープライズサポート](https://aws.amazon.com/jp/premiumsupport/plans/enterprise/) プランに登録しているお客様に Amazon EC2 のライトサイジング推奨事項を提供します。EEC2 向け OLA は、合理化されたプロセスを通じたセルフサービスの取り組みです。AWS OLA チームが推奨事項を評価レポートとして準備し、それぞれの AWS アカウントチームがこれらの結果を Amazon EC2 のライトサイジングとコスト最適化のためにお客様に提示します。Amazon EC2 のライトサイジング推奨事項に加えて、AWS OLA は BYOL（Bring Your Own License）および License Included の Microsoft SQL Server インスタンスに対する Microsoft SQL Server の最適化戦略も提供します。EEC2 向け OLA は、Amazon EC2 のライトサイジングに加えて、以下の方法で Microsoft SQL Server の支出を削減する補足戦略を提示します：1) CPU 推奨が低い EC2 インスタンス上の Microsoft SQL Server の CPU 構成を最適化する、2) ライセンス対象の SQL エディション（Enterprise/Standard）を実行している非本番サーバーを無料の SQL Developer エディションにダウングレードする。
+AWS OLA (最適化とライセンス評価) は、**既存の EC2 ワークロード** の評価である「**EC2 向け AWS OLA**」- **既存の EC2 ワークロード** 向け AWS OLA (最適化とライセンス評価) に焦点を当てています。
 
-評価を実行するために、EEC2 向け AWS OLA プロセスは、メモリや CPU 使用率（Amazon CloudWatch と CloudWatch エージェントを通じて）などのメトリクスを含む環境パラメータをお客様の AWS アカウントから収集します。必要なパラメータが収集されると、AWS OLA チームは集計されたデータを使用して推奨事項を準備し、PowerPoint デッキと Excel レポートを AWS TAM とアカウントチームに提示します。これらは後でお客様に提示することができます。レポートが提供する洞察は、お客様が既存の Amazon EC2 支出を最適化し、ワークロードのライセンス最適化戦略を探索するのに役立ちます。
+EC2 向け AWS OLA は、[AWS Enterprise Support](https://aws.amazon.com/jp/premiumsupport/plans/enterprise/) プランに加入しているお客様に Amazon EC2 のライトサイジングの推奨事項を提供するために [AWS Compute Optimizer](https://aws.amazon.com/jp/compute-optimizer/) を活用します。
+EC2 向け AWS OLA は、合理化されたプロセスを通じたセルフサービス型のエンゲージメントです。
+AWS OLA チームが評価レポートとして推奨事項を準備し、AWS アカウントチームがそれらの結果を Amazon EC2 のライトサイジングとコスト最適化のためにお客様に提示します。
+Amazon EC2 のライトサイジング推奨事項に加えて、AWS OLA は BYOL (Bring Your Own License) および License Included の Microsoft SQL Server インスタンスに対する Microsoft SQL Server の最適化戦略も提供します。
+EC2 向け AWS OLA は、1) CPU 使用率が低い推奨事項を持つ EC2 インスタンス上の Microsoft SQL Server の CPU 構成を最適化し、2) ライセンスが必要な SQL エディション (Enterprise/Standard) で実行されている非本番サーバーを無料の SQL Developer エディションにダウングレードすることで、Microsoft SQL Server の支出を削減する Amazon EC2 ライトサイジングの補完的な戦略を提示します。
+
+評価を実行するために、EC2 向け AWS OLA プロセスは、メモリと CPU 使用率 (Amazon CloudWatch と CloudWatch エージェントを通じて) などのメトリクスを含む、お客様の AWS アカウントから環境パラメータを収集します。
+必要なパラメータが収集されると、AWS OLA チームは集計されたデータを使用して推奨事項を準備し、後でお客様に提示できる PowerPoint デッキと Excel レポートを AWS TAM とアカウントチームに提示します。
+レポートによって提供されるインサイトは、お客様が既存の Amazon EC2 の支出を最適化し、ワークロードのライセンス最適化戦略を検討するのに役立ちます。
 
 
 
-## 既存の EC2 ワークロードに対する AWS OLA 評価
+## AWS OLA による既存 EC2 評価
 
-エンタープライズサポートを利用している AWS のお客様は、既存の Amazon EC2 インスタンス（Linux および Windows）のコストを、既存の EC2 ワークロードに対する無料の最適化およびライセンス評価（OLA）で最適化できます。AWS OLA for EEC2 評価をお客様のワークロードに対して無料で実施するには、AWS アカウントチームにお問い合わせください。
+エンタープライズサポートをご利用の AWS のお客様は、既存の Amazon EC2 インスタンス (Linux および Windows) のコストを、既存の EC2 ワークロードに対する最適化およびライセンス評価 (OLA) を無料で受けることで最適化できます。
+ワークロードに対する AWS OLA による EC2 評価を無料で実施するには、AWS のアカウントチームにお問い合わせください。
 
 
 
 
-## 正確なリソースの適正化のための Amazon CloudWatch メモリメトリクス
+## 正確なリソースサイジングのための Amazon CloudWatch メモリメトリクス
 
-AWS OLA for EEC2 が Amazon EC2 の適正化に関するアセスメントレポートを提供する一方で、[Amazon CloudWatch](https://aws.amazon.com/jp/cloudwatch/) が提供する洞察は、顧客のリソースをより正確に適正化するためにメモリ使用率メトリクスを組み込む価値を理解しています。
-したがって、AWS OLA for EEC2 プログラムと共に Amazon CloudWatch メモリメトリクスのモニタリングを奨励し促進することで、顧客は AWS 環境に対してより効果的なリソース最適化の推奨事項を得られ、ワークロードのリソース消費についてより広範な視点を得ることができます。
-これにより、ワークロードのコスト削減とパフォーマンス向上に役立ちます。
+AWS OLA for EEC2 は Amazon EC2 のリソースサイジングのための評価レポートを提供しますが、[Amazon CloudWatch](https://aws.amazon.com/jp/cloudwatch/) が提供するインサイトは、より正確なリソースサイジングのためにメモリ使用率メトリクスを組み込む価値を理解しています。
 
-Amazon EC2 インスタンスは、デフォルトで Amazon CloudWatch に複数のメトリクスを送信します。
-しかし、メモリメトリクスは Amazon EC2 が提供するデフォルトのメトリクスの 1 つではありません。
-Amazon EC2 のメモリメトリクスを知ることで、EC2 インスタンスの現在のメモリ使用率を理解し、インスタンスが過小プロビジョニングにも過大プロビジョニングにもならないようにすることができます。
-Amazon EC2 インスタンスの過小プロビジョニングは通常、システムやアプリケーションのパフォーマンスを損なう一方で、過大プロビジョニングは無駄な支出を生みます。
-ビッグデータ分析、インメモリデータベース、リアルタイムストリーミングなどのメモリを多用するアプリケーションでは、運用の可視性を確保するためにインスタンスのメモリ使用率をモニタリングする必要があります。
+そのため、AWS OLA for EEC2 プログラムと共に Amazon CloudWatch メモリメトリクスのモニタリングを推奨・促進することで、お客様は AWS 環境により効果的なリソース最適化の推奨事項を得ることができ、ワークロードのリソース消費についてより広い視点を得ることができます。
+
+これにより、ワークロードのコスト削減とパフォーマンスの向上を実現できます。
+
+Amazon EC2 インスタンスは、デフォルトで複数のメトリクスを Amazon CloudWatch に送信します。
+しかし、メモリメトリクスは Amazon EC2 が提供するデフォルトのメトリクスには含まれていません。
+Amazon EC2 のメモリメトリクスを把握することで、EC2 インスタンスの現在のメモリ使用率を理解し、インスタンスのプロビジョニング不足や過剰プロビジョニングを防ぐことができます。
+Amazon EC2 インスタンスのプロビジョニング不足は、システムやアプリケーションのパフォーマンスを低下させる一方、過剰プロビジョニングは無駄な支出を生みます。
+ビッグデータ分析、インメモリデータベース、リアルタイムストリーミングなどのメモリを大量に使用するアプリケーションでは、運用の可視性を確保するためにインスタンスのメモリ使用率を監視する必要があります。
 
 ![CloudWatch Agent](../../images/cw-agent.png)
 
 
 
-### Amazon EC2 インスタンスからのメモリメトリクス収集
+### Amazon EC2 インスタンスからのメモリメトリクスの収集
 
-[Amazon EC2 インスタンス](https://aws.amazon.com/jp/ec2/)からメモリメトリクスを収集するには、以下の手順を高レベルで実行します。
+[Amazon EC2 インスタンス](https://aws.amazon.com/jp/ec2/) からメモリメトリクスを収集するための手順の概要は以下の通りです。
 
-- AWS Identity and Access Management (IAM) で、以下の権限を持つロールを作成します：
-  - [Amazon Systems Manager](https://aws.amazon.com/jp/systems-manager/) が Amazon EC2 インスタンスを管理するための権限。これは Amazon EC2 インスタンスが Systems Manager で管理されている場合に必要です。[AWS Systems Manager Agent (SSM Agent)](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/ssm-agent.html) は、インスタンスが AWS Systems Manager と通信し、リモートコマンドやスクリプトの実行を可能にするために、Amazon EC2 インスタンスに必要です。例えば、EC2 インスタンスで Systems Manager Run Command を実行するなどです。AWS Systems Manager Agent (SSM Agent) は、Amazon EC2 インスタンスにインストールされて実行される Amazon のソフトウェアで、Amazon Systems Manager サービスが EC2 インスタンスを管理対象インスタンスとして更新、管理、設定することを可能にします。SSM エージェントは Systems Manager サービスからリクエストを受け取り、それを処理し、ステータスと実行情報を Systems Manager サービスに送り返します。なお、AWS Systems Manager Agent (SSM Agent) は、AWS が提供する一部の [Amazon Machine Images (AMIs) にデフォルトでプリインストール](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/ami-preinstalled-agent.html)されています。
-  - CloudWatch エージェントウィザードを使用して CloudWatch エージェント設定ファイルを生成する場合、オプションとして Systems Manager Parameter Store を安全な共通の場所として使用し、設定ファイルを保存して後で取得することができます。その場合、CloudWatch エージェントは [Systems Manager Parameter Store](https://aws.amazon.com/jp/systems-manager/features/) に対して、設定ファイルを書き込むための書き込みアクセス権と、設定ファイルを読み取るための読み取りアクセス権が必要です。
+- AWS Identity and Access Management (IAM) でロールを作成し、以下の権限を付与します：
+  - [Amazon Systems Manager](https://aws.amazon.com/jp/systems-manager/) で Amazon EC2 インスタンスを管理するための権限。これは Amazon EC2 インスタンスが Systems Manager で管理されている場合に必要です。[AWS Systems Manager Agent (SSM Agent)](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/ssm-agent.html) は、インスタンスが AWS Systems Manager と通信し、Systems Manager Run Command を EC2 インスタンスで実行するなど、リモートコマンドやスクリプトの実行を可能にするために必要です。AWS Systems Manager Agent (SSM Agent) は、Amazon EC2 インスタンスにインストールされて実行される Amazon のソフトウェアで、Amazon Systems Manager サービスが EC2 インスタンスを管理対象インスタンスとして更新、管理、設定することを可能にします。SSM エージェントは Systems Manager サービスからリクエストを受け取り、それを処理し、ステータスと実行情報を Systems Manager サービスに送り返します。なお、AWS Systems Manager Agent (SSM Agent) は、AWS が提供する一部の [Amazon Machine Images (AMIs)](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/ami-preinstalled-agent.html) にデフォルトでプリインストールされています。
+  - CloudWatch エージェントウィザードを使用して CloudWatch エージェント設定ファイルを生成する場合、オプションとして Systems Manager Parameter Store を設定ファイルを保存する安全な共通の場所として使用できます。その場合、CloudWatch エージェントは設定ファイルを書き込むための書き込みアクセス権と、設定ファイルを読み取るための読み取りアクセス権を [Systems Manager Parameter Store](https://aws.amazon.com/jp/systems-manager/features/) に対して持つ必要があります。
   - [CloudWatch エージェント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) がデータ（メトリクスとログ）を Amazon CloudWatch に書き込むための権限。
 - Amazon EC2 インスタンスを起動し、先ほど作成した IAM ロールを割り当てます。この IAM ロールについては、以下の付録 [1] の信頼ポリシーと、付録 [2] の Amazon マネージドポリシー（AmazonSSMManagedInstanceCore、CloudWatchAgentAdminPolicy、CloudWatchAgentServerPolicy）を参照してください（JSON 形式での権限を含む）。
-- 必要な EC2 インスタンス（Windows または Linux）に CloudWatch エージェントを [手動で](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html)、または [Systems Manager Run Command を使用して](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html)インストールします。
-- CloudWatch エージェントを設定して、メモリメトリクスを収集し、Amazon CloudWatch に書き込むようにします。
+- 必要な EC2 インスタンス（Windows または Linux）に CloudWatch エージェントを [手動で](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-commandline.html) または [Systems Manager Run Command を使用して](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/installing-cloudwatch-agent-ssm.html) インストールします。
+- CloudWatch エージェントを設定してメモリメトリクスを収集し、Amazon CloudWatch に書き込みます。
 
 ![CloudWatch Metrics](../../images/cw-metrics.png)
 
-- CloudWatch コンソールで収集された[メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html)と[ログ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)を表示します。
+- CloudWatch コンソールで収集された [メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/viewing_metrics_with_cloudwatch.html) と [ログ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) を表示します。
 - CloudWatch Logs Insights を使用してログデータを分析します。
 
 ![CloudWatch Metrics](../../images/ec2-cloudwatch-metrics.png)
 
 
 
-### Amazon EC2 インスタンスからの大規模なメモリメトリクス収集
+### Amazon EC2 インスタンスからのメモリメトリクスの大規模な収集
 
-以下の手順に従って、1 つまたは複数の Amazon EC2 インスタンスに CloudWatch エージェントをインストールし、設定して Amazon CloudWatch にシグナル（メトリクスとログ）を収集することができます。
+以下の手順に従って、1 つまたは複数の Amazon EC2 インスタンスに CloudWatch エージェントをインストールし、Amazon CloudWatch へのシグナル収集（メトリクスとログ）を設定します。
 
-- リモートデスクトップまたは SSH を使用して Amazon EC2 インスタンス（Windows または Linux）に接続します。これは CloudWatch エージェント設定ファイルを準備するために一度だけ必要です。
-- CloudWatch エージェント設定ウィザードを実行して、メトリクスとログの収集を設定します。
-  - CPU、メモリ、ディスクなどのホストメトリクスを設定します。
-  - オプションで、監視するカスタムログファイル（例：IIS ログ、Apache ログ）を追加します。
-  - オプションで Windows イベントログを監視します。
-  - 同じ設定を他の Amazon EC2 インスタンスに適用できる場合は、設定を Systems Manager パラメータストアに保存します。
-- Systems Manager Run Command を使用して、CloudWatch エージェント設定を他の EC2 インスタンスに適用します。[AmazonCloudWatch-ManageAgent](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/create-store-cloudwatch-configurations.html) Systems Manager コマンドドキュメントを使用して、1 回の実行で複数の EC2 インスタンスの CloudWatch 設定を更新できます。
+- リモートデスクトップまたは SSH を使用して Amazon EC2 インスタンス（Windows または Linux）に接続します。これは CloudWatch エージェント設定ファイルを準備するために 1 回必要です。
+- CloudWatch エージェント設定ウィザードを実行して、メトリクスとログの収集を設定します
+  - CPU、メモリ、ディスクなどのホストメトリクスを設定します
+  - 必要に応じて、監視するカスタムログファイル（IIS ログ、Apache ログなど）を追加します
+  - 必要に応じて Windows イベントログを監視します
+  - 同じ設定を他の Amazon EC2 インスタンスに適用する場合は、Systems Manager パラメータストアに設定を保存します
+- Systems Manager Run Command を使用して、他の EC2 インスタンスに CloudWatch エージェント設定を適用します。[AmazonCloudWatch-ManageAgent](https://docs.aws.amazon.com/ja_jp/prescriptive-guidance/latest/implementing-logging-monitoring-cloudwatch/create-store-cloudwatch-configurations.html) Systems Manager コマンドドキュメントを使用すると、1 回の実行で複数の EC2 インスタンスの CloudWatch 設定を更新できます。
 
 
 
 ### Amazon EC2 インスタンスからのメモリメトリクス収集の自動化
 
-以下の手順に従って、Amazon CloudWatch へのシグナル収集（メトリクスとログ）を大規模に自動化、オーケストレーション、管理することができます。[AWS CloudFormation](https://aws.amazon.com/jp/cloudformation/) テンプレートを使用して、以下のアクションを実行できます。
+以下の手順に従って、Amazon CloudWatch へのシグナル収集（メトリクスとログ）を自動化、オーケストレーション、大規模に管理することができます。[AWS CloudFormation](https://aws.amazon.com/jp/cloudformation/) テンプレートを使用して、以下のアクションを実行できます。
 
-- Systems Manager の自動化が Amazon EC2 インスタンス上でランブックを実行できるようにする IAM 実行ロールを作成します。
+- Systems Manager オートメーションがお客様に代わって Amazon EC2 インスタンス上でランブックを実行できるようにする IAM 実行ロールを作成します。
 - CloudWatch エージェントが Amazon CloudWatch にデータ（メトリクスとログ）を書き込むための権限を持つ IAM ロールを設定します。
-- Amazon EC2 インスタンス上に CloudWatch エージェントをインストールして設定する[カスタムランブック](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/automation-documents.html)を作成します。下記の付録 [3] を参照してください。これは、CloudWatch エージェントをインストールし、デフォルトのメトリクスまたは Amazon Systems Manager パラメータストアのパラメータを使用して CloudWatch エージェントを設定するために使用できるカスタムランブックドキュメントの例です。
+- Amazon EC2 インスタンスに CloudWatch エージェントをインストールして設定する[カスタムランブック](https://docs.aws.amazon.com/ja_jp/systems-manager/latest/userguide/automation-documents.html)を作成します。下記の付録 [3] を参照してください。これは、デフォルトのメトリクスまたは Amazon Systems Manager パラメータストアのパラメータを使用して CloudWatch エージェントをインストールおよび設定するために使用できるカスタムランブックドキュメントの例です。
 - CloudWatch エージェント設定ファイルを Systems Manager パラメータストアにアップロードします。
 
 
@@ -108,7 +118,7 @@ Amazon EC2 インスタンスの過小プロビジョニングは通常、シス
 
 ### 付録
 
-[1] Amazon EC2 がロールを引き受けるための**信頼ポリシー**
+[1] Amazon EC2 がロールを引き受けるための **信頼ポリシー**
 
 ```json
 {
@@ -125,7 +135,7 @@ Amazon EC2 インスタンスの過小プロビジョニングは通常、シス
 }
 ```
 
-[2] [AmazonSSMManagedInstanceCore](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/AmazonSSMManagedInstanceCore.html) - AWS Systems Manager サービスのコア機能を有効にするための Amazon EC2 ロール用 AWS マネージドポリシー。
+[2] [AmazonSSMManagedInstanceCore](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/AmazonSSMManagedInstanceCore.html) - AWS Systems Manager サービスのコア機能を有効にするための Amazon EC2 ロール用の AWS マネージドポリシー。
 
 ```json
 {
@@ -178,7 +188,7 @@ Amazon EC2 インスタンスの過小プロビジョニングは通常、シス
 }
 ```
 
-[CloudWatchAgentAdminPolicy](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/CloudWatchAgentAdminPolicy.html) - AmazonCloudWatchAgent を使用するために必要な全権限を持つ Amazon マネージドポリシー
+[CloudWatchAgentAdminPolicy](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/CloudWatchAgentAdminPolicy.html) - AmazonCloudWatchAgent を使用するために必要な完全な権限を持つ Amazon マネージドポリシー
 
 ```json
 {
@@ -214,7 +224,7 @@ Amazon EC2 インスタンスの過小プロビジョニングは通常、シス
 }
 ```
 
-[CloudWatchAgentServerPolicy](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/CloudWatchAgentServerPolicy.html) - サーバー上で AmazonCloudWatchAgent を使用するために必要な全権限を持つ Amazon マネージドポリシー
+[CloudWatchAgentServerPolicy](https://docs.aws.amazon.com/ja_jp/aws-managed-policy/latest/reference/CloudWatchAgentServerPolicy.html) - サーバー上で AmazonCloudWatchAgent を使用するために必要な完全な権限を持つ Amazon マネージドポリシー
 
 ```json
 {
@@ -251,7 +261,7 @@ Amazon EC2 インスタンスの過小プロビジョニングは通常、シス
 }
 ```
 
-[3] CloudWatch エージェントをインストールし、デフォルトのメトリクスまたは Amazon Systems Manager パラメータストアのパラメータを使用して CloudWatch エージェントを設定するために使用できるカスタムランブックドキュメントの例
+[3] デフォルトのメトリクスまたは Amazon Systems Manager パラメータストアのパラメータを使用して、CloudWatch エージェントをインストールおよび設定するために使用できるカスタムランブックドキュメントの例
 
 ```
 
@@ -271,7 +281,7 @@ Type: AWS::SSM::Document
 Properties:
     Content:
     schemaVersion: '2.2'
-    description: InstallAndManageCloudWatch コマンドドキュメントは、Amazon CloudWatch エージェントをインストールし、Amazon EC2 インスタンス用のエージェントの設定を管理します。
+    description: InstallAndManageCloudWatch コマンドドキュメントは、Amazon CloudWatch エージェントをインストールし、Amazon EC2 インスタンスのエージェント設定を管理します。
     parameters:
         action:
         description: CloudWatch エージェントが実行すべきアクション。
@@ -293,7 +303,7 @@ Properties:
         - onPremise
         - auto
         optionalConfigurationSource:
-        description: 'configure' 関連のアクションにのみ使用します。'ssm' を使用して SSM パラメータを設定として適用します。'default' を使用して amazon-cloudwatch-agent のデフォルト設定を適用します。'configure (remove)' と共に 'all' を使用して、amazon-cloudwatch-agent のすべての設定をクリーンアップします。
+        description: 'configure' 関連のアクションのみに使用します。'ssm' を使用して ssm パラメータを設定として適用します。'default' を使用して amazon-cloudwatch-agent のデフォルト設定を適用します。'configure (remove)' と共に 'all' を使用して、amazon-cloudwatch-agent のすべての設定をクリーンアップします。
         type: String
         allowedValues:
         - ssm
@@ -301,12 +311,12 @@ Properties:
         - all
         default: ssm
         optionalConfigurationLocation:
-        description: 'configure' 関連のアクションにのみ使用します。オプションの設定ソースが 'ssm' に設定されている場合にのみ必要です。値は SSM パラメータ名である必要があります。
+        description: 'configure' 関連のアクションのみに使用します。オプション設定ソースが 'ssm' に設定されている場合のみ必要です。値は ssm パラメータ名である必要があります。
         type: String
         default: ''
         allowedPattern: '[a-zA-Z0-9-"~:_@./^(*)!<>?=+]*$'
         optionalRestart:
-        description: 'configure' 関連のアクションにのみ使用します。'yes' の場合、新しい設定を使用するためにエージェントを再起動します。それ以外の場合、新しい設定は次回のエージェント再起動時にのみ適用されます。
+        description: 'configure' 関連のアクションのみに使用します。'yes' の場合、新しい設定を使用するためにエージェントを再起動します。それ以外の場合、新しい設定は次回のエージェント再起動時にのみ適用されます。
         type: String
         default: 'yes'
         allowedValues:

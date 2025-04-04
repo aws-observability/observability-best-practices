@@ -1,21 +1,20 @@
 # CloudWatch Logs Insights のクエリ例
 
-[CloudWatch Logs Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) は、CloudWatch ログデータを分析およびクエリするための強力なプラットフォームを提供します。
-SQL に似たクエリ言語を使用して、いくつかのシンプルで強力なコマンドでログデータをインタラクティブに検索できます。
+[CloudWatch Logs Insights](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) は、CloudWatch のログデータを分析およびクエリするための強力なプラットフォームを提供します。
+シンプルながら強力なコマンドを備えた SQL ライクなクエリ言語を使用して、ログデータをインタラクティブに検索できます。
 
-CloudWatch Logs Insights は、以下のカテゴリに対して、すぐに使えるクエリ例を提供しています：
+CloudWatch Logs Insights は、以下のカテゴリに対してすぐに使えるクエリ例を提供しています：
 
 - Lambda
 - VPC Flow Logs
 - CloudTrail
-- 共通クエリ
+- Common Queries
 - Route 53
 - AWS AppSync
 - NAT Gateway
 
-このベストプラクティスガイドのセクションでは、現在すぐに使える例に含まれていない他のタイプのログに対するクエリ例を提供します。
-このリストは時間とともに進化し変化していきます。
-また、GitHub の [issue](https://github.com/aws-observability/observability-best-practices/issues) を作成することで、独自の例を審査のために提出することができます。
+このベストプラクティスガイドのセクションでは、現在すぐに使えるクエリ例に含まれていない他のタイプのログに対するクエリ例を提供します。
+このリストは時間とともに進化し変更されていきます。また、GitHub の [issue](https://github.com/aws-observability/observability-best-practices/issues) を作成することで、独自の例を提出して確認を依頼することができます。
 
 
 
@@ -24,7 +23,7 @@ CloudWatch Logs Insights は、以下のカテゴリに対して、すぐに使�
 
 
 
-### HTTP メソッドタイプを含む最新の 20 件のメッセージ
+### HTTP メソッドタイプを含む最新 20 件のメッセージ
 
 ```
 filter @message like /$METHOD/ 
@@ -33,7 +32,9 @@ filter @message like /$METHOD/
 | limit 20
 ```
 
-このクエリは、特定の HTTP メソッドを含む最新の 20 件のログメッセージを、タイムスタンプの降順でソートして返します。**METHOD** を、クエリ対象のメソッドに置き換えてください。以下は、このクエリの使用例です：
+このクエリは、特定の HTTP メソッドを含む最新 20 件のログメッセージを、タイムスタンプの降順で返します。
+クエリ対象のメソッドに応じて **METHOD** を置き換えてください。
+以下がこのクエリの使用例です：
 
 ```
 filter @message like /POST/ 
@@ -43,12 +44,12 @@ filter @message like /POST/
 ```
 
 :::tip
-    $limit の値を変更することで、異なる数のメッセージを返すことができます。
+    返すメッセージ数を変更するには、$limit の値を変更することができます。
 :::
 
 
 
-### IP でソートされた上位 20 のトーカー
+### IP でソートされた上位 20 のアクセス元
 
 ```
 fields @timestamp, @message
@@ -57,9 +58,11 @@ fields @timestamp, @message
 | limit 20
 ```
 
-このクエリは、IP でソートされた上位 20 のトーカーを返します。これは、API に対する悪意のあるアクティビティを検出するのに役立ちます。
+このクエリは、IP でソートされた上位 20 のアクセス元を返します。
+これは API に対する不正なアクティビティを検出するのに役立ちます。
 
-次のステップとして、メソッドタイプの追加フィルターを加えることができます。例えば、このクエリは IP による上位のトーカーを表示しますが、「PUT」メソッド呼び出しのみを対象としています：
+次のステップとして、メソッドタイプのフィルターを追加することができます。
+たとえば、次のクエリは IP ごとの上位アクセス元を表示しますが、「PUT」メソッドの呼び出しのみに限定されます：
 
 ```
 fields @timestamp, @message
@@ -84,10 +87,10 @@ stats count(errorCode) as eventCount by eventSource, eventName, awsRegion, userA
 | sort eventCount desc
 ```
 
-このクエリを使用すると、カテゴリ別にグループ化された API スロットリングエラーを降順で表示できます。
+このクエリを使用すると、カテゴリ別にグループ化された API スロットリングエラーを降順で確認できます。
 
 :::tip
-    このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信する](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) ように設定する必要があります。
+このクエリを使用するには、まず [CloudTrail ログを CloudWatch に送信する](https://docs.aws.amazon.com/ja_jp/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) 設定が必要です。
 :::
 
 
@@ -100,7 +103,8 @@ fields @timestamp, @message, userIdentity.type
 | stats count() as RootActivity by bin(5m)
 ```
 
-このクエリを使用すると、ルートアカウントのアクティビティを折れ線グラフで可視化できます。このクエリは、時間経過に伴うルートアクティビティを集計し、5 分間隔ごとのルートアクティビティの発生回数をカウントします。
+このクエリを使用すると、ルートアカウントのアクティビティを折れ線グラフで可視化できます。
+このクエリは、5 分間隔でルートアクティビティの発生回数をカウントし、時系列で集計します。
 
 :::tip
      [ログデータをグラフで可視化する](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/CWL_Insights-Visualizing-Log-Data.html)
@@ -108,12 +112,12 @@ fields @timestamp, @message, userIdentity.type
 
 
 
-## VPC フローログ
+## VPC Flow Logs
 
 
 
 
-### 選択したソース IP アドレスのフローログをアクションが REJECT のものでフィルタリングする
+### 選択したソース IP アドレスのアクションが REJECT のフローログをフィルタリング
 
 ```
 fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP' and action = 'REJECT'
@@ -121,10 +125,11 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '$SOURCEIP'
 | limit 20
 ```
 
-このクエリは、$SOURCEIP からの 'REJECT' を含む最新の 20 件のログメッセージを返します。これは、トラフィックが明示的に拒否されているか、クライアント側のネットワーク設定に問題があるかを検出するのに使用できます。
+このクエリは、$SOURCEIP からの「REJECT」を含む最新 20 件のログメッセージを返します。
+これは、トラフィックが明示的に拒否されているか、クライアント側のネットワーク設定に問題があるかを検出するために使用できます。
 
 :::tip
-    '$SOURCEIP' の部分を、調査対象の IP アドレスの値に置き換えてください。
+    '$SOURCEIP' を確認したい IP アドレスの値に置き換えてください
 :::
 
 ```
@@ -135,16 +140,16 @@ fields @timestamp, @message, @logStream, @log  | filter srcAddr like '10.0.0.5' 
 
 
 
-### アベイラビリティーゾーン別のネットワークトラフィックのグループ化
+### アベイラビリティーゾーンによるネットワークトラフィックのグループ化
 
 ```
 stats sum(bytes / 1048576) as Traffic_MB by azId as AZ_ID 
 | sort Traffic_MB desc
 ```
 
-このクエリは、アベイラビリティーゾーン (AZ) ごとにグループ化されたネットワークトラフィックデータを取得します。
-バイト数を合計し、メガバイト (MB) に変換することで、総トラフィック量を MB 単位で計算します。
-結果は、各 AZ のトラフィック量に基づいて降順にソートされます。
+このクエリは、アベイラビリティーゾーン (AZ) でグループ化されたネットワークトラフィックデータを取得します。
+バイトを合計して MB に変換することで、合計トラフィック量をメガバイト (MB) 単位で計算します。
+結果は、各 AZ のトラフィック量に基づいて降順でソートされます。
 
 
 
@@ -159,7 +164,8 @@ stats sum(bytes / 1048576) as Traffic_MB by flowDirection as Flow_Direction
 
 
 
-### 送信元と宛先 IP アドレス別の上位 10 件のデータ転送
+
+### 送信元と宛先 IP アドレスによるデータ転送量のトップ 10
 
 ```
 stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAddr as Destination_IP 
@@ -167,8 +173,8 @@ stats sum(bytes / 1048576) as Data_Transferred_MB by srcAddr as Source_IP, dstAd
 | limit 10
 ```
 
-このクエリは、送信元と宛先 IP アドレス別の上位 10 件のデータ転送を取得します。
-このクエリを使用することで、特定の送信元と宛先 IP アドレス間で最も重要なデータ転送を特定することができます。
+このクエリは、送信元と宛先 IP アドレスによるデータ転送量のトップ 10 を取得します。
+このクエリを使用することで、特定の送信元と宛先 IP アドレス間で発生した最も大きなデータ転送を特定できます。
 
 
 
@@ -185,7 +191,8 @@ filter status = "FAILURE"
 | sort delivery.providerResponse desc
 ```
 
-上記のクエリは、理由別に並べられた配信失敗の数を降順で表示します。このクエリは、配信失敗の理由を見つけるために使用できます。
+上記のクエリは、配信失敗の理由別にカウントを降順で表示します。
+このクエリは、配信失敗の理由を特定するために使用できます。
 
 
 
@@ -198,8 +205,8 @@ fields notification.messageId as MessageId, delivery.destination as PhoneNumber
 | limit 100
 ```
 
-このクエリは、無効な電話番号が原因で配信に失敗したメッセージを返します。
-これは、修正が必要な電話番号を特定するために使用できます。
+このクエリは、無効な電話番号により配信に失敗したメッセージを返します。これは、修正が必要な電話番号を特定するために使用できます。
+
 
 
 
@@ -211,11 +218,14 @@ fields delivery.smsType
 | stats count(notification.messageId), avg(delivery.dwellTimeMs), sum(delivery.priceInUSD) by delivery.smsType
 ```
 
-このクエリは、各 SMS タイプ（トランザクショナルまたはプロモーション）の件数、平均滞留時間、および支出を返します。このクエリは、是正措置を開始するためのしきい値を設定するのに使用できます。特定の SMS タイプのみに是正措置が必要な場合は、クエリを変更して特定の SMS タイプのみをフィルタリングすることができます。
+このクエリは、各 SMS タイプ（トランザクショナルまたはプロモーショナル）の件数、平均滞留時間、および支出を返します。
+このクエリは、是正措置を実行するためのしきい値を設定するために使用できます。
+特定の SMS タイプのみに是正措置が必要な場合は、そのタイプのみをフィルタリングするようにクエリを変更できます。
 
 
 
-### SNS 失敗通知の統計
+
+### SNS 配信失敗通知の統計
 
 ```
 fields @MessageID 
@@ -225,4 +235,4 @@ fields @MessageID
 ```
 
 このクエリは、失敗したメッセージごとの配信失敗回数、平均滞留時間、最大滞留時間を返します。
-このクエリは、是正措置を開始するためのしきい値を設定するのに使用できます。
+このクエリは、是正措置を実行するためのしきい値を設定する際に使用できます。

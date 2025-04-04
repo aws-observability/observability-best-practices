@@ -1,11 +1,11 @@
-# CloudWatch メトリクスストリームを Firehose と AWS Lambda を介して Amazon Managed Service for Prometheus にエクスポートする
+# CloudWatch メトリクスストリームを Firehose と AWS Lambda を使用して Amazon Managed Service for Prometheus にエクスポートする
 
-このレシピでは、[CloudWatch メトリクスストリーム](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) を設定し、[Kinesis Data Firehose](https://aws.amazon.com/jp/kinesis/data-firehose/) と [AWS Lambda](https://aws.amazon.com/jp/lambda) を使用して [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/jp/prometheus/) にメトリクスを取り込む方法を紹介します。
+このレシピでは、[CloudWatch メトリクスストリーム](https://console.aws.amazon.com/cloudwatch/home#metric-streams:streamsList) を設定し、[Kinesis Data Firehose](https://aws.amazon.com/jp/kinesis/data-firehose/) と [AWS Lambda](https://aws.amazon.com/jp/lambda) を使用して [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/jp/prometheus/) にメトリクスを取り込む方法を説明します。
 
-完全なシナリオを示すために、[AWS Cloud Development Kit (CDK)](https://aws.amazon.com/jp/cdk/) を使用してスタックをセットアップし、Firehose 配信ストリーム、Lambda、S3 バケットを作成します。
+完全なシナリオを実演するために、[AWS Cloud Development Kit (CDK)](https://aws.amazon.com/jp/cdk/) を使用して、Firehose 配信ストリーム、Lambda、S3 バケットを作成するスタックをセットアップします。
 
 :::note
-    このガイドは約 30 分で完了します。
+    このガイドは完了までに約 30 分かかります。
 :::
 
 
@@ -22,26 +22,26 @@ CloudWatch Metric Streams を使用すると、ストリーミングメトリク
 * AWS CLI が環境に[インストール](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-install.html)され、[設定](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/cli-chap-configure.html)されていること。
 * [AWS CDK Typescript](https://docs.aws.amazon.com/ja_jp/cdk/latest/guide/work-with-cdk-typescript.html) が環境にインストールされていること。
 * Node.js と Go がインストールされていること。
-* [リポジトリ](https://github.com/aws-observability/observability-best-practices/) がローカルマシンにクローンされていること。このプロジェクトのコードは `/sandbox/CWMetricStreamExporter` にあります。
+* [リポジトリ](https://github.com/aws-observability/observability-best-practices/)がローカルマシンにクローンされていること。このプロジェクトのコードは `/sandbox/CWMetricStreamExporter` にあります。
 
 
 
 ### AMP ワークスペースの作成
 
 このレシピのデモアプリケーションは AMP 上で実行されます。
-以下のコマンドを使用して AMP ワークスペースを作成してください：
+以下のコマンドで AMP ワークスペースを作成します：
 
 ```
 aws amp create-workspace --alias prometheus-demo-recipe
 ```
 
-以下のコマンドを使用して、ワークスペースが作成されたことを確認してください：
+以下のコマンドでワークスペースが作成されたことを確認します：
 ```
 aws amp list-workspaces
 ```
 
 :::info
-    詳細については、[AMP 入門ガイド](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html)をご覧ください。
+    詳細については、[AMP 入門](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-getting-started.html) ガイドをご確認ください。
 :::
 
 
@@ -54,7 +54,7 @@ aws-o11y-recipes リポジトリのルートから、以下のコマンドを使
 cd sandbox/CWMetricStreamExporter
 ```
 
-これ以降、このディレクトリをリポジトリのルートとして扱います。
+以降、これをリポジトリのルートとして扱います。
 
 以下のコマンドを使用して `/cdk` ディレクトリに移動します：
 
@@ -62,7 +62,7 @@ cd sandbox/CWMetricStreamExporter
 cd cdk
 ```
 
-次のコマンドを使用して CDK の依存関係をインストールします：
+以下のコマンドを使用して CDK の依存関係をインストールします：
 
 ```
 npm install
@@ -74,20 +74,19 @@ npm install
 cd lambda
 ```
 
-`/lambda` フォルダに移動したら、以下のコマンドを使用して Go の依存関係をインストールします：
+`/lambda` フォルダで、以下のコマンドを使用して Go の依存関係をインストールします：
 
 ```
 go get
 ```
 
-これで全ての依存関係がインストールされました。
+これですべての依存関係がインストールされました。
 
 
 
 ### 設定ファイルの変更
 
-リポジトリのルートにある `config.yaml` を開き、AMP ワークスペース URL を変更します。
-`{workspace}` を新しく作成したワークスペース ID に置き換え、AMP ワークスペースが存在するリージョンを指定します。
+リポジトリのルートにある `config.yaml` を開き、新しく作成したワークスペース ID と AMP ワークスペースが存在するリージョンを使用して、AMP ワークスペース URL の `{workspace}` を置き換えます。
 
 例えば、以下のように変更します：
 
@@ -97,13 +96,13 @@ AMP:
     region: us-east-2
 ```
 
-Firehose 配信ストリームと S3 バケットの名前を好みに応じて変更してください。
+Firehose Delivery Stream と S3 バケットの名前を任意のものに変更してください。
 
 
 
 ### スタックのデプロイ
 
-`config.yaml` を AMP ワークスペース ID で修正したら、スタックを CloudFormation にデプロイする時です。
+`config.yaml` に AMP ワークスペース ID を設定したら、CloudFormation にスタックをデプロイする準備が整いました。
 CDK と Lambda コードをビルドするには、リポジトリのルートで次のコマンドを実行します：
 
 ```
@@ -114,7 +113,7 @@ npm run build
 
 スタックをデプロイするには、以下の IAM の変更を承認してください：
 
-![CDK をデプロイする際の IAM 変更のスクリーンショット](../images/cdk-amp-iam-changes.png)
+![Screen shot of the IAM Changes when deploying the CDK](../images/cdk-amp-iam-changes.png)
 
 次のコマンドを実行して、スタックが作成されたことを確認します：
 
@@ -129,42 +128,41 @@ aws cloudformation list-stacks
 ## CloudWatch ストリームの作成
 
 CloudWatch コンソールに移動します。例えば、
-`https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList`
-にアクセスし、「メトリクスストリームの作成」をクリックします。
+`https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metric-streams:streamsList` 
+にアクセスし、「Create metric stream」をクリックします。
 
-必要なメトリクスを選択します。すべてのメトリクスか、選択した名前空間からのみかを選びます。
+必要なメトリクスを選択します。すべてのメトリクスか、選択した名前空間のメトリクスのみを選択できます。
 
-CDK によって作成された既存の Firehose を使用してメトリクスストリームを設定します。
-出力形式を OpenTelemetry 0.7 ではなく JSON に変更します。
-メトリクスストリーム名を好みに合わせて変更し、「メトリクスストリームの作成」をクリックします。
+CDK によって作成された既存の Firehose を使用して、メトリクスストリームを設定します。
+出力形式を OpenTelemetry 0.7 から JSON に変更します。
+メトリクスストリーム名を任意のものに変更し、「Create metric stream」をクリックします。
 
-![CloudWatch メトリクスストリーム設定のスクリーンショット](../images/cloudwatch-metric-stream-configuration.png)
+![Screen shot of the Cloudwatch Metric Stream Configuration](../images/cloudwatch-metric-stream-configuration.png)
 
-Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、
-`KinesisMessageHandler` 関数をクリックします。「モニタリング」タブと「ログ」サブタブをクリックし、「最近の呼び出し」の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
+Lambda 関数の呼び出しを確認するには、[Lambda コンソール](https://console.aws.amazon.com/lambda/home)に移動し、`KinesisMessageHandler` 関数をクリックします。
+`Monitor` タブと `Logs` サブタブをクリックすると、「Recent Invocations」の下に Lambda 関数がトリガーされたエントリが表示されるはずです。
 
 :::note
-    モニタリングタブに呼び出しが表示されるまで、最大 5 分かかる場合があります。
+    Monitor タブに呼び出しが表示されるまで、最大 5 分かかる場合があります。
 :::
-
-以上です！おめでとうございます。これで、メトリクスが CloudWatch から Amazon Managed Service for Prometheus にストリーミングされるようになりました。
+以上です！おめでとうございます。これで CloudWatch から Amazon Managed Service for Prometheus へメトリクスのストリーミングが開始されました。
 
 
 
 ## クリーンアップ
 
-まず、CloudFormation スタックを削除します：
+まず、CloudFormation スタックを削除します。
 
 ```
 cd cdk
 cdk destroy
 ```
 
-AMP ワークスペースを削除します：
+AMP ワークスペースを削除します。
 
 ```
 aws amp delete-workspace --workspace-id \
     `aws amp list-workspaces --alias prometheus-sample-app --query 'workspaces[0].workspaceId' --output text`
 ```
 
-最後に、コンソールから CloudWatch メトリクスストリームを削除します。
+最後に、コンソールから CloudWatch Metric Stream を削除します。

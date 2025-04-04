@@ -5,7 +5,10 @@
 
 ## はじめに
 
-Rust は、安全性、パフォーマンス、並行性に焦点を当てたシステムプログラミング言語で、ソフトウェア開発の世界で人気を集めています。メモリ管理とスレッドの安全性に対するユニークなアプローチにより、堅牢で効率的なアプリケーションを構築するための魅力的な選択肢となっています。特にクラウド環境での利用に適しています。サーバーレスアーキテクチャの台頭と、高性能でスケーラブルなサービスの需要の増加に伴い、Rust の機能はクラウドネイティブアプリケーションの構築に最適な選択肢となっています。このガイドでは、AWS Rust SDK を活用してカスタム CloudWatch メトリクスを作成する方法を探ります。これにより、AWS エコシステム内でのアプリケーションのパフォーマンスと動作についてより深い洞察を得ることができます。
+Rust は、安全性、パフォーマンス、並行処理に重点を置いたシステムプログラミング言語で、ソフトウェア開発の世界で人気を集めています。
+メモリ管理とスレッドの安全性に対するユニークなアプローチにより、堅牢で効率的なアプリケーションの構築に適しており、特にクラウドでの利用に適しています。
+サーバーレスアーキテクチャの台頭と、高性能でスケーラブルなサービスへのニーズの高まりにより、Rust の機能はクラウドネイティブアプリケーションの構築に最適な選択肢となっています。
+このガイドでは、AWS Rust SDK を活用してカスタム CloudWatch メトリクスを作成し、AWS エコシステム内でアプリケーションのパフォーマンスと動作についてより深い洞察を得る方法を探ります。
 
 
 
@@ -24,19 +27,20 @@ Mac または Linux の場合:
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-Windows の場合、[rustup-init.exe](https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe) をダウンロードして実行してください。
+Windows の場合は、[rustup-init.exe](https://static.rust-lang.org/rustup/dist/i686-pc-windows-gnu/rustup-init.exe) をダウンロードして実行してください。
+
 
 
 
 ### CloudWatch ロググループとログストリームの作成
 
-1. CloudWatch ロググループを作成します：
+1. CloudWatch ロググループを作成します:
 
 ```
 aws logs create-log-group --log-group-name rust_custom
 ```
 
-2. CloudWatch ログストリームを作成します：
+2. CloudWatch ログストリームを作成します:
 
 ```
 aws logs create-log-stream --log-group-name rust_custom --log-stream-name diceroll_log_stream
@@ -46,20 +50,21 @@ aws logs create-log-stream --log-group-name rust_custom --log-stream-name dicero
 
 ## コード
 
-完全なコードは、このリポジトリの sandbox セクションで見つけることができます。
+完全なコードは、このリポジトリの sandbox セクションにあります。
 
 ```
 git clone https://github.com/aws-observability/observability-best-practices.git
 cd observability-best-practices/sandbox/rust-custom-metrics
 ```
 
-このコードはまず、サイコロを振るシミュレーションを行います。このサイコロの目の値をカスタムメトリクスとして扱うことにします。その後、このメトリクスを CloudWatch に追加し、ダッシュボードで表示する 3 つの異なる方法を示します。
+このコードではまず、サイコロを振るシミュレーションを行います。このサイコロの値をカスタムメトリクスとして扱います。
+そして、このメトリクスを CloudWatch に追加し、ダッシュボードで表示する 3 つの異なる方法を紹介します。
 
 
 
 ### アプリケーションのセットアップ
 
-まず、アプリケーションで使用するいくつかのクレートをインポートする必要があります。
+まず、アプリケーションで使用するクレートをインポートする必要があります。
 
 ```rust
 use crate::cloudwatch::types::Dimension;
@@ -74,39 +79,42 @@ use serde_json::json;
 use std::time::{SystemTime, UNIX_EPOCH};
 ```
 
-このインポートブロックでは、主に使用する AWS SDK ライブラリをインポートしています。また、ランダムなサイコロの値を作成するために 'rand' クレートも導入しています。最後に、SDK 呼び出しに使用するデータ作成を処理するために、'serde' や 'time' などのいくつかのライブラリがあります。
+このインポートブロックでは、主に使用する AWS SDK ライブラリをインポートしています。
+また、ランダムなサイコロの値を生成するために 'rand' クレートも導入しています。
+最後に、SDK 呼び出しで使用するデータ作成を処理するために、'serde' や 'time' などのライブラリも導入しています。
 
-次に、main 関数でサイコロの値を作成できます。この値は、3 つの AWS SDK 呼び出しすべてで使用されます。
+次に、main 関数でサイコロの値を作成できます。この値は、実行する 3 つの AWS SDK 呼び出しすべてで使用されます。
 
 ```rust
-//1から6のランダムな数字を選択してサイコロの目を表す
+//select a random number 1-6 to represent a diceroll
 let mut rng = rand::thread_rng();
 let roll_value = rng.gen_range(1..7);
 ```
 
-サイコロの数値が得られたので、この値を CloudWatch にカスタムメトリクスとして追加する 3 つの異なる方法を探ってみましょう。値がカスタムメトリクスになると、その値にアラームを設定したり、異常検出を設定したり、ダッシュボードにプロットしたりするなど、さまざまなことができるようになります。
+サイコロの数値が得られたので、この値を CloudWatch にカスタムメトリクスとして追加する 3 つの異なる方法を見ていきましょう。
+値がカスタムメトリクスになると、その値にアラームを設定したり、異常検出を設定したり、ダッシュボードにプロットしたりなど、さまざまなことができるようになります。
 
 
 
-### メトリクスデータの送信
+### Put Metric Data
 
-CloudWatch に値を追加する最初の方法は PutMetricData です。PutMetricData を使用すると、メトリクスの時系列の値を直接 CloudWatch に書き込みます。これは値を追加する最も効率的な方法です。PutMetricData を使用する際は、名前空間とメトリクス値に加えて、各 AWS SDK 呼び出しにディメンションを提供する必要があります。以下がコードです：
+最初に使用するメトリクスを CloudWatch に追加する方法は PutMetricData です。PutMetricData を使用すると、メトリクスの時系列の値を CloudWatch に直接書き込むことができます。これが値を追加する最も効率的な方法です。PutMetricData を使用する場合、メトリクス値と共に名前空間とディメンションを各 AWS SDK 呼び出しに提供する必要があります。以下がそのコードです：
 
 まず、メトリクス（サイコロの値）を受け取り、Result 型を返す関数を設定します。Rust では Result 型は成功または失敗を示します。関数内で最初に行うのは、AWS Rust SDK クライアントの初期化です。クライアントはローカル環境から認証情報とリージョンを継承します。このコードを実行する前に、コマンドラインから `aws configure` を実行して、これらが設定されていることを確認してください。
 
 ```rust
 async fn put_metric_data(roll_value: i32) -> Result<(), cloudwatch::Error> {
-    //クライアントに渡せる再利用可能な aws 設定を作成
+    //Create a reusable aws config that we can pass to our clients
     let config = aws_config::load_defaults(BehaviorVersion::v2023_11_09()).await;
 
-    //CloudWatch クライアントを作成
+    //Create a cloudwatch client
     let client = cloudwatch::Client::new(&config);
 ```
 
-クライアントの初期化後、PutMetricData API 呼び出しに必要な入力の設定を開始できます。ディメンションを定義し、次にディメンションと値の組み合わせである MetricDatum 自体を定義する必要があります。
+クライアントの初期化後、PutMetricData API 呼び出しに必要な入力の設定を開始できます。ディメンションを定義し、その後、ディメンションと値の組み合わせである MetricDatum 自体を定義する必要があります。
 
 ```rust
-//流暢なビルダーを使用して pmd 呼び出しに必要な入力を構築、ディメンションから始めます。
+//Use fluent builders to build the required input for pmd call, starting with dimensions.
 let dimensions = Dimension::builder()
     .name("roll_value_pmd_dimension")
     .value(roll_value.to_string())
@@ -119,7 +127,7 @@ let put_metric_data_input = MetricDatum::builder()
     .build();
 ```
 
-最後に、先ほど定義した入力を使用して PutMetricData API 呼び出しを行います。
+最後に、先ほど定義した入力を使用して PutMetricData API を呼び出すことができます。
 
 ```rust
 let response = client
@@ -128,35 +136,32 @@ let response = client
     .metric_data(put_metric_data_input)
     .send()
     .await?;
-println!("メトリクスが送信されました: {:?}", response);
+println!("Metric Submitted: {:?}", response);
 Ok(())
 ```
 
-SDK 呼び出しが非同期関数内にあることに注意してください。関数が非同期で完了するため、その完了を `await` する必要があります。そして、関数の最上位で定義された Result 型を返します。
+SDK の呼び出しが非同期関数内にあることに注意してください。関数は非同期で完了するため、完了を `await` する必要があります。その後、関数の最上位で定義された Result 型を返します。
 
 main から関数を呼び出す時は、以下のようになります：
 
 ```rust
-//put_metric_data 関数をロール値で呼び出す
-println!("まず、PutMetricData API 呼び出しでカスタムメトリクスを書き込みます");
+//call the put_metric_data function with the roll value
+println!("First we will write a custom metric with PutMetricData API call");
 put_metric_data(roll_value).await.unwrap();
 ```
 
-ここでも関数呼び出しの完了を待ち、値を `unwrap` しています。この場合、エラーではなく 'Ok' の結果にのみ興味があるためです。本番シナリオでは、おそらく異なる方法でエラー処理を行うでしょう。
+ここでも関数呼び出しの完了を待ち、値を `unwrap` します。この場合、エラーではなく 'Ok' の結果にのみ興味があるためです。本番環境のシナリオでは、おそらく異なる方法でエラー処理を行うことになるでしょう。
 
 
 
 ### PutLogEvent + メトリクスフィルター
 
-カスタムメトリクスを作成する次の方法は、単純に CloudWatch ロググループに書き込むことです。メトリクスが CloudWatch ロググループに入ったら、[メトリクスフィルター](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html) を使用してログデータからメトリクスデータを抽出できます。
+カスタムメトリクスを作成する次の方法は、CloudWatch ロググループに直接書き込むことです。メトリクスが CloudWatch ロググループに書き込まれたら、[メトリクスフィルター](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/logs/MonitoringPolicyExamples.html) を使用してログデータからメトリクスデータを抽出できます。
 
-まず、ログメッセージ用の構造体を定義します。これはオプションで、手動で JSON を構築することもできます。しかし、より複雑なアプリケーションでは、再利用性のためにこのようなログ構造体が必要になる可能性が高いでしょう。
+まず、ログメッセージ用の構造体を定義します。これは任意の手順で、手動で JSON を構築することもできます。しかし、より複雑なアプリケーションでは、再利用性のためにこのようなログ構造体が必要になるでしょう。
 
 ```rust
-// ログメッセージ用の単純な構造体を作成します。手動で JSON 文字列を作成することもできます。
-
-
-
+//ログメッセージ用のシンプルな構造体を作成します。手動で JSON 文字列を作成することもできます。
 #[derive(Serialize)]
 struct DicerollValue {
     welcome_message: String,
@@ -164,16 +169,16 @@ struct DicerollValue {
 }
 ```
 
-構造体を定義したら、AWS API 呼び出しの準備が整います。今回も API クライアントを作成しますが、今回は logs SDK を使用します。また、Unix エポックタイミングを使用してシステム時間を定義します。
+構造体を定義したら、AWS API の呼び出しを行う準備が整います。今回も API クライアントを作成しますが、今回は logs SDK を使用します。また、Unix エポックタイミングを使用してシステム時刻を定義します。
 
 ```rust
-// 再利用可能な AWS 設定を作成し、クライアントに渡します
+//Create a reusable aws config that we can pass to our clients
 let config = aws_config::load_defaults(BehaviorVersion::v2023_11_09()).await;
 
-// CloudWatch Logs クライアントを作成します
+//Create a cloudwatch logs client
 let client = cloudwatchlogs::Client::new(&config);
 
-// Unix エポックからの時間をミリ秒単位で取得します。これは CloudWatch Logs に必要です
+//Let's get the time in ms from unix epoch, this is required for CWlogs
 let time_now = SystemTime::now()
     .duration_since(UNIX_EPOCH)
     .unwrap()
@@ -209,23 +214,23 @@ println!("Log event submitted: {:?}", response);
 Ok(())
 ```
 
-ログイベントが送信されたら、CloudWatch に移動し、ロググループのメトリクスフィルターを作成してメトリクスを適切に抽出する必要があります。
+ログイベントが送信されたら、CloudWatch に移動し、メトリクスを適切に抽出するためにロググループのメトリクスフィルターを作成する必要があります。
 
-CloudWatch コンソールで、作成した rust_custom ロググループに移動します。次に、メトリクスフィルターを作成します。フィルターパターンは `{$.roll_value = *}` とします。次に、メトリクス値には `$.roll_value` を使用します。名前空間とメトリクス名は任意のものを使用できます。このメトリクスフィルターは次のように説明できます：
+CloudWatch コンソールで、作成した rust_custom ロググループに移動します。次に、メトリクスフィルターを作成します。フィルターパターンは `{$.roll_value = *}` とします。次に、メトリクス値として `$.roll_value` を使用します。任意の名前空間とメトリクス名を使用できます。このメトリクスフィルターは次のように説明できます：
 
-「'roll_value' というフィールドを受け取るたびに、値に関係なくフィルターをトリガーします。トリガーされたら、'roll_value' を CloudWatch Metrics に書き込む数値として使用します。」
+「値に関係なく、'roll_value' というフィールドを受け取るたびにフィルターをトリガーします。トリガーされると、'roll_value' を CloudWatch メトリクスに書き込む数値として使用します」。
 
-この方法でメトリクスを作成することは、ログ形式を制御できない場合にログデータから時系列の値を抽出するのに非常に強力です。私たちは直接コードを計装しているため、ログデータの形式を制御できます。したがって、より良い方法は CloudWatch 組み込みメトリクス形式を使用することかもしれません。これについては次のステップで説明します。
+このメトリクス作成方法は、ログフォーマットを制御できない場合に、ログデータから時系列の値を抽出するのに非常に強力です。私たちはコードを直接計装しているため、ログデータのフォーマットを制御できます。したがって、次のステップで説明する CloudWatch 組み込みメトリクスフォーマットを使用する方が良い方法かもしれません。
 
 
 
 ### PutLogEvent + Embedded Metric Format
 
-CloudWatch の [Embedded Metric Format](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)（EMF）は、時系列メトリクスをログに直接埋め込む方法です。
-CloudWatch は、メトリクスフィルターを使用せずにメトリクスを抽出します。
+CloudWatch [Embedded Metric Format](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html)(EMF) は、時系列メトリクスをログに直接埋め込む方法です。
+CloudWatch は、メトリクスフィルターを使用せずにメトリクスを抽出できます。
 コードを見てみましょう。
 
-まず、ログクライアントを再度作成し、Unix エポックでのシステム時間を取得します。
+ログクライアントを再度作成し、Unix エポックでシステム時刻を取得します。
 
 ```rust
 //Create a reusable aws config that we can pass to our clients
@@ -241,8 +246,8 @@ let time_now = SystemTime::now()
     .as_millis() as i64;
 ```
 
-次に、EMF の JSON 文字列を作成します。
-これには、CloudWatch がカスタムメトリクスを作成するために必要なすべてのデータが含まれている必要があるため、名前空間、ディメンション、値を文字列に埋め込みます。
+次に、EMF の JSON 文字列を作成できます。
+CloudWatch がカスタムメトリクスを作成するために必要なすべてのデータを含める必要があるため、名前空間、ディメンション、値を文字列に埋め込みます。
 
 ```rust
 //Create a json string in embedded metric format with our diceroll value.
@@ -268,10 +273,10 @@ let json_emf = json!(
 );
 ```
 
-ここで、ロール値を値として使用するだけでなく、ディメンションとしても作成していることに注目してください。
-これにより、ロール値で GroupBy を実行し、各ロール値が何回出たかを確認できます。
+ロール値を値として使用するだけでなく、ディメンションとしても作成していることに注目してください。
+これにより、ロール値で GroupBy を実行でき、各ロール値が何回出現したかを確認できます。
 
-これで、以前と同じように API 呼び出しを行ってログイベントを書き込むことができます：
+以前と同じように、API を呼び出してログイベントを書き込むことができます：
 
 ```rust
 let log_event = InputLogEvent::builder()
@@ -292,7 +297,7 @@ Ok(())
 ```
 
 ログイベントが CloudWatch に送信されると、メトリクスフィルターを使用せずにメトリクスが抽出されます。
-これは、高カーディナリティのメトリクスを作成する優れた方法で、すべての異なるディメンションを持つ PutMetricData API 呼び出しを行うよりも、これらの値をログメッセージとして書き込む方が簡単な場合があります。
+これは、すべてのディメンションで PutMetricData API を呼び出すよりも、ログメッセージとしてこれらの値を書き込む方が簡単な、高カーディナリティメトリクスを作成する優れた方法です。
 
 
 
@@ -306,45 +311,50 @@ Ok(())
 
 #[::tokio::main]
 async fn main() {
-    println!("Rust SDK を使用してカスタムメトリクスを作成して楽しみましょう");
+    println!("Let's have some fun by creating custom metrics with the Rust SDK");
 
-    //1-6 のランダムな数字を選択してサイコロの出目を表現します
+    //select a random number 1-6 to represent a dicerolll
     let mut rng = rand::thread_rng();
     let roll_value = rng.gen_range(1..7);
 
-    //roll_value を使用して put_metric_data 関数を呼び出します
-    println!("まず、PutMetricData API 呼び出しでカスタムメトリクスを書き込みます");
+    //call the put_metric_data function with the roll value
+    println!("First we will write a custom metric with PutMetricData API call");
     put_metric_data(roll_value).await.unwrap();
 
-    println!("次に、ログイベントを書き込み、そこからカスタムメトリクスを抽出します。");
-    //roll_value を使用して put_log_data 関数を呼び出します
+    println!("Now let's write a log event, which we will then extract a custom metric from.");
+    //call the put_log_data function with the roll value
     put_log_event(roll_value).await.unwrap();
 
-    //roll_value を使用して put_log_emf 関数を呼び出します
-    println!("次に、埋め込みメトリクス形式のログイベントを配置して、カスタムメトリクスを直接送信します。");
+    //call the put_log_emf function with the roll value
+    println!("Now we will put a log event with embedded metric format to directly submit the custom metric.");
     put_log_event_emf(roll_value).await.unwrap();
 }
 ```
 
-テストデータを生成するために、アプリケーションをビルドし、ループで実行して CloudWatch で表示するデータを生成できます。ルートディレクトリから以下を実行します。
+テストデータを生成するために、アプリケーションをビルドし、ループで実行して CloudWatch で表示するデータを生成します。
+ルートディレクトリから以下のコマンドを実行します。
 
 ```
 cargo build
 ```
 
-次に、2 秒のスリープを挟んで 50 回実行します。スリープは、CloudWatch ダッシュボードでメトリクスを見やすくするために、メトリクスの間隔を少し空けるためです。
+次に、2 秒のスリープを入れて 50 回実行します。
+このスリープは、CloudWatch ダッシュボードでメトリクスを見やすくするために、メトリクスの間隔を少し空けるためのものです。
 
 ```
 for run in {1..50}; do ./target/debug/custom-metrics; sleep 2; done
 ```
 
-これで CloudWatch で結果を確認できます。私はディメンションで GroupBy するのが好きです。これにより、各ロール値が選択された回数を確認できます。メトリクスインサイトのクエリは以下のようになるはずです。何か変更した場合は、メトリクス名とディメンション名を適宜変更してください。
+これで CloudWatch で結果を確認できます。
+私はディメンションで GroupBy を行うのが好みです。これにより、各ロール値が選択された回数を確認できます。
+Metric Insights のクエリは以下のようになります。
+メトリクス名とディメンション名は、変更した場合はそれに応じて変更してください。
 
 ```
 SELECT COUNT(roll_value_emf) FROM rust_custom_metrics GROUP BY roll_value_emf_dimension
 ```
 
-これで、3 つすべてをダッシュボードに配置し、予想通り同じグラフが表示されることを確認できます。
+これで 3 つすべてをダッシュボードに配置し、予想通り同じグラフが表示されることを確認できます。
 
 ![dashboard](./dashboard.png)
 

@@ -4,19 +4,20 @@ sidebar_position: 2
 
 
 
-# ドキュメントを作成する
 
-ドキュメントは以下の要素によって接続された **ページのグループ** です：
+# ドキュメントの作成
+
+ドキュメントは以下の要素で接続された **ページのグループ** です：
 
 - **サイドバー**
-- **前/次のナビゲーション**
+- **前へ/次へのナビゲーション**
 - **バージョン管理**
 
 
 
 ## 最初のドキュメントを作成する
 
-`docs/hello.md` に Markdown ファイルを作成します：
+`docs/hello.md` に Markdown ファイルを作成します:
 
 ```md title="docs/hello.md"
 
@@ -24,7 +25,7 @@ sidebar_position: 2
 
 # こんにちは
 
-これは私の **初めての Docusaurus ドキュメント** です！
+これは私の **初めての Docusaurus ドキュメント**です！
 ```
 
 新しいドキュメントが [http://localhost:3000/docs/hello](http://localhost:3000/docs/hello) で利用可能になりました。
@@ -36,7 +37,7 @@ sidebar_position: 2
 
 Docusaurus は `docs` フォルダから自動的に**サイドバーを作成**します。
 
-メタデータを追加して、サイドバーのラベルと位置をカスタマイズします：
+メタデータを追加してサイドバーのラベルと位置をカスタマイズします：
 
 ```md title="docs/hello.md" {1-4}
 ---
@@ -47,12 +48,12 @@ sidebar_position: 3
 
 
 
-# こんにちは
+# Hello
 
 これは私の **初めての Docusaurus ドキュメント**です！
 ```
 
-`sidebars.js` でサイドバーを明示的に作成することも可能です：
+`sidebars.js` で明示的にサイドバーを作成することもできます：
 
 ```js title="sidebars.js"
 export default {

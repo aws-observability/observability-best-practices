@@ -4,6 +4,7 @@ sidebar_position: 2
 
 
 
+
 # サイトを翻訳する
 
 `docs/intro.md` をフランス語に翻訳しましょう。
@@ -13,7 +14,7 @@ sidebar_position: 2
 
 ## i18n の設定
 
-`fr` ロケールのサポートを追加するために `docusaurus.config.js` を変更します：
+`fr` ロケールをサポートするために `docusaurus.config.js` を変更します:
 
 ```js title="docusaurus.config.js"
 export default {
@@ -48,13 +49,14 @@ cp docs/intro.md i18n/fr/docusaurus-plugin-content-docs/current/intro.md
 npm run start -- --locale fr
 ```
 
-ローカライズされたサイトは [http://localhost:3000/fr/](http://localhost:3000/fr/) でアクセス可能で、「はじめに」ページが翻訳されています。
+ローカライズされたサイトは [http://localhost:3000/fr/](http://localhost:3000/fr/) でアクセスでき、「はじめに」のページが翻訳されています。
 
 :::caution
 
-開発環境では、一度に 1 つのロケールしか使用できません。
+開発環境では、一度に 1 つのロケールのみ使用できます。
 
 :::
+
 
 
 
@@ -62,7 +64,7 @@ npm run start -- --locale fr
 
 言語間をシームレスに移動するために、ロケールドロップダウンを追加します。
 
-`docusaurus.config.js` ファイルを以下のように修正してください：
+`docusaurus.config.js` ファイルを以下のように変更します：
 
 ```js title="docusaurus.config.js"
 export default {
@@ -86,15 +88,15 @@ export default {
 
 
 
-## ローカライズされたサイトを構築する
+## ローカライズされたサイトのビルド
 
-特定のロケールでサイトを構築するには：
+特定のロケールでサイトをビルドします：
 
 ```bash
 npm run build -- --locale fr
 ```
 
-または、すべてのロケールを一度に含めてサイトを構築するには：
+または、すべてのロケールを一度にビルドします：
 
 ```bash
 npm run build

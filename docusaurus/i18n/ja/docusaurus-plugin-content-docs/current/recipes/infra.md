@@ -26,14 +26,16 @@
 - [Amazon Relational Database Service][rds]
 - [Amazon DynamoDB][ddb]
 - [Amazon Managed Streaming for Apache Kafka][msk]
-- [Amazon S3 でのログ記録とモニタリング][s3mon]
+- [Amazon S3 のログ記録とモニタリング][s3mon]
 - [Amazon SQS と AWS X-Ray][sqstrace]
+
+
 
 
 
 ## その他
 
-- [Prometheus エクスポーター][prometheus-exporters]
+- [Prometheus exporters][prometheus-exporters]
 
 [alb-docs]: https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/application/load-balancer-monitoring.html
 [nlb-docs]: https://docs.aws.amazon.com/ja_jp/elasticloadbalancing/latest/network/load-balancer-monitoring.html

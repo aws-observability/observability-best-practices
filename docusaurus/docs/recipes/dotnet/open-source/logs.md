@@ -18,7 +18,7 @@ builder.Logging.AddOpenTelemetry(options =>
 });
 ```
 
-One of the most powerful features of OpenTelemetry logs in .NET is automatic context propagation. Log entries are automatically enriched with trace and span IDs when logging occurs within an active trace, creating connections between logs and the related distributed traces"
+One of the most powerful features of OpenTelemetry logs in .NET is automatic context propagation. Log entries are automatically enriched with trace and span IDs when logging occurs within an active trace, creating connections between logs and the related distributed traces
 
 ```c#
 // Logs created within this span will contain its context

@@ -293,7 +293,11 @@ module.exports = {
                   type: 'category',
                   label: 'Open Source',
                   items: [
-                    'recipes/dotnet/open-source/opentelemetry'
+                    'recipes/dotnet/open-source/opentelemetry',
+                    'recipes/dotnet/open-source/metrics',
+                    'recipes/dotnet/open-source/traces',
+                    'recipes/dotnet/open-source/logs'
+
                   ],
                 }
               ],

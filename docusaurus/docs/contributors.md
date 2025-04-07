@@ -2,7 +2,7 @@
 
 The content on this site is maintained by Solution Architects, AWS Observability service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
 
-| Owners             | Owner                     | 
+| Owners             | Owners                     | 
 | ------------------ | --------------------------- |
 | Imaya Kumar Jagannathan       | Siva Guruvareddiar  |    
 

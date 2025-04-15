@@ -1,7 +1,5 @@
 
-# Resources
-
-## Interactive demos
+# Interactive Demos
 
 Check out interactive demos for AWS Monitoring & Observability below or open the [AWS Monitoring & Observability Demos Hub](https://aws-cloudops.storylane.io/hub/oq1jb6vuwlyg) in a new tab.
 

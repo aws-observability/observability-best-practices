@@ -286,7 +286,9 @@ module.exports = {
                   type: 'category',
                   label: 'AWS Native',
                   items: [
-                    'recipes/cw', // Update this
+                    'recipes/dotnet/native/logs',
+                    'recipes/dotnet/native/metrics',
+                    'recipes/dotnet/native/traces'
                   ],
                 },
                 {

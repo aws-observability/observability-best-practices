@@ -108,6 +108,34 @@ module.exports = {
             },
           ],
         },
+
+        {
+          type: 'category',
+          label: '.NET',
+          items: [
+            {
+              type: 'category',
+              label: 'AWS Native',
+              items: [
+                'guides/dotnet/aws-native/logs',
+                'guides/dotnet/aws-native/metrics',
+                'guides/dotnet/aws-native/traces'
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Open Source',
+              items: [
+                'guides/dotnet/oss/logs',
+                'guides/dotnet/oss/metrics',
+                'guides/dotnet/oss/traces',
+                'guides/dotnet/oss/opentelemetry'
+              ],
+            },
+          ],
+        },
+
+
         {
           type: 'category',
           label: 'Serverless best practices',

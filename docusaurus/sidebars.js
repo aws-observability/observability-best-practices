@@ -334,40 +334,6 @@ module.exports = {
         },
         {
           type: 'category',
-          label: 'By Language',
-          items: [
-            'recipes/java',
-            'recipes/nodejs',
-            {
-              type: 'category',
-              label: '.NET',
-              items: [
-                {
-                  type: 'category',
-                  label: 'AWS Native',
-                  items: [
-                    'recipes/dotnet/native/logs',
-                    'recipes/dotnet/native/metrics',
-                    'recipes/dotnet/native/traces'
-                  ],
-                },
-                {
-                  type: 'category',
-                  label: 'Open Source',
-                  items: [
-                    'recipes/dotnet/open-source/opentelemetry',
-                    'recipes/dotnet/open-source/metrics',
-                    'recipes/dotnet/open-source/traces',
-                    'recipes/dotnet/open-source/logs'
-
-                  ],
-                }
-              ],
-            },
-          ],
-        },
-        {
-          type: 'category',
           label: 'By Destination',
           items: [
             'recipes/cw',

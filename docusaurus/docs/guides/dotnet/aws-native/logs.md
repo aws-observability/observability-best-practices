@@ -6,15 +6,7 @@ This section provides recipes that can be used as best practices for emitting an
 
 ### Stream logs from log files on Amazon EC2 instances or on-premises servers to Amazon CloudWatch Logs
 
-
-| **Dimension** | **Value** |
-| -------- | -------- |
-| **Destination** | Amazon CloudWatch Logs |
-| **Agent** | CloudWatch Agent (CW Agent) |
-| **Compute Engine** | Amazon EC2 or On-Premises servers |
-| **OS** | Windows or Linux |
-
-This recipe is best used when your existing .NET applications write logs to log files and you want to use the Amazon CloudWatch logs for log storage and analysis without any changes to your code.
+You can use this approach when your existing .NET applications write logs to log files and you want to use the Amazon CloudWatch logs for log storage and analysis without any changes to your code.
 
 **Step 1:** Install the CW Agent on the Amazon EC2 instance or the On-premises server where your application runs. Instructions for installing the CW Agent can be found [**here**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-EC2-Instance.html).
 
@@ -29,6 +21,8 @@ The agent configuration file has four sections: agent, metrics, logs, and traces
 **Step 4:** Once you have all of the above things in place, you can [**start the CloudWatch agent**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-premise.html#start-CloudWatch-Agent-on-premise-SSM-onprem). 
 
 ### Use AWS SDK for .NET to write logs from .NET applications to CloudWatch Logs
+
+If you want to write logs directly to Amazon CloudWatch Logs using the services APIs, you can do so by using the AWS SDK for .NET. 
 
 [**AWS SDK for .NET**](https://docs.aws.amazon.com/sdk-for-net/) provides libraries that make it easier to develop .NET applications that interact with AWS Services. The libraries are provided in the form of NuGet packages.
 
@@ -120,3 +114,14 @@ await client.PutLogEventsAsync(putLogRequest);
 Although using the AmazonCloudWatchLogsClient provides a lot of flexibility and low-level API access to CloudWatch Logs, it results in a significant amount of boilerplate code. Additionally, there are several popular third-party logging frameworks among the .NET developer community for structured logging that the AmazonCloudWatchLogsClient does not integrate with out-of-the-box.
 
 The [**aws-logging-dotnet**](https://github.com/aws/aws-logging-dotnet) repository contains plugins for many of these popular logging framework providers to integrate with Amazon CloudWatch Logs. The [**repository**](https://github.com/aws/aws-logging-dotnet) contains detailed information on how to wire up your application that uses the standard ASP.NET ILogger framework, NLog, Apache log4net, or Serilog to send logs to AmazonCloudWatch Logs.
+
+### Logging in AWS Lambda functions
+
+https://aws.amazon.com/blogs/compute/introducing-advanced-logging-controls-for-aws-lambda-functions/
+
+https://aws.amazon.com/blogs/developer/structured-logging-for-net-lambda/
+
+
+### PowerTools for Lambda
+
+https://docs.powertools.aws.dev/lambda/dotnet/core/logging/#using-aws-lambda-advanced-logging-controls-alc

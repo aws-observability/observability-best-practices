@@ -305,7 +305,7 @@ module.exports = {
             'recipes/java',
             'recipes/nodejs',
           ],
-        },        
+        },
         {
           type: 'category',
           label: 'By Destination',

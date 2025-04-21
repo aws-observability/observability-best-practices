@@ -134,46 +134,12 @@ module.exports = {
             },
           ],
         },
-
-
         {
           type: 'category',
           label: 'Serverless best practices',
           items: [
             'guides/serverless/aws-native/lambda-based-observability',
             'guides/serverless/oss/lambda-based-observability-adot',
-          ],
-        },
-        {
-          type: 'category',
-          label: 'By Language',
-          items: [
-            {
-              type: 'category',
-              label: '.NET',
-              items: [
-                {
-                  type: 'category',
-                  label: 'AWS Native',
-                  items: [
-                    'guides/dotnet/native/metrics',
-                    'guides/dotnet/native/traces',
-                    'guides/dotnet/native/logs'
-                  ],
-                },
-                {
-                  type: 'category',
-                  label: 'Open Source',
-                  items: [
-                    'guides/dotnet/open-source/opentelemetry',
-                    'guides/dotnet/open-source/metrics',
-                    'guides/dotnet/open-source/traces',
-                    'guides/dotnet/open-source/logs'
-
-                  ],
-                }
-              ],
-            },
           ],
         },
         'guides/hybrid-and-multicloud',

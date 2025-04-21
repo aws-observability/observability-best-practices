@@ -22,7 +22,7 @@ The agent configuration file has four sections: agent, metrics, logs, and traces
 
 ### Use AWS SDK for .NET to write logs from .NET applications to CloudWatch Logs
 
-If you want to write logs directly to Amazon CloudWatch Logs using the services APIs, you can do so by using the AWS SDK for .NET. 
+If you want to write logs directly to Amazon CloudWatch Logs using the service's APIs, you can do so by using the AWS SDK for .NET. 
 
 [**AWS SDK for .NET**](https://docs.aws.amazon.com/sdk-for-net/) provides libraries that make it easier to develop .NET applications that interact with AWS Services. The libraries are provided in the form of NuGet packages.
 

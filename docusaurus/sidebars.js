@@ -300,6 +300,14 @@ module.exports = {
         },
         {
           type: 'category',
+          label: 'By Language',
+          items: [
+            'recipes/java',
+            'recipes/nodejs',
+          ],
+        },        
+        {
+          type: 'category',
           label: 'By Destination',
           items: [
             'recipes/cw',

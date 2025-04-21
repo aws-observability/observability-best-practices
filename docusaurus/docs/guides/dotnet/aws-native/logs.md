@@ -67,4 +67,56 @@ var client = new AmazonCloudWatchLogsClient();
 
 **Step 4:** Create a Log Group and Log Stream if needed. You can read more about these Amazon CloudWatch Logs concepts like Log groups and Log streams [**here**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogsConcepts.html)
 
+```csharp
+string logGroupName = "MyAppLogGroup";
+string logStreamName = "MyAppLogStream";
 
+// Create Log Group (skip if already exists)
+try
+{
+    await client.CreateLogGroupAsync(new CreateLogGroupRequest
+    {
+        LogGroupName = logGroupName
+    });
+}
+catch (ResourceAlreadyExistsException) { }
+
+// Create Log Stream (skip if already exists)
+try
+{
+    await client.CreateLogStreamAsync(new CreateLogStreamRequest
+    {
+        LogGroupName = logGroupName,
+        LogStreamName = logStreamName
+    });
+}
+catch (ResourceAlreadyExistsException) { }
+```
+
+**Step 5:** Send your logs to Amazon CloudWatch Logs
+
+```csharp
+var logEvents = new List<InputLogEvent>
+{
+    new InputLogEvent
+    {
+        Message = "Hello CloudWatch from .NET!",
+        Timestamp = DateTime.UtcNow
+    }
+};
+
+var putLogRequest = new PutLogEventsRequest
+{
+    LogGroupName = logGroupName,
+    LogStreamName = logStreamName,
+    LogEvents = logEvents
+};
+
+await client.PutLogEventsAsync(putLogRequest);
+```
+
+### Use popular .NET logging frameworks to send structured logs to Amazon CloudWatch Logs
+
+Although using the AmazonCloudWatchLogsClient provides a lot of flexibility and low-level API access to CloudWatch Logs, it results in a significant amount of boilerplate code. Additionally, there are several popular third-party logging frameworks among the .NET developer community for structured logging that the AmazonCloudWatchLogsClient does not integrate with out-of-the-box.
+
+The [**aws-logging-dotnet**](https://github.com/aws/aws-logging-dotnet) repository contains plugins for many of these popular logging framework providers to integrate with Amazon CloudWatch Logs. The [**repository**](https://github.com/aws/aws-logging-dotnet) contains detailed information on how to wire up your application that uses the standard ASP.NET ILogger framework, NLog, Apache log4net, or Serilog to send logs to AmazonCloudWatch Logs.

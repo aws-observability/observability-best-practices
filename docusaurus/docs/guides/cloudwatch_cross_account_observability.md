@@ -14,6 +14,31 @@ For effective cross-account observability with Amazon CloudWatch, you must under
 | **Observability Link** | A resource that represents the connection established between a source account and a monitoring account, facilitating the sharing of observability data. Links are managed by the source account. |
 
 Understand these definitions to successfully configure and manage cross-account observability in Amazon CloudWatch.
+## Things to consider
+1. Account Limits: You can link up to 100,000 source accounts to a single monitoring account, accommodating even the largest enterprise setups.
+2. Cross Region: Cross-Region functionality is built in to this feature automatically. You do not need to take any extra steps to be able to display metrics from different Regions in a single account on the same graph or the same dashboard.  
+3. Data Retention: All data retention is handled at the source account level. The monitoring account does not store or duplicate data. The monitoring account has read-only access to the source accounts' data. There's no actual data transfer or synchronization involved.
+4. Cost Implications: Surprisingly, there are no additional costs associated with Cross-Account Observability. Since data remains in the source accounts and is only read by the monitoring account, there are no extra data transfer or storage charges.
+5. When using cross-account observability to share traces from a source account (X) with a monitoring account (Y), the traces are duplicated and stored in the monitoring account (Y). This process does not incur additional costs for the source account (X), ensuring that monitoring capabilities can be extended across accounts without impacting the original billing.
+6. According to CloudWatch Service Quotas, each dashboard can have up to 500 widgets. A unique widget can have up to 500 metrics, and a unique dashboard can have up to 2500 metrics across all widgets. These quotas include all metrics retrieved for use in metric math functions, even if those metrics are not displayed on the graph. These quotas are hard quotas and they cannot be changed.
+7. In Amazon CloudWatch Logs Insights, you can query a maximum of 50 log groups per query if you specify them individually. This limit is fixed and cannot be increased. However, if you use log group criteria—such as selecting log groups based on name prefixes or opting to query "all log groups"—you can include up to 10,000 log groups in a single query, allowing for broader log analysis across multiple groups.
+8. When working with Logs and Metrics in CloudWatch Cross-Account Observability, you can choose to share the metrics from all namespaces with the monitoring account, or filter to a subset of namespaces.
+9. Some considerations when working with Alarms in cross-account scenario:
+   1. CloudWatch Metrics Insights is a powerful high-performance SQL query engine that you can use to query your metrics at scale, such as cross-account observability scenarios where you might want to query hundreds of metrics from multiple accounts.
+    2. When setting up an Alarm, it must be from a query that return a single time series, which can be accomplished by SELECT expression however, you can only use statistics SUM, MIN, MAX, COUNT and AVG.
+    3. Also, it is possible to use clause “group by“ to group metrics in real time into separate time series per specific dimension value. Also, it is possible to use the ”order by“ ability to make "Top N" type queries.
+    4. It is possible to use natural language to create queries. To do so, ask questions about or describe the data you're looking for. This AI-assisted capability generates a query based on your prompt and provides a line-by-line explanation of how the query works.
+    5. You can't create an alarm based on the SEARCH expression. This is because search expressions return multiple time series, and an alarm based on a math expression can watch only one time series. Also, you can't alarm or on a math expression (such as “MAX”) containing the SEARCH function. This scenario can be accomplished by CloudWatch Custom Data Sources. 
+    6. Cross-Region functionality is not supported for alarms, so you can't create an alarm in one Region that watches a metric in a different Region.
+
+10. Data Protection Policy: If data protection policy is enabled in a source account, the monitoring account won't be able to access the data unless explicit permissions are granted.
+
+
+
+
+
+
+
 
 ## Step by Step Tutorial via AWS Console
 

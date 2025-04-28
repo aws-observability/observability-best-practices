@@ -58,7 +58,7 @@ Computers are good at finding patterns, and at finding when data does *not* foll
 
 We refer to this as "knowing what good looks like". If you have load-tested your workload thoroughly then you may know these healthy performance metrics already, but for a complex distributed application it can be unwieldy to create baselines for every metric. This is where anomaly detection, automation, and machine learning are invaluable.
 
-Leverage tools that manage the baselining and alerting of applications health on your behalf, thereby letting you focus on your goals, and [monitor what matters](#monitor-what-matters).
+Leverage tools that manage the baselining and alerting of application health on your behalf, thereby letting you focus on your goals, and [monitor what matters](#monitor-what-matters).
 
 ## Collect telemetry from all tiers of your workload
 

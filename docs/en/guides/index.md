@@ -54,7 +54,7 @@ Don't reinvent the wheel! "Round" is a great shape already, and we should always
 
 #### Use automation and machine learning
 
-Computers are good at finding patterns, and at finding when data does *not* follow a pattern! If you have hundreds, thousands, or even millions of datapoints to monitor, then it would impossible to understand healthy thresholds for every single one of them. But many observability solutions have anomaly detection and machine learning capabilities that manage the undifferentiated heavy lifting of baselining your data.
+Computers are good at finding patterns, and at finding when data does *not* follow a pattern! If you have hundreds, thousands, or even millions of datapoints to monitor, then it would be impossible to understand healthy thresholds for every single one of them. But many observability solutions have anomaly detection and machine learning capabilities that manage the undifferentiated heavy lifting of baselining your data.
 
 We refer to this as "knowing what good looks like". If you have load-tested your workload thoroughly then you may know these healthy performance metrics already, but for a complex distributed application it can be unwieldy to create baselines for every metric. This is where anomaly detection, automation, and machine learning are invaluable.
 

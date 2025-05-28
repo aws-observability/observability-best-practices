@@ -22,10 +22,16 @@ The X-Ray SDK for .NET is an open source project. X-Ray SDK for .NET is supporte
 
 Here are the links for you to get started.
 
-[**AWS X-Ray SDK for .NET developer guide**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html)
+[**AWS X-Ray SDK for .NET developer guide**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html) - The documentation explains installation via NuGet, configuration options, and various instrumentation capabilities including automatic HTTP request tracing and AWS service call monitoring. It covers how developers can create custom segments, add annotations, and utilize sampling rules to manage data collection. The guide offers comprehensive information for integrating X-Ray tracing into ASP.NET applications, helping developers gain visibility into application performance and troubleshoot issues effectively.
 
-[**The SDK open source project repo - aws-xray-sdk-dotnet**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html)
+[**The SDK open source project repo - aws-xray-sdk-dotnet**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html) - The aws-xray-sdk-dotnet repository houses the open source code for Amazon's X-Ray SDK for .NET. Developers can see the implementation of this tracing tool which supports distributed application monitoring across .NET Core and .NET Framework environments. The repository contains the source code for automatic instrumentation of HTTP requests, AWS service calls, and custom instrumenting capabilities. You can review how the SDK integrates with ASP.NET frameworks and implements sampling rules. This GitHub project provides transparency into the SDK's functionality while allowing developers to report issues or contribute improvements to the codebase.
+
+The below are the API reference manuals that comprehensively describe the components of .NET X-Ray SDK. 
 
 [**The API Reference for .NET Framework**](https://docs.aws.amazon.com/xray-sdk-for-dotnet/latest/reference/html/d0b774be-200e-4897-9ce6-4e43c3f6f5de.htm)
 
 [**The API Reference for .NET (Core)**](https://docs.aws.amazon.com/xray-sdk-for-dotnetcore/latest/reference/html/bdf06719-4833-4e03-8ce5-31debb71506c.htm)
+
+Sample applications to learn using X-Ray SDK for .NET in your ASP.NET and ASP.NET Core applications are linked below
+
+[**Sample ASP.NET and ASP.NET core applications**](https://github.com/aws-samples/aws-xray-dotnet-webapp)

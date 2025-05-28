@@ -24,7 +24,7 @@ Here are the links for you to get started.
 
 [**AWS X-Ray SDK for .NET developer guide**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html)
 
-[**aws-xray-sdk-dotnet open source project repo**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html)
+[**The SDK open source project repo - aws-xray-sdk-dotnet**](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-dotnet.html)
 
 [**The API Reference for .NET Framework**](https://docs.aws.amazon.com/xray-sdk-for-dotnet/latest/reference/html/d0b774be-200e-4897-9ce6-4e43c3f6f5de.htm)
 

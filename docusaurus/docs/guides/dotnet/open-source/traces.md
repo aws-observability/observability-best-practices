@@ -70,8 +70,12 @@ public class OrderProcessor
 
 Now that your application is instrumented, use a collector agent—such as the OpenTelemetry Collector, CloudWatch Agent, or Fluent Bit—to route traces to the observability backend of your choice. Refer to the links below for details and implementation guidance.
 
-- [Observability with OpenTelemetry](https://aws-observability.github.io/observability-best-practices/patterns/otel)
-- [Operating the AWS Distro for OpenTelemetry (ADOT) Collector](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector)
-- [Collect metrics, logs, and traces with the CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)
-- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file)
-- [AWS XRay](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html)
+- [Observability with OpenTelemetry](https://aws-observability.github.io/observability-best-practices/patterns/otel) - Comprehensive guide to implementing OpenTelemetry across your applications, providing patterns for collecting, processing, and visualizing telemetry data with AWS services to achieve full-stack observability.
+
+- [Operating the AWS Distro for OpenTelemetry (ADOT) Collector](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) - Practical guidance for deploying, scaling, and managing the ADOT Collector in production environments, including configuration best practices and integration with AWS observability services.
+
+- [Collect metrics, logs, and traces with the CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - Step-by-step instructions for installing and configuring the CloudWatch agent to collect telemetry data from your applications and infrastructure, with seamless integration into AWS CloudWatch.
+
+- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file) - Lightweight and efficient solution for collecting and forwarding logs, metrics, and traces to multiple AWS services, optimized for containerized environments and Kubernetes deployments.
+
+- [AWS XRay](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html) - Detailed documentation on integrating AWS X-Ray with OpenTelemetry for distributed tracing, allowing you to analyze and debug production applications at scale with trace visualization and analysis tools.

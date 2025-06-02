@@ -1,0 +1,32 @@
+{
+  "title": {
+    "message": "AWS Observability Best Practices"
+  },
+  "item.label.Home": {
+    "message": "Home"
+  },
+  "item.label.Guides": {
+    "message": "Guides"
+  },
+  "item.label.Signals": {
+    "message": "Signals"
+  },
+  "item.label.Tools": {
+    "message": "Tools"
+  },
+  "item.label.Recipes": {
+    "message": "Recipes"
+  },
+  "item.label.FAQ": {
+    "message": "FAQ"
+  },
+  "item.label.Patterns": {
+    "message": "Patterns"
+  },
+  "item.label.Persona": {
+    "message": "Persona"
+  },
+  "item.label.contributors": {
+    "message": "contributors"
+  }
+}

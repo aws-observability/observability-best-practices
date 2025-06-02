@@ -2,27 +2,29 @@
 
 マネージドサービスであっても、EKS は Kubernetes コントロールプレーンから多くのメトリクスを公開しています。
 Prometheus コミュニティは、これらのメトリクスを確認および調査するための一連のダッシュボードを作成しました。
-このドキュメントでは、Amazon Managed Service for Prometheus がホストする環境にそれらをインストールする方法を説明します。
+このドキュメントでは、Amazon Managed Service for Prometheus でホストされている環境にこれらをインストールする方法を説明します。
 
-Prometheus mixin プロジェクトは、Prometheus Operator を介して Prometheus をインストールすることを想定していますが、Terraform ブループリントはデフォルトの Helm チャートを介して Prometheus エージェントをインストールします。
-スクレイピングジョブとダッシュボードを一致させるために、Prometheus ルールと mixin ダッシュボード設定を更新し、ダッシュボードを Grafana インスタンスにアップロードする必要があります。
+Prometheus mixin プロジェクトは、Prometheus Operator を介して Prometheus をインストールすることを想定していますが、Terraform ブループリントはデフォルトの helm チャートを介して Prometheus エージェントをインストールします。
+スクレイピングジョブとダッシュボードを連携させるために、Prometheus ルールと mixin ダッシュボードの設定を更新し、ダッシュボードを Grafana インスタンスにアップロードする必要があります。
 
 
 
 ## 前提条件
 
-* EKS クラスター - 以下から開始: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/)
+* EKS クラスター - 開始点: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/)
 * Cloud9 環境
-* EKS クラスターを管理するように設定された Cloud9 の kubectl
+* EKS クラスターを管理するように設定された Cloud9 上の kubectl
 * EKS 用の IAM 認証情報
-* Amazon Managed Service for Prometheus のインスタンス
+* AMP のインスタンス
 * Amazon Managed Grafana のインスタンス
+
+
 
 
 
 ## mixin ダッシュボードのインストール
 
-新しい Cloud9 インスタンスから始め、前提条件にリンクされている AWS の terraform 完全アドオン例のブループリントを対象の EKS クラスターとして使用します。
+新しい Cloud9 インスタンスから開始し、前提条件でリンクされている AWS の terraform 完全アドオン例のブループリントを対象の EKS クラスターとして使用します。
 
 Cloud9 インスタンスのファイルシステムを少なくとも 20 GB に拡張します。EC2 コンソールで EBS ボリュームを 20 GB に拡張し、Cloud9 シェルから以下のコマンドを実行します：
 
@@ -31,7 +33,7 @@ sudo growpart /dev/nvme0n1 1
 sudo xfs_growfs -d /
 ```
 
-awscli をバージョン 2 にアップグレードします：
+AWS CLI をバージョン 2 にアップグレードします：
 
 ```
 sudo yum remove -y awscli
@@ -56,7 +58,7 @@ git clone https://github.com/kubernetes-monitoring/kubernetes-mixincd kubernetes
 jb install
 ```
 
-config.libsonnet を編集し、「selectors」セクションを以下のように置き換えて、prometheus ジョブ名と一致させます：
+config.libsonnet を編集し、prometheus ジョブ名と一致させるために「selectors」セクションを以下のように置き換えます：
 
 ```
  // Selectors are inserted between {} in Prometheus queries.
@@ -75,7 +77,7 @@ config.libsonnet を編集し、「selectors」セクションを以下のよう
  containerfsSelector: 'container!=""',
 ```
 
-prometheus ルール、アラート、grafana ダッシュボードをビルドします：
+Prometheus のルール、アラート、Grafana ダッシュボードをビルドします：
 
 ```
 make prometheus_alerts.yaml
@@ -83,7 +85,7 @@ make prometheus_rules.yaml
 make dashboards_out
 ```
 
-prometheus ルールをマネージド prometheus にアップロードします。「WORKSPACE-ID」をマネージド prometheus インスタンスの ID に、「REGION」を適切な値に置き換えてください。
+Prometheus のルールを Managed Prometheus にアップロードします。「WORKSPACE-ID」を Managed Prometheus インスタンスの ID に、「REGION」を適切な値に置き換えてください：
 
 ```
 base64 prometheus_rules.yaml > prometheus_rules.b64

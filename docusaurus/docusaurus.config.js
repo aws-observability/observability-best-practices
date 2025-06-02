@@ -140,6 +140,12 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'resources/index',
+            position: 'left',
+            label: 'Resources',
+          },
+          {
+            type: 'doc',
             docId: 'contributors',
             position: 'left',
             label: 'Contributors',

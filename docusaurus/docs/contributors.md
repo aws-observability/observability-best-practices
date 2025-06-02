@@ -2,8 +2,12 @@
 
 The content on this site is maintained by Solution Architects, AWS Observability service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
 
-Recipes and content contributions in general so far are from the following
-people:
+| Owners             | Owners                     | 
+| ------------------ | --------------------------- |
+| Imaya Kumar Jagannathan       | Siva Guruvareddiar  |    
+
+
+Thank you to the following people for their contributions :
 
 | Authors             | Authors                     | Authors           | Authors            |
 | ------------------- | --------------------------- | ----------------- | ------------------ |
@@ -16,7 +20,7 @@ people:
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
-| Siva Guruvareddiar  |                             |                   |                    |
+| Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan     | Xavier Figueroa
 
 
 

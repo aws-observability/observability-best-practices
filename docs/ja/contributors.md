@@ -15,6 +15,7 @@
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
+| Ashish Ranjan       |                             |                   |                    |
 
 
 このサイトで公開されているすべてのレシピは、次のURLから入手できることに注意してください。

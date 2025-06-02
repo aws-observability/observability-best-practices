@@ -1,0 +1,336 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "CloudWatch Alarm Management with Lambda and EventBridge Scheduler"
+
+Parameters:
+  LambdaArchitecture:
+    Description: Choose the Lambda function architecture (x86_64 or arm64)
+    Type: String
+    Default: arm64
+    AllowedValues:
+      - x86_64
+      - arm64
+
+  SuppressTagKey:
+    Type: String
+    Description: "Key for the tag to filter CloudWatch Alarms (e.g., 'suppress' or 'snooze')"
+    Default: "suppress"
+
+  SuppressTagValue:
+    Type: String
+    Description: "Value for the tag to filter CloudWatch Alarms (e.g., 'true')"
+    Default: "true"
+
+  EnableAlarmsCronSchedule:
+    Type: String
+    Description: |
+      Cron expression for enabling alarms. Format: cron(Minutes Hours Day-of-month Month Day-of-week Year)
+      Example: cron(00 06 ? * 1-5 *) = 6:00 AM Monday-Friday
+    Default: "cron(00 06 ? * 1-5 *)"
+    AllowedPattern: "cron\\([0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [\\?0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]*\\)"
+    ConstraintDescription: Must be a valid cron expression
+
+  DisableAlarmsCronSchedule:
+    Type: String
+    Description: |
+      Cron expression for disabling alarms. Format: cron(Minutes Hours Day-of-month Month Day-of-week Year)
+      Example: cron(00 18 ? * 1-5 *) = 6:00 PM Monday-Friday
+    Default: "cron(00 18 ? * 1-5 *)"
+    AllowedPattern: "cron\\([0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [\\?0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]+ [0-9,\\-\\*\\/ ]*\\)"
+    ConstraintDescription: Must be a valid cron expression
+
+  ScheduleTimezone:
+    Type: String
+    Description: "Timezone for the schedule"
+    Default: "America/New_York"
+    AllowedValues:
+      - "America/New_York"
+      - "America/Chicago"
+      - "America/Denver"
+      - "America/Los_Angeles"
+      - "America/Phoenix"
+      - "America/Anchorage"
+      - "Pacific/Honolulu"
+      - "America/Toronto"
+      - "America/Vancouver"
+      - "UTC"
+      - "Europe/London"
+      - "Europe/Paris"
+      - "Europe/Berlin"
+      - "Asia/Tokyo"
+      - "Asia/Singapore"
+      - "Australia/Sydney"
+
+Resources:
+  # IAM Roles and Policies
+  LambdaCloudWatchAlarmPolicy:
+    DeletionPolicy: Delete
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: Lambda_CloudWatch_Alarm_Permissions
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - cloudwatch:EnableAlarmActions
+              - cloudwatch:DisableAlarmActions
+              - cloudwatch:DescribeAlarms
+              - cloudwatch:ListTagsForResource
+            Resource: "*"
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Lambda_CloudWatch_Alarm_Role
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref LambdaCloudWatchAlarmPolicy
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+  EventBridgeSchedulerPolicy:
+    DeletionPolicy: Delete
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: Amazon-EventBridge-Scheduler-Execution-Policy-Lambda
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:InvokeFunction
+            Resource:
+              - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Enable_CW_Alarm
+              - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Enable_CW_Alarm:*
+              - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Disable_CW_Alarm
+              - !Sub arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:Disable_CW_Alarm:*
+
+  EventBridgeSchedulerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: Amazon_EventBridge_Scheduler_LAMBDA_CW_Alarm_Actions
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: scheduler.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - !Ref EventBridgeSchedulerPolicy
+
+  # Lambda Functions with Complete Code
+  EnableCWAlarmFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: LambdaExecutionRole
+    Properties:
+      Architectures:
+        - !Ref LambdaArchitecture
+      FunctionName: Enable_CW_Alarm
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SUPPRESS_TAG_KEY: !Ref SuppressTagKey
+          SUPPRESS_TAG_VALUE: !Ref SuppressTagValue
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import os
+
+          def lambda_handler(event, context):
+              # Initialize CloudWatch client
+              cloudwatch = boto3.client('cloudwatch')
+
+              # Get the tag key and value from environment variables
+              suppress_tag_key = os.environ['SUPPRESS_TAG_KEY'].lower()
+              suppress_tag_value = os.environ['SUPPRESS_TAG_VALUE'].lower()
+
+              try:
+                  # Get a list of all CloudWatch alarms
+                  alarm_response = cloudwatch.describe_alarms()
+
+                  # List to store alarm names that have the specified tag
+                  suppressed_alarm_names = []
+
+                  # Process each alarm and check its tags
+                  for alarm in alarm_response['MetricAlarms']:
+                      # Get tags for the alarm
+                      tags_response = cloudwatch.list_tags_for_resource(
+                          ResourceARN=alarm['AlarmArn']
+                      )
+
+                      # Check if the alarm has the specified tag with the specified value
+                      for tag in tags_response['Tags']:
+                          if tag['Key'].lower() == suppress_tag_key and tag['Value'].lower() == suppress_tag_value:
+                              suppressed_alarm_names.append(alarm['AlarmName'])
+                              break
+
+                  if not suppressed_alarm_names:
+                      return {
+                          'statusCode': 200,
+                          'body': json.dumps({
+                              'message': f'No CloudWatch alarms found with {suppress_tag_key}={suppress_tag_value} tag.'
+                          })
+                      }
+
+                  # Enable actions only for alarms with the specified tag
+                  cloudwatch.enable_alarm_actions(AlarmNames=suppressed_alarm_names)
+
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': f'Successfully enabled actions for {len(suppressed_alarm_names)} CloudWatch alarms with {suppress_tag_key}={suppress_tag_value} tag',
+                          'alarmNames': suppressed_alarm_names
+                      })
+                  }
+              except Exception as e:
+                  print(f"Error processing CloudWatch alarms: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'message': f'Error processing CloudWatch alarms: {str(e)}'
+                      })
+                  }
+      Tags:
+        - Key: ManagedBy
+          Value: CloudFormation # Add this tag to indicate management method
+
+  DisableCWAlarmFunction:
+    Type: AWS::Lambda::Function
+    DependsOn: LambdaExecutionRole
+    Properties:
+      Architectures:
+        - !Ref LambdaArchitecture
+      FunctionName: Disable_CW_Alarm
+      Runtime: python3.12
+      Handler: index.lambda_handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Environment:
+        Variables:
+          SUPPRESS_TAG_KEY: !Ref SuppressTagKey
+          SUPPRESS_TAG_VALUE: !Ref SuppressTagValue
+      Code:
+        ZipFile: |
+          import boto3
+          import json
+          import os
+
+          def lambda_handler(event, context):
+              # Initialize CloudWatch client
+              cloudwatch = boto3.client('cloudwatch')
+
+              # Get the tag key and value from environment variables
+              suppress_tag_key = os.environ['SUPPRESS_TAG_KEY'].lower()
+              suppress_tag_value = os.environ['SUPPRESS_TAG_VALUE'].lower()
+
+              try:
+                  # Get a list of all CloudWatch alarms
+                  alarm_response = cloudwatch.describe_alarms()
+
+                  # List to store alarm names that have the specified tag
+                  suppressed_alarm_names = []
+
+                  # Process each alarm and check its tags
+                  for alarm in alarm_response['MetricAlarms']:
+                      # Get tags for the alarm
+                      tags_response = cloudwatch.list_tags_for_resource(
+                          ResourceARN=alarm['AlarmArn']
+                      )
+
+                      # Check if the alarm has the specified tag with the specified value
+                      for tag in tags_response['Tags']:
+                          if tag['Key'].lower() == suppress_tag_key and tag['Value'].lower() == suppress_tag_value:
+                              suppressed_alarm_names.append(alarm['AlarmName'])
+                              break
+
+                  if not suppressed_alarm_names:
+                      return {
+                          'statusCode': 200,
+                          'body': json.dumps({
+                              'message': f'No CloudWatch alarms found with {suppress_tag_key}={suppress_tag_value} tag.'
+                          })
+                      }
+
+                  # Disable actions only for alarms with the specified tag
+                  cloudwatch.disable_alarm_actions(AlarmNames=suppressed_alarm_names)
+
+                  return {
+                      'statusCode': 200,
+                      'body': json.dumps({
+                          'message': f'Successfully disabled actions for {len(suppressed_alarm_names)} CloudWatch alarms with {suppress_tag_key}={suppress_tag_value} tag',
+                          'alarmNames': suppressed_alarm_names
+                      })
+                  }
+              except Exception as e:
+                  print(f"Error processing CloudWatch alarms: {str(e)}")
+                  return {
+                      'statusCode': 500,
+                      'body': json.dumps({
+                          'message': f'Error processing CloudWatch alarms: {str(e)}'
+                      })
+                  }
+      Tags:
+        - Key: ManagedBy
+          Value: CloudFormation # Add this tag to indicate management method
+
+  # EventBridge Schedules
+  EnableAlarmsSchedule:
+    Type: AWS::Scheduler::Schedule
+    DependsOn:
+      - EnableCWAlarmFunction
+      - EventBridgeSchedulerRole
+    Properties:
+      Name: Enable-CloudWatch-Alarm-Actions
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      ScheduleExpression: !Ref EnableAlarmsCronSchedule
+      ScheduleExpressionTimezone: !Ref ScheduleTimezone
+      Target:
+        Arn: !GetAtt EnableCWAlarmFunction.Arn
+        RoleArn: !GetAtt EventBridgeSchedulerRole.Arn
+      State: ENABLED
+
+  DisableAlarmsSchedule:
+    Type: AWS::Scheduler::Schedule
+    DependsOn:
+      - DisableCWAlarmFunction
+      - EventBridgeSchedulerRole
+    Properties:
+      Name: Disable-CloudWatch-Alarm-Actions
+      FlexibleTimeWindow:
+        Mode: "OFF"
+      ScheduleExpression: !Ref DisableAlarmsCronSchedule
+      ScheduleExpressionTimezone: !Ref ScheduleTimezone
+      Target:
+        Arn: !GetAtt DisableCWAlarmFunction.Arn
+        RoleArn: !GetAtt EventBridgeSchedulerRole.Arn
+      State: ENABLED
+
+Outputs:
+  EnableLambdaARN:
+    Description: ARN of the Enable Lambda Function
+    Value: !GetAtt EnableCWAlarmFunction.Arn
+
+  DisableLambdaARN:
+    Description: ARN of the Disable Lambda Function
+    Value: !GetAtt DisableCWAlarmFunction.Arn
+
+  LambdaCloudWatchAlarmPolicyARN:
+    Description: ARN of the Lambda CloudWatch Alarm Policy
+    Value: !Ref LambdaCloudWatchAlarmPolicy
+
+  LambdaExecutionRoleARN:
+    Description: ARN of the Lambda Execution Role
+    Value: !GetAtt LambdaExecutionRole.Arn
+
+  EventBridgeSchedulerRoleARN:
+    Description: ARN of the EventBridge Scheduler Role
+    Value: !GetAtt EventBridgeSchedulerRole.Arn

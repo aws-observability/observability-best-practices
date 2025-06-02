@@ -39,7 +39,7 @@ A complete picture of your health and operations requires tools that collect [lo
 
 #### Every workload is different, but common tools make for a faster results
 
-Using a common set of tools across every workload has add benefits such as reducing operational friction and training, and generally you should strive for a reduced number of tools or vendors. Doing so lets you rapidly deploy existing observability solutions to new environments or workloads, and with faster time-to-resolution when things go wrong.
+Using a common set of tools across every workload has added benefits such as reducing operational friction and training, and generally you should strive for a reduced number of tools or vendors. Doing so lets you rapidly deploy existing observability solutions to new environments or workloads, and with faster time-to-resolution when things go wrong.
 
 Your tools should be broad enough to observe every tier of your workload: basic infrastructure, applications, web sites, and everything in between. In places where a single tool is not possible, the best practice is to use those that have an open standard, are open source, and therefore have the broadest cross-platform integration possibilities.
 
@@ -54,11 +54,11 @@ Don't reinvent the wheel! "Round" is a great shape already, and we should always
 
 #### Use automation and machine learning
 
-Computers are good at finding patterns, and at finding when data does *not* follow a pattern! If you have hundreds, thousands, or even millions of datapoints to monitor, then it would impossible to understand healthy thresholds for every single one of them. But many observability solutions have anomaly detection and machine learning capabilities that manage the undifferentiated heavy lifting of baselining your data.
+Computers are good at finding patterns, and at finding when data does *not* follow a pattern! If you have hundreds, thousands, or even millions of datapoints to monitor, then it would be impossible to understand healthy thresholds for every single one of them. But many observability solutions have anomaly detection and machine learning capabilities that manage the undifferentiated heavy lifting of baselining your data.
 
 We refer to this as "knowing what good looks like". If you have load-tested your workload thoroughly then you may know these healthy performance metrics already, but for a complex distributed application it can be unwieldy to create baselines for every metric. This is where anomaly detection, automation, and machine learning are invaluable.
 
-Leverage tools that manage the baselining and alerting of applications health on your behalf, thereby letting you focus on your goals, and [monitor what matters](#monitor-what-matters).
+Leverage tools that manage the baselining and alerting of application health on your behalf, thereby letting you focus on your goals, and [monitor what matters](#monitor-what-matters).
 
 ## Collect telemetry from all tiers of your workload
 
@@ -87,6 +87,6 @@ Depending on the size of your application, you may have a very large number of c
 
 Like security, observability should not be an afterthought to your development or operations. The best practice is to put observability early in your planning, just like security, which creates a model for people to work with and reduces opaque corners of your application. Adding transaction tracing after major development work is done takes time, even with [auto-instrumentation](../../tools/traces). The effort returns far greater returns! But doing so late in your development cycle may create some rework.
 
-Rather than bolting observability in your workload later one, use it to help *accelerate* your work. Proper [logging](../signals/logs), [metric](../signals/metrics), and [trace](../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward.
+Rather than bolting observability in your workload later on, use it to help *accelerate* your work. Proper [logging](../signals/logs), [metric](../signals/metrics), and [trace](../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward.
 
-[^1]: Amazon uses the *working backwards* process extensively as a way to obsession over our customers and their outcomes, and we highly recommend that anyone working on observability solutions work backwards from their own objectives in the same way. You can read more about *working backwards* on [Werner Vogels's blog](https://www.allthingsdistributed.com/2006/11/working_backwards.html).
+[^1]: Amazon uses the *working backwards* process extensively as a way to obsess over our customers and their outcomes, and we highly recommend that anyone working on observability solutions work backwards from their own objectives in the same way. You can read more about *working backwards* on [Werner Vogels's blog](https://www.allthingsdistributed.com/2006/11/working_backwards.html).

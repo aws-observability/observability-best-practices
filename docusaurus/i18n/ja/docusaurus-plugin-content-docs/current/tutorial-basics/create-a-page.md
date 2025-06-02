@@ -7,11 +7,12 @@ sidebar_position: 1
 
 # ページの作成
 
-**スタンドアロンページ**を作成するには、`src/pages` に **Markdown または React** ファイルを追加します：
+**スタンドアロンページ** を作成するには、`src/pages` に **Markdown または React** ファイルを追加します：
 
 - `src/pages/index.js` → `localhost:3000/`
 - `src/pages/foo.md` → `localhost:3000/foo`
 - `src/pages/foo/bar.js` → `localhost:3000/foo/bar`
+
 
 
 
@@ -33,13 +34,13 @@ export default function MyReactPage() {
 }
 ```
 
-新しいページが [http://localhost:3000/my-react-page](http://localhost:3000/my-react-page) で利用可能になりました。
+新しいページが [http://localhost:3000/my-react-page](http://localhost:3000/my-react-page) で利用できるようになりました。
 
 
 
 ## 最初の Markdown ページを作成する
 
-`src/pages/my-markdown-page.md` にファイルを作成します：
+`src/pages/my-markdown-page.md` にファイルを作成します:
 
 ```mdx title="src/pages/my-markdown-page.md"
 
@@ -47,7 +48,7 @@ export default function MyReactPage() {
 
 # マークダウンページ
 
-これはマークダウンページです
+これはマークダウンページです。
 ```
 
 新しいページが [http://localhost:3000/my-markdown-page](http://localhost:3000/my-markdown-page) で利用可能になりました。

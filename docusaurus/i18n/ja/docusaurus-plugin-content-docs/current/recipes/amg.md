@@ -1,28 +1,29 @@
 # Amazon Managed Grafana
 
 [Amazon Managed Grafana][amg-main] は、オープンソースの Grafana をベースにした完全マネージド型サービスです。
-サーバーのプロビジョニング、ソフトウェアの構成や更新、本番環境での Grafana のセキュリティ確保やスケーリングに伴う重労働を行うことなく、メトリクス、ログ、トレースを分析することができます。
+サーバーのプロビジョニング、ソフトウェアの設定やアップデート、本番環境での Grafana のセキュリティ確保やスケーリングに関する作業を行うことなく、メトリクス、ログ、トレースを分析できます。
 複数のデータソースに接続し、オブザーバビリティダッシュボードを作成、探索し、チームと共有することができます。
 
-以下のレシピをご覧ください：
+以下のレシピをご確認ください：
+
 
 
 
 ## 基本
 
 - [はじめに][amg-gettingstarted]
-- [自動化のための Terraform の使用][amg-tf-automation]
+- [Terraform を使用した自動化][amg-tf-automation]
 
 
 
 
-## 認証とアクセス制御
+## 認証とアクセスコントロール
 
 - [アイデンティティプロバイダーとの直接的な SAML 統合][amg-saml]
-- [SSO のためのアイデンティティプロバイダー（OneLogin、Ping Identity、Okta、Azure AD）の統合][amg-idps]
-- [SAMLv2 を介した Google 認証の統合][amg-google-idps]
-- [カスタマー管理の IAM ロールを使用した Amazon Managed Grafana クロスアカウントデータソースの設定][amg-cross-account-access]
-- [Grafana Teams を使用した Amazon Managed Grafana での細かなアクセス制御][amg-grafana-teams]
+- [アイデンティティプロバイダー (OneLogin、Ping Identity、Okta、Azure AD) と SSO の統合][amg-idps]
+- [SAMLv2 を使用した Google 認証の統合][amg-google-idps]
+- [カスタマー管理の IAM ロールを使用した Amazon Managed Grafana のクロスアカウントデータソースの設定][amg-cross-account-access]
+- [Grafana Teams を使用した Amazon Managed Grafana での詳細なアクセス制御][amg-grafana-teams]
 
 
 
@@ -32,6 +33,7 @@
 - [Amazon Managed Grafana での Redshift の使用][amg-plugin-redshift]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した statsd からのカスタムメトリクスの表示][amg-amp-statsd]
 - [カスタマー管理の IAM ロールを使用したクロスアカウントデータソースのセットアップ][amg-xacc-ds]
+
 
 
 

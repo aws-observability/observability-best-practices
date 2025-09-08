@@ -102,26 +102,6 @@ Watch the AWS Observability Best Practices MCP Server in action:
    }
    ```
 
-## Testing
-
-- **Local Development MCP Server**: To test the server locally, you can use the MCP Inspector tool:
-  ```bash
-  npx @modelcontextprotocol/inspector \
-    python3 \
-    aws_observability_best_practices_mcp_server.py
-  ```
-
-- **Run Test Suite**:
-  ```bash
-  # Test MCP functionality
-  python3 test_mcp_functionality.py
-  
-  # Test server functionality
-  python3 test_observability_server.py
-  
-  # Test service integrations
-  python3 test_services.py
-  ```
 
 ## Available Tools
 
@@ -166,6 +146,7 @@ Watch the AWS Observability Best Practices MCP Server in action:
 ```bash
 q chat
 # Ask questions like:
+"Get AWS observability best practices recommendations for ADOT implementation"
 "Analyze my application logs for errors"
 "Show me user experience metrics from RUM"
 "Create CloudWatch alarms for my metrics"

@@ -1,0 +1,14 @@
+2025-09-07 22:00:21,795 - logging_config - INFO - <module>:1126 - AWS Observability MCP Server starting up
+2025-09-07 22:00:21,797 - logging_config - INFO - main:1113 - Starting AWS Observability MCP Server
+2025-09-07 22:00:21,805 - logging_config - INFO - main:1116 - MCP server initialized successfully
+2025-09-07 22:00:21,814 - mcp.server.lowlevel.server - INFO - _handle_request:624 - Processing request of type ListToolsRequest
+2025-09-07 22:00:21,814 - logging_config - INFO - log_function_entry:94 - Entering list_tools with params: {}
+2025-09-07 22:00:21,814 - logging_config - INFO - log_function_exit:103 - Exiting list_tools - Status: success
+2025-09-07 22:00:21,814 - logging_config - INFO - list_tools:64 - Successfully listed 23 MCP tools
+2025-09-08 06:39:10,313 - logging_config - INFO - <module>:1126 - AWS Observability MCP Server starting up
+2025-09-08 06:39:10,315 - logging_config - INFO - main:1113 - Starting AWS Observability MCP Server
+2025-09-08 06:39:10,321 - logging_config - INFO - main:1116 - MCP server initialized successfully
+2025-09-08 06:39:10,380 - mcp.server.lowlevel.server - INFO - _handle_request:624 - Processing request of type ListToolsRequest
+2025-09-08 06:39:10,380 - logging_config - INFO - log_function_entry:94 - Entering list_tools with params: {}
+2025-09-08 06:39:10,380 - logging_config - INFO - log_function_exit:103 - Exiting list_tools - Status: success
+2025-09-08 06:39:10,380 - logging_config - INFO - list_tools:64 - Successfully listed 23 MCP tools

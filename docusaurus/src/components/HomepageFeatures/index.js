@@ -104,18 +104,6 @@ const FeatureList = [
     link: '/resources',
   },
   {
-    title: 'MCP',
-    Svg: require('@site/static/img/mcp.svg').default,
-    description: (
-      <>
-        <Translate id="featureList.patterns.description">
-          MCP (Model Context Protocol) server for AWS observability.
-        </Translate>
-      </>
-    ),
-    link: '/mcp',
-  },
-  {
     title: 'CloudOps',
     Svg: require('@site/static/img/cloudops.svg').default,
     description: (

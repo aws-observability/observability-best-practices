@@ -36,6 +36,8 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional, Any, Union
 
 import boto3
+import requests
+from bs4 import BeautifulSoup
 from botocore.exceptions import ClientError, NoCredentialsError
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
@@ -986,7 +988,7 @@ async def get_metric_stream(arguments: Dict[str, Any]) -> List[TextContent]:
 
 # AWS Recommendations Function
 async def get_recommendations(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Search AWS Observability Best Practices portal and return search URL only."""
+    """Search AWS Observability Best Practices portal and return content with search URL."""
     try:
         query = arguments.get("query", "")
         service = arguments.get("service", "")
@@ -1008,23 +1010,71 @@ async def get_recommendations(arguments: Dict[str, Any]) -> List[TextContent]:
         search_query = " ".join(search_terms)
         
         # STRICT GUARDRAIL: Only search AWS Observability Best Practices portal
-        # No fallback to other MCP servers or documentation
         search_url = f"https://aws-observability.github.io/observability-best-practices/search/?q={search_query}"
+        
+        # Fetch content from the search URL
+        try:
+            logger.info(f"Fetching content from: {search_url}")
+            response = requests.get(search_url, timeout=10)
+            response.raise_for_status()
+            
+            # Parse HTML content
+            soup = BeautifulSoup(response.content, 'html.parser')
+            
+            # Extract search results (this will depend on the actual HTML structure)
+            search_results = []
+            
+            # Look for common search result patterns
+            # Note: This will need to be adjusted based on the actual HTML structure of the search page
+            result_elements = soup.find_all(['div', 'article', 'section'], class_=lambda x: x and any(
+                keyword in x.lower() for keyword in ['result', 'search', 'item', 'card', 'post']
+            ))
+            
+            for element in result_elements[:5]:  # Limit to top 5 results
+                title_elem = element.find(['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'a'])
+                link_elem = element.find('a', href=True)
+                desc_elem = element.find(['p', 'div', 'span'])
+                
+                if title_elem or link_elem:
+                    result = {
+                        "title": title_elem.get_text(strip=True) if title_elem else "No title",
+                        "url": link_elem['href'] if link_elem else "No URL",
+                        "description": desc_elem.get_text(strip=True)[:200] if desc_elem else "No description"
+                    }
+                    search_results.append(result)
+            
+            # If no structured results found, extract general content
+            if not search_results:
+                # Fallback: extract any links and headings
+                links = soup.find_all('a', href=True)[:5]
+                for link in links:
+                    if link.get_text(strip=True):
+                        search_results.append({
+                            "title": link.get_text(strip=True),
+                            "url": link['href'],
+                            "description": "Content available at link"
+                        })
+            
+        except requests.RequestException as e:
+            logger.warning(f"Failed to fetch content from {search_url}: {str(e)}")
+            search_results = []
+        except Exception as e:
+            logger.warning(f"Failed to parse content from {search_url}: {str(e)}")
+            search_results = []
         
         result = {
             "status": "success",
             "tool": "get_recommendations",
             "search_query": search_query,
             "search_url": search_url,
-            "message": f"Search AWS Observability Best Practices portal for '{search_query}' recommendations",
-            "instructions": "DO NOT fetch content from this URL. Only provide the search URL as a recommendation for the user to visit.",
-            "recommendation": f"To learn about {search_query}, visit the AWS Observability Best Practices portal: {search_url}",
+            "message": f"Found {len(search_results)} recommendations for '{search_query}'",
+            "recommendations": search_results,
             "portal_info": {
                 "name": "AWS Observability Best Practices",
                 "url": "https://aws-observability.github.io/observability-best-practices/",
                 "search_url": search_url
             },
-            "note": "This tool only provides search URLs - do not fetch additional content from the URLs"
+            "note": f"Content fetched from AWS Observability Best Practices portal. Visit {search_url} for more results."
         }
         
         return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]

@@ -105,11 +105,12 @@ Watch the AWS Observability Best Practices MCP Server in action:
 
 ## Available Tools
 
+### Best Practices & Guidance
+- **`aws-observability-best-practices___get_recommendations`** - Search AWS Observability Best Practices portal for recommendations
+
 ### CloudWatch Tools
 - **`aws-observability-best-practices___get_metric_data`** - Retrieve CloudWatch metric values with Metrics Insights queries
 - **`aws-observability-best-practices___get_metric_statistics`** - Get CloudWatch metric statistics for analysis
-- **`aws-observability-best-practices___analyze_metric_anomalies`** - Analyze CloudWatch metrics for anomalies and patterns
-- **`aws-observability-best-practices___run_metric_anomaly_detection`** - Run metric anomaly detection analysis
 - **`aws-observability-best-practices___describe_alarms`** - Retrieve information about CloudWatch alarms
 - **`aws-observability-best-practices___list_dashboards`** - List available CloudWatch dashboards
 - **`aws-observability-best-practices___get_dashboard`** - Retrieve dashboard configuration details
@@ -121,24 +122,19 @@ Watch the AWS Observability Best Practices MCP Server in action:
 ### AWS Service-Specific Analysis
 - **`aws-observability-best-practices___run_lambda_metrics_analysis`** - Run Lambda function metrics analysis
 - **`aws-observability-best-practices___run_ec2_metrics_analysis`** - Run EC2 instance metrics analysis
-- **`aws-observability-best-practices___run_rds_metrics_analysis`** - Run RDS instance metrics analysis
 - **`aws-observability-best-practices___get_database_insights_metrics`** - Get Database Insights metrics for RDS instances
 
 ### Real User Monitoring (RUM) Tools
 - **`aws-observability-best-practices___analyze_rum_performance`** - Analyze AWS RUM performance data for user experience insights
 - **`aws-observability-best-practices___run_comprehensive_rum_analysis`** - Run comprehensive RUM analysis report
 - **`aws-observability-best-practices___run_web_vitals_analysis`** - Run Core Web Vitals analysis from AWS RUM
-- **`aws-observability-best-practices___get_user_experience_metrics`** - Get comprehensive user experience metrics from AWS RUM
-- **`aws-observability-best-practices___run_mobile_app_analysis`** - Run mobile app health analysis
-- **`aws-observability-best-practices___run_user_journey_analysis`** - Run user journey performance analysis
+
 
 ### SLO Management
 - **`aws-observability-best-practices___run_slo_health_assessment`** - Run SLO health assessment
 - **`aws-observability-best-practices___analyze_slo_breaches`** - Analyze SLO breaches and their root causes
 - **`aws-observability-best-practices___get_slo_status`** - Get Service Level Objective status and health
 
-### Best Practices & Guidance
-- **`aws-observability-best-practices___get_recommendations`** - Search AWS Observability Best Practices portal for recommendations
 
 ## Example Usage
 
@@ -171,8 +167,8 @@ q chat
   "tool": "aws-observability-best-practices___analyze_log_patterns",
   "arguments": {
     "log_group_name": "/aws/lambda/my-function",
-    "start_time": "2024-01-01T00:00:00Z",
-    "end_time": "2024-01-02T00:00:00Z",
+    "start_time": "2025-01-01T00:00:00Z",
+    "end_time": "2025-01-02T00:00:00Z",
     "query": "ERROR"
   }
 }
@@ -221,7 +217,7 @@ The MCP tools require specific AWS permissions to function. Follow these securit
 
 - **Real-time Observability** - Uses actual AWS observability data for analysis
 - **Comprehensive Monitoring** - Covers logs, metrics, traces, and user experience
-- **23 MCP Tools** - Extensive set of observability analysis capabilities
+- **Extensive MCP Tools** - Extensive set of observability analysis capabilities
 - **JSON Output** - Structured data for programmatic analysis and integration
 - **Easy Integration** - Works seamlessly with Amazon Q CLI and MCP clients
 - **Best Practices Integration** - Direct access to AWS Observability Best Practices portal

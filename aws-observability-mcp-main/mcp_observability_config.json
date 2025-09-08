@@ -1,4 +1,5 @@
 {
+  "_comment": "Template configuration for AWS Observability MCP Server. Copy this to your Amazon Q CLI configuration and update the paths.",
   "mcpServers": {
     "aws-observability-best-practices": {
       "command": "python3",
@@ -6,8 +7,40 @@
         "/path/to/aws-observability-mcp-main/aws_observability_best_practices_mcp_server.py"
       ],
       "env": {
+        "AWS_DEFAULT_REGION": "us-east-1",
+        "AWS_PROFILE": "default",
         "PYTHONPATH": "/path/to/aws-observability-mcp-main"
-      }
+      },
+      "timeout": 120000,
+      "disabled": false
+    },
+   "awslabs.cloudwatch-appsignals-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "awslabs.cloudwatch-appsignals-mcp-server@latest"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+      },
+      "timeout": 60,
+      "disabled": false
+    },
+   "awslabs.core-mcp-server": {
+      "command": "uvx",
+      "args": [
+        "awslabs.core-mcp-server@latest"
+      ],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR"
+      },
+      "timeout": 120000,
+      "disabled": false
+    },
+    "aws-smithy-cloudwatch-mcp": {
+      "command": "aws-smithy-cloudwatch-mcp",
+      "args": [],
+      "timeout": 120000,
+      "disabled": false
     }
   }
 }

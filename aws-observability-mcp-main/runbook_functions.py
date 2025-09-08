@@ -95,31 +95,6 @@ async def run_web_vitals_analysis(arguments: Dict[str, Any]) -> List[TextContent
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def run_user_journey_analysis(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Run user journey performance analysis."""
-    try:
-        result = analyze_user_journey_performance(
-            app_monitor_name=arguments["app_monitor_name"],
-            start_time=arguments.get("start_time"),
-            end_time=arguments.get("end_time"),
-            region=arguments.get("region")
-        )
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
-
-async def run_mobile_app_analysis(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Run mobile app health analysis."""
-    try:
-        result = analyze_mobile_app_health(
-            app_monitor_name=arguments["app_monitor_name"],
-            start_time=arguments.get("start_time"),
-            end_time=arguments.get("end_time"),
-            region=arguments.get("region")
-        )
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 async def run_comprehensive_rum_analysis(arguments: Dict[str, Any]) -> List[TextContent]:
     """Run comprehensive RUM analysis report."""
@@ -148,18 +123,6 @@ async def run_ec2_metrics_analysis(arguments: Dict[str, Any]) -> List[TextConten
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def run_rds_metrics_analysis(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Run RDS metrics analysis."""
-    try:
-        result = analyze_rds_metrics(
-            db_instance_identifier=arguments["db_instance_identifier"],
-            start_time=arguments.get("start_time"),
-            end_time=arguments.get("end_time"),
-            region=arguments.get("region")
-        )
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 async def run_lambda_metrics_analysis(arguments: Dict[str, Any]) -> List[TextContent]:
     """Run Lambda metrics analysis."""
@@ -174,21 +137,6 @@ async def run_lambda_metrics_analysis(arguments: Dict[str, Any]) -> List[TextCon
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def run_metric_anomaly_detection(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Run metric anomaly detection."""
-    try:
-        result = detect_metric_anomalies(
-            namespace=arguments["namespace"],
-            metric_name=arguments["metric_name"],
-            dimensions=arguments.get("dimensions", []),
-            start_time=arguments.get("start_time"),
-            end_time=arguments.get("end_time"),
-            region=arguments.get("region"),
-            threshold_multiplier=arguments.get("threshold_multiplier", 2.0)
-        )
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 # Comprehensive Observability Analysis
 async def run_infrastructure_health_check(arguments: Dict[str, Any]) -> List[TextContent]:

@@ -78,12 +78,6 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
         # CloudWatch Tools
         if name == "aws-observability-best-practices___get_metric_data":
             return await get_metric_data(arguments)
-        elif name == "aws-observability-best-practices___get_metric_statistics":
-            return await get_metric_statistics(arguments)
-        elif name == "aws-observability-best-practices___analyze_metric_anomalies":
-            return await analyze_metric_anomalies(arguments)
-        elif name == "aws-observability-best-practices___run_metric_anomaly_detection":
-            return await run_metric_anomaly_detection(arguments)
         elif name == "aws-observability-best-practices___describe_alarms":
             return await describe_alarms(arguments)
         elif name == "aws-observability-best-practices___list_dashboards":
@@ -102,8 +96,6 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             return await run_lambda_metrics_analysis(arguments)
         elif name == "aws-observability-best-practices___run_ec2_metrics_analysis":
             return await run_ec2_metrics_analysis(arguments)
-        elif name == "aws-observability-best-practices___run_rds_metrics_analysis":
-            return await run_rds_metrics_analysis(arguments)
         elif name == "aws-observability-best-practices___get_database_insights_metrics":
             return await get_database_insights_metrics(arguments)
         
@@ -114,12 +106,6 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
             return await run_comprehensive_rum_analysis(arguments)
         elif name == "aws-observability-best-practices___run_web_vitals_analysis":
             return await run_web_vitals_analysis(arguments)
-        elif name == "aws-observability-best-practices___get_user_experience_metrics":
-            return await get_user_experience_metrics(arguments)
-        elif name == "aws-observability-best-practices___run_mobile_app_analysis":
-            return await run_mobile_app_analysis(arguments)
-        elif name == "aws-observability-best-practices___run_user_journey_analysis":
-            return await run_user_journey_analysis(arguments)
         
         # SLO Management
         elif name == "aws-observability-best-practices___run_slo_health_assessment":
@@ -146,14 +132,14 @@ async def call_tool(name: str, arguments: Dict[str, Any]) -> List[TextContent]:
 
 # Import observability service modules
 from services.cloudwatch_logs import analyze_log_group_costs, analyze_log_retention_optimization, get_log_insights_queries
-from services.aws_rum import analyze_rum_performance, get_user_experience_metrics, analyze_mobile_app_performance
+from services.aws_rum import analyze_rum_performance, analyze_mobile_app_performance
 
 # Import observability runbook functions
 from runbook_functions import (
     run_log_error_analysis, run_log_performance_analysis, run_log_security_analysis,
-    run_comprehensive_log_analysis, run_web_vitals_analysis, run_user_journey_analysis,
-    run_mobile_app_analysis, run_comprehensive_rum_analysis, run_ec2_metrics_analysis,
-    run_rds_metrics_analysis, run_lambda_metrics_analysis, run_metric_anomaly_detection,
+    run_comprehensive_log_analysis, run_web_vitals_analysis,
+    run_comprehensive_rum_analysis, run_ec2_metrics_analysis,
+    run_lambda_metrics_analysis,
     run_infrastructure_health_check, run_observability_gap_analysis,
     run_app_performance_analysis, run_user_experience_analysis, run_slo_health_assessment
 )
@@ -202,53 +188,6 @@ async def execute_insights_queries(arguments: Dict[str, Any]) -> List[TextConten
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 # CloudWatch Metrics Functions
-async def get_metric_statistics(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Retrieve CloudWatch metric statistics for analysis."""
-    try:
-        namespace = arguments["namespace"]
-        metric_name = arguments["metric_name"]
-        dimensions = arguments.get("dimensions", [])
-        start_time = arguments.get("start_time")
-        end_time = arguments.get("end_time")
-        period = arguments.get("period", 300)
-        statistics = arguments.get("statistics", ["Average"])
-        region = arguments.get("region")
-        
-        # Create CloudWatch client
-        if region:
-            cloudwatch = boto3.client('cloudwatch', region_name=region)
-        else:
-            cloudwatch = boto3.client('cloudwatch')
-        
-        # Set default time range if not provided
-        if not start_time:
-            end_datetime = datetime.utcnow()
-            start_datetime = end_datetime - timedelta(hours=1)
-            start_time = start_datetime
-            end_time = end_datetime
-        elif not end_time:
-            end_time = datetime.utcnow()
-        
-        response = cloudwatch.get_metric_statistics(
-            Namespace=namespace,
-            MetricName=metric_name,
-            Dimensions=dimensions,
-            StartTime=start_time,
-            EndTime=end_time,
-            Period=period,
-            Statistics=statistics
-        )
-        
-        result = {
-            "status": "success",
-            "data": response,
-            "message": f"Retrieved metric statistics for {namespace}/{metric_name}"
-        }
-        
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-        
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 async def create_cloudwatch_alarms(arguments: Dict[str, Any]) -> List[TextContent]:
     """Create CloudWatch alarms for monitoring."""
@@ -291,32 +230,6 @@ async def create_cloudwatch_alarms(arguments: Dict[str, Any]) -> List[TextConten
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def analyze_metric_anomalies(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Analyze CloudWatch metrics for anomalies and patterns."""
-    try:
-        namespace = arguments["namespace"]
-        metric_name = arguments["metric_name"]
-        start_time = arguments.get("start_time")
-        end_time = arguments.get("end_time")
-        region = arguments.get("region")
-        
-        # This is a simplified implementation
-        # In a real implementation, you would use CloudWatch Anomaly Detection
-        result = {
-            "status": "success",
-            "data": {
-                "namespace": namespace,
-                "metric_name": metric_name,
-                "anomalies": [],
-                "message": "Anomaly detection not yet implemented"
-            },
-            "message": f"Analyzed {namespace}/{metric_name} for anomalies"
-        }
-        
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-        
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 # AWS RUM Functions
 async def analyze_rum_performance(arguments: Dict[str, Any]) -> List[TextContent]:
@@ -333,19 +246,6 @@ async def analyze_rum_performance(arguments: Dict[str, Any]) -> List[TextContent
     except Exception as e:
         return [TextContent(type="text", text=f"Error: {str(e)}")]
 
-async def get_user_experience_metrics(arguments: Dict[str, Any]) -> List[TextContent]:
-    """Get comprehensive user experience metrics from AWS RUM."""
-    try:
-        app_monitor_name = arguments["app_monitor_name"]
-        start_time = arguments.get("start_time")
-        end_time = arguments.get("end_time")
-        region = arguments.get("region")
-        
-        result = get_user_experience_metrics(app_monitor_name, start_time, end_time, region)
-        return [TextContent(type="text", text=json.dumps(result, indent=2, default=str))]
-        
-    except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
 
 async def analyze_mobile_app_performance(arguments: Dict[str, Any]) -> List[TextContent]:
     """Analyze mobile app performance using AWS RUM."""

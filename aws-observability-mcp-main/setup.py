@@ -252,7 +252,6 @@ def show_usage_instructions(config_file):
     tools = [
         "analyze_log_patterns - Analyze CloudWatch Logs for patterns and errors",
         "analyze_rum_performance - Analyze user experience performance",
-        "get_user_experience_metrics - Get comprehensive UX metrics",
         "app_performance_analysis - Comprehensive app performance analysis",
         "infrastructure_health_check - Infrastructure monitoring"
     ]

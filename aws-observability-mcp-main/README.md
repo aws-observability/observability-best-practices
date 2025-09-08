@@ -119,9 +119,6 @@ This repository hosts the AWS Observability Best Practices Model Context Protoco
 
 ### CloudWatch Tools
 - **`aws-observability-best-practices___get_metric_data`** - Retrieve CloudWatch metric values with Metrics Insights queries
-- **`aws-observability-best-practices___get_metric_statistics`** - Get CloudWatch metric statistics for analysis
-- **`aws-observability-best-practices___analyze_metric_anomalies`** - Analyze CloudWatch metrics for anomalies and patterns
-- **`aws-observability-best-practices___run_metric_anomaly_detection`** - Run metric anomaly detection analysis
 - **`aws-observability-best-practices___describe_alarms`** - Retrieve information about CloudWatch alarms
 - **`aws-observability-best-practices___list_dashboards`** - List available CloudWatch dashboards
 - **`aws-observability-best-practices___get_dashboard`** - Retrieve dashboard configuration details
@@ -133,16 +130,12 @@ This repository hosts the AWS Observability Best Practices Model Context Protoco
 ### AWS Service-Specific Analysis
 - **`aws-observability-best-practices___run_lambda_metrics_analysis`** - Run Lambda function metrics analysis
 - **`aws-observability-best-practices___run_ec2_metrics_analysis`** - Run EC2 instance metrics analysis
-- **`aws-observability-best-practices___run_rds_metrics_analysis`** - Run RDS instance metrics analysis
 - **`aws-observability-best-practices___get_database_insights_metrics`** - Get Database Insights metrics for RDS instances
 
 ### Real User Monitoring (RUM) Tools
 - **`aws-observability-best-practices___analyze_rum_performance`** - Analyze AWS RUM performance data for user experience insights
 - **`aws-observability-best-practices___run_comprehensive_rum_analysis`** - Run comprehensive RUM analysis report
 - **`aws-observability-best-practices___run_web_vitals_analysis`** - Run Core Web Vitals analysis from AWS RUM
-- **`aws-observability-best-practices___get_user_experience_metrics`** - Get comprehensive user experience metrics from AWS RUM
-- **`aws-observability-best-practices___run_mobile_app_analysis`** - Run mobile app health analysis
-- **`aws-observability-best-practices___run_user_journey_analysis`** - Run user journey performance analysis
 
 ### SLO Management
 - **`aws-observability-best-practices___run_slo_health_assessment`** - Run SLO health assessment

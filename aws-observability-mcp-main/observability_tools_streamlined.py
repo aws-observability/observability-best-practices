@@ -27,54 +27,6 @@ def get_observability_tools() -> list[Tool]:
             }
         ),
         Tool(
-            name="get_metric_statistics",
-            description="Get CloudWatch metric statistics for analysis",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "namespace": {"type": "string", "description": "CloudWatch namespace"},
-                    "metric_name": {"type": "string", "description": "Metric name"},
-                    "dimensions": {"type": "array", "items": {"type": "object"}, "description": "Metric dimensions"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "period": {"type": "integer", "description": "Period in seconds", "default": 300},
-                    "statistics": {"type": "array", "items": {"type": "string"}, "default": ["Average"]},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["namespace", "metric_name"]
-            }
-        ),
-        Tool(
-            name="analyze_metric_anomalies",
-            description="Analyze CloudWatch metrics for anomalies and patterns",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "namespace": {"type": "string", "description": "CloudWatch namespace"},
-                    "metric_name": {"type": "string", "description": "Metric name"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["namespace", "metric_name"]
-            }
-        ),
-        Tool(
-            name="run_metric_anomaly_detection",
-            description="Run metric anomaly detection analysis",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "namespace": {"type": "string", "description": "CloudWatch namespace"},
-                    "metric_name": {"type": "string", "description": "Metric name"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["namespace", "metric_name"]
-            }
-        ),
-        Tool(
             name="describe_alarms",
             description="Retrieve information about CloudWatch alarms",
             inputSchema={
@@ -173,20 +125,6 @@ def get_observability_tools() -> list[Tool]:
             }
         ),
         Tool(
-            name="run_rds_metrics_analysis",
-            description="Run RDS instance metrics analysis",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "db_instance_identifier": {"type": "string", "description": "RDS instance identifier"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["db_instance_identifier"]
-            }
-        ),
-        Tool(
             name="get_database_insights_metrics",
             description="Get Database Insights metrics for RDS instances",
             inputSchema={
@@ -233,48 +171,6 @@ def get_observability_tools() -> list[Tool]:
         Tool(
             name="run_web_vitals_analysis",
             description="Run Core Web Vitals analysis from AWS RUM",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "app_monitor_name": {"type": "string", "description": "RUM app monitor name"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["app_monitor_name"]
-            }
-        ),
-        Tool(
-            name="get_user_experience_metrics",
-            description="Get comprehensive user experience metrics from AWS RUM",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "app_monitor_name": {"type": "string", "description": "RUM app monitor name"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["app_monitor_name"]
-            }
-        ),
-        Tool(
-            name="run_mobile_app_analysis",
-            description="Run mobile app health analysis",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "app_monitor_name": {"type": "string", "description": "RUM app monitor name"},
-                    "start_time": {"type": "string", "description": "Start time (ISO format)"},
-                    "end_time": {"type": "string", "description": "End time (ISO format)"},
-                    "region": {"type": "string", "description": "AWS region"}
-                },
-                "required": ["app_monitor_name"]
-            }
-        ),
-        Tool(
-            name="run_user_journey_analysis",
-            description="Run user journey performance analysis",
             inputSchema={
                 "type": "object",
                 "properties": {

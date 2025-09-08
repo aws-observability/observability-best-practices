@@ -25,7 +25,7 @@ def test_imports():
         from services.cloudwatch_logs import analyze_log_group_costs, analyze_log_retention_optimization
         print("SUCCESS: CloudWatch Logs service imported successfully")
         
-        from services.aws_rum import analyze_rum_performance, get_user_experience_metrics
+        from services.aws_rum import analyze_rum_performance
         print("SUCCESS: AWS RUM service imported successfully")
         
         from observability_tools import get_observability_tools
@@ -63,7 +63,6 @@ def test_tools_definition():
         expected_tools = [
             "analyze_log_patterns",
             "analyze_rum_performance", 
-            "get_user_experience_metrics",
             "app_performance_analysis"
         ]
         

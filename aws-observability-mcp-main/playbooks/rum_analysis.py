@@ -9,7 +9,7 @@ import logging
 import boto3
 from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
-from services.aws_rum import analyze_rum_performance, get_user_experience_metrics, analyze_mobile_app_performance
+from services.aws_rum import analyze_rum_performance, analyze_mobile_app_performance
 
 logger = logging.getLogger(__name__)
 
@@ -41,8 +41,8 @@ def analyze_web_vitals(
         elif not end_time:
             end_time = datetime.utcnow().isoformat() + 'Z'
         
-        # Get user experience metrics which includes web vitals
-        result = get_user_experience_metrics(
+        # Get RUM performance data which includes web vitals
+        result = analyze_rum_performance(
             app_monitor_name=app_monitor_name,
             start_time=start_time,
             end_time=end_time,

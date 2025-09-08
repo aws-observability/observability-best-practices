@@ -10,7 +10,7 @@ As a best practice, you want to start with establishing a baseline performance f
 
 ### Amazon CloudWatch metrics
 
-[Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html) is a critical tool for monitoring and managing your [RDS](https://aws.amazon.com/rds/) and [Aurora](https://aws.amazon.com/rds/aurora/) databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Both Amazon RDS and Aurora database sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. RDS and Aurora publish instance-level metrics metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
+[Amazon CloudWatch](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/monitoring-cloudwatch.html) is a critical tool for monitoring and managing your [RDS](https://aws.amazon.com/rds/) and [Aurora](https://aws.amazon.com/rds/aurora/) databases. It provides valuable insights into database performance and helps you identify and resolve issues quickly. Both Amazon RDS and Aurora database sends metrics to CloudWatch for each active database instance at 1 minute granularity. Monitoring is enabled by default and metrics are available for 15 days. RDS and Aurora publish instance-level metrics to Amazon CloudWatch in the **AWS/RDS** namespace.
 
 Using CloudWatch Metrics, you can identify trends or patterns in your database performance, and use this information to optimize your configurations and improve your application's performance. Here are key metricsto monitor :
 

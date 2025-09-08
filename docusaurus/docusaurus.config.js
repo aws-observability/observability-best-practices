@@ -146,6 +146,12 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'mcp/index',
+            position: 'left',
+            label: 'MCP',
+          },
+          {
+            type: 'doc',
             docId: 'contributors',
             position: 'left',
             label: 'Contributors',

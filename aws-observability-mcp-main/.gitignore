@@ -1,0 +1,10 @@
+#Temporary folders
+__pycache__/
+.venv/
+.amazonq/
+
+#Log folders
+logs/
+
+#Template files
+mcp_runbooks.json

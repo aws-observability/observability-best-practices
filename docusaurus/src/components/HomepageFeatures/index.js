@@ -66,6 +66,7 @@ const FeatureList = [
     ),
     link: '/faq/general',
   },
+
   {
     title: 'Patterns',
     Svg: require('@site/static/img/patterns.svg').default,
@@ -77,6 +78,42 @@ const FeatureList = [
       </>
     ),
     link: '/patterns/Tracing/xrayec2',
+  },
+  {
+    title: 'Persona',
+    Svg: require('@site/static/img/persona.svg').default,
+    description: (
+      <>
+        <Translate id="featureList.patterns.description">
+          Persona specific best practices and recommendations for AWS observability.
+        </Translate>
+      </>
+    ),
+    link: '/persona/cloud_engineer',
+  },
+  {
+    title: 'Resources',
+    Svg: require('@site/static/img/resources.svg').default,
+    description: (
+      <>
+        <Translate id="featureList.patterns.description">
+          Resources for AWS observability.
+        </Translate>
+      </>
+    ),
+    link: '/resources',
+  },
+  {
+    title: 'MCP',
+    Svg: require('@site/static/img/mcp.svg').default,
+    description: (
+      <>
+        <Translate id="featureList.patterns.description">
+          MCP (Model Context Protocol) server for AWS observability.
+        </Translate>
+      </>
+    ),
+    link: '/mcp',
   },
   {
     title: 'CloudOps',

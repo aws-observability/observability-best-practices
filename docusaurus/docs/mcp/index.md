@@ -4,7 +4,7 @@ The repository (https://github.com/aws-observability/observability-best-practice
 
 ## Features
 
-- **23 Specialized Tools** - Comprehensive set of observability analysis tools for CloudWatch, RUM, SLO management, and more
+- **Extensive Tools** - Comprehensive set of observability analysis tools for CloudWatch, RUM, SLO management, and more
 - **Real-time Analysis** - Uses actual AWS observability data for analysis
 - **Best Practices Integration** - Direct integration with AWS Observability Best Practices portal
 - **Multi-service Support** - CloudWatch Logs, Metrics, RUM, Database Insights, and SLO monitoring

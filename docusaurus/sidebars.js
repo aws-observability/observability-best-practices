@@ -70,6 +70,7 @@ module.exports = {
             {
               type: 'category',
               label: 'AWS Native',
+              className: 'ecs-aws-native',
               items: [
                 'guides/containers/aws-native/ecs/best-practices-metrics-collection-1',
                 'guides/containers/aws-native/ecs/best-practices-metrics-collection-2',
@@ -78,6 +79,7 @@ module.exports = {
             {
               type: 'category',
               label: 'Open Source',
+              className: 'ecs-open-source',
               items: [
                 'guides/containers/oss/ecs/best-practices-metrics-collection-1',
                 'guides/containers/oss/ecs/best-practices-metrics-collection-2',
@@ -92,6 +94,7 @@ module.exports = {
             {
               type: 'category',
               label: 'AWS Native',
+              className: 'eks-aws-native',
               items: [
                 'guides/containers/aws-native/eks/amazon-cloudwatch-container-insights',
                 'guides/containers/aws-native/eks/log-aggregation',
@@ -102,6 +105,7 @@ module.exports = {
             {
               type: 'category',
               label: 'Open Source',
+              className: 'eks-open-source',
               items: ['guides/containers/oss/eks/best-practices-metrics-collection',
                 'guides/containers/oss/eks/keda-amp-eks',
               ],
@@ -116,6 +120,7 @@ module.exports = {
             {
               type: 'category',
               label: 'AWS Native',
+              className: 'dotnet-aws-native',
               items: [
                 'guides/dotnet/aws-native/logs',
                 'guides/dotnet/aws-native/metrics',
@@ -125,6 +130,7 @@ module.exports = {
             {
               type: 'category',
               label: 'Open Source',
+              className: 'dotnet-open-source',
               items: [
                 'guides/dotnet/oss/logs',
                 'guides/dotnet/oss/metrics',

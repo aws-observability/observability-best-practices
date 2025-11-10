@@ -179,15 +179,17 @@ One way to publish custom metrics to AWS CloudWatch is by calling CloudWatch met
 To achieve this, you can generate the logs using [EMF specification](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html), and send them to CloudWatch using `PutLogEvents` API. To simplify the process, there are **two client libraries that support the creation of metrics in the EMF** **format**.
 
 * Low level client libraries ([aws-embedded-metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html))
-* Lambda Powertools [Metrics](https://docs.powertools.aws.dev/lambda/java/core/metrics/).
+* Lambda Powertools [Metrics](https://docs.aws.amazon.com/powertools/java/latest/core/metrics/).
 
 
 ### **Use [CloudWatch Lambda Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) to monitor system-level metrics**
 
 CloudWatch Lambda insights provides you system-level metrics, including CPU time, memory usage, disk utilization, and network performance. Lambda Insights also collects, aggregates, and summarizes diagnostic information, such as **`cold starts`** and Lambda worker shutdowns. Lambda Insights leverages CloudWatch Lambda extension, which is packaged as a Lambda layer. Once enabled, it collects system-level metrics and emits a single performance log event to CloudWatch Logs for every invocation of that Lambda function in the embedded metrics format. 
 
-!!! note
+:::note
     CloudWatch Lambda Insights is not enabled by default and needs to be turned on per Lambda function. 
+:::
+
 You can enable it via AWS console or via  Infrastructure as Code (IaC). Here is an example of how to enable it using the AWS serverless application model (SAM). You add `LambdaInsightsExtension` extension Layer to your Lambda function, and also add managed IAM policy `CloudWatchLambdaInsightsExecutionRolePolicy`, which gives permissions to your Lambda function to create log stream and call `PutLogEvents` API to be able to write logs to it.
 
 ```
@@ -296,9 +298,9 @@ const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 ...
 ```
 
-!!! note
+:::note
     To instrument individual clients wrap your AWS SDK client in a call to `AWSXRay.captureAWSClient`.  Do not use both `captureAWS` and `captureAWSClient` together. This will lead to duplicate traces.
-
+:::
 
 ## **Additional Resources**
 
@@ -314,10 +316,3 @@ const AWS = AWSXRay.captureAWS(require('aws-sdk'));
 In this observability best practice guide for AWS Lambda based serverless application, we highlighted critical aspects such as logging, metrics and tracing using Native AWS services such as Amazon CloudWatch and AWS X-Ray. We recommended using AWS Lambda Powertools library to easily add observability best practices to your application. By adopting these best practices, you can unlock valuable insights into your serverless application, enabling faster error detection and performance optimization.
 
 For further deep dive, we would highly recommend you to practice AWS Native Observability module of AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US).
-
-
-
-
-
-
-

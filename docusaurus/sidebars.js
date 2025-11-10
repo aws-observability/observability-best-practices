@@ -69,8 +69,7 @@ module.exports = {
           items: [
             {
               type: 'category',
-              label: 'AWS Native',
-              link: {type: 'generated-index'},
+              label: 'ECS AWS Native',
               items: [
                 'guides/containers/aws-native/ecs/best-practices-metrics-collection-1',
                 'guides/containers/aws-native/ecs/best-practices-metrics-collection-2',
@@ -78,8 +77,7 @@ module.exports = {
             },
             {
               type: 'category',
-              label: 'Open Source',
-              link: {type: 'generated-index'},
+              label: 'ECS Open Source',
               items: [
                 'guides/containers/oss/ecs/best-practices-metrics-collection-1',
                 'guides/containers/oss/ecs/best-practices-metrics-collection-2',
@@ -93,8 +91,7 @@ module.exports = {
           items: [
             {
               type: 'category',
-              label: 'AWS Native',
-              link: {type: 'generated-index', slug: '/guides/eks-aws-native'},
+              label: 'EKS AWS Native',
               items: [
                 'guides/containers/aws-native/eks/amazon-cloudwatch-container-insights',
                 'guides/containers/aws-native/eks/log-aggregation',
@@ -104,8 +101,7 @@ module.exports = {
             },
             {
               type: 'category',
-              label: 'Open Source',
-              link: {type: 'generated-index', slug: '/guides/eks-open-source'},
+              label: 'EKS Open Source',
               items: ['guides/containers/oss/eks/best-practices-metrics-collection',
                 'guides/containers/oss/eks/keda-amp-eks',
               ],
@@ -119,8 +115,7 @@ module.exports = {
           items: [
             {
               type: 'category',
-              label: 'AWS Native',
-              link: {type: 'generated-index', slug: '/guides/dotnet-aws-native'},
+              label: '.NET AWS Native',
               items: [
                 'guides/dotnet/aws-native/logs',
                 'guides/dotnet/aws-native/metrics',
@@ -129,8 +124,7 @@ module.exports = {
             },
             {
               type: 'category',
-              label: 'Open Source',
-              link: {type: 'generated-index', slug: '/guides/dotnet-open-source'},
+              label: '.NET Open Source',
               items: [
                 'guides/dotnet/oss/logs',
                 'guides/dotnet/oss/metrics',

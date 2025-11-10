@@ -2,8 +2,6 @@
 
 A curated collection of resources to help you learn and implement AWS observability best practices.
 
-## Learning Resources
-
 ### AWS Cloud Operations Show
 
 Collection of live stream recordings where we dive deep into interesting AWS Cloud Operations features and use cases. This video series provides practical demonstrations and expert insights into cloud operations.
@@ -16,10 +14,12 @@ This hands-on workshop provides practical experience with the wide variety of to
 
 [Start the Workshop](https://catalog.workshops.aws/observability/)
 
-!!! tip
-    The One Observability Workshop is perfect for teams looking to get hands-on experience with AWS observability tools in a structured learning environment.
+### Interactive Demos
 
-## Demos and Examples
+AWS Cloud Operations Demos for Monitoring and Observability and Cloud Operations Management
+
+[View on Storylane](https://aws-cloudops.storylane.io/hub/9ajhvqeu78kb)
+
 
 ### Application Signals Demo
 
@@ -27,7 +27,6 @@ A complete demonstration application showcasing AWS Application Signals capabili
 
 [View on GitHub](https://github.com/aws-observability/application-signals-demo)
 
-## Documentation
 
 ### AWS Observability Best Practices Guide
 
@@ -39,6 +38,6 @@ The home page of this Observability Best Practices guide. This comprehensive res
 
 Comprehensive guides on how to instrument your code with ADOT. Learn how to collect distributed traces and metrics from your applications using the AWS-supported distribution of OpenTelemetry.
 
-[Explore ADOT Documentation](https://aws-otel.github.io/)
+[Explore ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 
 

@@ -1,4 +1,4 @@
-# Cost visibility and resource right-sizing using Kubecost
+# Using Kubecost
 Kubecost provides customers with visibility into spend and resource efficiency in Kubernetes environments. At a high level, Amazon EKS cost monitoring is deployed with Kubecost, which includes Prometheus, an open-source monitoring system and time series database. Kubecost reads metrics from Prometheus then performs cost allocation calculations and writes the metrics back to Prometheus. Finally, the Kubecost front end reads metrics from Prometheus and shows them on the Kubecost user interface (UI). The architecture is illustrated by the following diagram:
 
 ![Architecture](../../images/kubecost-architecture.png)
@@ -16,8 +16,9 @@ A downside of the above two approach is that you may end up with unused capacity
 
 The most efficient way to track costs in multi-tenant Kubernetes clusters is to distribute incurred costs based on the amount of resources consumed by workloads. This pattern allows you to maximize the utilization of your EC2 instances because different workloads can share nodes, which allows you to increase the pod-density on your nodes. However, calculating costs by workload or namespaces is a challenging task. Understanding the cost-responsibility of a workload requires aggregating all the resources consumed or reserved during a time-frame, and evaluating the charges based on the cost of the resource and the duration of the usage. This is the exact challenge that Kubecost is dedicated to tackling.
 
-!!! tip
+:::tip
     Take a look at our [One Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics) to get a hands-on experience on Kubecost.
+:::
 
 ## Recommendations
 ### Cost Allocation
@@ -49,7 +50,7 @@ So, idle costs can also be thought of as the cost of the space that the Kubernet
 
 ### Network Cost
 
-Kubecost uses best-effort to allocate network transfer costs to the workloads generating those costs. The accurate way of determining the network cost is by using the combination of  [AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations) and [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration). 
+Kubecost uses best-effort to allocate network transfer costs to the workloads generating those costs. The accurate way of determining the network cost is by using the combination of  [AWS Cloud Integration](https://www.ibm.com/docs/en/kubecost/self-hosted/3.x?topic=integration-aws-cloud-using-irsaeks-pod-identities) and [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration). 
 
 You would want to take into account your efficiency score and Idle cost to fine tune the workloads to ensure you utilize the cluster to its complete potential. This takes us to the next topic namely Cluster right-sizing.
 
@@ -99,7 +100,7 @@ eksctl create iamserviceaccount \
 --approve
 
 ```
-`CLUSTER_NAME` is the name of the Amazon EKS cluster where you want to install Kubecost and <REGION> is the region of the Amazon EKS cluster.
+`CLUSTER_NAME` is the name of the Amazon EKS cluster where you want to install Kubecost and "REGION" is the region of the Amazon EKS cluster.
 
 Once complete, you will have to upgrade the Kubecost helm chart as below :
 ```
@@ -113,7 +114,7 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 ```
 ### Accessing Kubecost UI
 
-Kubecost provides a web dashboard that you can access either through kubectl port-forward, an ingress, or a load balancer. The enterprise version of Kubecost also supports restricting access to the dashboard using [SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) and providing varying level of access. For example, restricting team’s view to only the products they are responsible for.
+Kubecost provides a web dashboard that you can access either through kubectl port-forward, an ingress, or a load balancer. The enterprise version of Kubecost also supports restricting access to the dashboard using [SSO/SAML](https://www.ibm.com/docs/en/kubecost/self-hosted/3.x?topic=configuration-user-management-oidc) and providing varying level of access. For example, restricting team’s view to only the products they are responsible for.
 
 In AWS environment, consider using the [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) to expose Kubecost and use [Amazon Cognito](https://aws.amazon.com/cognito/) for authentication, authorization, and user management. You can learn more on this [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/)
 

@@ -14,6 +14,12 @@ This hands-on workshop provides practical experience with the wide variety of to
 
 [Start the Workshop](https://catalog.workshops.aws/observability/)
 
+### Interactive Demos
+
+AWS Cloud Operations Demos for Monitoring and Observability and Cloud Operations Management
+
+[View on Storylane](https://aws-cloudops.storylane.io/hub/9ajhvqeu78kb)
+
 
 ### Application Signals Demo
 
@@ -32,6 +38,6 @@ The home page of this Observability Best Practices guide. This comprehensive res
 
 Comprehensive guides on how to instrument your code with ADOT. Learn how to collect distributed traces and metrics from your applications using the AWS-supported distribution of OpenTelemetry.
 
-[Explore ADOT Documentation](https://aws-otel.github.io/)
+[Explore ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 
 

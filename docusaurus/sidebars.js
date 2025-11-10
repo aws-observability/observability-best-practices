@@ -186,30 +186,6 @@ module.exports = {
           label: 'Partners',
           items: [
             'guides/partners/databricks',
-            {
-              type: 'category',
-              label: 'Databases',
-              items: ['guides/databases/rds-and-aurora'],
-            },
-            {
-              type: 'category',
-              label: 'Cost',
-              items: [
-                'guides/cost/kubecost',
-                'guides/cost/OLA-EC2-righsizing',
-                {
-                  type: 'category',
-                  label: 'Visualizing costs',
-                  items: [
-                    'guides/cost/cost-visualization/cost',
-                    'guides/cost/cost-visualization/amazon-cloudwatch',
-                    'guides/cost/cost-visualization/amazon-grafana',
-                    'guides/cost/cost-visualization/amazon-prometheus',
-                    'guides/cost/cost-visualization/aws-xray',
-                  ],
-                },
-              ],
-            },
           ],
         },
         'guides/observability-maturity-model',

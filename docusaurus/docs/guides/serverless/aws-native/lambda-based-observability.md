@@ -179,7 +179,7 @@ One way to publish custom metrics to AWS CloudWatch is by calling CloudWatch met
 To achieve this, you can generate the logs using [EMF specification](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Specification.html), and send them to CloudWatch using `PutLogEvents` API. To simplify the process, there are **two client libraries that support the creation of metrics in the EMF** **format**.
 
 * Low level client libraries ([aws-embedded-metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Libraries.html))
-* Lambda Powertools [Metrics](https://docs.powertools.aws.dev/lambda/java/core/metrics/).
+* Lambda Powertools [Metrics](https://docs.aws.amazon.com/powertools/java/latest/core/metrics/).
 
 
 ### **Use [CloudWatch Lambda Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Lambda-Insights.html) to monitor system-level metrics**

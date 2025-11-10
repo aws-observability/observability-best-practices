@@ -25,13 +25,13 @@ The [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:t
 
 GitOps is a software development and operations methodology that uses Git as the source of truth for deployment configurations. It involves keeping the desired state of an application or infrastructure in a Git repository and using Git-based workflows to manage and deploy changes. GitOps is a way of managing application and infrastructure deployment so that the whole system is described declaratively in a Git repository. It is an operational model that offers you the ability to manage the state of multiple Kubernetes clusters leveraging the best practices of version control, immutable artifacts, and automation. 
 
-Flux is a GitOps tool that automates the deployment of applications on Kubernetes. It works by continuously monitoring the state of a Git repository and applying any changes to a cluster. Flux integrates with various Git providers such as GitHub, [GitLab](https://dzone.com/articles/auto-deploy-spring-boot-app-using-gitlab-cicd), and Bitbucket. When changes are made to the repository, Flux automatically detects them and updates the cluster accordingly.
+Flux is a GitOps tool that automates the deployment of applications on Kubernetes. It works by continuously monitoring the state of a Git repository and applying any changes to a cluster. Flux integrates with various Git providers such as GitHub, [GitLab](https://dzone.com/articles/auto-deploy-spring-boot-app-using-gitlab-cicd/), and Bitbucket. When changes are made to the repository, Flux automatically detects them and updates the cluster accordingly.
 
 ### Advantages of using Flux
 
 * **Automated deployments**: Flux automates the deployment process, reducing manual errors and freeing up developers to focus on other tasks.
 * **Git-based workflow**: Flux leverages Git as a source of truth, which makes it easier to track and revert changes.
-* **Declarative configuration**: Flux uses [Kubernetes](https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co) manifests to define the desired state of a cluster, making it easier to manage and track changes.
+* **Declarative configuration**: Flux uses [Kubernetes](https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co/) manifests to define the desired state of a cluster, making it easier to manage and track changes.
 
 ### Challenges in adopting Flux
 

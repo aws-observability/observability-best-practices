@@ -34,10 +34,30 @@ The home page of this Observability Best Practices guide. This comprehensive res
 
 [Visit the Guide](https://aws-observability.github.io/observability-best-practices/)
 
+### AWS Cloud Operations Best Practices Guide
+
+The home page of The Cloud Operations Best Practices guide. This comprehensive resource covers recommended approaches for configuring and operating your Cloud Operations workloads on AWS.
+
+[Visit the Guide](https://aws-samples.github.io/cloud-operations-best-practices/)
+
+
+
+### MCP Servers
+
+[CloudWatch](https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server)
+
+[CloudWatch Application Signals](https://awslabs.github.io/mcp/servers/cloudwatch-applicationsignals-mcp-server)
+
+[CloudTrail](https://awslabs.github.io/mcp/servers/cloudtrail-mcp-server)
+
+
 ### AWS Distro for OpenTelemetry (ADOT)
 
 Comprehensive guides on how to instrument your code with ADOT. Learn how to collect distributed traces and metrics from your applications using the AWS-supported distribution of OpenTelemetry.
 
 [Explore ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 
+### Cloud Operations (COP) sessions at AWS re:Invent 2025
+
+Check out the AWS re:Invent 2025 session catalogue for all Cloud Operations (COP) sessions [here](https://registration.awsevents.com/flow/awsevents/reinvent2025/eventcatalog/page/eventcatalog?search.topic=1752157283215005Ftqs&search=cop)
 

@@ -61,5 +61,9 @@ Comprehensive guides on how to instrument your code with ADOT. Learn how to coll
 
 [Explore ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 
+### AWS CloudTrail Resources
 
+Explore curated resources to strengthen your **AWS CloudTrail** security practices, improve incident response, and enhance monitoring capabilities.
+
+[Visit the Guide](https://aws-samples.github.io/cloud-operations-best-practices/docs/resources/cloudtrail-resources)
 

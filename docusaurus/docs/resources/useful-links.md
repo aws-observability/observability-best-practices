@@ -2,6 +2,17 @@
 
 A curated collection of resources to help you learn and implement AWS observability best practices.
 
+### Cloud Operations (COP) sessions at AWS re:Invent 2025
+
+Check out the AWS re:Invent 2025 session catalogue for all Cloud Operations (COP) sessions [here](https://registration.awsevents.com/flow/awsevents/reinvent2025/eventcatalog/page/eventcatalog?search.topic=1752157283215005Ftqs&search=cop)
+
+### Interactive Demos
+
+Check out the AWS Cloud Operations Demos for Monitoring and Observability and Cloud Operations Management.
+
+[View on Storylane](https://aws-cloudops.storylane.io/hub/9ajhvqeu78kb)
+
+
 ### AWS Cloud Operations Show
 
 Collection of live stream recordings where we dive deep into interesting AWS Cloud Operations features and use cases. This video series provides practical demonstrations and expert insights into cloud operations.
@@ -13,12 +24,6 @@ Collection of live stream recordings where we dive deep into interesting AWS Clo
 This hands-on workshop provides practical experience with the wide variety of tool sets AWS offers for monitoring and observability. The workshop is highly customizable - you can pick and choose any module based on your interests and availability.
 
 [Start the Workshop](https://catalog.workshops.aws/observability/)
-
-### Interactive Demos
-
-AWS Cloud Operations Demos for Monitoring and Observability and Cloud Operations Management
-
-[View on Storylane](https://aws-cloudops.storylane.io/hub/9ajhvqeu78kb)
 
 
 ### Application Signals Demo
@@ -41,7 +46,6 @@ The home page of The Cloud Operations Best Practices guide. This comprehensive r
 [Visit the Guide](https://aws-samples.github.io/cloud-operations-best-practices/)
 
 
-
 ### MCP Servers
 
 [CloudWatch](https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server)
@@ -57,7 +61,9 @@ Comprehensive guides on how to instrument your code with ADOT. Learn how to coll
 
 [Explore ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 
-### Cloud Operations (COP) sessions at AWS re:Invent 2025
+### AWS CloudTrail Resources
 
-Check out the AWS re:Invent 2025 session catalogue for all Cloud Operations (COP) sessions [here](https://registration.awsevents.com/flow/awsevents/reinvent2025/eventcatalog/page/eventcatalog?search.topic=1752157283215005Ftqs&search=cop)
+Explore curated resources to strengthen your **AWS CloudTrail** security practices, improve incident response, and enhance monitoring capabilities.
+
+[Visit the Guide](https://aws-samples.github.io/cloud-operations-best-practices/docs/resources/cloudtrail-resources)
 

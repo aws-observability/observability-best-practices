@@ -2,9 +2,9 @@
 
 A curated collection of resources to help you learn and implement AWS observability best practices.
 
-### Cloud Operations (COP) sessions at AWS re:Invent 2025
+### Cloud Operations (COP) sessions at AWS re:Invent 2025 (YouTube Playlist)
 
-Check out the AWS re:Invent 2025 session catalogue for all Cloud Operations (COP) sessions [here](https://registration.awsevents.com/flow/awsevents/reinvent2025/eventcatalog/page/eventcatalog?search.topic=1752157283215005Ftqs&search=cop)
+Check out the AWS re:Invent 2025 breakout session playslist for Cloud Operations (COP) sessions [here](https://www.youtube.com/playlist?list=PL2yQDdvlhXf8fUGVeljVNpQwugV7XBZRt)
 
 ### Interactive Demos
 
@@ -22,7 +22,7 @@ Collection of live stream recordings where we dive deep into interesting AWS Clo
 ### One Observability Workshop
 
 This hands-on workshop provides practical experience with the wide variety of tool sets AWS offers for monitoring and observability. The workshop is highly customizable - you can pick and choose any module based on your interests and availability.
-
+e
 [Start the Workshop](https://catalog.workshops.aws/observability/)
 
 

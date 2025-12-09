@@ -22,7 +22,7 @@ Collection of live stream recordings where we dive deep into interesting AWS Clo
 ### One Observability Workshop
 
 This hands-on workshop provides practical experience with the wide variety of tool sets AWS offers for monitoring and observability. The workshop is highly customizable - you can pick and choose any module based on your interests and availability.
-e
+
 [Start the Workshop](https://catalog.workshops.aws/observability/)
 
 

@@ -1,20 +1,13 @@
 ---
 sidebar_position: 2
 ---
-
-
-
-
 # サイトを翻訳する
 
-`docs/intro.md` をフランス語に翻訳しましょう。
-
-
-
+翻訳しましょう `docs/intro.md` フランス語に翻訳します。
 
 ## i18n の設定
 
-`fr` ロケールをサポートするために `docusaurus.config.js` を変更します:
+変更 `docusaurus.config.js` のサポートを追加するために `fr` ロケール：
 
 ```js title="docusaurus.config.js"
 export default {
@@ -25,11 +18,9 @@ export default {
 };
 ```
 
-
-
 ## ドキュメントを翻訳する
 
-`docs/intro.md` ファイルを `i18n/fr` フォルダにコピーします：
+コピーします。 `docs/intro.md` ファイルに `i18n/fr` フォルダー
 
 ```bash
 mkdir -p i18n/fr/docusaurus-plugin-content-docs/current/
@@ -37,34 +28,29 @@ mkdir -p i18n/fr/docusaurus-plugin-content-docs/current/
 cp docs/intro.md i18n/fr/docusaurus-plugin-content-docs/current/intro.md
 ```
 
-`i18n/fr/docusaurus-plugin-content-docs/current/intro.md` をフランス語に翻訳します。
+翻訳 `i18n/fr/docusaurus-plugin-content-docs/current/intro.md` フランス語で。
 
+## ローカライズされたサイトを起動する
 
-
-## ローカライズされたサイトを開始する
-
-フランスのロケールでサイトを開始します：
+フランス語ロケールでサイトを起動します。
 
 ```bash
 npm run start -- --locale fr
 ```
 
-ローカライズされたサイトは [http://localhost:3000/fr/](http://localhost:3000/fr/) でアクセスでき、「はじめに」のページが翻訳されています。
+ローカライズされたサイトは [http://localhost:3000/fr/](http://localhost:3000/fr/) でアクセス可能です。 `Getting Started` ページが翻訳されました。
 
 :::caution
 
-開発環境では、一度に 1 つのロケールのみ使用できます。
+開発環境では、一度に 1 つのロケールのみを使用できます。
 
 :::
 
+## ロケールドロップダウンを追加する
 
+言語間をシームレスに移動するには、ロケールドロップダウンを追加します。
 
-
-## ロケールドロップダウンの追加
-
-言語間をシームレスに移動するために、ロケールドロップダウンを追加します。
-
-`docusaurus.config.js` ファイルを以下のように変更します：
+を変更します。 `docusaurus.config.js` ファイル:
 
 ```js title="docusaurus.config.js"
 export default {
@@ -82,21 +68,19 @@ export default {
 };
 ```
 
-これで、ナビゲーションバーにロケールドロップダウンが表示されます：
+ロケールドロップダウンがナビゲーションバーに表示されます。
 
 ![Locale Dropdown](./img/localeDropdown.png)
 
+## ローカライズされたサイトをビルドする
 
-
-## ローカライズされたサイトのビルド
-
-特定のロケールでサイトをビルドします：
+特定のロケール用にサイトをビルドします。
 
 ```bash
 npm run build -- --locale fr
 ```
 
-または、すべてのロケールを一度にビルドします：
+または、すべてのロケールを一度に含めてサイトをビルドします。
 
 ```bash
 npm run build

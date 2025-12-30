@@ -1,45 +1,29 @@
 # CloudWatch Contributor Insights
 
-
-
-
 ## 概要
-Amazon CloudWatch Contributor Insights は、メトリクスに影響を与えている主要な要因を特定するためにログデータを分析するのに役立ちます。
-リアルタイムのランキングと統計を作成することで、システムの動作とパフォーマンスにどのエンティティが影響を与えているかを理解できます。
-
-
-
+Amazon CloudWatch Contributor Insights は、ログデータを分析してメトリクスに影響を与える上位のコントリビューターを特定するのに役立ちます。リアルタイムのランキングと統計を作成することで、システムの動作とパフォーマンスに影響を与えているエンティティを理解できます。
 
 ## 機能
 - ログデータのリアルタイム分析
-- AWS の一般的なサービス向けの組み込みルール
-- カスタムルールの作成機能
+- 一般的な AWS サービス向けの組み込みルール
+- カスタムルール作成機能
 - 自動データ処理とランキング
 - CloudWatch ダッシュボードとアラームとの統合
 
-
-
-
 ## 実装
 
-
-
-
 ### 組み込みルール
-CloudWatch Contributor Insights には、一般的な AWS サービス向けの事前構築されたルールが用意されています：
-- VPC Flow Logs の分析
-- Application Load Balancer のログ
-- Amazon API Gateway のログ
-- AWS Lambda のログ
-
-
-
+CloudWatch Contributor Insights は、一般的な AWS サービス向けの事前構築されたルールを提供します。
+- VPC Flow Logs 分析
+- Application Load Balancer ログ
+- Amazon API Gateway ログ
+- AWS Lambda ログ
 
 ### カスタムルール
-以下を定義してカスタムルールを作成します:
-1. ソースドキュメントのロググループ。分析する Contributor フィールド
+カスタムルールを定義して作成します。
+1. ソースドキュメントの Log group コントリビューターフィールドを分析
 3. メトリクスと集計
-4. 時間枠とサンプリングレート
+4. 時間ウィンドウとサンプリングレート
 
 カスタムルールの例:
 ```yaml
@@ -64,30 +48,19 @@ CloudWatch Contributor Insights には、一般的な AWS サービス向けの�
 
 ![Preview of the CloudWatch Contributor Insights console](../../../images/contrib1.png)
 
-
-
 ## ベストプラクティス
 
-
-
-
-### ルールの設定
+### ルール設定
 - わかりやすいルール名を使用する
-- 可能な場合は組み込みルールから始める
+- 可能な限り組み込みルールから始める
 - 対象を絞ったログフィルタリングを実装する
 - 適切な時間枠を設定する
 
-
-
-
 ### パフォーマンスの最適化
-- アクティブなルール数を制限する
+- アクティブなルールの数を制限する
 - 最適なサンプリングレートを設定する
 - 適切な集計期間を使用する
 - 必要なロググループに対してのみルールを有効にする
-
-
-
 
 ### コスト管理
 - ルールの使用状況を定期的に監視する
@@ -95,60 +68,39 @@ CloudWatch Contributor Insights には、一般的な AWS サービス向けの�
 - ログフィルタリングを実装する
 - サンプリングレートを定期的に見直す
 
-
-
-
 ### セキュリティ
 - 最小権限の原則に従う
-- 機密データの暗号化
+- 機密データを暗号化する
 - 定期的なルール監査
-- パターン変更の監視
-
-
-
+- パターンの変更を監視する
 
 ## 一般的な問題と解決策
 
-
-
-
-### ルールがログと一致しない場合
-**問題**: ルールが期待されるログを処理していない
+### ルールに一致しないログ
+**問題**: ルールが期待されるログを処理しない
 **解決策**:
 - ログ形式がルール設定と一致することを確認する
 - フィールド名が正しいことを確認する
 - JSON 構造を検証する
 
-
-
-
 ### 欠損データ
 **問題**: コントリビューターデータのギャップ
 **解決策**:
-- サンプリングレートの設定を確認する
-- ログの配信を検証する
-- 時間枠の設定を確認する
-
-
-
+- サンプリングレート設定を確認
+- ログ配信を検証
+- 時間ウィンドウ設定を確認
 
 ### パフォーマンスの問題
-**問題**: ルール処理の遅延
+**問題**: ルール処理が遅い
 **解決策**:
-- アクティブなルールの数を最適化
-- サンプリングレートを調整
-- 寄与度のしきい値を見直し
-
-
-
+- アクティブなルールの数を最適化する
+- サンプリングレートを調整する
+- コントリビューションのしきい値を見直す
 
 ## 統合
 
-
-
-
-### CloudWatch Dashboards
-トップコントリビューターの可視化を作成します:
+### CloudWatch ダッシュボード
+トップコントリビューターの可視化を作成します。
 ```yaml
 {
   "widgets": [
@@ -165,11 +117,8 @@ CloudWatch Contributor Insights には、一般的な AWS サービス向けの�
 }
 ```
 
-
-
-
-### CloudWatch Alarms
-コントリビューターパターンのアラートを設定します:
+### CloudWatch アラーム
+コントリビューターパターンのアラートを設定します。
 ```yaml
 {
   "AlarmName": "HighContributorCount",
@@ -180,31 +129,16 @@ CloudWatch Contributor Insights には、一般的な AWS サービス向けの�
 }
 ```
 
-
-
-
 ## ツールとリソース
-
-
-
 
 ### AWS CLI コマンド
 ```bash
-
-
-
-# ルールを作成する
+# Create a rule
 aws cloudwatch put-insight-rule --rule-name MyRule --rule-definition file://rule.json
 
-
-
-
-# ルールの削除
+# Delete a rule
 aws cloudwatch delete-insight-rule --rule-name MyRule
 ```
-
-
-
 
 ### 関連サービス
 - Amazon CloudWatch
@@ -212,10 +146,7 @@ aws cloudwatch delete-insight-rule --rule-name MyRule
 - CloudWatch Alarms
 - Amazon EventBridge
 
-
-
-
-### 追加リソース
-- [公式ドキュメント](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights.html)
-- [ルール構文リファレンス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/ContributorInsights-RuleSyntax.html)
-- [AWS CLI リファレンス](https://docs.aws.amazon.com/ja_jp/cli/latest/reference/cloudwatch/put-insight-rule.html)
+### その他のリソース
+- [公式ドキュメント](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html)
+- [ルール構文リファレンス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights-RuleSyntax.html)
+- [AWS CLI リファレンス](https://docs.aws.amazon.com/cli/latest/reference/cloudwatch/put-insight-rule.html)

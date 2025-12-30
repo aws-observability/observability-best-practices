@@ -1,6 +1,6 @@
 # ワークショップ
 
-このセクションには、オブザーバビリティシステムとツールに関するサンプルやデモンストレーションを参照できるワークショップが含まれています。
+このセクションには、o11y システムとツールに関するサンプルやデモンストレーションを参照できるワークショップが含まれています。
 
 - [One Observability Workshop](https://observability.workshop.aws/en/)
 - [EKS Workshop](https://www.eksworkshop.com/)

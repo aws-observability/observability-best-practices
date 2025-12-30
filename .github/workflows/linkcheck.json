@@ -34,6 +34,10 @@
       "pattern": "^https://www.eksworkshop.com"
     },
     {
+      "pattern": "^https://dzone.com",
+      "comment": "DZone uses Cloudflare WAF which blocks automated requests (returns 403)"
+    },
+    {
       "pattern": "LICENSE"
     },
     {

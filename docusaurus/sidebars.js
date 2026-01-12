@@ -222,6 +222,11 @@ module.exports = {
             'tools/logs/contributor_insights/contributor_insights',
             {
               type: 'category',
+              label: 'Security',
+              items: ['tools/logs/security/cloudwatch-logs-security-best-practices'],
+            },
+            {
+              type: 'category',
               label: 'Data Protection',
               items: ['tools/logs/dataprotection/data-protection-policies'],
             },

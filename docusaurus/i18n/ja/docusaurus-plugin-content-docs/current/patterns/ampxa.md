@@ -1,24 +1,17 @@
 # Amazon Managed Prometheus クロスアカウントスクレイピング
 
-Amazon Managed Service for Prometheus は、Prometheus 互換のメトリクスを自動的に検出して収集する、完全マネージド型でエージェントレスのスクレイパー（コレクター）を提供します。
-エージェントやスクレイパーの管理、インストール、パッチ適用、保守は必要ありません。
-Amazon Managed Service for Prometheus コレクターは、Amazon EKS クラスターのメトリクスを信頼性が高く、安定した、高可用性で、自動的にスケールする収集機能を提供します。
-Amazon Managed Service for Prometheus のマネージドコレクターは、EC2 と Fargate を含む Amazon EKS クラスターと連携します。
+Amazon Managed Service for Prometheus は、フルマネージド型のエージェントレススクレイパー、またはコレクターを提供し、Prometheus 互換のメトリクスを自動的に検出してプルします。エージェントやスクレイパーを管理、インストール、パッチ適用、または保守する必要はありません。Amazon Managed Service for Prometheus コレクターは、Amazon EKS クラスターに対して信頼性が高く、安定した、高可用性で、自動的にスケールするメトリクスの収集を提供します。Amazon Managed Service for Prometheus マネージドコレクターは、EC2 と Fargate を含む Amazon EKS クラスターで動作します。
 
-Amazon Managed Service for Prometheus コレクターは、スクレイパーの作成時に指定されたサブネットごとに Elastic Network Interface (ENI) を作成します。
-コレクターはこれらの ENI を通じてメトリクスをスクレイプし、VPC エンドポイントを使用して remote_write で Amazon Managed Service for Prometheus ワークスペースにデータをプッシュします。
-スクレイプされたデータがパブリックインターネットを経由することはありません。
+Amazon Managed Service for Prometheus コレクターは、スクレイパーの作成時に指定されたサブネットごとに Elastic Network Interface (ENI) を作成します。コレクターはこれらの ENI を通じてメトリクスをスクレイピングし、remote_write を使用して VPC エンドポイント経由で Amazon Managed Service for Prometheus ワークスペースにデータをプッシュします。スクレイピングされたデータは、パブリックインターネット上を通過することはありません。
 
-メトリクスを収集したい Amazon EKS クラスターが存在するアカウント（ソースアカウント）と、Amazon Managed Service for Prometheus ワークスペースが存在するアカウント（ターゲットアカウント）が異なるクロスアカウント設定でスクレイパーを作成する場合は、以下の手順を使用してください。
+メトリクスを収集する Amazon EKS クラスターが、Amazon Managed Service for Prometheus ワークスペース (ターゲットアカウント) とは異なるアカウント (ソースアカウント) にある場合のクロスアカウント設定でスクレイパーを作成するには、以下の手順を使用します。
 
-
-
-## アーキテクチャの概要
+## 高レベルアーキテクチャ
 
 ![AMP Managed Collector Cross Account Scraping](./images/ampxa-arch.png)
-*図 1: AMP Managed Collector クロスアカウントスクレイピング、コレクターインフラストラクチャは AWS によって完全に管理されています*
+*図 1: AMP マネージドコレクタークロスアカウントスクレイピング、コレクターインフラストラクチャは AWS によって完全に管理されます*
 
-このアーキテクチャでは、EKS ワークロードが存在するアカウントでスクレイパーを作成します。スクレイパーは、ターゲットアカウントのロールを引き受けて、ターゲットアカウントの AMP ワークスペースにデータをプッシュできます。
+このアーキテクチャでは、EKS ワークロードが存在するアカウントにスクレイパーを作成します。スクレイパーは、ターゲットアカウントの AMP ワークスペースにデータをプッシュするために、ターゲットアカウントのロールを引き受けることができます。
 
 1. ソースアカウントで、STS::AssumeRole 権限を持つロール arn:aws:iam::account_id_source:role/Source を作成し、以下の信頼ポリシーを追加します。
 
@@ -46,7 +39,7 @@ Amazon Managed Service for Prometheus コレクターは、スクレイパーの
 }
 ```
 
-また、ロール引き受け権限のポリシーも必要です：
+ロールを引き受けるためのアクセス許可ポリシーも必要です。
 
 ```
 {
@@ -64,11 +57,11 @@ Amazon Managed Service for Prometheus コレクターは、スクレイパーの
 
 :::warning
 
-スクレイパーを実際に作成する前に IAM 構成を作成する必要があります。したがって、この時点では $SCRAPER_ARN はプレースホルダーフィールドです。スクレイパーを作成した後に、これを更新します。また、$TARGET_ACCOUNT_ROLE_ARN はステップ 2 が完了するまで存在しません。
+スクレイパーを実際に作成する前に、IAM コンストラクトを作成する必要があります。したがって、この時点では $SCRAPER_ARN は単なるプレースホルダーフィールドです。スクレイパーを作成した後、戻ってこれを更新します。$TARGET_ACCOUNT_ROLE_ARN もステップ 2 が完了するまで存在しません。
 
 :::
 
-2. ソース（Amazon EKS クラスター）とターゲット（Amazon Managed Service for Prometheus ワークスペース）の各組み合わせに対して、ターゲットアカウントに arn:aws:iam::account_id_target:role/Target のロールを作成し、AmazonPrometheusRemoteWriteAccess の管理ポリシーと共に以下の信頼ポリシーを追加する必要があります。
+2. ソース (Amazon EKS クラスター) とターゲット (Amazon Managed Service for Prometheus ワークスペース) のすべての組み合わせにおいて、ターゲットアカウントに arn:aws:iam::account_id_target:role/Target のロールを作成し、AmazonPrometheusRemoteWriteAccess のマネージド許可ポリシーを持つ以下の信頼ポリシーを追加する必要があります。
 
 ```
 {
@@ -87,11 +80,11 @@ Amazon Managed Service for Prometheus コレクターは、スクレイパーの
 
 :::warning
 
-$SCRAPER_ARN は依然としてプレースホルダーです。スクレイパーを作成した後に値を更新します。
+$SCRAPER_ARN はまだプレースホルダーです。スクレイパーを作成した後に値を更新します。
 
 :::
 
-3. ソースアカウント（EKS クラスターが存在するアカウント）で、--role-configuration オプションを使用してスクレイパーを作成します。
+3. ソースアカウント (EKS クラスターが存在する場所) でスクレイパーを作成します。 `--role-configuration` オプション。
 
 ```
 aws amp create-scraper \
@@ -100,14 +93,13 @@ aws amp create-scraper \
   --destination ampConfiguration="{workspaceArn='arn:aws:aps:us-west-2:$TARGET_ACCOUNT_ID:workspace/$TARGET_AMP_WORKSPACE_ID'}"\
   --role-configuration '{"sourceRoleArn":"arn:aws:iam::$SOURCE_ACCOUNT_ID:role/Source", "targetRoleArn":"arn:aws:iam::$TARGET_ACCOUNT_ID:role/Target"}'
 ```
-
 :::warning
 
-$VARIABLES に特定の値を必ず入力してください。
+$VARIABLES には、お客様固有の値を入力してください。
 
 :::
 
-4. スクレイパーの作成を確認し（約 20 分かかる場合があります）、スクレイパー ARN をメモしてください。
+4. スクレイパーの作成を検証し (これには約 20 分かかる場合があります)、スクレイパー ARN をメモします。
 
 ```
 aws amp list-scrapers
@@ -143,4 +135,4 @@ aws amp list-scrapers
         }
 ```
 
-5. ステップ 1 と 2 で作成した信頼ポリシーを、ステップ 4 のコマンドで得られたスクレイパー ARN の値で更新します。
+5. 戻って、ステップ 4 のコマンドから取得したスクレイパー ARN 値を使用して、ステップ 1 と 2 で作成した信頼ポリシーを更新します。

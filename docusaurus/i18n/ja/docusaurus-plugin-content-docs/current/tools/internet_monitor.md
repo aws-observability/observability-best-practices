@@ -1,41 +1,35 @@
 # Internet Monitor
 
 :::warning
-執筆時点では、[Internet Monitor](https://aws.amazon.com/jp/blogs/news/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) は CloudWatch コンソールで **プレビュー** として利用可能です。一般提供時の機能の範囲は、現在体験できる内容から変更される可能性があります。
+	この記事の執筆時点では、[Internet Monitor](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) は CloudWatch コンソールで**プレビュー**として利用可能です。一般提供時の機能範囲は、現在ご利用いただけるものから変更される可能性があります。
 :::
+[ワークロードのすべての階層からテレメトリを収集する](../guides/#ワークロードのすべての階層からテレメトリを収集する)ことはベストプラクティスであり、課題となる可能性があります。しかし、ワークロードの階層とは何でしょうか？ある人にとっては、Web サーバー、アプリケーションサーバー、データベースサーバーかもしれません。また、ワークロードをフロントエンドとバックエンドとして捉える人もいるでしょう。そして、Web アプリケーションを運用している人は、[Real User Monitoring](../tools/rum)(RUM) を使用して、エンドユーザーが体験するこれらのアプリの健全性を監視できます。
 
-[ワークロードのすべての層からテレメトリを収集する](../guides/#collect-telemetry-from-all-tiers-of-your-workload) ことはベストプラクティスですが、これは課題となる場合があります。しかし、ワークロードの層とは何でしょうか？一部の場合は、Web、アプリケーション、データベースサーバーかもしれません。また、フロントエンドとバックエンドとしてワークロードを捉える人もいます。そして、Web アプリケーションを運用する人々は、[Real User Monitoring](../tools/rum)(RUM) を使用して、エンドユーザーが体験するアプリケーションの健全性を観察できます。
-
-しかし、クライアントとデータセンターやクラウドサービスプロバイダー間のトラフィックについてはどうでしょうか？また、Web ページとして提供されず、RUM を使用できないアプリケーションについてはどうでしょうか？
+しかし、クライアントとデータセンターまたはクラウドサービスプロバイダー間のトラフィックについてはどうでしょうか。また、Web ページとして提供されないため RUM を使用できないアプリケーションについてはどうでしょうか。
 
 ![Network telemetry from Internet-traversing applications](../images/internet_monitor.png)
 
-Internet Monitor はネットワークレベルで動作し、観測されたトラフィックの健全性を評価し、[AWS の既存の知識](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html) と既知のインターネットの問題を相関分析します。簡単に言えば、インターネットサービスプロバイダー (ISP) にパフォーマンスや可用性の問題があり、**かつ** アプリケーションのクライアント/サーバー通信がその ISP を使用している場合、Internet Monitor はこのワークロードへの影響について事前に通知することができます。さらに、選択したホスティングリージョンと Content Delivery Network としての [CloudFront](https://aws.amazon.com/jp/cloudfront/) の使用状況に基づいて推奨事項を提供することができます[^1]。
+Internet Monitor はネットワークレベルで動作し、観測されたトラフィックの健全性を評価し、[AWS の既存の知識](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-inside-internet-monitor.html)と相関させて既知のインターネット問題を検出します。簡単に言えば、パフォーマンスや可用性の問題を抱えるインターネットサービスプロバイダー (ISP) が存在し、**かつ**アプリケーションがクライアント/サーバー通信にこの ISP を使用するトラフィックを持つ場合、Internet Monitor はワークロードへの影響を事前に通知できます。さらに、選択したホスティングリージョンと Content Delivery Network としての [CloudFront](https://aws.amazon.com/cloudfront/) の使用に基づいて推奨事項を提供できます[^1]。
 
 :::tip
-Internet Monitor は、ワークロードが通過するネットワークのトラフィックのみを評価します。例えば、他の国の ISP に影響が出ている場合でも、ユーザーがそのキャリアを使用していなければ、その問題を可視化することはできません。
+	Internet Monitor は、ワークロードが通過するネットワークからのトラフィックのみを評価します。たとえば、別の国の ISP が影響を受けているが、ユーザーがそのキャリアを使用していない場合、その問題を可視化することはできません。
 :::
-
-
 
 ## インターネットを経由するアプリケーションのモニターを作成する
 
-Internet Monitor は、影響を受けている ISP から CloudFront ディストリビューションまたは VPC に到達するトラフィックを監視することで動作します。これにより、ネットワークの問題によって発生するビジネス上の問題を軽減するために、アプリケーションの動作、ルーティング、またはユーザー通知に関する判断を行うことができます。
+Internet Monitor の動作方法は、影響を受けた ISP から CloudFront ディストリビューションまたは VPC に送信されるトラフィックを監視することです。これにより、制御できないネットワーク問題の結果として発生するビジネス上の問題を軽減するために、アプリケーションの動作、ルーティング、またはユーザー通知に関する決定を行うことができます。
 
-![ワークロードと ISP の問題の交差点](../images/internet_monitor_2.png)
+![Intersection of your workload and ISP issues](../images/internet_monitor_2.png)
 
 :::info
-インターネットを経由するトラフィックを監視するモニターのみを作成してください。プライベートネットワーク ([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/)) 内のホスト間などのプライベートトラフィックは、Internet Monitor で監視することはできません。
+	インターネットを通過するトラフィックを監視するモニターのみを作成してください。プライベートネットワーク内の 2 つのホスト間のトラフィック ([RFC1918](https://www.arin.net/reference/research/statistics/address_filters/)) などのプライベートトラフィックは、Internet Monitor を使用して監視することはできません。
 :::
 :::info
-該当する場合は、モバイルアプリケーションからのトラフィックを優先してください。プロバイダー間をローミングしているお客様や、遠隔地にいるお客様は、異なる予期しない体験をする可能性があり、それを把握しておく必要があります。
+	該当する場合は、モバイルアプリケーションからのトラフィックを優先します。プロバイダー間をローミングしている顧客や、遠隔地にいる顧客は、認識しておくべき異なる、または予期しないエクスペリエンスを持つ可能性があります。
 :::
+## EventBridge と CloudWatch を通じてアクションを有効にする
 
-
-
-## EventBridge と CloudWatch を通じたアクションの有効化
-
-観測された問題は、ソースが `aws.internetmonitor` として識別される [スキーマ](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html) を使用して [EventBridge](https://aws.amazon.com/jp/eventbridge/) を通じて公開されます。EventBridge を使用して、チケット管理システムに自動的に問題を作成したり、サポートチームにページングを送信したり、一部のシナリオを緩和するためにワークロードを変更する自動化をトリガーしたりすることができます。
+観測された問題は、[EventBridge](https://aws.amazon.com/eventbridge/) を通じて公開されます。その際、ソースが識別された情報を含む[スキーマ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-IM-EventBridge-integration.html)が使用されます。 `aws.internetmonitor`EventBridge を使用して、チケット管理システムで自動的に問題を作成したり、サポートチームに通知したり、ワークロードを変更して一部のシナリオを軽減する自動化をトリガーしたりできます。
 
 ```json
 {
@@ -43,7 +37,7 @@ Internet Monitor は、影響を受けている ISP から CloudFront ディス�
 }
 ```
 
-同様に、観測された都市、国、メトロ、地域のトラフィックの詳細な情報は [CloudWatch Logs](../tools/logs) で確認できます。これにより、影響を受けるお客様に対して、その地域特有の問題について事前に通知できる、非常にターゲットを絞ったアクションを作成できます。以下は、単一のプロバイダーに関する国レベルの観測の例です：
+同様に、観測された都市、国、大都市圏、および地域に関する詳細なトラフィック情報は、[CloudWatch Logs](../tools/logs) で確認できます。これにより、影響を受ける顧客に対して、その地域固有の問題について事前に通知できる、高度にターゲット化されたアクションを作成できます。以下は、単一のプロバイダーに関する国レベルの観測の例です。
 
 ```json
 {
@@ -101,25 +95,22 @@ Internet Monitor は、影響を受けている ISP から CloudFront ディス�
 ```
 
 :::info
-`percentageOfTotalTraffic` のような値は、お客様がどこからワークロードにアクセスしているかについての強力な洞察を提供し、高度な分析に使用できます。
+	次のような値 `percentageOfTotalTraffic` 顧客がどこからワークロードにアクセスしているかについての強力な洞察を明らかにすることができ、高度な分析に使用できます。
 :::
 
 :::warning
-Internet Monitor によって作成されたロググループは、デフォルトの保持期間が *無期限* に設定されることに注意してください。AWS はお客様の同意なしにデータを削除することはありませんので、必要に応じて適切な保持期間を設定してください。
+	Internet Monitor によって作成されたロググループには、デフォルトの保持期間として*無期限*が設定されることに注意してください。AWS はお客様の同意なしにデータを削除することはありませんので、ニーズに合った保持期間を必ず設定してください。
 :::
 :::info
-各モニターは少なくとも 10 個の個別の CloudWatch メトリクスを作成します。これらは、他の運用メトリクスと同様に [アラーム](../tools/alarms) を作成するために使用する必要があります。
+	各モニターは、少なくとも 10 個の個別の CloudWatch メトリクスを作成します。これらは、他の運用メトリクスと同様に[アラーム](../tools/alarms)を作成するために使用する必要があります。
 :::
-
-
-
 ## トラフィック最適化の提案を活用する
 
-Internet Monitor は、最高のカスタマーエクスペリエンスを実現するために、ワークロードを最適に配置する場所についてアドバイスするトラフィック最適化の推奨事項を提供します。グローバルなワークロード、またはグローバルな顧客を持つワークロードにとって、この機能は特に価値があります。
+Internet Monitor には、最適な顧客体験を実現するためにワークロードを配置する最適な場所についてアドバイスするトラフィック最適化の推奨事項機能があります。グローバルなワークロード、またはグローバルな顧客を持つワークロードの場合、この機能は特に価値があります。 
 
 ![Internet Monitor console](../images/internet_monitor_3.png)
 
 :::info
-トラフィック最適化の提案ビューでは、現在の Time-to-First-Byte (TTFB)、予測値、最低値に注目してください。これらの値は、通常では観察が難しいエンドユーザーエクスペリエンスの潜在的な問題を示す可能性があります。
+	トラフィック最適化の提案ビューで、現在、予測、および最低の time-to-first-byte (TTFB) 値に細心の注意を払ってください。これらの値は、他の方法では観察が困難な、潜在的に劣悪なエンドユーザーエクスペリエンスを示す可能性があります。
 :::
-[^1]: この新機能についての発表ブログは [https://aws.amazon.com/jp/blogs/news/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/](https://aws.amazon.com/jp/blogs/news/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) をご覧ください。
+[^1]: See [https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) for our launch blog about this new feature.

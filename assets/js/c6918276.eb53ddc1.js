@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkobservability_best_practices=globalThis.webpackChunkobservability_best_practices||[]).push([[6335],{93876:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/observability-best-practices/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

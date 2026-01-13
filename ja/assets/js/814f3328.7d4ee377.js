@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkobservability_best_practices=globalThis.webpackChunkobservability_best_practices||[]).push([[7472],{55513:e=>{e.exports=JSON.parse('{"title":"Recent posts","items":[{"title":"Welcome","permalink":"/observability-best-practices/ja/blog/welcome","unlisted":false,"date":"2021-08-26T00:00:00.000Z"}]}')}}]);

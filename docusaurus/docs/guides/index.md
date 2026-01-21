@@ -15,6 +15,8 @@ Start first with what your success criteria are. For example, if you run an e-co
 
 Regardless of your application, you must start with identifying your key metrics. Then *work backwards[^1]* from that to see what impacts it from an application or infrastructure perspective. For example, if high CPU on your web servers endangers customer satisfaction, and in-turn your sales, then monitoring CPU utilization is important!
 
+Note that cost is often an overlooked metric which impacts every business: if cost is higher than revenue, the business is at risk. If cost implications are considered early and continuously, systems can be designed to balance features, time-to-market, and efficiency. Also, you need to ensure that your costs have a measurable impact on your business and that your costs rise proportional to your profit. So, designate the cost as one of your key metrics and track it continuously. You can read [The Frugal Architect](https://www.thefrugalarchitect.com/) for further information.
+
 #### Know your objectives, and measure them!
 
 Having identified your important top-level KPIs, your next job is to have an automated way to track and measure them. A critical success factor is doing so in the same system that watches your workload's operations. For our e-commerce workload example this may mean:
@@ -29,6 +31,8 @@ Regardless of your metric data's original location or format, it must be maintai
 
 ![Example of a time series](../images/time_series.png)
 *Figure 1: example of a time series*
+
+Make the key metrics (especially cost) visible to engineers and relevant stakeholders, preferably through a screen in their office. This can foster sustainable practices such as tuning operations to trim costs. Also it can foster a healthy competition between teams which in turn increases productivity. You can read [The Frugal Architect](https://www.thefrugalarchitect.com/) for further information.
 
 ## Context propagation and tool selection
 
@@ -90,6 +94,6 @@ Depending on the size of your application, you may have a very large number of c
 
 Like security, observability should not be an afterthought to your development or operations. The best practice is to put observability early in your planning, just like security, which creates a model for people to work with and reduces opaque corners of your application. Adding transaction tracing after major development work is done takes time, even with auto-instrumentation. The effort returns far greater returns! But doing so late in your development cycle may create some rework.
 
-Rather than bolting observability in your workload later one, use it to help *accelerate* your work. Proper [logging](../signals/logs), [metric](../signals/metrics), and [trace](../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward.
+Rather than bolting observability in your workload later one, use it to help *accelerate* your work. Proper [logging](../signals/logs), [metric](../signals/metrics), and [trace](../signals/traces) collection enables faster application development, fosters good practices, and lays the foundation for rapid problem solving going forward. Even though implementing observability requires investment, the return on investment typically far outweighs the expense.
 
 [^1]: Amazon uses the *working backwards* process extensively as a way to obsession over our customers and their outcomes, and we highly recommend that anyone working on observability solutions work backwards from their own objectives in the same way. You can read more about *working backwards* on [Werner Vogels's blog](https://www.allthingsdistributed.com/2006/11/working_backwards.html).

@@ -2,7 +2,8 @@ Startup Observability adoption stages provides a structured framework for startu
 
 Throughout all stages, organizations should maintain a focus on **Continuous Review** and **Cost Optimization** as foundational principles.
 
-![[img-startup_observability_stages.png]]
+![Startup Observability stages](img-startup_observability_stages.png)
+
 
 ## Stage 1: Reactive Observability
 

@@ -22,7 +22,7 @@ function HomepageHeader() {
           <Link
             to="https://aws-experience.com/amer/smb/events/series/Cloud-Operations-Enablement"
             style={{color: 'white', textDecoration: 'underline'}}>
-            Register for upcoming events for AWS Cloud Operations
+            📅 Register for upcoming events for AWS Cloud Operations
           </Link>
         </p>
         <div className={styles.buttons}>

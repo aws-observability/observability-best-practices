@@ -36,6 +36,16 @@ module.exports = {
       label: 'Guides',
       items: [
         'guides/index',
+        {
+          type: 'category',
+          label: 'Getting Started on CloudWatch',
+          items: [
+            'guides/getting-started/setup-monitoring-source-accounts',
+            'guides/getting-started/setup-unified-data-store',
+            'guides/getting-started/configure-agents-collectors',
+            'guides/getting-started/dashboards-alerts',
+          ],
+        },
         'guides/choosing-a-tracing-agent',
         {
           type: 'category',

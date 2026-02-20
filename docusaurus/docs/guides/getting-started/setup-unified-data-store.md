@@ -4,7 +4,7 @@ sidebar_position: 2
 
 # Setup Unified Data Store
 
-In addition to cross-account observability, you can also centralize (copy) logs to a central region and a central account. The first copy is included at no additional cost!
+In addition to cross-account observability, you can also centralize (copy) logs to a central region and a central account.
 
 The CloudWatch Unified Data Store helps you build a unified repository at scale for your organization. You can collect, shape, and analyze your telemetry from here.
 

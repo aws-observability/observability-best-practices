@@ -48,9 +48,11 @@ You can decide and configure:
 
 1. **Source accounts** – Choose which source accounts you want to copy the data from and filter those by Organization, OU, or account ID
 2. **Source regions** – Select which source regions to copy the data from
-3. **Backup region** – Configure a backup region for a second copy of the data (optional)
-4. **Log group filters** – Filter log groups by name, prefix, or keyword using a number of operators
-5. **Multiple rules** – Configure multiple centralization rules based on your requirements
+3. **Destination account and region** - Specify the AWS account and Region where you want to store your centralized telemetry data
+4. **Backup region** – Configure a backup region for a second copy of the data (optional)
+5. **Log group filters** – Filter log groups by name, prefix, or keyword using a number of operators
+6. **Multiple rules** – Configure multiple centralization rules based on your requirements
+7. **KMS Encrypted log group options** - chose centralization behaviour for KMS-encrypted log groups.
 
 Your account structure for centralized logging may look something like this:
 

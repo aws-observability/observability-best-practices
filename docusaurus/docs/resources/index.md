@@ -3,11 +3,6 @@
 
 Welcome to the AWS Observability Best Practices resources section. Here you'll find interactive demos, enablement guides, and additional tools to help you implement observability best practices.
 
-## APM Center
-
-🚀 **[APM Center](apm-center)** - AWS Application Signals Enablement Guide
-
-Get step-by-step instructions for enabling AWS Application Signals across all major programming languages (Java, .NET, Python, Node.js) and compute platforms (AWS Lambda, Amazon ECS, Amazon EKS, Amazon EC2).
 
 ## Interactive Demos
 

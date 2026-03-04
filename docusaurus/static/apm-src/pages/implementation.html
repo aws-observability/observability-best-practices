@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Implementation Guides — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Implementation Guides</h1></header>
+      <article>
+        <section>
+          <h2>Prerequisites & Permissions</h2>
+          <p>Before enabling CloudWatch Application Signals, ensure you have the necessary permissions and infrastructure in place.</p>
+
+          <h3>Required IAM Permissions</h3>
+          <p>Application Signals requires specific IAM permissions to collect and send telemetry data to CloudWatch.</p>
+
+          <h4>Core Permissions:</h4>
+          <ul>
+            <li><code>cloudwatch:PutMetricData</code> - Send metrics to CloudWatch</li>
+            <li><code>xray:PutTraceSegments</code> - Send traces to X-Ray</li>
+            <li><code>logs:CreateLogGroup</code> - Create log groups for Application Signals</li>
+            <li><code>logs:CreateLogStream</code> - Create log streams</li>
+            <li><code>logs:PutLogEvents</code> - Send log events</li>
+          </ul>
+
+          <h4>Service-Specific Permissions:</h4>
+          <ul>
+            <li><strong>ECS:</strong> <code>ecs:DescribeTasks</code>, <code>ecs:DescribeServices</code></li>
+            <li><strong>EKS:</strong> <code>eks:DescribeCluster</code>, <code>eks:ListClusters</code></li>
+            <li><strong>Lambda:</strong> <code>lambda:GetFunction</code>, <code>lambda:ListFunctions</code></li>
+            <li><strong>EC2:</strong> <code>ec2:DescribeInstances</code>, <code>ec2:DescribeTags</code></li>
+          </ul>
+
+          <h4>Recommended IAM Policies:</h4>
+          <ul>
+            <li><strong>CloudWatchApplicationSignalsFullAccess</strong> - Full access to Application Signals</li>
+            <li><strong>CloudWatchApplicationSignalsReadOnlyAccess</strong> - Read-only access for monitoring</li>
+            <li><strong>AWSXRayDaemonWriteAccess</strong> - Required for trace data</li>
+          </ul>
+
+          <h3>Infrastructure Requirements</h3>
+          <ul>
+            <li><strong>VPC Configuration:</strong> Ensure proper network connectivity for telemetry data</li>
+            <li><strong>Security Groups:</strong> Allow outbound HTTPS traffic to CloudWatch endpoints</li>
+            <li><strong>CloudWatch Agent:</strong> Required for EC2 instances (version 1.300025.0 or later)</li>
+            <li><strong>ADOT Operator:</strong> Required for EKS clusters (version 0.70.0 or later)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Support Matrix</h2>
+          <p>CloudWatch Application Signals supports multiple compute platforms, runtimes, and instrumentation approaches.</p>
+
+          <h3>Compute Platform Support</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Platform</th>
+                <th>Auto-Instrumentation</th>
+                <th>Manual OTel</th>
+                <th>ADOT</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Amazon EKS</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>Recommended: ADOT Operator</td>
+              </tr>
+              <tr>
+                <td><strong>Amazon ECS</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>EC2 and Fargate supported</td>
+              </tr>
+              <tr>
+                <td><strong>AWS Lambda</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>Lambda layers available</td>
+              </tr>
+              <tr>
+                <td><strong>Amazon EC2</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>CloudWatch agent required</td>
+              </tr>
+              <tr>
+                <td><strong>On-Premises</strong></td>
+                <td>❌</td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>Manual OTel collector setup</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Runtime Support</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Runtime</th>
+                <th>Auto-Instrumentation</th>
+                <th>Manual OTel</th>
+                <th>Supported Versions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Java</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>JVM 8+</td>
+              </tr>
+              <tr>
+                <td><strong>Python</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>3.8+</td>
+              </tr>
+              <tr>
+                <td><strong>.NET</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>.NET Core 3.1+, .NET 5+</td>
+              </tr>
+              <tr>
+                <td><strong>Node.js</strong></td>
+                <td>✅</td>
+                <td>✅</td>
+                <td>14+</td>
+              </tr>
+              <tr>
+                <td><strong>Go</strong></td>
+                <td>❌</td>
+                <td>✅</td>
+                <td>1.16+</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3>Instrumentation Approach Decision Guide</h3>
+          <div style="background: #f8f8f8; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <h4>Choose Your Approach:</h4>
+            <ul>
+              <li><strong>Auto-Instrumentation:</strong> Best for getting started quickly, zero code changes</li>
+              <li><strong>Manual OpenTelemetry:</strong> Best for custom instrumentation and vendor portability</li>
+              <li><strong>AWS Distro for OpenTelemetry:</strong> Best for AWS-optimized experience</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+          <h2>Implementation Decision Tree</h2>
+          <p>Use this guide to determine the right implementation approach for your scenario.</p>
+
+          <h3>Step 1: Choose Your Compute Platform</h3>
+          <ul>
+            <li><strong>If using Amazon EKS:</strong> Use ADOT Operator for auto-instrumentation</li>
+            <li><strong>If using Amazon ECS:</strong> Use sidecar container approach</li>
+            <li><strong>If using AWS Lambda:</strong> Use Lambda layers</li>
+            <li><strong>If using Amazon EC2:</strong> Install CloudWatch agent</li>
+          </ul>
+
+          <h3>Step 2: Choose Your Instrumentation Method</h3>
+          <div style="background: #e6f7ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1890ff;">
+            <h4>For New Applications:</h4>
+            <ol>
+              <li>Start with <strong>Auto-Instrumentation</strong> for rapid setup</li>
+              <li>Add <strong>Manual Instrumentation</strong> for custom business metrics</li>
+              <li>Use <strong>ADOT</strong> for AWS-optimized experience</li>
+            </ol>
+          </div>
+
+          <div style="background: #fff7e6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #fa8c16;">
+            <h4>For Existing Applications:</h4>
+            <ol>
+              <li>Evaluate current instrumentation level</li>
+              <li>Choose <strong>Auto-Instrumentation</strong> if minimal existing telemetry</li>
+              <li>Use <strong>Manual OTel</strong> if migrating from other APM tools</li>
+              <li>Consider <strong>ADOT</strong> for AWS-native integration</li>
+            </ol>
+          </div>
+
+          <h3>Step 3: Consider Your Team's Expertise</h3>
+          <ul>
+            <li><strong>DevOps/SRE Teams:</strong> Start with Auto-Instrumentation, then customize</li>
+            <li><strong>Application Developers:</strong> Use Manual OTel for fine-grained control</li>
+            <li><strong>Platform Teams:</strong> Implement ADOT for organization-wide consistency</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Platform-Specific Implementation</h2>
+          <p>Detailed setup instructions for each supported compute platform.</p>
+
+          <h3>Amazon EKS Implementation</h3>
+          <p><strong>Best for:</strong> Kubernetes-native teams, microservices architectures</p>
+          <p><strong>Recommended approach:</strong> ADOT Operator with auto-instrumentation</p>
+
+          <h4>Prerequisites:</h4>
+          <ul>
+            <li>EKS cluster version 1.24+</li>
+            <li>ADOT Operator installed via Helm</li>
+            <li>Proper IAM permissions for service accounts</li>
+          </ul>
+
+          <h4>Quick Start (Auto-Instrumentation):</h4>
+          <ol>
+            <li>Install ADOT Operator: <code>helm install adot-operator aws-observability/adot-operator</code></li>
+            <li>Create Instrumentation resource with Application Signals configuration</li>
+            <li>Annotate your deployments: <code>instrumentation.opentelemetry.io/inject: "true"</code></li>
+            <li>Verify data collection in CloudWatch Application Signals console</li>
+          </ol>
+
+          <h3>Amazon ECS Implementation</h3>
+          <p><strong>Best for:</strong> Containerized applications, teams using ECS</p>
+          <p><strong>Recommended approach:</strong> Sidecar container with auto-instrumentation</p>
+
+          <h4>Prerequisites:</h4>
+          <ul>
+            <li>ECS cluster (EC2 or Fargate)</li>
+            <li>Task execution role with CloudWatch permissions</li>
+            <li>Application container with supported runtime</li>
+          </ul>
+
+          <h4>Quick Start (EC2 Launch Type):</h4>
+          <ol>
+            <li>Add Application Signals sidecar to your task definition</li>
+            <li>Configure environment variables for service discovery</li>
+            <li>Set up proper networking for telemetry export</li>
+            <li>Deploy and monitor in Application Signals console</li>
+          </ol>
+
+          <h3>AWS Lambda Implementation</h3>
+          <p><strong>Best for:</strong> Serverless applications, event-driven architectures</p>
+          <p><strong>Recommended approach:</strong> Lambda layers with auto-instrumentation</p>
+
+          <h4>Prerequisites:</h4>
+          <ul>
+            <li>Lambda functions with supported runtimes</li>
+            <li>Execution role with CloudWatch permissions</li>
+            <li>Lambda Powertools (optional but recommended)</li>
+          </ul>
+
+          <h4>Quick Start:</h4>
+          <ol>
+            <li>Add AWS managed Lambda layer for OpenTelemetry</li>
+            <li>Configure environment variables: <code>OTEL_TRACES_EXPORTER=aws</code></li>
+            <li>Enable Application Signals in Lambda console</li>
+            <li>View traces and metrics in Application Signals dashboard</li>
+          </ol>
+
+          <h3>Amazon EC2 Implementation</h3>
+          <p><strong>Best for:</strong> Traditional applications, lift-and-shift migrations</p>
+          <p><strong>Recommended approach:</strong> CloudWatch agent with auto-instrumentation</p>
+
+          <h4>Prerequisites:</h4>
+          <ul>
+            <li>EC2 instances with supported runtimes</li>
+            <li>CloudWatch agent installed (version 1.300025.0+)</li>
+            <li>Instance role with proper permissions</li>
+          </ul>
+
+          <h4>Quick Start:</h4>
+          <ol>
+            <li>Install CloudWatch agent on EC2 instances</li>
+            <li>Configure Application Signals in agent config</li>
+            <li>Restart your application with instrumentation</li>
+            <li>Verify data collection in CloudWatch console</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Instrumentation Approaches</h2>
+          <p>Choose the right instrumentation method based on your needs and expertise.</p>
+
+          <h3>Auto-Instrumentation</h3>
+          <p><strong>When to use:</strong> Getting started quickly, minimal code changes, production rollouts</p>
+          <p><strong>Who should use it:</strong> DevOps teams, platform engineers, organizations prioritizing speed</p>
+
+          <h4>Benefits:</h4>
+          <ul>
+            <li>Zero code changes required</li>
+            <li>Fast time to value</li>
+            <li>Covers common frameworks automatically</li>
+            <li>Easy to roll back if needed</li>
+          </ul>
+
+          <h4>Limitations:</h4>
+          <ul>
+            <li>Less control over what gets instrumented</li>
+            <li>May capture more data than needed</li>
+            <li>Custom business logic requires additional manual instrumentation</li>
+          </ul>
+
+          <h3>Manual OpenTelemetry Instrumentation</h3>
+          <p><strong>When to use:</strong> Custom business metrics, vendor portability, fine-grained control</p>
+          <p><strong>Who should use it:</strong> Application developers, teams with observability expertise</p>
+
+          <h4>Benefits:</h4>
+          <ul>
+            <li>Complete control over telemetry data</li>
+            <li>Custom spans and attributes for business logic</li>
+            <li>Vendor-neutral (works with other APM tools)</li>
+            <li>Precise control over performance impact</li>
+          </ul>
+
+          <h4>Trade-offs:</h4>
+          <ul>
+            <li>Requires code changes</li>
+            <li>More complex to implement</li>
+            <li>Ongoing maintenance as code evolves</li>
+          </ul>
+
+          <h3>AWS Distro for OpenTelemetry (ADOT)</h3>
+          <p><strong>When to use:</strong> AWS-native integration, optimized for CloudWatch, enterprise deployments</p>
+          <p><strong>Who should use it:</strong> Platform teams, AWS-focused organizations, large-scale deployments</p>
+
+          <h4>Benefits:</h4>
+          <ul>
+            <li>AWS-optimized performance</li>
+            <li>Automatic AWS metadata collection</li>
+            <li>Seamless CloudWatch integration</li>
+            <li>Enterprise-grade reliability</li>
+          </ul>
+
+          <h4>When to choose ADOT over standard OTel:</h4>
+          <ul>
+            <li>Running on AWS infrastructure</li>
+            <li>Need AWS service integration</li>
+            <li>Require enterprise support</li>
+            <li>Planning multi-region deployments</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Language-Specific Implementation</h2>
+          <p>Choose the right approach based on your programming language and requirements.</p>
+
+          <h3>Java Applications</h3>
+          <p><strong>Auto-Instrumentation:</strong> Recommended for Spring Boot, Tomcat, and enterprise Java apps</p>
+          <p><strong>Manual OTel:</strong> Best for custom frameworks or when you need fine-grained control</p>
+
+          <h4>Auto-Instrumentation Setup:</h4>
+          <pre><code>java -javaagent:/path/to/aws-opentelemetry-agent.jar \
+     -Dotel.service.name=my-java-app \
+     -Dotel.traces.exporter=aws \
+     -jar your-app.jar</code></pre>
+
+          <h4>Manual Instrumentation Example:</h4>
+          <pre><code>import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.api.trace.Span;
+
+Tracer tracer = GlobalOpenTelemetry.getTracer("my-service");
+
+Span span = tracer.spanBuilder("custom-operation")
+    .setAttribute("user.id", userId)
+    .startSpan();
+try {
+    // Your business logic
+    processOrder(order);
+} finally {
+    span.end();
+}</code></pre>
+
+          <h3>Python Applications</h3>
+          <p><strong>Auto-Instrumentation:</strong> Perfect for Django, Flask, and FastAPI applications</p>
+          <p><strong>Manual OTel:</strong> Ideal for custom async frameworks or data processing pipelines</p>
+
+          <h4>Auto-Instrumentation Setup:</h4>
+          <pre><code>pip install opentelemetry-distro opentelemetry-instrumentation
+opentelemetry-instrumentation \
+    --traces_exporter aws \
+    --service_name my-python-app \
+    python your_app.py</code></pre>
+
+          <h4>Manual Instrumentation Example:</h4>
+          <pre><code>from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+
+tracer = trace.get_tracer(__name__)
+
+with tracer.start_as_span("process-payment") as span:
+    span.set_attribute("payment.amount", amount)
+    span.set_attribute("payment.currency", currency)
+    # Process payment logic
+    result = process_payment(amount, currency)
+    span.set_attribute("payment.success", result.success)</code></pre>
+
+          <h3>.NET Applications</h3>
+          <p><strong>Auto-Instrumentation:</strong> Excellent for ASP.NET Core and web APIs</p>
+          <p><strong>Manual OTel:</strong> Best for custom middleware or complex business workflows</p>
+
+          <h4>Auto-Instrumentation Setup:</h4>
+          <pre><code>dotnet add package AWS.OpenTelemetry.Exporter
+# Configure in Program.cs
+builder.Services.AddOpenTelemetryTracing(builder =>
+    builder.AddAWSExporter()
+           .AddAspNetCoreInstrumentation());</code></pre>
+
+          <h4>Manual Instrumentation Example:</h4>
+          <pre><code>using OpenTelemetry.Trace;
+
+var tracer = tracerProvider.GetTracer("my-service");
+
+using var span = tracer.StartActiveSpan("validate-user");
+try
+{
+    span.SetAttribute("user.email", user.Email);
+    var isValid = await ValidateUserAsync(user);
+    span.SetAttribute("validation.result", isValid);
+    return isValid;
+}
+catch (Exception ex)
+{
+    span.SetStatus(Status.Error, ex.Message);
+    throw;
+}</code></pre>
+
+          <h3>Node.js Applications</h3>
+          <p><strong>Auto-Instrumentation:</strong> Great for Express.js and REST APIs</p>
+          <p><strong>Manual OTel:</strong> Perfect for GraphQL, custom frameworks, or microservices</p>
+
+          <h4>Auto-Instrumentation Setup:</h4>
+          <pre><code>npm install @aws/opentelemetry-auto-instrumentation
+node --require @aws/opentelemetry-auto-instrumentation \
+     --experimental-loader @aws/opentelemetry-auto-instrumentation/loader \
+     your_app.js</code></pre>
+
+          <h4>Manual Instrumentation Example:</h4>
+          <pre><code>const { trace } = require('@opentelemetry/api');
+
+const tracer = trace.getTracer('my-service');
+
+async function processOrder(order) {
+    const span = tracer.startSpan('process-order');
+    span.setAttribute('order.id', order.id);
+    span.setAttribute('order.amount', order.amount);
+
+    try {
+        await validateOrder(order);
+        await chargePayment(order);
+        await shipOrder(order);
+        span.setAttribute('order.status', 'completed');
+    } catch (error) {
+        span.setStatus({ code: trace.SpanStatusCode.ERROR, message: error.message });
+        throw error;
+    } finally {
+        span.end();
+    }
+}</code></pre>
+
+          <h3>Go Applications</h3>
+          <p><strong>Manual OTel Only:</strong> Go requires manual instrumentation (no auto-instrumentation available)</p>
+          <p><strong>Best for:</strong> High-performance services, cloud-native applications</p>
+
+          <h4>Setup:</h4>
+          <pre><code>go get go.opentelemetry.io/otel
+go get go.opentelemetry.io/otel/exporters/aws
+
+tracer := otel.Tracer("my-service")
+
+_, span := tracer.Start(ctx, "process-request")
+span.SetAttributes(
+    attribute.String("user.id", userID),
+    attribute.Float64("request.duration", duration),
+)
+defer span.End()</code></pre>
+        </section>
+
+        <section>
+          <h2>Validation & Troubleshooting</h2>
+          <p>Verify your implementation and resolve common issues.</p>
+
+          <h3>Validation Checklist</h3>
+          <ul>
+            <li>✅ Data appears in CloudWatch Application Signals console within 5-10 minutes</li>
+            <li>✅ Service map shows your application services and dependencies</li>
+            <li>✅ Traces display request flows and span details</li>
+            <li>✅ Metrics show latency, error rates, and throughput</li>
+            <li>✅ Custom attributes appear in traces (if manually instrumented)</li>
+          </ul>
+
+          <h3>Common Issues & Solutions</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Issue</th>
+                <th>Solution</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>No data in Application Signals</td>
+                <td>Check IAM permissions, network connectivity, and agent logs</td>
+              </tr>
+              <tr>
+                <td>Missing traces</td>
+                <td>Verify instrumentation is loaded, check sampling rates</td>
+              </tr>
+              <tr>
+                <td>High performance impact</td>
+                <td>Adjust sampling rates, review custom instrumentation</td>
+              </tr>
+              <tr>
+                <td>Incorrect service names</td>
+                <td>Set <code>OTEL_SERVICE_NAME</code> environment variable</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

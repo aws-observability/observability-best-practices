@@ -28,3 +28,41 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* APM docs (cw-apm-docs converted to MDX) */
+.apm-doc .guide-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 12px;
+}
+.apm-doc .guide-card {
+  border: 1px solid var(--ifm-toc-border-color);
+  border-radius: 12px;
+  padding: 14px 14px 10px;
+  background: var(--ifm-background-surface-color);
+}
+.apm-doc .guide-card h3 {
+  margin: 0 0 8px;
+}
+.apm-doc .guide-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.apm-doc .guide-meta {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  flex-wrap: wrap;
+  margin: 8px 0 16px;
+}
+.apm-doc .guide-src {
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+.apm-doc .guide-callout {
+  border-radius: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  background: var(--ifm-color-emphasis-100);
+}

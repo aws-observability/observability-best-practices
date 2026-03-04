@@ -1,0 +1,13 @@
+---
+title: Instrumentation
+slug: /instrumentation
+---
+
+import React from 'react';
+import {Redirect} from '@docusaurus/router';
+import useBaseUrl from '@docusaurus/useBaseUrl';
+
+export default function InstrumentationRedirect() {
+  return <Redirect to={useBaseUrl('/apm/implementation')} />;
+}
+

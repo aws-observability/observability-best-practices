@@ -79,6 +79,20 @@ const config = {
          indexBlog: false,
        }),
      ],
+
+     // APM docs (converted from cw-apm-docs) served under /apm/
+     [
+       '@docusaurus/plugin-content-docs',
+       /** @type {import('@docusaurus/plugin-content-docs').Options} */
+       ({
+         id: 'apm',
+         path: 'docs-apm',
+         routeBasePath: 'apm',
+         sidebarPath: require.resolve('./sidebarsApm.js'),
+         editUrl:
+           'https://github.com/aws-observability/observability-best-practices/blob/main/docusaurus/',
+       }),
+     ],
    ],
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -116,15 +130,16 @@ const config = {
           },
           {
             type: 'doc',
-            docId: 'recipes/index',
+            docsPluginId: 'apm',
+            docId: 'index',
             position: 'left',
-            label: 'Recipes',
+            label: 'APM',
           },
           {
             type: 'doc',
-            docId: 'faq/general',
+            docId: 'recipes/index',
             position: 'left',
-            label: 'FAQ',
+            label: 'Recipes',
           },
           {
             type: 'doc',

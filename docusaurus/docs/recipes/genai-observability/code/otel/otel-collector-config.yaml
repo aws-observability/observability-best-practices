@@ -1,0 +1,71 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+  
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: demo
+        action: upsert
+
+exporters:
+  # Amazon Managed Prometheus
+  prometheusremotewrite:
+    endpoint: ${AMP_REMOTE_WRITE_URL}
+    auth:
+      authenticator: sigv4auth
+    resource_to_telemetry_conversion:
+      enabled: true
+  
+  # AWS X-Ray
+  awsxray:
+    region: us-east-1
+    no_verify_ssl: false
+  
+  # CloudWatch Logs
+  awscloudwatchlogs:
+    region: us-east-1
+    log_group_name: /ai-observability-demo
+    log_stream_name: otel-collector
+  
+  # Debug logging
+  logging:
+    loglevel: info
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  
+  sigv4auth:
+    region: us-east-1
+    service: aps
+    assume_role:
+      sts_region: us-east-1
+
+service:
+  extensions: [health_check, sigv4auth]
+  
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [awsxray, logging]
+    
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [prometheusremotewrite, logging]
+    
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [awscloudwatchlogs, logging]

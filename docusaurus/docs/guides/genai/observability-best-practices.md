@@ -293,7 +293,7 @@ Without proper observability:
 
 ### Next Steps
 
-For a complete implementation example, see our [GenAI Observability Recipe](/docs/recipes/genai-observability/) which demonstrates:
+For a complete implementation example, see our [GenAI Observability Recipe](/recipes/genai-observability/) which demonstrates:
 - Multi-cloud LLM observability architecture
 - OpenTelemetry instrumentation
 - CloudWatch and Prometheus integration

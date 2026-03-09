@@ -5,7 +5,7 @@ Multi-cloud AI-native full-stack observability platform for monitoring LLM workl
 ## Quick Start
 
 ### Prerequisites
-- AWS Account with Bedrock access (Claude 3 Haiku/Sonnet enabled in us-east-1)
+- AWS Account with Bedrock access. This demo uses Claude 3 Haiku/Sonnet in us-east-1, but you can substitute any Bedrock-supported model by updating the model ID in `gateway/litellm-config.yaml`. The observability pipeline is model-agnostic and works with any LLM provider supported by LiteLLM.
 - AWS CLI configured with AdministratorAccess
 - Docker Desktop running
 - Docker Compose v2
@@ -83,8 +83,8 @@ awscurl --service aps --region us-east-1 \
 2. Click "Open Grafana"
 3. Add data sources:
    - Prometheus: Use AMP endpoint with SigV4 auth
-   - CloudWatch: Default region us-east-1
-   - X-Ray: Default region us-east-1
+   - CloudWatch: Set to the region where your resources are deployed
+   - X-Ray: Set to the same region as CloudWatch
 4. Import dashboard: `grafana/dashboards/ai-observability.json`
 
 ### Phase 6: MCP Server Integration
@@ -103,7 +103,7 @@ pip3 install -r requirements.txt
       "args": ["/path/to/AI-OBS_DEMO/mcp-server/prometheus_mcp_server.py"],
       "env": {
         "AMP_ENDPOINT": "your-amp-endpoint",
-        "AWS_REGION": "us-east-1",
+        "AWS_REGION": "your-aws-region",
         "AWS_ACCESS_KEY_ID": "your-key",
         "AWS_SECRET_ACCESS_KEY": "your-secret",
         "AWS_SESSION_TOKEN": "your-token"
@@ -112,6 +112,10 @@ pip3 install -r requirements.txt
   }
 }
 ```
+
+:::tip Region Configuration
+Set `AWS_REGION` to the region where your observability resources (AMP, CloudWatch, X-Ray) are deployed. Any AWS region that supports these services will work.
+:::
 
 ### Natural Language Queries in Kiro
 

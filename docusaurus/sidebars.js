@@ -198,6 +198,13 @@ module.exports = {
             'guides/partners/databricks',
           ],
         },
+        {
+          type: 'category',
+          label: 'GenAI',
+          items: [
+            'guides/genai/observability-best-practices',
+          ],
+        },
         'guides/observability-maturity-model',
         'guides/cloudwatch_cross_account_observability',
       ],
@@ -331,6 +338,18 @@ module.exports = {
             'recipes/alerting',
             'recipes/troubleshooting',
             'recipes/workshops',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'GenAI',
+          items: [
+            'recipes/genai-observability/index',
+            'recipes/genai-observability/architecture',
+            'recipes/genai-observability/best-practices',
+            'recipes/genai-observability/setup/grafana-setup',
+            'recipes/genai-observability/mcp-integration/kiro-quickstart',
+            'recipes/genai-observability/mcp-integration/mcp-queries',
           ],
         },
       ],

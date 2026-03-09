@@ -14,6 +14,10 @@ This document describes the architecture of a cloud-agnostic AI observability pl
 
 The platform supports monitoring LLM invocations across multiple providers:
 
+:::info Model Flexibility
+The models listed below are the ones used in this demo. Since the platform uses [LiteLLM](https://docs.litellm.ai/) as the AI gateway, you can substitute any LLM supported by LiteLLM — simply update `gateway/litellm-config.yaml` with your preferred models. The observability pipeline works the same regardless of which models you choose.
+:::
+
 #### AWS Bedrock
 - **Models**: Claude 3 Haiku, Claude 3 Sonnet
 - **Integration**: AWS SDK (boto3)
@@ -98,7 +102,7 @@ The platform supports monitoring LLM invocations across multiple providers:
 #### Amazon Managed Prometheus (AMP)
 - **Service Type**: Managed Prometheus-compatible monitoring
 - **Region**: us-east-1
-- **Workspace ID**: `ws-534fb858-0318-4700-91e3-e6113889e68d`
+- **Workspace ID**: `<your-amp-workspace-id>`
 - **Use Case**: Time-series metrics storage
 - **Query Language**: PromQL
 - **Retention**: 150 days
@@ -107,7 +111,7 @@ The platform supports monitoring LLM invocations across multiple providers:
 #### Amazon Managed Grafana (AMG)
 - **Service Type**: Managed Grafana for visualization
 - **Region**: us-east-1
-- **Workspace ID**: `g-45577447e2`
+- **Workspace ID**: `<your-amg-workspace-id>`
 - **Authentication**: IAM Identity Center (SSO)
 - **Data Sources**:
   - Amazon CloudWatch
@@ -134,7 +138,7 @@ The platform supports monitoring LLM invocations across multiple providers:
 #### IAM Identity Center (SSO)
 - **Region**: us-east-2 (Ohio)
 - **Purpose**: Single sign-on for Grafana users
-- **Users**: vipulgargav@gmail.com (ADMIN role)
+- **Users**: `<your-email>` (ADMIN role)
 - **Integration**: SAML 2.0 authentication
 - **Benefits**:
   - Centralized user management

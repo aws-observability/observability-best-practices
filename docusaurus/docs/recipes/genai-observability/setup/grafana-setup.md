@@ -1,8 +1,8 @@
 # Grafana Setup Guide
 
 ## Current Status
-- ✅ Grafana Workspace: `g-45577447e2` (ACTIVE)
-- ✅ Endpoint: `g-45577447e2.grafana-workspace.us-east-1.amazonaws.com`
+- ✅ Grafana Workspace: `<your-amg-workspace-id>` (ACTIVE)
+- ✅ Endpoint: `<your-amg-workspace-id>.grafana-workspace.<your-region>.amazonaws.com`
 - ⚠️ Authentication: AWS SSO required (not yet configured)
 
 ## Option 1: Enable AWS IAM Identity Center (Recommended)
@@ -10,10 +10,10 @@
 ### Step 1: Enable IAM Identity Center
 ```bash
 # Open IAM Identity Center console
-open "https://console.aws.amazon.com/singlesignon/home?region=us-east-1"
+open "https://console.aws.amazon.com/singlesignon/home?region=<your-region>"
 
 # Or use AWS CLI
-aws sso-admin create-instance --region us-east-1
+aws sso-admin create-instance --region <your-region>
 ```
 
 **In the Console:**
@@ -44,7 +44,7 @@ USER_ID=$(aws identitystore list-users --identity-store-id $IDENTITY_STORE_ID --
 
 # Assign user to Grafana workspace
 aws grafana update-permissions \
-  --workspace-id g-45577447e2 \
+  --workspace-id <your-amg-workspace-id> \
   --update-instruction-batch '[
     {
       "action": "ADD",
@@ -57,11 +57,11 @@ aws grafana update-permissions \
       ]
     }
   ]' \
-  --region us-east-1
+  --region <your-region>
 ```
 
 ### Step 4: Access Grafana
-1. Open: https://g-45577447e2.grafana-workspace.us-east-1.amazonaws.com
+1. Open: `https://<your-amg-workspace-id>.grafana-workspace.<your-region>.amazonaws.com`
 2. Sign in with your IAM Identity Center credentials
 3. You should now have admin access
 
@@ -72,7 +72,7 @@ aws grafana update-permissions \
 If you prefer to skip the SSO setup, you already have a working CloudWatch dashboard:
 
 **Dashboard URL:**
-https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=AI-Observability-Demo
+`https://console.aws.amazon.com/cloudwatch/home?region=<your-region>#dashboards:name=AI-Observability-Demo`
 
 **Advantages:**
 - ✅ No SSO setup required
@@ -83,7 +83,7 @@ https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=
 **To view:**
 ```bash
 # Open in browser
-open "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=AI-Observability-Demo"
+open "https://console.aws.amazon.com/cloudwatch/home?region=<your-region>#dashboards:name=AI-Observability-Demo"
 
 # Generate more data
 python3 AI-OBS_DEMO/local-demo.py
@@ -97,9 +97,9 @@ Update Grafana to use API key authentication instead of SSO:
 
 ```bash
 aws grafana update-workspace-authentication \
-  --workspace-id g-45577447e2 \
+  --workspace-id <your-amg-workspace-id> \
   --authentication-providers SAML \
-  --region us-east-1
+  --region <your-region>
 ```
 
 Then configure SAML with your corporate identity provider.
@@ -131,14 +131,14 @@ Then configure SAML with your corporate identity provider.
 
 ```bash
 # View your dashboard
-open "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#dashboards:name=AI-Observability-Demo"
+open "https://console.aws.amazon.com/cloudwatch/home?region=<your-region>#dashboards:name=AI-Observability-Demo"
 
 # Run demo to generate data
 python3 AI-OBS_DEMO/local-demo.py
 
 # View metrics
-open "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#metricsV2:graph=~();namespace=AIObservability"
+open "https://console.aws.amazon.com/cloudwatch/home?region=<your-region>#metricsV2:graph=~();namespace=AIObservability"
 
 # View logs
-open "https://console.aws.amazon.com/cloudwatch/home?region=us-east-1#logsV2:log-groups/log-group/$252Fai-observability-demo"
+open "https://console.aws.amazon.com/cloudwatch/home?region=<your-region>#logsV2:log-groups/log-group/$252Fai-observability-demo"
 ```

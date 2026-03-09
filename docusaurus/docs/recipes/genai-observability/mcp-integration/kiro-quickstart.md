@@ -33,10 +33,10 @@ No need to switch to dashboards or write complex queries!
        "ai-observability": {
          "command": "python3",
          "args": [
-           "/Users/vggargav/Documents/AI-Obs_demo/AI-OBS_DEMO/mcp-server/cloudwatch_mcp_server.py"
+           "/path/to/mcp-server/cloudwatch_mcp_server.py"
          ],
          "env": {
-           "AWS_REGION": "us-east-1"
+           "AWS_REGION": "your-aws-region"
          },
          "disabled": false,
          "autoApprove": []
@@ -70,8 +70,8 @@ aws sts get-caller-identity
 # Should show:
 # {
 #     "UserId": "...",
-#     "Account": "578787088678",
-#     "Arn": "arn:aws:iam::578787088678:user/Vipul-G"
+#     "Account": "<your-account-id>",
+#     "Arn": "arn:aws:iam::<your-account-id>:user/<your-username>"
 # }
 ```
 
@@ -80,7 +80,7 @@ If not configured, set up AWS credentials:
 aws configure
 # Enter your AWS Access Key ID
 # Enter your AWS Secret Access Key
-# Default region: us-east-1
+# Default region: your-aws-region
 # Default output format: json
 ```
 
@@ -302,7 +302,7 @@ Give me a complete overview of Claude Haiku performance
 1. Verify IAM permissions include:
    - `cloudwatch:GetMetricStatistics`
    - `cloudwatch:ListMetrics`
-2. Check AWS region is set to `us-east-1`
+2. Check AWS region is set correctly
 
 ### Python Path Issues
 

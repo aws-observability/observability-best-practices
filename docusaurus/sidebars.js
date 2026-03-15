@@ -46,7 +46,25 @@ module.exports = {
             'guides/getting-started/dashboards-alerts',
           ],
         },
-        'guides/choosing-a-tracing-agent',
+        {
+          type: 'category',
+          label: 'Application Performance Monitoring (APM)',
+          items: [
+            {
+              type: 'category',
+              label: 'Application Signals Instrumentation Guide',
+              items: [
+                'guides/apm/introduction',
+                'guides/apm/challenges',
+                'guides/apm/why-migrate-from-xray',
+                'guides/apm/setup',
+                'guides/apm/instrumentation-setups',
+                'guides/apm/instrumentation-samples',
+                'guides/apm/resources',
+              ],
+            },
+          ],
+        },
         {
           type: 'category',
           label: 'Cost',

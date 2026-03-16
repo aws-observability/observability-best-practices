@@ -16,7 +16,7 @@
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
-| Siva Guruvareddiar  | Jay Joshi
+| Siva Guruvareddiar  | Jay Joshi                   | Jean Velez Torres |                    |
 
 このサイトで公開されているすべてのレシピは、[MIT-0][mit0] ライセンスで利用可能です。
 これは通常の MIT ライセンスを修正し、帰属表示の要件を削除したものです。

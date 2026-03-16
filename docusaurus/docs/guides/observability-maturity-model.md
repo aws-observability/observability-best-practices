@@ -118,6 +118,9 @@ The assessment is designed to help you review the state of your observability st
 
 13. Do you have an enterprise observability strategy?
 14. How do you use SLOs?
+15. Are you getting return on investments (ROI) from your current observability tool-set?
+16. Do you use any ML/AI capability today?
+17. Do you have real end-user monitoring?
 
 ## Building the observability strategy
 

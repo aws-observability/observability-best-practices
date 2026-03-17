@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Generative AI observability — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Generative AI observability</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals supports troubleshooting generative AI applications that interact with Amazon Bedrock models. It provides out-of-the-box telemetry for Bedrock API calls so you can investigate:</p>
+          <ul>
+            <li><strong>Model configuration issues</strong></li>
+            <li><strong>Usage and cost drivers</strong> (token usage)</li>
+            <li><strong>Model latency</strong></li>
+            <li><strong>Stopped/finish reasons</strong> for responses</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Fine-grained metrics and traces</h2>
+          <p>For Bedrock calls, Application Signals can generate and correlate performance metrics and trace spans with resource-level detail (for example: model ID, guardrails ID, knowledge base ID, and Bedrock agent ID).</p>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">Example: troubleshoot generative AI apps interacting with Amazon Bedrock</a>.</p>
+        </section>
+
+        <section>
+          <h2>GenAI semantic attributes + Transaction Search</h2>
+          <p>Application Signals can emit OpenTelemetry GenAI semantic convention attributes (for example, <code>gen_ai.request.model</code> and token usage fields). You can analyze these with CloudWatch Transaction Search to compare prompts, token usage, and latency across models.</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">Searching and analyzing spans</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Further reading</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS announcement: Application Signals supports Bedrock</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">Blog: Improve Amazon Bedrock observability with AppSignals</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

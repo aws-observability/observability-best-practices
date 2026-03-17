@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RUM — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Real User Monitoring (RUM)</h1></header>
+      <article>
+        <section>
+          <h2>How RUM connects to Application Signals</h2>
+          <p>CloudWatch RUM web clients can appear in Application Signals when you enable X-Ray tracing for the RUM client. Requests from the client to backend services are then associated and shown in service details and on the Application Map.</p>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">How Application Signals enables operational health monitoring</a>.</p>
+        </section>
+
+        <section>
+          <h2>What RUM helps you answer</h2>
+          <ul>
+            <li><strong>Is this issue user-impacting?</strong> correlate backend health to page load and JS error signals</li>
+            <li><strong>Where are users impacted?</strong> compare performance by geography, device, and browser</li>
+            <li><strong>What changed?</strong> correlate with deployments/change events when investigating regressions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Next steps</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

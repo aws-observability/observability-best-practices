@@ -286,6 +286,7 @@ module.exports = {
             'recipes/eks',
             'recipes/ecs',
             'recipes/lambda',
+            'recipes/eks-gpu-cost-attribution',
           ],
         },
         {

@@ -23,7 +23,6 @@ module.exports = {
       label: 'Implementation guides',
       items: [
         'pages/implementation',
-        'pages/language-guides',
       ],
     },
     {

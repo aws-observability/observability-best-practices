@@ -152,14 +152,12 @@
           </table>
 
           <h3>Instrumentation Approach Decision Guide</h3>
-          <div style="background: #f8f8f8; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h4>Choose Your Approach:</h4>
             <ul>
               <li><strong>Auto-Instrumentation:</strong> Best for getting started quickly, zero code changes</li>
               <li><strong>Manual OpenTelemetry:</strong> Best for custom instrumentation and vendor portability</li>
               <li><strong>AWS Distro for OpenTelemetry:</strong> Best for AWS-optimized experience</li>
             </ul>
-          </div>
         </section>
 
         <section>
@@ -175,24 +173,19 @@
           </ul>
 
           <h3>Step 2: Choose Your Instrumentation Method</h3>
-          <div style="background: #e6f7ff; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #1890ff;">
             <h4>For New Applications:</h4>
             <ol>
               <li>Start with <strong>Auto-Instrumentation</strong> for rapid setup</li>
               <li>Add <strong>Manual Instrumentation</strong> for custom business metrics</li>
               <li>Use <strong>ADOT</strong> for AWS-optimized experience</li>
             </ol>
-          </div>
 
-          <div style="background: #fff7e6; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #fa8c16;">
-            <h4>For Existing Applications:</h4>
             <ol>
               <li>Evaluate current instrumentation level</li>
               <li>Choose <strong>Auto-Instrumentation</strong> if minimal existing telemetry</li>
               <li>Use <strong>Manual OTel</strong> if migrating from other APM tools</li>
               <li>Consider <strong>ADOT</strong> for AWS-native integration</li>
             </ol>
-          </div>
 
           <h3>Step 3: Consider Your Team's Expertise</h3>
           <ul>

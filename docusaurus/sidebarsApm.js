@@ -22,7 +22,13 @@ module.exports = {
       type: 'category',
       label: 'Implementation guides',
       items: [
-        'pages/implementation',
+        'pages/deep-dive/introduction',
+        'pages/deep-dive/challenges',
+        'pages/deep-dive/why-migrate-from-xray',
+        'pages/deep-dive/setup',
+        'pages/deep-dive/instrumentation-setups',
+        'pages/deep-dive/instrumentation-samples',
+        'pages/deep-dive/resources',
       ],
     },
     {

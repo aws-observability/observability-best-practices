@@ -26,7 +26,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const normalizedSrc = (() => {
     const p = stripDotSegments(src);
     if (p === 'index.html' || p === 'index') return '';
-    return p.replace(/\.html$/i, '');
+    return p;
   })();
   const apmSrcUrl = `${apmSrcBase}${normalizedSrc}`;
 

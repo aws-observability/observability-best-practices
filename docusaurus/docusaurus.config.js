@@ -23,6 +23,7 @@ const config = {
   organizationName: 'AWS', // Usually your GitHub org/user name.
   projectName: 'AWS Observability best practices', // Usually your repo name.
 
+  trailingSlash: true,
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 

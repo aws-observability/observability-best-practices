@@ -40,23 +40,23 @@ Based on your requirements, select one of the instrumentation approaches. Applic
 
 - **[AWS Distro for OpenTelemetry (ADOT) SDK](https://aws-otel.github.io/docs/introduction)** — AWS distribution of OpenTelemetry with Application Signals support. Available for Java, Python, .NET, and Node.js.
 - **[Upstream OpenTelemetry SDK](https://opentelemetry.io/docs/languages/)** — Standard vendor-neutral OpenTelemetry SDK. Works with any OTEL-supported language (Erlang, Rust, Ruby, Go, PHP, etc.).
-- **[X-Ray SDK](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)** — Legacy AWS tracing SDK. ⚠️ [Maintenance mode](instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline)
+- **[X-Ray SDK](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)** — Legacy AWS tracing SDK. ⚠️ [Maintenance mode](../instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline)
 
 ### Available Collectors / Agents
 
 - **[CloudWatch Agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)** — Managed AWS agent with built-in Application Signals support, Container Insights integration, and log collection.
 - **[OpenTelemetry Collector](https://opentelemetry.io/docs/collector/)** — Standard upstream or custom-built collector. Supports multi-destination telemetry fan-out.
-- **[X-Ray Daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)** — Legacy trace relay for X-Ray SDK. ⚠️ [Maintenance mode](instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline)
+- **[X-Ray Daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)** — Legacy trace relay for X-Ray SDK. ⚠️ [Maintenance mode](../instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline)
 
 ### Decision Matrix
 
 | Approach | Best For | Key Benefits |
 |---|---|---|
-| [**ADOT SDK + CloudWatch Agent**](instrumentation-setups#adot-sdk--cloudwatch-agent) | AWS-native environments, deep service integration | Tight AWS integration, Container Insights correlation, managed experience |
-| [**ADOT SDK + Custom OTEL Collector**](instrumentation-setups#adot-sdk--custom-otel-collector) | Multi-destination telemetry with full Application Signals support | Client-side RED metrics, App Signals processor, multi-destination flexibility |
-| [**Upstream OTEL SDK + OTEL Collector**](instrumentation-setups#upstream-opentelemetry-sdk--otel-collector) | Vendor-neutral strategy, non-ADOT languages, multi-cloud | Full vendor neutrality, any OTEL-supported language, no AWS SDK dependency |
-| [**Direct OTLP Endpoint (Collector-less tracing)**](instrumentation-setups#collector-less-tracing-with-otlp-endpoints) | Resource-efficient applications, minimal infrastructure | Minimal overhead, simplified architecture, reduced infrastructure |
-| [**X-Ray SDKs**](instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline) | Legacy X-Ray users, gradual migration | Existing investment protection, minimal change requirements. ⚠️ Maintenance mode |
+| [**ADOT SDK + CloudWatch Agent**](../instrumentation-setups#adot-sdk--cloudwatch-agent) | AWS-native environments, deep service integration | Tight AWS integration, Container Insights correlation, managed experience |
+| [**ADOT SDK + Custom OTEL Collector**](../instrumentation-setups#adot-sdk--custom-otel-collector) | Multi-destination telemetry with full Application Signals support | Client-side RED metrics, App Signals processor, multi-destination flexibility |
+| [**Upstream OTEL SDK + OTEL Collector**](../instrumentation-setups#upstream-opentelemetry-sdk--otel-collector) | Vendor-neutral strategy, non-ADOT languages, multi-cloud | Full vendor neutrality, any OTEL-supported language, no AWS SDK dependency |
+| [**Direct OTLP Endpoint (Collector-less tracing)**](../instrumentation-setups#collector-less-tracing-with-otlp-endpoints) | Resource-efficient applications, minimal infrastructure | Minimal overhead, simplified architecture, reduced infrastructure |
+| [**X-Ray SDKs**](../instrumentation-setups#existing-x-ray-sdk--x-ray-daemon-end-of-support-timeline) | Legacy X-Ray users, gradual migration | Existing investment protection, minimal change requirements. ⚠️ Maintenance mode |
 
 ### Feature Comparison
 
@@ -70,7 +70,7 @@ Based on your requirements, select one of the instrumentation approaches. Applic
 | **Always gets RED metrics on 100% of traffic** | ✅ Yes (client-side) | ✅ Yes (client-side) | ⚠️ Only with 100% sampling (server-side) | ⚠️ Only with 100% sampling (server-side) | ⚠️ Only with 100% sampling (server-side) |
 | **Multi-destination telemetry** | ❌ No | ✅ Yes | ✅ Yes | ❌ No | ❌ No |
 
-For detailed implementation of each approach, see [Instrumentation Setups](instrumentation-setups).
+For detailed implementation of each approach, see [Instrumentation Setups](../instrumentation-setups).
 
 ## Step 4: Understanding Sampling and Trace Indexing
 

@@ -41,19 +41,33 @@ npm run preview      # serves the built app on :4173
 src/
 ├── lib/
 │   ├── types.ts              # Shared TypeScript interfaces
-│   ├── scenarios.ts          # 20 chaos scenario definitions
+│   ├── scenarios.ts          # 30 chaos scenario definitions
+│   ├── game-store.svelte.ts  # Svelte 5 reactive game state store
 │   ├── server/               # Server-only modules (never sent to browser)
 │   │   ├── k8s.ts            # Kubernetes client wrapper
 │   │   ├── chaos-engine.ts   # Scenario trigger + cleanup logic
-│   │   ├── cloudwatch.ts     # CloudWatch metrics & logs reader
-│   │   └── game-state.ts     # In-memory game state machine
+│   │   ├── cloudwatch.ts     # CloudWatch metrics, logs & traces reader
+│   │   ├── game-state.ts     # In-memory game state machine
+│   │   ├── discovery.ts      # K8s deployment name resolution + caching
+│   │   ├── flagd.ts          # Feature flag management via flagd ConfigMap
+│   │   ├── costs.ts          # AWS Cost Explorer integration
+│   │   ├── llm-judge.ts      # LLM-based hypothesis scoring (Bedrock/Anthropic/OpenAI)
+│   │   └── llm-score-store.ts # Score persistence between endpoints
 │   └── components/           # Svelte 5 UI components
-│       ├── ScoreBoard.svelte
-│       ├── RedDashboard.svelte
+│       ├── AboutModal.svelte
+│       ├── CostsModal.svelte
+│       ├── FullscreenModal.svelte
 │       ├── HypothesisForm.svelte
-│       ├── RevealPanel.svelte
+│       ├── LogsModal.svelte
+│       ├── PromQLModal.svelte
+│       ├── RedDashboard.svelte
 │       ├── RemediatePanel.svelte
-│       └── ServiceGrid.svelte
+│       ├── RevealPanel.svelte
+│       ├── ScoreBoard.svelte
+│       ├── ServiceGrid.svelte
+│       ├── ServiceMap.svelte
+│       ├── TimeRangePicker.svelte
+│       └── TracesModal.svelte
 ├── routes/
 │   ├── +layout.svelte        # App shell, nav, global styles
 │   ├── +page.svelte          # Main game page (state machine UI)
@@ -65,9 +79,12 @@ src/
 │       │   ├── remediate/    # POST — auto-remediate or mark manual fix
 │       │   ├── state/        # GET  — current game state
 │       │   └── reset/        # POST — reset score and history
-│       ├── metrics/          # GET  — RED metrics from CloudWatch
+│       ├── metrics/          # GET  — RED metrics from CloudWatch PromQL
 │       ├── logs/             # GET  — service logs from CloudWatch
-│       └── services/         # GET  — live deployment status from K8s
+│       ├── traces/           # GET  — service traces from CloudWatch Logs Insights
+│       ├── services/         # GET  — live deployment status from K8s
+│       ├── costs/            # GET  — cost breakdown from AWS Cost Explorer
+│       └── promql/           # GET  — PromQL proxy + metadata endpoint
 ├── app.html                  # HTML template
 └── app.d.ts                  # SvelteKit type augmentations
 ```
@@ -96,7 +113,7 @@ Each scenario in `scenarios.ts` is a `ChaosScenario` object:
 |--------------------|------------------------------------------------------|
 | `id`               | Unique key, used by `chaos-engine.ts` switch/case    |
 | `name`             | Human-readable title shown in the reveal panel       |
-| `category`         | One of: `pod-kill`, `load-spike`, `resource-pressure`, `network-fault`, `config-fault` |
+| `category`         | One of: `pod-kill`, `load-spike`, `resource-pressure`, `network-fault`, `config-fault`, `feature-flag` |
 | `description`      | What the scenario does (shown after reveal)          |
 | `targetServices`   | Service names from `OTEL_SERVICES` affected          |
 | `hint`             | Clue shown to the player during hypothesis phase     |
@@ -105,26 +122,36 @@ Each scenario in `scenarios.ts` is a `ChaosScenario` object:
 
 ### Chaos engine
 
-`chaos-engine.ts` maps each scenario ID to a concrete Kubernetes mutation:
+`chaos-engine.ts` maps each scenario ID to a concrete Kubernetes mutation
+or feature flag toggle:
 
-| Function               | K8s operation                                      |
+| Function               | K8s / flagd operation                              |
 |------------------------|----------------------------------------------------|
 | `killServicePod`       | Deletes the pod, then scales deployment to 0       |
 | `spikeLoadGenerator`   | Sets `LOCUST_USERS` / `LOCUST_SPAWN_RATE` env vars |
 | `constrainCpu`         | Patches container CPU limits to a tiny value       |
 | `constrainMemory`      | Patches container memory limits to trigger OOMKill |
-| `injectNetworkDelay`   | Runs `tc qdisc add netem delay` inside the pod     |
-| `injectPacketLoss`     | Runs `tc qdisc add netem loss` inside the pod      |
+| `injectNetworkDelay`   | Sets `HTTP_PROXY`/`HTTPS_PROXY` to a non-routable address, simulating network delay |
+| `injectPacketLoss`     | Sets `HTTP_PROXY`/`HTTPS_PROXY` to a non-routable address, simulating packet loss |
 | `corruptEnvVar`        | Sets an env var to an invalid value                |
+| `enableFlag`           | Enables a feature flag in the flagd ConfigMap      |
+
+Network fault injection uses proxy env vars instead of `tc qdisc` because
+the demo containers don't include `iproute2`.
 
 Each function records the original state in an in-memory `Map` so that
 `cleanupScenario` can reverse the change (scale back up, restart to clear
-env/resources/network).
+env/resources/network, or restore the flagd ConfigMap).
+
+Deployment names are resolved at runtime via the discovery module rather
+than being hardcoded, since the Helm chart naming can vary by version.
 
 ### Kubernetes client (`k8s.ts`)
 
 Wraps `@kubernetes/client-node`. Key exports:
 
+- `coreApi()` — returns a `CoreV1Api` client (singleton, lazy-initialized)
+- `appsApi()` — returns an `AppsV1Api` client (singleton, lazy-initialized)
 - `listPods(namespace, labelSelector?)` — list pods
 - `deletePod(namespace, name)` — delete a single pod
 - `scaleDeployment(namespace, name, replicas)` — patch replica count
@@ -133,27 +160,92 @@ Wraps `@kubernetes/client-node`. Key exports:
 - `execInPod(namespace, pod, command[])` — exec a command inside a running pod
 - `getDeploymentStatus(namespace, name)` — returns replica counts
 
+Write operations (`scaleDeployment`, `patchDeploymentResources`,
+`setEnvVar`) use a `retryOnConflict` wrapper that retries up to 5 times
+on HTTP 409 Conflict responses with exponential backoff + jitter.
+
 The client loads kubeconfig from the default location (`~/.kube/config` or
 the `KUBECONFIG` env var). In-cluster config is also supported automatically.
+
+### Discovery module (`discovery.ts`)
+
+Resolves human-friendly service names (e.g. `"checkout"`) to actual K8s
+deployment names (e.g. `"otel-demo-checkoutservice"`) by listing all
+deployments in the `otel-demo` namespace and fuzzy-matching against the
+service's search hint. Results are cached after the first call and can be
+invalidated via `invalidateDiscoveryCache()` (called after cleanup).
+
+### Feature flag management (`flagd.ts`)
+
+Manages feature flags by reading and writing the `flagd-config` ConfigMap
+in the `otel-demo` namespace. The `enableFlag(flagName)` function sets a
+flag's `defaultVariant` to its "on" variant and saves the original config
+for later restoration via `restoreFlags()`.
 
 ### CloudWatch client (`cloudwatch.ts`)
 
 Reads telemetry that the OTel Collector has exported to CloudWatch:
 
-- `getREDMetrics(services, start, end)` — queries `GetMetricData` for rate
-  (SampleCount), errors (5xx SampleCount), and duration (p99) per service.
+- `getREDMetrics(services, start, end)` — queries the CloudWatch PromQL
+  endpoint (SigV4-signed) for rate, errors, and p99 duration per service
+  using the `traces.span.metrics.calls` and `traces.span.metrics.duration`
+  metrics generated by the spanmetrics connector.
+- `getAllServicesREDMetrics(start, end)` — convenience wrapper that returns
+  RED metrics for all services (excluding load-generator and flagd).
 - `getServiceLogs(service, start, end)` — queries `FilterLogEvents` with a
   JSON filter on `service.name`.
-- `getAllServicesREDMetrics(start, end)` — convenience wrapper for all 14
-  non-load-generator services.
+- `getServiceTraces(service, start, end)` — queries CloudWatch Logs Insights
+  against the `aws/spans` log group (Transaction Search) to fetch traces
+  grouped by trace ID with full span details.
 
 Configuration via environment variables:
 
-| Variable               | Default      | Description                        |
-|------------------------|--------------|------------------------------------|
-| `AWS_REGION`           | `eu-west-1`  | AWS region                         |
-| `CW_METRICS_NAMESPACE` | `OTelDemo`   | CloudWatch namespace for metrics   |
-| `CW_LOG_GROUP`         | `/otel/demo` | CloudWatch Logs group name         |
+| Variable                   | Default                          | Description                                |
+|----------------------------|----------------------------------|--------------------------------------------|
+| `AWS_REGION`               | `eu-west-1`                      | AWS region                                 |
+| `CW_LOG_GROUP`             | `/otel/demo`                     | CloudWatch Logs group name                 |
+| `CW_SPANS_LOG_GROUP`       | `aws/spans`                      | Log group for Transaction Search traces    |
+| `PROMQL_SVC_LABEL`         | `@resource.service.name`         | PromQL label for service name              |
+| `PROMQL_CALLS_METRIC`      | `traces.span.metrics.calls`      | PromQL metric name for span call counts    |
+| `PROMQL_DURATION_METRIC`   | `traces.span.metrics.duration`   | PromQL metric name for span durations      |
+
+### Cost Explorer client (`costs.ts`)
+
+Queries AWS Cost Explorer to build a cost breakdown for the game
+infrastructure. Costs are grouped into two categories:
+
+- **Infrastructure** — EKS, EC2, EBS costs, further broken down by usage
+  type (Compute, EKS Control Plane, EKS Auto Mode, Storage, Networking).
+- **Observability** — CloudWatch and X-Ray costs, broken down by signal
+  (Logs Ingest, Logs Query, Metrics Ingest, Metrics Query, Traces Ingest,
+  Traces Query).
+
+When CUR split cost allocation is active (detected by checking if the
+`Project` tag has values), costs are filtered by the `Project=otel-chaos-game`
+tag. Otherwise, costs are filtered by a hardcoded list of AWS service names.
+
+### LLM judge (`llm-judge.ts`)
+
+Uses an LLM to score player hypotheses on a continuous 0–100 scale and
+to generate plain-language explanations of chaos scenarios. Supports
+three providers:
+
+- **Bedrock** (default) — uses the Converse API with cross-region
+  inference profiles.
+- **Anthropic** — direct API calls with an API key.
+- **OpenAI-compatible** — any endpoint implementing the chat completions API.
+
+Configuration via environment variables:
+
+| Variable         | Default                | Description                          |
+|------------------|------------------------|--------------------------------------|
+| `LLM_PROVIDER`   | `bedrock`              | `bedrock`, `anthropic`, or `openai`  |
+| `LLM_MODEL_ID`   | `amazon.nova-pro-v1:0` | Model identifier                     |
+| `LLM_API_KEY`    | —                      | API key (Anthropic/OpenAI only)      |
+| `LLM_ENDPOINT`   | —                      | Custom endpoint (OpenAI-compatible)  |
+
+Token usage is tracked cumulatively per session and exposed via
+`getTokenUsage()` and `getLlmCosts()` (with per-model pricing).
 
 ## API reference
 
@@ -172,11 +264,15 @@ All routes return JSON.
 
 ### Observability data
 
-| Method | Path              | Query params                          | Description                  |
-|--------|-------------------|---------------------------------------|------------------------------|
-| GET    | `/api/metrics`    | `service?`, `minutes?` (default: 15)  | RED metrics from CloudWatch  |
-| GET    | `/api/logs`       | `service` (required), `minutes?`      | Service logs from CloudWatch |
-| GET    | `/api/services`   | —                                     | Live K8s deployment statuses |
+| Method | Path                    | Query params                          | Description                              |
+|--------|-------------------------|---------------------------------------|------------------------------------------|
+| GET    | `/api/metrics`          | `service?`, `minutes?` (default: 15)  | RED metrics from CloudWatch PromQL       |
+| GET    | `/api/logs`             | `service` (required), `minutes?`      | Service logs from CloudWatch             |
+| GET    | `/api/traces`           | `service` (required), `minutes?`      | Service traces from CloudWatch Logs Insights |
+| GET    | `/api/services`         | —                                     | Live K8s deployment statuses             |
+| GET    | `/api/costs`            | `days?` (default: 30)                 | Cost breakdown from AWS Cost Explorer    |
+| GET    | `/api/promql`           | `query`, `start?`, `end?`, `step?`    | PromQL proxy to CloudWatch               |
+| GET    | `/api/promql/metadata`  | —                                     | PromQL metric metadata                   |
 
 ## Frontend components
 
@@ -187,26 +283,45 @@ All components use Svelte 5 runes (`$state`, `$props`, `$effect`).
 | `ScoreBoard`           | Displays round number, total score, phase badge, history dots |
 | `RedDashboard`         | Three Chart.js line charts (rate, errors, duration) per service. Polls every 10s. |
 | `ServiceGrid`          | Grid of service cards with health dot (green/red pulsing), language tag, replica count. Polls every 15s. |
+| `ServiceMap`           | Visual service dependency map                               |
 | `HypothesisForm`       | Split panel: hint + symptoms on the left, textarea on the right |
 | `RevealPanel`          | Side-by-side: player hypothesis vs actual cause with category badge and affected services |
 | `RemediatePanel`       | Ordered remediation steps with checkboxes, plus auto-remediate and manual-complete buttons |
+| `TimeRangePicker`      | Time range selector for metrics/logs/traces queries         |
+| `LogsModal`            | Fullscreen modal for viewing service logs                   |
+| `TracesModal`          | Fullscreen modal for viewing service traces with span details |
+| `PromQLModal`          | Fullscreen modal for running ad-hoc PromQL queries          |
+| `CostsModal`           | Fullscreen modal showing infrastructure and observability cost breakdown |
+| `AboutModal`           | About/help modal                                            |
+| `FullscreenModal`      | Reusable fullscreen modal wrapper                           |
 
 ## Adding a new chaos scenario
 
 1. Add a `ChaosScenario` entry to `src/lib/scenarios.ts`.
 2. Add a `case` for the new `id` in the `triggerScenario` switch in
    `src/lib/server/chaos-engine.ts`, calling one of the existing helper
-   functions or writing a new one.
+   functions or writing a new one. For feature-flag scenarios, call
+   `enableFlag(flagName)`.
 3. If you wrote a new helper, make sure it records original state in the
    `originalState` map and that `cleanupScenario` can reverse it.
+   Feature-flag scenarios are cleaned up automatically via `restoreFlags()`.
 4. That's it — the UI, API, and game loop are all scenario-agnostic.
 
 ## Scoring
 
-- 100 points for completing a round (both auto-remediate and manual-complete
-  award full points).
-- 25 points partial credit if the round is completed but marked incorrect
-  (currently unused — all completions score 100).
+Hypotheses are scored by an LLM judge (`llm-judge.ts`) on a continuous
+0–100 scale. The judge compares the player's hypothesis against the
+actual root cause description and returns a score reflecting correctness.
+
+If the LLM is unavailable, scoring falls back to:
+- 100 points for a correct round completion.
+- 25 points partial credit for an incorrect completion.
+
+The LLM also generates a plain-language explanation of each scenario's
+root cause, shown in the reveal panel.
+
+Token usage and estimated costs are tracked per session and exposed via
+the `/api/costs` endpoint alongside infrastructure costs.
 
 
 ## Using CloudWatch

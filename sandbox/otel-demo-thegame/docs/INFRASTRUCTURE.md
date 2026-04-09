@@ -2,7 +2,8 @@
 
 This document covers the AWS and Kubernetes infrastructure that backs the
 game: the EKS cluster, the OpenTelemetry demo deployment, the OTel Collector
-configuration for CloudWatch OTLP ingestion, and IAM setup.
+configuration for CloudWatch OTLP ingestion, IAM setup, and cost allocation
+tagging for CUR split cost attribution.
 
 ## Prerequisites
 
@@ -30,8 +31,8 @@ infra/
 ```
 
 Files marked "templated" contain placeholders (`REGION_PLACEHOLDER`,
-`ACCOUNT_ID`) that `setup.sh` replaces at runtime via `sed`, writing
-`*-rendered.yaml` copies. The originals are never modified.
+`ACCOUNT_ID`, `ROLE_ARN_PLACEHOLDER`) that `setup.sh` replaces at runtime
+via `sed`, writing `*-rendered.yaml` copies. The originals are never modified.
 
 ## Architecture overview
 
@@ -56,7 +57,7 @@ Files marked "templated" contain placeholders (`REGION_PLACEHOLDER`,
 │  │      → CloudWatch Logs                                 │  │
 │  └────────────────────────────────────────────────────────┘  │
 │                                                              │
-│  IAM: IRSA (otel-collector SA → OTelCollectorCloudWatchRole) │
+│  IAM: IRSA (otel-demo-otelcol SA → OTelCollectorCloudWatchRole) │
 └──────────────────────────────────────────────────────────────┘
          │                    │                    │
    ┌─────▼─────┐       ┌─────▼─────┐       ┌─────▼──────┐
@@ -81,42 +82,68 @@ AWS_REGION=us-west-2 ./setup.sh
 
 ### What setup.sh does, step by step
 
-1. Renders templated YAML files into `*-rendered.yaml` copies, injecting
-   `$REGION` and `$ACCOUNT_ID`.
+1. Renders `eks-cluster.yaml` into a `*-rendered.yaml` copy, injecting
+   `$REGION`. Cost allocation tags (`Project`, `Environment`,
+   `CostCenter`, `ManagedBy`) are applied to every resource created by
+   the script.
 
 2. Creates an EKS Auto Mode cluster using `eksctl`. Auto Mode means AWS
    manages the node groups — no managed or self-managed node configuration
-   needed. If the cluster already exists, this step is skipped (idempotent).
+   needed. If the cluster already exists, this step is skipped and tags
+   are updated on the existing cluster (idempotent).
 
 3. Waits for the cluster to reach `ACTIVE` status using
-   `aws eks wait cluster-active`, then updates your local kubeconfig.
+   `aws eks wait cluster-active`, then updates your local kubeconfig and
+   verifies cluster connectivity.
 
 4. Creates an IAM policy (`OTelCollectorCloudWatchPolicy`) from
    `iam-policy.json` granting:
    - `cloudwatch:PutMetricData`
    - `logs:CreateLogGroup`, `CreateLogStream`, `PutLogEvents`,
-     `DescribeLogGroups`, `DescribeLogStreams`
+     `DescribeLogGroups`, `DescribeLogStreams`, `PutRetentionPolicy`,
+     `TagResource`, `StartQuery`, `GetQueryResults`, `FilterLogEvents`
    - `xray:PutTraceSegments`, `PutTelemetryRecords`,
      `GetSamplingRules`, `GetSamplingTargets`
+   - `xray:GetTraceSummaries`, `BatchGetTraces`, `GetTraceGraph`,
+     `GetServiceGraph` (trace read access)
+   - `ce:GetCostAndUsage`, `GetTags`, `GetCostCategories`,
+     `ListCostAllocationTags`, `UpdateCostAllocationTagsStatus`
+     (Cost Explorer read access)
+   - `cur:DescribeReportDefinitions`, `GetUsageReport`
+     (CUR read access)
 
-5. Creates an IAM Role for Service Accounts (IRSA) binding the policy to
-   the `otel-collector` Kubernetes service account in the `otel-demo`
-   namespace. This lets the collector authenticate to CloudWatch without
-   static credentials.
+5. Creates an IAM Role for Service Accounts (IRSA) using `--role-only`,
+   binding the policy to the `otel-demo-otelcol` service account in the
+   `otel-demo` namespace. The Helm chart owns the actual service account;
+   the script only creates the IAM role. The role ARN is retrieved from
+   the CloudFormation stack that `eksctl` creates.
 
-6. Creates the CloudWatch log group `/otel/demo` and log stream
-   `otel-demo-services`.
+6. Creates the CloudWatch log group `/otel/demo` (with cost allocation
+   tags) and log stream `otel-demo-services`.
 
-7. Installs the OpenTelemetry Demo Helm chart (`open-telemetry/opentelemetry-demo`)
-   with the custom values file that configures the collector exporters.
+7. Renders `otel-demo-values.yaml` into a `*-rendered.yaml` copy,
+   injecting `$ACCOUNT_ID` and `$ROLE_ARN`.
+
+8. Installs the OpenTelemetry Demo Helm chart (`open-telemetry/opentelemetry-demo`)
+   with the rendered values file that configures the collector exporters
+   and annotates the collector service account with the IRSA role ARN.
    Uses `helm upgrade --install` for idempotency.
 
-8. Applies the `otel-collector-config` ConfigMap with the full collector
-   pipeline configuration.
+9. Labels the `otel-demo` namespace with cost attribution tags
+   (`Project`, `Environment`, `CostCenter`).
 
-9. Waits for all pods in the namespace to be ready (5 min timeout).
+10. Verifies the IRSA annotation is present on the `otel-demo-otelcol`
+    service account. Exits with an error if the annotation is missing.
 
-10. Cleans up rendered files.
+11. Waits for all pods in the namespace to be ready (5 min timeout).
+
+12. Activates cost allocation tags for CUR split cost allocation,
+    including both user-defined tags (`Project`, `Environment`,
+    `CostCenter`) and EKS automatic tags (`aws:eks:cluster-name`,
+    `aws:eks:namespace`, `aws:eks:node`, `aws:eks:workload-name`,
+    `aws:eks:workload-type`, `aws:eks:deployment`).
+
+13. Cleans up rendered files.
 
 ## Teardown
 
@@ -129,15 +156,17 @@ cd infra
 
 1. Updates kubeconfig (best-effort, won't fail if cluster is already gone).
 2. Uninstalls the `otel-demo` Helm release.
-3. Deletes the `otel-collector-config` ConfigMap.
-4. Deletes the `otel-demo` namespace.
-5. Deletes the IRSA service account and its backing IAM role.
-6. Detaches the IAM policy from any roles, then deletes the policy.
-7. Deletes the CloudWatch log group `/otel/demo`.
+3. Deletes the `otel-demo` namespace.
+4. Deletes the IRSA role via `eksctl delete iamserviceaccount`
+   (`otel-demo-otelcol` in the `otel-demo` namespace).
+5. Detaches the IAM policy from any roles, then deletes the policy.
+6. Deletes the CloudWatch log group `/otel/demo`.
+7. Deactivates user-defined cost allocation tags (`Project`,
+   `Environment`, `CostCenter`).
 8. Deletes the EKS cluster via `eksctl delete cluster --wait`.
 9. Cleans up any leftover rendered files.
 
-Every step is guarded with `|| true` or `2>/dev/null` so the script is
+Every step is guarded with `2>/dev/null || echo "..."` so the script is
 safe to re-run even if resources are partially deleted.
 
 ## EKS cluster configuration
@@ -147,13 +176,23 @@ safe to re-run even if resources are partially deleted.
 | Field                  | Value                |
 |------------------------|----------------------|
 | Name                   | `otel-demo-cluster`  |
-| Kubernetes version     | 1.31                 |
+| Kubernetes version     | 1.35                 |
 | Auto Mode              | enabled              |
 | OIDC provider          | enabled (for IRSA)   |
 | Region                 | injected at runtime  |
 
 Auto Mode delegates node provisioning entirely to AWS. The cluster
 automatically scales compute based on pod scheduling demands.
+
+Cost allocation tags are applied at the cluster level and propagated by
+Auto Mode to managed resources (EC2 instances, ENIs, EBS volumes):
+
+| Tag           | Value                  |
+|---------------|------------------------|
+| `Project`     | `otel-chaos-game`      |
+| `Environment` | `demo`                 |
+| `ManagedBy`   | `eksctl`               |
+| `CostCenter`  | `observability-demo`   |
 
 ## OTel Collector pipeline
 
@@ -172,8 +211,16 @@ picks up credentials from the IRSA-annotated service account.
 
 ### Processors
 
-- `batch` — buffers up to 1024 items or 10 seconds before flushing.
+- `batch` — buffers up to 500 items or 10 seconds before flushing.
 - `resource` — adds `cloud.provider=aws` attribute to all telemetry.
+- `transform/metrics` — drops high-cardinality datapoint attributes
+  (`net.sock.peer.addr`, `net.sock.peer.port`) and invalid
+  `http.status_code` values to reduce metric cardinality.
+
+### Connectors
+
+- `spanmetrics` — generates request rate and duration metrics from
+  trace spans, feeding the metrics pipeline from the traces pipeline.
 
 ### Log routing
 
@@ -183,20 +230,36 @@ Logs are sent to the CloudWatch Logs OTLP endpoint with HTTP headers:
 
 ## IAM policy
 
-`iam-policy.json` grants the minimum permissions needed for the OTel
-Collector to write metrics, traces, and logs to CloudWatch. The policy
-uses `Resource: "*"` for simplicity. In production, scope this down to
-specific log group ARNs.
+`iam-policy.json` grants the permissions needed for the OTel Collector
+to write metrics, traces, and logs to CloudWatch, plus read access for
+the web application to query traces (X-Ray), logs, and cost data. The
+policy contains six statements:
+
+| Sid                      | Purpose                                          |
+|--------------------------|--------------------------------------------------|
+| `OTLPMetricsIngest`      | `cloudwatch:PutMetricData`                       |
+| `OTLPTracesIngest`       | X-Ray write (PutTraceSegments, etc.)             |
+| `XRayTraceRead`          | X-Ray read (GetTraceSummaries, BatchGetTraces)   |
+| `OTLPLogsIngest`         | CloudWatch Logs write + query (FilterLogEvents, StartQuery, etc.) |
+| `CostExplorerReadAccess` | Cost Explorer read (GetCostAndUsage, GetTags)    |
+| `CURReadAccess`          | Cost and Usage Report read                       |
+
+The policy uses `Resource: "*"` for simplicity. In production, scope
+this down to specific log group ARNs and resource ARNs.
 
 ## Helm values
 
 `otel-demo-values.yaml` overrides the default OTel Demo chart to:
 
 - Enable all 15 services plus the load generator.
-- Configure the collector with CloudWatch OTLP exporters.
-- Annotate the collector service account with the IRSA role ARN.
+- Embed the full collector pipeline configuration (receivers, processors,
+  exporters, connectors, extensions) inline — no separate ConfigMap apply
+  is needed.
+- Let the chart create and own the `otel-demo-otelcol` service account,
+  annotated with the IRSA role ARN.
 
-The `ACCOUNT_ID` placeholder in the role ARN is replaced by `setup.sh`.
+The `ACCOUNT_ID` and `ROLE_ARN_PLACEHOLDER` placeholders are replaced by
+`setup.sh` before Helm install.
 
 ## Customizing the region
 
@@ -205,6 +268,38 @@ The default region is `eu-west-1`. To change it:
 - Set `AWS_REGION` before running `setup.sh` / `teardown.sh`.
 - The setup script injects the region into all templated files.
 - The web app reads `AWS_REGION` at runtime for CloudWatch queries.
+
+## Cost allocation
+
+The infrastructure is tagged end-to-end for CUR split cost allocation.
+See the [AWS docs on split cost allocation](https://docs.aws.amazon.com/cur/latest/userguide/split-cost-allocation-data.html).
+
+User-defined tags applied to all resources:
+
+| Tag           | Value                  |
+|---------------|------------------------|
+| `Project`     | `otel-chaos-game`      |
+| `Environment` | `demo`                 |
+| `CostCenter`  | `observability-demo`   |
+| `ManagedBy`   | `eksctl`               |
+
+EKS Auto Mode automatically generates additional tags for split cost
+allocation at the pod level:
+
+- `aws:eks:cluster-name`
+- `aws:eks:namespace`
+- `aws:eks:node`
+- `aws:eks:workload-name`
+- `aws:eks:workload-type`
+- `aws:eks:deployment`
+
+`setup.sh` activates all of these tags in Cost Explorer so they appear
+in CUR reports. `teardown.sh` deactivates the user-defined tags on
+cleanup. Tag activation may take up to 24 hours to take effect.
+
+The web application includes a cost breakdown page that queries Cost
+Explorer using the `Project` tag to show infrastructure and observability
+costs grouped by AWS service and usage type.
 
 ## Networking
 
@@ -239,10 +334,8 @@ kubectl port-forward -n otel-demo svc/otel-demo-frontend 8080:8080
 - Check the collector logs:
   `kubectl logs -n otel-demo -l app.kubernetes.io/component=opentelemetry-collector`
 - Verify the IRSA annotation:
-  `kubectl get sa otel-collector -n otel-demo -o yaml`
+  `kubectl get sa otel-demo-otelcol -n otel-demo -o yaml`
 - Confirm the IAM role trust policy allows the OIDC provider.
-- Check that the CloudWatch namespace matches `CW_METRICS_NAMESPACE`
-  (default: `OTelDemo`).
 
 ### Pods stuck in Pending
 

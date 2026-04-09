@@ -1,0 +1,71 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "OTLPMetricsIngest",
+      "Effect": "Allow",
+      "Action": "cloudwatch:PutMetricData",
+      "Resource": "*"
+    },
+    {
+      "Sid": "OTLPTracesIngest",
+      "Effect": "Allow",
+      "Action": [
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords",
+        "xray:GetSamplingRules",
+        "xray:GetSamplingTargets"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "XRayTraceRead",
+      "Effect": "Allow",
+      "Action": [
+        "xray:GetTraceSummaries",
+        "xray:BatchGetTraces",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "OTLPLogsIngest",
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents",
+        "logs:DescribeLogGroups",
+        "logs:DescribeLogStreams",
+        "logs:PutRetentionPolicy",
+        "logs:TagResource",
+        "logs:StartQuery",
+        "logs:GetQueryResults",
+        "logs:FilterLogEvents"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CostExplorerReadAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ce:GetCostAndUsage",
+        "ce:GetTags",
+        "ce:GetCostCategories",
+        "ce:ListCostAllocationTags",
+        "ce:UpdateCostAllocationTagsStatus"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "CURReadAccess",
+      "Effect": "Allow",
+      "Action": [
+        "cur:DescribeReportDefinitions",
+        "cur:GetUsageReport"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

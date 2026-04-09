@@ -1,0 +1,28 @@
+# EKS Auto Mode cluster configuration
+# Deploy with: eksctl create cluster -f eks-cluster.yaml
+# Region is injected by setup.sh via sed before running eksctl.
+#
+# Tags are applied to the EKS cluster and propagated to managed resources
+# (EC2 instances, ENIs, EBS volumes) by EKS Auto Mode. These tags are used
+# for CUR split cost allocation — see:
+# https://docs.aws.amazon.com/cur/latest/userguide/split-cost-allocation-data.html
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: otel-demo-cluster
+  region: REGION_PLACEHOLDER
+  version: "1.35"
+  tags:
+    Project: otel-chaos-game
+    Environment: demo
+    ManagedBy: eksctl
+    CostCenter: observability-demo
+
+autoModeConfig:
+  enabled: true
+  # EKS Auto Mode propagates cluster-level tags to node EC2 instances,
+  # EBS volumes, and ENIs automatically.
+
+iam:
+  withOIDC: true

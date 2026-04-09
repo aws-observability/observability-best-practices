@@ -1,0 +1,96 @@
+# Helm values override for the OpenTelemetry Demo chart
+# Configures the demo to send telemetry to CloudWatch via the custom collector
+#
+# Install:
+#   helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+#   helm install otel-demo open-telemetry/opentelemetry-demo -n otel-demo --create-namespace -f otel-demo-values.yaml
+
+opentelemetry-collector:
+  enabled: true
+  mode: deployment
+  config:
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+            cors:
+              allowed_origins:
+                - "http://*"
+                - "https://*"
+    exporters:
+      otlphttp/cw_metrics:
+        endpoint: "https://monitoring.eu-west-1.amazonaws.com"
+        auth:
+          authenticator: sigv4auth/metrics
+      otlphttp/cw_traces:
+        endpoint: "https://xray.eu-west-1.amazonaws.com"
+        auth:
+          authenticator: sigv4auth/traces
+      otlphttp/cw_logs:
+        endpoint: "https://logs.eu-west-1.amazonaws.com"
+        auth:
+          authenticator: sigv4auth/logs
+        headers:
+          x-aws-log-group: "/otel/demo"
+          x-aws-log-stream: "otel-demo-services"
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+      sigv4auth/metrics:
+        region: "eu-west-1"
+        service: "monitoring"
+      sigv4auth/traces:
+        region: "eu-west-1"
+        service: "xray"
+      sigv4auth/logs:
+        region: "eu-west-1"
+        service: "logs"
+    processors:
+      batch:
+        timeout: 10s
+        send_batch_size: 500
+      resource:
+        attributes:
+          - key: cloud.provider
+            value: aws
+            action: upsert
+      transform/metrics:
+        error_mode: ignore
+        metric_statements:
+          - context: datapoint
+            statements:
+              - delete_key(attributes, "net.sock.peer.addr")
+              - delete_key(attributes, "net.sock.peer.port")
+              - delete_key(attributes, "http.status_code") where IsMatch(attributes["http.status_code"], "^[0-9]+$") == false
+    connectors:
+      spanmetrics: {}
+    service:
+      extensions: [health_check, sigv4auth/metrics, sigv4auth/traces, sigv4auth/logs]
+      pipelines:
+        metrics:
+          receivers: [otlp, spanmetrics]
+          processors: [transform/metrics, batch]
+          exporters: [otlphttp/cw_metrics]
+        traces:
+          receivers: [otlp]
+          exporters: [otlphttp/cw_traces, spanmetrics]
+        logs:
+          receivers: [otlp]
+          exporters: [otlphttp/cw_logs]
+
+  # Let the chart own the service account and apply the IRSA annotation directly.
+  serviceAccount:
+    create: true
+    name: "otel-demo-otelcol"
+    annotations:
+      eks.amazonaws.com/role-arn: "ROLE_ARN_PLACEHOLDER"
+    automountServiceAccountToken: true
+
+# All 15 demo services + load generator are enabled by default in the chart.
+# To disable a specific service, use its kebab-case name under components:
+#   components:
+#     frontend:
+#       enabled: false

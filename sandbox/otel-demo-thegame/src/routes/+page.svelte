@@ -227,36 +227,45 @@
 
   <ServiceGrid />
 
-  {#if gameState.phase === 'idle' || gameState.phase === 'complete'}
+  {#if gameState.phase === 'idle'}
     <div class="start-section">
-      {#if gameState.phase === 'complete'}
-        <div class="round-complete">
-          {#if gameState.round >= MAX_ROUNDS}
-            <h2>Game Over</h2>
-            <p>Final score: {gameState.score} across {MAX_ROUNDS} rounds</p>
-          {:else}
-            <h2>Round Complete</h2>
-            <p>Score this round: {gameState.history[gameState.history.length - 1]?.score ?? 0}</p>
-          {/if}
-        </div>
-      {/if}
-      {#if gameState.round >= MAX_ROUNDS}
-        <button class="btn-primary" onclick={resetGame}>Play Again</button>
-      {:else}
-        <button class="btn-primary" onclick={triggerChaos} disabled={loading}>
-          {#if loading}
-            Injecting chaos...
-          {:else}
-            {gameState.phase === 'complete' ? 'Next Round' : 'Play!'}
-          {/if}
-        </button>
-      {/if}
-      {#if gameState.round > 0}
-        <button class="btn-secondary" onclick={resetGame}>Reset Game</button>
-      {/if}
+      <button class="btn-primary" onclick={triggerChaos} disabled={loading}>
+        {#if loading}Injecting chaos...{:else}Play!{/if}
+      </button>
       {#if error}
         <p class="error">{error}</p>
       {/if}
+    </div>
+  {/if}
+
+  {#if gameState.phase === 'complete'}
+    <div class="complete-overlay" role="dialog" aria-modal="true">
+      <div class="complete-modal">
+        <div class="confetti-row">🎉🏆🎊</div>
+        {#if gameState.round >= MAX_ROUNDS}
+          <h2 class="complete-title">Game Over</h2>
+          <p class="complete-score">Final score: {gameState.score} across {MAX_ROUNDS} rounds</p>
+        {:else}
+          <h2 class="complete-title">Round Complete!</h2>
+          <p class="complete-score">Score this round: {gameState.history[gameState.history.length - 1]?.score ?? 0}</p>
+        {/if}
+        <div class="confetti-row">✨🥳✨</div>
+        <div class="complete-actions">
+          {#if gameState.round >= MAX_ROUNDS}
+            <button class="btn-primary" onclick={resetGame}>Play Again</button>
+          {:else}
+            <button class="btn-primary" onclick={triggerChaos} disabled={loading}>
+              {#if loading}Injecting chaos...{:else}Next Round{/if}
+            </button>
+          {/if}
+          {#if gameState.round > 0}
+            <button class="btn-secondary" onclick={resetGame}>Reset Game</button>
+          {/if}
+        </div>
+        {#if error}
+          <p class="error">{error}</p>
+        {/if}
+      </div>
     </div>
   {/if}
 
@@ -353,6 +362,64 @@
   .round-complete h2 {
     color: #3fb950;
     margin-bottom: 0.5rem;
+  }
+
+  /* Complete-phase modal */
+  .complete-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.25s ease-out;
+  }
+  .complete-modal {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 340px;
+    max-width: 440px;
+    animation: popIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 24px 48px rgba(0, 0, 0, 0.4);
+  }
+  .confetti-row {
+    font-size: 2.2rem;
+    letter-spacing: 0.4rem;
+    line-height: 1;
+  }
+  .complete-title {
+    color: #3fb950;
+    font-size: 1.6rem;
+    margin: 0.25rem 0 0;
+  }
+  .complete-score {
+    color: #e1e4e8;
+    font-size: 1.05rem;
+    margin: 0;
+  }
+  .complete-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.85) translateY(12px); }
+    to { opacity: 1; transform: scale(1) translateY(0); }
   }
   .btn-primary {
     background: #238636;

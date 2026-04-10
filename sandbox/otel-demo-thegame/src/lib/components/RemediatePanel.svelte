@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { ChaosScenario } from '$lib/types';
+  import type { ChaosScenario, RemediationStep } from '$lib/types';
 
   let { scenario, loading, onAutoRemediate, onManualComplete }: {
     scenario: ChaosScenario;
@@ -16,6 +16,18 @@
     else next.add(idx);
     completedSteps = next;
   }
+
+  function stepText(step: RemediationStep): string {
+    return typeof step === 'string' ? step : step.instruction;
+  }
+
+  function stepCondition(step: RemediationStep): string | undefined {
+    return typeof step === 'string' ? undefined : step.condition;
+  }
+
+  function stepAlternatives(step: RemediationStep): string[] | undefined {
+    return typeof step === 'string' ? undefined : step.alternatives;
+  }
 </script>
 
 <div class="remediate-panel">
@@ -30,7 +42,18 @@
         </button>
         <div class="step-content">
           <span class="step-num">Step {i + 1}</span>
-          <code>{step}</code>
+          {#if stepCondition(step)}
+            <span class="step-condition">⚡ {stepCondition(step)}</span>
+          {/if}
+          <code>{stepText(step)}</code>
+          {#if stepAlternatives(step)}
+            <div class="step-alternatives">
+              <span class="alt-label">Alternatives:</span>
+              {#each stepAlternatives(step)! as alt}
+                <code class="alt">{alt}</code>
+              {/each}
+            </div>
+          {/if}
         </div>
       </div>
     {/each}
@@ -104,6 +127,29 @@
     font-size: 0.85rem;
     color: #79c0ff;
     word-break: break-all;
+  }
+  .step-condition {
+    display: block;
+    font-size: 0.75rem;
+    color: #d29922;
+    margin-bottom: 0.3rem;
+    font-style: italic;
+  }
+  .step-alternatives {
+    margin-top: 0.4rem;
+    padding-top: 0.4rem;
+    border-top: 1px solid #21262d;
+  }
+  .alt-label {
+    display: block;
+    font-size: 0.7rem;
+    color: #8b949e;
+    margin-bottom: 0.2rem;
+  }
+  code.alt {
+    font-size: 0.8rem;
+    color: #7ee787;
+    margin-bottom: 0.2rem;
   }
   .actions {
     display: flex;

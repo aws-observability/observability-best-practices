@@ -315,7 +315,7 @@ The web app connects to:
 The OTel demo frontend can be accessed via port-forward:
 
 ```bash
-kubectl port-forward -n otel-demo svc/otel-demo-frontend 8080:8080
+kubectl port-forward -n otel-demo svc/frontend-proxy 8080:8080
 ```
 
 ## Troubleshooting

@@ -25,17 +25,41 @@ export const OTEL_SERVICES: OtelService[] = [
   { name: 'shipping', language: 'Rust', namespace: 'otel-demo', deployment: 'shipping' },
 ];
 
-export type ChaosCategory = 'pod-kill' | 'load-spike' | 'resource-pressure' | 'network-fault' | 'config-fault' | 'feature-flag';
+export type ChaosCategory =
+  | 'pod-kill'
+  | 'load-spike'
+  | 'resource-pressure'
+  | 'network-fault'
+  | 'config-fault'
+  | 'feature-flag'
+  | 'multi-fault'
+  | 'cascading'
+  | 'data-layer'
+  | 'observability-gap'
+  | 'race-condition'
+  | 'capacity';
+
+export type ChaosDifficulty = 'easy' | 'medium' | 'hard' | 'expert';
+
+export type RemediationStep = string | {
+  instruction: string;
+  condition?: string;
+  alternatives?: string[];
+};
 
 export interface ChaosScenario {
   id: string;
   name: string;
   category: ChaosCategory;
+  secondaryCategories?: ChaosCategory[];
+  difficulty: ChaosDifficulty;
   description: string;
   targetServices: string[];
   hint: string;
   expectedSymptoms: string[];
-  remediationSteps: string[];
+  remediationSteps: RemediationStep[];
+  triggerDelayMs?: number;
+  faultCount?: number;
 }
 
 export type GamePhase = 'idle' | 'triggering' | 'observing' | 'hypothesis' | 'reveal' | 'remediate' | 'complete';

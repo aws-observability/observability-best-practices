@@ -41,7 +41,7 @@ npm run preview      # serves the built app on :4173
 src/
 ├── lib/
 │   ├── types.ts              # Shared TypeScript interfaces
-│   ├── scenarios.ts          # 30 chaos scenario definitions
+│   ├── scenarios.ts          # 44 chaos scenario definitions (29 original + 15 advanced)
 │   ├── game-store.svelte.ts  # Svelte 5 reactive game state store
 │   ├── server/               # Server-only modules (never sent to browser)
 │   │   ├── k8s.ts            # Kubernetes client wrapper
@@ -109,42 +109,114 @@ the app is single-player, single-instance. A restart resets the game.
 
 Each scenario in `scenarios.ts` is a `ChaosScenario` object:
 
-| Field              | Purpose                                              |
-|--------------------|------------------------------------------------------|
-| `id`               | Unique key, used by `chaos-engine.ts` switch/case    |
-| `name`             | Human-readable title shown in the reveal panel       |
-| `category`         | One of: `pod-kill`, `load-spike`, `resource-pressure`, `network-fault`, `config-fault`, `feature-flag` |
-| `description`      | What the scenario does (shown after reveal)          |
-| `targetServices`   | Service names from `OTEL_SERVICES` affected          |
-| `hint`             | Clue shown to the player during hypothesis phase     |
-| `expectedSymptoms` | Observable effects listed alongside the hint         |
-| `remediationSteps` | Ordered kubectl commands to fix the issue            |
+| Field                  | Purpose                                              |
+|------------------------|------------------------------------------------------|
+| `id`                   | Unique key, used by `chaos-engine.ts` switch/case    |
+| `name`                 | Human-readable title shown in the reveal panel       |
+| `category`             | Primary category (see table below)                   |
+| `secondaryCategories?` | Additional categories for compound scenarios         |
+| `difficulty`           | One of: `easy`, `medium`, `hard`, `expert`           |
+| `description`          | What the scenario does (shown after reveal)          |
+| `targetServices`       | Service names from `OTEL_SERVICES` affected          |
+| `hint`                 | Clue shown to the player during hypothesis phase     |
+| `expectedSymptoms`     | Observable effects listed alongside the hint         |
+| `remediationSteps`     | Ordered steps to fix the issue (see below)           |
+| `triggerDelayMs?`      | Delay between faults for staggered scenarios         |
+| `faultCount?`          | Number of independent faults (defaults to 1)         |
+
+#### Categories
+
+| Category            | Count | Description                                    |
+|---------------------|-------|------------------------------------------------|
+| `pod-kill`          | 6     | Kill a service pod and scale to 0              |
+| `load-spike`        | 4     | Spike the Locust load generator                |
+| `resource-pressure` | 4     | Constrain CPU or memory limits                 |
+| `network-fault`     | 3     | Network partition via non-routable proxy       |
+| `config-fault`      | 3     | Corrupt an environment variable or swap addresses |
+| `feature-flag`      | 10    | Toggle a flagd feature flag                    |
+| `multi-fault`       | 3     | Two+ independent faults injected simultaneously |
+| `cascading`         | 2     | One fault triggers a chain reaction            |
+| `data-layer`        | 2     | Valkey, Kafka, or storage faults               |
+| `observability-gap` | 3     | OTel Collector or pipeline failures            |
+| `race-condition`    | 2     | Staggered or timing-dependent faults           |
+| `capacity`          | 2     | Scheduling, scaling, thundering herd           |
+
+#### Difficulty distribution
+
+| Difficulty | Count | Notes                                          |
+|------------|-------|------------------------------------------------|
+| `easy`     | 17    | Single-fault, obvious symptoms                 |
+| `medium`   | 16    | Subtle symptoms or requires deeper investigation |
+| `hard`     | 7     | Multi-fault, silent failures, or cascading     |
+| `expert`   | 4     | Compound faults, evolving incidents, meta-scenarios |
+
+#### Remediation steps
+
+`remediationSteps` is an array of `RemediationStep` values. Each element
+is either a plain string or a structured object:
+
+```typescript
+type RemediationStep = string | {
+  instruction: string;       // The step to perform
+  condition?: string;        // When this step applies ("if payment still erroring")
+  alternatives?: string[];   // Alternative approaches
+};
+```
+
+Plain strings work for simple scenarios. Structured steps are used by
+multi-fault and compound scenarios where remediation branches depending
+on which fault the player discovers first.
 
 ### Chaos engine
 
 `chaos-engine.ts` maps each scenario ID to a concrete Kubernetes mutation
-or feature flag toggle:
+or feature flag toggle.
 
-| Function               | K8s / flagd operation                              |
-|------------------------|----------------------------------------------------|
-| `killServicePod`       | Deletes the pod, then scales deployment to 0       |
-| `spikeLoadGenerator`   | Sets `LOCUST_USERS` / `LOCUST_SPAWN_RATE` env vars |
-| `constrainCpu`         | Patches container CPU limits to a tiny value       |
-| `constrainMemory`      | Patches container memory limits to trigger OOMKill |
-| `injectNetworkDelay`   | Sets `HTTP_PROXY`/`HTTPS_PROXY` to a non-routable address, simulating network delay |
-| `injectPacketLoss`     | Sets `HTTP_PROXY`/`HTTPS_PROXY` to a non-routable address, simulating packet loss |
-| `corruptEnvVar`        | Sets an env var to an invalid value                |
-| `enableFlag`           | Enables a feature flag in the flagd ConfigMap      |
+#### Fault injection primitives
 
-Network fault injection uses proxy env vars instead of `tc qdisc` because
-the demo containers don't include `iproute2`.
+| Function                 | K8s / flagd operation                              |
+|--------------------------|----------------------------------------------------|
+| `killServicePod`         | Deletes the pod, then scales deployment to 0       |
+| `spikeLoadGenerator`     | Sets `LOCUST_USERS` / `LOCUST_SPAWN_RATE` env vars |
+| `constrainCpu`           | Patches container CPU limits to a tiny value       |
+| `constrainMemory`        | Patches container memory limits to trigger OOMKill |
+| `injectNetworkPartition` | Sets `HTTP_PROXY`/`HTTPS_PROXY` to a non-routable address, causing all outbound HTTP to fail |
+| `corruptEnvVar`          | Sets an env var to an invalid value                |
+| `inflateRequests`        | Patches resource requests (not limits) to create scheduling pressure |
+| `enableFlag`             | Enables a feature flag in the flagd ConfigMap      |
 
-Each function records the original state in an in-memory `Map` so that
-`cleanupScenario` can reverse the change (scale back up, restart to clear
-env/resources/network, or restore the flagd ConfigMap).
+> **Note on network faults:** The `injectNetworkPartition` function uses
+> proxy env vars pointing at a non-routable address (`192.0.2.1:1`). This
+> causes immediate connection failure, not gradual latency or partial loss.
+> The demo containers don't include `iproute2` for `tc netem`. The scenario
+> descriptions and names reflect this honestly as "partition" rather than
+> claiming delay or loss simulation.
 
-Deployment names are resolved at runtime via the discovery module rather
-than being hardcoded, since the Helm chart naming can vary by version.
+#### Compound trigger helpers
+
+| Function           | Purpose                                              |
+|--------------------|------------------------------------------------------|
+| `triggerCompound`  | Fires multiple faults simultaneously via `Promise.allSettled`. Used by multi-fault, cascading, and capacity scenarios. |
+| `triggerStaggered` | Fires faults with configurable delays between them. Used by race-condition scenarios (e.g. kill payment, wait 30s, kill cart). |
+
+#### Infrastructure resolution
+
+| Function              | Purpose                                              |
+|-----------------------|------------------------------------------------------|
+| `resolveInfra(hint)`  | Resolves infrastructure component names (otelcol, kafka, valkey) by searching both Deployments and StatefulSets in the namespace. Used by data-layer and observability-gap scenarios. |
+| `resolveLoadGenerator`| Finds the load-generator deployment by name pattern. |
+
+#### Cleanup
+
+`cleanupScenario` iterates **all tracked state** in the `originalState`
+map rather than relying on `scenario.targetServices`. This ensures
+multi-fault scenarios are fully cleaned up even when faults span services
+not listed in `targetServices`. The cleanup order is:
+
+1. Restore feature flags (instant, harmless if no flags changed)
+2. Restart the load generator if it was modified
+3. Restore all tracked deployments: scale-back for pod-kills, restart
+   cycle (scale to 0 → wait → scale to 1) for env/resource/network changes
 
 ### Kubernetes client (`k8s.ts`)
 
@@ -285,8 +357,8 @@ All components use Svelte 5 runes (`$state`, `$props`, `$effect`).
 | `ServiceGrid`          | Grid of service cards with health dot (green/red pulsing), language tag, replica count. Polls every 15s. |
 | `ServiceMap`           | Visual service dependency map                               |
 | `HypothesisForm`       | Split panel: hint + symptoms on the left, textarea on the right |
-| `RevealPanel`          | Side-by-side: player hypothesis vs actual cause with category badge and affected services |
-| `RemediatePanel`       | Ordered remediation steps with checkboxes, plus auto-remediate and manual-complete buttons |
+| `RevealPanel`          | Side-by-side: player hypothesis vs actual cause with category badge, difficulty badge (color-coded by level), fault count indicator, and affected services |
+| `RemediatePanel`       | Ordered remediation steps with checkboxes, conditional step badges, alternative suggestions, plus auto-remediate and manual-complete buttons |
 | `TimeRangePicker`      | Time range selector for metrics/logs/traces queries         |
 | `LogsModal`            | Fullscreen modal for viewing service logs                   |
 | `TracesModal`          | Fullscreen modal for viewing service traces with span details |
@@ -297,15 +369,33 @@ All components use Svelte 5 runes (`$state`, `$props`, `$effect`).
 
 ## Adding a new chaos scenario
 
-1. Add a `ChaosScenario` entry to `src/lib/scenarios.ts`.
+1. Add a `ChaosScenario` entry to `src/lib/scenarios.ts`. Include the
+   required `difficulty` field and set `faultCount` if the scenario
+   injects more than one fault. For compound scenarios, set
+   `secondaryCategories` and use structured `RemediationStep` objects
+   with `condition` fields for branching remediation.
+
 2. Add a `case` for the new `id` in the `triggerScenario` switch in
-   `src/lib/server/chaos-engine.ts`, calling one of the existing helper
-   functions or writing a new one. For feature-flag scenarios, call
-   `enableFlag(flagName)`.
-3. If you wrote a new helper, make sure it records original state in the
-   `originalState` map and that `cleanupScenario` can reverse it.
-   Feature-flag scenarios are cleaned up automatically via `restoreFlags()`.
+   `src/lib/server/chaos-engine.ts`. Use the appropriate trigger helper:
+   - Single fault: call a primitive directly (e.g. `killServicePod`,
+     `constrainCpu`, `enableFlag`).
+   - Multi-fault: wrap primitives in `triggerCompound([...])`.
+   - Staggered: wrap primitives in `triggerStaggered([...])` with
+     `delayMs` values.
+   - Infrastructure targets (collector, kafka, valkey): resolve the
+     deployment name with `resolveInfra('hint')` instead of `dep()`.
+
+3. Each primitive automatically records original state in the
+   `originalState` map. The `cleanupScenario` function iterates all
+   tracked state, so multi-fault scenarios are cleaned up correctly
+   without any extra cleanup code. Feature-flag changes are restored
+   automatically via `restoreFlags()`.
+
 4. That's it — the UI, API, and game loop are all scenario-agnostic.
+   The `RemediatePanel` component renders both plain string steps and
+   structured `RemediationStep` objects with condition badges and
+   alternatives. The `RevealPanel` shows difficulty and fault count
+   badges automatically.
 
 ## Scoring
 

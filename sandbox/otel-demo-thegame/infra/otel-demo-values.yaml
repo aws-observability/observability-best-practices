@@ -22,15 +22,15 @@ opentelemetry-collector:
                 - "https://*"
     exporters:
       otlphttp/cw_metrics:
-        endpoint: "https://monitoring.eu-west-1.amazonaws.com"
+        endpoint: "https://monitoring.REGION_PLACEHOLDER.amazonaws.com"
         auth:
           authenticator: sigv4auth/metrics
       otlphttp/cw_traces:
-        endpoint: "https://xray.eu-west-1.amazonaws.com"
+        endpoint: "https://xray.REGION_PLACEHOLDER.amazonaws.com"
         auth:
           authenticator: sigv4auth/traces
       otlphttp/cw_logs:
-        endpoint: "https://logs.eu-west-1.amazonaws.com"
+        endpoint: "https://logs.REGION_PLACEHOLDER.amazonaws.com"
         auth:
           authenticator: sigv4auth/logs
         headers:
@@ -40,13 +40,13 @@ opentelemetry-collector:
       health_check:
         endpoint: 0.0.0.0:13133
       sigv4auth/metrics:
-        region: "eu-west-1"
+        region: "REGION_PLACEHOLDER"
         service: "monitoring"
       sigv4auth/traces:
-        region: "eu-west-1"
+        region: "REGION_PLACEHOLDER"
         service: "xray"
       sigv4auth/logs:
-        region: "eu-west-1"
+        region: "REGION_PLACEHOLDER"
         service: "logs"
     processors:
       batch:

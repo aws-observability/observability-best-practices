@@ -25,6 +25,10 @@
     <div class="content-box actual">
       <h4>{scenario.name}</h4>
       <span class="category-badge">{scenario.category}</span>
+      <span class="difficulty-badge difficulty-{scenario.difficulty}">{scenario.difficulty}</span>
+      {#if scenario.faultCount && scenario.faultCount > 1}
+        <span class="fault-count-badge">{scenario.faultCount} faults</span>
+      {/if}
       <p>{scenario.description}</p>
       {#if llmExplanation}
         <div class="llm-explanation">
@@ -122,6 +126,30 @@
     font-size: 0.75rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
+  }
+  .difficulty-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    margin-left: 0.3rem;
+  }
+  .difficulty-easy { background: #3fb95020; color: #3fb950; }
+  .difficulty-medium { background: #d2992220; color: #d29922; }
+  .difficulty-hard { background: #f8514920; color: #f85149; }
+  .difficulty-expert { background: #bc8cff20; color: #bc8cff; }
+  .fault-count-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: #da3633;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    margin-left: 0.3rem;
   }
   .hint-detail {
     color: #d29922;

@@ -105,6 +105,7 @@ aws logs create-log-stream --log-group-name /otel/demo --log-stream-name otel-de
 cp otel-demo-values.yaml otel-demo-values-rendered.yaml
 sed -i.bak "s|ACCOUNT_ID|${ACCOUNT_ID}|g" otel-demo-values-rendered.yaml
 sed -i.bak "s|ROLE_ARN_PLACEHOLDER|${ROLE_ARN}|g" otel-demo-values-rendered.yaml
+sed -i.bak "s|REGION_PLACEHOLDER|${REGION}|g" otel-demo-values-rendered.yaml
 rm -f otel-demo-values-rendered.yaml.bak
 
 # ── 6. Deploy OpenTelemetry Demo ────────────────────────────────────────────
@@ -172,7 +173,7 @@ echo "Services running in namespace: $NAMESPACE"
 kubectl get pods -n "$NAMESPACE"
 echo ""
 echo "To access the demo frontend:"
-echo "  kubectl port-forward -n $NAMESPACE svc/otel-demo-frontend 8080:8080"
+echo "  kubectl port-forward -n $NAMESPACE svc/frontend-proxy 8080:8080"
 echo ""
 echo "To run the chaos game:"
 echo "  cd .. && npm install && npm run dev"

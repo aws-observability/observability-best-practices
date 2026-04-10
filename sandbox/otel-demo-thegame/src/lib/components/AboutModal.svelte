@@ -28,6 +28,7 @@
             <li><a href="https://opentelemetry.io/docs/demo/" target="_blank" rel="noopener">OpenTelemetry Demo</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPEndpoint.html" target="_blank" rel="noopener">CloudWatch OTLP endpoints</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-PromQL-Querying.html" target="_blank" rel="noopener">PromQL in CloudWatch</a></li>
+            <li><a href="https://github.com/aws-observability/observability-best-practices/blob/main/sandbox/otel-demo-thegame/docs/DEVELOPMENT.md" target="_blank" rel="noopener">ODTG developer docs</a></li>
           </ul>
         </div>
       </div>

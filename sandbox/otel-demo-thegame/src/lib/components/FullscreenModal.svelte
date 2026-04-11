@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
 
-  let { open = $bindable(false), title, wide = false, children }: {
+  let { open = $bindable(false), title, wide = false, narrow = false, children }: {
     open: boolean;
     title: string;
     wide?: boolean;
+    narrow?: boolean;
     children: Snippet;
   } = $props();
 
@@ -16,7 +17,7 @@
 {#if open}
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div class="modal-backdrop" onclick={onBackdrop}>
-    <div class="modal" class:modal-wide={wide} role="dialog" aria-modal="true" aria-label={title}>
+    <div class="modal" class:modal-wide={wide} class:modal-narrow={narrow} role="dialog" aria-modal="true" aria-label={title}>
       <div class="modal-header">
         <h2>{title}</h2>
         <button class="close-btn" onclick={() => open = false} aria-label="Close">✕</button>
@@ -53,6 +54,9 @@
   .modal-wide {
     max-width: 90vw;
     max-height: 90vh;
+  }
+  .modal-narrow {
+    max-width: 420px;
   }
   .modal-header {
     display: flex;

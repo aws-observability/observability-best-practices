@@ -125,16 +125,18 @@
     />
   </FullscreenModal>
 
-  <FullscreenModal bind:open={helpOpen} title="Keyboard Shortcuts">
+  <FullscreenModal bind:open={helpOpen} title="Keyboard Shortcuts" narrow>
     <dl class="help-list">
-      <div class="help-row"><dt><kbd>H</kbd> / <kbd>?</kbd></dt><dd>Show this help</dd></div>
-      <div class="help-row"><dt><kbd>R</kbd></dt><dd>Request-Error-Duration (RED) metrics</dd></div>
-      <div class="help-row"><dt><kbd>M</kbd></dt><dd>Service map</dd></div>
-      <div class="help-row"><dt><kbd>C</kbd></dt><dd>Cost Breakdown</dd></div>
-      <div class="help-row"><dt><kbd>Esc</kbd></dt><dd>Close dialog</dd></div>
-      <div class="help-row"><dt><kbd>A</kbd></dt><dd>About</dd></div>
-      <div class="help-row"><dt><kbd>P</kbd></dt><dd>PromQL Explorer</dd></div>
+      <div class="help-row"><dt><kbd>A</kbd></dt><dd><span class="hl">A</span>bout</dd></div>
+      <div class="help-row"><dt><kbd>C</kbd></dt><dd><span class="hl">C</span>ost Breakdown</dd></div>
+      <div class="help-row"><dt><kbd>H</kbd> / <kbd>?</kbd></dt><dd>Show this <span class="hl">h</span>elp</dd></div>
+      <div class="help-row"><dt><kbd>M</kbd></dt><dd>Service <span class="hl">m</span>ap</dd></div>
+      <div class="help-row"><dt><kbd>P</kbd></dt><dd><span class="hl">P</span>romQL Explorer</dd></div>
+      <div class="help-row"><dt><kbd>R</kbd></dt><dd><span class="hl">R</span>equest-Error-Duration (RED) metrics</dd></div>
+      <div class="help-row"><dt><kbd>S</kbd></dt><dd><span class="hl">S</span>ervices overview</dd></div>
+      <div class="help-row"><dt><kbd>T</kbd></dt><dd><span class="hl">T</span>elemetry pipeline</dd></div>
       <div class="help-row"><dt><kbd>←</kbd> / <kbd>→</kbd></dt><dd>Decrease / increase metrics time range</dd></div>
+      <div class="help-row"><dt><kbd>Esc</kbd></dt><dd>Close dialog</dd></div>
     </dl>
   </FullscreenModal>
   <AboutModal bind:open={aboutOpen} />
@@ -332,9 +334,13 @@
   }
   .help-row dd {
     flex: 1;
-    color: #c9d1d9;
+    color: rgba(201, 209, 217, 0.8);
     font-size: 0.9rem;
     margin: 0;
+  }
+  .hl {
+    font-weight: 700;
+    color: #f0f6fc;
   }
   .help-row kbd {
     display: inline-block;

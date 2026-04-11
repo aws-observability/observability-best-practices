@@ -80,6 +80,15 @@ for i in $(seq 1 30); do
   sleep 5
 done
 
+if [ -n "${LB:-}" ]; then
+  echo "==> Waiting for ALB to serve traffic (listeners + healthy targets)..."
+  for i in $(seq 1 40); do
+    HTTP_CODE=$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "http://$LB/" 2>/dev/null || echo "000")
+    [ "$HTTP_CODE" != "000" ] && break
+    sleep 5
+  done
+fi
+
 echo ""
 echo "✅ ODTG deployed!"
 echo ""

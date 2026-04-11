@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REGION="${AWS_REGION:-eu-west-1}"
 CLUSTER_NAME="otel-demo-cluster"
 NAMESPACE="otel-demo"

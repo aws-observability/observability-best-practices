@@ -169,6 +169,10 @@ fi
 echo "==> Waiting for all pods to be ready (up to 5 min)..."
 kubectl wait --for=condition=ready pod --all -n "$NAMESPACE" --timeout=300s
 
+# ── 9b. Expose OTel Demo frontend via shared ALB ────────────────────────────
+echo "==> Applying OTel Demo ingress (shared ALB group)..."
+kubectl apply -f "$SCRIPT_DIR/otel-demo-ingress.yaml"
+
 # ── 10. Activate cost allocation tags for CUR split cost allocation ──────────
 # EKS automatically creates aws:eks:* tags for split cost allocation.
 # We also activate our user-defined tags so they appear in CUR reports.

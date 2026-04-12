@@ -14,6 +14,8 @@ let state: GameState = {
   history: [],
 };
 
+let roundStartedAt: string | null = null;
+
 export function getState(): GameState {
   return { ...state };
 }
@@ -24,6 +26,7 @@ export function startRound(scenario: ChaosScenario) {
   state.triggeredAt = new Date().toISOString();
   state.hypothesis = '';
   state.round++;
+  roundStartedAt = new Date().toISOString();
 }
 
 export function setPhase(phase: GameState['phase']) {
@@ -45,6 +48,7 @@ export function completeRound(correct: boolean, llmScore?: number) {
       correct,
       score: points,
       timestamp: new Date().toISOString(),
+      roundStartedAt: roundStartedAt ?? new Date().toISOString(),
     });
   }
   state.phase = 'complete';

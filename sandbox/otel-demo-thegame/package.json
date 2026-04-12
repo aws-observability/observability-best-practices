@@ -9,7 +9,7 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
-    "@sveltejs/adapter-auto": "^4.0.0",
+    "@sveltejs/adapter-node": "^5.5.4",
     "@sveltejs/kit": "^2.15.0",
     "@sveltejs/vite-plugin-svelte": "^5.0.0",
     "@types/d3": "^7.4.3",
@@ -25,7 +25,8 @@
     "@aws-sdk/client-cost-explorer": "^3.1024.0",
     "@kubernetes/client-node": "^1.0.0",
     "chart.js": "^4.4.0",
-    "d3": "^7.9.0"
+    "d3": "^7.9.0",
+    "jspdf": "^4.2.1"
   },
   "type": "module"
 }

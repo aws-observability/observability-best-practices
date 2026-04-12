@@ -10,6 +10,7 @@
   import TimeRangePicker from '$lib/components/TimeRangePicker.svelte';
   import LogsModal from '$lib/components/LogsModal.svelte';
   import TracesModal from '$lib/components/TracesModal.svelte';
+  import GameReport from '$lib/components/GameReport.svelte';
   import { gameStats } from '$lib/game-store.svelte';
 
   let gameState = $state<GameState>({
@@ -78,6 +79,10 @@
   async function triggerChaos() {
     loading = true;
     error = '';
+    hint = '';
+    expectedSymptoms = [];
+    llmScore = null;
+    llmExplanation = null;
     try {
       const resp = await fetch('/api/game/trigger', { method: 'POST' });
       const data = await resp.json();
@@ -239,34 +244,29 @@
   {/if}
 
   {#if gameState.phase === 'complete'}
-    <div class="complete-overlay" role="dialog" aria-modal="true">
-      <div class="complete-modal">
-        <div class="confetti-row">🎉🏆🎊</div>
-        {#if gameState.round >= MAX_ROUNDS}
-          <h2 class="complete-title">Game Over</h2>
-          <p class="complete-score">Final score: {gameState.score} across {MAX_ROUNDS} rounds</p>
-        {:else}
+    {#if gameState.round >= MAX_ROUNDS}
+      <GameReport history={gameState.history} totalScore={gameState.score} onplayagain={resetGame} />
+    {:else}
+      <div class="complete-overlay" role="dialog" aria-modal="true">
+        <div class="complete-modal">
+          <div class="confetti-row">🎉🏆🎊</div>
           <h2 class="complete-title">Round Complete!</h2>
           <p class="complete-score">Score this round: {gameState.history[gameState.history.length - 1]?.score ?? 0}</p>
-        {/if}
-        <div class="confetti-row">✨🥳✨</div>
-        <div class="complete-actions">
-          {#if gameState.round >= MAX_ROUNDS}
-            <button class="btn-primary" onclick={resetGame}>Play Again</button>
-          {:else}
+          <div class="confetti-row">✨🥳✨</div>
+          <div class="complete-actions">
             <button class="btn-primary" onclick={triggerChaos} disabled={loading}>
               {#if loading}Injecting chaos...{:else}Next Round{/if}
             </button>
-          {/if}
-          {#if gameState.round > 0}
-            <button class="btn-secondary" onclick={resetGame}>Reset Game</button>
+            {#if gameState.round > 0}
+              <button class="btn-secondary" onclick={resetGame}>Reset Game</button>
+            {/if}
+          </div>
+          {#if error}
+            <p class="error">{error}</p>
           {/if}
         </div>
-        {#if error}
-          <p class="error">{error}</p>
-        {/if}
       </div>
-    </div>
+    {/if}
   {/if}
 
   {#if gameState.phase === 'observing' || gameState.phase === 'hypothesis' || gameState.phase === 'reveal' || gameState.phase === 'remediate'}

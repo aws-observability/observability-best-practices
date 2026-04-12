@@ -5,7 +5,7 @@
 
   let { metrics, loading = false }: { metrics: REDMetrics[]; loading?: boolean } = $props();
 
-  let selectedService = $state<string | null>(null);
+  let selectedServices = $state<Set<string>>(new Set());
   let charts: Chart[] = [];
   let containerEl = $state<HTMLDivElement>(null!);
 
@@ -24,7 +24,7 @@
 
   function visibleServices(): string[] {
     const all = allServices();
-    return selectedService ? all.filter(s => s === selectedService) : all;
+    return selectedServices.size === 0 ? all : all.filter(s => selectedServices.has(s));
   }
 
   function buildData(svc: string, key: 'rate' | 'errors' | 'duration') {
@@ -96,7 +96,7 @@
 
   $effect(() => {
     if (metrics.length > 0) {
-      const _ = selectedService;
+      const _ = selectedServices.size;
       renderCharts();
     }
   });
@@ -109,11 +109,15 @@
     <h2>Request-Error-Duration (RED) Metrics</h2>
     {#if allServices().length > 0}
       <div class="filter-bar">
-        <button class="filter-btn" class:active={selectedService === null}
-          onclick={() => { selectedService = null; }}>All</button>
+        <button class="filter-btn" class:active={selectedServices.size === 0}
+          onclick={() => { selectedServices = new Set(); }}>All</button>
         {#each allServices() as svc}
-          <button class="filter-btn" class:active={selectedService === svc}
-            onclick={() => { selectedService = selectedService === svc ? null : svc; }}
+          <button class="filter-btn" class:active={selectedServices.has(svc)}
+            onclick={() => {
+              const next = new Set(selectedServices);
+              if (next.has(svc)) next.delete(svc); else next.add(svc);
+              selectedServices = next;
+            }}
             style="--svc-color: {colorFor(svc)}">
             <span class="color-dot"></span>{svc}
           </button>

@@ -82,6 +82,7 @@ export interface GameRound {
   correct: boolean;
   score: number;
   timestamp: string;
+  roundStartedAt: string;
 }
 
 export interface REDMetrics {

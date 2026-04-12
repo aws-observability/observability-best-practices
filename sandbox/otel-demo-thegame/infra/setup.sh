@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 REGION="${AWS_REGION:-eu-west-1}"
 CLUSTER_NAME="otel-demo-cluster"
 NAMESPACE="otel-demo"
@@ -37,6 +38,35 @@ fi
 
 echo "==> Waiting for cluster to be ACTIVE..."
 aws eks wait cluster-active --name "$CLUSTER_NAME" --region "$REGION"
+
+# ── 1b. Enable Auto Mode capabilities (compute, load balancing, storage) ────
+echo "==> Enabling Auto Mode capabilities (load balancing, block storage)..."
+NODE_ROLE_ARN=$(aws eks describe-cluster --name "$CLUSTER_NAME" --region "$REGION" \
+  --query "cluster.computeConfig.nodeRoleArn" --output text 2>/dev/null || echo "None")
+if [ "$NODE_ROLE_ARN" = "None" ] || [ -z "$NODE_ROLE_ARN" ]; then
+  # Derive the Auto Mode node role from the CloudFormation stack
+  NODE_ROLE_ARN=$(aws cloudformation describe-stack-resources \
+    --stack-name "eksctl-${CLUSTER_NAME}-cluster" --region "$REGION" \
+    --query "StackResources[?LogicalResourceId=='AutoModeNodeRole'].PhysicalResourceId" \
+    --output text 2>/dev/null || echo "")
+  [ -n "$NODE_ROLE_ARN" ] && NODE_ROLE_ARN="arn:aws:iam::${ACCOUNT_ID}:role/${NODE_ROLE_ARN}"
+fi
+
+UPDATE_ID=$(aws eks update-cluster-config \
+  --name "$CLUSTER_NAME" \
+  --region "$REGION" \
+  --compute-config "{\"enabled\":true,\"nodePools\":[\"general-purpose\",\"system\"],\"nodeRoleArn\":\"${NODE_ROLE_ARN}\"}" \
+  --kubernetes-network-config '{"elasticLoadBalancing":{"enabled": true}}' \
+  --storage-config '{"blockStorage":{"enabled": true}}' \
+  --query 'update.id' --output text 2>/dev/null || echo "")
+
+if [ -n "$UPDATE_ID" ] && [ "$UPDATE_ID" != "None" ]; then
+  echo "    Update ID: $UPDATE_ID — waiting for completion..."
+  aws eks wait cluster-active --name "$CLUSTER_NAME" --region "$REGION"
+  echo "    Auto Mode capabilities enabled."
+else
+  echo "    Auto Mode capabilities already enabled, skipping."
+fi
 
 echo "==> Updating kubeconfig..."
 aws eks update-kubeconfig --name "$CLUSTER_NAME" --region "$REGION"
@@ -139,6 +169,10 @@ fi
 # ── 9. Wait for pods ────────────────────────────────────────────────────────
 echo "==> Waiting for all pods to be ready (up to 5 min)..."
 kubectl wait --for=condition=ready pod --all -n "$NAMESPACE" --timeout=300s
+
+# ── 9b. Expose OTel Demo frontend via shared ALB ────────────────────────────
+echo "==> Applying OTel Demo ingress (shared ALB group)..."
+kubectl apply -f "$SCRIPT_DIR/otel-demo-ingress.yaml"
 
 # ── 10. Activate cost allocation tags for CUR split cost allocation ──────────
 # EKS automatically creates aws:eks:* tags for split cost allocation.

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odtg
+  namespace: odtg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: odtg
+  template:
+    metadata:
+      labels:
+        app: odtg
+    spec:
+      serviceAccountName: odtg
+      containers:
+        - name: odtg
+          image: IMAGE_PLACEHOLDER
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+            - name: AWS_REGION
+              value: REGION_PLACEHOLDER
+            - name: CW_LOG_GROUP
+              value: /otel/demo
+            - name: LLM_PROVIDER
+              value: bedrock
+            - name: LLM_MODEL_ID
+              value: "amazon.nova-pro-v1:0"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10

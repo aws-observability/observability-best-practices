@@ -84,6 +84,24 @@ And then open http://localhost:5173/
 5. The game **reveals** the actual cause side-by-side with your guess, and an **LLM judge scores** your hypothesis at a scale form 0 to 100
 6. Follow the **remediation steps** manually or click Auto-Remediate to let the app do it
 
+### Teardown
+
+1. Remove the game app resources:
+
+```bash
+cd odtg-app
+./undeploy.sh
+```
+
+2. Tear down the infrastructure (EKS cluster, IAM roles, CloudWatch log group):
+
+```bash
+cd infra
+./teardown.sh
+```
+
+> NOTE: Cluster deletion takes ~10 minutes.
+
 
 ## Internals
 

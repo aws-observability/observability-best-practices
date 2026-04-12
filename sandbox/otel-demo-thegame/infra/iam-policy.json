@@ -4,7 +4,12 @@
     {
       "Sid": "OTLPMetricsIngest",
       "Effect": "Allow",
-      "Action": "cloudwatch:PutMetricData",
+      "Action": [
+        "cloudwatch:PutMetricData",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "cloudwatch:GetMetricStatistics"
+      ],
       "Resource": "*"
     },
     {

@@ -80,9 +80,9 @@ Application Signals separates **request sampling** from **trace indexing**:
 
 ### Request Sampling
 
-**1. Default Application Signals Sampling Configuration**
+#### 1. X-Ray Centralized Sampling (Default and Recommended)
 
-When you enable Application Signals, **X-Ray centralized sampling is enabled by default** with these settings:
+When you enable Application Signals with the ADOT SDK and a CloudWatch Agent (or OpenTelemetry Collector), **X-Ray centralized sampling is enabled by default** with these settings:
 
 | Setting | Default Value | Description |
 |---|---|---|
@@ -94,26 +94,62 @@ The environment variables for the AWS Distro for OpenTelemetry (ADOT) SDK agent 
 | Environment Variable | Value | Description |
 |---|---|---|
 | **OTEL_TRACES_SAMPLER** | `xray` | Uses X-Ray sampling service |
-| **OTEL_TRACES_SAMPLER_ARG** | `endpoint=http://cloudwatch-agent.amazon-cloudwatch:2000` | CloudWatch agent endpoint |
+| **OTEL_TRACES_SAMPLER_ARG** | `endpoint=http://localhost:2000` | CloudWatch agent endpoint |
 
-**2. Modifying Sampling Configuration**
+You can modify these defaults at any time through the X-Ray console without redeploying your application. For example, to increase sampling to 10%, update the sampling rule's fixed rate. See [Configuring sampling rules](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-sampling.html) for the full list of rule options, examples, and how to create service-specific rules.
 
-**Option 1: X-Ray Centralized Sampling (Recommended)**
-- Configure X-Ray sampling rules to adjust your sampling rate (e.g., 10%)
-- Refer to [Configure sampling rules](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-sampling.html) documentation
-- Benefits: Centralized control, dynamic updates, service-specific rules
+:::info When Does the X-Ray Remote Sampler Apply?
+The `xray` sampler works by calling `http://localhost:2000/GetSamplingRules` and `http://localhost:2000/SamplingTargets` through a local proxy. This means X-Ray remote sampling **only works when a local proxy is running**:
 
-**Option 2: Local sampling in the ADOT SDK**
+- **CloudWatch Agent** — exposes the sampling proxy on port 2000 by default
+- **OpenTelemetry Collector** — with the [AWS Proxy extension](https://aws-otel.github.io/docs/getting-started/remote-sampling) configured
 
-For local control, disable X-Ray centralized sampling:
+If no local proxy is available (e.g., in [collector-less mode](../instrumentation-setups#collector-less-tracing-with-otlp-endpoints)), the ADOT SDK cannot reach the sampling endpoints and silently falls back to **ParentBased(AlwaysOn) at 100%**.
+:::
+
+#### 2. Configuring X-Ray Remote Sampler per Runtime
+
+Each ADOT SDK language runtime requires specific configuration to use X-Ray remote sampling rules. Refer to the guide for your language:
+
+| Runtime | Configuration Guide |
+|---|---|
+| **Java** | [Using X-Ray Remote Sampling with ADOT Java](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr#using-x-ray-remote-sampling) |
+| **Python** | [Using X-Ray Remote Sampling with ADOT Python](https://aws-otel.github.io/docs/getting-started/python-sdk/auto-instr#using-x-ray-remote-sampling) |
+| **Node.js** | [Using X-Ray Remote Sampling with ADOT JavaScript](https://aws-otel.github.io/docs/getting-started/js-sdk/trace-metric-auto-instr#using-x-ray-remote-sampling) |
+| **.NET** | [Using X-Ray Remote Sampling with ADOT .NET](https://aws-otel.github.io/docs/getting-started/dotnet-sdk/auto-instr#using-x-ray-remote-sampling) |
+| **Go** | [Configuring Sampling with ADOT Go](https://aws-otel.github.io/docs/getting-started/go-sdk/manual-instr#configuring-sampling) |
+
+For all runtimes, the key environment variables are:
+
+```bash
+OTEL_TRACES_SAMPLER=xray
+OTEL_TRACES_SAMPLER_ARG=endpoint=http://localhost:2000
+```
+
+Adjust the endpoint to match your CloudWatch Agent or collector proxy address (e.g., `http://cloudwatch-agent.amazon-cloudwatch:2000` on EKS).
+
+#### 3. Local Sampling
+
+If you don't have a local proxy available, or prefer local control without depending on the X-Ray service, you can configure sampling directly in the ADOT SDK using environment variables:
 
 | Environment Variable | Value | Description |
 |---|---|---|
-| **OTEL_TRACES_SAMPLER** | `parentbased_traceidratio` | Local sampling |
-| **OTEL_TRACES_SAMPLER_ARG** | `0.10` | 10% sampling rate |
+| **OTEL_TRACES_SAMPLER** | `parentbased_traceidratio` | Local ratio-based sampling |
+| **OTEL_TRACES_SAMPLER_ARG** | `0.10` | 10% sampling rate (adjust as needed) |
 
+This is particularly useful in [collector-less mode](../instrumentation-setups#collector-less-tracing-with-otlp-endpoints) where X-Ray remote sampling is unavailable. Without these variables, the SDK defaults to `parentbased_always_on` (100% sampling).
 
-**3. Alternative: X-Ray Adaptive Sampling (Cost-Optimized Approach)**
+For more sampler options, see [OTEL_TRACES_SAMPLER](https://opentelemetry.io/docs/concepts/sdk-configuration/general-sdk-configuration/#otel_traces_sampler) documentation.
+
+#### 4. X-Ray Adaptive Sampling (Cost-Optimized Approach)
+
+:::tip Requirements
+- ADOT Java SDK (v2.11.5 or higher)
+- Must run with CloudWatch Agent or OpenTelemetry Collector
+- Compatible with Amazon EC2, ECS, EKS, and self-hosted Kubernetes
+
+For detailed setup instructions, refer to [X-Ray Adaptive Sampling](https://docs.aws.amazon.com/xray/latest/devguide/xray-adaptive-sampling.html) documentation.
+:::
 
 If you don't need 100% sampling but want better anomaly coverage, consider X-Ray adaptive sampling which automatically increases sampling during error spikes and latency outliers while maintaining cost-effective baseline rates:
 
@@ -142,17 +178,6 @@ Configuration Example:
   }
 }
 ```
-
-Requirements:
-- ADOT Java SDK (v2.11.5 or higher)
-- Must run with CloudWatch Agent or OpenTelemetry Collector
-- Compatible with Amazon EC2, ECS, EKS, and self-hosted Kubernetes
-
-For detailed setup instructions, refer to [X-Ray Adaptive Sampling](https://docs.aws.amazon.com/xray/latest/devguide/xray-adaptive-sampling.html) documentation.
-
-:::info
-For more advanced sampling configurations, see [OTEL_TRACES_SAMPLER](https://opentelemetry.io/docs/concepts/sdk-configuration/general-sdk-configuration/#otel_traces_sampler) documentation.
-:::
 
 ### Trace Indexing
 

@@ -3,11 +3,13 @@
 
   let command = $state('');
   let history = $state<Array<{ cmd: string; out: string; err: string }>>([]);
+  let cmdHistory = $state<string[]>([]);
   let loading = $state(false);
   let inputEl = $state<HTMLInputElement | null>(null);
   let scrollEl = $state<HTMLDivElement | null>(null);
   let suggestions = $state<string[]>([]);
   let selectedIdx = $state(0);
+  let maximized = $state(false);
   let historyIdx = $state(-1);
   let savedInput = $state('');
 
@@ -79,6 +81,7 @@
     if (!trimmed) return;
     suggestions = [];
     history = [...history, { cmd: trimmed, out: '', err: '' }];
+    cmdHistory = [...cmdHistory, trimmed];
     const idx = history.length - 1;
     command = '';
     loading = true;
@@ -120,17 +123,16 @@
       return;
     } else if (e.key === 'ArrowUp') {
       e.preventDefault();
-      const cmds = history.map(h => h.cmd);
-      if (!cmds.length) return;
+      if (!cmdHistory.length) return;
       if (historyIdx === -1) savedInput = command;
-      historyIdx = historyIdx < cmds.length - 1 ? historyIdx + 1 : historyIdx;
-      command = cmds[cmds.length - 1 - historyIdx];
+      historyIdx = historyIdx < cmdHistory.length - 1 ? historyIdx + 1 : historyIdx;
+      command = cmdHistory[cmdHistory.length - 1 - historyIdx];
       return;
     } else if (e.key === 'ArrowDown') {
       e.preventDefault();
       if (historyIdx <= 0) { historyIdx = -1; command = savedInput; return; }
       historyIdx--;
-      command = history.map(h => h.cmd)[history.length - 1 - historyIdx];
+      command = cmdHistory[cmdHistory.length - 1 - historyIdx];
       return;
     }
     if (e.key === 'Enter') { e.preventDefault(); historyIdx = -1; run(); }
@@ -146,11 +148,13 @@
 </script>
 
 {#if open}
-  <div class="shell" role="dialog" aria-label="kubectl">
+  <div class="shell" class:maximized role="dialog" aria-label="kubectl">
     <div class="shell-header">
-      <span class="shell-title">kubectl</span>
+      <span class="shell-title"><strong>kubectl</strong>: interactive inspection</span>
       <div class="header-actions">
         <button class="clear-btn" onclick={() => history = []} aria-label="Clear">Clear</button>
+        <button class="close-btn" onclick={() => maximized = true} aria-label="Maximize" title="Maximize">▲</button>
+        <button class="close-btn" onclick={() => maximized = false} aria-label="Minimize" title="Minimize">▼</button>
         <button class="close-btn" onclick={() => open = false} aria-label="Close">✕</button>
       </div>
     </div>
@@ -199,6 +203,7 @@
     animation: slideUp 0.15s ease-out;
   }
   @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+  .shell.maximized { height: 100vh; }
   .shell-header {
     display: flex; align-items: center; justify-content: space-between;
     padding: 0.4rem 1rem; background: #161b22; border-bottom: 1px solid #21262d; flex-shrink: 0;

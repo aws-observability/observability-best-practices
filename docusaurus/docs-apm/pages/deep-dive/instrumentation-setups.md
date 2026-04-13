@@ -453,31 +453,47 @@ Collector-less tracing is perfect when you want the simplest possible architectu
 
 Your application gets automatically instrumented with the ADOT SDK. It captures logs and traces in OpenTelemetry format without requiring any code changes.
 
-**Step 2: Client-Side Sampling**
+**Step 2: Local SDK Sampling (ParentBased/AlwaysOn at 100% by default)**
 
-The ADOT SDK applies your X-Ray sampling rules to decide which traces to send. All logs get processed regardless of sampling decisions.
+The X-Ray remote sampler requires a local proxy (CloudWatch Agent or [OpenTelemetry Collector](https://aws-otel.github.io/docs/getting-started/remote-sampling)) to fetch sampling rules. It calls `http://localhost:2000/GetSamplingRules` and `http://localhost:2000/SamplingTargets` to retrieve the configured rules. In collector-less mode, there is no local proxy running, so the ADOT SDK cannot reach these endpoints. As a result, the SDK silently falls back to its default sampling strategy: **ParentBased(AlwaysOn) at 100%**.
+
+:::tip Control Sampling Rate to Manage Costs
+Since X-Ray remote sampling is unavailable in collector-less mode, you can configure a local sampling strategy using environment variables to reduce trace volume and costs:
+
+```bash
+# Use a TraceIdRatioBased sampler at 5% (adjust ratio as needed)
+OTEL_TRACES_SAMPLER=traceidratio
+OTEL_TRACES_SAMPLER_ARG=0.05
+
+# Or use parentbased_traceidratio to respect incoming trace context
+OTEL_TRACES_SAMPLER=parentbased_traceidratio
+OTEL_TRACES_SAMPLER_ARG=0.05
+```
+
+Without these variables, the SDK defaults to `parentbased_always_on` (100% sampling), which sends all traces and may increase CloudWatch and X-Ray costs for high-throughput applications.
+:::
 
 **Step 3: Direct AWS Communication**
 
-Instead of going through a collector, your data goes directly to AWS services:
+Instead of going through a collector, your data goes directly to AWS services with SigV4 authentication:
 - **Logs** → `https://logs.<region>.amazonaws.com/v1/logs` via OTLP HTTP
 - **Traces** → `https://xray.<region>.amazonaws.com/v1/traces` via OTLP HTTP
-- **Authentication**: Uses SigV4 with your AWS credentials
 
-**Step 4: Server-Side Metrics Calculation**
+**Step 4: Server-Side RED Metrics Calculation**
 
-The X-Ray frontend analyzes your received traces to calculate RED metrics on the AWS backend. This means your metrics are only as complete as your sampling rate.
+The X-Ray frontend analyzes the received traces to calculate RED metrics on the AWS backend. Since the SDK defaults to 100% sampling in collector-less mode, the server-side RED metrics are calculated on all traffic.
 
 **Step 5: Analytics Options**
-- **Application Signals**: Application Maps with dynamic grouping and golden signals from server-calculated metrics
-- **Transaction Search**: Query complete span data from CloudWatch Logs
+- **Application Signals**: Application Maps with dynamic grouping and golden signals from server-calculated RED metrics
+- **Transaction Search**: Query complete span data from CloudWatch Logs (`aws/spans`)
 - **X-Ray Analytics**: Traditional trace analysis on indexed spans
 
 ### Important Considerations
 - **Transaction Search is required** — you must enable it when using OTLP endpoints
 - **ADOT SDK is required** — regular OpenTelemetry SDK won't work for this approach
 - **Authentication is automatic** — ADOT SDK handles AWS SigV4 authentication
-- **Sampling affects metrics** — your Application Signals metrics are only as complete as your sampling rate
+- **No X-Ray remote sampling** — without a local proxy, the SDK cannot fetch X-Ray sampling rules and defaults to 100% sampling (ParentBased/AlwaysOn)
+- **Cost implications** — since all traces are sent (100% sampling), monitor your CloudWatch and X-Ray costs for high-throughput services
 
 
 ## Existing X-Ray SDK + X-Ray Daemon (End of Support Timeline)
@@ -512,7 +528,7 @@ Understanding how RED (Rate, Errors, Duration) metrics are calculated across dif
 | **ADOT SDK + CloudWatch Agent** | Client-side | `OTEL_AWS_APPLICATION_SIGNALS_ENABLED=true` | None - works with any sampling |
 | **ADOT SDK + Custom OTEL Collector** | Client-side | `OTEL_AWS_APPLICATION_SIGNALS_ENABLED=true` | Custom collector with App Signals Processor |
 | **Upstream OTEL SDK + OTEL Collector** | Server-side | N/A (no ADOT SDK) | Transaction Search + 100% sampling for accuracy |
-| **Collector-less (ADOT SDK)** | Server-side | `OTEL_AWS_APPLICATION_SIGNALS_ENABLED=false` (default) | Transaction Search + 100% sampling for accuracy |
+| **Collector-less (ADOT SDK)** | Server-side | `OTEL_AWS_APPLICATION_SIGNALS_ENABLED=false` (default) | Transaction Search. Defaults to 100% sampling (X-Ray remote sampling unavailable without local proxy) |
 | **X-Ray SDK + X-Ray Daemon** | Server-side (extrapolated) | N/A | Based on sampled data |
 
 ### Client-side RED Metrics (ADOT SDK — both CW Agent and Custom Collector)

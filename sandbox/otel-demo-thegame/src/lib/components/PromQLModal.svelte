@@ -835,6 +835,10 @@
         <button class="close-btn" onclick={close} aria-label="Close">✕</button>
       </div>
       <div class="modal-body">
+        <div class="info-box" role="note">
+          <span class="info-icon">ℹ</span>
+          <span>Have you enabled OTel Enrichment for vended metrics? <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTelEnrichment.html" target="_blank" rel="noopener noreferrer">Learn more →</a></span>
+        </div>
         <div class="query-bar">
           <div class="input-wrapper">
             <textarea
@@ -849,7 +853,7 @@
               autocomplete="off"
               spellcheck="false"
               autofocus
-              rows="1"
+              rows="3"
               role="combobox"
               aria-expanded={showSuggestions}
               aria-autocomplete="list"
@@ -1045,6 +1049,25 @@
   .resize-nw { top: -4px; left: -4px; width: 14px; height: 14px; cursor: nw-resize; }
   .resize-se { bottom: -4px; right: -4px; width: 14px; height: 14px; cursor: se-resize; }
   .resize-sw { bottom: -4px; left: -4px; width: 14px; height: 14px; cursor: sw-resize; }
+  .info-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #1f6feb15;
+    border: 1px solid #1f6feb44;
+    border-radius: 6px;
+    padding: 0.6rem 1rem;
+    color: #58a6ff;
+    font-size: 0.85rem;
+    align-self: flex-end;
+    width: fit-content;
+  }
+  .info-box a {
+    color: #79c0ff;
+    text-decoration: underline;
+  }
+  .info-box a:hover { color: #e1e4e8; }
+  .info-icon { flex-shrink: 0; }
   .query-bar {
     display: flex;
     gap: 0.5rem;

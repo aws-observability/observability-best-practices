@@ -93,6 +93,7 @@
         <div class="header-controls">
           <select bind:value={days} aria-label="Time period">
             <option value={1}>Last 1 day</option>
+            <option value={3}>Last 3 days</option>
             <option value={7}>Last 7 days</option>
             <option value={14}>Last 14 days</option>
             <option value={30}>Last 30 days</option>

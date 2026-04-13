@@ -340,6 +340,23 @@ export async function triggerScenario(scenario: ChaosScenario): Promise<{ succes
       case 'capacity-scheduling-deadlock':
         return await inflateRequests(await dep('ad'), '4', '256Mi');
 
+      // ── Graceful Degradation: Recommendation ──────────────────
+      case 'resilience-recommendation-graceful':
+        return await killServicePod(await dep('recommendation'));
+
+      // ── Sidecar Contention: Collector + Load ──────────────────
+      case 'resource-sidecar-contention': {
+        const otelcol = await resolveInfra('otelcol');
+        return await triggerCompound([
+          () => constrainCpu(otelcol, '10m'),
+          () => spikeLoadGenerator(300),
+        ]);
+      }
+
+      // ── Deep Dependency Chain: Product Catalog Kill ────────────
+      case 'cascade-deep-dependency-chain':
+        return await killServicePod(await dep('product-catalog'));
+
       default:
         return { success: false, message: `Unknown scenario: ${scenario.id}` };
     }

@@ -834,4 +834,78 @@ export const SCENARIOS: ChaosScenario[] = [
       'The issue is requests vs. actual usage — a common misconfiguration in production'
     ]
   },
+
+  // ── Graceful Degradation ───────────────────────────────────────────
+  {
+    id: 'resilience-recommendation-graceful',
+    name: 'Graceful Degradation: Missing Recommendations',
+    category: 'capacity',
+    difficulty: 'medium',
+    description: 'Kill the recommendation service. The frontend still works — pages load, products display, checkout succeeds. But recommendations silently vanish. The player must notice what\'s missing, not what\'s broken.',
+    targetServices: ['recommendation'],
+    hint: 'The site works. No errors in RED metrics. But something is missing from product pages that was there before.',
+    expectedSymptoms: [
+      'Recommendation service at 0 replicas',
+      'Frontend error rate stays near zero',
+      'Product pages load successfully but without recommendation section',
+      'No spike in error metrics — this is silent degradation'
+    ],
+    remediationSteps: [
+      'Notice that RED metrics look healthy — the failure is in what\'s absent, not what\'s erroring',
+      'Check all services: kubectl get pods -n otel-demo (look for missing pods)',
+      'Restore: kubectl scale deployment otel-demo-recommendationservice -n otel-demo --replicas=1',
+      'This scenario teaches that graceful degradation can hide failures — monitor feature completeness, not just errors'
+    ]
+  },
+
+  // ── Sidecar Resource Contention ────────────────────────────────────
+  {
+    id: 'resource-sidecar-contention',
+    name: 'Sidecar Contention: Collector Starves the App',
+    category: 'resource-pressure',
+    secondaryCategories: ['observability-gap'],
+    difficulty: 'hard',
+    faultCount: 2,
+    description: 'Constrain the OTel Collector CPU to 10m AND spike load to 300 users. The collector competes with application containers for node resources. Apps slow down but the root cause is the telemetry pipeline hogging what\'s left, not the apps themselves.',
+    targetServices: ['frontend', 'checkout'],
+    hint: 'Multiple services are slow but their own CPU usage is low. Something else on the node is consuming resources. Check infrastructure pods, not just application pods.',
+    expectedSymptoms: [
+      'Application latency increases across multiple services',
+      'Application pod CPU usage appears normal',
+      'OTel Collector CPU pegged at limit',
+      'Telemetry data may also be incomplete due to collector saturation'
+    ],
+    remediationSteps: [
+      'Notice that app pods show normal CPU but are still slow — look beyond application containers',
+      'Check infrastructure pods: kubectl top pods -n otel-demo | grep otelcol',
+      'Increase collector CPU: kubectl patch deployment otel-demo-otelcol -n otel-demo --type=json -p \'[{"op":"replace","path":"/spec/template/spec/containers/0/resources/limits/cpu","value":"1"}]\'',
+      'Reduce load generator intensity to stabilize',
+      'This teaches that sidecar/infrastructure resource contention can masquerade as application problems'
+    ]
+  },
+
+  // ── Deep Dependency Chain Collapse ─────────────────────────────────
+  {
+    id: 'cascade-deep-dependency-chain',
+    name: 'Deep Dependency Chain: One Kill, Four Victims',
+    category: 'cascading',
+    difficulty: 'hard',
+    description: 'Kill product-catalog. Recommendation fails (depends on catalog for product data). Frontend degrades (no products, no recommendations). Load generator retries amplify the cascade. One root cause, four layers of symptoms.',
+    targetServices: ['product-catalog', 'recommendation', 'frontend', 'checkout'],
+    hint: 'Four services are degraded but only one is actually broken. The others are victims of a dependency chain. Find the root — don\'t chase the symptoms.',
+    expectedSymptoms: [
+      'Product catalog at 0 replicas (root cause)',
+      'Recommendation errors — can\'t fetch product data',
+      'Frontend shows no products and no recommendations',
+      'Checkout fails on product lookup',
+      'Load generator retries amplify error rates across all four'
+    ],
+    remediationSteps: [
+      'Trace the dependency chain: which service is DOWN vs. which services are ERRORING because of a dependency',
+      'Identify product-catalog as the single root cause: kubectl get pods -n otel-demo | grep product-catalog',
+      'Restore: kubectl scale deployment otel-demo-productcatalogservice -n otel-demo --replicas=1',
+      'Watch the cascade recover — recommendation, frontend, and checkout should all heal without intervention',
+      'Only one fix needed despite four services being affected'
+    ]
+  },
 ];

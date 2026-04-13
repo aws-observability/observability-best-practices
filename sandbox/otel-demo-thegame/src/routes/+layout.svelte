@@ -9,6 +9,7 @@
   import TimeRangePicker from '$lib/components/TimeRangePicker.svelte';
   import LogsModal from '$lib/components/LogsModal.svelte';
   import TracesModal from '$lib/components/TracesModal.svelte';
+  import KubectlModal from '$lib/components/KubectlModal.svelte';
   let { children } = $props();
 
   let costsOpen = $state(false);
@@ -20,6 +21,7 @@
   let logsOpen = $state(false);
   let logsService = $state('');
   let tracesOpen = $state(false);
+  let kubectlOpen = $state(false);
   let tracesService = $state('');
 
   function isInputFocused(): boolean {
@@ -29,7 +31,7 @@
     return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (el as HTMLElement).isContentEditable;
   }
 
-  function closeAll() { costsOpen = false; metricsOpen = false; mapOpen = false; helpOpen = false; aboutOpen = false; promqlOpen = false; }
+  function closeAll() { costsOpen = false; metricsOpen = false; mapOpen = false; helpOpen = false; aboutOpen = false; promqlOpen = false; kubectlOpen = false; }
 
   const timeSteps = [60, 360, 1440, 4320, 10080];
 
@@ -38,6 +40,7 @@
       // Close the topmost modal only: logs/traces sit on top of everything else
       if (tracesOpen) { tracesOpen = false; return; }
       if (logsOpen) { logsOpen = false; return; }
+      if (kubectlOpen) { kubectlOpen = false; return; }
       closeAll();
       return;
     }
@@ -56,6 +59,7 @@
     else if (e.key === 'h' || e.key === '?') { closeAll(); helpOpen = true; }
     else if (e.key === 'a') { closeAll(); aboutOpen = true; }
     else if (e.key === 'p') { e.preventDefault(); closeAll(); promqlOpen = true; }
+    else if (e.key === 'k') { closeAll(); kubectlOpen = true; }
   }
 </script>
 
@@ -130,6 +134,7 @@
       <div class="help-row"><dt><kbd>A</kbd></dt><dd><span class="hl">A</span>bout</dd></div>
       <div class="help-row"><dt><kbd>C</kbd></dt><dd><span class="hl">C</span>ost Breakdown</dd></div>
       <div class="help-row"><dt><kbd>H</kbd> / <kbd>?</kbd></dt><dd>Show this <span class="hl">h</span>elp</dd></div>
+      <div class="help-row"><dt><kbd>K</kbd></dt><dd><span class="hl">K</span>ubectl command runner</dd></div>
       <div class="help-row"><dt><kbd>M</kbd></dt><dd>Service <span class="hl">m</span>ap</dd></div>
       <div class="help-row"><dt><kbd>P</kbd></dt><dd><span class="hl">P</span>romQL Explorer</dd></div>
       <div class="help-row"><dt><kbd>R</kbd></dt><dd><span class="hl">R</span>equest-Error-Duration (RED) metrics</dd></div>
@@ -143,6 +148,7 @@
   <PromQLModal bind:open={promqlOpen} />
   <TracesModal bind:open={tracesOpen} service={tracesService} onviewlogs={(svc) => { logsService = svc; logsOpen = true; }} />
   <LogsModal bind:open={logsOpen} service={logsService} />
+  <KubectlModal bind:open={kubectlOpen} />
   <footer class="status-bar">
     <span>Press <kbd>h</kbd> to show keyboard navigation</span>
     {#if gameStats.llmTokensIn > 0 || gameStats.llmTokensOut > 0}

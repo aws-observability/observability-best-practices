@@ -48,7 +48,7 @@
   ]);
 
   const langColors: Record<string, string> = {
-    'go': '#00ADD8', 'rust': '#DEA584', 'java': '#B07219', 'kotlin': '#A97BFF',
+    'go': '#00ADD8', 'rust': '#DEA584', 'java': '#B07219', 'kotlin': '#B07219',
     'c++': '#A0724A', 'python': '#3572A5', 'ruby': '#E44D2A', 'php': '#777BB4',
     'javascript': '#F7DF1E', '.net': '#9B6BFF', 'typescript': '#F7DF1E',
     'elixir': '#6E4A7E', 'envoy': '#AC6199', 'locust': '#3572A5',

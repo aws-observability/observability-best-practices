@@ -18,31 +18,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: install markdown-link-check
-        run: npm install -g markdown-link-check@3.12.2
       - name: Get changed Markdown files
-        id: changed-files
+        id: changed
+        uses: tj-actions/changed-files@v45
+        with:
+          files: "docusaurus/**/*.md"
+          separator: "\n"
+      - name: install markdown-link-check
+        if: steps.changed.outputs.any_changed == 'true'
+        run: npm install -g markdown-link-check@3.12.2
+      - name: Run markdown-link-check
+        if: steps.changed.outputs.any_changed == 'true'
         run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            BASE=${{ github.event.pull_request.base.sha }}
-          else
-            BASE=${{ github.event.before }}
-          fi
-          FILES=$(git diff --name-only --diff-filter=d "$BASE" HEAD -- 'docusaurus/**/*.md' | tr '\n' '\0' | xargs -0 -r printf '%s\n')
-          echo "files<<EOF" >> "$GITHUB_OUTPUT"
-          echo "$FILES" >> "$GITHUB_OUTPUT"
-          echo "EOF" >> "$GITHUB_OUTPUT"
-          COUNT=$(echo "$FILES" | grep -c '.' || true)
-          echo "count=$COUNT" >> "$GITHUB_OUTPUT"
-      - name: Run markdown-link-check on changed MD files
-        if: steps.changed-files.outputs.count != '0'
-        run: |
-          echo "${{ steps.changed-files.outputs.files }}" | while IFS= read -r file; do
+          echo "${{ steps.changed.outputs.all_changed_files }}" | while IFS= read -r file; do
             [ -z "$file" ] && continue
             echo "Checking: $file"
             markdown-link-check -q -c .github/workflows/linkcheck.json "$file"

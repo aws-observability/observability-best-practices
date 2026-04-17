@@ -18,22 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Get changed Markdown files
-        id: changed
-        uses: tj-actions/changed-files@v45
-        with:
-          files: "docusaurus/**/*.md"
-          separator: "\n"
       - name: install markdown-link-check
-        if: steps.changed.outputs.any_changed == 'true'
         run: npm install -g markdown-link-check@3.12.2
-      - name: Run markdown-link-check
-        if: steps.changed.outputs.any_changed == 'true'
+      - name: Run markdown-link-check on changed MD files
         run: |
-          echo "${{ steps.changed.outputs.all_changed_files }}" | while IFS= read -r file; do
+          git diff --name-only --diff-filter=d ${{ github.event.pull_request.base.sha || github.event.before }} HEAD -- 'docusaurus/**/*.md' | while IFS= read -r file; do
             [ -z "$file" ] && continue
             echo "Checking: $file"
             markdown-link-check -q -c .github/workflows/linkcheck.json "$file"

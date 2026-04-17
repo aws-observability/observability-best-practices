@@ -1,0 +1,84 @@
+{
+  "dashboard": {
+    "title": "AI Observability - LLM Metrics",
+    "tags": ["ai", "llm", "observability"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Total Input Tokens by Model",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0},
+        "targets": [
+          {
+            "expr": "sum by (gen_ai_request_model) (rate(gen_ai_usage_input_tokens_total[5m]))",
+            "legendFormat": "{{gen_ai_request_model}}"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "title": "P95 Latency by Model (ms)",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0},
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum by (gen_ai_request_model, le) (rate(gen_ai_request_duration_bucket[5m])))",
+            "legendFormat": "{{gen_ai_request_model}}"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Output Tokens by Cloud Provider",
+        "type": "piechart",
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 8},
+        "targets": [
+          {
+            "expr": "sum by (cloud_provider) (rate(gen_ai_usage_output_tokens_total[5m]))",
+            "legendFormat": "{{cloud_provider}}"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Request Rate by Model",
+        "type": "timeseries",
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 8},
+        "targets": [
+          {
+            "expr": "sum by (gen_ai_request_model) (rate(gen_ai_usage_input_tokens_total[5m]) > 0)",
+            "legendFormat": "{{gen_ai_request_model}}"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Throttle Events",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(rate(gen_ai_request_errors_total{error_type=\"throttle\"}[5m]))"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Total Requests",
+        "type": "stat",
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 16},
+        "targets": [
+          {
+            "expr": "sum(rate(gen_ai_usage_input_tokens_total[5m]) > 0)"
+          }
+        ]
+      }
+    ],
+    "refresh": "10s",
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    }
+  }
+}

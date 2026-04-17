@@ -2,7 +2,7 @@
 
 .NET は OpenTelemetry トレーシングに対する堅牢なサポートを提供し、開発者に分散システム全体のリクエストフローを監視するための強力なツールを提供します。この実装により、アプリケーションの動作とパフォーマンスのボトルネックに対するエンドツーエンドの可視性が実現されます。
 
-.NET エコシステムでは、OpenTelemetry トレーシングは [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) クラスを中心に構築されています。これは、W3C Trace Context 仕様の .NET 実装です。この業界標準との整合性により、他のサービスやオブザーバビリティツールとの相互運用性が確保されます。
+.NET エコシステムでは、OpenTelemetry トレーシングは [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) クラスを中心に構築されています。これは、W3C Trace Context 仕様の .NET 実装です。この業界標準との整合性により、他のサービスや可観測性ツールとの相互運用性が確保されます。
 
 ## トレースの実装
 
@@ -37,7 +37,7 @@ activity?.SetTag("orderId", orderId);
 using var childActivity = MyActivitySource.StartActivity("ValidatePayment");
 ```
 
-登録 `ActivitySource` 依存性注入における OpenTelemetry トレーシングは、.NET アプリケーションのベストプラクティスと考えられています。 
+.NET アプリケーションで OpenTelemetry トレーシングを使用する場合、依存性注入に ActivitySource を登録することがベストプラクティスと考えられています。 
 
 ```c#
 // During service configuration

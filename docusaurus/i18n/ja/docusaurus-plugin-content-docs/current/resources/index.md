@@ -1,7 +1,12 @@
 
-# インタラクティブデモ
+# リソース
 
-以下の AWS Monitoring & Observability のインタラクティブデモをご覧いただくか、新しいタブで [AWS Monitoring & Observability Demos Hub](https://aws-cloudops.storylane.io/hub/oq1jb6vuwlyg) を開いてください。
+AWS Observability ベストプラクティスのリソースセクションへようこそ。ここでは、インタラクティブなデモ、有効化ガイド、およびオブザーバビリティのベストプラクティスを実装するための追加ツールを見つけることができます。
+
+
+## インタラクティブデモ
+
+以下の AWS モニタリング & オブザーバビリティのインタラクティブデモをご確認いただくか、新しいタブで [AWS モニタリング & オブザーバビリティデモハブ](https://aws-cloudops.storylane.io/hub/oq1jb6vuwlyg)を開いてください。
 
 <>
   <div>

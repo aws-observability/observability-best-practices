@@ -2,7 +2,7 @@
 
 .NET は OpenTelemetry トレーシングに対する堅牢なサポートを提供し、開発者に分散システム全体のリクエストフローを監視するための強力なツールを提供します。この実装により、アプリケーションの動作とパフォーマンスのボトルネックに対するエンドツーエンドの可視性が実現されます。
 
-.NET エコシステムでは、OpenTelemetry トレーシングは [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) クラスを中心に構築されています。これは、W3C Trace Context 仕様の .NET 実装です。この業界標準との整合性により、他のサービスやオブザーバビリティツールとの相互運用性が確保されます。
+.NET エコシステムでは、OpenTelemetry トレーシングは [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) クラスを中心に構築されています。これは、W3C Trace Context 仕様の .NET 実装です。この業界標準との整合性により、他のサービスや可観測性ツールとの相互運用性が保証されます。
 
 ## トレースの実装
 
@@ -37,7 +37,7 @@ activity?.SetTag("orderId", orderId);
 using var childActivity = MyActivitySource.StartActivity("ValidatePayment");
 ```
 
-登録 `ActivitySource` 依存性注入における OpenTelemetry トレーシングは、.NET アプリケーションのベストプラクティスと考えられています。
+.NET アプリケーションで OpenTelemetry トレーシングを使用する場合、ActivitySource を依存性注入に登録することがベストプラクティスと考えられています。
 
 ```c#
 // During service configuration
@@ -68,14 +68,14 @@ public class OrderProcessor
 
 ## 次のステップ
 
-アプリケーションがインストルメント化されたので、OpenTelemetry Collector、CloudWatch Agent、Fluent Bit などのコレクターエージェントを使用して、選択したオブザーバビリティバックエンドにトレースをルーティングします。詳細と実装ガイダンスについては、以下のリンクを参照してください。
+アプリケーションがインストルメント化されたので、OpenTelemetry Collector、CloudWatch Agent、Fluent Bit などのコレクターエージェントを使用して、選択した可観測性バックエンドにトレースをルーティングします。詳細と実装ガイダンスについては、以下のリンクを参照してください。
 
-- [OpenTelemetry によるオブザーバビリティ](/observability-best-practices/ja/patterns/otel) - アプリケーション全体に OpenTelemetry を実装するための包括的なガイドです。AWS サービスを使用してテレメトリデータを収集、処理、可視化するためのパターンを提供し、フルスタックのオブザーバビリティを実現します。
+- [OpenTelemetry を使用したオブザーバビリティ](/observability-best-practices/ja/patterns/otel) - アプリケーション全体に OpenTelemetry を実装するための包括的なガイドです。AWS サービスを使用してテレメトリデータを収集、処理、可視化し、フルスタックのオブザーバビリティを実現するためのパターンを提供します。
 
 - [AWS Distro for OpenTelemetry (ADOT) Collector の運用](/observability-best-practices/ja/guides/operational/adot-at-scale/operating-adot-collector) - 本番環境での ADOT Collector のデプロイ、スケーリング、管理に関する実践的なガイダンスです。設定のベストプラクティスや AWS オブザーバビリティサービスとの統合について説明しています。
 
-- [CloudWatch エージェントを使用してメトリクス、ログ、トレースを収集する](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - アプリケーションとインフラストラクチャからテレメトリデータを収集するための CloudWatch エージェントのインストールと設定に関する詳細な手順です。AWS CloudWatch へのシームレスな統合が可能です。
+- [CloudWatch エージェントでメトリクス、ログ、トレースを収集する](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - アプリケーションとインフラストラクチャからテレメトリデータを収集するための CloudWatch エージェントのインストールと設定に関する手順を説明します。AWS CloudWatch とのシームレスな統合が可能です。
 
-- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file) - ログ、メトリクス、トレースを複数の AWS サービスに収集および転送するための軽量で効率的なソリューションで、コンテナ化された環境と Kubernetes デプロイメント向けに最適化されています。
+- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file) - 複数の AWS サービスにログ、メトリクス、トレースを収集および転送するための軽量で効率的なソリューションです。コンテナ化された環境と Kubernetes デプロイメント向けに最適化されています。
 
-- [AWS XRay](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html) - 分散トレーシングのために AWS X-Ray と OpenTelemetry を統合する詳細なドキュメントです。トレースの可視化と分析ツールを使用して、本番アプリケーションを大規模に分析およびデバッグできます。
+- [AWS XRay](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html) - OpenTelemetry と AWS X-Ray を統合して分散トレーシングを行うための詳細なドキュメントです。トレースの可視化と分析ツールを使用して、本番アプリケーションを大規模に分析およびデバッグできます。

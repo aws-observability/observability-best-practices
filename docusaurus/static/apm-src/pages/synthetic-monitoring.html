@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synthetic Monitoring (Canaries) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Synthetic Monitoring (Canaries)</h1></header>
+      <article>
+        <section>
+          <h2>How Synthetics connects to Application Signals</h2>
+          <p>CloudWatch Synthetics canaries can appear in Application Signals when you enable X-Ray tracing for the canary. This allows canary calls to be associated with backend services and shown in service details and on the Application Map.</p>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">How Application Signals enables operational health monitoring</a>.</p>
+        </section>
+
+        <section>
+          <h2>Common canary use cases</h2>
+          <ul>
+            <li><strong>API health checks</strong>: validate key endpoints on a schedule</li>
+            <li><strong>Browser flows</strong>: validate login/checkout journeys</li>
+            <li><strong>Multi-region</strong>: detect regional issues before customers do</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Next steps</h2>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">CloudWatch Synthetics canaries</a></li>
+            <li><a href="application-map.html">Application Map</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,9 @@
+node_modules
+.svelte-kit
+build
+.env
+.env.*
+odtg-app
+infra
+docs
+.git

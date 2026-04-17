@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Features & Capabilities — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Features & Capabilities</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals: what it provides</h2>
+          <p>CloudWatch Application Signals is AWS’s application performance monitoring (APM) experience in CloudWatch. After enablement, it automatically collects application telemetry and organizes it by <strong>service</strong>, <strong>operation</strong>, and <strong>dependency</strong> so you can quickly triage operational health and track longer-term performance goals.</p>
+          <ul>
+            <li><strong>Standard application metrics:</strong> call volume, availability, latency, faults, and errors.</li>
+            <li><strong>Service and dependency topology:</strong> an Application Map generated from discovered services and relationships.</li>
+            <li><strong>Deep troubleshooting:</strong> drill down from service health into correlated traces and related telemetry.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Application Map (topology + health)</h2>
+          <p>The Application Map visualizes your application’s topology and highlights operational health. It shows connections between clients, canaries, services, and dependencies so operators can understand execution flow and identify where issues propagate.</p>
+
+          <h3>What you can do</h3>
+          <ul>
+            <li><strong>See SLO/SLI health:</strong> quickly spot services (and upstream/downstream impact) that are not meeting objectives.</li>
+            <li><strong>Drill down:</strong> select nodes/edges to open detailed metrics and navigate to service details.</li>
+            <li><strong>Group and filter:</strong> use default groupings (Related services, Environment) and create custom groupings using AWS tags or OpenTelemetry resource attributes.</li>
+            <li><strong>Cross-account visibility:</strong> view services across multiple AWS accounts (when set up via cross-account observability).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Services, operations, and dependencies</h2>
+          <p>Application Signals structures telemetry into a model that matches how teams debug production systems:</p>
+          <ul>
+            <li><strong>Service:</strong> your deployable unit (for example, an ECS service, EKS workload, Lambda function).</li>
+            <li><strong>Operation:</strong> a request handler within a service (for example, an HTTP route or RPC method).</li>
+            <li><strong>Dependency:</strong> downstream calls made by a service (for example, another service or AWS dependency).</li>
+          </ul>
+          <p>This structure makes it easier to answer questions like “which operation regressed?”, “is this an upstream or downstream issue?”, and “which dependencies are contributing to latency or faults?”</p>
+        </section>
+
+        <section>
+          <h2>Service level objectives (SLOs)</h2>
+          <p>Create and monitor SLOs directly from the telemetry that Application Signals collects. SLOs help you track performance and reliability against targets and surface “at risk” services early.</p>
+          <ul>
+            <li><strong>Define SLOs on key SLIs:</strong> availability, latency, or other CloudWatch metrics relevant to business goals.</li>
+            <li><strong>Track health:</strong> see SLI health status in service lists and the Application Map.</li>
+            <li><strong>Alert:</strong> create alarms tied to SLO status/burn so teams can respond before an outage.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instrumentation (OpenTelemetry-compatible)</h2>
+          <p>Application Signals is OpenTelemetry-compatible and supports multiple ways to instrument applications depending on platform and language.</p>
+          <ul>
+            <li><strong>Supported languages:</strong> Java, Python, Node.js, and .NET (plus additional runtimes via OpenTelemetry zero-code instrumentation paths).</li>
+            <li><strong>Supported systems:</strong> Amazon EKS, Kubernetes, Amazon ECS, Amazon EC2 (and enablement patterns that rely on the CloudWatch agent + AWS Distro for OpenTelemetry).</li>
+            <li><strong>Common setup patterns:</strong> AWS Distro for OpenTelemetry (ADOT) SDK/collector or OpenTelemetry SDK + collector, depending on environment.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Works with RUM and Synthetics</h2>
+          <p>Application Signals integrates with CloudWatch RUM and CloudWatch Synthetics. When you enable tracing for those clients/canaries, they can appear in the Application Map and help connect user experience and proactive tests to the backend services they call.</p>
+          <ul>
+            <li><strong>RUM clients:</strong> connect frontend performance and JS errors to backend service calls.</li>
+            <li><strong>Synthetics canaries:</strong> validate critical flows and help detect issues before users do.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

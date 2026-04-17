@@ -1,0 +1,26 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: odtg-chaos
+  namespace: otel-demo
+rules:
+  - apiGroups: [""]
+    resources: [pods, pods/exec, configmaps]
+    verbs: [get, list, watch, create, update, patch, delete]
+  - apiGroups: [apps]
+    resources: [deployments, statefulsets]
+    verbs: [get, list, watch, update, patch]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: odtg-chaos
+  namespace: otel-demo
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: odtg-chaos
+subjects:
+  - kind: ServiceAccount
+    name: odtg
+    namespace: odtg

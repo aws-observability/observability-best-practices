@@ -1,5 +1,10 @@
 
-# Interactive Demos
+# Resources
+
+Welcome to the AWS Observability Best Practices resources section. Here you'll find interactive demos, enablement guides, and additional tools to help you implement observability best practices.
+
+
+## Interactive Demos
 
 Check out interactive demos for AWS Monitoring & Observability below or open the [AWS Monitoring & Observability Demos Hub](https://aws-cloudops.storylane.io/hub/oq1jb6vuwlyg) in a new tab.
 

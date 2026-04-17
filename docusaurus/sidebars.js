@@ -210,7 +210,7 @@ module.exports = {
       ],
     },
     ],
-    signals:[{
+    sigals:[{
       type: 'category',
       label: 'Data types',
       items: [

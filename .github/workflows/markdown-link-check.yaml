@@ -18,17 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
       - uses: actions/setup-node@v3
         with:
           node-version: 20
       - name: install markdown-link-check
         run: npm install -g markdown-link-check@3.12.2
-      - name: Run markdown-link-check on changed MD files
-        run: |
-          git diff --name-only --diff-filter=d ${{ github.event.pull_request.base.sha || github.event.before }} HEAD -- 'docusaurus/**/*.md' | while IFS= read -r file; do
-            [ -z "$file" ] && continue
-            echo "Checking: $file"
-            markdown-link-check -q -c .github/workflows/linkcheck.json "$file"
-          done
+      - name: markdown-link-check version
+        run: npm list -g markdown-link-check
+      - name: Run markdown-link-check on MD files
+        run: find docusaurus -name "*.md" | xargs -n 1 markdown-link-check -q -c .github/workflows/linkcheck.json

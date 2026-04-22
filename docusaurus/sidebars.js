@@ -202,7 +202,8 @@ module.exports = {
           type: 'category',
           label: 'GenAI',
           items: [
-            'guides/genai/observability-best-practices',
+            'guides/genai/genai-observability-on-aws',
+            'guides/genai/custom-dashboards-for-genai-telemetry',
           ],
         },
         'guides/observability-maturity-model',

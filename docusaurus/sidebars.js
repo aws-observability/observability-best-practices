@@ -240,7 +240,10 @@ module.exports = {
             {
               type: 'category',
               label: 'Security',
-              items: ['tools/logs/security/cloudwatch-logs-security-best-practices'],
+              items: [
+                'tools/logs/security/cloudwatch-logs-security-best-practices',
+                'tools/logs/security/querying_security_lake_with_cloudwatch_uds',
+              ],
             },
             {
               type: 'category',

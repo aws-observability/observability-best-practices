@@ -16,9 +16,9 @@ function stripDotSegments(path: string) {
 }
 
 /**
- * Dev/prod servers expose static HTML as extensionless URLs with a trailing slash.
- * Fetching `*.html` returns redirects whose Location omits `baseUrl`, so the client follows
- * into the SPA and receives the wrong document.
+ * Prefer directory-style paths (`pages/foo/`) for fetch: the dev server serves these reliably.
+ * GitHub Pages only copies `static/` as flat files (e.g. `pages/foo.html`) with no `foo/index.html`,
+ * so `/apm-src/pages/foo/` returns 404 in production — see fetch fallback below.
  */
 function apmStaticFetchPath(srcPath: string): string {
   const p = stripDotSegments(srcPath);
@@ -29,6 +29,13 @@ function apmStaticFetchPath(srcPath: string): string {
   return p;
 }
 
+/** Actual filename under `static/apm-src/` used when directory URL is missing on static hosts. */
+function apmStaticFileRelativePath(srcPath: string): string {
+  const p = stripDotSegments(srcPath);
+  if (!p || p === 'index') return 'index.html';
+  return p.endsWith('.html') ? p : `${p}.html`;
+}
+
 export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const [html, setHtml] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -37,7 +44,8 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const apmHome = useBaseUrl('/apm/');
   const apmDocBase = useBaseUrl('/apm/');
   const apmFetchPath = apmStaticFetchPath(src);
-  const apmSrcUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
+  const primaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
+  const fallbackUrl = useBaseUrl(`/apm-src/${apmStaticFileRelativePath(src)}`);
 
   const resolved = useMemo(() => {
     // Avoid SSR crashes: DOMParser/document are browser-only.
@@ -52,8 +60,15 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
       setError('');
       setHtml('');
       try {
-        const res = await fetch(apmSrcUrl, {cache: 'no-cache'});
-        if (!res.ok) throw new Error(`Failed to load ${apmSrcUrl} (${res.status})`);
+        let res = await fetch(primaryUrl, {cache: 'no-cache'});
+        let loadedFrom = primaryUrl;
+        if (!res.ok && res.status === 404 && fallbackUrl !== primaryUrl) {
+          res = await fetch(fallbackUrl, {cache: 'no-cache'});
+          loadedFrom = fallbackUrl;
+        }
+        if (!res.ok) {
+          throw new Error(`Failed to load ${loadedFrom} (${res.status})`);
+        }
         const text = await res.text();
 
         if (typeof window === 'undefined') return;
@@ -127,7 +142,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
     return () => {
       cancelled = true;
     };
-  }, [apmDocBase, apmHome, apmSrcBase, apmSrcUrl, selector]);
+  }, [apmDocBase, apmHome, apmSrcBase, fallbackUrl, primaryUrl, selector]);
 
   if (typeof window === 'undefined') {
     return (
@@ -144,7 +159,13 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
           <h2>Unable to load page content</h2>
           <p>{error}</p>
           <p>
-            Source: <code>{apmSrcUrl}</code>
+            Tried: <code>{primaryUrl}</code>
+            {fallbackUrl !== primaryUrl && (
+              <>
+                {' '}
+                then <code>{fallbackUrl}</code>
+              </>
+            )}
           </p>
         </div>
       </div>

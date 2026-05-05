@@ -15,20 +15,29 @@ function stripDotSegments(path: string) {
   return p;
 }
 
+/**
+ * Dev/prod servers expose static HTML as extensionless URLs with a trailing slash.
+ * Fetching `*.html` returns redirects whose Location omits `baseUrl`, so the client follows
+ * into the SPA and receives the wrong document.
+ */
+function apmStaticFetchPath(srcPath: string): string {
+  const p = stripDotSegments(srcPath);
+  if (p === 'index.html' || p === 'index') return '';
+  if (p.endsWith('.html')) {
+    return `${p.slice(0, -'.html'.length)}/`;
+  }
+  return p;
+}
+
 export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const [html, setHtml] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const baseUrl = useBaseUrl('/');
-  const apmSrcBase = `${baseUrl}apm-src/`;
-  const apmHome = `${baseUrl}apm/`;
-  const apmDocBase = `${baseUrl}apm/`;
-  const normalizedSrc = (() => {
-    const p = stripDotSegments(src);
-    if (p === 'index.html' || p === 'index') return '';
-    return p;
-  })();
-  const apmSrcUrl = `${apmSrcBase}${normalizedSrc}`;
+  const apmSrcBase = useBaseUrl('/apm-src/');
+  const apmHome = useBaseUrl('/apm/');
+  const apmDocBase = useBaseUrl('/apm/');
+  const apmFetchPath = apmStaticFetchPath(src);
+  const apmSrcUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
 
   const resolved = useMemo(() => {
     // Avoid SSR crashes: DOMParser/document are browser-only.
@@ -49,12 +58,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
 
         if (typeof window === 'undefined') return;
         const doc = new DOMParser().parseFromString(text, 'text/html');
-        const root = doc.querySelector(selector) || doc.body;
 
-        // Remove scripts/styles so docs behave as static content.
-        root.querySelectorAll('script, style, link[rel="stylesheet"]').forEach((n) => n.remove());
-
-        // Rewire URLs to work inside Docusaurus.
         const rewriteStatic = (u: string) => {
           if (!u) return u;
           if (/^(https?:|mailto:|tel:|data:)/i.test(u)) return u;
@@ -62,6 +66,11 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
           const clean = stripDotSegments(u);
           return `${apmSrcBase}${clean}`;
         };
+
+        const root = doc.querySelector(selector) || doc.body;
+
+        // Remove scripts/styles so docs behave as static content.
+        root.querySelectorAll('script, style, link[rel="stylesheet"]').forEach((n) => n.remove());
 
         const rewriteDocLink = (u: string) => {
           if (!u) return u;

@@ -4,7 +4,8 @@
 <tr>
 <td width="40%" valign="top">
 
-<strong>OpenTelemetry Demo: The Game</strong> takes the [OpenTelemetry Demo](https://opentelemetry.io/docs/demo/) and gamifies it, teaching you observability by breaking microservices and diagnosing failures.
+<strong>OpenTelemetry Demo: The Game (ODTG)</strong> takes the [OpenTelemetry Demo](https://opentelemetry.io/docs/demo/) and gamifies it, teaching you observability by breaking microservices and diagnosing failures. A game consists of 5 rounds. In each round, ODTG randomly picks one out of over 40 different failure scenarios and injects it. Your task is
+figuring out what happened and submit a hypothesis about the root cause. Your hypothesis is rated by an LLM judge and you can earn up to 100 points per round.
 
 It runs on Amazon EKS in Auto Mode with the OpenTelemetry Demo application consisting of 15 services deployed. Observability is powered by Amazon CloudWatch with the telemetry natively ingested using OTLP.
 

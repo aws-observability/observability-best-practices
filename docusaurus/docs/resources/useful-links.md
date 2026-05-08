@@ -2,6 +2,9 @@
 
 A curated collection of resources to help you learn and implement AWS observability best practices.
 
+### Register for upcoming events (on AWS Connected Community)
+Register for live webinars and workshops for developers, DevOps engineers, solutions architects, system administrators, and anyone interested in cloud operations [here](https://aws-experience.com/amer/smb/events/series/Cloud-Operations-Enablement)
+
 ### Cloud Operations (COP) sessions at AWS re:Invent 2025 (YouTube Playlist)
 
 Check out the AWS re:Invent 2025 breakout session playslist for Cloud Operations (COP) sessions [here](https://www.youtube.com/playlist?list=PL2yQDdvlhXf8fUGVeljVNpQwugV7XBZRt)
@@ -24,13 +27,6 @@ Collection of live stream recordings where we dive deep into interesting AWS Clo
 This hands-on workshop provides practical experience with the wide variety of tool sets AWS offers for monitoring and observability. The workshop is highly customizable - you can pick and choose any module based on your interests and availability.
 
 [Start the Workshop](https://catalog.workshops.aws/observability/)
-
-
-### Application Signals Demo
-
-A complete demonstration application showcasing AWS Application Signals capabilities. This demo provides a working example (the Pet Clinic) which you can deploy and explore to understand how Application Signals works in practice.
-
-[View on GitHub](https://github.com/aws-observability/application-signals-demo)
 
 
 ### AWS Observability Best Practices Guide
@@ -67,3 +63,8 @@ Explore curated resources to strengthen your **AWS CloudTrail** security practic
 
 [Visit the Guide](https://aws-samples.github.io/cloud-operations-best-practices/docs/resources/cloudtrail-resources)
 
+### Application Signals Demo
+
+A complete demonstration application showcasing AWS Application Signals capabilities. This demo provides a working example (the Pet Clinic) which you can deploy and explore to understand how Application Signals works in practice.
+
+[View on GitHub](https://github.com/aws-observability/application-signals-demo)

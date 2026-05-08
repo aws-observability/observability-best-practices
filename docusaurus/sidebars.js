@@ -202,7 +202,8 @@ module.exports = {
           type: 'category',
           label: 'GenAI',
           items: [
-            'guides/genai/observability-best-practices',
+            'guides/genai/genai-observability-on-aws',
+            'guides/genai/custom-dashboards-for-genai-telemetry',
           ],
         },
         'guides/observability-maturity-model',
@@ -240,7 +241,10 @@ module.exports = {
             {
               type: 'category',
               label: 'Security',
-              items: ['tools/logs/security/cloudwatch-logs-security-best-practices'],
+              items: [
+                'tools/logs/security/cloudwatch-logs-security-best-practices',
+                'tools/logs/security/querying_security_lake_with_cloudwatch_uds',
+              ],
             },
             {
               type: 'category',

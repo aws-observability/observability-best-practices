@@ -51,7 +51,17 @@ module.exports = {
     {
       type: 'category',
       label: 'Examples & code samples',
-      items: ['pages/examples'],
+      items: [
+        {
+          type: 'category',
+          label: 'Examples',
+          link: {
+            type: 'doc',
+            id: 'pages/examples',
+          },
+          items: ['pages/java-spring-otlp-exercise'],
+        },
+      ],
     },
     {
       type: 'category',

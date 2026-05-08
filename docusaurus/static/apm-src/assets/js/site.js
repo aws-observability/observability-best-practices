@@ -5,7 +5,7 @@ const NAV = [
   {title:'', items:[{title:'Release Notes', href:'pages/release-notes.html'}]},
   {title:'IMPLEMENTATION GUIDES', items:[{title:'Instrumentation', href:'pages/implementation.html'}]},
   {title:'FEATURES & CAPABILITIES', items:[{title:'Auto Discovery', href:'pages/auto-discovery.html'},{title:'Auto Instrumentation', href:'pages/auto-instrumentation.html'},{title:'Dashboards', href:'pages/dashboards.html'},{title:'Distributed Tracing', href:'pages/features.html'},{title:'Application Map', href:'pages/application-map.html'},{title:'Performance Analytics', href:'pages/performance-analytics.html'},{title:'Searching and analyzing spans', href:'pages/searching-spans.html'},{title:'Service Level Objectives (SLOs)', href:'pages/slos.html'},{title:'Synthetic Monitoring (Canaries)', href:'pages/synthetic-monitoring.html'},{title:'RUM', href:'pages/rum.html'},{title:'Generative AI observability', href:'pages/generative-ai.html'}]},
-  {title:'EXAMPLES & CODE SAMPLES', items:[{title:'Examples', href:'pages/examples.html'}]},
+  {title:'EXAMPLES & CODE SAMPLES', items:[{title:'Examples', href:'pages/examples.html'},{title:'Java Spring + OTLP Exercise', href:'pages/java-spring-otlp-exercise.html'}]},
   {title:'API REFERENCE', items:[{title:'REST APIs', href:'pages/api.html'},{title:'SDK Reference', href:'pages/sdk-reference.html'}]},
   {title:'BEST PRACTICES', items:[{title:'Instrumentation Best Practices', href:'pages/best-practices.html'}]},
   {title:'TROUBLESHOOTING', items:[{title:'Common Issues', href:'pages/troubleshooting.html'},{title:'Debugging Guides', href:'pages/debugging.html'}]},

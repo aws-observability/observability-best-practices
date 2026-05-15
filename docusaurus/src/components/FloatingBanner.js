@@ -45,7 +45,7 @@ export default function FloatingBanner() {
       <span>Live:</span>
       <span>CloudOps Webinars &amp; Hands-on Workshops ·</span>
       <a
-        href="https://aws-experience.com/amer/smb/events/series/Cloud-Operations-Enablement"
+        href="https://aws-experience.com/amer/smb/events/series/Cloud-Operations-Enablement?trk=d12ac22e-c3d0-4081-9e94-e2f911079e70&sc_channel=el"
         target="_blank"
         rel="noopener noreferrer"
         style={linkStyle}

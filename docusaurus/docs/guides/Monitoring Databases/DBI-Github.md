@@ -10,7 +10,7 @@ This article covers what Database Insights offers, how to choose between its two
 
 ## What Is Database Insights?
 
-Database Insights builds on top of Amazon RDS Performance Insights and extends it with fleet-wide monitoring, log correlation, lock analysis, execution plan capture, and application-level integration. It is the successor to the standalone Performance Insights console experience (which reaches end-of-life soon). 
+Database Insights builds on top of Amazon RDS Performance Insights and extends it with fleet-wide monitoring, log correlation, lock analysis, execution plan capture, and application-level integration. It is the successor to the standalone Performance Insights console experience (which reaches end-of-life soon).
 
 The core concept is **DB Load** — the average number of active sessions in your database at any point in time. If DB Load exceeds your instance's vCPU count, your database is overloaded. Database Insights visualizes this metric and lets you slice it by multiple dimensions (SQL, wait events, users, hosts, applications) to quickly identify the root cause of performance issues.
 
@@ -193,10 +193,12 @@ Use IAM policies to restrict access to the SQL text dimension. Database queries 
 ### If you're managing a large fleet:
 
 1. **Set up cross-account cross-region monitoring** with OAM.
-(How OAM works:
-Monitoring account — The central account where your team views dashboards. You create a "sink" here that accepts data from other accounts.
-Source accounts — The accounts that actually run your databases. You create "links" from each source account to the monitoring account's sink, granting it permission to read their CloudWatch data.
-Once linked, the monitoring account can see metrics, logs, and traces from all source accounts as if they were local — including the Database Insights Fleet Health Dashboard showing instances across all linked accounts and regions in a single view.)
+
+   How OAM works:
+   - **Monitoring account** — The central account where your team views dashboards. You create a "sink" here that accepts data from other accounts.
+   - **Source accounts** — The accounts that actually run your databases. You create "links" from each source account to the monitoring account's sink, granting it permission to read their CloudWatch data.
+
+   Once linked, the monitoring account can see metrics, logs, and traces from all source accounts as if they were local — including the Database Insights Fleet Health Dashboard showing instances across all linked accounts and regions in a single view.
 2. **Create multiple fleet views** segmented by team, service, or environment.
 3. **Establish a triage workflow**: Fleet Health → identify hot instance → DB Load Analysis → who/what/where/when → take action.
 4. **Run periodic on-demand analyses** on your highest-traffic instances to catch slow regressions before they become incidents.

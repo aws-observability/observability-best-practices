@@ -18,7 +18,7 @@ Nominate a monitoring account from which you want to view the telemetry data in 
 
 Then define which accounts will share the data with your monitoring account. You can choose all accounts in your AWS organization or pick individual source accounts. You will also specify what telemetry data you want to share with the monitoring account (e.g. logs, metrics, traces, application signals etc).
 
-You will then [link the source accounts](../cloudwatch_cross_account_observability.md#step-2-link-source-accounts-to-the-monitoring-account) to complete the setup.
+You will then [link the source accounts](../cloudwatch_cross_account_observability.md#step-2-link-the-source-accounts) to complete the setup.
 
 Your typical monitoring account structure will look similar to this:
 

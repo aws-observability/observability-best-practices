@@ -6,6 +6,6 @@ Prometheus はデータの収集に *プル* モデルを使用しますが、Cl
 
 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) は、Kubernetes でホストされるコンテナ化アプリケーションや [Amazon ECS](https://aws.amazon.com/ecs/) で広く使用されています。
 
-[CloudWatch エージェント](../../tools/cloudwatch_agent/) や [AWS Distro for OpenTelemetry](https://aws-otel.github.io/) を使用して、EC2 インスタンスや ECS/EKS クラスターに Prometheus メトリクス機能を追加できます。Prometheus サポート付きの CloudWatch エージェントは、Prometheus メトリクスを発見および収集して、アプリケーションのパフォーマンス低下と障害をより迅速に監視、トラブルシューティング、アラーム設定を行います。これにより、オブザーバビリティを改善するために必要なモニタリングツールの数も削減されます。
+[CloudWatch エージェント](./cloudwatch_agent.md) や [AWS Distro for OpenTelemetry](https://aws-otel.github.io/) を使用して、EC2 インスタンスや ECS/EKS クラスターに Prometheus メトリクス機能を追加できます。Prometheus サポート付きの CloudWatch エージェントは、Prometheus メトリクスを発見および収集して、アプリケーションのパフォーマンス低下と障害をより迅速に監視、トラブルシューティング、アラーム設定を行います。これにより、オブザーバビリティを改善するために必要なモニタリングツールの数も削減されます。
 
 コンテナ化されたシステムとワークロードからの Prometheus メトリクスの自動検出を行う Container Insights による Prometheus のモニタリング https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html

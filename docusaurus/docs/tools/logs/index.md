@@ -5,13 +5,13 @@ The selection of logging tools is tied to your requirements for data transmissio
 Here we will expand on the best practices for implementing the CloudWatch agent for logging, and the use of CloudWatch Logs within the AWS console or APIs.
 
 :::info
-	The CloudWatch agent can also be used for delivery of [metric data](../../signals/metrics/) to CloudWatch. See the [metrics](../../tools/metrics/) page for implementation details. It can also be used to collect [traces](../../signals/traces.md) from OpenTelemetry or X-Ray client SDKs, and send them to [AWS X-Ray](../../tools/xray.md).
+	The CloudWatch agent can also be used for delivery of [metric data](../../signals/metrics) to CloudWatch. See the [metrics](../metrics) page for implementation details. It can also be used to collect [traces](../../signals/traces.md) from OpenTelemetry or X-Ray client SDKs, and send them to [AWS X-Ray](../xray.md).
 :::
 ## Collecting logs with the CloudWatch agent
 
 ### Forwarding
 
-When taking a [cloud first approach](../../faq#what-is-a-cloud-first-approach) to observability, as a rule, if you need to log into a machine to get its logs, you then have an anti-pattern. Your workloads should emit their logging data outside of their confines in near real time to a log analysis system, and latency between that transmission and the original event represents a potential loss of point-in-time information should a disaster befall your workload.
+When taking a [cloud first approach](../../faq/general.md#what-is-a-cloud-first-approach) to observability, as a rule, if you need to log into a machine to get its logs, you then have an anti-pattern. Your workloads should emit their logging data outside of their confines in near real time to a log analysis system, and latency between that transmission and the original event represents a potential loss of point-in-time information should a disaster befall your workload.
 
 As an architect you will have to determine what your acceptable loss for logging data is and adjust the CloudWatch agent's [`force_flush_interval`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) to accommodate this.
 
@@ -63,7 +63,7 @@ Unstructured logs can still be searched or queried using a regular expression wi
 :::
 ### Handling `stdout`
 
-As discussed in our [log signals](../../signals/logs/#log-to-stdout) page, the best practice is to decouple logging systems from their generating applications. However to send data from `stdout` to a file is a common pattern for many (if not most) platforms. Container orchestration systems such as Kubernetes or [Amazon Elastic Container Service](https://aws.amazon.com/ecs/) manage this delivery of `stdout` to a log file automatically, allowing for collection of each log from a collector. The CloudWatch agent then reads this file in real time and forwards the data to a log group on your behalf.
+As discussed in our [log signals](../../signals/logs#log-to-stdout) page, the best practice is to decouple logging systems from their generating applications. However to send data from `stdout` to a file is a common pattern for many (if not most) platforms. Container orchestration systems such as Kubernetes or [Amazon Elastic Container Service](https://aws.amazon.com/ecs/) manage this delivery of `stdout` to a log file automatically, allowing for collection of each log from a collector. The CloudWatch agent then reads this file in real time and forwards the data to a log group on your behalf.
 
 :::info
 	Use the pattern of simplified application logging to `stdout`, with collection by an agent, as much as possible.
@@ -90,7 +90,7 @@ There are many reasons to filter your logs such as preventing the persistent sto
 
 ### Multi-line logging
 
-The best practice for all logging is to use [structured logging](../../signals/logs/#structured-logging-is-key-to-success) with a single line emitted for every discrete log event. However, there are many legacy and ISV-supported applications that do not have this option. For these workloads, CloudWatch Logs will interpret each line as a unique event unless they are emitted using a multi-line-aware protocol. The CloudWatch agent can perform this with the [`multi_line_start_pattern`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) directive.
+The best practice for all logging is to use [structured logging](../../signals/logs#structured-logging-is-key-to-success) with a single line emitted for every discrete log event. However, there are many legacy and ISV-supported applications that do not have this option. For these workloads, CloudWatch Logs will interpret each line as a unique event unless they are emitted using a multi-line-aware protocol. The CloudWatch agent can perform this with the [`multi_line_start_pattern`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection) directive.
 
 :::info
 	Use the `multi_line_start_pattern` directive to ease the burden of ingesting muli-line logging into CloudWatch Logs.

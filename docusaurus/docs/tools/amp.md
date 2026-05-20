@@ -6,6 +6,6 @@ Prometheus uses a *pull* model to collect data, where as CloudWatch uses a *push
 
 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) is widely used in containerized applications hosted in Kubernetes and [Amazon ECS](https://aws.amazon.com/ecs/).
 
-You can add Prometheus metric capabilities on your EC2 instance or ECS/EKS cluster using the [CloudWatch agent](../tools/cloudwatch_agent/) or [AWS Distro for OpenTelemetry](https://aws-otel.github.io/). The CloudWatch agent with Prometheus support discovers and collects Prometheus metrics to monitor, troubleshoot, and alarm on application performance degradation and failures faster. This also reduces the number of monitoring tools required to improve observability.
+You can add Prometheus metric capabilities on your EC2 instance or ECS/EKS cluster using the [CloudWatch agent](./cloudwatch_agent.md) or [AWS Distro for OpenTelemetry](https://aws-otel.github.io/). The CloudWatch agent with Prometheus support discovers and collects Prometheus metrics to monitor, troubleshoot, and alarm on application performance degradation and failures faster. This also reduces the number of monitoring tools required to improve observability.
 
 CloudWatch Container Insights monitoring for Prometheus automates the discovery of Prometheus metrics from containerized systems and workloads https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ ContainerInsights-Prometheus.html

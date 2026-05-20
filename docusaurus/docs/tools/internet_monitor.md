@@ -3,7 +3,7 @@
 :::warning
 	As of this writing, [Internet Monitor](https://aws.amazon.com/blogs/aws/cloudwatch-internet-monitor-end-to-end-visibility-into-internet-performance-for-your-applications/) is available in **preview** in the CloudWatch console. The scope of features for general availability may change from what you experience today.
 :::
-[Collecting telemetry from all tiers of your workload](../guides/#collect-telemetry-from-all-tiers-of-your-workload) is a best practice, and one that can be a challenge. But what are the tiers of your workload? For some it may be web, application, and database servers. Other people might view their workload as front end and back end. And those operating web applications can use [Real User Monitoring](../tools/rum)(RUM) to observe the health of these apps as experienced by end users. 
+[Collecting telemetry from all tiers of your workload](../guides/index.md#collect-telemetry-from-all-tiers-of-your-workload) is a best practice, and one that can be a challenge. But what are the tiers of your workload? For some it may be web, application, and database servers. Other people might view their workload as front end and back end. And those operating web applications can use [Real User Monitoring](./rum.md)(RUM) to observe the health of these apps as experienced by end users. 
 
 But what about the traffic between the client and the datacenter or cloud services provider? And for applications that are not served as web pages and therefore cannot use RUM?
 
@@ -37,7 +37,7 @@ Observed issues will be published through [EventBridge](https://aws.amazon.com/e
 }
 ```
 
-Likewise, extensive details of traffic are available in [CloudWatch Logs](../tools/logs) for observed cities, countries, metros, and subdivisions. This allows you to create highly-targeted actions which can notify impacted customers proactively about issues local to them. Here is an example of a country-level observation about a single provider:
+Likewise, extensive details of traffic are available in [CloudWatch Logs](./logs/index.md) for observed cities, countries, metros, and subdivisions. This allows you to create highly-targeted actions which can notify impacted customers proactively about issues local to them. Here is an example of a country-level observation about a single provider:
 
 ```json
 {
@@ -102,7 +102,7 @@ Likewise, extensive details of traffic are available in [CloudWatch Logs](../too
 	Note that log groups created by Internet Monitor will have a default retention period set to *never expire*. AWS does not delete your data without your consent, so be sure to set a retention period that makes sense for your needs.
 :::
 :::info
-	Each monitor will create at least 10 discrete CloudWatch metrics. These should be used for creating [alarms](../tools/alarms) just as you would with any other operational metric.
+	Each monitor will create at least 10 discrete CloudWatch metrics. These should be used for creating [alarms](./alarms.md) just as you would with any other operational metric.
 :::
 ## Utilize traffic optimization suggestions
 

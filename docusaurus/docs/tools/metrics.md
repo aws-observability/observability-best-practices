@@ -2,7 +2,7 @@
 
 Metrics are data about the performance of your system. Having all the metrics related to system or the resources available in a centralised place grants you the ability to compare metrics, analyse performance, and make better strategic decisions like scaling-up or scaling-in resources. Metrics are also important for the knowing the health of the resources and take proactive measures.
 
-Metric data is foundational and used to drive [alarms](../signals/alarms/), anomaly detection, [events](../signals/events/), [dashboards](../tools/dashboards) and more.
+Metric data is foundational and used to drive [alarms](../signals/alarms.md), anomaly detection, [events](../signals/events.md), [dashboards](./dashboards.md) and more.
 
 ## Vended metrics
 
@@ -30,7 +30,7 @@ CloudWatch also supports conditional statements. For example, to return a value 
 
 	IF(latency>threshold, 1, 0)
 
-In the CloudWatch console we can use this logic to create boolean values, which in turn can trigger [CloudWatch alarms](../tools/alarms) or other actions. This can enable automatic actions from derived datapoints. An example from the CloudWatch console is below:
+In the CloudWatch console we can use this logic to create boolean values, which in turn can trigger [CloudWatch alarms](./alarms.md) or other actions. This can enable automatic actions from derived datapoints. An example from the CloudWatch console is below:
 
 ![Alarm creation from a derived value](../images/metrics2.png)
 
@@ -46,11 +46,11 @@ And a view of the same in the CloudWatch console:
 ![Search query in CloudWatch metrics](../images/metrics3.png)
 
 :::info
-	Use the `SEARCH` approach to rapidly display the valuable or worst performing resources in your environment, and then display these in [dashboards](../tools/dashboards).
+	Use the `SEARCH` approach to rapidly display the valuable or worst performing resources in your environment, and then display these in [dashboards](./dashboards.md).
 :::
 ## Collecting metrics
 
-If you would like to have additional metrics like memory or disk space utilization for your EC2 instances, you use the [CloudWatch agent](../tools/cloudwatch_agent/) to push this data to CloudWatch on your behalf. Or if you have custom processing data which needs to be visualised in graphical manner, and you want this data to be present as CloudWatch metric, then you can use [`PutMetricData` API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) to publish custom metrics to CloudWatch.
+If you would like to have additional metrics like memory or disk space utilization for your EC2 instances, you use the [CloudWatch agent](./cloudwatch_agent.md) to push this data to CloudWatch on your behalf. Or if you have custom processing data which needs to be visualised in graphical manner, and you want this data to be present as CloudWatch metric, then you can use [`PutMetricData` API](https://docs.aws.amazon.com/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) to publish custom metrics to CloudWatch.
 
 :::info
 	Use one of the [AWS SDKs](https://aws.amazon.com/developer/tools/) to push metric data to CloudWatch rather than the bare API.
@@ -64,11 +64,11 @@ If you would like to have additional metrics like memory or disk space utilizati
 	When using `PutMetricData`, the best practice is to batch your data into single `PUT` operations whenever possible.
 :::
 :::info
-	If large volumes of metrics are emitted into CloudWatch then consider using [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) as an alternative approach. Note that Embedded Metric Format does not use, nor charge, for the use of `PutMetricData`, though it does incur billing from the use of [CloudWatch Logs](../tools/logs/).
+	If large volumes of metrics are emitted into CloudWatch then consider using [Embedded Metric Format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) as an alternative approach. Note that Embedded Metric Format does not use, nor charge, for the use of `PutMetricData`, though it does incur billing from the use of [CloudWatch Logs](./logs/index.md).
 :::
 ## Anomaly detection
 
-CloudWatch has an [anomaly detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) feature that augments your observability strategy by learning what *normal* is based on recorded metrics. The use of anomaly detection is a [best practice](../signals/metrics/#use-anomaly-detection-algorithms) for any metric signal collection system.
+CloudWatch has an [anomaly detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) feature that augments your observability strategy by learning what *normal* is based on recorded metrics. The use of anomaly detection is a [best practice](../signals/metrics.md#use-anomaly-detection-algorithms) for any metric signal collection system.
 
 Anomaly detection builds a model over a two-week period of time. 
 

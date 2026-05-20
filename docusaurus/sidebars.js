@@ -70,7 +70,7 @@ module.exports = {
         {
           type: 'category',
           label: 'Databases',
-          items: ['guides/databases/rds-and-aurora'],
+          items: ['guides/databases/rds-and-aurora', 'guides/databases/DBI-Github'],
         },
         'guides/ec2-monitoring',
         {

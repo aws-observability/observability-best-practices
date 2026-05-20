@@ -2,14 +2,14 @@
 
 ## Choose the right agent
 
-AWS directly supports two toolsets for [trace](../signals/traces/) collection (plus our wealth of [observability partners](https://aws.amazon.com/products/management-and-governance/partners/): 
+AWS directly supports two toolsets for [trace](../signals/traces.md) collection (plus our wealth of [observability partners](https://aws.amazon.com/products/management-and-governance/partners/): 
 
 * The [AWS Distro for OpenTelemetry](https://aws-otel.github.io/), commonly called ADOT
 * The X-Ray [SDKs](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html) and [daemon](https://docs.aws.amazon.com/xray/latest/devguide/xray-daemon.html)
 
 The selection of which tool or tools to use is a principal decision you must make as you evolve your observability solution. These tools are not mutually-exclusive, and you can mix them together as necessary. And there is a best practice for making this selection. However, first you should understand the current state of [OpenTelemetry (OTEL)](https://opentelemetry.io/).
 
-OTEL is the current industry standard specification for observabillity signalling, and contains definitions for each of the three core signal types: [metrics](../signals/metrics/), [traces](../signals/traces/), and [logs](../signals/logs). However, OTEL has not always existed and has evolved out of earlier specifications such as [OpenMetrics](https://openmetrics.io) and [OpenTracing](https://opentracing.io). Observability vendors began openly supporting OpenTelemetry Line Protocol (OTLP) in recent years. 
+OTEL is the current industry standard specification for observabillity signalling, and contains definitions for each of the three core signal types: [metrics](../signals/metrics.md), [traces](../signals/traces.md), and [logs](../signals/logs.md). However, OTEL has not always existed and has evolved out of earlier specifications such as [OpenMetrics](https://openmetrics.io) and [OpenTracing](https://opentracing.io). Observability vendors began openly supporting OpenTelemetry Line Protocol (OTLP) in recent years. 
 
 AWS X-Ray and CloudWatch pre-date the OTEL specification, as do other leading observability solutions. However, the AWS X-Ray service readily accepts OTEL traces using ADOT. ADOT has the integrations already built into it to emit telemetry into X-Ray directly, as well as to other ISV solutions.
 

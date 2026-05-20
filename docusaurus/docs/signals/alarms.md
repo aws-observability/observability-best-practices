@@ -16,7 +16,7 @@ Alarms reflect this state for a period of time and are built on top of a timeser
 Alarm fatigue is when people get so many alerts that they have learned to ignore them. This is not an indication of a well-monitored system! Rather this is an anti-pattern.
 
 :::info
-	Create alarms for things that are actionable, and you should always work from your [objectives](../guides/#monitor-what-matters) backwards.
+	Create alarms for things that are actionable, and you should always work from your [objectives](../guides/index.md#monitor-what-matters) backwards.
 :::
 
 For example, if you operate a web site that requires fast response times, create an alert to be delivered when your response times are exceeding a given threshold. And if you have identified that poor performance is tied to high CPU utilization then alert on this datapoint *proactively* before it becomes an issue. However, there may no need to alert on all CPU utilization *everywhere* in your environment if it does not *endanger your outcomes*.
@@ -34,7 +34,7 @@ Likewise, a common pattern is the "everything is OK" alarm, when operators are s
 :::
 ## Fight alarm fatigue with aggregation
 
-Observability is a *human* problem, not a technology problem. And as such, your alarm strategy should focus on reducing alarms rather than creating more. As you implement  telemetry collection, it is natural to have more alerts from your environment. Be cautious though to only [alert on things that are actionable](../signals/alarms/#alert-on-things-that-are-actionable). If the condition that caused the alert is not actionable then there is no need to report on it.
+Observability is a *human* problem, not a technology problem. And as such, your alarm strategy should focus on reducing alarms rather than creating more. As you implement  telemetry collection, it is natural to have more alerts from your environment. Be cautious though to only [alert on things that are actionable](#alert-on-things-that-are-actionable). If the condition that caused the alert is not actionable then there is no need to report on it.
 
 This is best shown by example: if you have five web servers that use a single database for their backend, what happens to your web servers if the database is down? The answer for many people is that they get *at least six* alerts - *five* for the web servers and *one* for the database!
 

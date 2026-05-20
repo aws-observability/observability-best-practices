@@ -92,7 +92,7 @@ You can add custom metadata to the CloudWatch RUM events default [event metadata
 :::
 ## Use Extended Metrics
 
-There is a [default set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html) automatically collected by CloudWatch RUM that are published in the metric namespace named `AWS/RUM`. These are free, [vended metrics](../tools/metrics/#vended-metrics) that RUM creates on your behalf.
+There is a [default set of metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM-metrics.html) automatically collected by CloudWatch RUM that are published in the metric namespace named `AWS/RUM`. These are free, [vended metrics](./metrics.md#vended-metrics) that RUM creates on your behalf.
 
 :::info
     Send any of the CloudWatch RUM metrics to CloudWatch with additional dimensions so that the metrics give you a more fine-grained view.

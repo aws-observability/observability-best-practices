@@ -95,7 +95,7 @@
 * 影響や優先順位を理解するにはどうしましたか?	
 * 問題の原因を調べるために何を確認しましたか?
 
-Application Performance Monitoring (APM) は、エンドポイントとワークフローの定期的なベースラインとテストのために [Synthetics](../../tools/synthetics/) を使用し、実際の顧客体験のために [RUM](../../tools/rum/) を使用することでここで役立ちます。 このデータを使用して、どのワークフローが影響を受けているかと影響の程度をすばやく視覚化できます。
+Application Performance Monitoring (APM) は、エンドポイントとワークフローの定期的なベースラインとテストのために [Synthetics](./synthetics.md) を使用し、実際の顧客体験のために [RUM](./rum.md) を使用することでここで役立ちます。 このデータを使用して、どのワークフローが影響を受けているかと影響の程度をすばやく視覚化できます。
 
 時間とともにエラー数を示す視覚化や、上位のエラー数を示すものは、正しい領域に焦点を当て、エラーの詳細を示すのに役立ちます。 ここではログデータを頻繁に使用しており、エラーコードと理由の動的な視覚化をしています。
 
@@ -137,7 +137,7 @@ Application Performance Monitoring (APM) は、エンドポイントとワーク
 !!! success
     ダッシュボードを使用して、任意のメトリクスの上位 10 件や 20 件を表示し、これが明らかにする[症状](#think-about-symptoms-first-over-causes)に焦点を当ててください。
 
-[CloudWatch メトリクス](../../tools/metrics/) を使用すると、任意の時系列の上位 N を検索できます。たとえば、このクエリは CPU 使用率が最も高い上位 20 の EC2 インスタンスを返します。
+[CloudWatch メトリクス](./metrics.md) を使用すると、任意の時系列の上位 N を検索できます。たとえば、このクエリは CPU 使用率が最も高い上位 20 の EC2 インスタンスを返します。
 
 ```
 SORT(SEARCH('{AWS/EC2,InstanceId} MetricName="CPUUtilization"', 'Average', 300), SUM, DESC, 10)

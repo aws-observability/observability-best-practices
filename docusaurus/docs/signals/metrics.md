@@ -36,7 +36,7 @@ Understanding what a healthy baseline is can be challenging. Many people have to
 A healthy workload is one that has a balance of meeting your KPI objectives while remaining resilient, available, and cost-effective.
 
 :::info
-	Your KPIs *must* have an identified healthy range so you can create [alarms](../signals/alarms/) when performance falls below, or above, what is required.
+	Your KPIs *must* have an identified healthy range so you can create [alarms](./alarms.md) when performance falls below, or above, what is required.
 :::
 ## Use anomaly detection algorithms
 

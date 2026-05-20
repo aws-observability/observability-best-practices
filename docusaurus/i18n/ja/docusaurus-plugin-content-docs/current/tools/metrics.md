@@ -4,11 +4,11 @@
 システムやリソースに関連するすべてのメトリクスを一元化された場所に集約することで、メトリクスの比較、パフォーマンスの分析、リソースのスケールアップやスケールインなどの戦略的な意思決定を行うことができます。
 また、メトリクスはリソースの健全性を把握し、予防措置を講じる上でも重要です。
 
-メトリクスデータは基盤となるもので、[アラーム](../signals/alarms/)、異常検知、[イベント](../signals/events/)、[ダッシュボード](../tools/dashboards) などの機能を実現するために使用されます。
+メトリクスデータは基盤となるもので、[アラーム](../signals/alarms.md)、異常検知、[イベント](../signals/events.md)、[ダッシュボード](./dashboards.md) などの機能を実現するために使用されます。
 
 
 
-## ベンダーメトリクス
+## ベンダーメトリクス {#vended-metrics}
 
 [CloudWatch メトリクス](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/working_with_metrics.html) は、システムのパフォーマンスに関するデータを収集します。デフォルトでは、ほとんどの AWS サービスが、そのリソースのメトリクスを無料で提供しています。これには [Amazon EC2](https://aws.amazon.com/jp/ec2/) インスタンス、[Amazon RDS](https://aws.amazon.com/jp/rds/)、[Amazon S3](https://aws.amazon.com/jp/s3/) バケットなど、多くのサービスが含まれます。
 
@@ -39,7 +39,7 @@ CloudWatch は条件文もサポートしています。
 
 	IF(latency>threshold, 1, 0)
 
-CloudWatch コンソールでは、この論理を使用してブール値を作成し、[CloudWatch alarms](../tools/alarms) やその他のアクションをトリガーすることができます。
+CloudWatch コンソールでは、この論理を使用してブール値を作成し、[CloudWatch alarms](./alarms.md) やその他のアクションをトリガーすることができます。
 これにより、導出されたデータポイントから自動アクションを実行できます。
 以下は CloudWatch コンソールでの例です：
 
@@ -59,14 +59,14 @@ CloudWatch コンソールでは、この論理を使用してブール値を作
 ![Search query in CloudWatch metrics](../images/metrics3.png)
 
 :::info
-	`SEARCH` アプローチを使用して、環境内で価値のあるリソースやパフォーマンスの悪いリソースを素早く表示し、それらを [dashboards](../tools/dashboards) に表示することができます。
+	`SEARCH` アプローチを使用して、環境内で価値のあるリソースやパフォーマンスの悪いリソースを素早く表示し、それらを [dashboards](./dashboards.md) に表示することができます。
 :::
 
 
 
-## メトリクスの収集
+## メトリクスの収集 {#collecting-metrics}
 
-EC2 インスタンスのメモリやディスク容量使用率などの追加メトリクスが必要な場合は、[CloudWatch エージェント](../tools/cloudwatch_agent/) を使用して、これらのデータを CloudWatch に送信できます。また、グラフィカルな形式で可視化する必要のあるカスタム処理データがあり、そのデータを CloudWatch メトリクスとして表示したい場合は、[`PutMetricData` API](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) を使用してカスタムメトリクスを CloudWatch に公開できます。
+EC2 インスタンスのメモリやディスク容量使用率などの追加メトリクスが必要な場合は、[CloudWatch エージェント](./cloudwatch_agent.md) を使用して、これらのデータを CloudWatch に送信できます。また、グラフィカルな形式で可視化する必要のあるカスタム処理データがあり、そのデータを CloudWatch メトリクスとして表示したい場合は、[`PutMetricData` API](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/APIReference/API_PutMetricData.html) を使用してカスタムメトリクスを CloudWatch に公開できます。
 
 :::info
 API を直接使用するのではなく、[AWS SDK](https://aws.amazon.com/jp/developer/tools/) のいずれかを使用して、メトリクスデータを CloudWatch に送信してください。
@@ -82,15 +82,15 @@ API を直接使用するのではなく、[AWS SDK](https://aws.amazon.com/jp/d
 :::
 
 :::info
-大量のメトリクスが CloudWatch に送信される場合は、代替アプローチとして [Embedded Metric Format](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) の使用を検討してください。Embedded Metric Format は `PutMetricData` を使用せず、その使用に対する課金もありませんが、[CloudWatch Logs](../tools/logs/) の使用に対する課金は発生します。
+大量のメトリクスが CloudWatch に送信される場合は、代替アプローチとして [Embedded Metric Format](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format_Manual.html) の使用を検討してください。Embedded Metric Format は `PutMetricData` を使用せず、その使用に対する課金もありませんが、[CloudWatch Logs](./logs/index.md) の使用に対する課金は発生します。
 :::
 
 
 
-## 異常検知
+## 異常検知 {#anomaly-detection}
 
 CloudWatch には [異常検知](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) 機能があり、記録されたメトリクスに基づいて *正常* な状態を学習することで、オブザーバビリティ戦略を強化します。
-異常検知の使用は、メトリクスシグナル収集システムにおける [ベストプラクティス](../signals/metrics/#use-anomaly-detection-algorithms) です。
+異常検知の使用は、メトリクスシグナル収集システムにおける [ベストプラクティス](../signals/metrics.md#use-anomaly-detection-algorithms) です。
 
 異常検知は 2 週間の期間にわたってモデルを構築します。
 

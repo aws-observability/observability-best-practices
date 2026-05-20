@@ -27,7 +27,7 @@ You can follow the instructions below on how to setup of Static and Anomaly base
 :::info
 	To reduce the alarm fatigue or reduce the noise from the number of alarms generated, you have two advanced methods to configure the alarms:
 
-	1. **Composite alarms**: A composite alarm includes a rule expression that takes into account the alarm states of other alarms that have been created. The composite alarm goes into `ALARM` state only if all conditions of the rule are met. The alarms specified in a composite alarm's rule expression can include metric alarms and other composite alarms. Composite alarms help to [fight alarm fatigue with aggregation](../signals/alarms/#fight-alarm-fatigue-with-aggregation).
+	1. **Composite alarms**: A composite alarm includes a rule expression that takes into account the alarm states of other alarms that have been created. The composite alarm goes into `ALARM` state only if all conditions of the rule are met. The alarms specified in a composite alarm's rule expression can include metric alarms and other composite alarms. Composite alarms help to [fight alarm fatigue with aggregation](../signals/alarms.md#fight-alarm-fatigue-with-aggregation).
 
 	2. **Metric math based alarms**: Metric math expressions can be used to build more meaningful KPIs and alarms on them. You can combine multiple metrics and create a combined utilization metric and alarm on them.
 :::

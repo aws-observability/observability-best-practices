@@ -33,7 +33,7 @@ Amazon Managed Grafana または Amazon QuickSight で AWS のコストと使用
 
 
 
-### 実装
+### 実装 {#implementation}
 
 1.	[Amazon Athena][amazon-athnea] との統合を有効にした [CUR レポート][cur-report] を作成します。  
 *初期設定時、AWS が Amazon S3 バケットにレポートの配信を開始するまでに最大 24 時間かかる場合があります。レポートは 1 日 1 回配信されます。Cost and Usage Reports と Athena の統合を合理化および自動化するために、AWS は Athena 統合用に設定したレポートとともに、いくつかの重要なリソースを含む AWS CloudFormation テンプレートを提供しています。*

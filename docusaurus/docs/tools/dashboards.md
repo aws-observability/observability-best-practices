@@ -91,7 +91,7 @@ Think back to the specific indcident.
 * How did you understand the impact, and therefore priority of the issue?
 * What did you look at for cause of the issue?	
 
-Application Performance Monitoring (APM) can help here, with [Synthetics](../tools/synthetics/) for regular baseline and testing of endpoints and workflows, and [RUM](../tools/rum/) for the actual customer experience. You can use this data to quickly visualize which workflows are impacted, and by how much.
+Application Performance Monitoring (APM) can help here, with [Synthetics](./synthetics.md) for regular baseline and testing of endpoints and workflows, and [RUM](./rum.md) for the actual customer experience. You can use this data to quickly visualize which workflows are impacted, and by how much.
 
 Visualizations which show the error count over time, and the top # errors, can help you to focus on the right area, and show you specific details of errors. This is where we are often using log data, and dynamic visualizations of error codes and reasons.
 
@@ -130,7 +130,7 @@ Most of the time there is no need to visualize *all* of your operational metrics
 :::info
     Use your dashboards to show the ten or 20 of any given metric, and then focus on the [symptoms](#think-about-symptoms-first-over-causes) this reveals. 
 :::
-[CloudWatch metrics](../tools/metrics/) allows you to search for the top N for any time series. For example, this query will return the busiest 20 EC2 instances by CPU utilization:
+[CloudWatch metrics](./metrics.md) allows you to search for the top N for any time series. For example, this query will return the busiest 20 EC2 instances by CPU utilization:
 
 ```
 SORT(SEARCH('{AWS/EC2,InstanceId} MetricName="CPUUtilization"', 'Average', 300), SUM, DESC, 10)

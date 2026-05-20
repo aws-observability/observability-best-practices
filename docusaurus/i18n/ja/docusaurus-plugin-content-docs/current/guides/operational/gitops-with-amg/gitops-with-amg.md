@@ -9,7 +9,7 @@
 
 
 
-## はじめに
+## はじめに {#introduction-to-gitops}
 
 お客様は、オープンソースの分析とモニタリングソリューションのためのオブザーバビリティプラットフォームとして Grafana を使用しています。Amazon EKS でワークロードを実行しているお客様は、ワークロードの重要性に焦点を当て、Kubernetes ネイティブのコントローラーを使用して Cloud リソースなどの外部リソースのデプロイとライフサイクル管理に依存したいと考えています。お客様は [AWS Controllers for Kubernetes (ACK)](https://aws-controllers-k8s.github.io/community/docs/community/overview/) をインストールして、AWS サービスの作成、デプロイ、管理を行っています。最近では、多くのお客様が Prometheus と Grafana の実装をマネージドサービスに移行することを選択しており、AWS の場合、これらのサービスはワークロードのモニタリングのために [Amazon Managed Service for Prometheus](https://docs.aws.amazon.com/ja_jp/prometheus/) と [Amazon Managed Grafana](https://docs.aws.amazon.com/ja_jp/grafana/) を使用しています。
 

@@ -16,7 +16,7 @@ In this way, a trace a collection of events from multiple services intended to s
 
 ## What signal types are immutable?
 
-All three of the basic signal types ([metrics](../signals/metrics/), [logs](../signals/logs/), and [traces](../signals/traces/)) are immutable, though some implementations have greater or lesser assurance of this. For example, immutability of logs is a strict requirement in many governance frameworks - and many tools exist to ensure this. Metrics and traces should likewise *always* be immutable. 
+All three of the basic signal types ([metrics](../signals/metrics.md), [logs](../signals/logs.md), and [traces](../signals/traces.md)) are immutable, though some implementations have greater or lesser assurance of this. For example, immutability of logs is a strict requirement in many governance frameworks - and many tools exist to ensure this. Metrics and traces should likewise *always* be immutable. 
 
 This leads to a question as to handling "bad data", or data that was inaccurate. With  AWS observability services, there is no facility to delete metrics or traces that were emitted in error. CloudWatch Logs does allow for the deletion of an entire log stream, but you cannot retroactively change data once it has been collected. This is by design, and an important feature to ensure customer data is treated with the utmost care.
 

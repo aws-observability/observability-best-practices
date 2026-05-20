@@ -5,7 +5,7 @@ Traces represent an entire journey of the requests as they traverse through diff
 Unlike logs or metrics, *traces* are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters, and metadata.
 
 :::tip
-    There is conceptual similarity between [logs](../signals/logs/) and traces, however a trace is intended to be considered in a cross-service context, whereas logs are typically limited to the execution of a single service or application.
+    There is conceptual similarity between [logs](./logs.md) and traces, however a trace is intended to be considered in a cross-service context, whereas logs are typically limited to the execution of a single service or application.
 ::::::tip
 Today's developers are leaning towards building modular and distributed applications. Some call these [Service Oriented Architecture](https://en.wikipedia.org/wiki/Service-oriented_architecture), others will refer to them as [microservices](https://aws.amazon.com/microservices/). Regardless of the name, when something goes wrong in these loosely coupled applications, just looking at logs or events may not be sufficient to track down the root cause of an incident.  Having full visibility into request flow is essential and this is where traces add value. Through a series of causally related events that depict end-to-end request flow, traces help  you gain that visibility.
 

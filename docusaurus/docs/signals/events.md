@@ -28,7 +28,7 @@ Consider a timechart of application performance, such as time to place an order 
 :::
 
 :::info
-	Visualize events along with other important metric data so you can [correlate events](../signals/metrics/#correlate-with-operational-metric-data).
+	Visualize events along with other important metric data so you can [correlate events](./metrics.md#correlate-with-operational-metric-data).
 :::
 
 ## Taking action on events
@@ -52,7 +52,7 @@ As you do this, consider integrating this with your incident management/ticketin
 :::
 For example, consider a server restart every time it becomes unresponsive. The restart allows the system to continue functioning, but what is causing the unresponsiveness. How often this happens, and if there is a pattern (for example that matches with report generation, or high users, or system backups), will determine the priority and resources you put into understanding and fixing the root cause.
 :::info
-	Consider delivery of *every* event related to your [key performance indicators](../signals/metrics/#know-your-key-performance-indicatorskpis-and-measure-them) into a message bus for consumption. And note that some observability solutions do this transparently without explicit configuration requirements.
+	Consider delivery of *every* event related to your [key performance indicators](./metrics.md#know-your-key-performance-indicatorskpis-and-measure-them) into a message bus for consumption. And note that some observability solutions do this transparently without explicit configuration requirements.
 :::
 ## Getting your events into your Observability platform
 Once you have identified the events which are important to you, you'll need to consider how best to get them into your Observability platform. 

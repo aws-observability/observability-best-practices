@@ -2,7 +2,7 @@
 
 Logs are a series of messages that are sent by an application, or an appliance, that are represented by one or more lines of details about an event, or sometimes about the health of that application. Typically, logs are delivered to a file, though sometimes they are sent to a collector that performs analysis and aggregation. There are many full-featured log aggregators, frameworks, and products that aim to make the task of generating, ingesting, and managing log data at any volume – from megabytes per day to terabytes per hour.
 
-Logs are emitted by a single application at a time and usually pertain to the scope of that *one application* - though developers are free to have logs be as complex and nuanced as they desire. For our purposes we consider logs to be a fundamentally different signal from [traces](../signals/traces), which are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters etc.
+Logs are emitted by a single application at a time and usually pertain to the scope of that *one application* - though developers are free to have logs be as complex and nuanced as they desire. For our purposes we consider logs to be a fundamentally different signal from [traces](./traces.md), which are composed of events from more than one application or a service, and with context about the connection between services such as response latency, service faults, request parameters etc.
 
 Data in logs can also be aggregate over a period of time. For example, they may be statistical (e.g. number of requests served over the previous minute). They can be structured, free-form, verbose, and in any written language. 
 
@@ -92,7 +92,7 @@ Wherever possible, reduce the volume of logs as close to the source as possible.
 * Log systems, and networks, need not be placed under undue stress and traffic.
 
 :::info
-	Filter your log close to the source to keep your costs down, decrease risk of data exposure, and focus each component on the [things that matter](../guides/#monitor-what-matters).
+	Filter your log close to the source to keep your costs down, decrease risk of data exposure, and focus each component on the [things that matter](../guides/index.md#monitor-what-matters).
 :::
 
 :::tip
@@ -113,7 +113,7 @@ A common pattern that administrators pursue is copying all of their logging data
 :::
 ## Collect metric data from your logs
 
-Your logs contain [metrics](../signals/metrics/) that are just waiting to be collected! Even ISV solutions or applications that you have not written yourself will emit valuable data into their logs that you can extract meaningful insights into overall workload health from. Common examples include:
+Your logs contain [metrics](./metrics.md) that are just waiting to be collected! Even ISV solutions or applications that you have not written yourself will emit valuable data into their logs that you can extract meaningful insights into overall workload health from. Common examples include:
 
 * Slow query time from databases
 * Uptime from web servers
@@ -129,7 +129,7 @@ Your logs contain [metrics](../signals/metrics/) that are just waiting to be col
 Where possible, applications shouould log to `stdout` rather than to a fixed location such as a file or socket. This enables log agents to collect and route your log events based on rules that make sense for your own observability solution. While not possible for all applications, this is the best practice for containerized workloads.
 
 :::note
-	While applications should be generic and simple in their logging practices, remaining loosely coupled from logging solutions, the transmission of log data does still require a [log collector](../tools/logs/) to send data from `stdout` to a file. The important concept is to avoid application and business logic being dependant on your logging infrastructure - in other words, you should work to separate your concerns.
+	While applications should be generic and simple in their logging practices, remaining loosely coupled from logging solutions, the transmission of log data does still require a [log collector](../tools/logs/index.md) to send data from `stdout` to a file. The important concept is to avoid application and business logic being dependant on your logging infrastructure - in other words, you should work to separate your concerns.
 :::
 
 :::info

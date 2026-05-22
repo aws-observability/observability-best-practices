@@ -98,7 +98,7 @@ Developers use observability for several key purposes:
 
 ## Profiling and performance optimization
 - **Real User Monitoring(RUM):**
-    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/) or New Relic to monitor real user interactions and identify performance bottlenecks. Focus on key conversion points and measure both technical performance as well as business outcomes (conversion rates, abandonment points).
+    - Use tools like [AWS X-Ray](https://aws.amazon.com/xray/), [Middleware](https://middleware.io/) or New Relic to monitor real user interactions and identify performance bottlenecks. Focus on key conversion points and measure both technical performance as well as business outcomes (conversion rates, abandonment points).
     - Prioritize monitoring of critical user paths like checkout flows and registration processes. 
     - Establish baseline performance and user behavior to quickly be able to identify anomalies and trends that may impact business outcomes
 - **Synthetics:**

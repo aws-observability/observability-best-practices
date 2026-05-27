@@ -1,0 +1,62 @@
+---
+sidebar_position: 1
+title: Automating CloudTrail Log Management using Amazon Athena
+description: A guide to automating AWS CloudTrail log analysis using partitioned Athena tables for optimized performance, cost reduction, and enhanced security investigations.
+---
+
+# Automating CloudTrail Log Management using Amazon Athena
+
+---
+
+AWS CloudTrail provides comprehensive monitoring and logging of account activity across your AWS infrastructure, capturing API calls and events for auditing, compliance, and security investigations. However, as AWS environments scale, particularly in multi-account organizations, the volume of CloudTrail logs can grow significantly, leading to increased query times and costs when analyzing logs in Amazon Athena. To address this, we recommend automating the creation and management of partitioned Athena tables to optimize query performance and reduce costs. This best practice guide outlines how to implement an automated solution using AWS Lambda and Amazon Athena to partition CloudTrail logs by account, region, and date, enabling efficient log analysis for security, compliance, and operational use cases.
+
+## Configure Partitioned Athena Tables for CloudTrail Logs
+
+To optimize query performance and reduce costs, configure partitioned Athena tables for CloudTrail logs using an automated solution. This approach involves deploying two AWS Lambda functions to create and maintain account-specific and organization-wide Athena tables, partitioned by account ID, region, and date. Partitioning ensures that Athena scans only relevant data during queries, significantly improving query speed and reducing costs compared to scanning unpartitioned datasets. For example, when investigating suspicious activity for a specific AWS account within a defined time frame, Athena will scan only the relevant partitions, rather than the entire log dataset.
+
+- **[Deploy this CloudFormation Template for Automation](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**: Use this CloudFormation template to deploy the solution, which includes two Lambda functions, IAM roles, an AWS Glue database, and predefined Athena queries. The template automates the setup of partitioned tables, eliminating manual configuration and ensuring consistency across environments. GitHub solution can be found [here](https://github.com/aws-samples/sample-automation-cloudtrail-athena).
+- **[CloudTrail logs in Athena using partition projection](https://docs.aws.amazon.com/athena/latest/ug/create-cloudtrail-table-partition-projection.html)**: This solution uses Athena projection partitioning which, due to CloudTrail logs having a known structure with predefined partition schemes, allows you to reduce query runtime and automate partition management by using the Athena partition projection feature. Partition projection automatically adds new partitions as new data is added. This removes the need for you to manually add partitions by using `ALTER TABLE ADD PARTITION`.
+- **[Specify CloudTrail S3 Bucket and Prefix](https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning-s3bucketprefix.html)**: Provide the CloudTrail S3 bucket name and the appropriate prefix as inputs to the CloudFormation template. For organizational trails, the prefix follows the format `ORG_ID/AWSLogs/ORG_ID`, where `ORG_ID` is the AWS organization ID. For single-account trails, use the default prefix `AWSLogs/`. Verify the prefix using the AWS CLI command: `aws cloudtrail describe-trails --trail-name-list TRAIL_NAME`. If a custom prefix is used, append it to the default prefix (e.g., `PREFIX/ORG_ID/AWSLogs/ORG_ID`).
+- **[Set Up Athena Query Result Location](https://docs.aws.amazon.com/athena/latest/ug/query-results-specify-location.html)**: Ensure an S3 bucket is configured in Athena for query results. Specify this bucket (without the `s3://` prefix) in the CloudFormation template to store query outputs.
+
+:::tip Automate with GitHub Solution
+**Access [CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena)** on GitHub to deploy the CloudFormation template and streamline your CloudTrail log analysis with partitioned Athena tables.
+:::
+
+## Use Account-Specific and Consolidated Tables for Flexible Analysis
+
+The solution creates two types of Athena tables to support different use cases:
+
+- **Account-Specific Tables**: The `CloudTrailLogsPartitionedByAccount` Lambda function creates dedicated Athena tables (e.g., `trail_123456789012`) for each AWS account discovered in the CloudTrail S3 bucket. These tables are partitioned by region and date, enabling teams to analyze logs specific to their account without scanning irrelevant data. This is particularly useful for security teams investigating account-specific incidents or operational teams troubleshooting regional activities.
+- **Consolidated Organization-Wide Table**: The `CloudTrailLogsPartitionedAllAccounts` Lambda function maintains a unified table (e.g., `all_accounts_trail`) containing logs from all accounts in the AWS organization, partitioned by account ID, region, and date. This table supports cross-account investigations and organization-wide audits, allowing security administrators to query activity across the entire environment efficiently.
+
+Both functions use partition projection to automatically include new accounts and partitions as the organization evolves, eliminating the need for manual updates. Configure these tables to deliver logs to a centralized S3 bucket in a separate security boundary with restricted access to enforce strict security controls and segregation of duties.
+
+## Enable Daily Table Updates for Synchronization
+
+To ensure Athena tables remain synchronized with the AWS organization’s structure, configure the Lambda functions to execute daily updates. These updates detect new accounts and create corresponding partitions, ensuring that logs from newly added accounts or regions are included in the Athena tables. This automation reduces administrative overhead and ensures comprehensive log coverage, supporting compliance requirements such as FedRAMP or PCI-DSS that mandate continuous monitoring of account activity.
+
+## Leverage Predefined Queries for Common Use Cases
+
+**[Include predefined Athena queries in the solution to address common security and operational scenarios](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**. For example, the “Find most frequent console users” query analyzes AWS console login frequency by user, helping identify potential unauthorized access. These queries serve as templates for custom queries, allowing teams to tailor investigations to specific needs. Store predefined queries in the Athena console’s Saved Queries section for easy access and execution.
+
+:::note Access Saved Security Queries
+**Explore [AWS CloudTrail Athena Demo Queries](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)** on GitHub to use pre-built Athena queries for common security scenarios like detecting unauthorized console access.
+:::
+
+## Optimize Costs with Partitioning and Monitoring
+
+Partitioning CloudTrail logs reduces the amount of data scanned by Athena, directly lowering query costs. Additionally, implement the following cost management practices:
+
+- **Monitor Lambda Function Costs**: The solution uses two Lambda functions, each invoked once daily. Monitor their runtime to estimate costs using the AWS Lambda pricing page. Adjust invocation frequency if needed to balance cost and update requirements.
+- **Track Athena Query Costs**: Athena charges based on the amount of data scanned per query. Partitioning minimizes scanned data, but monitor query costs using the Amazon Athena pricing page. Use AWS Budgets to set cost thresholds and alerts for CloudTrail and Athena spending.
+- **Use AWS Cost Anomaly Detection**: Configure AWS Cost Anomaly Detection to monitor CloudTrail and Athena spending. This service uses machine learning to detect unexpected cost spikes, enabling proactive cost management.
+
+## Clean Up Resources to Avoid Unnecessary Costs
+
+To prevent ongoing charges, delete the CloudFormation stack when the solution is no longer needed. This removes the Lambda functions, IAM roles, Glue database, and Athena tables, ensuring no residual costs are incurred. Regularly review AWS Budgets and Cost Anomaly Detection reports to identify and address any unexpected expenses related to the solution.
+
+## Conclusion
+
+Automating partitioned Athena tables for CloudTrail logs optimizes query performance, reduces costs, and enhances security and compliance investigations. By deploying account-specific and organization-wide tables, enabling daily updates, and securing the S3 bucket, this solution provides a scalable and efficient approach to CloudTrail log analysis. Integrating with CloudWatch Logs and leveraging predefined queries further streamlines investigations, while cost management practices ensure affordability. Implement this solution to achieve faster, cost-effective, and secure analysis of CloudTrail logs, supporting governance, compliance, and operational excellence in your AWS environment.
+

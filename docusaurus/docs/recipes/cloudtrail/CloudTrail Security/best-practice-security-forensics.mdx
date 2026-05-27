@@ -1,0 +1,127 @@
+---
+sidebar_position: 2
+title: Best Practices for Security Forensics
+---
+
+# Best Practices for Security Forensics
+
+Security forensics and incident response are vital cybersecurity practices for identifying, investigating, and mitigating IT security incidents. Forensics systematically collects and analyzes digital evidence, like logs and system artifacts, to uncover details of a breach. Incident response focuses on detecting, containing, and remediating incidents to minimize damage and prevent recurrence. Together, they help organizations understand breaches, attribute actions, and ensure compliance with regulations. Implementing CloudTrail best practices enhances logging, analysis, and timely remediation for effective security forensics and incident response.
+
+
+:::tip Strengthen Your AWS Security Services.
+To strengthen your AWS security services, enhance your implementation strategy, and effectively protect your valuable cloud resources, 
+**explore the latest [AWS Security Services Best Practices](https://aws.github.io/aws-security-services-best-practices/)**. 
+Learn how to validate your security configurations, implement proven techniques, and adopt community-contributed best practices for a robust security posture.
+:::
+
+:::tip Strengthen Your CloudTrail Security
+To enhance your AWS CloudTrail setup and protect activity logs during incident investigations, **explore the latest [AWS CloudTrail Security Best Practices](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html)**. Learn how to secure event data stores, enable encryption, and restrict access for a robust security posture.
+:::
+
+## Comprehensive Logging Configuration
+
+### Enable Comprehensive Logging Across All Regions and Accounts
+
+Configure CloudTrail to log management, data, and network activity events in all AWS Regions and accounts within your organization. Use multi-Region trails or organizational trails to capture all API activities, including global service events (e.g., IAM, Route 53).
+
+**Benefits**: Ensures no events are missed, enabling detection of unauthorized actions in unused regions or accounts.
+
+**Example**: Unexpected activity in a dormant region may indicate attacker reconnaissance.
+
+### Use Advanced Event Selectors to Focus on High-Risk Data Events
+
+Configure advanced event selectors to log high-risk data events, such as S3 DeleteObject or Lambda InvokeFunction calls, while excluding high-volume, low-risk events to reduce costs.
+
+**Benefits**: Focuses forensic analysis on critical activities while controlling costs.
+
+**Example**: Use selectors to log only DeleteObject events for specific S3 buckets containing sensitive data, as shown in the query:
+```sql
+SELECT * FROM <event-data-store-ID> 
+WHERE eventName = 'DeleteObject' 
+AND resources.ARN LIKE 'arn:aws:s3:::sensitive-bucket%'
+```
+
+## Log Analysis and Querying
+
+### Use CloudTrail Lake for Advanced Querying
+
+Leverage CloudTrail Lake to run SQL-based queries on event data stores, enabling rapid analysis of large log volumes.
+
+**Benefits**: Enables efficient filtering of events by fields like eventName, userIdentity.arn, or sourceIPAddress to identify malicious activities.
+
+**Example Query**:
+```sql
+SELECT eventTime, userIdentity.arn, eventName 
+FROM <event-data-store-ID> 
+WHERE eventName = 'CreateAccessKey'
+```
+
+**Best Practice**: Store events in CloudTrail Lake for longer than the default 90 days to support extended investigations.
+
+### Integrate with Amazon Athena for Efficient Log Analysis
+
+Use Amazon Athena to query CloudTrail logs stored in S3, leveraging partitioned tables to reduce query costs and improve performance. 
+:::tip Automate CloudTrail Analysis
+**Explore [AWS CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena)** on GitHub to streamline incident investigations with pre-built queries and automation for CloudTrail and Athena integration.
+:::
+
+**Benefits**: Enables targeted queries on specific accounts, regions, or times periods.
+
+**Example Query**:
+```sql
+SELECT * FROM trail_123456789012 
+WHERE eventName = 'DeleteObject' 
+AND eventTime > '2025-05-01'
+```
+
+**Implementation**: Create account-specific and organization-wide tables partitioned by account, region, and date.
+
+:::note Access Saved Security Queries
+**Enhance your incident investigations** with pre-built Athena queries for AWS CloudTrail. **[Explore saved security incident queries](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)** on GitHub to streamline analysis of CloudTrail logs in Athena tables.
+:::
+
+
+
+## Monitoring and Detection
+
+### Enable CloudTrail Insights for Anomaly Detection
+
+Activate CloudTrail Insights to detect unusual API activity, such as spikes in CreateUser or AssumeRole calls, which may indicate compromise.
+
+**Configuration**: Configure Insights to deliver events to an S3 bucket or CloudTrail Lake event data store, and integrate with Amazon EventBridge to trigger alerts or Lambda functions for automated responses.
+
+**Example**: An Insights event for excessive GetCallerIdentity calls could trigger an email notification to the security team.
+
+### Monitor and Alert on Suspicious Activity in Real Time
+
+:::tip Stream CloudTrail Events to CloudWatch
+**Integrate AWS CloudTrail with Amazon CloudWatch Logs** for near real-time monitoring of security events. **[Learn how to configure event streaming in our documentation](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)**.
+:::
+
+**Implementation**: Use CloudWatch Logs Insights to query logs and set up alarms for high-risk events, such as Root logins or failed authentication attempts.
+
+**Example CloudWatch alarm using metric filters**: Create an alarm to notify the security team when:
+```
+{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }
+```
+
+:::tip Monitor IAM Policy Changes
+**Set up CloudWatch alarms for AWS CloudTrail** to detect IAM policy changes. [Learn how in the AWS documentation](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html#cloudwatch-alarms-for-cloudtrail-iam-policy-changes).
+:::
+
+
+## Log Security and Integrity
+
+### Secure CloudTrail Logs with Robust Controls
+
+Protect CloudTrail logs to ensure their integrity and availability for forensic analysis:
+
+1. **Centralized Storage**: Store logs in a centralized S3 bucket in a separate AWS account with restricted access to prevent unauthorized modifications.
+
+2. **Deletion Protection**: Enable MFA-delete or S3 Object Lock and versioning on the S3 bucket to prevent accidental or malicious deletion of logs.
+
+3. **Encryption**: Encrypt logs at rest using AWS KMS-managed keys (SSE-KMS) to protect sensitive data. Use Amazon S3 Bucket Keys to reduce KMS request costs.
+
+4. **Integrity Validation**: Enable log file integrity validation using SHA-256 hashing and RSA signing to detect tampering or deletion, ensuring logs are reliable for forensic investigations.
+
+

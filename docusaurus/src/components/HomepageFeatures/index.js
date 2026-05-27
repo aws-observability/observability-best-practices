@@ -109,11 +109,11 @@ const FeatureList = [
     description: (
       <>
         <Translate id="featureList.cloudOps.description">
-          Learn the AWS Cloud Operations Best Practices.
+          AWS Cloud Operations best practices for governance, compliance, and operational excellence.
         </Translate>
       </>
     ),
-    link: 'https://aws-samples.github.io/cloud-operations-best-practices/',
+    link: '/guides/cloudtrail/',
   },
 ];
 

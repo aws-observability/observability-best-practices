@@ -1,0 +1,269 @@
+---
+sidebar_position: 3
+---
+
+# EventBridge integration with JITNA
+
+When using just-in-time node access (JITNA), there are three types of events emitted to [EventBridge](https://aws.amazon.com/eventbridge/) when session access request are created that require manual approval:
+
+1. Requester Access Request Status Update
+1. Approver Access Request Status Update
+1. JITNA Access Request Failed
+
+:::info
+Events are not emitted for access requests that are automatically approved based on your auto-approval policy.
+:::
+
+## Example event details
+
+### Requester access request event
+
+Below is an example of the event details for the `Requester Access Request Status Update` event.
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="status"
+    defaultValue="pending"
+    values={[
+        {label: 'Pending Approval', value: 'pending'},
+        {label: 'Approved', value: 'approved'},
+    ]}>
+<TabItem value="pending">
+
+```json
+{
+    "version": "0",
+    "id": "6cfc3d6d-fd93-29e2-e96c-909a080ce519",
+    "detail-type": "Requester Access Request Status Update",
+    "source": "aws.ssm",
+    "account": "123456789012",
+    "time": "2025-04-10T20:19:32Z",
+    "region": "us-east-2",
+    "resources": ["arn:aws:ssm:us-east-2:123456789012:automation-execution/0aa5a695-4685-449f-90cc-49d24139dbe9"],
+    "detail": {
+        "ExecutionId": "0aa5a695-4685-449f-90cc-49d24139dbe9",
+        "OpsItemId": "oi-f57e817742bd",
+        "StartTime": "Apr 10, 2025, 8:19:30 PM",
+        "TargetResourceArn": "arn:aws:ec2:us-east-2:123456789012:instance/i-0b3952fba006f5f0d",
+        "Title": "Access Request - 2025-04-10 20:19 UTC",
+        "Requester": "e1fbc510-8081-70c2-448f-123456789012",
+        "AccessRequestStatus": "PendingApproval"
+    }
+}
+```
+
+</TabItem>
+<TabItem value="approved">
+
+```json
+{
+    "version": "0",
+    "id": "3d3b64bc-3903-ec60-7101-78e9befbbdac",
+    "detail-type": "Requester Access Request Status Update",
+    "source": "aws.ssm",
+    "account": "123456789012",
+    "time": "2025-04-10T20:40:02Z",
+    "region": "us-east-2",
+    "resources": ["arn:aws:ssm:us-east-2:123456789012:automation-execution/0aa5a695-4685-449f-90cc-49d24139dbe9"],
+    "detail": {
+        "ExecutionId": "0aa5a695-4685-449f-90cc-49d24139dbe9",
+        "OpsItemId": "oi-f57e817742bd",
+        "StartTime": "Apr 10, 2025, 8:40:00 PM",
+        "TargetResourceArn": "arn:aws:ec2:us-east-2:123456789012:instance/i-0b3952fba006f5f0d",
+        "Title": "Access Request - 2025-04-10 20:19 UTC",
+        "Requester": "e1fbc510-8081-70c2-448f-123456789012",
+        "AccessRequestStatus": "Approved"
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### Approver access request event
+
+Below is an example of the event details for the `Approver Access Request Status Update` event.
+
+<Tabs
+    groupId="status"
+    defaultValue="pending"
+    values={[
+        {label: 'Pending Approval', value: 'pending'},
+        {label: 'Approved', value: 'approved'},
+    ]}>
+<TabItem value="pending">
+
+```json
+{
+    "version": "0",
+    "id": "5d6ee943-9c8f-62aa-ee19-84391b0dc60a",
+    "detail-type": "Approver Access Request Status Update",
+    "source": "aws.ssm",
+    "account": "123456789012",
+    "time": "2025-04-10T20:19:30Z",
+    "region": "us-east-2",
+    "resources": ["arn:aws:ssm:us-east-2:123456789012:automation-execution/0aa5a695-4685-449f-90cc-49d24139dbe9"],
+    "detail": {
+        "ExecutionId": "0aa5a695-4685-449f-90cc-49d24139dbe9",
+        "OpsItemId": "oi-f57e817742bd",
+        "StartTime": "Apr 10, 2025, 8:19:29 PM",
+        "Requester": "e1fbc510-8081-70c2-448f-123456789012",
+        "Title": "Access Request - 2025-04-10 20:19 UTC",
+        "TargetResourceArn": "arn:aws:ec2:us-east-2:123456789012:instance/i-0b3952fba006f5f0d",
+        "AccessRequestApprovalLevelStatus": "PendingApproval",
+        "StepName": "ManualApproval",
+        "RequestReason": "Requesting access to node - production",
+        "Approvers": ["816b5550-f031-70c9-4d41-123456789012", "d1db5560-10e1-7090-5614-123456789012"]
+    }
+}
+```
+
+</TabItem>
+<TabItem value="approved">
+
+```json
+{
+    "version": "0",
+    "id": "92833908-12b7-142f-d434-84995819239d",
+    "detail-type": "Approver Access Request Status Update",
+    "source": "aws.ssm",
+    "account": "123456789012",
+    "time": "2025-04-10T20:40:00Z",
+    "region": "us-east-2",
+    "resources": ["arn:aws:ssm:us-east-2:123456789012:automation-execution/0aa5a695-4685-449f-90cc-49d24139dbe9"],
+    "detail": {
+        "ExecutionId": "0aa5a695-4685-449f-90cc-49d24139dbe9",
+        "OpsItemId": "oi-f57e817742bd",
+        "StartTime": "Apr 10, 2025, 8:39:58 PM",
+        "Requester": "e1fbc510-8081-70c2-448f-123456789012",
+        "Title": "Access Request - 2025-04-10 20:19 UTC",
+        "TargetResourceArn": "arn:aws:ec2:us-east-2:123456789012:instance/i-0b3952fba006f5f0d",
+        "AccessRequestApprovalLevelStatus": "Approved",
+        "StepName": "ManualApproval",
+        "RequestReason": "Requesting access to node - production",
+        "Approvers": ["816b5550-f031-70c9-4d41-123456789012", "d1db5560-10e1-7090-5614-123456789012"]
+    }
+}
+```
+
+</TabItem>
+</Tabs>
+
+### JITNA Access Request Failed
+
+```json
+{
+    "version": "0",
+    "id": "aa09fe20-2b39-c973-42a0-edfa7eb85200",
+    "detail-type": "JITNA Access Request Failed",
+    "source": "aws.ssm",
+    "account": "123456789012",
+    "time": "2025-04-11T14:14:02Z",
+    "region": "us-east-2",
+    "resources": ["arn:aws:ssm:us-east-2:123456789012:opsitem/oi-fdac6036584a"],
+    "detail": {
+        "ApplicablePolicies": ["Approval-Policy-Production-Nodes", "prod"],
+        "TargetResourceArn": "arn:aws:ec2:us-east-2:123456789012:instance/i-05d8934df93bb43db",
+        "OpsItemId": "oi-fdac6036584a",
+        "CreatedDate": "Fri Apr 11 14:13:58 UTC 2025",
+        "Requester": "e1fbc510-8081-70c2-448f-123456789012"
+    }
+}
+```
+
+### Example OpsItem details
+
+Just-in-time node access requests are stored as a [Systems Manager OpsItem resource](https://docs.aws.amazon.com/systems-manager/latest/APIReference/API_OpsItem.html). Below is an example of the details for an OpsItem that is for a session access request that was automatically approved by an auto-approval policy.
+
+```json
+{
+    "OpsItem": {
+        "CreatedBy": "arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_jitna-operator_434098e0f9f1965d/bob@example.com",
+        "OpsItemType": "/aws/accessrequest",
+        "CreatedTime": "2025-05-02T14:57:14.118000+00:00",
+        "Description": "OpsItem created for AccessRequest J8eDlHbgoAMEebw=.",
+        "LastModifiedBy": "arn:aws:sts::123456789012:assumed-role/AWSServiceRoleForSystemsManagerJustInTimeAccess/JustInTimeAccessService",
+        "LastModifiedTime": "2025-05-02T14:57:16.160000+00:00",
+        "Notifications": [],
+        "RelatedOpsItems": [],
+        "Status": "Approved",
+        "OpsItemId": "oi-a71f4d891d72",
+        "Version": "1746197836160",
+        "Title": "Access Request - 2025-05-02 14:57 UTC",
+        "Source": "aws.ssm",
+        "OperationalData": {
+            "/aws/accessrequest/approvaldetails": {
+                "Value": "Requesting access to node",
+                "Type": "SearchableString"
+            },
+            "/aws/accessrequest/context": {
+                "Value": "{\"targets\":{\"instanceId\":\"arn:aws:ec2:us-east-2:123456789012:instance/i-02999bd501754105a\"},\"accessTokenRole\":\"SSM-JustInTimeAccessTokenRole\"}",
+                "Type": "SearchableString"
+            },
+            "/aws/accessrequest/accessduration": {
+                "Value": "PT3600S",
+                "Type": "SearchableString"
+            },
+            "/aws/accessrequest/endtime": {
+                "Value": "2025-05-02 15:57:16 UTC",
+                "Type": "SearchableString"
+            },
+            "/aws/accessrequest": {
+                "Value": "{\"requester\":{\"isReplica\":\"false\",\"sourceOpsItemId\":\"oi-a71f4d891d72\",\"sourceAccountId\":\"\",\"id\":\"\",\"sourceRegion\":\"\",\"arn\":\"arn:aws:sts::123456789012:assumed-role/AWSReservedSSO_jitna-operator_434098e0f9f1965d/bob@example.com\"},\"approvalPolicy\":\"SSM-JustInTimeAccessAutoApprovalPolicy\",\"approvalPolicyVersion\":\"1\",\"automationExecutionId\":\"\"}",
+                "Type": "SearchableString"
+            },
+            "/aws/accessrequest/starttime": {
+                "Value": "2025-05-02 14:57:16 UTC",
+                "Type": "SearchableString"
+            }
+        },
+        "OpsItemArn": "arn:aws:ssm:us-east-2:123456789012:opsitem/oi-a71f4d891d72"
+    }
+}
+```
+
+## EventBridge rule patterns
+
+<Tabs
+    defaultValue="requester"
+    values={[
+        {label: 'Requester event', value: 'requester'},
+        {label: 'Approver event', value: 'approver'},
+        {label: 'Failed event', value: 'failed'},
+    ]}>
+<TabItem value="requester">
+
+```json
+{
+  "source": ["aws.ssm"],
+  "detail-type": ["Requester Access Request Status Update"]
+}
+```
+
+</TabItem>
+<TabItem value="approver">
+
+```json
+{
+  "source": ["aws.ssm"],
+  "detail-type": ["Approver Access Request Status Update"],
+  "detail": {
+    "Approvers": ["AccessApprover1"]
+  }
+}
+```
+
+</TabItem>
+<TabItem value="failed">
+
+```json
+{
+  "source": ["aws.ssm"],
+  "detail-type": ["JITNA Access Request Failed"]
+}
+```
+
+</TabItem>
+</Tabs>

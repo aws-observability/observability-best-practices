@@ -144,6 +144,12 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'ai/index',
+            position: 'left',
+            label: 'AI',
+          },
+          {
+            type: 'doc',
             docId: 'patterns/Tracing/xrayec2',
             position: 'left',
             label: 'Patterns',

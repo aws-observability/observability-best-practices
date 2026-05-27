@@ -110,7 +110,7 @@ Distributed flow that answers "how did the request move through my system?"
 
 Amazon CloudWatch provides end-to-end observability for GenAI through two complementary data pipelines. They serve different purposes, capture different data, and are enabled differently. Most production setups need both.
 
-![GenAI Telemetry Pipelines](../../images/GenAI/genai-telemetry-pipelines.png)
+![GenAI Telemetry Pipelines](../../../images/GenAI/genai-telemetry-pipelines.png)
 
 ### Pipeline 1: Bedrock Model Invocation Logging
 

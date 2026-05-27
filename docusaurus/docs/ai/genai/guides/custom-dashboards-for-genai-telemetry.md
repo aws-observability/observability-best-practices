@@ -32,7 +32,7 @@ For an overview of the underlying data pipelines and when to enable each, see [G
 
 DevOps teams need to answer: *is my GenAI workload healthy, and where are the bottlenecks?* These queries focus on invocation health, agent workflow reliability, and performance bottlenecks.
 
-![GenAI DevOps Dashboard](../../images/GenAI/genai-devops-dashboard.png)
+![GenAI DevOps Dashboard](../../../images/GenAI/genai-devops-dashboard.png)
 
 ### Model Invocation Health
 
@@ -239,7 +239,7 @@ fields name as spanName,
 
 FinOps teams need to answer: *where is our GenAI spend going, and how do we optimize it?* These queries compute cost from token usage, attribute spend to teams and roles, and surface optimization opportunities like prompt caching.
 
-![GenAI FinOps Dashboard](../../images/GenAI/genai-finops-dashboard.png)
+![GenAI FinOps Dashboard](../../../images/GenAI/genai-finops-dashboard.png)
 
 All FinOps queries use a cost calculation pattern based on per-token pricing. The `strcontains` multiplication pattern maps each model to its per-token rate. Update the pricing values when Bedrock pricing changes.
 

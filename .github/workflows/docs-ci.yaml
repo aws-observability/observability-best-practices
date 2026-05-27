@@ -1,28 +1,28 @@
 name: ci
 on:
-  push:
-    branches:
-      - master
-      - main
+    push:
+      branches:
+        - master
+        - main
 permissions:
-  contents: write
+    contents: write
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          cach: yarn
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile --non-interactive
-      - name: Build
-        run: |
-          cd docusaurus
-          yarn install
-          yarn build
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docusaurus/build
+    deploy:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-node@v4
+          with:
+            node-version: 20
+            cache: npm
+            cache-dependency-path: docusaurus/package-lock.json
+        - name: Install dependencies
+          run: npm ci
+          working-directory: docusaurus
+        - name: Build
+          run: npm run build
+          working-directory: docusaurus
+        - uses: peaceiris/actions-gh-pages@v4
+          with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_dir: ./docusaurus/build

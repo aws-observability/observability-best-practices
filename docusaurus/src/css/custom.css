@@ -68,7 +68,35 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   background: var(--ifm-color-emphasis-100);
 }
-/* Navigation bar menu line break prevention + spacing adjustment */
+/* ===== Responsive Navigation Bar Adjustment (Korean i18n) =====*/
+/* Prevent menu item line breaks */
 .navbar__link {
   white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+/* Prioritize the right area (language selection + GitHub) to always be visible */
+.navbar__items--right {
+  flex-shrink: 0;
+}
+
+/* 왼쪽 메뉴 영역은 공간 부족 시 숨김 처리 */
+.navbar__items:not(.navbar__items--right) {
+  flex-shrink: 1;
+  overflow: hidden;
+}
+
+/* 중간 크기 화면에서 메뉴 간격 축소 */
+@media (max-width: 1200px) {
+  .navbar__link {
+    font-size: 0.8rem;
+    padding: 0.4rem 0.5rem;
+  }
+}
+
+/* 더 줄어들면 왼쪽 메뉴 숨기고 햄버거 메뉴로 전환되도록 */
+@media (max-width: 996px) {
+  .navbar__items:not(.navbar__items--right) {
+    display: none;
+  }
 }

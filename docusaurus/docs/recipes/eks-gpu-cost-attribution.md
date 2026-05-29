@@ -482,6 +482,98 @@ scalar(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100)
   - plug AMP into Grafana and chart `allocated`, `effective`, and `waste` over time per BU
 
 ---
+
+## Cleanup
+
+When you're done with the PoC, delete all resources in reverse dependency order to avoid orphaned infrastructure and ongoing charges.
+
+### 1) Delete BU workloads
+
+```bash
+kubectl delete namespace bu-a bu-b bu-c
+```
+
+### 2) Delete OTel collector
+
+```bash
+kubectl delete namespace observability
+```
+
+### 3) Uninstall kube-state-metrics
+
+```bash
+helm uninstall kube-state-metrics -n kube-system
+```
+
+### 4) Uninstall NVIDIA GPU Operator
+
+```bash
+helm uninstall gpu-operator -n gpu-operator
+kubectl delete namespace gpu-operator
+```
+
+### 5) Delete Amazon Managed Grafana workspace
+
+```bash
+aws grafana delete-workspace \
+  --workspace-id "$AMG_WORKSPACE_ID" \
+  --region "$AWS_REGION"
+```
+
+### 6) Detach AMG IAM policy
+
+```bash
+ROLE_NAME="$(basename "$AMG_ROLE_ARN")"
+aws iam detach-role-policy \
+  --role-name "$ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess
+```
+
+### 7) Delete AMP workspace
+
+```bash
+aws amp delete-workspace \
+  --workspace-id "$AMP_WORKSPACE_ID" \
+  --region "$AWS_REGION"
+```
+
+### 8) Delete IRSA service accounts
+
+```bash
+eksctl delete iamserviceaccount \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name amp-ingest --namespace observability
+
+eksctl delete iamserviceaccount \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name amp-query --namespace observability
+```
+
+### 9) Delete nodegroups
+
+```bash
+eksctl delete nodegroup \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name gpu-ng-ubuntu
+
+eksctl delete nodegroup \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name system-ng
+```
+
+### 10) Delete the EKS cluster
+
+```bash
+eksctl delete cluster \
+  --name "$CLUSTER_NAME" \
+  --region "$AWS_REGION"
+```
+
+:::tip
+`eksctl delete cluster` also removes the OIDC provider and any remaining nodegroups if they weren't deleted individually. However, deleting nodegroups first ensures a cleaner teardown with fewer retries on CloudFormation stack deletion.
+:::
+
+---
 ###### @author: Siva Guruvareddiar
 
 

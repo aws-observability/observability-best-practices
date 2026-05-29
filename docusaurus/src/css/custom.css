@@ -68,4 +68,7 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   background: var(--ifm-color-emphasis-100);
 }
-
+/* Navigation bar menu line break prevention + spacing adjustment */
+.navbar__link {
+  white-space: nowrap;
+}

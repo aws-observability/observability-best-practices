@@ -1,0 +1,23 @@
+{
+  "featureList.guides.description": {
+    "message": "가이드는 처음부터 쉽게 따라하며 구현할 수 있도록 설계되어, 클라우드 모니터링을 빠르게 구축할 수 있습니다."
+  },
+  "featureList.signals.description": {
+    "message": "주요 메트릭, 로그, 성능 지표를 통해 AWS 환경에 대한 포괄적인 인사이트를 확보할 수 있습니다."
+  },
+  "featureList.tools.description": {
+    "message": "효율적인 데이터 수집, 분석, 시각화를 위한 전용 솔루션으로 AWS 모니터링을 간소화합니다."
+  },
+  "featureList.recipes.description": {
+    "message": "검증된 AWS 옵저버빌리티 패턴을 구현하여 일반적인 모니터링 및 문제 해결 과제를 신속하게 해결합니다."
+  },
+  "featureList.faqs.description": {
+    "message": "AWS 옵저버빌리티에 관한 자주 묻는 질문에 대한 답변을 통해 핵심 개념과 모범 사례를 확인할 수 있습니다."
+  },
+  "featureList.patterns.description": {
+    "message": "포괄적이고 이해하기 쉬운 교육 리소스를 통해 AWS 옵저버빌리티 구현을 단계별로 학습할 수 있습니다."
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS 클라우드 운영 모범 사례를 학습할 수 있습니다."
+  }
+}

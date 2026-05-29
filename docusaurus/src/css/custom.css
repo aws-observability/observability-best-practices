@@ -79,3 +79,7 @@
 .navbar__items--right {
   flex-shrink: 0;
 }
+/* Site-wide Korean word-unit line breaks */
+body {
+  word-break: keep-all;
+}

@@ -22,7 +22,7 @@
 },
 "featureList.resources.description": {
   "message": "AWS 옵저버빌리티 관련 리소스를 확인할 수 있습니다."
-}
+},
   "featureList.cloudOps.description": {
     "message": "AWS 클라우드 운영 모범 사례를 학습할 수 있습니다."
   }

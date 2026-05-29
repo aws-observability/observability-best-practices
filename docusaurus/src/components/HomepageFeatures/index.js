@@ -84,7 +84,7 @@ const FeatureList = [
     Svg: require('@site/static/img/persona.svg').default,
     description: (
       <>
-        <Translate id="featureList.patterns.description">
+        <Translate id="featureList.persona.description">
           Persona specific best practices and recommendations for AWS observability.
         </Translate>
       </>
@@ -96,7 +96,7 @@ const FeatureList = [
     Svg: require('@site/static/img/resources.svg').default,
     description: (
       <>
-        <Translate id="featureList.patterns.description">
+        <Translate id="featureList.resources.description">
           Resources for AWS observability.
         </Translate>
       </>

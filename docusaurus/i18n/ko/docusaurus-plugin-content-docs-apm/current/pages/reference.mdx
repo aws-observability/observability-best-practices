@@ -1,0 +1,255 @@
+---
+title: 레퍼런스
+sidebar_label: 레퍼런스
+slug: /reference
+---
+
+# 레퍼런스
+
+## 서비스 한도 및 할당량
+
+CloudWatch Application Signals의 한도 및 할당량을 이해합니다.
+
+### 한도 및 할당량
+
+Application Signals는 CloudWatch와 AWS X-Ray에 의존합니다. 한도(수집, 쿼리 속도, 할당량)는 해당 서비스에 의해 관리되며 시간에 따라 변경될 수 있습니다. 현재 값은 공식 문서를 참조하세요.
+
+- **Application Signals:** [Application Signals 문서](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html)
+- **CloudWatch 할당량:** [CloudWatch 서비스 할당량](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html)
+- **AWS X-Ray 할당량:** [X-Ray API 스로틀링 및 한도](https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html)
+
+### CloudWatch 메트릭 보존 (일반 참조)
+
+CloudWatch는 메트릭 데이터를 다른 해상도로 보존합니다. 전체 보존 모델은 CloudWatch 문서를 참조하세요.
+
+- **1분 해상도:** 15일
+- **5분 해상도:** 63일
+- **1시간 해상도:** 15개월
+
+### 서비스 할당량
+
+#### Application Signals:
+
+- **계정당 서비스:** 1,000
+- **서비스당 오퍼레이션:** 100
+- **사용자 정의 메트릭:** 서비스당 30
+
+#### RUM:
+
+- **계정당 앱 모니터:** 20
+- **초당 이벤트:** 10,000
+- **이벤트 크기:** 64 KB
+
+#### Synthetics:
+
+- **계정당 Canary:** 100
+- **Canary 실행 시간:** 최대 15분
+- **Canary 크기:** 1 GB (압축 해제 시)
+
+## 용어집
+
+CloudWatch Application Signals의 주요 용어 및 개념입니다.
+
+### 핵심 개념
+
+#### Application Performance Monitoring (APM)
+
+소프트웨어 애플리케이션의 성능과 가용성을 모니터링하고 관리하는 방법입니다.
+
+#### Distributed Tracing (분산 트레이싱)
+
+분산 시스템을 통과하는 요청을 추적하는 방법으로, 여러 서비스에 걸친 요청의 경로와 성능을 이해할 수 있게 합니다.
+
+#### Service Map
+
+서비스 간의 연결과 상호작용을 보여주는 애플리케이션 아키텍처의 시각적 표현입니다.
+
+#### Span (스팬)
+
+트레이스 내의 단일 작업으로, 데이터베이스 쿼리나 API 호출과 같은 작업 단위를 나타냅니다.
+
+#### Trace (트레이스)
+
+애플리케이션을 통과하는 요청의 완전한 엔드투엔드 여정으로, 여러 스팬으로 구성됩니다.
+
+### 계측 용어
+
+#### Auto-Instrumentation (자동 계측)
+
+코드 변경 없이 애플리케이션에 Observability 코드를 자동으로 추가하는 것입니다.
+
+#### Manual Instrumentation (수동 계측)
+
+애플리케이션 소스 코드에 트레이싱 및 메트릭 코드를 명시적으로 추가하는 것입니다.
+
+#### OpenTelemetry
+
+계측을 위한 벤더 중립적 API를 제공하는 오픈소스 Observability 프레임워크입니다.
+
+#### Sampling (샘플링)
+
+Observability와 비용 및 성능 간의 균형을 맞추기 위해 어떤 요청을 트레이싱할지 선택하는 프로세스입니다.
+
+#### Context Propagation (컨텍스트 전파)
+
+트레이스 연속성을 유지하기 위해 서비스 간에 트레이스 컨텍스트를 전달하는 메커니즘입니다.
+
+### 메트릭 및 모니터링
+
+#### Golden Signals
+
+애플리케이션 상태를 모니터링하기 위한 4가지 핵심 메트릭: 지연 시간, 처리량, 오류율, 포화도입니다.
+
+#### Latency (지연 시간)
+
+요청이 처리되는 데 걸리는 시간으로, 일반적으로 백분위수(P50, P90, P99)로 측정됩니다.
+
+#### Throughput (처리량)
+
+요청이 처리되는 속도로, 보통 초당 요청 수로 측정됩니다.
+
+#### Error Rate (오류율)
+
+오류를 발생시키는 요청의 비율입니다.
+
+#### Saturation (포화도)
+
+시스템 리소스가 사용되는 정도입니다.
+
+#### Service Level Objective (SLO)
+
+서비스 제공자와 소비자 간에 합의된 서비스 품질의 목표 수준입니다.
+
+#### Service Level Indicator (SLI)
+
+지연 시간 또는 가용성과 같이 제공되는 서비스 수준의 측정 가능한 측면입니다.
+
+### RUM 및 Synthetics
+
+#### Real User Monitoring (RUM)
+
+프로덕션 환경에서 웹 애플리케이션과 실제 사용자의 상호작용을 모니터링하는 것입니다.
+
+#### Synthetic Monitoring
+
+시뮬레이션된 사용자 상호작용을 사용한 애플리케이션 자동화 테스트입니다.
+
+#### Canary
+
+애플리케이션에 대해 자동화된 테스트를 실행하는 합성 모니터링 스크립트입니다.
+
+#### Core Web Vitals
+
+웹에서의 사용자 경험을 측정하기 위한 Google의 메트릭: LCP, FID, CLS입니다.
+
+#### Largest Contentful Paint (LCP)
+
+가장 큰 콘텐츠 요소가 화면에 렌더링되는 데 걸리는 시간입니다.
+
+#### First Input Delay (FID)
+
+사용자가 페이지와 처음 상호작용한 시점부터 브라우저가 응답할 때까지의 시간입니다.
+
+#### Cumulative Layout Shift (CLS)
+
+예상치 못한 레이아웃 이동을 수량화하는 시각적 안정성의 측정치입니다.
+
+### AWS 관련 용어
+
+#### Application Signals
+
+APM, RUM, Synthetics를 결합한 AWS의 통합 Observability 솔루션입니다.
+
+#### X-Ray
+
+현재 Application Signals와 통합된 AWS의 분산 트레이싱 서비스입니다.
+
+#### CloudWatch
+
+메트릭, 로그, 트레이스를 수집하는 AWS의 모니터링 및 Observability 서비스입니다.
+
+#### ADOT (AWS Distro for OpenTelemetry)
+
+AWS 서비스에 최적화된 AWS의 OpenTelemetry 배포판입니다.
+
+## 지원되는 런타임 및 프레임워크
+
+Application Signals가 지원하는 프로그래밍 언어 및 프레임워크입니다.
+
+### 자동 계측 지원
+
+공식 호환성 및 런타임/버전 매트릭스는 [Supported systems](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html)를 참조하세요. 주요 내용:
+
+- **Java:** JVM 8/11/17/21/23 (프레임워크 지원은 ADOT/OpenTelemetry Java 계측을 따름)
+- **Python:** Python 3.9+ (프레임워크 지원은 ADOT/OpenTelemetry Python 계측을 따름)
+- **Node.js:** Node 14/16/18/20/22 (프레임워크 지원은 ADOT/OpenTelemetry JS 계측을 따름)
+- **.NET:** x86-64 또는 ARM64에서 지원; Linux x64/ARM64 및 Windows Server 2022 x64 (라이브러리 지원은 ADOT/OpenTelemetry .NET 계측을 따름)
+- **PHP/Ruby/Go:** OpenTelemetry zero-code/auto-instrumentation 경로를 통해 지원 (해당 언어에 대한 ADOT SDK 없음)
+
+#### 참고 사항 및 알려진 고려 사항
+
+- **Node.js ESM:** ESM 지원은 제한적입니다. 문서의 ESM 전용 설정을 따르지 않는 한 CommonJS를 선호하세요.
+- **Python:** 컨테이너화된 앱에서 `PYTHONPATH` 설정이 필요할 수 있습니다 (알려진 OTel autoinstrumentation 이슈).
+- **.NET:** ADOT .NET은 AWS SDK for .NET V4와 제한 사항이 있습니다. 완전한 지원을 위해 AWS SDK V3을 권장합니다.
+
+### 수동 계측
+
+모든 주요 프로그래밍 언어가 OpenTelemetry SDK를 통해 지원됩니다:
+
+- Java, Scala, Kotlin
+- Python, Ruby
+- JavaScript/TypeScript, Go
+- .NET (C#, F#, VB.NET)
+- PHP, Rust, C++
+
+## 구성 레퍼런스
+
+일반적인 구성 옵션 및 환경 변수입니다.
+
+### 환경 변수
+
+#### OpenTelemetry 구성:
+
+- `OTEL_SERVICE_NAME` - 서비스 이름
+- `OTEL_TRACES_EXPORTER` - 트레이스 exporter (otlp, jaeger, zipkin)
+- `OTEL_EXPORTER_OTLP_ENDPOINT` - OTLP 엔드포인트 URL
+- `OTEL_TRACES_SAMPLER` - 샘플링 전략
+- `OTEL_TRACES_SAMPLER_ARG` - 샘플링 매개변수
+
+#### AWS 관련 구성:
+
+- `AWS_REGION` - AWS 리전
+- `AWS_XRAY_DAEMON_ADDRESS` - X-Ray 데몬 주소
+- `OTEL_RESOURCE_ATTRIBUTES` - 서비스 속성 (Application Map에서 사용자 정의 그룹화에도 사용됨)
+
+### 샘플링 구성
+
+#### 샘플링 전략:
+
+- `always_on` - 모든 트레이스 샘플링
+- `always_off` - 트레이스 샘플링 안 함
+- `traceidratio` - 비율 기반 샘플링 (예: 10%의 경우 0.1)
+- `parentbased_always_on` - 부모 샘플링 결정 존중
+- `parentbased_traceidratio` - 부모 기반 비율 샘플링
+
+## 비용 최적화
+
+Observability 비용을 관리하기 위한 전략입니다.
+
+### 샘플링 전략
+
+- **프로덕션:** 5-10% 샘플링 비율
+- **개발:** 50-100% 샘플링 비율
+- **에러 트레이스:** 에러가 있는 트레이스는 항상 샘플링
+- **고가치 오퍼레이션:** 중요 경로에 대해 100% 샘플링
+
+### 데이터 보존 정책
+
+보존은 기반 텔레메트리 저장소(예: CloudWatch 메트릭/로그 및 AWS X-Ray 트레이스)에 의해 제어됩니다. 해당 서비스에서 보존 기간을 구성하고 문제 해결 및 규정 준수 요구 사항에 맞춰 조정하세요.
+
+### 리소스 최적화
+
+- **배치 내보내기:** 네트워크 오버헤드 감소
+- **압축:** 데이터 압축 활성화
+- **필터링:** 불필요한 스팬 및 속성 제거
+- **버퍼링:** 적절한 버퍼 크기 사용

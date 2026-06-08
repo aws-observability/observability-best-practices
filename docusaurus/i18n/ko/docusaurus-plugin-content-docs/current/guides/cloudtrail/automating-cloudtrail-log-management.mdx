@@ -1,0 +1,61 @@
+---
+sidebar_position: 1
+title: Amazon Athena를 사용한 CloudTrail 로그 관리 자동화
+description: 최적화된 성능, 비용 절감 및 향상된 보안 조사를 위해 파티션된 Athena 테이블을 사용하여 AWS CloudTrail 로그 분석을 자동화하는 가이드입니다.
+---
+
+# Amazon Athena를 사용한 CloudTrail 로그 관리 자동화
+
+---
+
+AWS CloudTrail은 AWS 인프라 전반에서 계정 활동의 포괄적인 모니터링 및 로깅을 제공하여 감사, 컴플라이언스 및 보안 조사를 위한 API 호출 및 이벤트를 캡처합니다. 그러나 AWS 환경이 확장되면, 특히 다중 계정 조직에서 CloudTrail 로그의 볼륨이 크게 증가하여 Amazon Athena에서 로그를 분석할 때 쿼리 시간과 비용이 증가할 수 있습니다. 이를 해결하기 위해 파티션된 Athena 테이블의 생성 및 관리를 자동화하여 쿼리 성능을 최적화하고 비용을 줄이는 것을 권장합니다. 이 모범 사례 가이드는 AWS Lambda와 Amazon Athena를 사용하여 CloudTrail 로그를 계정, 리전 및 날짜별로 파티션하는 자동화 솔루션을 구현하여 보안, 컴플라이언스 및 운영 사용 사례에 대한 효율적인 로그 분석을 가능하게 하는 방법을 설명합니다.
+
+## CloudTrail 로그를 위한 파티션된 Athena 테이블 구성
+
+쿼리 성능을 최적화하고 비용을 줄이려면 자동화 솔루션을 사용하여 CloudTrail 로그에 대한 파티션된 Athena 테이블을 구성합니다. 이 접근 방식은 두 개의 AWS Lambda 함수를 배포하여 계정 ID, 리전 및 날짜별로 파티션된 계정별 및 조직 전체 Athena 테이블을 생성하고 유지하는 것을 포함합니다. 파티셔닝을 통해 Athena는 쿼리 중에 관련 데이터만 스캔하여 파티션되지 않은 데이터셋을 스캔하는 것에 비해 쿼리 속도를 크게 향상시키고 비용을 줄입니다. 예를 들어, 정의된 시간 프레임 내에서 특정 AWS 계정에 대한 의심스러운 활동을 조사할 때, Athena는 전체 로그 데이터셋 대신 관련 파티션만 스캔합니다.
+
+- **[자동화를 위한 CloudFormation 템플릿 배포](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**: 이 CloudFormation 템플릿을 사용하여 두 개의 Lambda 함수, IAM 역할, AWS Glue 데이터베이스 및 사전 정의된 Athena 쿼리를 포함하는 솔루션을 배포합니다. 이 템플릿은 파티션된 테이블 설정을 자동화하여 수동 구성을 제거하고 환경 전반에서 일관성을 보장합니다. GitHub 솔루션은 [여기](https://github.com/aws-samples/sample-automation-cloudtrail-athena)에서 찾을 수 있습니다.
+- **[파티션 프로젝션을 사용한 Athena의 CloudTrail 로그](https://docs.aws.amazon.com/athena/latest/ug/create-cloudtrail-table-partition-projection.html)**: 이 솔루션은 Athena 프로젝션 파티셔닝을 사용합니다. CloudTrail 로그는 사전 정의된 파티션 체계가 있는 알려진 구조를 가지고 있으므로 Athena 파티션 프로젝션 기능을 사용하여 쿼리 런타임을 줄이고 파티션 관리를 자동화할 수 있습니다. 파티션 프로젝션은 새 데이터가 추가될 때 자동으로 새 파티션을 추가합니다. 이를 통해 `ALTER TABLE ADD PARTITION`을 사용하여 수동으로 파티션을 추가할 필요가 없습니다.
+- **[CloudTrail S3 버킷 및 접두사 지정](https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning-s3bucketprefix.html)**: CloudFormation 템플릿에 대한 입력으로 CloudTrail S3 버킷 이름과 적절한 접두사를 제공합니다. 조직 trail의 경우 접두사는 `ORG_ID/AWSLogs/ORG_ID` 형식을 따릅니다. 여기서 `ORG_ID`는 AWS 조직 ID입니다. 단일 계정 trail의 경우 기본 접두사 `AWSLogs/`를 사용합니다. AWS CLI 명령을 사용하여 접두사를 확인합니다: `aws cloudtrail describe-trails --trail-name-list TRAIL_NAME`. 사용자 지정 접두사를 사용하는 경우 기본 접두사에 추가합니다(예: `PREFIX/ORG_ID/AWSLogs/ORG_ID`).
+- **[Athena 쿼리 결과 위치 설정](https://docs.aws.amazon.com/athena/latest/ug/query-results-specify-location.html)**: Athena에서 쿼리 결과를 위한 S3 버킷이 구성되어 있는지 확인합니다. 쿼리 출력을 저장하기 위해 CloudFormation 템플릿에 이 버킷(`s3://` 접두사 없이)을 지정합니다.
+
+:::tip GitHub 솔루션으로 자동화
+파티션된 Athena 테이블로 CloudTrail 로그 분석을 간소화하기 위해 GitHub의 **[CloudTrail Athena 자동화 스크립트](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**에 접근하여 CloudFormation 템플릿을 배포하세요.
+:::
+
+## 유연한 분석을 위한 계정별 및 통합 테이블 사용
+
+이 솔루션은 다양한 사용 사례를 지원하기 위해 두 가지 유형의 Athena 테이블을 생성합니다:
+
+- **계정별 테이블**: `CloudTrailLogsPartitionedByAccount` Lambda 함수는 CloudTrail S3 버킷에서 발견된 각 AWS 계정에 대해 전용 Athena 테이블(예: `trail_123456789012`)을 생성합니다. 이 테이블은 리전과 날짜별로 파티션되어 팀이 관련 없는 데이터를 스캔하지 않고도 계정별 로그를 분석할 수 있습니다. 이는 계정별 인시던트를 조사하는 보안 팀이나 리전별 활동을 문제 해결하는 운영 팀에 특히 유용합니다.
+- **통합 조직 전체 테이블**: `CloudTrailLogsPartitionedAllAccounts` Lambda 함수는 계정 ID, 리전 및 날짜별로 파티션된 AWS 조직의 모든 계정 로그를 포함하는 통합 테이블(예: `all_accounts_trail`)을 유지합니다. 이 테이블은 교차 계정 조사 및 조직 전체 감사를 지원하여 보안 관리자가 전체 환경에서 활동을 효율적으로 쿼리할 수 있게 합니다.
+
+두 함수 모두 파티션 프로젝션을 사용하여 조직이 발전함에 따라 새 계정과 파티션을 자동으로 포함하여 수동 업데이트가 필요하지 않습니다. 엄격한 보안 제어와 직무 분리를 적용하기 위해 제한된 접근 권한이 있는 별도의 보안 경계 내 중앙 S3 버킷에 로그를 전달하도록 이 테이블을 구성합니다.
+
+## 동기화를 위한 일일 테이블 업데이트 활성화
+
+Athena 테이블이 AWS 조직의 구조와 동기화되도록 하려면 Lambda 함수가 일일 업데이트를 실행하도록 구성합니다. 이러한 업데이트는 새 계정을 감지하고 해당 파티션을 생성하여 새로 추가된 계정이나 리전의 로그가 Athena 테이블에 포함되도록 합니다. 이 자동화는 관리 오버헤드를 줄이고 계정 활동의 지속적인 모니터링을 의무화하는 FedRAMP 또는 PCI-DSS와 같은 컴플라이언스 요구 사항을 지원하는 포괄적인 로그 범위를 보장합니다.
+
+## 일반적인 사용 사례를 위한 사전 정의된 쿼리 활용
+
+**[일반적인 보안 및 운영 시나리오를 해결하기 위해 솔루션에 사전 정의된 Athena 쿼리를 포함](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**합니다. 예를 들어, "가장 빈번한 콘솔 사용자 찾기" 쿼리는 사용자별 AWS 콘솔 로그인 빈도를 분석하여 잠재적인 무단 접근을 식별하는 데 도움을 줍니다. 이러한 쿼리는 사용자 지정 쿼리를 위한 템플릿 역할을 하여 팀이 특정 요구에 맞게 조사를 맞춤화할 수 있게 합니다. Athena 콘솔의 저장된 쿼리 섹션에 사전 정의된 쿼리를 저장하여 쉽게 접근하고 실행할 수 있습니다.
+
+:::note 저장된 보안 쿼리 접근
+무단 콘솔 접근 감지와 같은 일반적인 보안 시나리오를 위한 사전 구축된 Athena 쿼리를 사용하려면 GitHub의 **[AWS CloudTrail Athena 데모 쿼리](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**를 살펴보세요.
+:::
+
+## 파티셔닝 및 모니터링으로 비용 최적화
+
+CloudTrail 로그의 파티셔닝은 Athena가 스캔하는 데이터 양을 줄여 쿼리 비용을 직접적으로 절감합니다. 또한 다음 비용 관리 관행을 구현합니다:
+
+- **Lambda 함수 비용 모니터링**: 이 솔루션은 두 개의 Lambda 함수를 사용하며, 각각 매일 한 번 호출됩니다. AWS Lambda 요금 페이지를 사용하여 비용을 추정하기 위해 런타임을 모니터링합니다. 필요한 경우 비용과 업데이트 요구 사항의 균형을 맞추기 위해 호출 빈도를 조정합니다.
+- **Athena 쿼리 비용 추적**: Athena는 쿼리당 스캔한 데이터 양에 따라 요금을 부과합니다. 파티셔닝은 스캔된 데이터를 최소화하지만, Amazon Athena 요금 페이지를 사용하여 쿼리 비용을 모니터링합니다. AWS Budgets를 사용하여 CloudTrail 및 Athena 지출에 대한 비용 임계값과 알림을 설정합니다.
+- **AWS Cost Anomaly Detection 사용**: CloudTrail 및 Athena 지출을 모니터링하도록 AWS Cost Anomaly Detection을 구성합니다. 이 서비스는 머신 러닝을 사용하여 예상치 못한 비용 급증을 감지하여 사전 예방적 비용 관리를 가능하게 합니다.
+
+## 불필요한 비용을 방지하기 위한 리소스 정리
+
+지속적인 비용을 방지하려면 솔루션이 더 이상 필요하지 않을 때 CloudFormation 스택을 삭제합니다. 이를 통해 Lambda 함수, IAM 역할, Glue 데이터베이스 및 Athena 테이블이 제거되어 잔여 비용이 발생하지 않습니다. AWS Budgets 및 Cost Anomaly Detection 보고서를 정기적으로 검토하여 솔루션과 관련된 예상치 못한 비용을 식별하고 해결합니다.
+
+## 결론
+
+CloudTrail 로그에 대한 파티션된 Athena 테이블 자동화는 쿼리 성능을 최적화하고, 비용을 절감하며, 보안 및 컴플라이언스 조사를 강화합니다. 계정별 및 조직 전체 테이블을 배포하고, 일일 업데이트를 활성화하며, S3 버킷을 보호함으로써 이 솔루션은 CloudTrail 로그 분석에 대한 확장 가능하고 효율적인 접근 방식을 제공합니다. CloudWatch Logs와의 통합 및 사전 정의된 쿼리를 활용하면 조사를 더욱 간소화할 수 있으며, 비용 관리 관행은 합리적인 가격을 보장합니다. AWS 환경에서 거버넌스, 컴플라이언스 및 운영 우수성을 지원하는 더 빠르고 비용 효율적이며 안전한 CloudTrail 로그 분석을 달성하기 위해 이 솔루션을 구현하세요.

@@ -1,0 +1,113 @@
+---
+sidebar_position: 2
+---
+
+# Infrastructure-as-Code(IaC)를 사용하여 JITNA 활성화
+
+다음 섹션에서는 AWS Organization에서 CloudFormation을 사용하여 just-in-time 노드 접근을 배포하는 방법을 설명합니다. Just-in-time 노드 접근을 배포하려면 먼저 환경에서 just-in-time 노드 접근을 활성화한 다음, 승인 정책, 세션 기본 설정 및 알림 구성을 포함하는 just-in-time 노드 접근 리소스를 배포할 수 있습니다.
+
+:::info
+Systems Manager 통합 콘솔과 just-in-time 노드 접근은 위임된 관리자 계정 내에서 기능을 활성화하는 대신 로컬 배포를 수행하여 계정/리전별로 활성화할 수도 있습니다.
+:::
+
+## Just-in-time 노드 접근 활성화
+
+1. 조직의 AWS 관리 계정에서 Systems Manager의 위임된 관리자 계정을 지정합니다.
+1. [Systems Manager 통합 콘솔](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)을 배포합니다.
+1. [Just-in-time 노드 접근](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html)을 배포합니다.
+
+아래는 통합 콘솔과 just-in-time 노드 접근을 위한 Quick Setup 구성 관리자를 배포하는 예제 아키텍처 다이어그램입니다.
+
+![통합 콘솔 및 just-in-time 노드 접근을 위한 Quick Setup 구성 관리자 배포 예제 아키텍처 다이어그램](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-organization.png "Just-in-time 노드 접근 아키텍처 다이어그램")
+
+1. Systems Manager의 위임된 관리자 계정 내에서 CloudFormation 스택을 생성합니다.
+1. CloudFormation 스택이 Quick Setup 구성 관리자를 생성합니다.
+1. 통합 콘솔용 Quick Setup 구성 관리자가 조직의 모든 OU(A, B, C)에 배포됩니다.
+1. JITNA용 Quick Setup 구성 관리자가 OU A와 B에 배포됩니다.
+
+:::info
+Just-in-time 노드 접근은 AWS Organization 전체 또는 조직 내 특정 조직 단위(OU)에 대해 활성화할 수 있습니다. Just-in-time 노드 접근의 배포 가능 리전에는 Systems Manager 통합 콘솔에 대해 활성화한 모든 리전이 포함됩니다. 통합 콘솔이 활성화되지 않은 리전에서는 JITNA를 활성화할 수 없습니다.
+:::
+
+### Quick Setup 구성 관리자 배포
+
+Infrastructure-as-Code(IaC)를 사용하여 just-in-time 노드 접근을 활성화하려면 다음을 수행해야 합니다:
+
+1. Quick Setup IAM 서비스 역할을 배포합니다.
+    :::info
+    Quick Setup의 IAM 서비스 역할에 대한 자세한 내용은 [Quick Setup API를 프로그래밍 방식으로 사용하기 위한 수동 온보딩](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-getting-started.html#quick-setup-api-manual-onboarding)을 참조하세요.
+    :::
+1. 두 개의 [Quick Setup Configuration Manager](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssmquicksetup-configurationmanager.html)를 배포합니다:
+    1. Systems Manager 통합 콘솔.
+    1. Systems Manager just-in-time 노드 접근.
+
+다음 예제 CloudFormation 템플릿에는 두 개의 필수 Quick Setup IAM 서비스 역할 생성과 Systems Manager 통합 콘솔 및 JITNA를 위한 두 개의 Quick Setup 구성 관리자 배포가 포함되어 있습니다.
+
+#### 샘플 CloudFormation 템플릿
+
+[Just-in-time 노드 접근 샘플 CFN 템플릿 - Quick Setup 구성 관리자](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-quick-setup-cfn-template.yaml)
+
+##### CloudFormation 템플릿 파라미터
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="type"
+    defaultValue="organization"
+    values={[
+        {label: 'AWS Organization 활성화', value: 'organization'},
+    ]}>
+<TabItem value="organization">
+
+| 파라미터 이름 | 설명 | 예제 값 |
+| -------------- | ----------- | ------------- |
+| `AgentUpdateSchedule` | (선택 사항) 에이전트 업데이트 연결이 실행되는 간격입니다. 사용하지 않으려면 none을 입력합니다. | rate(14 days) |
+| `DelegatedAdminAccountId` | Systems Manager 위임된 관리자 계정의 AWS 계정 ID입니다. | 123456789012 |
+| `EnableDHMCSchedule` | (선택 사항) DHMC 연결이 실행되는 간격입니다. 사용하지 않으려면 none을 입력합니다. | rate(1 day) |
+| `HomeRegion` | Systems Manager 통합 콘솔이 배포되는 AWS 리전입니다. | us-east-1 |
+| `IdentityProviderSetting` | 현재 접근 제어 템플릿 승인자를 결정하는 데 사용되는 Identity Provider(IAM 또는 Single Sign-On(SSO))를 지정합니다. | IAM |
+| `InventoryCollectionSchedule` | (선택 사항) 인벤토리 수집이 실행되는 간격입니다. 사용하지 않으려면 none을 입력합니다. | rate(24 hours) |
+| `JITNATargetOrganizationalUnits` | just-in-time 노드 접근이 설정되는 AWS Organization Unit ID의 쉼표로 구분된 목록입니다. | ou-a1b2-abcd1234,ou-a1b2-efgh1234,ou-a1b2-hijk1234 |
+| `JITNATargetRegions` | just-in-time 노드 접근을 활성화할 리전입니다. 지정된 리전은 `UnifiedConsoleTargetRegions` 파라미터에 지정된 리전과 일치하거나 해당 리전의 하위 집합이어야 합니다. | us-east-1,us-east-2,us-west-2 |
+| `UnifiedConsoleRootOrganizationUnitID` | 루트 AWS Organization unit ID입니다. | r-abcd |
+| `UnifiedConsoleTargetRegions` | Systems Manager 통합 콘솔이 설정되는 AWS 리전의 쉼표로 구분된 목록입니다. 이러한 리전에서 데이터가 집계되어 홈 리전으로 복제됩니다. | us-east-1,us-east-2,us-west-2 |
+
+</TabItem>
+</Tabs>
+
+## Just-in-time 노드 접근 구성
+
+환경에서 just-in-time 노드 접근을 활성화한 후, 승인 정책, 세션 기본 설정 및 알림 구성을 배포할 수 있습니다.
+
+* 노드에 대한 [승인 정책](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-approval-policies.html).
+* Just-in-time 세션을 위한 [세션 기본 설정](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-session-preferences.html).
+* Just-in-time 접근 요청을 위한 [알림 구성](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-notifications.html).
+
+### 노드에 대한 승인 정책 배포
+
+아래는 just-in-time 노드 접근 승인 정책 및 세션 기본 설정 배포를 위한 예제 아키텍처 다이어그램입니다.
+
+![Just-in-time 노드 접근 승인 정책 및 세션 기본 설정 배포를 위한 예제 아키텍처 다이어그램](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-resources.png "Just-in-time 노드 접근 승인 정책 및 기본 설정 아키텍처 다이어그램")
+
+1. 자동 승인 정책, 수동 승인 정책(또는 여러 정책) 및 세션 기본 설정을 Systems Manager 문서로 배포하는 CloudFormation StackSet을 생성합니다.
+1. 각 대상 계정 및 리전에서 CloudFormation 스택이 필요한 리소스를 배포합니다.
+1. Systems Manager의 위임된 관리자 계정에서 거부 전용 접근 정책을 배포하는 CloudFormation 스택을 생성합니다.
+
+:::info
+조직당 하나의 거부 접근 정책만 가질 수 있습니다. 계정 및 리전당 하나의 자동 승인 정책만 가질 수 있습니다.
+
+AWS 계정 및 AWS 리전당 최대 50개의 수동 승인 정책을 생성할 수 있습니다. 그러나 여러 수동 승인 정책이 하나의 노드에 적용되면 충돌이 발생하여 사용자가 노드에 대한 접근을 요청할 수 없게 됩니다. 일부 인스턴스는 사용 사례에 따라 여러 태그를 가질 수 있으므로 수동 승인 정책을 생성할 때 이 점을 유의하세요.
+:::
+
+다음 예제 CloudFormation 템플릿은 다음을 생성합니다:
+
+1. 리소스 태그 키-값 쌍 `ENV:DEV`로 식별되는 개발 관리형 노드에 자동 접근을 허용하는 자동 승인 정책.
+1. 두 개의 수동 승인 정책:
+    1. 리소스 태그 키-값 쌍 `Workload:Ecommerce`를 가진 관리형 노드에 적용되는 E-commerce 애플리케이션용 수동 승인 정책.
+    1. 리소스 태그 키-값 쌍 `Workload:Finance`를 가진 관리형 노드에 적용되는 Finance 애플리케이션용 수동 승인 정책.
+1. Just-in-time 노드 접근 세션 중에 사용할 세션 기본 설정 문서.
+
+#### 샘플 CloudFormation 템플릿 - JITNA 구성
+
+[Just-in-time 노드 접근 샘플 CFN 템플릿 - 승인 정책 및 세션 기본 설정](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-cfn-approval-policies.yaml)

@@ -1,0 +1,68 @@
+---
+title: 언어별 가이드 목록
+sidebar_label: 언어별 가이드 목록
+slug: /language-guides
+---
+
+# 언어별 가이드 목록
+
+CloudWatch Application Signals를 활성화할 플랫폼과 런타임을 선택하세요. 각 가이드는 `apm-center`에서 관리되는 활성화 콘텐츠를 기반으로 하며 동일한 문서 UI에서 제공됩니다.
+
+## 활성화 가이드 (16가지 조합)
+
+### Lambda
+
+- [Java](/language-guide?combo=lambda-java)
+- [Python](/language-guide?combo=lambda-python)
+- [Node.js](/language-guide?combo=lambda-nodejs)
+- [.NET](/language-guide?combo=lambda-dotnet)
+
+### ECS
+
+- [Java](/language-guide?combo=ecs-java)
+- [Python](/language-guide?combo=ecs-python)
+- [Node.js](/language-guide?combo=ecs-nodejs)
+- [.NET](/language-guide?combo=ecs-dotnet)
+
+### EKS
+
+- [Java](/language-guide?combo=eks-java)
+- [Python](/language-guide?combo=eks-python)
+- [Node.js](/language-guide?combo=eks-nodejs)
+- [.NET](/language-guide?combo=eks-dotnet)
+
+### EC2
+
+- [Java](/language-guide?combo=ec2-java)
+- [Python](/language-guide?combo=ec2-python)
+- [Node.js](/language-guide?combo=ec2-nodejs)
+- [.NET](/language-guide?combo=ec2-dotnet)
+
+## 커스텀 메트릭 (apm-center 샘플 기반)
+
+`apm-center`의 일부 샘플 서비스에는 테스트 중 "커스텀 메트릭" 동작을 실행하는 데 사용되는 엔드포인트가 포함되어 있습니다. 예를 들어, EKS Python 샘플은 `GET /api/metrics`를 제공합니다:
+
+[EKS Python 활성화 가이드 열기](/language-guide?combo=eks-python)
+
+```python
+@app.get("/api/metrics")
+async def metrics():
+    """Custom metrics endpoint"""
+    # 비즈니스 로직 시뮬레이션
+    processing_time = random.uniform(0.1, 0.5)
+    time.sleep(processing_time)
+
+    # 로직에 따른 다양한 응답 시간 시뮬레이션
+    if processing_time > 0.3:
+        status = "slow"
+    else:
+        status = "fast"
+
+    return {
+        "message": "Metrics endpoint",
+        "processing_time": processing_time,
+        "status": status,
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+```

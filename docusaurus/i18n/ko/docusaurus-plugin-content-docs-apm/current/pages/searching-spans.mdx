@@ -1,0 +1,23 @@
+---
+title: Span 검색 및 분석
+sidebar_label: Span 검색 및 분석
+slug: /searching-spans
+---
+
+# Span 검색 및 분석
+
+## Transaction Search
+
+CloudWatch **Transaction Search**는 span 속성을 사용하여 수집된 span을 검색하고 분석할 수 있는 대화형 분석 환경입니다. 다음 기능을 지원합니다:
+
+- **List**: 개별 트랜잭션 문제 해결, 느린 span 찾기, 오류 찾기
+- **Time series**: 지연 시간 및 빈도 추세 시각화 (P50/P90/P99)
+- **Group analysis**: 속성별 집계 (예: 영향을 받은 상위 고객)
+
+참고: [Searching and analyzing spans](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html)
+
+## Logs Insights를 활용한 span 쿼리
+
+CloudWatch Logs Insights를 사용하여 span을 쿼리할 수도 있습니다 (예: DB 문별 p99 지속 시간, HTTP 5xx가 포함된 span 개수 등).
+
+참고: [Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html)

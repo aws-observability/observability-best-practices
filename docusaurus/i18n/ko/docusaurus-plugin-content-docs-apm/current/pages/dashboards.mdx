@@ -1,0 +1,27 @@
+---
+title: 대시보드
+sidebar_label: 대시보드
+slug: /dashboards
+---
+
+# 대시보드
+
+## 기본 제공 Application Signals 뷰
+
+Application Signals는 CloudWatch 콘솔에서 애플리케이션 중심의 워크플로우를 제공합니다:
+
+- **Services**: 서비스 목록을 확인하고, 높은 장애율/지연 시간을 파악하며, SLO가 존재할 경우 SLI 상태를 확인할 수 있습니다.
+- **Service detail**: 오퍼레이션, 종속성 및 상관 트레이스를 상세히 조사할 수 있습니다.
+- **Application Map**: 토폴로지를 시각화하고 종속성 간 상태를 전파합니다.
+
+참조: [Operational health monitoring with Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html)
+
+## CloudWatch 대시보드 (사용자 정의)
+
+Application Signals가 발행하는 메트릭(네임스페이스 `ApplicationSignals`)을 사용하여 CloudWatch 대시보드를 직접 구성하고, 필요에 따라 알람 및 로그와 연계할 수 있습니다.
+
+- **서비스 메트릭**: Service/Operation/Environment 차원의 지연 시간, 장애, 오류 정보
+- **종속성 메트릭**: 다운스트림 호출에 대한 remote service/operation 차원
+- **런타임 메트릭** (지원되는 경우): GC/CPU/메모리와 지연 시간 급증을 상관 분석
+
+참조: [Metrics collected by Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html)

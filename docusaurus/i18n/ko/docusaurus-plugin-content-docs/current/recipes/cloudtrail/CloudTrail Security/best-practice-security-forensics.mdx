@@ -1,0 +1,127 @@
+---
+sidebar_position: 2
+title: 보안 포렌식 모범 사례
+---
+
+# 보안 포렌식 모범 사례
+
+보안 포렌식과 인시던트 대응은 IT 보안 인시던트를 식별, 조사, 완화하기 위한 핵심 사이버 보안 관행입니다. 포렌식은 로그 및 시스템 아티팩트와 같은 디지털 증거를 체계적으로 수집하고 분석하여 침해의 세부 사항을 밝혀냅니다. 인시던트 대응은 피해를 최소화하고 재발을 방지하기 위해 인시던트를 탐지, 격리, 교정하는 데 중점을 둡니다. 이 두 가지를 함께 사용하면 조직이 침해를 이해하고, 행동을 귀속시키며, 규정 준수를 보장하는 데 도움이 됩니다. CloudTrail 모범 사례를 구현하면 효과적인 보안 포렌식 및 인시던트 대응을 위한 로깅, 분석, 적시 교정이 향상됩니다.
+
+
+:::tip AWS 보안 서비스를 강화하세요.
+AWS 보안 서비스를 강화하고, 구현 전략을 개선하며, 소중한 클라우드 리소스를 효과적으로 보호하려면
+**최신 [AWS Security Services Best Practices](https://aws.github.io/aws-security-services-best-practices/)**를 살펴보세요.
+보안 구성을 검증하고, 검증된 기술을 구현하며, 강력한 보안 태세를 위해 커뮤니티에서 기여한 모범 사례를 채택하는 방법을 알아보세요.
+:::
+
+:::tip CloudTrail 보안을 강화하세요
+AWS CloudTrail 설정을 강화하고 인시던트 조사 중 활동 로그를 보호하려면 **최신 [AWS CloudTrail Security Best Practices](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html)**를 살펴보세요. 이벤트 데이터 스토어를 보호하고, 암호화를 활성화하며, 강력한 보안 태세를 위해 접근을 제한하는 방법을 알아보세요.
+:::
+
+## 포괄적인 로깅 구성
+
+### 모든 리전 및 계정에서 포괄적인 로깅 활성화
+
+모든 AWS 리전 및 조직 내 계정에서 관리, 데이터, 네트워크 활동 이벤트를 로깅하도록 CloudTrail을 구성합니다. 멀티 리전 추적 또는 조직 추적을 사용하여 글로벌 서비스 이벤트(예: IAM, Route 53)를 포함한 모든 API 활동을 캡처합니다.
+
+**이점**: 이벤트가 누락되지 않도록 하여 미사용 리전 또는 계정에서의 무단 행동을 탐지할 수 있습니다.
+
+**예제**: 휴면 리전에서의 예기치 않은 활동은 공격자의 정찰을 나타낼 수 있습니다.
+
+### Advanced Event Selector를 사용하여 고위험 데이터 이벤트에 집중
+
+S3 DeleteObject 또는 Lambda InvokeFunction 호출과 같은 고위험 데이터 이벤트를 로깅하고, 대용량 저위험 이벤트는 제외하여 비용을 절감하도록 Advanced Event Selector를 구성합니다.
+
+**이점**: 비용을 관리하면서 포렌식 분석을 중요한 활동에 집중합니다.
+
+**예제**: 다음 쿼리와 같이 민감한 데이터가 포함된 특정 S3 버킷의 DeleteObject 이벤트만 로깅하도록 셀렉터를 사용합니다:
+```sql
+SELECT * FROM <event-data-store-ID> 
+WHERE eventName = 'DeleteObject' 
+AND resources.ARN LIKE 'arn:aws:s3:::sensitive-bucket%'
+```
+
+## 로그 분석 및 쿼리
+
+### CloudTrail Lake를 활용한 고급 쿼리
+
+CloudTrail Lake를 활용하여 이벤트 데이터 스토어에서 SQL 기반 쿼리를 실행하여 대량의 로그 볼륨을 빠르게 분석합니다.
+
+**이점**: eventName, userIdentity.arn 또는 sourceIPAddress와 같은 필드별로 이벤트를 효율적으로 필터링하여 악의적인 활동을 식별할 수 있습니다.
+
+**예제 쿼리**:
+```sql
+SELECT eventTime, userIdentity.arn, eventName 
+FROM <event-data-store-ID> 
+WHERE eventName = 'CreateAccessKey'
+```
+
+**모범 사례**: 확장된 조사를 지원하기 위해 기본 90일 이상 CloudTrail Lake에 이벤트를 저장하세요.
+
+### Amazon Athena와 통합하여 효율적인 로그 분석
+
+Amazon Athena를 사용하여 S3에 저장된 CloudTrail 로그를 쿼리하고, 파티션된 테이블을 활용하여 쿼리 비용을 줄이고 성능을 향상시킵니다.
+:::tip CloudTrail 분석 자동화
+**GitHub의 [AWS CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**를 살펴보고 사전 빌드된 쿼리와 CloudTrail 및 Athena 통합 자동화로 인시던트 조사를 간소화하세요.
+:::
+
+**이점**: 특정 계정, 리전 또는 기간에 대한 대상 쿼리를 수행할 수 있습니다.
+
+**예제 쿼리**:
+```sql
+SELECT * FROM trail_123456789012 
+WHERE eventName = 'DeleteObject' 
+AND eventTime > '2025-05-01'
+```
+
+**구현**: 계정, 리전, 날짜별로 파티션된 계정별 및 조직 전체 테이블을 생성합니다.
+
+:::note 저장된 보안 쿼리에 접근
+**사전 빌드된 Athena 쿼리로 인시던트 조사를 강화**하세요. GitHub에서 **[저장된 보안 인시던트 쿼리](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**를 살펴보고 Athena 테이블에서 CloudTrail 로그 분석을 간소화하세요.
+:::
+
+
+
+## 모니터링 및 탐지
+
+### 이상 탐지를 위한 CloudTrail Insights 활성화
+
+CloudTrail Insights를 활성화하여 침해를 나타낼 수 있는 비정상적인 API 활동(예: CreateUser 또는 AssumeRole 호출의 급증)을 탐지합니다.
+
+**구성**: S3 버킷 또는 CloudTrail Lake 이벤트 데이터 스토어에 Insights 이벤트를 전달하도록 구성하고, Amazon EventBridge와 통합하여 알림을 트리거하거나 자동화된 응답을 위한 Lambda 함수를 실행합니다.
+
+**예제**: 과도한 GetCallerIdentity 호출에 대한 Insights 이벤트가 보안 팀에 이메일 알림을 트리거할 수 있습니다.
+
+### 의심스러운 활동을 실시간으로 모니터링 및 알림
+
+:::tip CloudTrail 이벤트를 CloudWatch로 스트리밍
+보안 이벤트의 거의 실시간 모니터링을 위해 **AWS CloudTrail을 Amazon CloudWatch Logs와 통합**하세요. **[문서에서 이벤트 스트리밍 구성 방법을 확인](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)**하세요.
+:::
+
+**구현**: CloudWatch Logs Insights를 사용하여 로그를 쿼리하고 Root 로그인 또는 실패한 인증 시도와 같은 고위험 이벤트에 대한 알람을 설정합니다.
+
+**예제 CloudWatch 알람(메트릭 필터 사용)**: 다음과 같은 경우 보안 팀에 알리는 알람을 생성합니다:
+```
+{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }
+```
+
+:::tip IAM 정책 변경 모니터링
+IAM 정책 변경을 탐지하기 위해 **AWS CloudTrail에 대한 CloudWatch 알람을 설정**하세요. [AWS 문서에서 방법 알아보기](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html#cloudwatch-alarms-for-cloudtrail-iam-policy-changes).
+:::
+
+
+## 로그 보안 및 무결성
+
+### 강력한 제어를 통한 CloudTrail 로그 보호
+
+포렌식 분석을 위한 무결성과 가용성을 보장하기 위해 CloudTrail 로그를 보호합니다:
+
+1. **중앙 집중식 저장**: 무단 수정을 방지하기 위해 접근이 제한된 별도의 AWS 계정에 있는 중앙 집중식 S3 버킷에 로그를 저장합니다.
+
+2. **삭제 보호**: S3 버킷에서 MFA 삭제 또는 S3 Object Lock 및 버전 관리를 활성화하여 로그의 실수 또는 악의적 삭제를 방지합니다.
+
+3. **암호화**: AWS KMS 관리형 키(SSE-KMS)를 사용하여 저장 시 로그를 암호화하여 민감한 데이터를 보호합니다. Amazon S3 Bucket Key를 사용하여 KMS 요청 비용을 줄입니다.
+
+4. **무결성 검증**: SHA-256 해싱 및 RSA 서명을 사용하여 로그 파일 무결성 검증을 활성화하여 변조 또는 삭제를 감지하고, 포렌식 조사에 로그의 신뢰성을 보장합니다.
+
+

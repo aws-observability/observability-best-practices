@@ -1,0 +1,30 @@
+---
+title: 자동 계측
+sidebar_label: 자동 계측
+slug: /auto-instrumentation
+---
+
+# 자동 계측
+
+## "자동 계측"의 의미
+
+자동 계측은 애플리케이션 코드를 변경하지 않고 런타임에 OpenTelemetry 계측을 추가하여, 서비스가 Application Signals의 검색 및 상태 모니터링에 사용하는 텔레메트리를 내보내도록 합니다.
+
+## 일반적인 AWS 설정 구성 요소
+
+- **AWS Distro for OpenTelemetry (ADOT)** SDK 및/또는 collector
+- **CloudWatch Agent** — 지원되는 설정에서 텔레메트리 수집/내보내기
+- **플랫폼 활성화** (EKS 애드온 / ECS 사이드카 / EC2 에이전트 설정 / Lambda 레이어)
+
+시작하기: [Application Signals 개요](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html)
+
+## 지원 언어 및 시스템
+
+Application Signals는 Java, Python, Node.js, .NET 애플리케이션을 지원하며 Amazon EKS, Kubernetes, Amazon ECS, Amazon EC2에서 지원/테스트되었습니다.
+
+참조: [Supported systems](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html)
+
+## 참고 사항 및 주의점
+
+- **Node.js ESM:** ESM 지원은 제한적입니다. 문서의 ESM 전용 가이드를 따르지 않는 한 CommonJS가 권장 경로입니다.
+- **컨테이너 내 Python:** OTel 자동 계측을 위해 `PYTHONPATH` 구성이 필요할 수 있습니다.

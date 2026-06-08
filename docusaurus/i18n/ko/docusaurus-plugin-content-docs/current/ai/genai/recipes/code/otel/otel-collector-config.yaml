@@ -1,0 +1,86 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 10s
+    send_batch_size: 1024
+  
+  resource:
+    attributes:
+      - key: deployment.environment
+        value: demo
+        action: upsert
+
+exporters:
+  # Amazon Managed Prometheus
+  prometheusremotewrite:
+    endpoint: ${AMP_REMOTE_WRITE_URL}
+    auth:
+      authenticator: sigv4auth/aps
+    resource_to_telemetry_conversion:
+      enabled: true
+  
+  # Traces → CloudWatch via OTLP endpoint
+  otlp/traces:
+    endpoint: https://xray.${AWS_REGION}.amazonaws.com
+    compression: none
+    headers:
+      content-type: application/x-protobuf
+    auth:
+      authenticator: sigv4auth/xray
+  
+  # Logs → CloudWatch via OTLP endpoint
+  otlp/logs:
+    endpoint: https://logs.${AWS_REGION}.amazonaws.com
+    compression: none
+    headers:
+      content-type: application/x-protobuf
+      x-aws-log-group: /ai-observability-demo
+      x-aws-log-stream: otel-collector
+    auth:
+      authenticator: sigv4auth/logs
+  
+  # Debug logging
+  logging:
+    loglevel: info
+
+extensions:
+  health_check:
+    endpoint: 0.0.0.0:13133
+  
+  sigv4auth/aps:
+    region: ${AWS_REGION}
+    service: aps
+  
+  sigv4auth/xray:
+    region: ${AWS_REGION}
+    service: xray
+  
+  sigv4auth/logs:
+    region: ${AWS_REGION}
+    service: logs
+
+service:
+  extensions: [health_check, sigv4auth/aps, sigv4auth/xray, sigv4auth/logs]
+  
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/traces, logging]
+    
+    metrics:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [prometheusremotewrite, logging]
+    
+    logs:
+      receivers: [otlp]
+      processors: [batch, resource]
+      exporters: [otlp/logs, logging]

@@ -1,0 +1,33 @@
+---
+title: 성능 분석
+sidebar_label: 성능 분석
+slug: /performance-analytics
+---
+
+# 성능 분석
+
+## 표준 애플리케이션 메트릭
+
+Application Signals는 표준 애플리케이션 메트릭을 CloudWatch(네임스페이스 `ApplicationSignals`)에 발행합니다. 이 메트릭은 서비스, 오퍼레이션, 종속성 간 빠른 트리아지를 위해 설계되었습니다.
+
+- **Latency** (ms)
+- **Fault** (HTTP 5xx 및 스팬 상태 오류)
+- **Error** (HTTP 4xx)
+- **Availability**는 콘솔에서 다음과 같이 계산됩니다: (1 - Faults/Total) × 100. Total은 `SampleCount(Latency)`에서 파생됩니다. 4xx 응답은 이 가용성 계산에서 성공으로 처리됩니다.
+
+참조: [Metrics collected by Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html)
+
+## Dimensions (서비스 vs 종속성)
+
+메트릭은 성능을 다양한 관점에서 분류할 수 있는 Dimensions와 함께 발행됩니다:
+
+- **서비스 메트릭**: Environment, Service, Operation
+- **종속성 메트릭**: Environment, Service, Operation + RemoteService / RemoteOperation (플랫폼에 따라 기타 remote dimensions도 포함)
+
+이를 통해 "어떤 오퍼레이션이 성능 저하되었는가?" 및 "지연 시간이 종속성 호출에 의해 발생하는가?" 같은 질문에 쉽게 답할 수 있습니다.
+
+## 런타임 메트릭 (지원되는 경우)
+
+Application Signals는 지원되는 런타임에 대해 런타임 메트릭도 수집할 수 있습니다(예: JVM GC, 메모리, CPU; Python 프로세스 메트릭; .NET 런타임 메트릭). Node.js에서는 런타임 메트릭이 수집되지 않습니다.
+
+`OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false`로 런타임 메트릭 수집을 비활성화할 수 있습니다(플랫폼별 단계는 공식 문서를 참조하세요).

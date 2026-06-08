@@ -1,0 +1,23 @@
+---
+title: Service Level Objectives (SLO)
+sidebar_label: SLO
+slug: /slos
+---
+
+# Service Level Objectives (SLO)
+
+## SLO가 중요한 이유
+
+SLO를 사용하면 안정성 및 성능 목표(예: "99.9% 가용성" 또는 "p99 지연 시간 500ms 이하")를 정의하고 시간에 따라 추적할 수 있습니다. Application Signals에서는 SLO/SLI 상태가 **Services** 페이지와 **Application Map**에 표시되어 문제 분류를 가속화합니다.
+
+## SLO를 생성할 수 있는 대상
+
+CloudWatch SLO는 메트릭을 기반으로 합니다. Application Signals의 표준 메트릭(지연 시간, 장애, 오류, 가용성)이 일반적인 SLI 입력값으로 사용됩니다.
+
+공식 문서: [Service level objectives (SLOs)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html)
+
+## 일반적인 워크플로
+
+- **서비스 선택** — 사용자 영향을 가장 잘 반영하는 지표(가용성 vs 지연 시간)를 결정합니다.
+- **목표 정의** — 타겟, 시간 창, 평가 방식을 설정합니다.
+- **알림 설정** — SLO/SLI 상태 또는 burn rate에 대한 경보를 사용합니다.

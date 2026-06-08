@@ -1,0 +1,23 @@
+---
+title: Real User Monitoring (RUM)
+sidebar_label: RUM
+slug: /rum
+---
+
+# Real User Monitoring (RUM)
+
+## RUM과 Application Signals의 연결 방식
+
+CloudWatch RUM 웹 클라이언트는 RUM 클라이언트에서 X-Ray 트레이싱을 활성화하면 Application Signals에 표시될 수 있습니다. 클라이언트에서 백엔드 서비스로의 요청이 연결되어 서비스 상세 정보와 Application Map에 표시됩니다.
+
+참조: [How Application Signals enables operational health monitoring](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html)
+
+## RUM으로 답할 수 있는 질문
+
+- **이 문제가 사용자에게 영향을 미치는가?** 백엔드 상태를 페이지 로드 및 JS 에러 시그널과 상관 분석
+- **어디서 사용자가 영향을 받는가?** 지역, 디바이스, 브라우저별 성능 비교
+- **무엇이 변경되었는가?** 회귀 분석 시 배포/변경 이벤트와 상관 분석
+
+## 다음 단계
+
+[CloudWatch RUM](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html)

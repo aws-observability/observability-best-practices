@@ -1,0 +1,25 @@
+---
+title: Application Map
+sidebar_label: Application Map
+slug: /application-map
+---
+
+# Application Map
+
+## 개요
+
+CloudWatch **Application Map**은 애플리케이션 토폴로지와 운영 상태를 시각화합니다. Application Signals에서 기존 "Service Map" 용어를 대체합니다.
+
+클라이언트, Canaries, 서비스, 종속성 간의 연결을 표시하여 팀이 실행 흐름을 이해하고 장애 및 지연 시간이 발생하는 위치를 빠르게 파악할 수 있도록 합니다.
+
+## 주요 기능
+
+- **SLO/SLI 상태:** 목표를 충족하거나 위반하는 서비스를 확인하고 영향이 다운스트림으로 전파되는 방식을 파악
+- **드릴다운:** 노드/엣지를 선택하여 메트릭을 확인하고 서비스 세부정보로 이동
+- **그룹화 및 필터링:** 기본 그룹화(Related services, Environment) 또는 태그나 OTEL resource attribute를 사용한 커스텀 그룹 정의
+- **미계측 서비스:** Application Signals는 아직 계측되지 않은 서비스도 표시하여 롤아웃 우선순위를 정하는 데 도움
+- **크로스 계정 가시성:** 크로스 계정 Observability가 구성된 경우 여러 계정의 서비스를 시각화
+
+## 공식 문서
+
+[CloudWatch Application Map으로 애플리케이션 토폴로지 확인 및 운영 상태 모니터링](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceMap.html)

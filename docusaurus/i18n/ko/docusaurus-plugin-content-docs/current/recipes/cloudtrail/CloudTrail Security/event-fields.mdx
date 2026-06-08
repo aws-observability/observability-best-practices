@@ -1,0 +1,162 @@
+---
+sidebar_position: 1
+title: CloudTrail 이벤트 필드의 보안적 중요성 이해
+description: 핵심 AWS CloudTrail 이벤트 필드, 보안적 중요성, 포렌식 분석 및 인시던트 대응을 위한 사용 사례에 대한 가이드입니다.
+---
+
+# CloudTrail 이벤트 필드의 보안적 중요성 이해
+
+AWS CloudTrail 이벤트 필드는 API 활동, 사용자 ID, 리소스 상호 작용에 대한 세분화된 세부 정보를 제공하여 보안 조사 중 정확한 추적과 분석을 가능하게 합니다. 이 섹션에서는 핵심 CloudTrail 이벤트 필드, 보안적 중요성, 포렌식 분석 및 인시던트 대응을 위한 권장 사용 사례를 설명합니다.
+
+## 보안 조사를 위한 주요 CloudTrail 이벤트 필드
+
+다음은 보안 조사에서 가장 중요한 CloudTrail 이벤트 필드, 보안 조사에서의 중요성, 인시던트 대응 중 효과적으로 활용하는 방법에 대한 상세 분석입니다.
+
+:::tip CloudTrail 레코드 내용 살펴보기
+`eventName`, `eventSource`, `requestParameters`를 포함한 **AWS CloudTrail 레코드 내용**의 전체 세부 정보를 살펴보려면 **[포괄적인 문서를 확인](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)**하세요. 완전한 로그 인사이트로 보안 포렌식 및 인시던트 대응을 강화하세요.
+:::
+
+### 핵심 이벤트 필드
+
+- **1. userIdentity** 
+  - **설명**: `type`(예: IAMUser, AssumedRole, Root), `principalId`, `arn`, `accountId`, `userName`, `sessionContext`를 포함하여 요청을 수행하는 IAM ID에 대한 세부 정보를 포함합니다. 
+  - **보안적 중요성**: 인시던트의 주체를 식별하여 손상된 사용자, 역할 또는 루트 계정이 관련되었는지 판단할 수 있습니다. 교차 계정 접근 추적도 지원합니다. 
+  - **사용 사례**: `userIdentity`를 사용하여 악의적 행위자가 도난된 IAM 자격 증명을 사용했는지 또는 권한 상승을 위해 역할을 가정했는지 확인합니다. `type`이 `Root`인 경우 루트 계정 손상의 높은 위험으로 인해 즉시 에스컬레이션합니다.
+
+- **2. userIdentity.accessKeyId** 
+  - **설명**: 요청에 사용된 접근 키를 식별합니다. 
+  - **보안적 중요성**: 악의적 행위자가 도난된 접근 키를 자주 재사용하므로 여러 이벤트에서 손상된 자격 증명을 추적합니다. 
+  - **사용 사례**: `accessKeyId`를 사용하여 의심스러운 활동을 상관 분석하여 침해의 범위를 판단합니다. 비어 있는 경우(예: 콘솔 작업) `userIdentity.sessionContext`와 교차 참조하여 세션 유형을 확인합니다.
+
+- **3. userIdentity.userName** 
+  - **설명**: IAM 사용자의 이름을 지정합니다. 
+  - **보안적 중요성**: 특히 여러 접근 키가 있는 경우 사용자별 활동을 추적합니다. 
+  - **사용 사례**: 일관된 ID 추적을 위해 `userName`을 `userIdentity.principalId`와 교차 참조합니다.
+
+- **4. userIdentity.principalId** 
+  - **설명**: 요청을 수행하는 엔티티의 고유 식별자를 제공합니다. 
+  - **보안적 중요성**: 특히 임시 자격 증명의 경우 세션 간 작업을 상관 분석합니다. 
+  - **사용 사례**: `principalId`를 사용하여 가정된 역할이나 세션에서 악의적 행위자의 이동을 추적합니다.
+
+- **5. userIdentity.sessionContext** 
+  - **설명**: `sessionIssuer` 및 [`sourceIdentity`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html#STS-API-source-identity)를 포함하여 가정된 역할 또는 페더레이션된 세션의 세부 정보를 제공합니다. 
+  - **보안적 중요성**: 교차 계정 접근 또는 역할 체이닝 공격을 이해하는 데 중요합니다. 임시 보안 자격 증명으로 요청이 수행된 경우, sessionContext는 해당 자격 증명에 대해 생성된 세션 정보를 제공합니다. 임시 자격 증명을 반환하는 API를 호출할 때 세션을 생성합니다. 사용자가 콘솔에서 작업하고 멀티 팩터 인증을 포함하는 API로 요청할 때도 세션을 생성합니다. 
+  - **사용 사례**: 역할 가정 시나리오에서 공격의 기원을 추적하기 위해 `sessionContext.sourceIdentity`를 분석합니다.
+
+- **6. userIdentity.type** 
+  - **설명**: ID 유형(예: `IAMUser`, `Root`, `AssumedRole`)을 지정합니다. 
+  - **보안적 중요성**: 즉각적인 에스컬레이션이 필요한 `Root` 사용과 같은 고위험 작업을 식별합니다. 
+  - **사용 사례**: 권한 있는 ID와 관련된 조사의 우선순위를 지정하기 위해 `userIdentity.type`으로 필터링합니다.
+
+- **7. userIdentity.arn** 
+  - **설명**: 주체의 Amazon Resource Name을 제공합니다. 
+  - **보안적 중요성**: 복잡한 환경에서 행위자의 정확한 식별을 보장합니다. 
+  - **사용 사례**: `arn`을 사용하여 특정 IAM 엔티티로 작업을 추적합니다.
+
+- **8. userIdentity.accountId** 
+  - **설명**: 엔티티를 소유한 AWS 계정을 식별합니다. 
+  - **보안적 중요성**: 교차 계정 시나리오에서 소스 계정을 격리합니다. 
+  - **사용 사례**: 무단 접근을 감지하기 위해 `recipientAccountId`와 교차 참조합니다.
+
+- **9. userIdentity.sessionIssuer** 
+  - **설명**: 세션 자격 증명을 발급하는 엔티티(예: 역할)를 식별합니다. 
+  - **보안적 중요성**: 역할 기반 공격에서 임시 자격 증명의 소스를 추적합니다. 사용자가 임시 보안 자격 증명으로 요청을 수행하면 sessionIssuer는 사용자가 자격 증명을 얻은 방법에 대한 정보를 제공합니다. 예를 들어, 역할을 가정하여 임시 보안 자격 증명을 얻은 경우 이 요소는 가정된 역할에 대한 정보를 제공합니다. 루트 또는 IAM 사용자 자격 증명으로 AWS STS GetFederationToken을 호출하여 자격 증명을 얻은 경우 이 요소는 루트 계정 또는 IAM 사용자에 대한 정보를 제공합니다.
+  - **사용 사례**: 권한 상승 분석을 위해 `AssumedRole` 이벤트에서 `sessionIssuer`를 분석합니다.
+
+- **10. userIdentity.invokedBy** 
+  - **설명**: AWS 서비스(예: Lambda)가 요청을 수행했는지 나타냅니다. 
+  - **보안적 중요성**: 서비스가 시작한 작업을 사용자 활동과 구별하여 잘못된 구성 또는 악용된 역할을 식별합니다. 
+  - **사용 사례**: 서비스 동작의 이상을 조사하기 위해 `invokedBy`를 확인합니다.
+
+- **11. eventTime** 
+  - **설명**: 활동의 UTC 타임스탬프를 기록합니다. 
+  - **보안적 중요성**: 공격의 타임라인을 설정하여 최초 침해 지점을 식별하고 시스템 간 이벤트를 상관 분석합니다. 
+  - **사용 사례**: 악의적 행위자의 행동을 순서화하고 무단 접근 기간을 판단합니다. 비정상적인 시간에 API 호출이 급증하면 악의적 활동을 나타낼 수 있습니다.
+
+- **12. eventName** 
+  - **설명**: AWS API 작업(예: `GetCallerIdentity`, `CreateAccessKey`, `DeleteBucket`)을 지정합니다. 
+  - **보안적 중요성**: 정찰(`ListUsers`) 또는 권한 상승(`CreateAccessKey`)과 같은 악의적 행위자의 기법을 드러냅니다. 
+  - **사용 사례**: IAM 정책 수정 또는 로깅 비활성화와 같은 고위험 작업을 식별하기 위해 `eventName`을 분석하여 지속성 또는 탐지 회피 의도를 파악합니다.
+
+- **13. eventSource** 
+  - **설명**: 대상 AWS 서비스(예: `iam.amazonaws.com`, `s3.amazonaws.com`)를 식별합니다. 
+  - **보안적 중요성**: 영향을 받는 서비스를 판단하여 교정 노력의 우선순위를 정합니다. 
+  - **사용 사례**: 역할 체이닝 공격을 감지하기 위해 `sts.amazonaws.com`의 `eventSource`와 `AssumeRole`의 `eventName`을 조사합니다. 손상된 서비스에 집중하기 위해 로그를 필터링합니다.
+
+- **14. sourceIPAddress** 
+  - **설명**: 요청이 발생한 IP 주소를 나타냅니다. 
+  - **보안적 중요성**: 공격의 지리적 기원과 잠재적 위협 행위자를 식별합니다. 
+  - **사용 사례**: 위협 인텔리전스 피드와 `sourceIPAddress`를 교차 참조하여 의심스러운 기원을 탐지합니다. "AWS Internal/#"으로 표시되면 서비스 역할 또는 잘못된 구성을 조사합니다.
+
+- **15. userAgent** 
+  - **설명**: 사용된 애플리케이션 또는 도구(예: `aws-cli`, `aws-sdk-java`)를 상세히 설명합니다. 
+  - **보안적 중요성**: 악의적 행위자가 사용한 의심스러운 도구 또는 비표준 애플리케이션을 식별합니다. 
+  - **사용 사례**: 일반적인 조직 패턴에서 벗어나는 비 AWS SDK와 같은 이상을 감지하기 위해 `userAgent`를 모니터링합니다.
+
+- **16. errorCode 및 errorMessage** 
+  - **설명**: API 호출이 실패했는지와 그 이유(예: `AccessDenied`)를 나타냅니다. 
+  - **보안적 중요성**: 실패한 공격 시도와 권한 경계를 드러내어 악의적 행위자의 범위에 대한 통찰을 제공합니다. 
+  - **사용 사례**: `CreateAccessKey`에 대한 다수의 `AccessDenied` 오류는 권한 테스트를 나타낼 수 있습니다. 이 필드를 사용하여 보안 제어를 개선합니다.
+
+- **17. requestParameters** 
+  - **설명**: 리소스 이름 또는 구성과 같이 API 호출과 함께 전송된 파라미터를 포함합니다. readOnly API의 경우 이 필드는 null입니다. 작업이 응답 요소를 반환하지 않는 경우에도 이 필드는 null입니다. 작업에 대한 응답 요소는 적절한 AWS 서비스의 API 참조 문서에 문서화되어 있습니다. 
+  - **보안적 중요성**: API 호출의 특정 입력과 악의적 행위자의 행동으로 전송된 구성 세부 정보를 드러냅니다. 
+  - **사용 사례**: 교정을 위한 버킷 이름을 식별하기 위해 `CreateBucket` 호출의 `requestParameters`를 분석합니다.
+
+- **18. responseElements** 
+  - **설명**: 새로 생성된 접근 키 또는 리소스 ARN과 같은 API 호출의 출력을 포함합니다. 변경을 수행하는 작업(생성, 업데이트, 삭제)의 응답 요소입니다. readOnly API의 경우 이 필드는 `null`입니다. 작업이 응답 요소를 반환하지 않는 경우에도 이 필드는 `null`입니다. 작업에 대한 응답 요소는 적절한 AWS 서비스의 API 참조 문서에 문서화되어 있습니다. 
+  - **보안적 중요성**: 새로 생성된 리소스, 접근 키 및 기타 아티팩트와 같은 중요 정보를 포함합니다. 
+  - **사용 사례**: `CreateAccessKey` 이벤트의 `responseElements`를 사용하여 새 키를 비활성화하고 무단 변경을 되돌립니다.
+
+- **19. resources** 
+  - **설명**: ARN 및 리소스 유형을 포함하여 접근 또는 수정된 AWS 리소스를 나열합니다. 
+  - **보안적 중요성**: 교정을 위한 S3 버킷 또는 IAM 역할과 같은 영향 받는 자산을 식별합니다. 
+  - **사용 사례**: `DeleteObject` 이벤트에서 `resources`를 사용하여 영향 받는 S3 오브젝트를 정확히 파악하고 복구 우선순위를 정합니다.
+
+- **20. eventType** 
+  - **설명**: 이벤트를 분류합니다(예: `AwsApiCall`, `AwsConsoleSignIn`). 
+  - **보안적 중요성**: API 기반 공격, 콘솔 로그인 또는 서비스 시작 작업을 구별합니다. 
+  - **사용 사례**: 무단 콘솔 접근을 감지하고 MFA를 확인하기 위해 `AwsConsoleSignIn` 이벤트를 필터링합니다.
+
+- **21. recipientAccountId** 
+  - **설명**: 요청을 수신하는 AWS 계정을 식별합니다. 
+  - **보안적 중요성**: 멀티 계정 조직에서 교차 계정 활동을 추적합니다. 
+  - **사용 사례**: 무단 교차 계정 접근을 감지하기 위해 `recipientAccountId`가 `userIdentity.accountId`와 다른지 조사합니다.
+
+- **22. awsRegion** 
+  - **설명**: 요청의 AWS 리전을 지정합니다. 
+  - **보안적 중요성**: 지리적 패턴과 인시던트 범위를 설정합니다. 
+  - **사용 사례**: 미사용 리전에서의 이상을 식별하기 위해 `awsRegion`별로 로그를 필터링합니다.
+
+- **23. readOnly** 
+  - **설명**: API 호출이 읽기 전용(`true`)인지 쓰기(`false`)인지 나타냅니다. 
+  - **보안적 중요성**: 정찰과 수정 작업을 구별합니다. 
+  - **사용 사례**: 잠재적 데이터 변조 또는 지속성을 위해 쓰기 작업에 집중합니다.
+
+- **24. eventID** 
+  - **설명**: 각 CloudTrail 이벤트를 고유하게 식별합니다. 
+  - **보안적 중요성**: 특정 이벤트를 참조하고 SIEM 도구와 같은 외부 시스템과 상관 분석할 수 있습니다. 
+  - **사용 사례**: 로그 집계 및 추적을 위한 기본 키로 `eventID`를 사용합니다.
+
+- **25. serviceEventDetails** 
+  - **설명**: IAM Identity Center 페더레이션 이벤트와 같은 서비스별 컨텍스트를 제공합니다. 
+  - **보안적 중요성**: 전문화된 서비스 세부 정보로 조사를 강화합니다. 
+  - **사용 사례**: 페더레이션된 사용자 작업을 감사하기 위해 IAM Identity Center 이벤트의 `serviceEventDetails`를 분석합니다.
+
+:::tip userIdentity 요소 살펴보기
+AWS CloudTrail 로그의 **userIdentity** 요소에 대한 포괄적인 가이드(필드: `type`, `userName`, `arn` 등)는 **[상세 문서를 방문](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html)**하세요. 효과적인 보안 포렌식 및 인시던트 대응을 위한 인사이트를 얻으세요.
+:::
+
+:::note CloudTrail 모범 사례
+보안 조사를 위한 CloudTrail의 효과를 극대화하려면 AWS Organization의 모든 리전 및 계정에서 CloudTrail을 활성화하세요. 접근이 제한된 S3 버킷에 로그를 안전하게 저장하고 변조를 감지하기 위한 로그 파일 무결성 검증을 활성화하세요. Amazon Athena 또는 CloudTrail Lake와 같은 도구를 사용하여 이러한 필드를 정기적으로 분석하여 이상을 식별하고 인시던트에 신속하게 대응하세요.
+:::
+
+## 손상된 AWS 접근 키에 대한 분석 워크플로우 예제
+
+1. **행위자 식별**: `userIdentity` 필드(`type`, `userName`, `arn`, `accountId`, `principalId`)를 사용하여 관련 ID를 판단합니다. `Root`가 감지되면 에스컬레이션합니다.
+2. **타임라인 설정**: `eventTime`을 사용하여 이벤트를 순서화하고 공격 기간을 식별합니다.
+3. **작업 분석**: `eventName`, `eventSource`, `readOnly`를 검토하여 악의적 행위자의 기법과 영향 받는 서비스를 파악합니다.
+4. **리소스 추적**: `resources`, `requestParameters`, `responseElements`를 사용하여 교정을 위한 대상 또는 수정된 자산을 식별합니다.
+5. **접근 조사**: `sourceIPAddress`, `userAgent`, `recipientAccountId`, `sessionContext`를 교차 참조하여 무단 접근 또는 역할 체이닝을 감지합니다.
+6. **오류 검토**: `errorCode` 및 `errorMessage`를 분석하여 IAM 정책에 의해 차단된 시도된 작업을 식별합니다.
+7. **이벤트 상관 분석**: `eventID` 및 `serviceEventDetails`를 사용하여 SIEM 도구와 통합하고 상세한 포렌식 분석을 수행합니다.

@@ -1,0 +1,322 @@
+---
+title: CloudWatch APM 시작하기
+sidebar_label: 시작하기
+slug: /getting-started
+---
+
+# CloudWatch APM 시작하기
+
+## 개요
+
+Application Performance Monitoring(APM)은 현대 분산 애플리케이션의 상태와 성능을 이해하고 최적화하는 데 필수적입니다. APM이 없으면 느린 응답 시간, 잦은 장애, 복잡한 마이크로서비스 아키텍처에서 문제를 정확히 파악하기 어렵습니다. Amazon CloudWatch Application Signals는 애플리케이션을 자동으로 계측하고, 텔레메트리 데이터를 수집하며, 사전 구성된 대시보드와 지능형 알림을 통해 실행 가능한 인사이트를 제공하여 이러한 문제를 해결합니다.
+
+CloudWatch Application Signals는 빠른 상태 평가를 위한 Golden Metrics(지연 시간, 처리량, 오류율, 포화도), 상세한 요청 흐름 분석을 위한 Trace 및 Span 분석, 완전한 OpenTelemetry(OTel) 호환성을 포함한 핵심 APM 기능을 지원합니다. OpenTelemetry는 텔레메트리 데이터 수집 및 내보내기를 위한 벤더 중립 표준을 제공하여, 한 번 계측으로 여러 Observability 플랫폼에 데이터를 전송할 수 있게 해줍니다. 이를 통해 개발에서 프로덕션까지의 여정을 가속화하고, 환경 전반에 걸쳐 일관된 모니터링을 가능하게 하며, 평균 복구 시간(MTTR)을 단축하고, 사전 예방적 문제 감지와 자동화된 인사이트를 통해 안정적이고 신뢰할 수 있는 애플리케이션을 보장합니다.
+
+## 주요 기능
+
+### 전체 구조를 한눈에
+
+설정 없이 전체 시스템 아키텍처를 시각화하고 문제를 해결합니다. 계측 및 미계측 서비스의 자동 검색, 분산 애플리케이션의 AWS 계정 및 리전 간 자동 매핑, 크로스 계정 가시성, 일반적인 문제에 대한 자동 운영 감사, 애플리케이션의 최근 변경 사항을 통해 종속성을 이해하고 문제를 더 빠르게 해결할 수 있습니다.
+
+### 모든 Trace에서 비즈니스 인사이트 도출
+
+직관적인 비주얼 쿼리 빌더를 사용하여 트랜잭션 분석을 간소화합니다. 트랜잭션 추적을 비즈니스 목표에 연결하여 비즈니스 인사이트를 도출합니다. 최소한의 설정과 원클릭 분석으로 비즈니스 크리티컬 트랜잭션의 엔드투엔드 뷰를 즉시 확보할 수 있습니다.
+
+### 소스 코드와 프로덕션 텔레메트리 연결
+
+VS Code 또는 GitHub과 같은 IDE에서 도구 전환이나 쿼리 언어 학습 없이 자연어로 직접 프로덕션 이슈를 조사할 수 있습니다. "왜 결제 서비스가 결제 처리에 실패하나요?"와 같은 일반 질문을 하면, 발생 중인 알람을 검사하고, 로그 이상을 조사하고, 배포와 메트릭을 상관 분석하고, 문제를 일으키는 정확한 코드를 몇 초 만에 가리키는 AI 기반 분석을 받을 수 있습니다. GitHub 이슈에서 @awsapm을 사용하면 소스 코드와 함께 라이브 텔레메트리 자동 분석을 트리거하고, 상세한 수정 사항을 받으며, AI가 정확한 솔루션이 포함된 Pull Request를 제출할 수 있습니다.
+
+### 고객 만족과 서비스 가동 유지
+
+SLO와 SLI를 사용하여 서비스 신뢰성을 추적하고 고객 만족을 유지합니다. CloudWatch의 통합 콘솔을 사용하여 실시간 SLO 상태 및 준수 여부를 추적하고 일관된 서비스 품질을 제공합니다. 신뢰성 문제가 발생하기 전에 CloudWatch에서 비즈니스 중심 SLO 알림을 설정하여 고객 불만을 방지합니다.
+
+### 사용자 행동 파악
+
+Real User Monitoring(RUM)을 통해 웹 및 모바일 애플리케이션에서 고객이 사이트를 어떻게 경험하는지 정확히 파악합니다. CloudWatch에서 주요 고객 여정을 시뮬레이션하는 Synthetic Monitoring(Canaries)을 실행하여 고객보다 먼저 사이트 문제를 감지합니다. 성능 이슈와 트렌드를 즉시 강조하는 CloudWatch의 내장 대시보드를 사용하여 더 빠른 의사결정을 내릴 수 있습니다.
+
+---
+
+CloudWatch Application Performance Monitoring(APM)은 Application Signals(AWS의 대표 Observability 플랫폼)를 통해 분산 시스템 전반에서 애플리케이션을 이해, 문제 해결 및 최적화할 수 있도록 도와줍니다. 코드를 디버깅하는 개발자, 프로덕션 시스템을 유지하는 운영자, Observability 전략을 설계하는 아키텍트 모두에게 빠른 시작을 도와드립니다.
+
+## 어디서부터 시작해야 하나요?
+
+- 개발자 → [첫 번째 애플리케이션 계측하기](#developers-첫-번째-애플리케이션-계측하기)로 이동
+- 운영자 → [프로덕션 시스템 모니터링](#operators-프로덕션-시스템-모니터링)으로 이동
+- 아키텍트 → [Observability 전략 설계](#architects-observability-전략-설계)로 이동
+
+## CloudWatch APM이란?
+
+CloudWatch Application Performance Monitoring(APM)은 Application Signals를 기반으로 한 AWS의 종합적인 Observability 솔루션으로, 백엔드 서비스부터 프론트엔드 사용자 경험까지 애플리케이션에 대한 엔드투엔드 가시성을 제공합니다.
+
+Application Signals는 애플리케이션 토폴로지를 자동으로 검색하고, 코드를 계측하며, 완전한 Observability를 위해 함께 작동하는 세 가지 통합 모니터링 기능을 제공합니다.
+
+## Application Performance Monitoring(APM)의 세 가지 축
+
+### CloudWatch Application Signals
+
+CloudWatch Application Signals는 AWS의 대표 Observability 플랫폼으로, 애플리케이션 토폴로지를 자동으로 검색하고, 코드를 계측하며, 완전한 Observability를 위해 함께 작동하는 세 가지 통합 모니터링 기능을 제공합니다.
+
+**제공 기능:**
+
+- 자동 서비스 검색 및 계측
+- 하나의 플랫폼에서 APM, RUM, Synthetics 통합
+- 사전 구성된 대시보드 및 자동화된 인사이트
+- 크로스 계정 및 크로스 리전 가시성
+
+### Real User Monitoring (RUM)
+
+프로덕션에서 실제 사용자 경험을 캡처합니다. 다양한 브라우저, 디바이스, 지역에서 실제 사용자가 웹 애플리케이션과 상호작용하는 방식을 모니터링합니다. RUM은 페이지 성능, JavaScript 오류, Core Web Vitals를 추적하여 사용자 경험을 이해하고 최적화하는 데 도움을 줍니다.
+
+**제공 기능:**
+
+- 페이지 로드 시간 및 네비게이션 성능
+- Stack trace가 포함된 JavaScript 오류
+- Core Web Vitals (LCP, FID, CLS) 추적
+- 사용자 세션 리플레이 및 여정 분석
+- 지역 및 디바이스 기반 성능 인사이트
+
+### Synthetic Monitoring
+
+사용자보다 먼저 주요 플로우를 사전에 테스트합니다. 여러 AWS 리전에서 24/7 자동화된 테스트를 실행하여 사용자에게 영향을 미치기 전에 문제를 감지합니다. Synthetic Canaries는 API 기능을 검증하고, 주요 사용자 여정을 모니터링하며, 애플리케이션이 SLA를 충족하는지 확인합니다.
+
+**제공 기능:**
+
+- 예약된 API 상태 확인(1~60분 간격)
+- 주요 사용자 플로우에 대한 스크립트 기반 브라우저 테스트
+- 멀티 리전 가용성 모니터링
+- 기준 성능 추적
+- 사용자 영향 전 사전 알림
+
+## 세 가지 기능의 시너지
+
+Application Signals의 진정한 가치는 이 세 가지 기능이 서로 보완하여 완전한 가시성을 제공하는 것에 있습니다.
+
+### 시나리오: 전체 인시던트 조사
+
+1. Synthetics가 결제 플로우 실패 감지 → 알림 발생
+2. APM trace가 결제 서비스의 예외 발생을 표시
+3. RUM이 실제 사용자도 동일한 실패를 경험하고 있음을 확인
+4. 해결: APM trace가 최근 배포에서 버그가 유입되었음을 밝힘
+
+### 시나리오: 성능 최적화
+
+1. RUM이 모바일에서 느린 페이지 로드 식별 (LCP 4.5초)
+2. APM trace가 백엔드 API는 빠름을 표시 (200ms)
+3. RUM이 병목이 3MB 히어로 이미지임을 밝힘
+4. Synthetics가 최적화 후 수정을 검증
+
+## Application Signals 시작하기
+
+Application Signals를 사용하면 코드 변경 없이 시작할 수 있습니다. AWS 환경에서 활성화하기만 하면 애플리케이션을 자동으로 계측하고 서비스를 검색합니다. 활성화 후에는 추가 구성 없이 애플리케이션 토폴로지의 변경 사항을 계속 자동 검색합니다.
+
+모든 것을 한꺼번에 활성화할 필요는 없습니다. 다음 단계별 접근을 권장합니다:
+
+### 1단계: APM부터 시작 (1주차)
+
+- 백엔드 서비스에 Application Signals 활성화
+- 서비스 종속성에 대한 가시성 확보
+- 성능 기준선 수립
+
+### 2단계: Synthetics 추가 (2~3주차)
+
+- 주요 사용자 여정에 대한 Canaries 생성
+- 사전 모니터링 설정
+- 가용성 기준선 수립
+
+### 3단계: RUM 활성화 (4주차 이후)
+
+- 웹 애플리케이션에 RUM 추가
+- 실제 사용자 경험 추적
+- 백엔드 성능과 상관 분석
+
+### Application Signals의 핵심 기능
+
+- 자동 서비스 검색
+- 분산 추적
+- 실시간 메트릭
+- Application Map
+- SLO 추적
+- 지능형 알림
+
+## Developers: 첫 번째 애플리케이션 계측하기
+
+**달성 목표**
+15분 만에 지원되는 런타임에서 코드 변경 없이 Application Signals가 백엔드 서비스에서 APM trace와 메트릭을 수집하도록 설정합니다.
+
+### 사전 요구사항
+
+- AWS에서 실행 중인 애플리케이션 (ECS, EKS, EC2 또는 Lambda)
+- 지원되는 런타임: Java, Python, .NET, Node.js 또는 Go
+- Application Signals를 활성화할 IAM 권한
+
+### Step 1: 계측 방식 선택
+
+**Option A: Auto-Instrumentation (권장)**
+
+- 코드 변경 불필요
+- Java, Python, .NET, Node.js에서 작동
+- 자동 APM 메트릭 및 trace 수집
+
+**Option B: OpenTelemetry 수동 계측**
+
+- 계측 대상에 대한 완전한 제어
+- Observability 플랫폼 간 이식 가능
+- APM, RUM, Synthetics용 커스텀 span 및 attribute
+
+**Option C: AWS Distro for OpenTelemetry (ADOT)**
+
+- AWS에 최적화된 OpenTelemetry
+- Application Signals에 사전 구성됨
+
+### Step 2: Application Signals 활성화
+
+플랫폼별 활성화 지침(EKS, ECS, Lambda)은 개발자 가이드를 참조하세요. 활성화 후 콘솔에 데이터가 나타나기까지 5~10분 정도 기다립니다.
+
+### Step 3: APM 데이터 수집 확인
+
+1. 데이터가 나타나기까지 5~10분 대기
+2. **CloudWatch Console** → **Application Signals** 열기
+3. Application Map 확인 — APM 메트릭과 함께 서비스가 표시되어야 합니다
+4. 서비스를 클릭하여 분산 trace 및 성능 메트릭 확인
+
+### Step 4: 커스텀 계측 추가 (선택사항)
+
+커스텀 span과 비즈니스 컨텍스트로 APM trace를 향상시킬 수 있습니다(언어별 예제는 개발자 문서 참조).
+
+### Step 5: 프론트엔드 모니터링을 위한 RUM 활성화 (선택사항)
+
+RUM 웹 클라이언트를 추가하여 사용자 경험을 추적합니다.
+
+### Step 6: Synthetic Canaries 생성 (선택사항)
+
+Synthetic 테스트를 사용하여 사전 모니터링을 설정합니다.
+
+### 개발자를 위한 트러블슈팅
+
+- **APM trace가 보이지 않나요?** IAM 권한(`cloudwatch:PutMetricData`, `xray:PutTraceSegments`)을 확인하고 에이전트가 실행 중인지 확인합니다(`kubectl logs -n amazon-cloudwatch ...`).
+- **RUM 데이터가 나타나지 않나요?** RUM 스니펫이 다른 스크립트보다 먼저 로드되는지 확인하고, 브라우저 콘솔에서 오류를 확인합니다.
+- **Synthetic Canaries가 실패하나요?** Canary 로그를 검토하고 스크립트를 로컬에서 테스트합니다. Canary VPC에서의 네트워크 연결을 확인합니다.
+- **오버헤드가 높나요?** APM 샘플링 비율을 조정하고, head-based 샘플링 또는 RUM 세션 샘플링을 고려합니다.
+
+## Operators: 프로덕션 시스템 모니터링
+
+**달성 목표**
+30분 만에 APM, RUM, Synthetics 전반에 걸친 종합적인 모니터링, 알림, 대시보드를 프로덕션 애플리케이션에 설정합니다.
+
+### 모니터링 체크리스트
+
+#### 서비스 상태 모니터링 (APM)
+
+- Application Map에 모든 중요 백엔드 서비스가 표시됨
+- 주요 APM 메트릭 대시보드 생성됨 (지연 시간, 오류, 처리량)
+- 중요 서비스에 SLO가 정의됨
+- SLO 위반에 대한 알림이 구성됨
+
+#### 사용자 경험 모니터링 (RUM)
+
+- 프로덕션 웹 애플리케이션에 RUM 활성화됨
+- Core Web Vitals 추적 구성됨
+- 프론트엔드 오류 알림 설정됨
+- 지역별 성능 기준선 수립됨
+
+#### 사전 모니터링 (Synthetics)
+
+- 주요 사용자 여정에 대한 Canaries 생성됨
+- 5분마다 API 상태 확인 실행 중
+- 멀티 리전 가용성 모니터링 활성화됨
+- Synthetic 테스트 실패 알림 구성됨
+
+### Step 1: 통합 대시보드 생성
+
+Application Signals 대시보드 템플릿을 사용하여 APM Golden Signals, RUM 사용자 경험, Synthetics 상태, 서비스 종속성 위젯을 추가합니다.
+
+### Step 2: 지능형 알림 설정
+
+APM, RUM, Synthetics에 걸친 복합 알람을 생성합니다(예제는 문서 참조).
+
+### Step 3: 런북 자동화 구현
+
+알림에 런북을 연결하고 안전한 경우 자동 복구를 구현합니다(예: 컨테이너 재시작, 높은 지연 시간 시 스케일링, CDN 캐시 무효화).
+
+### Step 4: 운영 리뷰 수립
+
+주간 메트릭 리뷰 및 월간 심층 분석(비용 최적화, 알림 피로도 분석, 인시던트 회고)을 실시합니다.
+
+## Architects: Observability 전략 설계
+
+**달성 목표**
+향후 2~3년간 조직의 요구를 지원하는 확장 가능하고 비용 효율적인 Application Signals 아키텍처를 설계합니다.
+
+### 아키텍처 의사결정 프레임워크
+
+#### 도입 전략
+
+권장사항: 백엔드 가시성을 위해 APM으로 시작하고, 사전 모니터링을 위해 Synthetics를 추가한 후, 사용자 경험 인사이트를 위해 RUM을 활성화합니다.
+
+#### 계측 전략
+
+권장사항: 유연성을 유지하기 위해 새로운 애플리케이션에는 OpenTelemetry를 사용하고, 빠른 Application Signals 도입을 위해서는 AWS 네이티브를 사용합니다.
+
+#### 멀티 클라우드 전략
+
+AWS 전용은 Application Signals, 통합 멀티 클라우드 접근은 OpenTelemetry, 하이브리드 유연성을 위해서는 OTel collector bridge를 옵션으로 사용할 수 있습니다.
+
+#### 데이터 보존 전략
+
+- APM trace 데이터: Hot (7일), Warm (30일), Cold (90일 이상 아카이브)
+- RUM 세션 데이터: Hot (30일), Cold (90일 이상)
+- Synthetics 결과: Hot (90일), Cold (1년 이상)
+- 해상도별 메트릭 보존: 1분 (15일), 5분 (63일), 1시간 (15개월)
+
+### 참조 아키텍처 패턴
+
+예시: ADOT을 사용한 EKS 기반 마이크로서비스, Lambda 레이어를 사용한 서버리스, OTel collector를 사용한 하이브리드 클라우드.
+
+### 용량 계획
+
+Observability 비용을 추정하고 샘플링/필터링 및 아카이브 정책을 사용하여 지출을 최적화합니다.
+
+## 보안 및 규정 준수
+
+- APM trace, RUM 데이터, Synthetics 결과를 저장 시 및 전송 시 암호화
+- Trace 및 RUM 세션에서 PII에 대한 데이터 마스킹 구현
+- 세분화된 접근 제어를 위해 IAM 사용
+- 감사 로깅을 위해 CloudTrail 활성화
+
+규정 준수 고려사항: HIPAA, PCI-DSS, GDPR, SOC 2 — 각 경우에 데이터 보존 및 마스킹 지침을 따릅니다.
+
+## 마이그레이션 계획
+
+### X-Ray에서 Application Signals로
+
+1. **병렬 실행 (2~4주):** X-Ray와 함께 Application Signals 활성화, RUM 추가, Canaries 생성, 커버리지 비교
+2. **점진적 마이그레이션 (1~2개월):** 비핵심 서비스 마이그레이션, RUM 확장, 대시보드 업데이트
+3. **전면 전환 (1개월):** 나머지 서비스 마이그레이션 및 X-Ray 폐기
+
+### 타사 APM에서 전환
+
+- 현재 계측 상태 평가
+- 필요 시 OTel 마이그레이션 계획
+- 전환 기간 동안 dual-write 고려
+- 마이그레이션에 3~6개월 예산 산정
+
+## 팀 교육
+
+- 1주차: 기본 워크숍 (APM, RUM, Synthetics 개요)
+- 2~3주차: 실습 랩 (서비스 계측, RUM 활성화, Canaries 생성)
+- 4주차: 세 가지 시그널 모두를 사용한 프로덕션 파일럿
+- 2개월 이후: 오피스 아워 및 지원
+
+Center of Excellence를 수립합니다: 챔피언, 내부 문서, 재사용 가능한 대시보드, 모범 사례.
+
+## 일반적인 시나리오 및 솔루션
+
+### 시나리오: 느린 API 엔드포인트 디버깅
+
+**개발자 접근 방식:** RUM 확인 → 느린 APM trace 찾기 → 병목 span 식별 → 커스텀 계측 추가 → 배포 후 RUM 및 Synthetics로 검증
+
+**운영자 접근 방식:** Synthetics 확인 → APM trace 검토 → RUM으로 사용자 영향 확인 → 상관된 인프라 이슈 확인 → 근거와 함께 에스컬레이션
+
+### 시나리오: 블랙 프라이데이 준비
+
+용량 계획을 검토하고, 시그널 전반에 걸쳐 SLO를 수립하고, 스케일링 정책을 설정하고, 런북을 준비합니다.

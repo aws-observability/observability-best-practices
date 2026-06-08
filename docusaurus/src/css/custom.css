@@ -68,4 +68,18 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   background: var(--ifm-color-emphasis-100);
 }
+/* ===== Responsive Navigation Bar Adjustment (Korean i18n) =====*/
+/* Prevent menu item line breaks */
+.navbar__link {
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
 
+/* Prioritize the right area (language selection + GitHub) to always be visible */
+.navbar__items--right {
+  flex-shrink: 0;
+}
+/* Site-wide Korean word-unit line breaks */
+body {
+  word-break: keep-all;
+}

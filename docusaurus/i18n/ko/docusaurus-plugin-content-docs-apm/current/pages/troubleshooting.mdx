@@ -1,0 +1,226 @@
+---
+title: 문제 해결
+sidebar_label: 문제 해결
+slug: /troubleshooting
+---
+
+# 문제 해결
+
+## 일반적인 문제
+
+이 섹션에서는 CloudWatch Application Signals 구현 시 가장 자주 발생하는 문제와 해결 방법을 다룹니다.
+
+### CloudWatch에 트레이스가 표시되지 않는 경우
+
+#### 가능한 원인:
+
+- 서비스에 Application Signals가 활성화되지 않음
+- 잘못된 IAM 권한
+- Agent가 올바르게 구성되지 않았거나 실행되지 않음
+- 샘플링 비율이 너무 낮게 설정됨
+- CloudWatch에 대한 네트워크 연결 문제
+
+#### 해결 방법:
+
+1. AWS 콘솔에서 Application Signals가 활성화되어 있는지 확인합니다
+2. IAM 권한에 `cloudwatch:PutMetricData` 및 `xray:PutTraceSegments`가 포함되어 있는지 확인합니다
+3. Agent가 올바르게 실행 중이고 구성되었는지 확인합니다
+4. 테스트를 위해 샘플링 비율을 높입니다 (일시적으로 100%로 설정)
+5. VPC 보안 그룹 및 NACL이 CloudWatch로의 아웃바운드 트래픽을 허용하는지 확인합니다
+
+### 트레이스 누락 또는 불완전한 트레이스
+
+#### 일반적인 문제:
+
+- 서비스 간 컨텍스트가 전파되지 않음
+- 일부 서비스가 계측되지 않음
+- 샘플링으로 인한 span 누락
+- Agent 구성 문제
+
+#### 디버깅 단계:
+
+1. Service map에서 계측되지 않은 서비스를 확인합니다
+2. 트레이스 컨텍스트 헤더가 전달되고 있는지 확인합니다 (예: `x-amzn-trace-id`)
+3. Agent 로그에서 구성 오류를 검토합니다
+4. 샘플링 문제를 배제하기 위해 100% 샘플링으로 테스트합니다
+5. Trace search를 사용하여 부분 트레이스를 찾습니다
+
+### 높은 계측 오버헤드
+
+#### 증상:
+
+- CPU 사용량 증가
+- 메모리 소비 증가
+- 지연 시간 증가
+- 애플리케이션 성능 저하
+
+#### 최적화 전략:
+
+- 샘플링 비율을 줄입니다 (프로덕션에서는 10%부터 시작)
+- tail-based 대신 head-based 샘플링을 사용합니다
+- 적절한 span 제한을 구성합니다
+- span export를 배치 처리합니다
+- 계측 메트릭을 모니터링합니다
+
+### RUM 데이터가 표시되지 않는 경우
+
+#### 체크리스트:
+
+- RUM 웹 클라이언트가 올바르게 설치 및 로드됨
+- Application ID 및 구성이 올바름
+- RUM 도메인에 대한 CORS 헤더가 구성됨
+- Content Security Policy에서 RUM 스크립트를 허용함
+- 브라우저 콘솔에 JavaScript 오류가 없음
+
+#### 검증:
+
+```javascript
+// RUM이 로드되었는지 확인
+console.log(window.cwr);
+
+// 구성 확인
+console.log(cwr('getConfig'));
+```
+
+### Synthetic Canary 실패
+
+#### 일반적인 원인:
+
+- Canary VPC에서의 네트워크 연결 문제
+- 인증 또는 권한 부여 실패
+- 애플리케이션 변경으로 인한 테스트 스크립트 중단
+- Canary 런타임 또는 종속성이 오래됨
+
+#### 디버깅:
+
+1. CloudWatch Logs에서 canary 로그를 검토합니다
+2. Canary 스크립트를 로컬에서 테스트합니다
+3. VPC 라우팅 및 보안 그룹을 확인합니다
+4. 필요 시 canary 런타임을 업데이트합니다
+5. 애플리케이션 엔드포인트에 접근 가능한지 확인합니다
+
+## 디버깅 가이드
+
+복잡한 문제를 진단하기 위한 단계별 가이드입니다.
+
+### 트레이스 컨텍스트 전파 디버깅
+
+#### 1단계: 계측 확인
+
+호출 체인의 모든 서비스가 올바르게 계측되었는지 확인합니다:
+
+```bash
+# 요청에서 트레이스 헤더 확인
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint
+```
+
+#### 2단계: Agent 구성 확인
+
+Agent 구성 파일 및 환경 변수를 확인합니다.
+
+#### 3단계: 종단 간 테스트
+
+테스트 요청을 만들고 모든 서비스를 통해 추적합니다.
+
+### 성능 문제 진단
+
+#### 병목 지점 식별:
+
+1. Service map에서 높은 지연 시간을 가진 서비스를 확인합니다
+2. 트레이스 타임라인에서 느린 span을 검사합니다
+3. 리소스 메트릭(CPU, 메모리, 디스크 I/O)을 검토합니다
+4. 로그에서 오류 패턴을 찾습니다
+5. 데이터베이스 쿼리 성능을 확인합니다
+
+#### 일반적인 병목 지점:
+
+- 데이터베이스 쿼리 최적화 필요
+- 외부 API 호출 시간 초과
+- 리소스 제약 (CPU/메모리)
+- 스레드 풀 고갈
+- 서비스 간 네트워크 지연
+
+### Agent 문제 해결
+
+#### Agent 상태 확인:
+
+```bash
+# Java 애플리케이션의 경우
+jps -l | grep opentelemetry
+
+# Python 애플리케이션의 경우
+ps aux | grep opentelemetry
+
+# Agent 로그 확인
+tail -f /var/log/aws-opentelemetry-agent.log
+```
+
+#### 일반적인 Agent 문제:
+
+- JVM에 맞지 않는 Java agent 버전
+- 종속성 또는 라이브러리 누락
+- 구성 파일 구문 오류
+- 로그 파일 쓰기 권한 문제
+
+## 도구 및 명령어
+
+문제 해결에 유용한 도구와 명령어입니다.
+
+### CloudWatch CLI 명령어
+
+```bash
+# Application Signals 서비스 목록 조회
+aws application-signals list-services
+
+# 서비스 메트릭 가져오기
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# 트레이스 쿼리
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z
+```
+
+### 로그 분석
+
+CloudWatch Logs Insights를 사용하여 텔레메트리 데이터를 분석합니다:
+
+```
+# 애플리케이션 로그에서 오류 찾기
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# 트레이스와 로그 상관관계
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc
+```
+
+## 도움 받기
+
+추가 지원이 필요한 경우:
+
+### 문서 리소스:
+
+- [Application Signals User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html)
+- [Synthetics User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html)
+- [RUM User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html)
+
+### 지원 옵션:
+
+- AWS Support Center
+- AWS re:Post 커뮤니티
+- OpenTelemetry 프로젝트 GitHub issues

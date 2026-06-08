@@ -1,0 +1,31 @@
+---
+title: 자동 검색
+sidebar_label: 자동 검색
+slug: /auto-discovery
+---
+
+# 자동 검색
+
+## Application Signals가 검색하는 것
+
+Application Signals를 활성화하고 서비스가 텔레메트리를 내보내면, CloudWatch가 자동으로 다음을 검색하고 표시합니다:
+
+- **서비스** 및 해당 **오퍼레이션**
+- **종속성** (다운스트림 호출)
+- **토폴로지** (Application Map)
+
+검색은 선택한 시간 범위(예: 기본값 "최근 3시간") 내에 내보내진 메트릭 및 trace에 의해 구동됩니다. 해당 시간 범위에 활동이 없는 서비스는 표시되지 않습니다.
+
+## 계정 초기 설정 (서비스 검색)
+
+계정에서 서비스 검색을 처음 시작하면 CloudWatch가 `AWSServiceRoleForCloudWatchApplicationSignals` 서비스 연결 역할을 생성합니다. 이 역할은 CloudWatch가 서비스를 검색하고 상관시킬 수 있게 합니다.
+
+공식 절차: [계정에서 Application Signals 활성화](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html)
+
+## 운영 기대치
+
+- **검색 지연:** 토폴로지 및 서비스 검색은 최대 약 10분까지 지연될 수 있습니다.
+- **SLO/SLI 평가:** SLI 상태 평가가 지연될 수 있습니다(예: 최대 약 15분).
+- **스케일 제한:** 콘솔에 최대 1,000개의 서비스를 표시할 수 있습니다.
+
+참조: [Application Signals로 애플리케이션 운영 상태 모니터링](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html)

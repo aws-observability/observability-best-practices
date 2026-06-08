@@ -1,0 +1,115 @@
+---
+sidebar_position: 3
+---
+
+# CloudTrail Lake 이벤트 보강 모범 사례
+
+CloudTrail 이벤트 보강 기능을 사용하면 이벤트 데이터 스토어를 생성하거나 업데이트할 때 리소스 태그 키와 IAM 글로벌 조건 키(프린시펄 태그 키 포함)를 추가하여 관리 이벤트 및 데이터 이벤트를 강화할 수 있습니다. 이 보강 기능은 비용 할당, 재무 관리, 운영, 데이터 보안 요구 사항과 같은 비즈니스 맥락을 기반으로 CloudTrail 이벤트를 더 효과적으로 분류, 검색, 분석할 수 있게 해줍니다. 보강된 이벤트에는 API 작업에 대한 컨텍스트 정보를 제공하는 eventContext 필드가 포함되며, CloudTrail Lake에서 쿼리를 실행하거나 Amazon Athena와의 페더레이션을 통해 분석할 수 있습니다. 이 기능은 리소스, 프린시펄, 인증 조건에 대한 추가 메타데이터를 이벤트 로그에 포함시켜 조직이 AWS 리소스 사용 현황과 보안 상태를 더 잘 이해하고 추적하는 데 도움을 줍니다.
+
+### 리소스 태그 보강
+
+* 이벤트 데이터 스토어 생성 또는 업데이트 시 리소스 태그 키를 구성하여 비즈니스 맥락에 따라 이벤트를 분류하고 분석할 수 있습니다
+* 리소스 생성 이후에 추가된 리소스 태그는 CloudTrail 이벤트에 반영되기까지 지연이 발생할 수 있습니다
+* 삭제된 리소스에 대한 리소스 태그는 태그 정보를 포함하지 않을 수 있습니다
+* 리소스 생성 시점에 적용된 태그는 지연이 거의 또는 전혀 발생하지 않습니다
+
+### IAM 글로벌 조건 키 보강
+
+* 인증 프로세스에 대한 추가 컨텍스트를 포함하려면 관련 IAM 글로벌 조건 키를 선택합니다
+* 구성된 조건 키가 IAM 정책 평가와 관련이 없는 경우 모든 이벤트에 표시되지 않을 수 있습니다
+* 다음과 같은 [지원되는 조건 키](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services)를 사용하는 것을 고려하세요:
+    * aws:FederatedProvider
+    * aws:MultiFactorAuthPresent
+    * aws:PrincipalAccount
+    * aws:PrincipalType
+    * aws:ViaAWSService
+    * aws:SecureTransport
+    * 기타 다수 ([보강된 이벤트에 지원되는 IAM 글로벌 조건 키](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services))
+
+### 서비스 고려 사항
+
+* 리소스 태그 업데이트에 지연이 발생할 수 있는 [서비스](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)를 숙지하세요:
+    * Amazon S3
+    * AWS CloudTrail
+    * AWS Lambda
+    * Amazon DynamoDB
+    * AWS Organizations
+    * AWS KMS
+    * Amazon SQS
+    * 기타 다수 ([AWS 문서](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)에서 추가 서비스를 확인할 수 있습니다)
+
+### 이벤트 컨텍스트 관리
+
+* CloudTrail 이벤트의 eventContext 필드에서 보강된 정보를 모니터링합니다
+* eventContext 필드는 보강이 구성된 이벤트 데이터 스토어의 이벤트에만 존재합니다
+* 지연된 이벤트에는 eventContext 데이터가 포함되지 않습니다. 지연 전달된 이벤트에는 지연 사유를 보여주는 "addendum" 필드가 포함됩니다. 자세한 내용은 [CloudTrail 이벤트 레코드](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)를 참조하세요.
+* 적절한 태그 수집을 위해 AWSServiceRoleForCloudTrailEventContext 서비스 연결 역할을 유지 관리합니다
+* 이벤트 컨텍스트를 추가하면 이벤트의 전체 크기가 증가할 수 있으며, 이로 인해 CloudTrail Lake의 수집 비용이 추가로 발생할 수 있습니다
+
+### 운영 고려 사항
+
+* 서비스 장애로 인해 리소스 태그 업데이트가 지연될 수 있으므로 이에 대한 대비 계획을 수립합니다
+* 서비스 장애 이후 리소스 태그 변경 정보를 포함하는 CloudTrail 이벤트의 addendum 필드를 모니터링합니다
+* 이벤트 기록(Event history), EventBridge, 트레일에는 eventContext 필드가 포함되지 않습니다
+* 보강에 사용할 태그 키와 조건 키를 선택할 때 비용 할당, 운영, 보안에 대한 비즈니스 요구 사항을 고려합니다
+
+### CloudTrail Lake용 샘플 SQL 쿼리
+
+#### **이벤트 보강을 위한 리소스 태그 조회**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+eventContext.tagContext.resourceTags[1].tags as tags,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL 
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **데이터 분류 태그를 활용한 이벤트 보강 리소스 태그 조회**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **이벤트 보강 시각화 차트 생성을 위한 샘플 쿼리**
+
+```
+SELECT count(*) as count, eventName, substr(userIdentity.arn, 
+strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+Group BY eventName,
+substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1),
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification'),
+eventContext.tagContext.resourceTags[1].arn,
+element_at(requestParameters, 'key')
+```
+
+### Cloud Operation Show: Tag It & Track It - AWS CloudTrail 이벤트 보강 및 확장 기능 설명
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IELtInifymY?si=uupyo9_wx0Kcx1Vw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

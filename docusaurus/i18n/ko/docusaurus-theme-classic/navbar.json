@@ -1,0 +1,38 @@
+{
+  "title": {
+    "message": "AWS Observability Best Practices"
+  },
+  "item.label.Home": {
+    "message": "홈"
+  },
+  "item.label.Guides": {
+    "message": "가이드"
+  },
+  "item.label.Signals": {
+    "message": "시그널"
+  },
+  "item.label.Tools": {
+    "message": "도구"
+  },
+  "item.label.APM": {
+    "message": "APM"
+  },
+  "item.label.Recipes": {
+    "message": "레시피"
+  },
+  "item.label.AI": {
+    "message": "AI"
+  },
+  "item.label.Patterns": {
+    "message": "패턴"
+  },
+  "item.label.Persona": {
+    "message": "페르소나"
+  },
+  "item.label.Resources": {
+    "message": "리소스"
+  },
+  "item.label.Contributors": {
+    "message": "Contributors"
+  }
+}

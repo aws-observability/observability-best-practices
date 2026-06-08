@@ -1,0 +1,635 @@
+---
+title: API 레퍼런스
+sidebar_label: API 레퍼런스
+slug: /api
+---
+
+# REST APIs
+
+## Application Signals API
+
+Application Signals 데이터 및 기능에 대한 프로그래밍 방식 접근을 제공합니다.
+
+### 서비스 오퍼레이션
+
+#### ListServices
+
+Application Signals가 검색한 서비스 목록을 반환합니다.
+
+**요청 구문:**
+
+```
+GET /services?nextToken=string&maxResults=integer&startTime=long&endTime=long
+```
+
+**파라미터:**
+
+- `nextToken` - 페이지네이션 토큰
+- `maxResults` - 최대 결과 수 (1-100)
+- `startTime` - 시작 시간 (Unix timestamp)
+- `endTime` - 종료 시간 (Unix timestamp)
+
+**응답:**
+
+```json
+{
+  "services": [
+    {
+      "name": "string",
+      "namespace": "string",
+      "logGroupName": "string"
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+#### GetService
+
+특정 서비스에 대한 상세 정보를 반환합니다.
+
+**요청 구문:**
+
+```
+GET /services/{serviceName}?startTime=long&endTime=long
+```
+
+**경로 파라미터:**
+
+- `serviceName` - 서비스 이름
+
+**응답:**
+
+```json
+{
+  "service": {
+    "name": "string",
+    "namespace": "string",
+    "logGroupName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "rum": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "synthetics": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      }
+    }
+  }
+}
+```
+
+#### ListOperations
+
+서비스의 오퍼레이션 목록을 반환합니다.
+
+**요청 구문:**
+
+```
+GET /services/{serviceName}/operations?nextToken=string&maxResults=integer&startTime=long&endTime=long
+```
+
+**응답:**
+
+```json
+{
+  "operations": [
+    {
+      "name": "string",
+      "metricName": "string"
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+#### GetOperation
+
+특정 오퍼레이션에 대한 상세 정보를 반환합니다.
+
+**요청 구문:**
+
+```
+GET /services/{serviceName}/operations/{operationName}?startTime=long&endTime=long
+```
+
+**응답:**
+
+```json
+{
+  "operation": {
+    "name": "string",
+    "metricName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED"
+      }
+    }
+  }
+}
+```
+
+## Traces API
+
+분산 trace 데이터에 접근하고 분석합니다.
+
+### GetTraceSummaries
+
+Trace 요약 목록을 조회합니다.
+
+**요청 구문:**
+
+```
+POST /TraceSummaries
+```
+
+**요청 본문:**
+
+```json
+{
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "sampling": true|false,
+  "filterExpression": "string"
+}
+```
+
+**응답:**
+
+```json
+{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "startTime": "timestamp",
+      "endTime": "timestamp",
+      "hasError": true|false,
+      "hasFault": true|false,
+      "hasThrottle": true|false
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+### BatchGetTraces
+
+지정된 trace ID에 대한 전체 trace 데이터를 조회합니다.
+
+**요청 구문:**
+
+```
+POST /Traces
+```
+
+**요청 본문:**
+
+```json
+{
+  "traceIds": ["string"],
+  "nextToken": "string"
+}
+```
+
+**응답:**
+
+```json
+{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "segments": [
+        {
+          "id": "string",
+          "name": "string",
+          "startTime": number,
+          "endTime": number,
+          "annotations": {},
+          "metadata": {},
+          "subsegments": [...]
+        }
+      ]
+    }
+  ],
+  "nextToken": "string",
+  "unprocessedTraceIds": ["string"]
+}
+```
+
+### GetServiceGraph
+
+서비스 종속성을 보여주는 서비스 그래프를 조회합니다.
+
+**요청 구문:**
+
+```
+POST /ServiceGraph
+```
+
+**요청 본문:**
+
+```json
+{
+  "startTime": "timestamp",
+  "endTime": "timestamp"
+}
+```
+
+**응답:**
+
+```json
+{
+  "services": [
+    {
+      "name": "string",
+      "names": ["string"],
+      "type": "string",
+      "state": "string",
+      "startTime": "timestamp",
+      "endTime": "timestamp"
+    }
+  ],
+  "edges": [
+    {
+      "source": "string",
+      "target": "string",
+      "references": [...]
+    }
+  ]
+}
+```
+
+## Metrics API
+
+CloudWatch 메트릭 데이터에 접근합니다.
+
+### GetMetricData
+
+메트릭 데이터 포인트를 조회합니다.
+
+**요청 구문:**
+
+```
+POST /
+```
+
+**요청 본문:**
+
+```json
+{
+  "metricDataQueries": [
+    {
+      "id": "string",
+      "metricStat": {
+        "metric": {
+          "namespace": "string",
+          "metricName": "string",
+          "dimensions": [
+            {
+              "name": "string",
+              "value": "string"
+            }
+          ]
+        },
+        "period": integer,
+        "stat": "string"
+      },
+      "expression": "string",
+      "label": "string",
+      "returnData": true|false
+    }
+  ],
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "nextToken": "string",
+  "scanBy": "TimestampDescending|TimestampAscending"
+}
+```
+
+**응답:**
+
+```json
+{
+  "metricDataResults": [
+    {
+      "id": "string",
+      "label": "string",
+      "timestamps": ["timestamp"],
+      "values": [number],
+      "statusCode": "Complete|PartialData|InternalError"
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+### PutMetricData
+
+CloudWatch에 메트릭 데이터 포인트를 게시합니다.
+
+**요청 구문:**
+
+```
+POST /
+```
+
+**요청 본문:**
+
+```json
+{
+  "namespace": "string",
+  "metricData": [
+    {
+      "metricName": "string",
+      "dimensions": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "timestamp": "timestamp",
+      "value": number,
+      "statisticValues": {
+        "sampleCount": number,
+        "sum": number,
+        "minimum": number,
+        "maximum": number
+      },
+      "unit": "string"
+    }
+  ]
+}
+```
+
+## RUM API
+
+Real User Monitoring 데이터에 접근합니다.
+
+### PutRumEvents
+
+CloudWatch에 RUM 이벤트를 전송합니다.
+
+**요청 구문:**
+
+```
+POST /appmonitors/{appMonitorName}/rum-events
+```
+
+**요청 본문:**
+
+```json
+{
+  "events": [
+    {
+      "details": "string",
+      "timestamp": number,
+      "type": "string",
+      "metadata": {}
+    }
+  ],
+  "userDetails": {
+    "userId": "string",
+    "sessionId": "string"
+  }
+}
+```
+
+### GetAppMonitor
+
+RUM App Monitor에 대한 정보를 조회합니다.
+
+**요청 구문:**
+
+```
+GET /appmonitors/{appMonitorName}
+```
+
+**응답:**
+
+```json
+{
+  "appMonitor": {
+    "name": "string",
+    "domain": "string",
+    "id": "string",
+    "state": "CREATED|ACTIVE",
+    "tags": {}
+  }
+}
+```
+
+## Synthetics API
+
+Synthetic Monitoring Canaries를 관리합니다.
+
+### DescribeCanaries
+
+Canaries에 대한 정보를 조회합니다.
+
+**요청 구문:**
+
+```
+POST /canaries
+```
+
+**요청 본문:**
+
+```json
+{
+  "names": ["string"],
+  "nextToken": "string",
+  "maxResults": integer
+}
+```
+
+**응답:**
+
+```json
+{
+  "canaries": [
+    {
+      "id": "string",
+      "name": "string",
+      "code": {...},
+      "executionRoleArn": "string",
+      "schedule": {...},
+      "runConfig": {...},
+      "successRetentionPeriodInDays": integer,
+      "failureRetentionPeriodInDays": integer,
+      "status": {...},
+      "tags": {...},
+      "timeline": {...}
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+### GetCanaryRuns
+
+Canary 실행에 대한 정보를 조회합니다.
+
+**요청 구문:**
+
+```
+POST /canaries/{name}/runs
+```
+
+**요청 본문:**
+
+```json
+{
+  "nextToken": "string",
+  "maxResults": integer
+}
+```
+
+**응답:**
+
+```json
+{
+  "canaryRuns": [
+    {
+      "id": "string",
+      "name": "string",
+      "status": {...},
+      "timeline": {...},
+      "artifactS3Location": "string",
+      "metricData": [...]
+    }
+  ],
+  "nextToken": "string"
+}
+```
+
+## SDK 레퍼런스
+
+언어별 SDK 문서입니다.
+
+### JavaScript SDK
+
+**설치:**
+
+```bash
+npm install @aws-sdk/client-application-signals
+```
+
+**사용법:**
+
+```javascript
+import { ApplicationSignalsClient, ListServicesCommand } from "@aws-sdk/client-application-signals";
+
+const client = new ApplicationSignalsClient({ region: "us-east-1" });
+
+const command = new ListServicesCommand({
+  startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  endTime: new Date()
+});
+
+const response = await client.send(command);
+```
+
+### Python SDK (Boto3)
+
+**설치:**
+
+```bash
+pip install boto3
+```
+
+**사용법:**
+
+```python
+import boto3
+from datetime import datetime, timedelta
+
+client = boto3.client('application-signals', region_name='us-east-1')
+
+response = client.list_services(
+    startTime=datetime.utcnow() - timedelta(days=1),
+    endTime=datetime.utcnow()
+)
+```
+
+### Java SDK
+
+**Maven 종속성:**
+
+```xml
+<dependency>
+  <groupId>software.amazon.awssdk</groupId>
+  <artifactId>application-signals</artifactId>
+  <version>2.20.0</version>
+</dependency>
+```
+
+**사용법:**
+
+```java
+ApplicationSignalsClient client = ApplicationSignalsClient.builder()
+    .region(Region.US_EAST_1)
+    .build();
+
+ListServicesRequest request = ListServicesRequest.builder()
+    .startTime(Instant.now().minus(1, ChronoUnit.DAYS))
+    .endTime(Instant.now())
+    .build();
+
+ListServicesResponse response = client.listServices(request);
+```
+
+### .NET SDK
+
+**NuGet 패키지:**
+
+```bash
+dotnet add package AWSSDK.ApplicationSignals
+```
+
+**사용법:**
+
+```csharp
+using Amazon.ApplicationSignals;
+using Amazon.ApplicationSignals.Model;
+
+var client = new AmazonApplicationSignalsClient(RegionEndpoint.USEast1);
+
+var request = new ListServicesRequest
+{
+    StartTime = DateTime.UtcNow.AddDays(-1),
+    EndTime = DateTime.UtcNow
+};
+
+var response = await client.ListServicesAsync(request);
+```
+
+## 오류 코드
+
+일반적인 오류 코드와 그 의미입니다.
+
+### Application Signals 오류
+
+- `ValidationException` - 유효하지 않은 입력 파라미터
+- `ResourceNotFoundException` - 요청한 리소스가 존재하지 않음
+- `ThrottlingException` - 요청 비율 초과
+- `InternalServerException` - 내부 서비스 오류
+- `AccessDeniedException` - 권한 부족
+
+### X-Ray 오류
+
+- `InvalidRequestException` - 잘못된 형식의 요청
+- `ThrottledException` - 비율 제한 초과
+- `ResourceNotFoundException` - Trace를 찾을 수 없음
+
+### CloudWatch 오류
+
+- `InvalidParameterValueException` - 유효하지 않은 파라미터 값
+- `MissingRequiredParameterException` - 필수 파라미터 누락
+- `LimitExceededException` - 할당량 초과

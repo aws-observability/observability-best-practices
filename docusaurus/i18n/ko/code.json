@@ -1,0 +1,29 @@
+{
+  "featureList.guides.description": {
+    "message": "단계별 가이드를 따라 하기만 하면 클라우드 모니터링을 빠르게 구축할 수 있습니다."
+  },
+  "featureList.signals.description": {
+    "message": "메트릭, 로그, 성능 지표를 활용하여 AWS 환경 전반의 상태를 한눈에 파악할 수 있습니다."
+  },
+  "featureList.tools.description": {
+    "message": "데이터 수집부터 분석, 시각화까지 — AWS 모니터링에 최적화된 도구를 소개합니다."
+  },
+  "featureList.recipes.description": {
+    "message": "현장에서 검증된 Observability 패턴으로 모니터링과 장애 대응 문제를 빠르게 해결하세요."
+  },
+  "featureList.faqs.description": {
+    "message": "AWS Observability에 대해 자주 묻는 질문과 답변을 모았습니다."
+  },
+  "featureList.patterns.description": {
+    "message": "AWS Observability를 단계별로 구현할 수 있는 실습형 학습 자료입니다."
+  },
+  "featureList.persona.description": {
+    "message": "역할에 맞는 Observability 모범 사례와 권장 구성을 확인하세요."
+  },
+  "featureList.resources.description": {
+    "message": "AWS Observability와 관련된 참고 자료를 모아두었습니다."
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS 클라우드 운영에 관한 모범 사례를 확인할 수 있습니다."
+  }
+}

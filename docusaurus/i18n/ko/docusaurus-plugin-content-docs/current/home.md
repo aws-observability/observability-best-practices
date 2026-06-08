@@ -22,14 +22,14 @@ Observability는 '제품'이 아니라 '솔루션'으로 바라보는 것이 중
 
 이 사이트는 다음 여덟가지 카테고리로 구성되어 있습니다:
 
-1. [솔루션별 모범 사례 — 대시보드, 애플리케이션 성능 모니터링(APM), 컨테이너 등](https://aws-observability.github.io/observability-best-practices/guides/)
-1. [데이터 유형별 모범 사례 — 로그, 트레이스 등](https://aws-observability.github.io/observability-best-practices/signals/logs/)
-1. [AWS 도구 활용 모범 사례 (다른 벤더 제품에도 대부분 적용 가능)](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)
-1. [AWS 환경에서의 Observability 레시피 모음](https://aws-observability.github.io/observability-best-practices/recipes/)
-1. [AIOps and Ops for AI](https://aws-observability.github.io/observability-best-practices/ai/)
-1. [실제 실습형 Observability 패턴](https://aws-observability.github.io/observability-best-practices/patterns/Tracing/xrayec2/)
-1. [역할별 모범 사례 및 권장 사항](https://aws-observability.github.io/observability-best-practices/persona/cloud_engineer/)
-1. [유용한 정보](https://aws-observability.github.io/observability-best-practices/resources/)
+1. [솔루션별 모범 사례 — 대시보드, 애플리케이션 성능 모니터링(APM), 컨테이너 등](/guides/)
+1. [데이터 유형별 모범 사례 — 로그, 트레이스 등](/signals/logs/)
+1. [AWS 도구 활용 모범 사례 (다른 벤더 제품에도 대부분 적용 가능)](/tools/cloudwatch_agent/)
+1. [AWS 환경에서의 Observability 레시피 모음](/recipes/)
+1. [AIOps and Ops for AI](/ai/)
+1. [실제 실습형 Observability 패턴](/patterns/Tracing/xrayec2/)
+1. [역할별 모범 사례 및 권장 사항](/persona/cloud_engineer/)
+1. [유용한 정보](/resources/)
 
 :::info
 	이 사이트의 내용은 AWS와 고객이 실제로 경험하고 해결한 사례를 기반으로 합니다.

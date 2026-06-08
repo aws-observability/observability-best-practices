@@ -70,9 +70,9 @@ public class OrderProcessor
 
 애플리케이션이 계측되었으므로, 수집기 에이전트(OpenTelemetry Collector, CloudWatch Agent 또는 Fluent Bit 등)를 사용하여 선택한 Observability 백엔드로 트레이스를 라우팅합니다. 자세한 내용과 구현 가이드는 아래 링크를 참조하세요.
 
-- [Observability with OpenTelemetry](https://aws-observability.github.io/observability-best-practices/patterns/otel) - 애플리케이션 전반에 OpenTelemetry를 구현하기 위한 포괄적인 가이드로, AWS 서비스를 활용하여 텔레메트리 데이터를 수집, 처리, 시각화하는 패턴을 제공하여 풀스택 Observability를 달성할 수 있습니다.
+- [Observability with OpenTelemetry](/patterns/otel) - 애플리케이션 전반에 OpenTelemetry를 구현하기 위한 포괄적인 가이드로, AWS 서비스를 활용하여 텔레메트리 데이터를 수집, 처리, 시각화하는 패턴을 제공하여 풀스택 Observability를 달성할 수 있습니다.
 
-- [Operating the AWS Distro for OpenTelemetry (ADOT) Collector](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) - 프로덕션 환경에서 ADOT Collector를 배포, 확장, 관리하기 위한 실용적인 가이드로, 구성 모범 사례와 AWS Observability 서비스와의 통합을 포함합니다.
+- [Operating the AWS Distro for OpenTelemetry (ADOT) Collector](/guides/operational/adot-at-scale/operating-adot-collector) - 프로덕션 환경에서 ADOT Collector를 배포, 확장, 관리하기 위한 실용적인 가이드로, 구성 모범 사례와 AWS Observability 서비스와의 통합을 포함합니다.
 
 - [Collect metrics, logs, and traces with the CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - 애플리케이션과 인프라에서 텔레메트리 데이터를 수집하기 위한 CloudWatch Agent 설치 및 구성에 대한 단계별 지침으로, AWS CloudWatch와의 원활한 통합을 제공합니다.
 

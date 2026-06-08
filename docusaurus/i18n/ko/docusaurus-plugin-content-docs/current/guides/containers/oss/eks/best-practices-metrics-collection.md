@@ -14,17 +14,17 @@
 
 # 메트릭 수집
 
-EKS 클러스터에서 메트릭을 수집하는 것은 [세 가지 컴포넌트](https://aws-observability.github.io/observability-best-practices/recipes/telemetry/)로 구성됩니다:
+EKS 클러스터에서 메트릭을 수집하는 것은 [세 가지 컴포넌트](/recipes/telemetry/)로 구성됩니다:
 
 1. 소스: 이 가이드에 나열된 것과 같이 메트릭이 생성되는 곳.
-2. 에이전트: EKS 환경에서 실행되는 애플리케이션으로, 종종 에이전트라고 불리며, 모니터링 데이터를 수집하고 이 데이터를 두 번째 컴포넌트로 푸시합니다. 이 컴포넌트의 예로는 [AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/)와 [CloudWatch Agent](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch_agent/)가 있습니다.
-3. 목적지: 모니터링 데이터 저장 및 분석 솔루션으로, 일반적으로 [시계열 형식 데이터](https://aws-observability.github.io/observability-best-practices/signals/metrics/)에 최적화된 데이터 서비스입니다. 이 컴포넌트의 예로는 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/)와 [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)가 있습니다.
+2. 에이전트: EKS 환경에서 실행되는 애플리케이션으로, 종종 에이전트라고 불리며, 모니터링 데이터를 수집하고 이 데이터를 두 번째 컴포넌트로 푸시합니다. 이 컴포넌트의 예로는 [AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/)와 [CloudWatch Agent](/tools/cloudwatch_agent/)가 있습니다.
+3. 목적지: 모니터링 데이터 저장 및 분석 솔루션으로, 일반적으로 [시계열 형식 데이터](/signals/metrics/)에 최적화된 데이터 서비스입니다. 이 컴포넌트의 예로는 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/)와 [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)가 있습니다.
 
 참고: 이 섹션에서 구성 예시는 [AWS Observability Accelerator](https://aws-observability.github.io/terraform-aws-observability-accelerator/)의 관련 섹션에 대한 링크입니다. 이는 EKS 메트릭 수집 구현에 대한 최신 안내와 예시를 제공하기 위한 것입니다.
 
 ## 관리형 오픈 소스 솔루션
 
-[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/)는 사용자가 상관관계 있는 메트릭과 트레이스를 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/)와 [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)와 같은 다양한 모니터링 데이터 수집 솔루션으로 전송할 수 있게 하는 [OpenTelemetry](https://opentelemetry.io/) 프로젝트의 지원 버전입니다. ADOT는 [EKS 관리형 애드온](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)을 통해 EKS 클러스터에 설치할 수 있으며 이 페이지에 나열된 것과 같은 메트릭과 워크로드 트레이스를 수집하도록 구성할 수 있습니다. AWS는 ADOT 애드온이 Amazon EKS와 호환됨을 검증했으며, 최신 버그 수정 및 보안 패치로 정기적으로 업데이트됩니다. [ADOT 모범 사례 및 추가 정보.](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector/)
+[AWS Distro for OpenTelemetry(ADOT)](https://aws-otel.github.io/)는 사용자가 상관관계 있는 메트릭과 트레이스를 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/)와 [AWS CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-EKS.html)와 같은 다양한 모니터링 데이터 수집 솔루션으로 전송할 수 있게 하는 [OpenTelemetry](https://opentelemetry.io/) 프로젝트의 지원 버전입니다. ADOT는 [EKS 관리형 애드온](https://docs.aws.amazon.com/eks/latest/userguide/eks-add-ons.html)을 통해 EKS 클러스터에 설치할 수 있으며 이 페이지에 나열된 것과 같은 메트릭과 워크로드 트레이스를 수집하도록 구성할 수 있습니다. AWS는 ADOT 애드온이 Amazon EKS와 호환됨을 검증했으며, 최신 버그 수정 및 보안 패치로 정기적으로 업데이트됩니다. [ADOT 모범 사례 및 추가 정보.](/guides/operational/adot-at-scale/operating-adot-collector/)
 
 
 ## ADOT + AMP
@@ -145,7 +145,7 @@ ADOT 컬렉터 파이프라인은 Prometheus Remote Write 기능을 활용하여
 
 완전한 모범 사례 컬렉터 구성, ADOT 파이프라인 구성 및 Prometheus 스크래핑 구성은 [Observability Accelerator의 Helm Chart](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml)에서 찾을 수 있습니다.
 
-AMP 구성 및 사용에 대한 모범 사례는 [여기](https://aws-observability.github.io/observability-best-practices/recipes/amp/)에 있습니다.
+AMP 구성 및 사용에 대한 모범 사례는 [여기](/recipes/amp/)에 있습니다.
 
 # 관련 메트릭은 무엇인가?
 

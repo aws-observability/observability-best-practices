@@ -24,7 +24,7 @@ GenAI 텔레메트리는 세 개의 로그 그룹에 도착합니다: `bedrock-m
 
 이 가이드는 두 가지를 모두 구축하기 위한 쿼리를 제공합니다. 대상에 맞는 섹션을 선택하세요. 각 쿼리는 소스 로그 그룹, 뷰 유형, 쿼리 언어, 답변하는 질문을 표기합니다.
 
-기본 데이터 파이프라인과 각각을 언제 활성화해야 하는지에 대한 개요는 [GenAI Observability on AWS](../genai-observability-on-aws.md)를 참조하세요.
+기본 데이터 파이프라인과 각각을 언제 활성화해야 하는지에 대한 개요는 [GenAI Observability on AWS](../genai-observability-on-aws)를 참조하세요.
 
 ---
 
@@ -299,4 +299,4 @@ fields coalesce(output.outputBodyJson.usage.inputTokens,
 
 ## 다음 단계
 
-두 파이프라인이 모두 흐르면 다양한 대상을 위한 대시보드를 구축할 수 있습니다. 기본 데이터 파이프라인과 활성화 시기에 대한 개요는 [AWS에서의 GenAI Observability](../genai-observability-on-aws.md) 가이드를 참조하세요.
+두 파이프라인이 모두 흐르면 다양한 대상을 위한 대시보드를 구축할 수 있습니다. 기본 데이터 파이프라인과 활성화 시기에 대한 개요는 [AWS에서의 GenAI Observability](../genai-observability-on-aws) 가이드를 참조하세요.

@@ -6,9 +6,9 @@
 
 | 섹션 | 설명 |
 |---|---|
-| [기존 모니터링의 문제점](../challenges.md)) | 레거시 모니터링이 현대적인 클라우드 네이티브 애플리케이션에 부적합한 이유 |
-| [X-Ray에서 마이그레이션해야 하는 이유](../why-migrate-from-xray.md)) | 기존 X-Ray 대비 Application Signals + Transaction Search 도입의 이점 |
-| [설정 및 구성](../setup.md)) | Application Signals, Transaction Search 및 샘플링을 활성화하는 단계별 가이드 |
-| [계측 및 Collector 설정](../instrumentation-setups.md)) | 계측 방법 및 상세 Collector 아키텍처 (ADOT + CW Agent, ADOT + Custom Collector, Upstream OTEL, Collector-less, X-Ray 레거시) |
-| [계측 샘플](../instrumentation-samples.md)) | Java, Python, Node.js, .NET, Go, Rust용 언어별 코드 예제 및 데모 애플리케이션 |
-| [리소스](../resources.md)) | 문서 링크, 기술 리소스 및 교육 자료 |
+| [기존 모니터링의 문제점](../challenges) | 레거시 모니터링이 현대적인 클라우드 네이티브 애플리케이션에 부적합한 이유 |
+| [X-Ray에서 마이그레이션해야 하는 이유](../why-migrate-from-xray) | 기존 X-Ray 대비 Application Signals + Transaction Search 도입의 이점 |
+| [설정 및 구성](../setup) | Application Signals, Transaction Search 및 샘플링을 활성화하는 단계별 가이드 |
+| [계측 및 Collector 설정](../instrumentation-setups) | 계측 방법 및 상세 Collector 아키텍처 (ADOT + CW Agent, ADOT + Custom Collector, Upstream OTEL, Collector-less, X-Ray 레거시) |
+| [계측 샘플](../instrumentation-samples) | Java, Python, Node.js, .NET, Go, Rust용 언어별 코드 예제 및 데모 애플리케이션 |
+| [리소스](../resources) | 문서 링크, 기술 리소스 및 교육 자료 |

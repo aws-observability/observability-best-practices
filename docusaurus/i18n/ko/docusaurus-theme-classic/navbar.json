@@ -15,13 +15,13 @@
     "message": "도구"
   },
   "item.label.APM": {
-    "message": "APM"
+    "message": "앱 성능 모니터링"
   },
   "item.label.Recipes": {
     "message": "레시피"
   },
   "item.label.AI": {
-    "message": "AI"
+    "message": "인공지능"
   },
   "item.label.Patterns": {
     "message": "패턴"

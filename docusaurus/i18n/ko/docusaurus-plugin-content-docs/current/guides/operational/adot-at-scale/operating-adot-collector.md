@@ -107,7 +107,7 @@ scrape_configs:
 
 Deployment로 collector를 실행하는 것은 collector에 고가용성을 제공하려는 경우에 특히 유용합니다. 대상 수, 스크래핑 가능한 metrics 등에 따라 Collector의 리소스를 조정하여 collector가 부족하여 신호 수집에 문제가 발생하지 않도록 해야 합니다.
 
-[이 주제에 대한 가이드를 여기서 읽어보세요.](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
+[이 주제에 대한 가이드를 여기서 읽어보세요.](/guides/containers/oss/eks/best-practices-metrics-collection)
 
 다음 아키텍처는 워크로드 노드 외부의 별도 노드에 collector가 배포되어 metrics와 traces를 수집하는 방법을 보여줍니다.
 

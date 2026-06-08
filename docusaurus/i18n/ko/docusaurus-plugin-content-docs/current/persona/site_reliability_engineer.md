@@ -144,7 +144,7 @@ SLO 문서 예시:
 
 ## 참고 자료
 - [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US)
-- [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)
+- [AWS Observability Best Practices](/)
 - [Amazon CloudWatch Intelligent Operations](https://aws.amazon.com/cloudwatch/features/intelligent-operations/)
 - [Resilience analysis framework](https://docs.aws.amazon.com/prescriptive-guidance/latest/resilience-analysis-framework/introduction.html)
 - [Chaos Engineering with AWS Fault Injection Simulator](https://aws.amazon.com/blogs/architecture/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/)

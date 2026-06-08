@@ -40,7 +40,7 @@ Observability 성숙도 모델은 워크로드의 Observability와 관리 프로
 
 ![Observability 기둥](../images/three-pillars.png)
 
-대부분의 경우 모니터링이 잘 작동하는 것처럼 보이지만, 조직은 문제 디버깅에 더 많은 시간을 소비하는 경향이 있으며, 결과적으로 전반적인 평균 해결 시간(MTTR)이 일정하지 않거나 시간이 지남에 따라 의미 있게 개선되지 않습니다. 또한 문제 디버깅에 예상보다 더 높은 인지적 시간과 노력이 필요하여 인시던트 대응이 길어집니다. 운영을 압도하는 데이터 과부하 상황도 발생하는 경향이 있습니다. 대부분의 기업이 다음으로 나아갈 수 있는 곳을 인식하지 못한 채 이 단계에 머무는 것을 발견합니다. 조직을 다음 수준으로 이동시키기 위해 취할 수 있는 구체적인 조치는 다음과 같습니다: 1) 정기적인 간격으로 시스템 아키텍처 설계를 검토하고 영향과 다운타임을 줄이는 정책과 관행을 배포하여 알림을 줄입니다. 2) 실행 가능한 [KPI](https://aws-observability.github.io/observability-best-practices/guides/operational/business/key-performance-indicators/)를 정의하고, 알림 결과에 가치 있는 컨텍스트를 추가하며, 심각도/긴급도별로 분류하고, 엔지니어가 문제를 더 빠르게 해결할 수 있도록 다른 도구와 팀에 전송하여 알림 피로를 방지합니다.
+대부분의 경우 모니터링이 잘 작동하는 것처럼 보이지만, 조직은 문제 디버깅에 더 많은 시간을 소비하는 경향이 있으며, 결과적으로 전반적인 평균 해결 시간(MTTR)이 일정하지 않거나 시간이 지남에 따라 의미 있게 개선되지 않습니다. 또한 문제 디버깅에 예상보다 더 높은 인지적 시간과 노력이 필요하여 인시던트 대응이 길어집니다. 운영을 압도하는 데이터 과부하 상황도 발생하는 경향이 있습니다. 대부분의 기업이 다음으로 나아갈 수 있는 곳을 인식하지 못한 채 이 단계에 머무는 것을 발견합니다. 조직을 다음 수준으로 이동시키기 위해 취할 수 있는 구체적인 조치는 다음과 같습니다: 1) 정기적인 간격으로 시스템 아키텍처 설계를 검토하고 영향과 다운타임을 줄이는 정책과 관행을 배포하여 알림을 줄입니다. 2) 실행 가능한 [KPI](/guides/operational/business/key-performance-indicators/)를 정의하고, 알림 결과에 가치 있는 컨텍스트를 추가하며, 심각도/긴급도별로 분류하고, 엔지니어가 문제를 더 빠르게 해결할 수 있도록 다른 도구와 팀에 전송하여 알림 피로를 방지합니다.
 
 이러한 알림을 정기적으로 분석하고 반복되는 일반적인 알림에 대해 자동 복구를 구현합니다. 운영 및 프로세스 개선에 대한 피드백을 제공하기 위해 관련 팀과 알림 결과를 공유하고 소통합니다.
 
@@ -140,7 +140,7 @@ Observability 성숙도 모델은 워크로드와 인프라의 동작을 이해,
 ## 유용한 리소스
 
 - [효과적인 Observability 전략 구축](https://youtu.be/7PQv9eYCJW8?si=gsn0qPyIMhrxU6sy) - AWS re:Invent 2023
-- [AWS Observability 모범 사례](https://aws-observability.github.io/observability-best-practices/)
+- [AWS Observability 모범 사례](/)
 - [Observability란 무엇이며 왜 중요한가?](https://aws.amazon.com/blogs/mt/what-is-observability-and-why-does-it-matter-part-1/)
 - [Observability 전략을 어떻게 개발하는가?](https://aws.amazon.com/blogs/mt/how-to-develop-an-observability-strategy/)
 - [AWS에서의 심층 애플리케이션 Observability 가이드](https://aws.amazon.com/solutions/guidance/deep-application-observability-on-aws/)

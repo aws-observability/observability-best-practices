@@ -8,7 +8,7 @@
 
 ## 안전한 코딩 실무 및 보안 개발 라이프사이클
 
-AWS는 "설계에 의한 보안" 원칙을 통해 소프트웨어 개발의 기본 요소로서 보안을 강조합니다. 개발 라이프사이클 전반에 걸쳐 보안 제어와 컴플라이언스 요구사항을 통합하는 [안전한 코딩 실무](https://aws-observability.github.io/observability-best-practices/persona/developer)를 구현할 수 있습니다. 이러한 실무는 OWASP Top 10과 같은 산업 표준에 부합하며 애플리케이션 라이프사이클 전반에 걸쳐 강력한 보안 태세를 유지하는 데 도움이 됩니다.
+AWS는 "설계에 의한 보안" 원칙을 통해 소프트웨어 개발의 기본 요소로서 보안을 강조합니다. 개발 라이프사이클 전반에 걸쳐 보안 제어와 컴플라이언스 요구사항을 통합하는 [안전한 코딩 실무](/persona/developer)를 구현할 수 있습니다. 이러한 실무는 OWASP Top 10과 같은 산업 표준에 부합하며 애플리케이션 라이프사이클 전반에 걸쳐 강력한 보안 태세를 유지하는 데 도움이 됩니다.
 
 - 일관되고 버전 관리되는 보안 구성을 보장하기 위해 IaC(Infrastructure as Code)를 구현하고, 통합 보안 스캐닝이 있는 AWS CodeBuild를 사용하며, 자동화된 보안 테스트를 위해 AWS CodePipeline을 배포합니다.
 
@@ -78,7 +78,7 @@ AWS는 통합 보안 서비스와 자동화 기능을 통해 인시던트 대응
 
 - AWS CloudTrail Lake 기능을 사용하면 포렌식 조사를 위해 API 활동 기록 전반에 걸쳐 SQL 기반 쿼리를 실행할 수 있습니다.
 
-- 보안 이벤트에 대한 자동 대응을 위해 Amazon EventBridge를, 서버리스 인시던트 복구를 위해 AWS Lambda를 구현하여 보안 태세를 강화할 수 있습니다. AWS는 네트워크 트래픽 분석을 위해 [VPC Flow Logs를 통한 네트워크 Observability](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs)와 DNS 쿼리 로깅을 구축할 것을 권장하며, AWS Config는 컴플라이언스 분석 및 인시던트 조사를 위한 리소스 구성을 기록합니다.
+- 보안 이벤트에 대한 자동 대응을 위해 Amazon EventBridge를, 서버리스 인시던트 복구를 위해 AWS Lambda를 구현하여 보안 태세를 강화할 수 있습니다. AWS는 네트워크 트래픽 분석을 위해 [VPC Flow Logs를 통한 네트워크 Observability](/patterns/vpcflowlogs)와 DNS 쿼리 로깅을 구축할 것을 권장하며, AWS Config는 컴플라이언스 분석 및 인시던트 조사를 위한 리소스 구성을 기록합니다.
 
 이러한 기능은 Amazon Kinesis Data Firehose를 통해 기존 SIEM(보안 정보 및 이벤트 관리) 솔루션과 통합되어 중앙 집중식 보안 모니터링 및 자동화된 인시던트 대응 워크플로우를 가능하게 합니다.
 

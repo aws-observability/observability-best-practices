@@ -24,7 +24,7 @@ Amazon Managed Service for Prometheus에 수집되는 샘플 수를 줄이려면
 
 ## CloudWatch 메트릭을 Amazon Managed Service for Prometheus로 어떻게 보낼 수 있나요?
 
-[CloudWatch 메트릭 스트림을 사용하여 CloudWatch 메트릭을 Amazon Managed Service for Prometheus로 전송](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/)하는 것을 권장합니다. 이 통합의 일부 가능한 단점은 다음과 같습니다:
+[CloudWatch 메트릭 스트림을 사용하여 CloudWatch 메트릭을 Amazon Managed Service for Prometheus로 전송](/recipes/recipes/lambda-cw-metrics-go-amp/)하는 것을 권장합니다. 이 통합의 일부 가능한 단점은 다음과 같습니다:
 1. Amazon Managed Service for Prometheus API를 호출하려면 Lambda 함수가 필요합니다.
 1. CloudWatch 메트릭을 Amazon Managed Service for Prometheus에 수집하기 전에 메타데이터(예: AWS 태그)로 보강할 수 없습니다.
 1. 메트릭은 네임스페이스별로만 필터링할 수 있습니다(충분히 세분화되지 않음). 대안으로, Prometheus Exporter를 사용하여 CloudWatch 메트릭 데이터를 Amazon Managed Service for Prometheus로 전송할 수 있습니다: (1) CloudWatch Exporter: CW ListMetrics 및 GetMetricStatistics (GMS) API를 사용하는 Java 기반 스크랩.

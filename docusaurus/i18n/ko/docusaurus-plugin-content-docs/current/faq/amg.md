@@ -35,7 +35,7 @@ Amazon Managed Grafana는 [AWS CloudFormation과 통합](https://docs.aws.amazon
 > 관련 블로그: [Amazon Managed Grafana의 프라이빗 VPC 데이터 소스 지원 발표](https://aws.amazon.com/blogs/mt/announcing-private-vpc-data-source-support-for-amazon-managed-grafana/)
 
 ## 우리 조직은 자동화를 위해 Terraform을 사용합니다. Amazon Managed Grafana가 Terraform을 지원하나요?
-네, [Amazon Managed Grafana는](https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-automation-tf/) [자동화](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)를 위한 Terraform을 지원합니다.
+네, [Amazon Managed Grafana는](/recipes/recipes/amg-automation-tf/) [자동화](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)를 위한 Terraform을 지원합니다.
 
 > 예시: [Terraform 지원을 위한 참조 구현](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/examples/managed-grafana-workspace)
 

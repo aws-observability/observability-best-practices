@@ -60,7 +60,7 @@ Service Level Indicator(SLI), Service Level Objective(SLO), Service Level Agreem
 
 6. [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/)를 활용하여 정의된 RTO 및 RPO에 대해 애플리케이션을 분석합니다. [AWS Fault Injection Simulator](https://aws.amazon.com/fis/)와 같은 도구를 사용한 통제된 실험을 통해 가용성, 지연 시간, 비즈니스 연속성 요구사항이 충족되는지 검증합니다. 추가적인 Well-Architected 검토 및 서비스별 심층 분석을 수행하여 워크로드가 AWS 모범 사례에 따라 비즈니스 요구사항을 충족하도록 설계되었는지 확인합니다.
 
-7. 자세한 내용은 [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) 가이드의 다른 섹션, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) 백서, 그리고 AWS Well-Architected Framework Operational Excellence 필러 백서의 '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)' 콘텐츠를 참조하세요.
+7. 자세한 내용은 [AWS Observability Best Practices](/) 가이드의 다른 섹션, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) 백서, 그리고 AWS Well-Architected Framework Operational Excellence 필러 백서의 '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)' 콘텐츠를 참조하세요.
     
 
 ### 3.2 도메인별 TLG (비즈니스 메트릭, 즉 UX, BX 중심)

@@ -92,7 +92,7 @@ Log level은 환경의 상태를 모니터링 및 Observability 솔루션에 알
 *   로그 시스템과 네트워크에 불필요한 부하와 트래픽을 유발하지 않아야 합니다.
 
 :::info
-	로그를 생성 시점에서 바로 필터링하면 비용을 절감하고, 데이터 노출 위험을 줄이며, 각 구성 요소가 [정말 중요한 것에 집중](https://aws-observability.github.io/observability-best-practices/guides/#monitor-what-matters)할 수 있습니다.
+	로그를 생성 시점에서 바로 필터링하면 비용을 절감하고, 데이터 노출 위험을 줄이며, 각 구성 요소가 [정말 중요한 것에 집중](/guides/#monitor-what-matters)할 수 있습니다.
 :::
 
 :::tip

@@ -115,7 +115,7 @@ myApplications 대시보드의 컴퓨팅 위젯은 각 애플리케이션을 구
 
 CloudWatch Synthetics 모니터링([카나리아](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html))은 Application Signals와 통합됩니다. 카나리아는 애플리케이션 최종 사용자와 동일한 경로를 따르고 동일한 작업을 수행하는 예약된 합성 동작을 사용하여 엔드포인트와 API를 모니터링할 수 있는 강력한 기능입니다. 최종 사용자보다 먼저 문제를 발견하고 고객 경험을 지속적으로 평가할 수 있습니다.
 
-Observability를 처음 접하거나 metrics, 알람을 설정하거나 Observability 전략을 개발하는 방법에 대한 지침이 필요한 경우, [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)에서 Observability의 다양한 구성 요소를 이해하고 어떤 metrics, 알람 등이 모니터링에 유용한지 시작하는 방법을 설명합니다.
+Observability를 처음 접하거나 metrics, 알람을 설정하거나 Observability 전략을 개발하는 방법에 대한 지침이 필요한 경우, [AWS Observability Best Practices](/)에서 Observability의 다양한 구성 요소를 이해하고 어떤 metrics, 알람 등이 모니터링에 유용한지 시작하는 방법을 설명합니다.
 
 *참고: 컨테이너 기반 애플리케이션을 운영하는 고객의 경우, 클러스터, 작업 등에 태그를 지정하려면 비 EC2 리소스에 대해 수동으로 태그를 지정해야 합니다.*
 

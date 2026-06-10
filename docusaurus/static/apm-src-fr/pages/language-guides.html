@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guides specifiques par langage — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Guides specifiques par langage</h1></header>
+      <article>
+        <section>
+          <p>Choisissez la plateforme et l'environnement d'execution que vous activez pour CloudWatch Application Signals. Chaque guide est base sur le contenu d'activation maintenu dans <code>apm-center</code> et est presente ici dans la meme interface de documentation.</p>
+        </section>
+
+        <section>
+          <h2>Guides d'activation (16 combinaisons)</h2>
+          <div id="guide-grid">Chargement des guides...</div>
+        </section>
+
+        <section>
+          <h2>Metriques personnalisees (a partir des exemples apm-center)</h2>
+          <p>Certains services d'exemple dans <code>apm-center</code> incluent un point de terminaison utilise pour exercer le comportement des "metriques personnalisees" pendant les tests. Par exemple, l'exemple EKS Python fournit <code>GET /api/metrics</code> :</p>
+          <p><a id="eks-python-link" href="language-guide/?combo=eks-python">Ouvrir le guide d'activation EKS Python</a></p>
+          <pre><code>@app.get("/api/metrics")
+async def metrics():
+    """Custom metrics endpoint"""
+    # Simulate some business logic
+    processing_time = random.uniform(0.1, 0.5)
+    time.sleep(processing_time)
+
+    # Simulate different response times based on some logic
+    if processing_time &gt; 0.3:
+        status = "slow"
+    else:
+        status = "fast"
+
+    return {
+        "message": "Metrics endpoint",
+        "processing_time": processing_time,
+        "status": status,
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }</code></pre>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script>
+    (() => {
+      const grid = document.getElementById('guide-grid');
+      const inCleanUrl = /\/language-guides\/?$/.test(location.pathname);
+      const guideHref = (combo) =>
+        (inCleanUrl ? '../language-guide/?combo=' : 'language-guide.html?combo=') + encodeURIComponent(combo);
+      const eksLink = document.getElementById('eks-python-link');
+      if (eksLink) eksLink.href = guideHref('eks-python');
+
+      const combos = [
+        { platform: 'Lambda', id: 'lambda-java', label: 'Java' },
+        { platform: 'Lambda', id: 'lambda-python', label: 'Python' },
+        { platform: 'Lambda', id: 'lambda-nodejs', label: 'Node.js' },
+        { platform: 'Lambda', id: 'lambda-dotnet', label: '.NET' },
+        { platform: 'ECS', id: 'ecs-java', label: 'Java' },
+        { platform: 'ECS', id: 'ecs-python', label: 'Python' },
+        { platform: 'ECS', id: 'ecs-nodejs', label: 'Node.js' },
+        { platform: 'ECS', id: 'ecs-dotnet', label: '.NET' },
+        { platform: 'EKS', id: 'eks-java', label: 'Java' },
+        { platform: 'EKS', id: 'eks-python', label: 'Python' },
+        { platform: 'EKS', id: 'eks-nodejs', label: 'Node.js' },
+        { platform: 'EKS', id: 'eks-dotnet', label: '.NET' },
+        { platform: 'EC2', id: 'ec2-java', label: 'Java' },
+        { platform: 'EC2', id: 'ec2-python', label: 'Python' },
+        { platform: 'EC2', id: 'ec2-nodejs', label: 'Node.js' },
+        { platform: 'EC2', id: 'ec2-dotnet', label: '.NET' },
+      ];
+
+      const byPlatform = combos.reduce((acc, c) => {
+        (acc[c.platform] ||= []).push(c);
+        return acc;
+      }, {});
+
+      let html = '<div class="guide-grid">';
+      Object.keys(byPlatform).forEach((platform) => {
+        html += `<div class="guide-card"><h3>${platform}</h3><ul>`;
+        byPlatform[platform].forEach((c) => {
+          html += `<li><a href="${guideHref(c.id)}">${c.label}</a></li>`;
+        });
+        html += '</ul></div>';
+      });
+      html += '</div>';
+
+      grid.innerHTML = html;
+    })();
+  </script>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Integrations — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Integrations</h1></header>
+      <article>
+        <section>
+          <h2>Integrations de services AWS</h2>
+          <p>CloudWatch Application Signals s'integre de maniere transparente avec les services AWS pour fournir une observabilite complete sur l'ensemble de votre infrastructure cloud.</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>Surveillez la performance des API et suivez les requetes depuis API Gateway vers vos services backend.</p>
+
+          <h4>Fonctionnalites d'integration :</h4>
+          <ul>
+            <li>Tracage automatique des appels API</li>
+            <li>Surveillance de la latence pour les points de terminaison API</li>
+            <li>Suivi du taux d'erreur</li>
+            <li>Correlation requete/reponse</li>
+          </ul>
+
+          <h4>Configuration :</h4>
+          <p>Activez le tracage X-Ray dans la configuration de votre etape API Gateway.</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>Suivez le flux de trafic a travers les repartiteurs de charge et correlez avec la performance applicative.</p>
+
+          <h4>Avantages de l'integration :</h4>
+          <ul>
+            <li>Visibilite du routage des requetes</li>
+            <li>Metriques de performance des groupes cibles</li>
+            <li>Surveillance des controles de sante</li>
+            <li>Analyse de la repartition de charge</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>Surveillez les operations de base de donnees et identifiez les goulots d'etranglement de performance dans les schemas d'acces aux donnees.</p>
+
+          <h4>Capacites de tracage :</h4>
+          <ul>
+            <li>Chronometrage des operations de requete</li>
+            <li>Suivi des limitations et des erreurs</li>
+            <li>Performance des tables et des index</li>
+            <li>Surveillance de la replication inter-regions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>Obtenez des informations sur la performance de la base de donnees et le pool de connexions.</p>
+
+          <h4>Surveillance de base de donnees :</h4>
+          <ul>
+            <li>Temps d'execution des requetes</li>
+            <li>Utilisation du pool de connexions</li>
+            <li>Metriques de l'instance de base de donnees</li>
+            <li>Identification des requetes lentes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>Suivez les operations de stockage d'objets et la performance du transfert de donnees.</p>
+
+          <h4>Operations de stockage :</h4>
+          <ul>
+            <li>Tracage Put/Get d'objets</li>
+            <li>Surveillance de la latence de transfert</li>
+            <li>Analyse du taux d'erreur</li>
+            <li>Suivi des transferts inter-regions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>Surveillez le traitement des messages et la performance des files d'attente dans les architectures evenementielles.</p>
+
+          <h4>Informations sur la messagerie :</h4>
+          <ul>
+            <li>Tracage de la publication/abonnement des messages</li>
+            <li>Surveillance de la profondeur de file d'attente</li>
+            <li>Latence de traitement des messages</li>
+            <li>Analyse des files de lettres mortes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>Visualisez l'execution des flux de travail et identifiez les goulots d'etranglement dans le traitement des machines a etats.</p>
+
+          <h4>Surveillance des flux de travail :</h4>
+          <ul>
+            <li>Tracage des transitions d'etat</li>
+            <li>Analyse du temps d'execution</li>
+            <li>Identification des etats d'erreur</li>
+            <li>Surveillance de l'execution parallele</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>Suivez le routage et le traitement des evenements dans les systemes evenementiels.</p>
+
+          <h4>Traitement des evenements :</h4>
+          <ul>
+            <li>Visibilite du routage des evenements</li>
+            <li>Chronometrage de l'evaluation des regles</li>
+            <li>Tracage de l'invocation des cibles</li>
+            <li>Surveillance de la transformation des evenements</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>Surveillez la performance des fonctions serverless et l'impact des demarrages a froid.</p>
+
+          <h4>Informations serverless :</h4>
+          <ul>
+            <li>Tracage de l'invocation des fonctions</li>
+            <li>Duree de demarrage a froid</li>
+            <li>Utilisation de la memoire et du CPU</li>
+            <li>Suivi des erreurs et des delais d'expiration</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>Integration de la plateforme d'orchestration de conteneurs pour la surveillance des microservices.</p>
+
+          <h4>Surveillance des conteneurs :</h4>
+          <ul>
+            <li>Tracage du maillage de services</li>
+            <li>Communication pod a pod</li>
+            <li>Utilisation des ressources</li>
+            <li>Suivi des deploiements</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Integrations tierces</h2>
+          <p>Etendez Application Signals avec des outils et plateformes tiers.</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>Tirez parti de l'ecosysteme OpenTelemetry pour une observabilite neutre vis-a-vis des fournisseurs.</p>
+
+          <h4>Options d'integration :</h4>
+          <ul>
+            <li>Bibliotheques d'instrumentation personnalisees</li>
+            <li>Prise en charge d'agents tiers</li>
+            <li>Export de donnees multi-backend</li>
+            <li>Contributions de la communaute au collecteur</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Fournisseurs APM</h3>
+          <p>Migrez depuis ou integrez avec d'autres solutions APM.</p>
+
+          <h4>Integrations prises en charge :</h4>
+          <ul>
+            <li>Export de donnees vers des outils APM tiers</li>
+            <li>Observabilite cloud hybride</li>
+            <li>Correlation multi-fournisseurs</li>
+            <li>Utilitaires de migration de donnees</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Surveillance et alertes</h3>
+          <p>Connectez Application Signals avec votre pile de surveillance existante.</p>
+
+          <h4>Partenaires d'integration :</h4>
+          <ul>
+            <li><strong>PagerDuty :</strong> Reponse aux incidents et alertes</li>
+            <li><strong>Slack :</strong> Notifications d'equipe</li>
+            <li><strong>Datadog :</strong> Plateforme de surveillance unifiee</li>
+            <li><strong>New Relic :</strong> Surveillance de la performance applicative</li>
+            <li><strong>Splunk :</strong> Analyse et correlation des logs</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Integration CI/CD</h3>
+          <p>Integrez l'observabilite dans votre pipeline de developpement.</p>
+
+          <h4>Outils DevOps :</h4>
+          <ul>
+            <li><strong>GitHub Actions :</strong> Tests et deploiements automatises</li>
+            <li><strong>Jenkins :</strong> Integration au pipeline de build</li>
+            <li><strong>GitLab CI :</strong> Flux DevSecOps</li>
+            <li><strong>Terraform :</strong> Infrastructure en tant que code</li>
+            <li><strong>AWS CDK :</strong> Provisionnement d'infrastructure cloud</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Integrations personnalisees</h2>
+          <p>Construisez vos propres integrations a l'aide d'API et de SDK.</p>
+        </section>
+
+        <section>
+          <h3>API CloudWatch</h3>
+          <p>Utilisez les API CloudWatch pour creer des tableaux de bord personnalises, des alarmes et des flux de travail pilotes par les metriques autour de la telemetrie qu'Application Signals publie vers CloudWatch.</p>
+
+          <h4>API disponibles :</h4>
+          <ul>
+            <li><code>PutMetricData</code> - Envoyer des metriques personnalisees</li>
+            <li><code>GetMetricData</code> - Recuperer des donnees de metriques</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - Gerer les tableaux de bord</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - Gerer les alarmes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>API AWS X-Ray</h3>
+          <p>Application Signals utilise AWS X-Ray comme magasin de traces. Si vous avez besoin d'une integration directe d'ingestion/requete de traces, utilisez les API X-Ray.</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - Ingerer des segments de trace</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - Interroger les traces</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Webhooks et callbacks</h3>
+          <p>Recevez des notifications en temps reel et integrez avec des flux de travail personnalises.</p>
+
+          <h4>Schemas d'integration :</h4>
+          <ul>
+            <li>Webhooks d'alerte pour les systemes de notification personnalises</li>
+            <li>Traitement evenementiel avec Lambda</li>
+            <li>Mises a jour de tableaux de bord personnalises</li>
+            <li>Flux de remediation automatises</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDK et bibliotheques</h3>
+          <p>L'instrumentation se fait generalement via OpenTelemetry et/ou AWS Distro for OpenTelemetry (ADOT). Pour les appels d'API AWS, utilisez les SDK AWS avec les instrumentations OpenTelemetry prises en charge.</p>
+
+          <h4>Langages pris en charge :</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js :</strong> AWS SDK pour JavaScript</li>
+            <li><strong>Python :</strong> SDK AWS Boto3</li>
+            <li><strong>Java :</strong> AWS SDK pour Java</li>
+            <li><strong>.NET :</strong> AWS SDK pour .NET</li>
+            <li><strong>Go :</strong> AWS SDK pour Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

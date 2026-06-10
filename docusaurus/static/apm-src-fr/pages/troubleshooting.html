@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dépannage — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Dépannage</h1></header>
+      <article>
+        <section>
+          <h2>Problèmes courants</h2>
+          <p>Cette section couvre les problèmes les plus fréquemment rencontrés lors de la mise en œuvre de CloudWatch Application Signals et comment les résoudre.</p>
+        </section>
+
+        <section>
+          <h3>Aucune trace n'apparaît dans CloudWatch</h3>
+
+          <h4>Causes possibles :</h4>
+          <ul>
+            <li>Application Signals non activé pour le service</li>
+            <li>Permissions IAM incorrectes</li>
+            <li>Agent non correctement configuré ou non en cours d'exécution</li>
+            <li>Taux d'échantillonnage trop bas</li>
+            <li>Problèmes de connectivité réseau vers CloudWatch</li>
+          </ul>
+
+          <h4>Solutions :</h4>
+          <ol>
+            <li>Vérifier qu'Application Signals est activé dans la console AWS</li>
+            <li>Vérifier que les permissions IAM incluent <code>cloudwatch:PutMetricData</code> et <code>xray:PutTraceSegments</code></li>
+            <li>Confirmer que l'agent est en cours d'exécution et correctement configuré</li>
+            <li>Augmenter le taux d'échantillonnage pour les tests (définir à 100 % temporairement)</li>
+            <li>Vérifier que les groupes de sécurité VPC et les ACL réseau autorisent le trafic sortant vers CloudWatch</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Traces manquantes ou incomplètes</h3>
+
+          <h4>Problèmes courants :</h4>
+          <ul>
+            <li>Contexte non propagé entre les services</li>
+            <li>Certains services non instrumentés</li>
+            <li>L'échantillonnage supprime des spans</li>
+            <li>Problèmes de configuration de l'agent</li>
+          </ul>
+
+          <h4>Étapes de débogage :</h4>
+          <ol>
+            <li>Vérifier la carte des services pour identifier les services non instrumentés</li>
+            <li>Vérifier que les en-têtes de contexte de trace sont transmis (par ex., <code>x-amzn-trace-id</code>)</li>
+            <li>Examiner les journaux de l'agent pour les erreurs de configuration</li>
+            <li>Tester avec un échantillonnage à 100 % pour exclure les problèmes d'échantillonnage</li>
+            <li>Utiliser la recherche de traces pour trouver les traces partielles</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Surcharge d'instrumentation élevée</h3>
+
+          <h4>Symptômes :</h4>
+          <ul>
+            <li>Utilisation accrue du CPU</li>
+            <li>Consommation de mémoire plus élevée</li>
+            <li>Latence accrue</li>
+            <li>Dégradation des performances de l'application</li>
+          </ul>
+
+          <h4>Stratégies d'optimisation :</h4>
+          <ul>
+            <li>Réduire le taux d'échantillonnage (commencer avec 10 % pour la production)</li>
+            <li>Utiliser l'échantillonnage en tête au lieu de l'échantillonnage en queue</li>
+            <li>Configurer des limites de spans appropriées</li>
+            <li>Regrouper les exportations de spans</li>
+            <li>Surveiller les métriques d'instrumentation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Les données RUM n'apparaissent pas</h3>
+
+          <h4>Liste de vérification :</h4>
+          <ul>
+            <li>Client web RUM correctement installé et chargé</li>
+            <li>ID d'application et configuration corrects</li>
+            <li>En-têtes CORS configurés pour les domaines RUM</li>
+            <li>La politique de sécurité du contenu autorise les scripts RUM</li>
+            <li>La console du navigateur ne montre aucune erreur JavaScript</li>
+          </ul>
+
+          <h4>Vérification :</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>Échec des canaries synthétiques</h3>
+
+          <h4>Causes courantes :</h4>
+          <ul>
+            <li>Problèmes de connectivité réseau depuis le VPC du canary</li>
+            <li>Échecs d'authentification ou d'autorisation</li>
+            <li>Modifications de l'application cassant les scripts de test</li>
+            <li>Environnement d'exécution ou dépendances du canary obsolètes</li>
+          </ul>
+
+          <h4>Débogage :</h4>
+          <ol>
+            <li>Examiner les journaux du canary dans CloudWatch Logs</li>
+            <li>Tester les scripts du canary localement</li>
+            <li>Vérifier le routage VPC et les groupes de sécurité</li>
+            <li>Mettre à jour l'environnement d'exécution du canary si nécessaire</li>
+            <li>Vérifier que les points de terminaison de l'application sont accessibles</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Guides de débogage</h2>
+          <p>Guides pas à pas pour diagnostiquer les problèmes complexes.</p>
+        </section>
+
+        <section>
+          <h3>Débogage de la propagation du contexte de trace</h3>
+
+          <h4>Étape 1 : Vérifier l'instrumentation</h4>
+          <p>Vérifiez que tous les services de votre chaîne d'appels sont correctement instrumentés :</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>Étape 2 : Vérifier la configuration de l'agent</h4>
+          <p>Vérifiez les fichiers de configuration de l'agent et les variables d'environnement.</p>
+
+          <h4>Étape 3 : Tester de bout en bout</h4>
+          <p>Effectuez une requête de test et tracez-la à travers tous les services.</p>
+        </section>
+
+        <section>
+          <h3>Diagnostic des problèmes de performance</h3>
+
+          <h4>Identifier le goulot d'étranglement :</h4>
+          <ol>
+            <li>Vérifier la carte des services pour les services à haute latence</li>
+            <li>Examiner les chronologies de traces pour les spans lents</li>
+            <li>Revoir les métriques de ressources (CPU, mémoire, E/S disque)</li>
+            <li>Chercher des modèles d'erreurs dans les journaux</li>
+            <li>Vérifier les performances des requêtes de base de données</li>
+          </ol>
+
+          <h4>Goulots d'étranglement courants :</h4>
+          <ul>
+            <li>Optimisation des requêtes de base de données nécessaire</li>
+            <li>Appels d'API externes expirant</li>
+            <li>Contraintes de ressources (CPU/mémoire)</li>
+            <li>Épuisement du pool de threads</li>
+            <li>Latence réseau entre les services</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Dépannage de l'agent</h3>
+
+          <h4>Vérifier l'état de l'agent :</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>Problèmes courants de l'agent :</h4>
+          <ul>
+            <li>Mauvaise version de l'agent Java pour la JVM</li>
+            <li>Dépendances ou bibliothèques manquantes</li>
+            <li>Erreurs de syntaxe dans le fichier de configuration</li>
+            <li>Problèmes de permissions d'écriture sur les fichiers journaux</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Outils et commandes</h2>
+          <p>Outils et commandes utiles pour le dépannage.</p>
+        </section>
+
+        <section>
+          <h3>Commandes CLI CloudWatch</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>Analyse des journaux</h3>
+          <p>Utilisez CloudWatch Logs Insights pour analyser les données de télémétrie :</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>Obtenir de l'aide</h2>
+          <p>Lorsque vous avez besoin d'assistance supplémentaire :</p>
+
+          <h3>Ressources de documentation :</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Guide utilisateur Application Signals</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Guide utilisateur Synthetics</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">Guide utilisateur RUM</a></li>
+          </ul>
+
+          <h3>Options de support :</h3>
+          <ul>
+            <li>Centre de support AWS</li>
+            <li>Communauté AWS re:Post</li>
+            <li>Issues GitHub pour les projets OpenTelemetry</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

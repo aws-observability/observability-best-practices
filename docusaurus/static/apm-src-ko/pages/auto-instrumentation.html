@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>자동 계측 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>자동 계측</h1></header>
+      <article>
+        <section>
+          <h2>"자동 계측"의 의미</h2>
+          <p>자동 계측은 애플리케이션 코드를 변경하지 않고 런타임에 OpenTelemetry 계측을 추가하여 서비스가 Application Signals가 검색 및 상태 모니터링에 사용하는 텔레메트리를 전송하도록 합니다.</p>
+        </section>
+
+        <section>
+          <h2>일반적인 AWS 설정 구성 요소</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK 및/또는 컬렉터</li>
+            <li><strong>CloudWatch Agent</strong> - 지원되는 설정에서 텔레메트리를 수집/내보내기</li>
+            <li><strong>플랫폼 활성화</strong> (EKS 애드온 / ECS 사이드카 / EC2 에이전트 설정 / Lambda 레이어)</li>
+          </ul>
+          <p>시작하기: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals 개요</a>.</p>
+        </section>
+
+        <section>
+          <h2>지원되는 언어 및 시스템</h2>
+          <p>Application Signals는 Java, Python, Node.js 및 .NET 애플리케이션을 지원하며 Amazon EKS, Kubernetes, Amazon ECS 및 Amazon EC2에서 지원/테스트됩니다.</p>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">지원되는 시스템</a>.</p>
+        </section>
+
+        <section>
+          <h2>참고 사항 및 주의점</h2>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM 지원은 제한적이며, 문서의 ESM 전용 가이드를 따르지 않는 한 CommonJS가 권장 방식입니다.</li>
+            <li><strong>컨테이너의 Python:</strong> OTel 자동 계측을 위해 <code>PYTHONPATH</code> 구성이 필요할 수 있습니다.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

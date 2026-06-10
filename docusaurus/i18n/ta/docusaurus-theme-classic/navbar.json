@@ -1,0 +1,38 @@
+{
+  "title": {
+    "message": "AWS Observability Best Practices"
+  },
+  "item.label.Home": {
+    "message": "முகப்பு"
+  },
+  "item.label.Guides": {
+    "message": "வழிகாட்டிகள்"
+  },
+  "item.label.Signals": {
+    "message": "சிக்னல்கள்"
+  },
+  "item.label.Tools": {
+    "message": "கருவிகள்"
+  },
+  "item.label.APM": {
+    "message": "APM"
+  },
+  "item.label.Recipes": {
+    "message": "செய்முறைகள்"
+  },
+  "item.label.AI": {
+    "message": "AI"
+  },
+  "item.label.Patterns": {
+    "message": "வடிவங்கள்"
+  },
+  "item.label.Persona": {
+    "message": "பங்கு"
+  },
+  "item.label.Resources": {
+    "message": "வளங்கள்"
+  },
+  "item.label.Contributors": {
+    "message": "Contributors"
+  }
+}

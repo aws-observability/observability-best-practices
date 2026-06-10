@@ -1,0 +1,38 @@
+{
+  "title": {
+    "message": "AWS Observability Best Practices"
+  },
+  "item.label.Home": {
+    "message": "होम"
+  },
+  "item.label.Guides": {
+    "message": "गाइड"
+  },
+  "item.label.Signals": {
+    "message": "सिग्नल"
+  },
+  "item.label.Tools": {
+    "message": "टूल्स"
+  },
+  "item.label.APM": {
+    "message": "ऐप प्रदर्शन निगरानी"
+  },
+  "item.label.Recipes": {
+    "message": "रेसिपी"
+  },
+  "item.label.AI": {
+    "message": "कृत्रिम बुद्धिमत्ता"
+  },
+  "item.label.Patterns": {
+    "message": "पैटर्न"
+  },
+  "item.label.Persona": {
+    "message": "पर्सोना"
+  },
+  "item.label.Resources": {
+    "message": "संसाधन"
+  },
+  "item.label.Contributors": {
+    "message": "Contributors"
+  }
+}

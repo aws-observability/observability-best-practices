@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>모범 사례 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>모범 사례</h1></header>
+      <article>
+        <section>
+          <h2>계측 모범 사례</h2>
+          <p>효과적인 계측은 Observability 데이터에서 가치 있는 인사이트를 얻는 핵심입니다. 다음 모범 사례를 따라 계측이 오버헤드를 최소화하면서 최대 가치를 제공하도록 하세요.</p>
+        </section>
+
+        <section>
+          <h3>계측 대상</h3>
+          <p>애플리케이션의 가장 중요한 부분을 계측하는 데 집중하세요:</p>
+
+          <h4>높은 우선순위:</h4>
+          <ul>
+            <li>공개 API 엔드포인트 및 사용자 대면 오퍼레이션</li>
+            <li>데이터베이스 쿼리 및 외부 서비스 호출</li>
+            <li>비즈니스 크리티컬 워크플로 및 트랜잭션</li>
+            <li>오류 경로 및 예외 처리</li>
+          </ul>
+
+          <h4>중간 우선순위:</h4>
+          <ul>
+            <li>내부 서비스 간 통신</li>
+            <li>백그라운드 작업 및 예약된 태스크</li>
+            <li>캐시 오퍼레이션</li>
+          </ul>
+
+          <h4>낮은 우선순위:</h4>
+          <ul>
+            <li>단순 유틸리티 함수</li>
+            <li>정적 콘텐츠 제공</li>
+            <li>헬스 체크 엔드포인트</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>명명 규칙</h3>
+          <p>일관된 명명을 통해 트레이스를 검색하고 필터링하기 쉽게 합니다:</p>
+
+          <h4>스팬 이름:</h4>
+          <ul>
+            <li>하이픈이 있는 소문자 사용: <code>http-get-user-profile</code></li>
+            <li>오퍼레이션 유형 포함: <code>db-query-users</code>, <code>redis-get-session</code></li>
+            <li>설명적이지만 간결하게: "process"나 "handle" 같은 일반적인 이름 피하기</li>
+          </ul>
+
+          <h4>서비스 이름:</h4>
+          <ul>
+            <li>환경 간 일관된 서비스 명명 사용</li>
+            <li>다중 환경 설정의 경우 서비스 이름에 환경 포함</li>
+            <li>조직의 명명 규칙 따르기</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>속성 및 태그</h3>
+          <p>속성을 사용하여 스팬과 트레이스에 컨텍스트를 추가하세요:</p>
+
+          <h4>표준 속성:</h4>
+          <ul>
+            <li><code>http.method</code> - HTTP 메서드 (GET, POST 등)</li>
+            <li><code>http.url</code> - 요청 URL (PII에 주의)</li>
+            <li><code>http.status_code</code> - HTTP 응답 상태</li>
+            <li><code>db.system</code> - 데이터베이스 유형 (mysql, postgres 등)</li>
+            <li><code>db.name</code> - 데이터베이스 이름</li>
+            <li><code>db.operation</code> - 데이터베이스 오퍼레이션 (SELECT, INSERT 등)</li>
+          </ul>
+
+          <h4>사용자 정의 속성:</h4>
+          <ul>
+            <li><code>user.id</code> - 사용자 식별자 (PII인 경우 해시 처리)</li>
+            <li><code>business.operation</code> - 비즈니스 오퍼레이션 유형</li>
+            <li><code>version</code> - 애플리케이션 버전</li>
+            <li><code>environment</code> - 배포 환경</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PII 및 보안 고려 사항</h3>
+          <p>텔레메트리에서 민감한 데이터를 보호하세요:</p>
+
+          <h4>절대 포함하지 말 것:</h4>
+          <ul>
+            <li>비밀번호, API 키 또는 인증 토큰</li>
+            <li>이메일, 전화번호 같은 개인 식별 정보(PII)</li>
+            <li>민감한 데이터가 포함된 쿼리 파라미터가 있는 전체 URL</li>
+            <li>신용카드 번호 또는 금융 정보</li>
+          </ul>
+
+          <h4>안전한 대안:</h4>
+          <ul>
+            <li>해시 또는 토큰화된 식별자 사용</li>
+            <li>URL의 경로 부분만 포함</li>
+            <li>구체적인 값 대신 일반적인 상태 표시자 사용</li>
+            <li>계측 수준에서 데이터 마스킹 구현</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>샘플링 전략</h2>
+          <p>샘플링은 Observability 커버리지를 유지하면서 비용을 제어하는 데 도움을 줍니다.</p>
+        </section>
+
+        <section>
+          <h3>샘플링 전략 선택</h3>
+
+          <h4>비율 기반 샘플링:</h4>
+          <ul>
+            <li>고정 비율의 요청을 샘플링 (예: 10%)</li>
+            <li>구현 및 이해가 간단</li>
+            <li>중요하지만 드문 이벤트를 놓칠 수 있음</li>
+          </ul>
+
+          <h4>테일 샘플링:</h4>
+          <ul>
+            <li>트레이스 데이터를 수집한 후 샘플링 결정</li>
+            <li>오류나 높은 지연 시간이 있는 트레이스를 우선시할 수 있음</li>
+            <li>더 복잡하지만 더 지능적</li>
+          </ul>
+
+          <h4>규칙 기반 샘플링:</h4>
+          <ul>
+            <li>특정 조건(사용자, 엔드포인트 등)에 따라 샘플링</li>
+            <li>중요한 경로가 항상 트레이싱되도록 보장</li>
+            <li>신중한 규칙 정의 필요</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>권장 샘플링 비율</h3>
+          <ul>
+            <li><strong>개발:</strong> 완전한 가시성을 위해 100% 샘플링</li>
+            <li><strong>스테이징:</strong> 테스트를 위해 50-100% 샘플링</li>
+            <li><strong>프로덕션:</strong> 비용 효율적 커버리지를 위해 10-20%</li>
+            <li><strong>고트래픽 서비스:</strong> 볼륨 제어를 위해 1-5%</li>
+            <li><strong>크리티컬 경로:</strong> 다른 규칙과 관계없이 100% 샘플링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>성능 최적화</h2>
+          <p>계측의 성능 영향을 최소화합니다.</p>
+        </section>
+
+        <section>
+          <h3>오버헤드 줄이기</h3>
+          <ul>
+            <li>가능한 경우 비동기 스팬 처리 사용</li>
+            <li>네트워크 호출을 줄이기 위해 스팬 내보내기 배치 처리</li>
+            <li>적절한 버퍼 크기 구성</li>
+            <li>계측 성능 메트릭 모니터링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>리소스 관리</h3>
+          <ul>
+            <li>스팬 내보내기에 적절한 타임아웃 설정</li>
+            <li>백엔드 장애에 대한 서킷 브레이커 구현</li>
+            <li>컬렉터에 연결 풀링 사용</li>
+            <li>적절한 재시도 정책 구성</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>알림 및 모니터링</h2>
+          <p>애플리케이션 상태를 파악하기 위한 효과적인 알림을 설정합니다.</p>
+        </section>
+
+        <section>
+          <h3>모니터링할 핵심 메트릭</h3>
+          <ul>
+            <li><strong>지연 시간:</strong> P95/P99 응답 시간</li>
+            <li><strong>오류율:</strong> 실패한 요청의 비율</li>
+            <li><strong>처리량:</strong> 초당 요청 수</li>
+            <li><strong>포화도:</strong> 리소스 사용률</li>
+            <li><strong>트레이스 볼륨:</strong> 수집된 트레이스 수</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SLO 기반 알림</h3>
+          <p>서비스 수준 목표를 정의하고 위험할 때 알림을 보냅니다:</p>
+          <ul>
+            <li>지연 시간 SLO: 요청의 95%가 500ms 미만</li>
+            <li>오류 SLO: 99.9% 성공률</li>
+            <li>가용성 SLO: 99.95% 가동 시간</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>비용 관리</h2>
+          <p>가치를 유지하면서 Observability 비용을 제어합니다.</p>
+        </section>
+
+        <section>
+          <h3>비용 최적화 전략</h3>
+          <ul>
+            <li>적절한 샘플링 비율 구현</li>
+            <li>데이터 보존 정책 사용</li>
+            <li>불필요한 스팬 및 속성 필터링</li>
+            <li>오래된 데이터를 저렴한 스토리지에 아카이브</li>
+            <li>데이터 볼륨 모니터링 및 최적화</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>데이터 보존 정책</h3>
+          <ul>
+            <li><strong>핫 스토리지:</strong> 능동적 문제 해결을 위한 최근 데이터 (7-30일)</li>
+            <li><strong>웜 스토리지:</strong> 추세 분석을 위한 과거 데이터 (30-90일)</li>
+            <li><strong>콜드 스토리지:</strong> 규정 준수 및 드문 쿼리를 위한 아카이브 데이터 (90일 이상)</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

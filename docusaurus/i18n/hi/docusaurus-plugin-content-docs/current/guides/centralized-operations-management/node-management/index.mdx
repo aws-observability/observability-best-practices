@@ -1,0 +1,55 @@
+---
+sidebar_position: 4
+---
+
+# नोड प्रबंधन
+
+चाहे ग्राहक AWS, ऑन-प्रिमाइसेस, या मल्टीक्लाउड वातावरण में और खातों और क्षेत्रों में संचालन करना चुनें, AWS Systems Manager SSM agent का निदान और उपचार करने, आसानी से प्रबंधित करने के लिए एक केंद्रीकृत स्थान प्रदान करता है। व्यापक बुनियादी ढाँचा दृश्यता प्रदान करता है, जबकि परिचालन दक्षता और उत्पादकता बढ़ाता है, चाहे उनके नोड्स कहीं भी हों।
+
+## Systems Manager यूनिफाइड कंसोल
+
+[यूनिफाइड Systems Manager कंसोल](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-unified-console.html) एक समेकित अनुभव है जो AWS Organizations संगठन में कई AWS खातों और AWS क्षेत्रों, या एकल खाते और क्षेत्र में सामान्य नोड कार्यों को पूरा करने में मदद करने के लिए विभिन्न उपकरणों को जोड़ता है। यूनिफाइड कंसोल में, आपको अपने नोड्स के बारे में विस्तृत अंतर्दृष्टि प्रदान की जाती है। आप अपने नोड्स के लिए रिपोर्ट जेनरेट कर सकते हैं, सामान्य समस्याओं का निदान और उपचार कर सकते हैं जो नोड्स को Systems Manager द्वारा managed के रूप में रिपोर्ट करने से रोकती हैं, जैसे कनेक्टिविटी समस्याएँ। आपके नोड्स के बारे में सारांश के अतिरिक्त, आप किसी नोड के बारे में विशिष्ट विवरण देख सकते हैं जैसे सॉफ़्टवेयर इन्वेंट्री और पैचिंग स्थिति।
+
+## डेमो: Systems Manager यूनिफाइड कंसोल
+
+निम्नलिखित इंटरैक्टिव डेमो में हम Systems Manager यूनिफाइड कंसोल का अन्वेषण करेंगे। इंटरैक्टिव डेमो को एक नई विंडो में देखने के लिए, [इस लिंक](https://aws-cloudops.storylane.io/share/1xr2aepwsitb) का उपयोग करें।
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/1xr2aepwsitb?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+## नोड्स पंजीकृत करने के लिए पूर्वापेक्षाएँ
+
+AWS Systems Manager के साथ नोड्स पंजीकृत करने के लिए तीन पूर्वापेक्षाएँ हैं।
+
+पहली, SSM agent इंस्टॉल होना चाहिए। SSM agent AWS और विश्वसनीय तृतीय-पक्षों द्वारा प्रदान किए गए [कुछ Amazon Machine Images (AMIs) पर पूर्व-इंस्टॉल](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) होता है।
+
+दूसरी, [SSM agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) को आपकी ओर से नोड पर कार्य करने के लिए आवश्यक अनुमतियों की आवश्यकता होती है। आप [AWS Organization के लिए Systems Manager यूनिफाइड कंसोल सक्षम करके](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) IAM अनुमतियों को अटैच और उपचार करने की प्रक्रिया को ऑटोमेट कर सकते हैं। वैकल्पिक रूप से, जब आप अपने संसाधन तैनात करते हैं तो IaC के माध्यम से आवश्यक IAM role और अनुमतियाँ जोड़ सकते हैं।
+
+और अंत में, SSM agent को इंटरनेट पर या [VPC endpoints](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html) का उपयोग करके [Systems Manager सर्विस endpoints](https://docs.aws.amazon.com/general/latest/gr/ssm.html) से नेटवर्क कनेक्टिविटी होनी चाहिए।
+
+![AWS Systems Manager Agent](/img/cloudops/guides/centralized-operations-management/node-management/BP-Node-Mgmt-1.png "AWS Systems Manager Agent")
+
+SSM Agent Systems Manager के लिए इन संसाधनों को अपडेट, प्रबंधित और कॉन्फ़िगर करना संभव बनाता है। Agent AWS Cloud में Systems Manager सेवा से अनुरोधों को संसाधित करता है, और फिर अनुरोध में निर्दिष्ट अनुसार उन्हें चलाता है। फिर SSM Agent स्थिति और निष्पादन जानकारी Systems Manager सेवा को वापस भेजता है।
+
+## बड़े पैमाने पर नोड्स के लिए IAM अनुमतियों का प्रबंधन
+
+नोड्स के लिए IAM अनुमतियों को प्रबंधित करने के कुछ तरीके हैं। यदि आपके पास AWS संसाधनों को तैनात करने के लिए Infrastructure as Code (IaC) रणनीति है तो आपको EC2 इंस्टेंस लॉन्च करते समय IAM instance profile अटैच करना चाहिए।
+
+यदि आपके पास IaC रणनीति नहीं है या IaC मार्ग से जाना एक विकल्प नहीं है, तो आप [Systems Manager यूनिफाइड कंसोल सक्षम कर सकते हैं](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) जो Quick Setup द्वारा संचालित है।
+
+[Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) आपके AWS Organization में AWS खातों और क्षेत्रों में सामान्य या अनुशंसित कार्यों को ऑटोमेट करके Systems Manager सहित AWS सेवाओं को सेट अप करना सरल बनाता है। इन कार्यों में आवश्यक AWS Identity and Access Management (IAM) instance profile roles बनाना और परिचालन सर्वोत्तम प्रथाओं को सेट करना शामिल है, जैसे आवधिक पैच स्कैन और इन्वेंट्री संग्रह।
+
+## अपने संपूर्ण बुनियादी ढाँचा वातावरण में दृश्यता बढ़ाएँ
+
+AWS Systems Manager नोड प्रबंधन को सरल बनाकर परिचालन दक्षता को स्केल करने में आपकी मदद करता है, जिससे नोड्स का प्रबंधन आसान हो जाता है। अब आप अपने संगठन के AWS खातों और क्षेत्रों में सभी managed और unmanaged नोड्स को एक ही स्थान से देख सकते हैं। आप unmanaged नोड्स की पहचान, निदान और उपचार भी कर सकते हैं।
+
+एक बार उपचार हो जाने के बाद, अर्थात वे Systems Manager द्वारा managed हो जाते हैं, आप महत्वपूर्ण परिचालन कार्यों को प्रभावी ढंग से निष्पादित करने के लिए Systems Manager टूल के पूर्ण सूट का लाभ उठा सकते हैं, जैसे सुरक्षा पैच लागू करना, सत्र शुरू करना और लॉग करना, या परिचालन कमांड चलाना, और अपने संपूर्ण फ्लीट में व्यापक दृश्यता प्राप्त करना।
+
+## Systems Manager के लिए AWS Organizations delegated administrator बनाना
+
+यूनिफाइड कंसोल सेट अप करते समय आप Systems Manager के लिए एक delegated administrator खाता कॉन्फ़िगर कर सकते हैं ताकि संगठन भर में अपने नोड्स को केंद्रीय रूप से प्रबंधित किया जा सके। इसमें Quick Setup शामिल है जो आपको AWS Organizations का उपयोग करके खातों और क्षेत्रों में कॉन्फ़िगरेशन तैनात और प्रबंधित करने में मदद करता है। Quick Setup के लिए एक delegated administrator Quick Setup कॉन्फ़िगरेशन मैनेजर संसाधनों को आपके संगठन में बना, अपडेट, देख और हटा सकता है। Systems Manager एकीकृत कंसोल अनुभव के लिए सेटअप प्रक्रिया के हिस्से के रूप में Quick Setup के लिए एक delegated administrator पंजीकृत करता है। यह आपको एक व्यापक, केंद्रीकृत दृश्य देता है जहाँ आप अपने संगठन के AWS खातों और क्षेत्रों में सभी managed और unmanaged नोड्स को एक ही स्थान से देख सकते हैं।

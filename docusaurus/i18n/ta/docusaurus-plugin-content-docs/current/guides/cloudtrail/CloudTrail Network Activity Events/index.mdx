@@ -1,0 +1,78 @@
+---
+sidebar_position: 5
+---
+# CloudTrail Network Activity Events
+
+<!-- VPC எண்ட்பாயிண்ட்களுக்கான network activity events மூலம், உங்கள் நெட்வொர்க்கில் ரிசோர்ஸ்களை அணுகுபவர் யார் என்பதன் விவரங்களை பார்க்கலாம், இது உங்கள் data perimeter இல் தீங்கிழைக்கும் அல்லது அங்கீகரிக்கப்படாத செயல்களை அடையாளம் காணவும் பதிலளிக்கவும் அதிக திறனை வழங்குகிறது. -->
+
+With network activity events for VPC endpoints, you can view details of who is accessing resources within your network giving you greater ability to identify and respond to malicious or unauthorized actions in your data perimeter. For example, as the VPC endpoint owner, you can view logs of actions that were denied due to VPC endpoint policies or determine if an actor outside of your data perimeter is trying to access the data in your S3 buckets.
+
+### Advanced Event Selectors for Network Activity Events
+When you use network activity events, advanced event selectors offer greater control over which CloudTrail events are ingested into your event data stores. With advanced event selectors, you can include or exclude values on fields such as errorCode, eventName, & vpcEndpointId. Advanced event selectors also support including or excluding values with pattern matching on partial strings. This increases the efficiency and precision of your security, compliance, and operational investigations while helping reduce costs. For example, you can filter CloudTrail events based on the vpcEndpointId attribute to only inlcude events from a specific VPC edpoint Id. This allows you to significantly reduce the volume of CloudTrail events ingested into CloudTrail Lake, lowering costs while maintaining visibility into relevant user and system activities.
+
+### [Demo: Network Activity Events for CloudTrail Lake](https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi)
+
+In the following interactive demo we will explore how to use network activity events for VPC endpoints in CloudTrail Lake. 
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+### Sample SQL Queries for CloudTrail Lake:
+
+#### Count of VPC Access Denied Errors
+```
+SELECT count(*) as VPCAccessDenied, userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-21 17:00:00'
+    GROUP BY 
+    userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+    ORDER BY eventName DESC;
+```
+
+#### VPC Access Denied Errors
+```
+SELECT userIdentity.arn,
+    userIdentity.accountid,
+    eventType,
+    eventCategory,
+    eventName,
+    errorCode,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-20 17:00:00'
+    ORDER BY eventTime DESC;
+```
+
+### Cloud Operation Show: Securing your VPC Endpoints using Network Activity Events | AWS CloudTrail
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pAppy_tkWPY?si=sy7w_Yp8nejmwbLv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

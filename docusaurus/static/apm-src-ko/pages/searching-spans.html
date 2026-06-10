@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>스팬 검색 및 분석 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>스팬 검색 및 분석</h1></header>
+      <article>
+        <section>
+          <h2>Transaction Search</h2>
+          <p>CloudWatch <strong>Transaction Search</strong>는 스팬 속성을 사용하여 수집된 스팬을 검색하고 분석하는 대화형 분석 경험입니다. 지원 기능:</p>
+          <ul>
+            <li><strong>목록</strong>: 개별 트랜잭션 문제 해결, 느린 스팬 찾기, 오류 찾기</li>
+            <li><strong>시계열</strong>: 지연 시간 및 빈도 추세 시각화 (P50/P90/P99)</li>
+            <li><strong>그룹 분석</strong>: 속성별 집계 (예: 영향을 받는 상위 고객)</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">스팬 검색 및 분석</a>.</p>
+        </section>
+
+        <section>
+          <h2>스팬에 대한 Logs Insights</h2>
+          <p>CloudWatch Logs Insights를 사용하여 스팬을 쿼리할 수도 있습니다(예: DB 문별 p99 지속 시간, 또는 HTTP 5xx가 있는 스팬 수).</p>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

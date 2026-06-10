@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>సూచన — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>సూచన</h1></header>
+      <article>
+        <section>
+          <h2>సేవ పరిమితులు & కోటాలు</h2>
+          <p>CloudWatch Application Signals కోసం పరిమితులు మరియు కోటాలను అర్థం చేసుకోవడం.</p>
+        </section>
+
+        <section>
+          <h3>పరిమితులు మరియు కోటాలు</h3>
+          <p>Application Signals CloudWatch మరియు AWS X-Ray పై ఆధారపడుతుంది. పరిమితులు (ఇన్‌జెషన్, క్వెరీ రేట్లు మరియు కోటాలు) ఆ సేవలచే నిర్వహించబడతాయి మరియు కాలక్రమేణా మారవచ్చు. ప్రస్తుత విలువల కోసం అధికారిక డాక్యుమెంటేషన్‌ను ఉపయోగించండి.</p>
+          <ul>
+            <li><strong>Application Signals:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals డాక్స్</a></li>
+            <li><strong>CloudWatch కోటాలు:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch సేవ కోటాలు</a></li>
+            <li><strong>AWS X-Ray కోటాలు:</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API థ్రాట్లింగ్ మరియు పరిమితులు</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch మెట్రిక్ నిల్వ (సాధారణ సూచన)</h3>
+          <p>CloudWatch వివిధ రిజల్యూషన్‌లలో మెట్రిక్ డేటాను నిల్వ చేస్తుంది. పూర్తి నిల్వ మోడల్ కోసం CloudWatch డాక్స్ చూడండి.</p>
+          <ul>
+            <li><strong>1-నిమిషం రిజల్యూషన్:</strong> 15 రోజులు</li>
+            <li><strong>5-నిమిషాల రిజల్యూషన్:</strong> 63 రోజులు</li>
+            <li><strong>1-గంట రిజల్యూషన్:</strong> 15 నెలలు</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>సేవ కోటాలు</h3>
+
+          <h4>Application Signals:</h4>
+          <ul>
+            <li><strong>ఖాతాకు సేవలు:</strong> 1,000</li>
+            <li><strong>సేవకు ఆపరేషన్‌లు:</strong> 100</li>
+            <li><strong>కస్టమ్ మెట్రిక్స్:</strong> సేవకు 30</li>
+          </ul>
+
+          <h4>RUM:</h4>
+          <ul>
+            <li><strong>ఖాతాకు యాప్ మానిటర్‌లు:</strong> 20</li>
+            <li><strong>సెకనుకు ఈవెంట్‌లు:</strong> 10,000</li>
+            <li><strong>ఈవెంట్ పరిమాణం:</strong> 64 KB</li>
+          </ul>
+
+          <h4>Synthetics:</h4>
+          <ul>
+            <li><strong>ఖాతాకు కానరీలు:</strong> 100</li>
+            <li><strong>కానరీ అమలు సమయం:</strong> గరిష్టంగా 15 నిమిషాలు</li>
+            <li><strong>కానరీ పరిమాణం:</strong> 1 GB (అన్‌జిప్డ్)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>పదకోశం</h2>
+          <p>CloudWatch Application Signals లో కీలక పదాలు మరియు భావనలు.</p>
+        </section>
+
+        <section>
+          <h3>ప్రధాన భావనలు</h3>
+
+          <h4>Application Performance Monitoring (APM)</h4>
+          <p>సాఫ్ట్‌వేర్ అప్లికేషన్‌ల పనితీరు మరియు అందుబాటును పర్యవేక్షించడం మరియు నిర్వహించడం యొక్క అభ్యాసం.</p>
+
+          <h4>డిస్ట్రిబ్యూటెడ్ ట్రేసింగ్</h4>
+          <p>డిస్ట్రిబ్యూటెడ్ సిస్టమ్‌ల ద్వారా అభ్యర్థనలు ప్రవహించేటప్పుడు వాటిని ట్రాక్ చేసే పద్ధతి, బహుళ సేవల అంతటా అభ్యర్థనల మార్గం మరియు పనితీరును అర్థం చేసుకోవడానికి మిమ్మల్ని అనుమతిస్తుంది.</p>
+
+          <h4>సర్వీస్ మ్యాప్</h4>
+          <p>సేవలు ఎలా కనెక్ట్ అవుతాయి మరియు ఇంటరాక్ట్ చేస్తాయో చూపించే మీ అప్లికేషన్ ఆర్కిటెక్చర్ యొక్క దృశ్య ప్రాతినిధ్యం.</p>
+
+          <h4>Span</h4>
+          <p>ట్రేస్‌లో ఒకే ఆపరేషన్, డేటాబేస్ క్వెరీ లేదా API కాల్ వంటి పని యూనిట్‌ను సూచిస్తుంది.</p>
+
+          <h4>ట్రేస్</h4>
+          <p>మీ అప్లికేషన్ ద్వారా అభ్యర్థన యొక్క పూర్తి ఎండ్-టు-ఎండ్ ప్రయాణం, బహుళ span లను కలిగి ఉంటుంది.</p>
+        </section>
+
+        <section>
+          <h3>ఇన్‌స్ట్రుమెంటేషన్ పదాలు</h3>
+
+          <h4>ఆటో-ఇన్‌స్ట్రుమెంటేషన్</h4>
+          <p>కోడ్ మార్పులు అవసరం లేకుండా అప్లికేషన్‌లకు observability కోడ్‌ను స్వయంచాలకంగా జోడించడం.</p>
+
+          <h4>మాన్యువల్ ఇన్‌స్ట్రుమెంటేషన్</h4>
+          <p>అప్లికేషన్ సోర్స్ కోడ్‌కు ట్రేసింగ్ మరియు మెట్రిక్స్ కోడ్‌ను స్పష్టంగా జోడించడం.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>ఇన్‌స్ట్రుమెంటేషన్ కోసం వెండర్-న్యూట్రల్ APIలను అందించే ఓపెన్-సోర్స్ observability ఫ్రేమ్‌వర్క్.</p>
+
+          <h4>శాంప్లింగ్</h4>
+          <p>observability ని ఖర్చు మరియు పనితీరుతో సమతులం చేయడానికి ఏ అభ్యర్థనలను ట్రేస్ చేయాలో ఎంచుకునే ప్రక్రియ.</p>
+
+          <h4>కాంటెక్స్ట్ ప్రాపగేషన్</h4>
+          <p>ట్రేస్ కొనసాగింపును నిర్వహించడానికి సేవల మధ్య ట్రేస్ కాంటెక్స్ట్‌ను పంపే విధానం.</p>
+        </section>
+
+        <section>
+          <h3>మెట్రిక్స్ మరియు మానిటరింగ్</h3>
+
+          <h4>గోల్డెన్ సిగ్నల్స్</h4>
+          <p>అప్లికేషన్ ఆరోగ్యాన్ని పర్యవేక్షించడానికి నాలుగు కీలక మెట్రిక్స్: లేటెన్సీ, థ్రూపుట్, ఎర్రర్ రేట్ మరియు సాచురేషన్.</p>
+
+          <h4>లేటెన్సీ</h4>
+          <p>అభ్యర్థన ప్రాసెస్ అవడానికి పట్టే సమయం, సాధారణంగా పర్సంటైల్‌లలో (P50, P90, P99) కొలవబడుతుంది.</p>
+
+          <h4>థ్రూపుట్</h4>
+          <p>అభ్యర్థనలు ప్రాసెస్ అయ్యే రేటు, సాధారణంగా సెకనుకు అభ్యర్థనలుగా కొలవబడుతుంది.</p>
+
+          <h4>ఎర్రర్ రేట్</h4>
+          <p>ఎర్రర్‌లకు దారితీసే అభ్యర్థనల శాతం.</p>
+
+          <h4>సాచురేషన్</h4>
+          <p>సిస్టమ్ వనరులు ఎంత మేరకు ఉపయోగించబడుతున్నాయో దాని స్థాయి.</p>
+
+          <h4>Service Level Objective (SLO)</h4>
+          <p>సేవ ప్రదాతలు మరియు వినియోగదారుల మధ్య అంగీకరించబడిన సేవ నాణ్యత లక్ష్య స్థాయి.</p>
+
+          <h4>Service Level Indicator (SLI)</h4>
+          <p>లేటెన్సీ లేదా అందుబాటు వంటి అందించబడిన సేవ స్థాయి యొక్క కొలవగల అంశం.</p>
+        </section>
+
+        <section>
+          <h3>RUM మరియు Synthetics</h3>
+
+          <h4>Real User Monitoring (RUM)</h4>
+          <p>ప్రొడక్షన్‌లో వెబ్ అప్లికేషన్‌లతో వాస్తవ వినియోగదారు ఇంటరాక్షన్‌ల పర్యవేక్షణ.</p>
+
+          <h4>సింథటిక్ మానిటరింగ్</h4>
+          <p>అనుకరించిన వినియోగదారు ఇంటరాక్షన్‌లను ఉపయోగించి అప్లికేషన్‌ల యొక్క ఆటోమేటెడ్ టెస్టింగ్.</p>
+
+          <h4>కానరీ</h4>
+          <p>మీ అప్లికేషన్‌పై ఆటోమేటెడ్ టెస్ట్‌లను నిర్వహించే సింథటిక్ మానిటరింగ్ స్క్రిప్ట్.</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>వెబ్‌లో వినియోగదారు అనుభవాన్ని కొలవడానికి Google యొక్క మెట్రిక్స్: LCP, FID మరియు CLS.</p>
+
+          <h4>Largest Contentful Paint (LCP)</h4>
+          <p>స్క్రీన్‌పై అతిపెద్ద కంటెంట్ ఎలిమెంట్ రెండర్ అవడానికి పట్టే సమయం.</p>
+
+          <h4>First Input Delay (FID)</h4>
+          <p>వినియోగదారు మొదటిసారి పేజీతో ఇంటరాక్ట్ చేసినప్పటి నుండి బ్రౌజర్ ప్రతిస్పందించే వరకు సమయం.</p>
+
+          <h4>Cumulative Layout Shift (CLS)</h4>
+          <p>దృశ్య స్థిరత్వం యొక్క కొలత, ఊహించని లేఅవుట్ మార్పులను పరిమాణీకరిస్తుంది.</p>
+        </section>
+
+        <section>
+          <h3>AWS-నిర్దిష్ట పదాలు</h3>
+
+          <h4>Application Signals</h4>
+          <p>APM, RUM మరియు synthetics ను కలిపే AWS యొక్క ఏకీకృత observability పరిష్కారం.</p>
+
+          <h4>X-Ray</h4>
+          <p>AWS యొక్క డిస్ట్రిబ్యూటెడ్ ట్రేసింగ్ సేవ, ఇప్పుడు Application Signals తో ఇంటిగ్రేట్ చేయబడింది.</p>
+
+          <h4>CloudWatch</h4>
+          <p>మెట్రిక్స్, లాగ్‌లు మరియు ట్రేస్‌లను సేకరించే AWS యొక్క మానిటరింగ్ మరియు observability సేవ.</p>
+
+          <h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+          <p>AWS సేవల కోసం ఆప్టిమైజ్ చేయబడిన OpenTelemetry యొక్క AWS డిస్ట్రిబ్యూషన్.</p>
+        </section>
+
+        <section>
+          <h2>మద్దతు ఉన్న రన్‌టైమ్‌లు మరియు ఫ్రేమ్‌వర్క్‌లు</h2>
+          <p>Application Signals ద్వారా మద్దతు ఉన్న ప్రోగ్రామింగ్ భాషలు మరియు ఫ్రేమ్‌వర్క్‌లు.</p>
+        </section>
+
+        <section>
+          <h3>ఆటో-ఇన్‌స్ట్రుమెంటేషన్ మద్దతు</h3>
+
+          <p>అధికారిక అనుకూలత మరియు రన్‌టైమ్/వెర్షన్ మ్యాట్రిక్స్ కోసం, <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">మద్దతు ఉన్న సిస్టమ్‌లు</a> చూడండి. ముఖ్యాంశాలు:</p>
+
+          <ul>
+            <li><strong>Java:</strong> JVM 8/11/17/21/23 (ఫ్రేమ్‌వర్క్ మద్దతు ADOT/OpenTelemetry Java ఇన్‌స్ట్రుమెంటేషన్‌ను అనుసరిస్తుంది).</li>
+            <li><strong>Python:</strong> Python 3.9+ (ఫ్రేమ్‌వర్క్ మద్దతు ADOT/OpenTelemetry Python ఇన్‌స్ట్రుమెంటేషన్‌ను అనుసరిస్తుంది).</li>
+            <li><strong>Node.js:</strong> Node 14/16/18/20/22 (ఫ్రేమ్‌వర్క్ మద్దతు ADOT/OpenTelemetry JS ఇన్‌స్ట్రుమెంటేషన్‌ను అనుసరిస్తుంది).</li>
+            <li><strong>.NET:</strong> x86-64 లేదా ARM64 లో మద్దతు; Linux x64/ARM64 మరియు Windows Server 2022 x64 (లైబ్రరీ మద్దతు ADOT/OpenTelemetry .NET ఇన్‌స్ట్రుమెంటేషన్‌ను అనుసరిస్తుంది).</li>
+            <li><strong>PHP/Ruby/Go:</strong> OpenTelemetry zero-code/auto-instrumentation మార్గాల ద్వారా మద్దతు (ఈ భాషల కోసం ADOT SDK లేదు).</li>
+          </ul>
+
+          <h4>గమనికలు మరియు తెలిసిన పరిగణనలు</h4>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM మద్దతు పరిమితం; డాక్స్‌లో ESM-నిర్దిష్ట సెటప్‌ను అనుసరించకపోతే CommonJS ని ప్రాధాన్యత ఇవ్వండి.</li>
+            <li><strong>Python:</strong> కంటెయినరైజ్డ్ యాప్‌లకు <code>PYTHONPATH</code> సెట్ చేయడం అవసరం కావచ్చు (తెలిసిన OTel autoinstrumentation సమస్య).</li>
+            <li><strong>.NET:</strong> ADOT .NET కు AWS SDK for .NET V4 తో పరిమితులు ఉన్నాయి; పూర్తి మద్దతు కోసం AWS SDK V3 సిఫార్సు చేయబడింది.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>మాన్యువల్ ఇన్‌స్ట్రుమెంటేషన్</h3>
+          <p>అన్ని ప్రధాన ప్రోగ్రామింగ్ భాషలు OpenTelemetry SDKల ద్వారా మద్దతు ఉన్నాయి:</p>
+          <ul>
+            <li>Java, Scala, Kotlin</li>
+            <li>Python, Ruby</li>
+            <li>JavaScript/TypeScript, Go</li>
+            <li>.NET (C#, F#, VB.NET)</li>
+            <li>PHP, Rust, C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>కాన్ఫిగరేషన్ సూచన</h2>
+          <p>సాధారణ కాన్ఫిగరేషన్ ఎంపికలు మరియు ఎన్విరాన్మెంట్ వేరియబుల్స్.</p>
+        </section>
+
+        <section>
+          <h3>ఎన్విరాన్మెంట్ వేరియబుల్స్</h3>
+
+          <h4>OpenTelemetry కాన్ఫిగరేషన్:</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - మీ సేవ పేరు</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - ట్రేస్ ఎక్స్‌పోర్టర్ (otlp, jaeger, zipkin)</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLP ఎండ్‌పాయింట్ URL</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - శాంప్లింగ్ వ్యూహం</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - శాంప్లింగ్ పారామీటర్</li>
+          </ul>
+
+          <h4>AWS-నిర్దిష్ట కాన్ఫిగరేషన్:</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - AWS రీజియన్</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Ray daemon చిరునామా</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - సేవ అట్రిబ్యూట్‌లు (అప్లికేషన్ మ్యాప్‌లో కస్టమ్ గ్రూపింగ్ కోసం కూడా ఉపయోగించబడుతుంది)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>శాంప్లింగ్ కాన్ఫిగరేషన్</h3>
+
+          <h4>శాంప్లింగ్ వ్యూహాలు:</h4>
+          <ul>
+            <li><code>always_on</code> - అన్ని ట్రేస్‌లను శాంపిల్ చేయండి</li>
+            <li><code>always_off</code> - ట్రేస్‌లను శాంపిల్ చేయవద్దు</li>
+            <li><code>traceidratio</code> - నిష్పత్తి ఆధారంగా శాంపిల్ చేయండి (ఉదా., 10% కోసం 0.1)</li>
+            <li><code>parentbased_always_on</code> - పేరెంట్ శాంప్లింగ్ నిర్ణయాన్ని గౌరవించండి</li>
+            <li><code>parentbased_traceidratio</code> - పేరెంట్-ఆధారిత నిష్పత్తి శాంప్లింగ్</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>ఖర్చు ఆప్టిమైజేషన్</h2>
+          <p>observability ఖర్చులను నియంత్రించడానికి వ్యూహాలు.</p>
+        </section>
+
+        <section>
+          <h3>శాంప్లింగ్ వ్యూహాలు</h3>
+          <ul>
+            <li><strong>ప్రొడక్షన్:</strong> 5-10% శాంప్లింగ్ రేటు</li>
+            <li><strong>డెవలప్‌మెంట్:</strong> 50-100% శాంప్లింగ్ రేటు</li>
+            <li><strong>ఎర్రర్ ట్రేస్‌లు:</strong> ఎర్రర్‌లతో ఉన్న ట్రేస్‌లను ఎల్లప్పుడూ శాంపిల్ చేయండి</li>
+            <li><strong>అధిక-విలువ ఆపరేషన్‌లు:</strong> క్లిష్టమైన మార్గాల కోసం 100% శాంప్లింగ్</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>డేటా నిల్వ విధానాలు</h3>
+          <p>నిల్వ అంతర్లీన టెలిమెట్రీ స్టోర్‌ల ద్వారా నియంత్రించబడుతుంది (ఉదాహరణకు, CloudWatch మెట్రిక్స్/లాగ్‌లు మరియు AWS X-Ray ట్రేస్‌లు). ఆ సేవలలో నిల్వను కాన్ఫిగర్ చేయండి మరియు మీ ట్రబుల్‌షూటింగ్ మరియు కంప్లయన్స్ అవసరాలతో సమలేఖనం చేయండి.</p>
+        </section>
+
+        <section>
+          <h3>వనరుల ఆప్టిమైజేషన్</h3>
+          <ul>
+            <li><strong>బ్యాచ్ ఎక్స్‌పోర్ట్‌లు:</strong> నెట్‌వర్క్ ఓవర్‌హెడ్‌ను తగ్గించండి</li>
+            <li><strong>కంప్రెషన్:</strong> డేటా కంప్రెషన్‌ను ప్రారంభించండి</li>
+            <li><strong>ఫిల్టరింగ్:</strong> అనవసరమైన span లు మరియు అట్రిబ్యూట్‌లను తొలగించండి</li>
+            <li><strong>బఫరింగ్:</strong> తగిన బఫర్ పరిమాణాలను ఉపయోగించండి</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

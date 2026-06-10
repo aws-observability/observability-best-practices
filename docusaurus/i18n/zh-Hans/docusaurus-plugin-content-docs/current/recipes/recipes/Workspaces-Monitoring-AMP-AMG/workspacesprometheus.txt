@@ -1,0 +1,166 @@
+#!/bin/bash
+#user script for prometheus server
+#runs as root
+
+
+# The userdata script configures the following elements
+#
+# * Automatic installation of a Prometheus server
+# * A systemd service for Prometheus that is enabled for automatic start on reboot
+# * A retention of four hours of Prometheus data on the EC2, since the AMP service retains 150 days
+# * User accounts, without logon rights, that run the Prometheus service and Linux agent exporter
+# * A starting Prometheus configuration file in /etc/prometheus that needs configuration for your AMP service and DHCP clients
+# * An example script that updates Prometheus server with DHCP client addresses every four hours, this will need additional configuration for operational use. The example script shows an Active Directory Zone Export into Prometheus format. 
+# * A backup script for the /etc/prometheus/prometheus.yml configuration file
+# * A Linux exporter is installed so the server could be monitored, with additional configuration
+# * systemd start of the SSM agent
+
+
+
+
+
+useradd --no-create-home --shell /bin/false prometheus
+useradd  -m --shell /bin/false node_exporter
+mkdir /var/lib/prometheus
+mkdir /etc/prometheus
+chown prometheus:prometheus /etc/prometheus
+chown prometheus:prometheus /var/lib/prometheus
+chown prometheus:prometheus /usr/local/bin/prometheus
+
+cd /home/ec2-user
+#server
+#ADJUST FOR LATEST VERSION PATH
+
+wget https://github.com/prometheus/prometheus/releases/download/v2.34.0/prometheus-2.34.0.linux-amd64.tar.gz
+
+tar -xf prometheus-2.34.0.linux-amd64.tar.gz
+
+cp prometheus-2.34.0.linux-amd64/prometheus /usr/local/bin/
+cp prometheus-2.34.0.linux-amd64/promtool /usr/local/bin/
+chown prometheus:prometheus /usr/local/bin/prometheus
+chown prometheus:prometheus /usr/local/bin/promtool
+cp -r prometheus-2.34.0.linux-amd64/consoles /etc/prometheus/
+cp -r prometheus-2.34.0.linux-amd64/console_libraries /etc/prometheus/
+chown -R prometheus:prometheus /etc/prometheus/consoles
+chown -R prometheus:prometheus /etc/prometheus/console_libraries
+
+
+#node_exporter
+#ADJUST FOR LATEST VERSION PATH
+
+cd /home/ec2-user
+wget https://github.com/prometheus/node_exporter/releases/download/v1.3.1/node_exporter-1.3.1.linux-amd64.tar.gz
+
+tar -xzvf node_exporter-1.3.1.linux-amd64.tar.gz
+mv node_exporter-1.3.1.linux-amd64 /home/node_exporter
+mv /home/node_exporter/node_exporter-1.3.1.linux-amd64 /home/node_exporter/agent
+
+chown -R node_exporter:node_exporter /home/node_exporter
+
+
+#Add node_exporter as systemd service
+tee -a /etc/systemd/system/node_exporter.service << END
+[Unit]
+Description=Node Exporter
+Wants=network-online.target
+After=network-online.target
+[Service]
+User=node_exporter
+ExecStart=/home/node_exporter/agent/node_exporter —web.listen-address=:9182
+[Install]
+WantedBy=default.target
+END
+
+systemctl daemon-reload
+systemctl enable node_exporter
+systemctl start node_exporter
+
+
+
+tee -a /etc/systemd/system/prometheus.service << END
+
+#insert this config:
+[Unit]
+Description=Prometheus
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User=prometheus
+Group=prometheus
+Type=simple
+ExecStart=/usr/local/bin/prometheus --config.file /etc/prometheus/prometheus.yml --storage.tsdb.path /var/lib/prometheus/  --storage.tsdb.retention.time 4h --web.console.templates=/etc/prometheus/consoles --web.console.libraries=/etc/prometheus/console_libraries
+
+[Install]
+WantedBy=multi-user.target
+END
+
+
+#Set the service to automatically run and check status
+
+systemctl daemon-reload
+systemctl enable prometheus
+systemctl start prometheus
+
+#create backup folder
+mkdir /home/ec2-user/bak
+tee -a /home/ec2-user/zone-transfer-to-prometheus.sh << END
+
+#this script needs to pull DNS from route53, 
+#Active Directory, etc into Prometheus format
+
+#cron job is set to run every 4 hours
+#customize for route53 DHCP, Active Directory DHCP, or whatever DHCP is used for your target monitoring systems
+#backup the /etc/prometheus/prometheus.yml #to /home/ec2-user/bak as part of the script
+#!/bin/bash
+
+#clear any variable for rawexp before we pull in #the DNS zone info
+rawexp=''
+
+#zone transfer from Active Directory to sanitized format that only has A records, strips out others, adds the 
+#port format correctly for prometheus file, puts in quoted hostname in front and back of name
+#this example uses a test source Bind domain transfer that is not Route 53 format
+#this is commented, modify for your specific DNS data
+#rawexp=/usr/bin/dig axfr @dnsserver.name.com zonetransfer.com |/usr/bin/sed "s/.name.com/.name.com:9182', /" |/usr/bin/awk $1 '/[Dd]E/{print}'| /usr/bin/awk '$4 ~ /A/ && !/AAA/ && !/SOA/ && !/AFSDB/ && !/NAPTR/ && !/DHCID/ && !/CNAME/ { printf "\x27" "%s ", $1  }' 
+
+#echo $rawexp
+#take off the last comma on the target string, create yaml format of line
+newtargets=/usr/bin/echo $rawexp |/usr/bin/sed "s/..$//g" |/usr/bin/sed "s/$/]/" | /usr/bin/sed "s/^/     - targets: [/"
+
+#sanity check to make sure the targets look good
+#/usr/bin/echo $newtargets
+
+#backup the file before mod with date and time in bak folder
+/usr/bin/cp /etc/prometheus/prometheus.yml /home/ec2-user/bak/prometheus.yml-date +%F_%R.bak
+
+#clear the targets line so appending isn't forced into file
+#this is commented, uncomment to start replacing prometheus DHCP targets
+#/usr/bin/sed -i "/targets/d" /etc/prometheus/prometheus.yml
+
+#replace the target line in the prometheus.yml file
+#this is commented, uncomment to start replacing prometheus DHCP targets
+#/usr/bin/sed -i  "/static_configs:/a\ $newtargets" /etc/prometheus/prometheus.yml
+
+
+#new config loaded, restart the service to read the new DHCP addresses
+/usr/bin/systemctl restart prometheus
+/usr/bin/systemctl status prometheus
+
+END
+
+
+chown ec2-user.ec2-user  /home/ec2-user/zone-transfer-to-prometheus.sh
+
+chmod 750 /home/ec2-user/zone-transfer-to-prometheus.sh
+
+#set DHCP input of targets to prometheus.yml is every 4 hours
+#crontab <<EOF
+#0 /4  * * /home/ec2-user/zone-transfer-to-prometheus.sh
+#EOF
+
+
+#Verify the cron is scheduled with 
+#crontab -l
+
+sudo systemctl enable amazon-ssm-agent
+sudo systemctl start amazon-ssm-agent

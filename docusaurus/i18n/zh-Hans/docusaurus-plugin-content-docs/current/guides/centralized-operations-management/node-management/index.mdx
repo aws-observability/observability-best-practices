@@ -1,0 +1,55 @@
+---
+sidebar_position: 4
+---
+
+# 节点管理
+
+无论客户选择在 AWS、本地还是多云环境中运行，跨账户和区域，AWS Systems Manager 都提供了一个集中位置来轻松管理、诊断和修复 SSM 代理。提供全面的基础设施可见性，同时提高运营效率和生产力，无论节点位于何处。
+
+## Systems Manager 统一控制台
+
+[统一 Systems Manager 控制台](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-unified-console.html)是一个整合体验，结合了各种工具来帮助您在 AWS Organizations 组织中的多个 AWS 账户和 AWS 区域中完成常见的节点任务，或在单个账户和区域中完成。在统一控制台中，您可以获得关于节点的详细洞察。您可以为节点生成报告，诊断和修复阻止节点被 Systems Manager 管理的常见问题，如连接问题。除了关于节点的摘要之外，您还可以查看节点的特定详细信息，如软件清单和补丁状态。
+
+## 演示：Systems Manager 统一控制台
+
+在以下交互式演示中，我们将探索 Systems Manager 统一控制台。要在新窗口中查看交互式演示，请使用[此链接](https://aws-cloudops.storylane.io/share/1xr2aepwsitb)。
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/1xr2aepwsitb?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+## 注册节点的先决条件
+
+向 AWS Systems Manager 注册节点有三个先决条件。
+
+首先，必须安装 SSM 代理。SSM 代理[预装在 AWS 和可信第三方提供的某些 Amazon Machine Images (AMIs)](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) 上。
+
+其次，[SSM 代理](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html)需要必要的权限来代表您在节点上执行操作。您可以通过[为 AWS Organization 启用 Systems Manager 统一控制台](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)来自动化附加和修复 IAM 权限的过程。或者，您可以在部署资源时通过 IaC 添加必要的 IAM 角色和权限。
+
+最后，SSM 代理必须通过互联网或使用 [VPC 端点](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)与 [Systems Manager 服务端点](https://docs.aws.amazon.com/general/latest/gr/ssm.html)建立网络连接。
+
+![AWS Systems Manager Agent](/img/cloudops/guides/centralized-operations-management/node-management/BP-Node-Mgmt-1.png "AWS Systems Manager Agent")
+
+SSM Agent 使 Systems Manager 能够更新、管理和配置这些资源。代理处理来自 AWS Cloud 中 Systems Manager 服务的请求，然后按照请求中指定的方式运行它们。SSM Agent 随后将状态和执行信息发送回 Systems Manager 服务。
+
+## 大规模管理节点的 IAM 权限
+
+有几种方法可以管理节点的 IAM 权限。如果您有用于部署 AWS 资源的基础设施即代码（IaC）策略，则应在启动 EC2 实例时附加 IAM 实例配置文件。
+
+如果您没有 IaC 策略或通过 IaC 途径不可行，则可以[启用 Systems Manager 统一控制台](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)（由 Quick Setup 提供支持）。
+
+[Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) 通过自动化 AWS Organization 中跨 AWS 账户和区域的常见或推荐任务来简化 AWS 服务（包括 Systems Manager）的设置。这些任务包括创建所需的 AWS Identity and Access Management (IAM) 实例配置文件角色以及设置运营最佳实践，如定期补丁扫描和清单收集。
+
+## 增强整个基础设施环境的可见性
+
+AWS Systems Manager 通过简化节点管理来帮助您提升运营效率，使管理节点变得更加容易。您现在可以从单一位置查看组织的 AWS 账户和区域中所有已管理和未管理的节点。您还可以识别、诊断和修复未管理的节点。
+
+一旦修复完成（即它们由 Systems Manager 管理），您可以利用 Systems Manager 的完整工具套件有效地执行关键运营任务，如应用安全补丁、启动和记录会话或运行运营命令，并在整个集群中获得全面的可见性。
+
+## 为 Systems Manager 创建 AWS Organizations 委托管理员
+
+您可以在设置统一控制台时为 Systems Manager 配置委托管理员账户，以集中管理组织中的节点。这包括 Quick Setup，帮助您使用 AWS Organizations 跨账户和区域部署和管理配置。Quick Setup 的委托管理员可以在您的组织中创建、更新、查看和删除配置管理器资源。Systems Manager 在集成控制台体验的设置过程中将委托管理员注册到 Quick Setup。为您提供全面的集中视图，从单一位置查看组织的 AWS 账户和区域中所有已管理和未管理的节点。

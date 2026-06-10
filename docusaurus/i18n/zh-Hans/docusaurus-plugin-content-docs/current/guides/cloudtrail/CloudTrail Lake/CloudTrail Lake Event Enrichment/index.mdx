@@ -1,0 +1,115 @@
+---
+sidebar_position: 3
+---
+
+# CloudTrail Lake 事件丰富最佳实践
+
+CloudTrail 事件丰富允许您通过在创建或更新事件数据存储时添加资源标签键和 IAM 全局条件键（包括主体标签键）来增强管理和数据事件。此丰富功能可以基于业务上下文（如成本分配、财务管理、运维和数据安全要求）更好地分类、搜索和分析 CloudTrail 事件。丰富后的事件包含一个 eventContext 字段，为 API 操作提供上下文信息，您可以通过在 CloudTrail Lake 中运行查询或通过与 Amazon Athena 的联合来分析。此功能通过将有关资源、主体和授权条件的额外元数据纳入事件日志，帮助组织更好地了解和跟踪其 AWS 资源使用情况和安全态势。
+
+### 资源标签丰富
+
+* 在事件数据存储创建或更新期间配置资源标签键，以基于业务上下文分类和分析事件
+* 考虑到在资源创建后添加的资源标签在出现在 CloudTrail 事件中之前可能会有延迟
+* 请注意，已删除资源的资源标签可能不包含标签信息
+* 了解在资源创建时应用的标签几乎没有或没有延迟
+
+### IAM 全局条件键丰富
+
+* 选择相关的 IAM 全局条件键以包含有关授权过程的额外上下文
+* 请记住，如果配置的条件键与 IAM 策略评估无关，则可能不会出现在每个事件中
+* 考虑使用[支持的条件键](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services)，如：
+    * aws:FederatedProvider
+    * aws:MultiFactorAuthPresent
+    * aws:PrincipalAccount
+    * aws:PrincipalType
+    * aws:ViaAWSService
+    * aws:SecureTransport
+    * 以及更多（[丰富事件支持的 IAM 全局条件键](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services)）
+
+### 服务注意事项
+
+* 请注意资源标签更新可能出现延迟的[服务](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)，包括：
+    * Amazon S3
+    * AWS CloudTrail
+    * AWS Lambda
+    * Amazon DynamoDB
+    * AWS Organizations
+    * AWS KMS
+    * Amazon SQS
+    * 以及更多（[AWS 文档](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)列出了其他服务）
+
+### 事件上下文管理
+
+* 监控 CloudTrail 事件中的 eventContext 字段以获取丰富后的信息
+* 请注意 eventContext 字段仅出现在为配置了丰富的事件数据存储的事件中
+* 请注意延迟事件将不包含 eventContext 数据。延迟交付的事件包含一个 "addendum" 字段，显示事件延迟的原因信息。阅读更多关于 [CloudTrail 事件记录](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)的内容。
+* 维护 AWSServiceRoleForCloudTrailEventContext 服务关联角色以确保正确的标签填充
+* 添加事件上下文可能会增加事件的整体大小，这可能导致 CloudTrail Lake 的额外摄入成本
+
+### 运维注意事项
+
+* 为可能导致资源标签更新延迟的服务中断做好规划
+* 监控 CloudTrail 事件中的 addendum 字段，其中包含服务中断后资源标签变更的信息
+* 了解 Event history、EventBridge 和 trails 中的事件将不包含 eventContext 字段
+* 在选择丰富的标签键和条件键时考虑成本分配、运维和安全的业务需求
+
+### CloudTrail Lake 示例 SQL 查询
+
+#### **事件丰富的资源标签**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+eventContext.tagContext.resourceTags[1].tags as tags,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL 
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **基于数据分类标签的事件丰富资源标签**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **创建事件丰富可视化图表的示例查询**
+
+```
+SELECT count(*) as count, eventName, substr(userIdentity.arn, 
+strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+Group BY eventName,
+substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1),
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification'),
+eventContext.tagContext.resourceTags[1].arn,
+element_at(requestParameters, 'key')
+```
+
+### Cloud Operation Show：Tag It & Track It：AWS CloudTrail 事件丰富和扩展详解
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IELtInifymY?si=uupyo9_wx0Kcx1Vw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

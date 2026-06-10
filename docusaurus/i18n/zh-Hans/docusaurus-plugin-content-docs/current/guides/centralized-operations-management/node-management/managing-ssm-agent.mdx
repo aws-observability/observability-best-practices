@@ -1,0 +1,577 @@
+---
+sidebar_position: 1
+---
+
+# 在 AWS Organization 中管理 SSM Agent
+
+本节概述了如何在 AWS Organization 中管理 SSM 代理的安装，并提供 CloudFormation、Terraform、Shell、PowerShell、Ansible、Chef 和 Puppet 的示例代码。
+
+请注意，这是示例代码，应在任何生产环境使用之前在开发环境中进行彻底测试和验证。
+
+## 了解 SSM Agent
+
+如前几节所讨论的，要开始使用 Systems Manager 管理环境中的节点，节点必须是[受管理的](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html#supported-machine-types)，这意味着 SSM Agent 已安装在机器上，并且代理可以使用所需权限与 Systems Manager 服务端点通信。
+
+AWS Systems Manager Agent (SSM Agent) 是在 Amazon Elastic Compute Cloud (Amazon EC2) 实例、边缘设备、本地服务器和虚拟机 (VM) 上运行的 Amazon 软件。SSM Agent 的源代码可在 [GitHub](https://github.com/aws/amazon-ssm-agent) 上获取。SSM Agent 使 Systems Manager 能够更新、管理和配置这些资源。代理处理来自 AWS Cloud 中 Systems Manager 服务的请求，然后按照请求中指定的方式运行它们。
+
+因此，确保 SSM Agent 安装在节点上是必要的，也是使用 AWS Systems Manager 服务开始节点管理运维之旅的第一步。
+
+## 操作系统支持
+
+SSM Agent 支持广泛的操作系统和机器类型。请参阅用户指南中的[支持的操作系统和机器类型](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html)以验证您的操作系统 (OS)、OS 版本和机器类型是否受支持。
+
+## 预装 SSM Agent 的 AMI
+
+为了开始使用 Systems Manager，AWS Systems Manager Agent (SSM Agent) 预装在 AWS 和可信第三方提供的某些 Amazon Machine Images (AMIs) 上。请参阅[查找预装 SSM Agent 的 AMI](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html)，以获取预装的操作系统列表。
+
+## SSM Agent 安装方法
+
+现在我们了解了哪些操作系统支持 SSM Agent，让我们探索在未预装 SSM Agent 的实例上安装代理的各种方法。安装方法可以分为两个主要场景：
+
+* **新实例部署**：在启动新实例时安装 SSM Agent。
+* **现有实例管理**：在已运行的实例上安装 SSM Agent。
+
+### 在新实例上安装 SSM Agent
+
+在启动新实例时，将 SSM Agent 安装纳入初始设置过程可确保从一开始就具有一致的管理能力。这种方法消除了部署后安装的需要。您可以通过多种方法实现这一点，如黄金 AMI、用户数据脚本或基础设施即代码工具等。方法的选择通常取决于您组织的部署实践和扩展需求。
+
+#### 黄金 AMI 方法
+
+黄金 AMI 是一个自定义的 Amazon Machine Image，用作启动 EC2 实例的标准化模板。对于 Systems Manager 集成，组织可以创建预装 SSM Agent 的黄金 AMI，确保从这些 AMI 启动的所有实例都可以立即通过 Systems Manager 进行管理。这种方法消除了启动后安装脚本的需要，并降低了部署失败的风险。
+
+创建黄金 AMI
+
+1. 手动：手动创建黄金 AMI 可以通过启动实例、安装和配置 SSM Agent、测试配置，然后从该实例创建 AMI 来完成。
+1. EC2 Image Builder：如果您使用 EC2 Image Builder 创建黄金镜像，请配置[镜像配方](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html#start-build-image-step2)并选择在输出镜像中保留 SSM 代理的选项。
+1. Hashicorp Packer：如果您使用 Hashicorp Packer，请使用 shell Packer provisioner 运行 shell 命令来安装 SSM 代理。
+
+```json
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "if [ -f /etc/system-release ]; then",
+        "  # Amazon Linux",
+        "  sudo yum install -y amazon-ssm-agent",
+        "  sudo systemctl enable amazon-ssm-agent",
+        "  sudo systemctl start amazon-ssm-agent",
+        "elif [ -f /etc/lsb-release ]; then",
+        "  # Ubuntu",
+        "  sudo snap install amazon-ssm-agent \u2014classic",
+        "  sudo systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "  sudo systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "fi"
+      ]
+    }
+  ]
+}
+```
+
+或者，提供包含 Agent 安装 shell 命令的脚本路径。
+
+```json
+{
+  "provisioners": [{
+    "type": "shell",
+    "script": "scripts/install_ssm.sh"
+  }]
+}
+```
+
+使用 Packer 的 script provisioner 时，`install_ssm.sh` 应相对于您的 Packer 配置文件（`.json` 或 `.pkr` `.hcl`）存储。
+
+#### 基础设施即代码（IaC）
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+如果您使用 CloudFormation 通过未预装 SSM 代理的 AMI 启动实例，可以利用 `UserData` 属性来安装 SSM 代理。
+
+```yaml
+  # EC2 Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - !Ref OperatingSystem
+      InstanceType: !FindInMap
+        - EnvironmentSettings
+        - !Ref EnvironmentType
+        - InstanceType
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      UserData: !If
+        - !Base64
+          'Fn::Sub': |
+            #!/bin/bash
+            # Install SSM Agent based on OS
+            if [ -f /etc/os-release ]; then
+                . /etc/os-release
+                case "$ID" in
+                    amzn|rhel)
+                        yum install -y amazon-ssm-agent
+                        systemctl enable amazon-ssm-agent
+                        systemctl start amazon-ssm-agent
+                        ;;
+                    ubuntu)
+                        snap install amazon-ssm-agent \u2014classic
+                        systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        ;;
+                esac
+            fi
+```
+
+</TabItem>
+
+<TabItem value="terraform">
+
+使用 Terraform 时，创建一个包含 SSM 代理安装 shell 命令的脚本文件。然后使用实例资源的 `user_data` 属性指向安装脚本文件。
+
+```json
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t2.micro"
+
+  subnet_id                   = data.aws_subnet.main.id
+  vpc_security_group_ids      = [aws_security_group.allow_ssm.id]
+  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  associate_public_ip_address = true
+
+  user_data = filebase64("${path.module}/scripts/install_ssm.sh")
+
+  tags = {
+    Name = "SSM-enabled-instance"
+  }
+}
+
+# Output
+output "instance_id" {
+  value = aws_instance.web.id
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 控制台/API/SDK
+
+使用 EC2 控制台或任何 SDK 启动 EC2 实例时，在启动实例之前将包含 SSM Agent 安装命令的用户数据添加到 Amazon EC2 实例。
+
+* 有关 Linux 的步骤，请参阅此文章：[如何在启动时在 Amazon EC2 Linux 实例上安装 SSM Agent？](https://repost.aws/knowledge-center/install-ssm-agent-ec2-linux)
+* 有关 Windows 的步骤，请参阅此文章：[如何在启动时在 Amazon EC2 Windows 实例上安装 AWS Systems Manager Agent (SSM Agent)？](https://repost.aws/knowledge-center/ssm-agent-windows-ec2)
+
+#### Application Migration Service (MGN)
+
+如果您的服务器是使用 Application Migration Service 迁移和启动的，请使用**启动后**设置来安装 SSM Agent。请参阅[此处](https://docs.aws.amazon.com/mgn/latest/ug/post-launch-settings.html#post-launch-settings-activation)概述的步骤。
+
+#### Amazon EKS
+
+最新的 Amazon EKS 优化 AMI 会自动安装 SSM Agent。如果您使用自定义 AMI，要安装 SSM Agent，请使用[此处](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-the-ssm-agent-and-cloudwatch-agent-on-amazon-eks-worker-nodes-using-prebootstrapcommands.html)概述的 `preBootstrapCommands` 属性。
+
+### 在运行中的实例上安装 SSM Agent
+
+对于环境中已经运行的实例，您可以使用各种远程访问和自动化方法安装 SSM Agent。安装过程因操作系统类型、可用的访问方法和网络配置而异。本节介绍了在现有实例上安装 SSM Agent 的不同方法。
+
+#### 自定义解决方案 
+请参阅关于**在 AWS Organization 中未管理的 Amazon EC2 节点上自动安装 AWS Systems Manager 代理**的[公开博客](https://aws.amazon.com/blogs/mt/automate-installing-ssm-agent-on-unmanaged-ec2-instances-in-an-aws-organization/)。
+此解决方案使用 userdata 安装 SSM 代理，自动化 Runbook 在跨区域和账户中编排此过程。
+
+#### 配置管理工具
+
+如果您的组织使用 Puppet、Chef 或 Ansible 等配置管理工具，您可以利用这些现有工具在实例上部署 SSM Agent。
+
+<Tabs
+    groupId="cmtool"
+    defaultValue="ansible"
+    values={[
+        {label: 'Ansible', value: 'ansible'},
+        {label: 'Chef', value: 'chef'},
+        {label: 'Puppet', value: 'puppet'}
+    ]}>
+<TabItem value="ansible">
+
+```yaml
+- name: Install SSM Agent across fleet
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Detect OS family
+      ansible.builtin.set_fact:
+        os_family: "{{ ansible_facts['os_family'] }}"
+
+    - name: Install SSM Agent on RedHat family
+      block:
+        - name: Download SSM Agent RPM
+          get_url:
+            url: "https://s3.{{ aws_region }}.amazonaws.com/amazon-ssm-{{ aws_region }}/latest/linux_amd64/amazon-ssm-agent.rpm"
+            dest: /tmp/amazon-ssm-agent.rpm
+            mode: '0644'
+
+        - name: Install SSM Agent
+          yum:
+            name: /tmp/amazon-ssm-agent.rpm
+            state: present
+      when: os_family == "RedHat"
+
+    - name: Install SSM Agent on Debian family
+      block:
+        - name: Install SSM Agent via Snap
+          community.general.snap:
+            name: amazon-ssm-agent
+            classic: yes
+      when: os_family == "Debian"
+
+    - name: Enable and start SSM Agent
+      systemd:
+        name: amazon-ssm-agent
+        enabled: yes
+        state: started
+
+    - name: Verify installation
+      command: systemctl status amazon-ssm-agent
+      register: ssm_status
+      ignore_errors: yes
+
+    - name: Report status
+      debug:
+        var: ssm_status.stdout_lines
+```
+
+</TabItem>
+<TabItem value="puppet">
+
+```puppet
+if $facts['os']['family'] == 'RedHat' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm',
+    provider => 'rpm',
+  }
+} elsif $facts['os']['family'] == 'Debian' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb',
+    provider => 'dpkg',
+  }
+}
+
+service { 'amazon-ssm-agent':
+  ensure => running,
+  enable => true,
+  require => Package['amazon-ssm-agent'],
+}
+```
+
+</TabItem>
+<TabItem value="chef">
+
+```ruby
+# cookbooks/ssm_agent/recipes/default.rb
+case node['platform_family']
+when 'rhel'
+  remote_file '/tmp/amazon-ssm-agent.rpm' do
+    source "https://s3.#{node['region']}.amazonaws.com/amazon-ssm-#{node['region']}/latest/linux_amd64/amazon-ssm-agent.rpm"
+    mode '0644'
+    action :create
+  end
+
+  package 'amazon-ssm-agent' do
+    source '/tmp/amazon-ssm-agent.rpm'
+    action :install
+  end
+
+when 'debian'
+  execute 'install_ssm_agent' do
+    command 'snap install amazon-ssm-agent \u2014classic'
+    not_if 'snap list | grep amazon-ssm-agent'
+  end
+end
+
+service 'amazon-ssm-agent' do
+  action [:enable, :start]
+end
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 用户数据
+
+默认情况下，用户数据命令和 cloud-init 指令仅在 EC2 实例启动时的第一个引导周期内运行。但是，您可以使用 mime 多部分文件配置用户数据命令和 cloud-init 指令。
+
+要更新用户数据，请**停止**实例。点击**操作**，选择**实例设置**，然后选择**编辑用户数据**。
+
+<Tabs
+    groupId="os"
+    defaultValue="linux"
+    values={[
+        {label: 'Linux', value: 'linux'},
+        {label: 'Windows', value: 'windows'},
+    ]}>
+<TabItem value="linux">
+
+```bash
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#!/bin/bash
+# Amazon Linux 2, RHEL
+dnf install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+--//--
+```
+
+</TabItem>
+<TabItem value="windows">
+
+**注意**：以下 PowerShell 脚本仅适用于 EC2Launch v2 启动代理。
+
+```powershell
+<powershell>
+$dir = $env:TEMP + "\ssm"
+New-Item -ItemType directory -Path $dir -Force
+cd $dir
+(New-Object System.Net.WebClient).DownloadFile("https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe", $dir + "\AmazonSSMAgentSetup.exe")
+Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @("/q", "/log", "install.log") -Wait
+</powershell>
+<persist>true</persist>
+```
+
+</TabItem>
+</Tabs>
+
+使用 `ModifyInstanceAttribute` API 以编程方式执行时，此脚本需要转换为 base64 编码文本。
+
+#### 组策略（适用于 Windows）
+
+虽然组策略传统上支持 .msi 包，但 AWS Systems Manager (SSM) Agent 以 .exe 文件形式提供。为了克服这一限制，我们将结合使用组策略和计划任务来在您的 Windows 环境中部署 SSM Agent。
+
+1. 在 Active Directory 中的适当层次结构/OU 中创建（或修改现有的）GPO。编辑策略以利用计算机计划任务脚本配置。
+
+2. 该选项位于 Computer Configuration | Preferences | Control Panel Settings | Scheduled Tasks | 右键单击并选择 New->Immediate Task
+
+3. 为操作选择**创建**，为任务命名，并指定 `NT AUTHORITY\System` 作为运行任务的用户账户。点击**无论用户是否登录都运行**的单选按钮，然后点击**触发器**选项卡继续下一节。
+
+![SSMAgent 属性的任务管理器截图](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-ssm-agent.png "SSMAgent 属性的任务管理器截图")
+
+4. 对于触发器，选择一次。
+
+5. 创建一个新操作来**启动程序**，选择 `powershell.exe`，对于**参数**使用以下内容：
+
+```powershell
+-ExecutionPolicy Bypass -Command "$dir = $env:TEMP + '\ssm'; New-Item -ItemType directory -Path $dir -Force; Set-Location $dir; (New-Object System.Net.WebClient).DownloadFile('https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe', $dir + '\AmazonSSMAgentSetup.exe'); Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @('/q', '/log', 'install.log') -Wait"
+```
+
+![添加新操作的任务管理器截图](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-new-action.png "添加新操作的任务管理器截图")
+
+6. 在"新操作"窗口中点击**确定**，然后在"属性"窗口中点击**确定**以关闭这些对话框。
+
+7. 完成后，当 GP 策略更新或从命令提示符使用 `gpudate /force` 强制执行该操作时，任何关联的计算机都应收到安装程序推送。
+
+有关更多信息，请参阅[在 AWS Systems Manager 中自动注册 Windows 托管节点](https://github.com/aws-samples/sample-ssm-automate-windows-hybrid-install)。
+
+#### SSH（适用于 Linux）
+
+对于通过 SSH 可访问的 Linux 实例，您可以使用以下示例脚本自动化 SSM Agent 的安装。此脚本检测操作系统类型并安装相应的包。
+
+```bash
+#!/bin/bash
+USERNAME=ec2-user
+HOSTS=("192.168.1.121" "192.168.1.122" "192.168.1.123")
+KEY_PATH="/path/to/your/key.pem"
+
+for HOSTNAME in ${HOSTS}; do
+    # Detect OS type
+    OS_TYPE=$(ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "cat /etc/os-release | grep '^ID=' | cut -d= -f2 | tr -d '\"'")
+
+    case ${OS_TYPE} in
+        "amzn"|"rhel"|"centos")
+            SCRIPT="sudo yum install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl start amazon-ssm-agent"
+            ;;
+        "ubuntu"|"debian")
+            SCRIPT="wget s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb && sudo dpkg -i amazon-ssm-agent.deb && sudo systemctl start amazon-ssm-agent"
+            ;;
+        *)
+            echo "Unsupported OS on ${HOSTNAME}"
+            continue
+            ;;
+    esac
+
+    ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+done
+```
+
+#### Amazon EKS - 现有实例
+
+最新的 Amazon EKS 优化 AMI 会自动安装 SSM Agent。如果您使用自定义 AMI，要在运行中的工作节点上安装 SSM Agent，请使用[此处](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-ssm-agent-on-amazon-eks-worker-nodes-by-using-kubernetes-daemonset.html)概述的 Kubernetes Daemonset。
+
+#### Amazon Workspaces
+
+使用[此处](https://github.com/aws-samples/workspaces-ssm-install)记录的自定义解决方案。
+
+## 管理 SSM Agent 的 IAM 权限
+
+适当的 IAM 权限对于 SSM Agent 的功能至关重要。AWS 提供了多种方法来管理这些权限，从手动附加实例配置文件到组织范围的自动化解决方案。
+
+### 默认主机管理配置 (DHMC)
+
+DHMC 是 AWS 推荐的跨组织管理 SSM Agent 权限的方法。它使得无需手动创建 AWS Identity and Access Management (IAM) 实例配置文件即可管理 EC2 实例成为可能。相反，默认主机管理配置创建并应用默认 IAM 角色，以确保 Systems Manager 具有管理激活它的 AWS 账户和 AWS 区域中所有实例的权限。
+
+#### 启用 DHMC 的方法：
+* **通过统一控制台体验**：在[加入统一控制台体验](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)时，DHMC 会自动启用。这是使用加入期间创建的 State Manager 关联来启用的，并将在每个目标账户和区域中启用 DHMC。
+* **使用 Fleet Manager**：您可以从 Fleet Manager 控制台开启默认主机管理配置。您必须在要管理 Amazon EC2 实例的每个区域逐一开启默认主机管理配置。请参阅[此处](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#default-host-management)的步骤。
+* **通过 CLI/SDK**：这是通过创建所需角色并使用 AWS CLI/SDK 更新服务设置来完成的。您必须在要管理 Amazon EC2 实例的每个区域逐一开启默认主机管理配置。请参阅[此处](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate)的步骤。
+* **通过 Quick Setup**：使用 Quick Setup，您可以为已添加到 AWS Organizations 组织的所有账户和区域激活默认主机管理配置。请参阅[此处](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate)的步骤。
+* **使用 CloudFormation**：您也可以使用 CloudFormation，通过 StackSets 在多账户和区域中启用 DHMC。请参阅此[博客](https://aws.amazon.com/blogs/mt/enable-management-of-your-amazon-ec2-instances-in-aws-systems-manager-using-default-host-management-configuration/)。
+
+### 单个实例权限
+
+如果您未使用 DHMC，则必须使用 IAM 实例配置文件在每个实例级别授予 SSM 代理的权限。我们建议使用推荐的 Amazon 托管策略 AmazonSSMManagedInstanceCore 创建实例配置文件。根据用例，此实例配置文件可能需要额外的权限。请参阅用户指南中的[托管实例的其他策略注意事项](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#instance-profile-policies-overview)，其中讨论了为 SSM 代理使用创建 IAM 实例配置文件和其他策略注意事项。
+
+#### 在启动时将实例配置文件附加到 EC2 实例
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+如果您使用 CloudFormation 启动实例，可以创建 IAM 实例配置文件资源并在实例资源中引用它。
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SSMInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  SSMInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref SSMInstanceRole
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      # Other instance properties
+```
+
+部署 Auto Scaling 组时，Launch Template 资源属性可以引用使用实例配置文件。
+
+```yaml
+# ASG with SSM Instance Profile
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Name: !Ref SSMInstanceProfile
+```
+
+</TabItem>
+<TabItem value="terraform">
+
+如果您使用 Terraform 启动实例，可以创建 IAM 实例配置文件资源并在实例资源中引用它。
+
+```json
+# IAM Role and Instance Profile
+resource "aws_iam_role" "ssm_role" {
+  name = "SSMManagedInstanceRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "SSMManagedInstanceProfile"
+  role = aws_iam_role.ssm_role.name
+}
+
+# EC2 Instance with Profile
+resource "aws_instance" "example" {
+  # ... other configuration ...
+  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### 使用 Systems Manager Automation Runbook 启动实例
+
+[AWS-CreateManagedLinuxInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedlinuxinstance.html) 和 [AWS-CreateManagedWindowsInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedwindowsinstance.html) 是预配置的 Systems Manager Automation Runbook，可自动化创建和配置托管实例的过程。这些 Runbook 确保实例配置文件具有附加到启动实例所需的 SSM 权限。
+
+### 将实例配置文件附加到已运行的 EC2 实例
+
+* 使用 Quick Setup（推荐）：使用[通过 Quick Setup 进行 Amazon EC2 主机管理](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-host-management.html)，您可以配置将所需的 IAM 策略添加到附加到实例的现有实例配置文件中，或允许 Quick Setup 创建具有您选择的配置所需权限的 IAM 策略和实例配置文件。此选项可以面向组织或特定 OU 中多个账户的实例。
+
+* 使用 Systems Manager Automation：您可以使用 Automation Runbook [AWS-SetupManagedRoleOnEc2Instance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-setupmanagedroleonec2instance.html) 为实例配置用于 Systems Manager 访问的 SSMRoleForManagedInstance 托管 IAM 角色。如果指定的角色不存在，自动化将创建它。要面向多账户和区域中的实例，请在[多账户/多区域](https://docs.aws.amazon.com/systems-manager/latest/userguide/running-automations-multiple-accounts-regions.html)模式下运行自动化。

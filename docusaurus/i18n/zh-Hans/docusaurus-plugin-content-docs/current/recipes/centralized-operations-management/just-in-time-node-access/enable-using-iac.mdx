@@ -1,0 +1,113 @@
+---
+sidebar_position: 2
+---
+
+# 使用基础设施即代码 (IaC) 启用 JITNA
+
+以下部分介绍如何在 AWS Organization 中使用 CloudFormation 部署即时节点访问。要部署即时节点访问，您必须首先为您的环境启用即时节点访问，然后可以部署即时节点访问资源，包括审批策略、会话首选项和通知配置。
+
+:::info
+Systems Manager 统一控制台和即时节点访问也可以通过在每个账户/区域进行本地部署来启用，而不是在委托管理员账户中启用这些功能。
+:::
+
+## 启用即时节点访问
+
+1. 在您组织的 AWS 管理账户中，为 Systems Manager 指定一个委托管理员账户。
+1. 部署 [Systems Manager 统一控制台](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)。
+1. 部署[即时节点访问](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html)。
+
+以下是为统一控制台和即时节点访问部署 Quick Setup 配置管理器的示例架构图。
+
+![为统一控制台和即时节点访问部署 Quick Setup 配置管理器的示例架构图](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-organization.png "即时节点访问架构图")
+
+1. 在 Systems Manager 的委托管理员账户中创建 CloudFormation 堆栈。
+1. CloudFormation 堆栈创建 Quick Setup 配置管理器。
+1. 统一控制台的 Quick Setup 配置管理器部署到组织中的所有 OU：A、B 和 C。
+1. JITNA 的 Quick Setup 配置管理器部署到 OU A 和 B。
+
+:::info
+即时节点访问可以在整个 AWS Organization 中启用，也可以针对组织中的特定组织单元 (OU) 启用。即时节点访问的可部署区域包括您为 Systems Manager 统一控制台启用的所有区域。您无法在未启用统一控制台的区域启用 JITNA。
+:::
+
+### 部署 Quick Setup 配置管理器
+
+要使用基础设施即代码 (IaC) 启用即时节点访问，您需要：
+
+1. 部署 Quick Setup IAM 服务角色。
+    :::info
+    有关 Quick Setup IAM 服务角色的更多信息，请参见 [以编程方式使用 Quick Setup API 的手动设置](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-getting-started.html#quick-setup-api-manual-onboarding)。
+    :::
+1. 部署两个 [Quick Setup 配置管理器](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssmquicksetup-configurationmanager.html)：
+    1. Systems Manager 统一控制台。
+    1. Systems Manager 即时节点访问。
+
+以下示例 CloudFormation 模板包括创建两个所需的 Quick Setup IAM 服务角色，并为 Systems Manager 统一控制台和 JITNA 部署两个 Quick Setup 配置管理器。
+
+#### 示例 CloudFormation 模板
+
+[即时节点访问示例 CFN 模板 - Quick Setup 配置管理器](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-quick-setup-cfn-template.yaml)
+
+##### CloudFormation 模板参数
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="type"
+    defaultValue="organization"
+    values={[
+        {label: 'AWS Organization 启用', value: 'organization'},
+    ]}>
+<TabItem value="organization">
+
+| 参数名称 | 描述 | 示例值 |
+| -------------- | ----------- | ------------- |
+| `AgentUpdateSchedule` | （可选）代理更新关联运行的间隔。如需退出，请输入 none。 | rate(14 days) |
+| `DelegatedAdminAccountId` | Systems Manager 委托管理员账户的 AWS 账户 ID。 | 123456789012 |
+| `EnableDHMCSchedule` | （可选）DHMC 关联运行的间隔。如需退出，请输入 none。 | rate(1 day) |
+| `HomeRegion` | 部署 Systems Manager 统一控制台的 AWS 区域。 | us-east-1 |
+| `IdentityProviderSetting` | 指定用于确定当前访问控制模板审批者的身份提供者：IAM 身份访问管理 (IAM) 或单点登录 (SSO)。 | IAM |
+| `InventoryCollectionSchedule` | （可选）清单收集运行的间隔。如需退出，请输入 none。 | rate(24 hours) |
+| `JITNATargetOrganizationalUnits` | 设置即时节点访问的 AWS 组织单元 ID 的逗号分隔列表。 | ou-a1b2-abcd1234,ou-a1b2-efgh1234,ou-a1b2-hijk1234 |
+| `JITNATargetRegions` | 您要启用即时节点访问的区域。指定的区域必须与参数 `UnifiedConsoleTargetRegions` 中指定的区域匹配，或者是该参数中指定区域的子集。 | us-east-1,us-east-2,us-west-2 |
+| `UnifiedConsoleRootOrganizationUnitID` | 根 AWS 组织单元 ID。 | r-abcd |
+| `UnifiedConsoleTargetRegions` | 设置 Systems Manager 统一控制台的 AWS 区域的逗号分隔列表。数据从这些区域聚合并复制到您的主区域。 | us-east-1,us-east-2,us-west-2 |
+
+</TabItem>
+</Tabs>
+
+## 配置即时节点访问
+
+启用即时节点访问后，您可以开始部署审批策略、会话首选项和通知配置。
+
+* [节点的审批策略](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-approval-policies.html)。
+* 即时会话的[会话首选项](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-session-preferences.html)。
+* 即时访问请求的[通知配置](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-notifications.html)。
+
+### 部署节点的审批策略
+
+以下是部署即时节点访问审批策略和会话首选项的示例架构图。
+
+![部署即时节点访问审批策略和会话首选项的示例架构图](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-resources.png "即时节点访问审批策略和首选项架构图")
+
+1. 创建 CloudFormation StackSet 以将自动审批策略、手动审批策略和会话首选项部署为 Systems Manager 文档。
+1. 在每个目标账户和区域中，CloudFormation 堆栈部署所需的资源。
+1. 在 Systems Manager 的委托管理员账户中创建 CloudFormation 堆栈以部署仅拒绝访问策略。
+
+:::info
+每个组织只能有一个拒绝访问策略。每个账户和区域只能有一个自动审批策略。
+
+每个 AWS 账户和 AWS 区域最多可以创建 50 个手动审批策略。但是，当多个手动审批策略适用于一个节点时，会导致冲突，用户将无法请求访问该节点。在创建手动审批策略时请注意这一点，因为某些实例可能根据您的情况具有多个标签。
+:::
+
+以下示例 CloudFormation 模板创建：
+
+1. 一个自动审批策略，允许自动访问由资源标签键值对 `ENV:DEV` 标识的开发托管节点。
+1. 两个手动审批策略：
+    1. 一个用于电子商务应用的手动审批策略，适用于具有资源标签键值对 `Workload:Ecommerce` 的托管节点。
+    1. 一个用于财务应用的手动审批策略，适用于具有资源标签键值对 `Workload:Finance` 的托管节点。
+1. 一个在即时节点访问会话期间使用的会话首选项文档。
+
+#### 示例 CloudFormation 模板 - JITNA 配置
+
+[即时节点访问示例 CFN 模板 - 审批策略和会话首选项](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-cfn-approval-policies.yaml)

@@ -1,0 +1,254 @@
+---
+sidebar_position: 1
+---
+
+# AWS Systems Manager మరియు tagging ఉపయోగించి managed nodes ను patching చేయడం
+
+## పరిచయం
+
+మీ node infrastructure అంతటా security మరియు performance maintain చేయడానికి robust patch management strategy అవసరం. ఈ guided solution [AWS Systems Manager](https://aws.amazon.com/systems-manager/) ఉపయోగించి automated, tag-based patch management system implement చేయడంలో మిమ్మల్ని walk through చేస్తుంది. ఈ guided solution follow చేయడం ద్వారా, manual intervention తగ్గించి security compliance improve చేసే scalable మరియు efficient patching process establish చేస్తారు. ఈ method centralized approach కోసం [AWS Organizations](https://aws.amazon.com/organizations/) లో utilize చేయవచ్చు, మరియు single accounts కోసం కూడా implement చేయవచ్చు.
+
+ఇలాంటి tagging scheduling method application owners తమ nodes updates receive చేసే సమయం manage చేయడానికి అనుమతిస్తుంది. Approved schedules, వాటికి corresponding [patch policy](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-patch-manager.html#create-patch-policy) ఉంటుంది, [AWS CLI](https://aws.amazon.com/cli/) ఉపయోగించి query చేయవచ్చు, node schedule మార్చడానికి self-service method అనుమతిస్తుంది.
+
+## Solution ను అర్థం చేసుకోవడం
+
+మీ patch management solution లో కొన్ని parts implement చేయడం ప్రారంభించే ముందు, ఈ solution ఎలా work చేస్తుందో అర్థం చేసుకోవడం ముఖ్యం. ఈ approach AWS Systems Manager patch management capabilities ను standardized tagging strategy తో combine చేస్తుంది. ఈ integration update schedules పై granular control maintain చేస్తూ మీ managed nodes అంతటా patching schedules automate చేయడానికి అనుమతిస్తుంది.
+
+ప్రతి managed node కు predefined tag assign చేయబడుతుంది, ఈ case లో, `maintenance:patching`. ఈ tag value cron expression కు similar entry contain చేస్తుంది, ఇది node evaluate చేయబడి updates apply చేయబడే schedule indicate చేస్తుంది.
+
+Managed node updates receive చేయవలసిన ప్రతి authorized schedule కు match అయ్యే patch policies create చేయబడతాయి.
+
+Custom patch baselines create చేసి patch policies కు associate చేయవచ్చు, apply చేయబడే updates పై additional control అనుమతిస్తుంది లేదా default patch baselines utilize చేయవచ్చు.
+
+Patch policies మరియు tags establish చేసి assign చేసిన తర్వాత, managed nodes కు patch policies మరియు patch baselines లోని specifications ప్రకారం patch policies apply అవుతాయి.
+
+## Role-based బాధ్యతలు
+
+### Cloud Operations team
+
+Cloud Operations team comprehensive patch management oversight ద్వారా మన cloud infrastructure security మరియు stability maintain చేయడంలో crucial role play చేస్తుంది. వారి బాధ్యతలు మన patching program effectiveness ensure చేసే అనేక key areas encompass చేస్తాయి.
+
+System health maintain చేయడానికి patch deployment success rates యొక్క continuous monitoring essential. Team AWS Systems Manager leverage చేసి patching outcomes track మరియు analyze చేస్తుంది, patterns మరియు potential areas of concern identify చేయడానికి weekly reports generate చేస్తుంది. ([Working with patch compliance reports](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-compliance-reports.html) చూడండి) ఈ proactive monitoring systemic issues early detection enable చేస్తుంది మరియు environment అంతటా patches successfully apply అవుతున్నట్లు ensure చేస్తుంది.
+
+Team మన patching process drive చేసే automation infrastructure maintain చేసే responsibility కలిగి ఉంటుంది. ఇది AWS Systems Manager patch baselines regular refinement, deployment schedules optimization, మరియు automation workflows maintenance include చేస్తుంది. ఈ automated processes security standards maintain చేస్తూ changing business needs accommodate చేయడానికి continuously evaluate మరియు adjust చేయాలి.
+
+Patching failures occur అయినప్పుడు, Cloud Operations team primary responder గా serve చేస్తుంది. వారు 24 hours లోపు issues investigate చేయాలి, అవసరమైన remediation efforts coordinate చేయాలి, మరియు required అయినప్పుడు application teams తో work చేయాలి. Incidents మరియు వాటి resolutions thorough documentation భవిష్యత్ reference కోసం knowledge base build చేయడంలో help చేస్తుంది మరియు patching process యొక్క continuous improvement drive చేస్తుంది.
+
+Regular compliance oversight మరొక critical responsibility. Team patching tag compliance యొక్క weekly reviews conduct చేస్తుంది, అన్ని nodes established standards adhere అవుతున్నట్లు ensure చేస్తుంది. ఇది proper tag implementation verify చేయడం మరియు AWS Config rules ద్వారా ఏదైనా అవసరమైన remediation manage చేయడం include చేస్తుంది. వారు compliance status యొక్క detailed records maintain చేస్తారు మరియు standard processes కు approved exceptions manage చేస్తారు.
+
+ఈ activities ద్వారా, Cloud Operations team business impact minimize చేస్తూ system security maintain చేసే robust మరియు reliable patching program ensure చేస్తుంది. Patching issues కోసం escalation point గా వారి role మరియు stakeholders తో ongoing communication patching process లో transparency మరియు trust maintain చేయడంలో help చేస్తుంది.
+
+### Security team
+
+Security team మన managed node patching program కోసం governance authority గా serve చేస్తుంది, comprehensive oversight మరియు strategic direction ద్వారా security standards maintain మరియు compliance requirements meet అవుతున్నట్లు ensure చేస్తుంది.
+
+Patch compliance monitoring Security team బాధ్యతల cornerstone. Compliance reports regular analysis ద్వారా, వారు organization security posture evaluate చేసి attention అవసరమయ్యే potential vulnerabilities identify చేస్తారు. ఈ oversight patch deployment metrics review చేయడం, security advisory impacts analyze చేయడం, మరియు required timeframes లో critical patches apply అవుతున్నట్లు ensure చేయడం include చేస్తుంది.
+
+Team emerging threats మరియు industry best practices ఆధారంగా security requirements maintain మరియు evolve చేస్తుంది. New vulnerabilities discover అయినప్పుడు లేదా compliance standards change అయినప్పుడు, impact assess చేసి patching requirements accordingly update చేస్తారు. ఇది acceptable patch deployment windows define చేయడం, minimum compliance thresholds establish చేయడం, మరియు ఏ security patches prioritize చేయాలో determine చేయడం include చేస్తుంది.
+
+Patch baseline governance వారి purview కింద వస్తుంది, Security team patch baselines modifications కోసం approval authority గా serve చేస్తుంది. వారు proposed changes ను security standards మరియు compliance requirements against evaluate చేస్తారు, ఏదైనా adjustments operational needs accommodate చేస్తూ appropriate security posture maintain చేస్తున్నట్లు ensure చేస్తారు. ఇది operating system మరియు application patch specifications రెండింటినీ review చేయడం include చేస్తుంది.
+
+Team patching processes regulatory requirements మరియు internal security policies తో align అవుతున్నట్లు verify చేయడానికి regular compliance validations conduct చేస్తుంది. వారు compliance status documentation maintain చేస్తారు, audit responses manage చేస్తారు, మరియు gaps identify అయినప్పుడు remediation పై guidance provide చేస్తారు. వారి assessment organization security certifications maintain చేయడం మరియు compliance obligations meet చేయడంలో help చేస్తుంది.
+
+ఈ activities ద్వారా, Security team మన patching program guide చేసే security framework establish మరియు maintain చేస్తుంది, operational efficiency enable చేస్తూ security primary focus గా remain అవుతున్నట్లు ensure చేస్తుంది.
+
+### Application teams
+
+Application teams application availability మరియు performance maintain చేస్తూ successful patch management ensure చేయడంలో vital role play చేస్తారు. Application behavior మరియు business requirements గురించి వారి intimate knowledge patching process లో essential participants గా చేస్తుంది.
+
+Patching schedules coordination business operations careful consideration require చేస్తుంది. Application teams suitable schedules identify చేయడానికి Cloud Operations తో proactively work చేయాలి, business impact minimize చేస్తూ. Peak usage periods, critical business events, మరియు dependencies assess చేసి patching safely occur అవ్వగల సమయం determine చేయాలి.
+
+Post-patching validation critical responsibility, ఇక్కడ application teams తమ applications functionality systematically verify చేయాలి. ప్రతి patch cycle తర్వాత, అన్ని critical business functions expected గా operate అవుతున్నట్లు confirm చేయడానికి established testing procedures execute చేయాలి. ఇది application performance metrics monitor చేయడం, core functionality validate చేయడం, మరియు dependent systems తో integrations intact గా ఉన్నట్లు verify చేయడం include చేస్తుంది.
+
+Issues arise అయినప్పుడు, application teams proper incident tracking మరియు resolution ensure చేయడానికి established escalation procedures follow చేయాలి. ఇది observed problems యొక్క detailed documentation provide చేయడం, specific symptoms, timing of issues, మరియు recent patches తో potential correlation include చేస్తుంది. Timely మరియు accurate reporting Cloud Operations మరియు Security teams patch-related incidents కు effectively respond చేయడంలో help చేస్తుంది.
+
+Resource tagging accuracy application team బాధ్యతల్లో squarely fall అవుతుంది. వారు తమ అన్ని resources పై, ముఖ్యంగా patching schedules కు related వాటిపై current మరియు accurate tags maintain చేయాలి. ఈ tags automated patching processes drive చేస్తాయి, మరియు appropriate schedule మరియు requirements ప్రకారం systems patch అవుతున్నట్లు ensure చేయడానికి వాటి accuracy crucial.
+
+ఈ బాధ్యతల ద్వారా, application teams technical operations మరియు business needs మధ్య essential bridge గా serve చేస్తారు, patching activities application availability మరియు performance preserve చేస్తూ system security maintain చేస్తున్నట్లు ensure చేస్తారు.
+
+## Foundation build చేయడం
+
+### Tag-based patching implementation కోసం Prerequisites
+
+#### AWS Systems Manager configuration
+
+Tag-based patching implement చేయడానికి ముందు AWS Systems Manager account లేదా organizational level వద్ద [properly configured](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) ఉండాలి. Organizational context లో, AWS Organizations ద్వారా అన్ని relevant accounts అంతటా Systems Manager enabled అని ensure చేయండి. Systems Manager resources manage చేయడానికి allow చేసే appropriate IAM roles మరియు policies configure చేయండి, required service-linked roles మరియు instance profiles include చేస్తూ. Multiple regions లేదా accounts అంతటా centralized visibility అవసరమైతే resource data sync establish చేయండి.
+
+#### SSM Agent management
+
+అన్ని managed nodes properly configured [SSM Agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html) run చేయాలి. చాలా AWS AMIs agent default గా include చేస్తాయి, కానీ ఇది present అని మరియు latest version కు updated అని verify చేయండి. Non-AWS managed nodes కోసం, instance provisioning సమయంలో agent install మరియు configure చేయడానికి process implement చేయండి. Agent updates maintain చేయడానికి automated process establish చేయండి, appropriate ఉన్న చోట Systems Manager agent auto-update capability leverage చేస్తూ.
+
+#### Network connectivity requirements
+
+Systems Manager nodes ను effectively manage చేయడానికి [consistent network connectivity](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html) require చేస్తుంది. Managed nodes internet ద్వారా లేదా VPC endpoints ద్వారా Systems Manager endpoints reach చేయగలని ensure చేయండి. Private subnets లోని nodes కోసం, Systems Manager కోసం అవసరమైన VPC endpoints (ssm, ssmmessages, మరియు ec2messages) configure చేయండి. Security groups మరియు network ACLs required traffic permit చేస్తున్నట్లు verify చేయండి. Proxy use చేస్తుంటే, SSM Agent ను appropriate proxy settings తో configure చేయండి.
+
+#### Patch tagging strategy
+
+Organizational needs తో align అయ్యే comprehensive tagging strategy develop మరియు document చేయండి. Define చేయండి:
+
+* Patch groups identify చేయడానికి Tag key-value pairs (ఉదా., `maintenance:patching`)
+* AWS Config rules ద్వారా Tag enforcement mechanisms
+* Tag governance మరియు ownership బాధ్యతలు
+* Tag updates మరియు modifications కోసం procedures
+
+Different environments లేదా application types కోసం అవసరమైన ఏదైనా variations తో సహా complete tagging schema document చేయండి. Tag compliance validate చేయడానికి మరియు improperly tagged resources remediate చేయడానికి processes establish చేయండి.
+
+:::note
+Patch source లేదా repositories కు Network connectivity కూడా required అవుతుంది. మరింత information కోసం [Connectivity to the patch source](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html#source-connectivity) చూడండి.
+:::
+
+## Patching process implement చేయడం
+
+మీ [managed nodes](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html#supported-machine-types) up-to-date మరియు secure గా ఉంచడం మీ AWS, on-premises, మరియు multi-cloud infrastructure maintain చేయడంలో ముఖ్యమైన భాగం. AWS Systems Manager తో, మీ managed node fleet అంతటా చాలా security మరియు ఇతర types software updates (patches) automate చేయవచ్చు. అయితే, patching schedules మరియు cadences manage చేయడం ఇప్పటికీ complex గా ఉంటుంది, ముఖ్యంగా మీ infrastructure scale అయ్యేకొద్దీ. ఈ guided solution flexibility తో patching schedules manage చేయడంలో assist చేయడానికి employ చేయగల ఒక method యొక్క example.
+
+### Step 1: మీ tagging strategy establish చేయడం
+
+`maintenance:patching` tagging convention implement చేయడం ద్వారా ప్రారంభించండి. ఈ tag ప్రతి node కు patches ఎప్పుడు apply చేయాలో define చేస్తుంది. Tag value schedule specify చేయడానికి cron-like expression use చేస్తుంది. Organizations off hour (non production) times updates apply చేయడానికి select చేయడం common. ఇలాంటి cases లో, select times మరియు days of the month ప్రతి node align అవ్వవలసిన standards గా choose చేయవచ్చు.
+
+ఉదాహరణకు:
+
+```language=yaml
+Key: maintenance:patching
+Value: 2SATX4    # Runs at 2 AM every 4th Saturday
+```
+
+:::note
+Value లోని 'X' '#' symbol ను replace చేయడానికి use చేయబడుతుంది, ఇది tag values కోసం allowed characters లో లేదు
+:::
+
+Values కోసం ఇతర common patterns:
+
+* `0SUN` ప్రతి Sunday, midnight maintenance కోసం
+* `4TUEX2` ప్రతి 2nd Tuesday, 4 AM maintenance కోసం
+* `22MONX3` ప్రతి third Monday, 10 PM maintenance కోసం
+
+కింది diagram managed nodes పై tags, వివిధ sources నుండి, patch policy తో ఎలా align అవ్వవచ్చో demonstrate చేస్తుంది.
+
+![Example diagram that demonstrates how tags on managed nodes can align with a patch policy](/img/cloudops/solutions/centralized-operations-management/patch-nodes-using-tags/PatchTagging.drawio.png "Example diagram that demonstrates how tags on managed nodes can align with a patch policy")
+
+ఈ solution యొక్క ఒక implementation Friday evenings 10 PM న ప్రారంభమయ్యే implementation times provide చేసింది. 10 PM Friday తర్వాత ప్రతి నాలుగు గంటలకు 10 PM Sunday వరకు subsequent time offerings create చేయబడ్డాయి. ఇది weekly updates apply చేయడానికి 13 options allow చేసింది, ఇవి environment అంతటా అవసరమైన విధంగా spread చేయవచ్చు, development, test, మరియు production వంటి environments ను separate schedules లో update చేయగల ability తో సహా.
+
+### Step 2: మీ tag strategy deploy చేయడం
+
+మీ tagging strategy decide చేసిన తర్వాత, మీ existing nodes కొత్త required tag receive చేస్తున్నట్లు ensure చేయాలి మరియు అన్ని new nodes పై tag require చేసే standards enact చేయాలి.
+
+#### Compliance enforcement
+
+మీ environment అంతటా tag governance maintain చేయడానికి AWS Config rules implement చేయండి. అన్ని managed nodes పై required patching tags presence verify చేయడానికి మరియు tag values approved standards కు conform అవుతున్నట్లు validate చేయడానికి rules configure చేయండి. ఈ automated oversight మీ infrastructure అంతటా consistent tagging ensure చేస్తుంది మరియు non-compliant resources త్వరగా identify చేయడంలో help చేస్తుంది.
+
+#### Automated remediation
+
+Non-compliant resources address చేయడానికి AWS Systems Manager Automation use చేసి automated remediation processes establish చేయండి. మీ remediation workflow resource characteristics ఆధారంగా appropriate default values తో missing tags add చేయాలి. Standard cases కోసం automatic మరియు human review require చేసే exceptions కోసం manual అయ్యేలా మీ remediation design చేయండి.
+
+#### Audit మరియు review process
+
+`maintenance:patching` tag కోసం managed nodes ను automatically monitor చేయడానికి AWS Config rules deploy చేయండి, tag presence మరియు valid patching schedule values (ఉదా., `2SATX4`, `4TUEX2`) రెండూ ensure చేస్తూ. Non-compliant resources identify చేయడానికి మరియు auto-remediation properly functioning అని validate చేయడానికి Config compliance reports weekly review చేయండి. Approved exceptions documentation centralized location లో create మరియు maintain చేయండి.
+
+#### Governance model
+
+Tag management కోసం clear ownership మరియు responsibilities establish చేయండి, Cloud Operations consistent reference కోసం AWS Systems Manager [Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-su-create.html) లో approved patching schedules maintain చేస్తూ [organization అంతటా](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-shared-parameters.html#share). Tag standards మరియు patching schedules కు changes request చేయడానికి processes define చేయండి, updates Parameter Store మరియు associated Config rules రెండింటిలోనూ reflect అయ్యేలా ensure చేస్తూ. Changes కోసం documented approval workflows create చేయండి, Cloud Operations centralized parameters update చేయడానికి ముందు Security team validation require చేస్తూ. Tagging strategy మరియు maintenance windows organizational needs continue to meet చేస్తున్నట్లు ensure చేయడానికి operations, security, మరియు application teams మధ్య feedback loops maintain చేయండి, approved values కోసం source of truth గా Parameter Store use చేస్తూ.
+
+### Step 3: Systems Manager Configure చేయడం
+
+మీ tagging strategy in place ఉన్నప్పుడు మీ Cloud Operations Team మీ patching strategy execute చేయడానికి Systems Manager configure చేయవచ్చు:
+
+#### Patch baseline guidance
+
+[Custom patch baseline](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-predefined-and-custom-patch-baselines.html) create చేయడానికి ముందు, AWS predefined baselines మీ patching requirements meet చేస్తాయో evaluate చేయండి. మీ operating systems కోసం default AWS-managed baselines review చేయండి, ఇవి సాధారణంగా critical updates మరియు security patches కోసం approved patches include చేస్తాయి. మీ organization కు specific compliance requirements, patch exclusions, delayed patch approvals, లేదా particular application dependencies manage చేయవలసిన అవసరం ఉంటే, మీకు likely custom baseline అవసరం. అయితే, మీరు simply regular schedule లో critical మరియు security updates apply చేయవలసి ఉంటే, AWS-managed baselines often తక్కువ maintenance overhead require చేస్తూ sufficient coverage provide చేస్తాయి. మీ patching requirements document చేసి informed decision తీసుకోవడానికి predefined baseline configurations against compare చేయండి.
+
+#### Patch policy configuration guidance
+
+Parameter Store లో define చేయబడిన ప్రతి approved patching schedule కోసం, AWS Systems Manager లో corresponding [patch policy](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-patch-manager.html#create-patch-policy) create చేయండి. Patching schedules తో easy correlation ensure చేస్తూ CRON schedule clearly reflect చేయడానికి మీ policy name చేయండి (ఉదా., `Patch-2SATX4`). Policy ను scan మరియు install operations రెండింటికీ configure చేయండి, patching schedule తో align అయ్యే మీ pre-approved CRON expression specify చేయడానికి Custom Scan schedule option utilize చేస్తూ.
+
+Policy scope define చేసేటప్పుడు, మీ designated patch baseline select చేసి Custom Targets option use చేసి targeting configure చేయండి. ఈ policy apply అవ్వాల్సిన appropriate organizational units (OUs) మరియు AWS regions specify చేయండి. Most critically, `maintenance:patching` tag use చేసి target nodes set చేయండి, ఈ patching schedule కు correspond చేసే specific tag value enter చేస్తూ (ఉదా., `2SATX4`). ఇది ఈ patching schedule కోసం explicitly tagged nodes మాత్రమే patching operation లో include అవుతాయని ensure చేస్తుంది.
+
+ఈ configuration approach మీ tagging strategy, patching schedules, మరియు patch policy execution మధ్య consistency maintain చేస్తుంది, ప్రతి scheduled period లో ఏ nodes patch అవుతాయనే clear visibility provide చేస్తూ.
+
+#### Automation workflow guidance (optional)
+
+AWS Systems Manager లో supplemental automation workflows implement చేయడం ద్వారా మీ patching strategy enhance చేయండి. System readiness verify చేయడానికి pre-patch validation checks design చేయండి, available disk space confirm చేయడం, running process verification, మరియు critical configurations backup చేయడం వంటివి. System functionality validate చేయడానికి post-patch testing automation create చేయండి, service status checks, application health monitoring, మరియు basic connectivity tests include చేస్తూ. Patch execution status, test failures, లేదా validation issues గురించి appropriate teams alert చేయడానికి SNS topics మరియు notification pathways configure చేయండి. ఈ automated workflows patch cycle అంతటా consistent validation మరియు clear communication channels provide చేయడం ద్వారా మీ patching process strengthen చేస్తాయి.
+
+## Implementation roadmap
+
+మీ patching strategy roll out చేయడానికి ఈ steps follow చేయండి:
+
+### Phase 1: Planning మరియు design (Weeks 1-2)
+
+ఈ foundational phase customers కు వారి current environment clear understanding establish చేయడంలో మరియు achievable goals set చేయడంలో help చేస్తుంది. Detailed documentation మరియు role definitions teams అంతటా accountability మరియు smooth operations ensure చేస్తాయి. Standardized tagging మరియు automation workflows upfront establish చేయడం ద్వారా, organizations human error minimize చేస్తూ consistent మరియు efficient patch management achieve చేయగలవు. ఈ phase compliance మరియు security standards maintain చేస్తూ operational overhead reduce చేయడానికి framework create చేస్తుంది.
+
+* Current environment patch management state assess మరియు document చేయండి
+* Compliance targets మరియు reporting requirements include చేసిన measurable success criteria define చేయండి
+* Parameter Store లో store చేయవలసిన approved patching schedule values include చేసిన tag standards establish చేయండి
+* Pre-patch validation మరియు post-patch testing కోసం automation workflows design చేయండి (optional)
+* Cloud Operations, Security, మరియు Application teams కోసం roles మరియు responsibilities document చేయండి
+
+### Phase 2: Testing మరియు validation (Weeks 3-4)
+
+Controlled environment లో testing production systems impact చేయడానికి ముందు potential issues identify మరియు resolve చేయడానికి allow చేస్తుంది, business risk significantly reduce చేస్తుంది. Validation process automated workflows intended గా function అవుతున్నట్లు మరియు reporting patch status మరియు compliance లోకి necessary visibility provide చేస్తున్నట్లు ensure చేస్తుంది. ఈ phase organizations procedures refine చేయడానికి మరియు system stability మరియు security maintain చేస్తూ వారి patch management strategy లో confidence build చేయడానికి help చేస్తుంది. Different configurations అంతటా thorough testing solution entire infrastructure అంతటా reliably work చేస్తుందని ensure చేస్తుంది.
+
+* Test environment లో tag compliance monitoring కోసం AWS Config rules deploy చేయండి
+* Associated automation workflows తో patch policies implement చేయండి
+* Tag enforcement మరియు auto-remediation processes validate చేయండి
+* Reporting mechanisms మరియు dashboard effectiveness verify చేయండి
+* Different instance types మరియు operating systems అంతటా thorough testing conduct చేయండి
+* Test results ఆధారంగా procedures review మరియు adjust చేయండి
+
+### Phase 3: Production implementation (Weeks 5-6)
+
+Phased rollout approach production environment అంతటా successful implementation ensure చేస్తూ business disruption minimize చేస్తుంది. Issues regular monitoring మరియు documentation భవిష్యత్ reference మరియు patch management process continuous improvement కోసం knowledge base create చేయడంలో help చేస్తుంది. Stakeholder reviews మరియు finalized documentation solution business requirements meet చేస్తుందని మరియు long-term effectively maintain చేయగలదని ensure చేస్తాయి. ఈ phase security మరియు compliance standards maintain చేస్తూ manual effort reduce చేసే sustainable, automated patch management system establish చేస్తుంది.
+
+* Non-critical application tiers తో start చేస్తూ phased rollout execute చేయండి
+* Config compliance reports మరియు remediation success rates monitor చేయండి
+* Encountered issues మరియు resolutions document చేయండి
+* Production experience ఆధారంగా automation workflows మరియు procedures adjust చేయండి
+* Patch execution results యొక్క stakeholder reviews conduct చేయండి
+* Operational documentation మరియు handover procedures finalize చేయండి
+
+ప్రతి phase business requirements మరియు security standards తో alignment ensure చేయడానికి stakeholders తో regular checkpoints include చేస్తుంది.
+
+## Monitoring మరియు maintenance
+
+### Ongoing operational processes
+
+#### Weekly patch compliance review
+
+Non-compliant nodes మరియు remediation effectiveness identify చేయడానికి AWS Config compliance reports, [Amazon Athena reports](https://catalog.workshops.aws/getting-started-with-com/en-US/patch-management/org-patch-reporting), లేదా [Amazon QuickSight](https://catalog.workshops.aws/getting-started-with-com/en-US/advanced-workshops/organization-patch-reporting) weekly reviews conduct చేయండి. Cloud Operations team patch policy execution results verify చేసి failed patching attempts address చేయాలి. Trends మరియు attention require చేసే potential issues highlight చేస్తూ stakeholders కు compliance status reports generate మరియు distribute చేయండి.
+
+#### Monthly tag accuracy audit
+
+`maintenance:patching` tags Parameter Store లోని approved values తో align అవుతున్నట్లు monthly validation perform చేయండి. Unauthorized tag modifications కోసం Config rule reports review చేసి auto-remediation correctly functioning అని verify చేయండి. Repeated non-compliance patterns document మరియు investigate చేయండి, systematic issues identified అయితే procedures update చేస్తూ.
+
+#### Quarterly patch baseline assessment
+
+Security team quarterly patch baselines review మరియు update చేయాలి, current security requirements మరియు vendor recommendations తో align అవుతున్నట్లు ensure చేస్తూ. Approved patches compliance standards meet చేస్తున్నట్లు validate చేసి excluded patches risk evaluate చేయండి. Baseline documentation update చేసి changes stakeholders కు communicate చేయండి.
+
+#### Semi-annual process review
+
+Entire patching program comprehensive review yearly twice conduct చేయండి. Automation workflows effectiveness, patching schedules timing, మరియు overall compliance rates evaluate చేయండి. అన్ని stakeholders నుండి feedback gather చేసి process improvements implement చేయండి. Program కు ఏవైనా changes reflect చేయడానికి documentation మరియు training materials update చేయండి.
+
+ప్రతి review process findings మరియు actions taken formal documentation include చేస్తుంది, results appropriate stakeholders తో share చేయబడతాయి.
+
+## Troubleshooting మరియు support
+
+Organizations తమ environment లో encounter అయ్యే common patching issues కోసం comprehensive troubleshooting documentation develop మరియు maintain చేయాలి. Support teams కోసం కనీసం కింది scenarios address చేసే detailed runbooks create చేయండి:
+
+* Failed patch installations: Common failure patterns, required log collection procedures, మరియు patches consistently fail అయినప్పుడు escalation paths document చేయండి.
+* Missed patch schedule windows: Missed schedules root causes identify చేయడానికి guidance మరియు patches appropriately reschedule చేయడానికి procedures provide చేయండి.
+* Missing reboot verification: Reboot requirements validate చేయడానికి steps, stuck reboot states handle చేయడానికి procedures, మరియు necessary అయినప్పుడు forced reboot scenarios కోసం guidance include చేయండి.
+* Tag compliance failures: Non-compliant resources investigate చేయడానికి procedures, tag issues correct చేయడానికి steps, మరియు remediation success verify చేయడానికి methods document చేయండి.
+* Systems Manager connectivity issues: Network validation మరియు IAM permission verification include చేస్తూ agent connectivity problems కోసం troubleshooting steps detail చేయండి.
+
+Support teams accessible centralized location లో ఈ documents maintain చేయండి, మరియు environment changes మరియు newly discovered issues తో troubleshooting procedures current ఉంచడానికి regular review cycle establish చేయండి.
+
+## అదనపు resources
+
+Links maintain చేయండి:
+
+* AWS Systems Manager documentation
+* Internal troubleshooting guides
+* Support teams కోసం contact information
+* Relevant AWS service documentation
+
+AWS services evolve అయ్యేకొద్దీ మరియు మీ organization needs change అయ్యేకొద్దీ ఈ guide regularly review మరియు update చేయడం గుర్తుంచుకోండి. ఈ process use చేస్తున్న teams నుండి regular feedback మీ patching strategy refine మరియు improve చేయడంలో time over help చేస్తుంది.
+
+Patch management కు ఈ standardized approach మీ managed node fleet secure మరియు up-to-date గా ఉంటుందని operational overhead మరియు potential human error minimize చేస్తూ ensure చేయడంలో help చేస్తుంది.

@@ -1,0 +1,113 @@
+---
+sidebar_position: 2
+---
+
+# Infrastructure-as-Code (IaC) ఉపయోగించి JITNA ని ఎనేబుల్ చేయడం
+
+కింది విభాగం AWS Organization లో CloudFormation ఉపయోగించి just-in-time node access ని డిప్లాయ్ చేయడం ఎలాగో వివరిస్తుంది. Just-in-time node access ని డిప్లాయ్ చేయడానికి, మీరు ముందుగా మీ environment కోసం just-in-time node access ని ఎనేబుల్ చేయాలి, ఆ తర్వాత approval policies, session preferences మరియు notification configurations వంటి just-in-time node access resources ని డిప్లాయ్ చేయవచ్చు.
+
+:::info
+Systems Manager unified console మరియు just-in-time node access ను delegated administrator account లో features ని ఎనేబుల్ చేయడం కాకుండా, local deployments చేయడం ద్వారా account/Region ప్రాతిపదికన కూడా ఎనేబుల్ చేయవచ్చు.
+:::
+
+## Just-in-time node access ని ఎనేబుల్ చేయడం
+
+1. మీ organization కోసం AWS management account లో, Systems Manager కోసం delegated administrator account ని నిర్దేశించండి.
+1. [Systems Manager unified console](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) ని డిప్లాయ్ చేయండి.
+1. [Just-in-time node access](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html) ని డిప్లాయ్ చేయండి.
+
+Unified console మరియు just-in-time node access కోసం Quick Setup configuration managers ని డిప్లాయ్ చేయడానికి ఒక ఉదాహరణ architecture diagram క్రింద ఉంది.
+
+![Unified console మరియు just-in-time node access కోసం Quick Setup configuration managers డిప్లాయ్‌మెంట్ ఉదాహరణ architecture diagram](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-organization.png "Just-in-time node access architecture diagram")
+
+1. Systems Manager కోసం delegated administrator account లో CloudFormation stack సృష్టించండి.
+1. CloudFormation stack Quick Setup configuration managers ని సృష్టిస్తుంది.
+1. Unified console కోసం Quick Setup configuration manager organization లోని అన్ని OUs - A, B మరియు C లకు డిప్లాయ్ చేయబడుతుంది.
+1. JITNA కోసం Quick Setup configuration manager OUs A మరియు B లోకి డిప్లాయ్ చేయబడుతుంది.
+
+:::info
+Just-in-time node access ను మీ AWS Organization మొత్తం అంతటా లేదా organization లోని నిర్దిష్ట Organizational Units (OUs) కోసం ఎనేబుల్ చేయవచ్చు. Just-in-time node access కోసం డిప్లాయ్ చేయగల Regions మీరు Systems Manager unified console కోసం ఎనేబుల్ చేసిన అన్ని Regions ని కలిగి ఉంటాయి. Unified console ఎనేబుల్ చేయని Regions కోసం JITNA ని ఎనేబుల్ చేయలేరు.
+:::
+
+### Quick Setup configuration managers ని డిప్లాయ్ చేయడం
+
+Infrastructure-as-code (IaC) ఉపయోగించి just-in-time node access ని ఎనేబుల్ చేయడానికి, మీరు:
+
+1. Quick Setup IAM service roles ని డిప్లాయ్ చేయాలి.
+    :::info
+    Quick Setup కోసం IAM service roles గురించి మరింత సమాచారం కోసం, [Manual onboarding for working with Quick Setup API programatically](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-getting-started.html#quick-setup-api-manual-onboarding) చూడండి.
+    :::
+1. రెండు [Quick Setup Configuration Managers](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssmquicksetup-configurationmanager.html) ని డిప్లాయ్ చేయాలి:
+    1. Systems Manager unified console.
+    1. Systems Manager just-in-time-node access.
+
+కింది ఉదాహరణ CloudFormation template రెండు అవసరమైన Quick Setup IAM service roles సృష్టించడం మరియు Systems Manager unified console మరియు JITNA కోసం రెండు Quick Setup configuration managers డిప్లాయ్ చేయడం కలిగి ఉంటుంది.
+
+#### నమూనా CloudFormation template
+
+[Just-in-time node access నమూనా CFN template - Quick Setup configuration managers](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-quick-setup-cfn-template.yaml)
+
+##### CloudFormation template parameters
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="type"
+    defaultValue="organization"
+    values={[
+        {label: 'AWS Organization enablement', value: 'organization'},
+    ]}>
+<TabItem value="organization">
+
+| Parameter పేరు | వివరణ | ఉదాహరణ విలువ |
+| -------------- | ----------- | ------------- |
+| `AgentUpdateSchedule` | (ఐచ్ఛికం) Agent update association రన్ అయ్యే interval. Opt-out చేయడానికి, none ఎంటర్ చేయండి. | rate(14 days) |
+| `DelegatedAdminAccountId` | Systems Manager delegated administrator account కోసం AWS Account ID. | 123456789012 |
+| `EnableDHMCSchedule` | (ఐచ్ఛికం) DHMC association రన్ అయ్యే interval. Opt-out చేయడానికి, none ఎంటర్ చేయండి. | rate(1 day) |
+| `HomeRegion` | Systems Manager unified console డిప్లాయ్ చేయబడిన AWS Region. | us-east-1 |
+| `IdentityProviderSetting` | ప్రస్తుత access control template approver ఎవరో నిర్ణయించడానికి ఉపయోగించే identity provider IAM లేదా Single Sign-On (SSO) ని నిర్దేశిస్తుంది. | IAM |
+| `InventoryCollectionSchedule` | (ఐచ్ఛికం) Inventory collection రన్ అయ్యే interval. Opt-out చేయడానికి, none ఎంటర్ చేయండి. | rate(24 hours) |
+| `JITNATargetOrganizationalUnits` | Just-in-time node access సెటప్ చేయబడిన AWS Organization Unit IDs యొక్క comma-separated list. | ou-a1b2-abcd1234,ou-a1b2-efgh1234,ou-a1b2-hijk1234 |
+| `JITNATargetRegions` | మీరు just-in-time node access ని ఎనేబుల్ చేయాలనుకునే Regions. నిర్దేశించిన Regions `UnifiedConsoleTargetRegions` parameter లో నిర్దేశించిన Regions కు సరిపోలాలి లేదా subset అయి ఉండాలి. | us-east-1,us-east-2,us-west-2 |
+| `UnifiedConsoleRootOrganizationUnitID` | Root AWS Organization unit ID. | r-abcd |
+| `UnifiedConsoleTargetRegions` | Systems Manager unified console సెటప్ చేయబడిన AWS Regions యొక్క comma-separated list. ఈ Regions నుండి data aggregate చేయబడుతుంది మరియు మీ home Region కు replicate చేయబడుతుంది. | us-east-1,us-east-2,us-west-2 |
+
+</TabItem>
+</Tabs>
+
+## Just-in-time node access ని కాన్ఫిగర్ చేయడం
+
+మీ environment కోసం just-in-time node access ని ఎనేబుల్ చేసిన తర్వాత, మీరు approval policies, session preferences మరియు notification configurations ని డిప్లాయ్ చేయడం ప్రారంభించవచ్చు.
+
+* మీ nodes కోసం [Approval policies](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-approval-policies.html).
+* Just-in-time sessions కోసం [Session preferences](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-session-preferences.html).
+* Just-in-time access requests కోసం [Notification configurations](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-notifications.html).
+
+### మీ nodes కోసం approval policies డిప్లాయ్ చేయడం
+
+Just-in-time node access approval policies మరియు session preferences డిప్లాయ్ చేయడానికి ఉదాహరణ architecture diagram క్రింద ఉంది.
+
+![Just-in-time node access approval policies మరియు session preferences డిప్లాయ్‌మెంట్ ఉదాహరణ architecture diagram](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-resources.png "Just-in-time node access approval policies మరియు preferences architecture diagram")
+
+1. Auto-approval policy, manual approval policy (లేదా policies) మరియు session preferences ని Systems Manager documents గా డిప్లాయ్ చేయడానికి CloudFormation StackSet సృష్టించండి.
+1. ప్రతి target account మరియు Region లో, CloudFormation stacks అవసరమైన resources ని డిప్లాయ్ చేస్తాయి.
+1. Deny-only access policy డిప్లాయ్ చేయడానికి Systems Manager కోసం delegated administrator account లో CloudFormation Stack సృష్టించండి.
+
+:::info
+ప్రతి organization కు ఒకే deny-access policy ఉంటుంది. ప్రతి account మరియు Region కు ఒకే auto-approval policy ఉంటుంది.
+
+ప్రతి AWS account మరియు AWS Region కు 50 వరకు manual approval policies సృష్టించవచ్చు. అయితే, బహుళ manual approval policies ఒక node కు వర్తించినప్పుడు, ఇది conflict కు కారణమవుతుంది మరియు users ఆ node కి access అభ్యర్థించలేరు. మీ manual approval policies సృష్టించేటప్పుడు ఇది గుర్తుంచుకోండి ఎందుకంటే మీ case ను బట్టి కొన్ని instances కు బహుళ tags ఉండవచ్చు.
+:::
+
+కింది ఉదాహరణ CloudFormation template ఇవి సృష్టిస్తుంది:
+
+1. `ENV:DEV` resource tag key-value pair ద్వారా గుర్తించబడిన development managed nodes కు automatic access అనుమతించే auto-approval policy.
+1. రెండు manual approval policies:
+    1. `Workload:Ecommerce` resource tag key-value pair ఉన్న managed nodes కు వర్తించే E-commerce application కోసం ఒక manual approval policy.
+    1. `Workload:Finance` resource tag key-value pair ఉన్న managed nodes కు వర్తించే Finance application కోసం ఒక manual approval policy.
+1. Just-in-time node access sessions సమయంలో ఉపయోగించబడే session preferences document.
+
+#### నమూనా CloudFormation template - JITNA Configuration
+
+[Just-in-time node access నమూనా CFN template - Approval policies మరియు Session preferences](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-cfn-approval-policies.yaml)

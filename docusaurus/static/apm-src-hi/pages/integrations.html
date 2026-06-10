@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>एकीकरण — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>एकीकरण</h1></header>
+      <article>
+        <section>
+          <h2>AWS सर्विस एकीकरण</h2>
+          <p>CloudWatch Application Signals आपके संपूर्ण क्लाउड इंफ्रास्ट्रक्चर में व्यापक observability प्रदान करने के लिए AWS सर्विसेज़ के साथ निर्बाध रूप से एकीकृत होता है।</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>API प्रदर्शन की निगरानी करें और API Gateway से आपकी बैकएंड सर्विसेज़ तक अनुरोधों को ट्रैक करें।</p>
+
+          <h4>एकीकरण सुविधाएं:</h4>
+          <ul>
+            <li>API कॉल की स्वचालित ट्रेसिंग</li>
+            <li>API एंडपॉइंट के लिए लेटेंसी मॉनिटरिंग</li>
+            <li>एरर रेट ट्रैकिंग</li>
+            <li>रिक्वेस्ट/रिस्पॉन्स सहसंबंध</li>
+          </ul>
+
+          <h4>सेटअप:</h4>
+          <p>अपने API Gateway स्टेज कॉन्फ़िगरेशन में X-Ray ट्रेसिंग सक्षम करें।</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>लोड बैलेंसर के माध्यम से ट्रैफ़िक प्रवाह को ट्रैक करें और एप्लिकेशन प्रदर्शन के साथ सहसंबंधित करें।</p>
+
+          <h4>एकीकरण लाभ:</h4>
+          <ul>
+            <li>रिक्वेस्ट रूटिंग विज़िबिलिटी</li>
+            <li>टारगेट ग्रुप प्रदर्शन मेट्रिक्स</li>
+            <li>हेल्थ चेक मॉनिटरिंग</li>
+            <li>लोड वितरण विश्लेषण</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>डेटाबेस ऑपरेशन की निगरानी करें और डेटा एक्सेस पैटर्न में प्रदर्शन बाधाओं की पहचान करें।</p>
+
+          <h4>ट्रेसिंग क्षमताएं:</h4>
+          <ul>
+            <li>क्वेरी ऑपरेशन टाइमिंग</li>
+            <li>थ्रॉटल और एरर ट्रैकिंग</li>
+            <li>टेबल और इंडेक्स प्रदर्शन</li>
+            <li>क्रॉस-रीजन रेप्लिकेशन मॉनिटरिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>डेटाबेस प्रदर्शन और कनेक्शन पूलिंग में अंतर्दृष्टि प्राप्त करें।</p>
+
+          <h4>डेटाबेस मॉनिटरिंग:</h4>
+          <ul>
+            <li>क्वेरी निष्पादन समय</li>
+            <li>कनेक्शन पूल उपयोग</li>
+            <li>डेटाबेस इंस्टेंस मेट्रिक्स</li>
+            <li>धीमी क्वेरी पहचान</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>ऑब्जेक्ट स्टोरेज ऑपरेशन और डेटा ट्रांसफर प्रदर्शन को ट्रैक करें।</p>
+
+          <h4>स्टोरेज ऑपरेशन:</h4>
+          <ul>
+            <li>Put/Get ऑब्जेक्ट ट्रेसिंग</li>
+            <li>ट्रांसफर लेटेंसी मॉनिटरिंग</li>
+            <li>एरर रेट विश्लेषण</li>
+            <li>क्रॉस-रीजन ट्रांसफर ट्रैकिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>इवेंट-ड्रिवन आर्किटेक्चर में मैसेज प्रोसेसिंग और क्यू प्रदर्शन की निगरानी करें।</p>
+
+          <h4>मैसेजिंग अंतर्दृष्टि:</h4>
+          <ul>
+            <li>मैसेज पब्लिश/सब्सक्राइब ट्रेसिंग</li>
+            <li>क्यू डेप्थ मॉनिटरिंग</li>
+            <li>मैसेज प्रोसेसिंग लेटेंसी</li>
+            <li>डेड लेटर क्यू विश्लेषण</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>वर्कफ़्लो निष्पादन को विज़ुअलाइज़ करें और स्टेट मशीन प्रोसेसिंग में बाधाओं की पहचान करें।</p>
+
+          <h4>वर्कफ़्लो मॉनिटरिंग:</h4>
+          <ul>
+            <li>स्टेट ट्रांज़िशन ट्रेसिंग</li>
+            <li>निष्पादन समय विश्लेषण</li>
+            <li>एरर स्टेट पहचान</li>
+            <li>पैरेलल निष्पादन मॉनिटरिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>इवेंट-ड्रिवन सिस्टम में इवेंट रूटिंग और प्रोसेसिंग को ट्रैक करें।</p>
+
+          <h4>इवेंट प्रोसेसिंग:</h4>
+          <ul>
+            <li>इवेंट रूटिंग विज़िबिलिटी</li>
+            <li>रूल इवैल्यूएशन टाइमिंग</li>
+            <li>टारगेट इन्वोकेशन ट्रेसिंग</li>
+            <li>इवेंट ट्रांसफ़ॉर्मेशन मॉनिटरिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>सर्वरलेस फ़ंक्शन प्रदर्शन और कोल्ड स्टार्ट प्रभावों की निगरानी करें।</p>
+
+          <h4>सर्वरलेस अंतर्दृष्टि:</h4>
+          <ul>
+            <li>फ़ंक्शन इन्वोकेशन ट्रेसिंग</li>
+            <li>कोल्ड स्टार्ट अवधि</li>
+            <li>मेमोरी और CPU उपयोग</li>
+            <li>एरर और टाइमआउट ट्रैकिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>माइक्रोसर्विसेज़ मॉनिटरिंग के लिए कंटेनर ऑर्केस्ट्रेशन प्लेटफ़ॉर्म एकीकरण।</p>
+
+          <h4>कंटेनर मॉनिटरिंग:</h4>
+          <ul>
+            <li>सर्विस मेश ट्रेसिंग</li>
+            <li>पॉड-टू-पॉड संचार</li>
+            <li>रिसोर्स उपयोग</li>
+            <li>डिप्लॉयमेंट ट्रैकिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>थर्ड-पार्टी एकीकरण</h2>
+          <p>थर्ड-पार्टी टूल और प्लेटफ़ॉर्म के साथ Application Signals का विस्तार करें।</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>वेंडर-न्यूट्रल observability के लिए OpenTelemetry इकोसिस्टम का लाभ उठाएं।</p>
+
+          <h4>एकीकरण विकल्प:</h4>
+          <ul>
+            <li>कस्टम इंस्ट्रूमेंटेशन लाइब्रेरी</li>
+            <li>थर्ड-पार्टी एजेंट सपोर्ट</li>
+            <li>मल्टी-बैकएंड डेटा एक्सपोर्ट</li>
+            <li>कम्युनिटी कलेक्टर योगदान</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>APM वेंडर</h3>
+          <p>अन्य APM समाधानों से माइग्रेट करें या उनके साथ एकीकृत करें।</p>
+
+          <h4>समर्थित एकीकरण:</h4>
+          <ul>
+            <li>थर्ड-पार्टी APM टूल में डेटा एक्सपोर्ट</li>
+            <li>हाइब्रिड क्लाउड observability</li>
+            <li>मल्टी-वेंडर सहसंबंध</li>
+            <li>डेटा माइग्रेशन यूटिलिटी</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>मॉनिटरिंग और अलर्टिंग</h3>
+          <p>Application Signals को अपने मौजूदा मॉनिटरिंग स्टैक के साथ कनेक्ट करें।</p>
+
+          <h4>एकीकरण भागीदार:</h4>
+          <ul>
+            <li><strong>PagerDuty:</strong> इंसिडेंट रिस्पॉन्स और अलर्टिंग</li>
+            <li><strong>Slack:</strong> टीम नोटिफ़िकेशन</li>
+            <li><strong>Datadog:</strong> यूनिफ़ाइड मॉनिटरिंग प्लेटफ़ॉर्म</li>
+            <li><strong>New Relic:</strong> एप्लिकेशन परफ़ॉर्मेंस मॉनिटरिंग</li>
+            <li><strong>Splunk:</strong> लॉग विश्लेषण और सहसंबंध</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CI/CD एकीकरण</h3>
+          <p>अपनी डेवलपमेंट पाइपलाइन में observability शामिल करें।</p>
+
+          <h4>DevOps टूल:</h4>
+          <ul>
+            <li><strong>GitHub Actions:</strong> स्वचालित परीक्षण और डिप्लॉयमेंट</li>
+            <li><strong>Jenkins:</strong> बिल्ड पाइपलाइन एकीकरण</li>
+            <li><strong>GitLab CI:</strong> DevSecOps वर्कफ़्लो</li>
+            <li><strong>Terraform:</strong> इंफ्रास्ट्रक्चर एज़ कोड</li>
+            <li><strong>AWS CDK:</strong> क्लाउड इंफ्रास्ट्रक्चर प्रोविज़निंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>कस्टम एकीकरण</h2>
+          <p>API और SDK का उपयोग करके अपने स्वयं के एकीकरण बनाएं।</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch API</h3>
+          <p>Application Signals द्वारा CloudWatch में प्रकाशित टेलीमेट्री के आधार पर कस्टम डैशबोर्ड, अलार्म और मेट्रिक-ड्रिवन वर्कफ़्लो बनाने के लिए CloudWatch API का उपयोग करें।</p>
+
+          <h4>उपलब्ध API:</h4>
+          <ul>
+            <li><code>PutMetricData</code> - कस्टम मेट्रिक्स भेजें</li>
+            <li><code>GetMetricData</code> - मेट्रिक डेटा प्राप्त करें</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - डैशबोर्ड प्रबंधित करें</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - अलार्म प्रबंधित करें</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS X-Ray API</h3>
+          <p>Application Signals ट्रेस स्टोर के रूप में AWS X-Ray का उपयोग करता है। यदि आपको सीधे ट्रेस इनजेशन/क्वेरी एकीकरण की आवश्यकता है, तो X-Ray API का उपयोग करें।</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - ट्रेस सेगमेंट इनजेस्ट करें</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - ट्रेसेज़ क्वेरी करें</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>वेबहुक और कॉलबैक</h3>
+          <p>रियल-टाइम नोटिफ़िकेशन प्राप्त करें और कस्टम वर्कफ़्लो के साथ एकीकृत करें।</p>
+
+          <h4>एकीकरण पैटर्न:</h4>
+          <ul>
+            <li>कस्टम नोटिफ़िकेशन सिस्टम के लिए अलर्ट वेबहुक</li>
+            <li>Lambda के साथ इवेंट-ड्रिवन प्रोसेसिंग</li>
+            <li>कस्टम डैशबोर्ड अपडेट</li>
+            <li>स्वचालित रेमेडिएशन वर्कफ़्लो</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDK और लाइब्रेरी</h3>
+          <p>इंस्ट्रूमेंटेशन आमतौर पर OpenTelemetry और/या AWS Distro for OpenTelemetry (ADOT) के माध्यम से किया जाता है। AWS API कॉल के लिए, समर्थित OpenTelemetry इंस्ट्रूमेंटेशन के साथ AWS SDK का उपयोग करें।</p>
+
+          <h4>समर्थित भाषाएं:</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js:</strong> AWS SDK for JavaScript</li>
+            <li><strong>Python:</strong> Boto3 AWS SDK</li>
+            <li><strong>Java:</strong> AWS SDK for Java</li>
+            <li><strong>.NET:</strong> AWS SDK for .NET</li>
+            <li><strong>Go:</strong> AWS SDK for Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

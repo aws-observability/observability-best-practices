@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ஒருங்கிணைப்புகள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ஒருங்கிணைப்புகள்</h1></header>
+      <article>
+        <section>
+          <h2>AWS சேவை ஒருங்கிணைப்புகள்</h2>
+          <p>CloudWatch Application Signals உங்கள் முழு cloud infrastructure முழுவதும் விரிவான observability வழங்க AWS சேவைகளுடன் தடையின்றி ஒருங்கிணைகிறது.</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>API செயல்திறனைக் கண்காணித்து API Gateway-லிருந்து உங்கள் backend சேவைகளுக்கான கோரிக்கைகளைக் கண்காணிக்கவும்.</p>
+
+          <h4>ஒருங்கிணைப்பு அம்சங்கள்:</h4>
+          <ul>
+            <li>API அழைப்புகளின் தானியங்கி tracing</li>
+            <li>API endpoints-க்கான தாமத கண்காணிப்பு</li>
+            <li>பிழை விகித கண்காணிப்பு</li>
+            <li>Request/response correlation</li>
+          </ul>
+
+          <h4>அமைப்பு:</h4>
+          <p>உங்கள் API Gateway stage configuration-ல் X-Ray tracing-ஐ இயக்குங்கள்.</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>Load balancers வழியாக traffic flow-ஐ கண்காணித்து application செயல்திறனுடன் correlate செய்யுங்கள்.</p>
+
+          <h4>ஒருங்கிணைப்பு நன்மைகள்:</h4>
+          <ul>
+            <li>Request routing visibility</li>
+            <li>Target group செயல்திறன் மெட்ரிக்ஸ்</li>
+            <li>Health check கண்காணிப்பு</li>
+            <li>Load distribution analysis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>Database செயல்பாடுகளைக் கண்காணித்து data access patterns-ல் செயல்திறன் bottlenecks-ஐ அடையாளம் காணுங்கள்.</p>
+
+          <h4>Tracing திறன்கள்:</h4>
+          <ul>
+            <li>Query செயல்பாட்டு நேரம்</li>
+            <li>Throttle மற்றும் error கண்காணிப்பு</li>
+            <li>Table மற்றும் index செயல்திறன்</li>
+            <li>Cross-region replication கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>Database செயல்திறன் மற்றும் connection pooling பற்றிய insights பெறுங்கள்.</p>
+
+          <h4>Database கண்காணிப்பு:</h4>
+          <ul>
+            <li>Query execution நேரங்கள்</li>
+            <li>Connection pool பயன்பாடு</li>
+            <li>Database instance மெட்ரிக்ஸ்</li>
+            <li>மெதுவான query அடையாளம்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>Object storage செயல்பாடுகள் மற்றும் data transfer செயல்திறனைக் கண்காணிக்கவும்.</p>
+
+          <h4>Storage செயல்பாடுகள்:</h4>
+          <ul>
+            <li>Put/Get object tracing</li>
+            <li>Transfer தாமத கண்காணிப்பு</li>
+            <li>பிழை விகித analysis</li>
+            <li>Cross-region transfer கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>Event-driven architectures-ல் message processing மற்றும் queue செயல்திறனைக் கண்காணிக்கவும்.</p>
+
+          <h4>Messaging Insights:</h4>
+          <ul>
+            <li>Message publish/subscribe tracing</li>
+            <li>Queue depth கண்காணிப்பு</li>
+            <li>Message processing தாமதம்</li>
+            <li>Dead letter queue analysis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>Workflow execution-ஐ காட்சிப்படுத்தி state machine processing-ல் bottlenecks-ஐ அடையாளம் காணுங்கள்.</p>
+
+          <h4>Workflow கண்காணிப்பு:</h4>
+          <ul>
+            <li>State transition tracing</li>
+            <li>Execution நேர analysis</li>
+            <li>Error state அடையாளம்</li>
+            <li>Parallel execution கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>Event-driven systems வழியாக event routing மற்றும் processing-ஐ கண்காணிக்கவும்.</p>
+
+          <h4>Event Processing:</h4>
+          <ul>
+            <li>Event routing visibility</li>
+            <li>Rule evaluation timing</li>
+            <li>Target invocation tracing</li>
+            <li>Event transformation கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>Serverless function செயல்திறன் மற்றும் cold start தாக்கங்களைக் கண்காணிக்கவும்.</p>
+
+          <h4>Serverless Insights:</h4>
+          <ul>
+            <li>Function invocation tracing</li>
+            <li>Cold start duration</li>
+            <li>Memory மற்றும் CPU பயன்பாடு</li>
+            <li>Error மற்றும் timeout கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>Microservices கண்காணிப்புக்கான container orchestration platform ஒருங்கிணைப்பு.</p>
+
+          <h4>Container கண்காணிப்பு:</h4>
+          <ul>
+            <li>Service mesh tracing</li>
+            <li>Pod-to-pod communication</li>
+            <li>Resource பயன்பாடு</li>
+            <li>Deployment கண்காணிப்பு</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Third-Party ஒருங்கிணைப்புகள்</h2>
+          <p>Third-party tools மற்றும் platforms-உடன் Application Signals-ஐ விரிவுபடுத்துங்கள்.</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>Vendor-neutral observability-க்கு OpenTelemetry ecosystem-ஐ பயன்படுத்துங்கள்.</p>
+
+          <h4>ஒருங்கிணைப்பு விருப்பங்கள்:</h4>
+          <ul>
+            <li>தனிப்பயன் instrumentation libraries</li>
+            <li>Third-party agent support</li>
+            <li>Multi-backend data export</li>
+            <li>Community collector contributions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>APM Vendors</h3>
+          <p>பிற APM solutions-லிருந்து migrate செய்யுங்கள் அல்லது ஒருங்கிணையுங்கள்.</p>
+
+          <h4>ஆதரிக்கப்படும் ஒருங்கிணைப்புகள்:</h4>
+          <ul>
+            <li>Third-party APM tools-க்கு data export</li>
+            <li>Hybrid cloud observability</li>
+            <li>Multi-vendor correlation</li>
+            <li>Data migration utilities</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>கண்காணிப்பு மற்றும் எச்சரிக்கை</h3>
+          <p>உங்கள் தற்போதைய monitoring stack-உடன் Application Signals-ஐ இணைக்கவும்.</p>
+
+          <h4>ஒருங்கிணைப்பு Partners:</h4>
+          <ul>
+            <li><strong>PagerDuty:</strong> சம்பவ பதில் மற்றும் எச்சரிக்கை</li>
+            <li><strong>Slack:</strong> குழு அறிவிப்புகள்</li>
+            <li><strong>Datadog:</strong> ஒருங்கிணைந்த கண்காணிப்பு platform</li>
+            <li><strong>New Relic:</strong> Application performance monitoring</li>
+            <li><strong>Splunk:</strong> Log analysis மற்றும் correlation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CI/CD ஒருங்கிணைப்பு</h3>
+          <p>உங்கள் development pipeline-ல் observability-ஐ உள்ளடக்குங்கள்.</p>
+
+          <h4>DevOps Tools:</h4>
+          <ul>
+            <li><strong>GitHub Actions:</strong> தானியங்கி testing மற்றும் deployment</li>
+            <li><strong>Jenkins:</strong> Build pipeline ஒருங்கிணைப்பு</li>
+            <li><strong>GitLab CI:</strong> DevSecOps workflows</li>
+            <li><strong>Terraform:</strong> Infrastructure as code</li>
+            <li><strong>AWS CDK:</strong> Cloud infrastructure provisioning</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>தனிப்பயன் ஒருங்கிணைப்புகள்</h2>
+          <p>APIs மற்றும் SDKs பயன்படுத்தி உங்கள் சொந்த ஒருங்கிணைப்புகளை உருவாக்குங்கள்.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch APIs</h3>
+          <p>Application Signals CloudWatch-க்கு publish செய்யும் telemetry-ஐ சுற்றி தனிப்பயன் டாஷ்போர்டுகள், alarms மற்றும் metric-driven workflows-ஐ உருவாக்க CloudWatch APIs-ஐ பயன்படுத்துங்கள்.</p>
+
+          <h4>கிடைக்கும் APIs:</h4>
+          <ul>
+            <li><code>PutMetricData</code> - தனிப்பயன் metrics அனுப்புதல்</li>
+            <li><code>GetMetricData</code> - Metric data எடுத்தல்</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - டாஷ்போர்டுகளை நிர்வகித்தல்</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - Alarms நிர்வகித்தல்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS X-Ray APIs</h3>
+          <p>Application Signals trace store ஆக AWS X-Ray-ஐ பயன்படுத்துகிறது. நேரடி trace ingestion/query ஒருங்கிணைப்பு தேவைப்பட்டால், X-Ray APIs-ஐ பயன்படுத்துங்கள்.</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - Trace segments ingest செய்தல்</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - Traces query செய்தல்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Webhooks மற்றும் Callbacks</h3>
+          <p>நிகழ்நேர அறிவிப்புகளைப் பெற்று தனிப்பயன் workflows-உடன் ஒருங்கிணையுங்கள்.</p>
+
+          <h4>ஒருங்கிணைப்பு Patterns:</h4>
+          <ul>
+            <li>தனிப்பயன் notification systems-க்கான alert webhooks</li>
+            <li>Lambda-உடன் event-driven processing</li>
+            <li>தனிப்பயன் டாஷ்போர்ட் updates</li>
+            <li>தானியங்கி remediation workflows</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDKs மற்றும் Libraries</h3>
+          <p>Instrumentation பொதுவாக OpenTelemetry மற்றும்/அல்லது AWS Distro for OpenTelemetry (ADOT) வழியாக செய்யப்படுகிறது. AWS API அழைப்புகளுக்கு, ஆதரிக்கப்படும் OpenTelemetry instrumentations-உடன் AWS SDKs-ஐ பயன்படுத்துங்கள்.</p>
+
+          <h4>ஆதரிக்கப்படும் மொழிகள்:</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js:</strong> AWS SDK for JavaScript</li>
+            <li><strong>Python:</strong> Boto3 AWS SDK</li>
+            <li><strong>Java:</strong> AWS SDK for Java</li>
+            <li><strong>.NET:</strong> AWS SDK for .NET</li>
+            <li><strong>Go:</strong> AWS SDK for Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

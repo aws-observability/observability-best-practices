@@ -1,0 +1,29 @@
+{
+  "featureList.guides.description": {
+    "message": "படிப்படியான வழிகாட்டிகளைப் பின்பற்றி கிளவுட் கண்காணிப்பை விரைவாக அமைக்கலாம்."
+  },
+  "featureList.signals.description": {
+    "message": "மெட்ரிக்குகள், லாக்குகள், செயல்திறன் குறிகாட்டிகளைப் பயன்படுத்தி AWS சூழலின் நிலையை ஒரே பார்வையில் புரிந்துகொள்ளலாம்."
+  },
+  "featureList.tools.description": {
+    "message": "தரவு சேகரிப்பு முதல் பகுப்பாய்வு, காட்சிப்படுத்தல் வரை — AWS கண்காணிப்புக்கு உகந்த கருவிகளை அறிமுகப்படுத்துகிறோம்."
+  },
+  "featureList.recipes.description": {
+    "message": "நடைமுறையில் நிரூபிக்கப்பட்ட Observability வடிவங்களைப் பயன்படுத்தி கண்காணிப்பு மற்றும் சிக்கல் தீர்வு சவால்களை விரைவாகச் சமாளிக்கலாம்."
+  },
+  "featureList.faqs.description": {
+    "message": "AWS Observability பற்றி அடிக்கடி கேட்கப்படும் கேள்விகளும் பதில்களும்."
+  },
+  "featureList.patterns.description": {
+    "message": "AWS Observability-ஐ படிப்படியாகச் செயல்படுத்த உதவும் நடைமுறைப் பயிற்சிக் கற்றல் வளங்கள்."
+  },
+  "featureList.persona.description": {
+    "message": "உங்கள் பங்குக்கு ஏற்ற Observability சிறந்த நடைமுறைகள் மற்றும் பரிந்துரைக்கப்பட்ட கட்டமைப்புகளைக் கண்டறியுங்கள்."
+  },
+  "featureList.resources.description": {
+    "message": "AWS Observability தொடர்பான குறிப்பு ஆவணங்கள் மற்றும் வளங்களின் தொகுப்பு."
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS கிளவுட் இயக்கத்திற்கான சிறந்த நடைமுறைகளைக் கண்டறியுங்கள்."
+  }
+}

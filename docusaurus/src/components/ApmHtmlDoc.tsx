@@ -1,5 +1,6 @@
 import React, {useEffect, useMemo, useState} from 'react';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
 type Props = {
   /** Path inside static `apm-src/` (e.g. `pages/security.html`, `index.html`). */
@@ -40,12 +41,17 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const [html, setHtml] = useState<string>('');
   const [error, setError] = useState<string>('');
 
-  const apmSrcBase = useBaseUrl('/apm-src/');
+  const {i18n} = useDocusaurusContext();
+  const currentLocale = i18n.currentLocale;
+  const apmSrcFolder = currentLocale === 'en' ? 'apm-src' : `apm-src-${currentLocale}`;
+
+  const apmSrcBase = useBaseUrl(`/${apmSrcFolder}/`);
   const apmHome = useBaseUrl('/apm/');
   const apmDocBase = useBaseUrl('/apm/');
   const apmFetchPath = apmStaticFetchPath(src);
-  const primaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
-  const fallbackUrl = useBaseUrl(`/apm-src/${apmStaticFileRelativePath(src)}`);
+  const primaryUrl = useBaseUrl(`/${apmSrcFolder}/${apmFetchPath}`);
+  const fallbackUrl = useBaseUrl(`/${apmSrcFolder}/${apmStaticFileRelativePath(src)}`);
+  const enFallbackUrl = useBaseUrl(`/apm-src/${apmStaticFileRelativePath(src)}`);
 
   const resolved = useMemo(() => {
     // Avoid SSR crashes: DOMParser/document are browser-only.
@@ -65,6 +71,10 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
         if (!res.ok && res.status === 404 && fallbackUrl !== primaryUrl) {
           res = await fetch(fallbackUrl, {cache: 'no-cache'});
           loadedFrom = fallbackUrl;
+        }
+        if (!res.ok && res.status === 404 && currentLocale !== 'en') {
+          res = await fetch(enFallbackUrl, {cache: 'no-cache'});
+          loadedFrom = enFallbackUrl;
         }
         if (!res.ok) {
           throw new Error(`Failed to load ${loadedFrom} (${res.status})`);
@@ -142,7 +152,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
     return () => {
       cancelled = true;
     };
-  }, [apmDocBase, apmHome, apmSrcBase, fallbackUrl, primaryUrl, selector]);
+  }, [apmDocBase, apmHome, apmSrcBase, fallbackUrl, primaryUrl, enFallbackUrl, currentLocale, selector]);
 
   if (typeof window === 'undefined') {
     return (

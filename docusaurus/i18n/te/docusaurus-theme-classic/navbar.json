@@ -1,0 +1,38 @@
+{
+  "title": {
+    "message": "AWS Observability Best Practices"
+  },
+  "item.label.Home": {
+    "message": "హోమ్"
+  },
+  "item.label.Guides": {
+    "message": "గైడ్‌లు"
+  },
+  "item.label.Signals": {
+    "message": "సిగ్నల్స్"
+  },
+  "item.label.Tools": {
+    "message": "సాధనాలు"
+  },
+  "item.label.APM": {
+    "message": "APM"
+  },
+  "item.label.Recipes": {
+    "message": "రెసిపీలు"
+  },
+  "item.label.AI": {
+    "message": "AI"
+  },
+  "item.label.Patterns": {
+    "message": "నమూనాలు"
+  },
+  "item.label.Persona": {
+    "message": "పర్సోనా"
+  },
+  "item.label.Resources": {
+    "message": "వనరులు"
+  },
+  "item.label.Contributors": {
+    "message": "Contributors"
+  }
+}

@@ -1,0 +1,254 @@
+---
+sidebar_position: 1
+---
+
+# Appliquer des correctifs aux noeuds gérés avec AWS Systems Manager et le balisage
+
+## Introduction
+
+Maintenir la sécurité et les performances de votre infrastructure de noeuds nécessite une stratégie robuste de gestion des correctifs. Cette solution guidée vous accompagnera dans l'implémentation d'un système automatisé de gestion des correctifs basé sur les tags en utilisant [AWS Systems Manager](https://aws.amazon.com/systems-manager/). En suivant cette solution guidée, vous établirez un processus de mise à jour évolutif et efficace qui réduit l'intervention manuelle tout en améliorant la conformité de sécurité. Cette méthode peut être utilisée au sein d'[AWS Organizations](https://aws.amazon.com/organizations/) pour une approche centralisée, et peut également être implémentée pour des comptes individuels.
+
+L'utilisation d'une méthode de planification par balisage comme celle-ci permet aux propriétaires d'applications de gérer quand leurs noeuds reçoivent des mises à jour. Les planifications approuvées, qui auraient une [politique de correctifs](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-patch-manager.html#create-patch-policy) correspondante, peuvent être interrogées à l'aide de l'[AWS CLI](https://aws.amazon.com/cli/), permettant une méthode en libre-service pour modifier la planification d'un noeud.
+
+## Comprendre la solution
+
+Avant de commencer à implémenter certaines parties dans votre solution de gestion des correctifs, il est important de comprendre comment cette solution fonctionne. L'approche combine les capacités de gestion des correctifs d'AWS Systems Manager avec une stratégie de balisage standardisée. Cette intégration vous permet d'automatiser les planifications de mise à jour sur vos noeuds gérés tout en maintenant un contrôle granulaire sur les calendriers de mise à jour.
+
+Chaque noeud géré se verrait attribuer un tag prédéfini, dans ce cas, `maintenance:patching`. La valeur de ce tag contiendrait une entrée similaire à une expression cron, qui indiquerait la planification selon laquelle le noeud serait évalué et recevrait les mises à jour.
+
+Des politiques de correctifs seraient créées pour correspondre à chacune des planifications autorisées selon lesquelles un noeud géré devrait recevoir des mises à jour.
+
+Des références de correctifs personnalisées peuvent être créées et associées aux politiques de correctifs, permettant un contrôle supplémentaire sur les mises à jour appliquées, ou les références de correctifs par défaut peuvent être utilisées.
+
+Une fois les politiques de correctifs et les tags établis et attribués, les noeuds gérés verront les politiques de correctifs appliquées selon les spécifications des politiques de correctifs et des références de correctifs.
+
+## Responsabilités basées sur les rôles
+
+### Équipe des opérations cloud
+
+L'équipe des opérations cloud joue un rôle crucial dans le maintien de la sécurité et de la stabilité de notre infrastructure cloud grâce à une supervision complète de la gestion des correctifs. Leurs responsabilités englobent plusieurs domaines clés qui assurent l'efficacité de notre programme de mise à jour.
+
+La surveillance continue des taux de succès de déploiement des correctifs est essentielle au maintien de la santé du système. L'équipe utilise AWS Systems Manager pour suivre et analyser les résultats des mises à jour, générant des rapports hebdomadaires pour identifier les tendances et les domaines de préoccupation potentiels. (Voir [Travailler avec les rapports de conformité des correctifs](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-compliance-reports.html)) Cette surveillance proactive permet la détection précoce des problèmes systémiques et garantit que les correctifs sont appliqués avec succès dans l'ensemble de l'environnement.
+
+L'équipe maintient la responsabilité de l'infrastructure d'automatisation qui pilote notre processus de mise à jour. Cela inclut l'affinement régulier des références de correctifs AWS Systems Manager, l'optimisation des calendriers de déploiement et la maintenance des flux de travail d'automatisation. Ces processus automatisés doivent être continuellement évalués et ajustés pour s'adapter aux besoins commerciaux changeants tout en maintenant les standards de sécurité.
+
+Lorsque des échecs de mise à jour surviennent, l'équipe des opérations cloud sert de premier intervenant. Elle doit investiguer les problèmes dans les 24 heures, coordonner les efforts de remédiation nécessaires et travailler avec les équipes applicatives si nécessaire. Une documentation approfondie des incidents et de leurs résolutions aide à constituer une base de connaissances pour référence future et favorise l'amélioration continue du processus de mise à jour.
+
+La supervision régulière de la conformité représente une autre responsabilité critique. L'équipe effectue des revues hebdomadaires de la conformité des tags de mise à jour, s'assurant que tous les noeuds respectent les standards établis. Cela inclut la vérification de l'implémentation correcte des tags et la gestion de toute remédiation nécessaire via les règles AWS Config. Ils maintiennent des registres détaillés du statut de conformité et gèrent toute exception approuvée aux processus standards.
+
+À travers ces activités, l'équipe des opérations cloud assure un programme de mise à jour robuste et fiable qui maintient la sécurité du système tout en minimisant l'impact commercial. Leur rôle de point d'escalade pour les problèmes de mise à jour et leur communication continue avec les parties prenantes aide à maintenir la transparence et la confiance dans le processus de mise à jour.
+
+### Équipe de sécurité
+
+L'équipe de sécurité sert d'autorité de gouvernance pour notre programme de mise à jour des noeuds gérés, assurant que les standards de sécurité sont maintenus et que les exigences de conformité sont respectées grâce à une supervision complète et une direction stratégique.
+
+La surveillance de la conformité des correctifs constitue une pierre angulaire des responsabilités de l'équipe de sécurité. Par l'analyse régulière des rapports de conformité, elle évalue la posture de sécurité de l'organisation et identifie les vulnérabilités potentielles nécessitant une attention. Cette supervision inclut l'examen des métriques de déploiement des correctifs, l'analyse des impacts des avis de sécurité et la garantie que les correctifs critiques sont appliqués dans les délais requis.
+
+L'équipe maintient et fait évoluer les exigences de sécurité en fonction des menaces émergentes et des meilleures pratiques de l'industrie. Lorsque de nouvelles vulnérabilités sont découvertes ou que les standards de conformité changent, elle évalue l'impact et met à jour les exigences de mise à jour en conséquence. Cela inclut la définition des fenêtres de déploiement de correctifs acceptables, l'établissement de seuils de conformité minimaux et la détermination des correctifs de sécurité à prioriser.
+
+La gouvernance des références de correctifs relève de leur responsabilité, l'équipe de sécurité servant d'autorité d'approbation pour les modifications des références de correctifs. Elle évalue les changements proposés par rapport aux standards de sécurité et aux exigences de conformité, s'assurant que tout ajustement maintient une posture de sécurité appropriée tout en répondant aux besoins opérationnels. Cela inclut l'examen des spécifications de correctifs pour les systèmes d'exploitation et les applications.
+
+L'équipe effectue des validations de conformité régulières pour vérifier que les processus de mise à jour sont alignés avec les exigences réglementaires et les politiques de sécurité internes. Elle maintient la documentation du statut de conformité, gère les réponses aux audits et fournit des orientations sur la remédiation lorsque des lacunes sont identifiées. Leur évaluation aide à garantir que l'organisation maintient ses certifications de sécurité et respecte ses obligations de conformité.
+
+À travers ces activités, l'équipe de sécurité établit et maintient le cadre de sécurité qui guide notre programme de mise à jour, assurant que la sécurité reste un objectif principal tout en permettant l'efficacité opérationnelle.
+
+### Équipes applicatives
+
+Les équipes applicatives jouent un rôle vital pour assurer une gestion réussie des correctifs tout en maintenant la disponibilité et les performances des applications. Leur connaissance intime du comportement des applications et des exigences commerciales les rend des participants essentiels dans le processus de mise à jour.
+
+La coordination des planifications de mise à jour nécessite une considération attentive des opérations commerciales. Les équipes applicatives doivent travailler proactivement avec les opérations cloud pour identifier des planifications adaptées qui minimisent l'impact commercial. Elles doivent évaluer les périodes de pointe d'utilisation, les événements commerciaux critiques et les dépendances pour déterminer quand la mise à jour peut se faire en toute sécurité.
+
+La validation post-mise à jour est une responsabilité critique où les équipes applicatives doivent systématiquement vérifier la fonctionnalité de leurs applications. Après chaque cycle de mise à jour, elles doivent exécuter les procédures de test établies pour confirmer que toutes les fonctions commerciales critiques fonctionnent comme prévu. Cela inclut la surveillance des métriques de performance des applications, la validation des fonctionnalités de base et la vérification que les intégrations avec les systèmes dépendants restent intactes.
+
+Lorsque des problèmes surviennent, les équipes applicatives doivent suivre les procédures d'escalade établies pour assurer un suivi et une résolution appropriés des incidents. Cela inclut la fourniture d'une documentation détaillée de tout problème observé, incluant les symptômes spécifiques, la chronologie des problèmes et la corrélation potentielle avec les correctifs récents. Un signalement rapide et précis aide les équipes d'opérations cloud et de sécurité à répondre efficacement aux incidents liés aux correctifs.
+
+La précision du balisage des ressources relève directement de la responsabilité des équipes applicatives. Elles doivent maintenir des tags actuels et précis sur toutes leurs ressources, en particulier ceux liés aux planifications de mise à jour. Ces tags pilotent les processus automatisés de mise à jour, et leur précision est cruciale pour garantir que les systèmes sont mis à jour selon la planification et les exigences appropriées.
+
+À travers ces responsabilités, les équipes applicatives servent de pont essentiel entre les opérations techniques et les besoins commerciaux, assurant que les activités de mise à jour maintiennent la sécurité du système tout en préservant la disponibilité et les performances des applications.
+
+## Construire les fondations
+
+### Prérequis pour l'implémentation de la mise à jour basée sur les tags
+
+#### Configuration d'AWS Systems Manager
+
+AWS Systems Manager doit être [correctement configuré](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) au niveau du compte ou de l'organisation avant d'implémenter la mise à jour basée sur les tags. Dans un contexte organisationnel, assurez-vous que Systems Manager est activé dans tous les comptes pertinents via AWS Organizations. Configurez les rôles et politiques IAM appropriés pour permettre à Systems Manager de gérer les ressources, incluant les rôles liés au service requis et les profils d'instance. Établissez la synchronisation des données de ressources si une visibilité centralisée sur plusieurs régions ou comptes est nécessaire.
+
+#### Gestion de l'agent SSM
+
+Tous les noeuds gérés doivent exécuter un [agent SSM](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html) correctement configuré. Bien que de nombreuses AMI AWS incluent l'agent par défaut, vérifiez qu'il est présent et mis à jour vers la dernière version. Pour les noeuds gérés non-AWS, implémentez un processus pour installer et configurer l'agent lors du provisionnement de l'instance. Établissez un processus automatisé pour maintenir les mises à jour de l'agent, en tirant parti de la capacité de mise à jour automatique de l'agent de Systems Manager lorsque c'est approprié.
+
+#### Exigences de connectivité réseau
+
+Systems Manager nécessite une [connectivité réseau constante](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html) pour gérer efficacement les noeuds. Assurez-vous que les noeuds gérés peuvent atteindre les points de terminaison Systems Manager soit via Internet, soit via des points de terminaison VPC. Pour les noeuds dans des sous-réseaux privés, configurez les points de terminaison VPC nécessaires pour Systems Manager (ssm, ssmmessages et ec2messages). Vérifiez que les groupes de sécurité et les ACL réseau permettent le trafic requis. Si vous utilisez un proxy, configurez l'agent SSM avec les paramètres de proxy appropriés.
+
+#### Stratégie de balisage des correctifs
+
+Développez et documentez une stratégie de balisage complète qui s'aligne avec les besoins organisationnels. Définissez :
+
+* Les paires clé-valeur de tags pour identifier les groupes de correctifs (par exemple, `maintenance:patching`)
+* Les mécanismes d'application des tags via les règles AWS Config
+* La gouvernance et les responsabilités de propriété des tags
+* Les procédures de mise à jour et de modification des tags
+
+Documentez le schéma de balisage complet, incluant toute variation nécessaire pour différents environnements ou types d'applications. Établissez des processus pour valider la conformité des tags et remédier aux ressources incorrectement balisées.
+
+:::note
+La connectivité réseau vers la source des correctifs ou les dépôts sera également requise. Veuillez consulter [Connectivité à la source des correctifs](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-prerequisites.html#source-connectivity) pour plus d'informations.
+:::
+
+## Implémenter le processus de mise à jour
+
+Maintenir vos [noeuds gérés](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html#supported-machine-types) à jour et sécurisés est une partie importante de la maintenance de votre infrastructure AWS, sur site et multi-cloud. Avec AWS Systems Manager, vous pouvez automatiser de nombreuses mises à jour de sécurité et d'autres types de mises à jour logicielles (correctifs) sur votre flotte de noeuds gérés. Cependant, la gestion des planifications et des cadences de mise à jour peut encore être complexe, surtout à mesure que votre infrastructure évolue. Cette solution guidée est un exemple d'une méthode qui peut être employée pour aider à gérer les planifications de mise à jour avec flexibilité.
+
+### Étape 1 : Établir votre stratégie de balisage
+
+Commencez par implémenter la convention de balisage `maintenance:patching`. Ce tag définira quand les correctifs doivent être appliqués à chaque noeud. La valeur du tag utilise une expression de type cron pour spécifier la planification. Il est courant pour les organisations de sélectionner des heures creuses (hors production) pour appliquer les mises à jour. Dans de tels cas, des heures et jours du mois spécifiques peuvent être choisis comme standards auxquels chaque noeud devrait se conformer.
+
+Par exemple :
+
+```language=yaml
+Key: maintenance:patching
+Value: 2SATX4    # Runs at 2 AM every 4th Saturday
+```
+
+:::note
+Le 'X' dans la valeur est utilisé pour remplacer le symbole '#', qui ne fait pas partie des caractères autorisés pour les valeurs de tags
+:::
+
+D'autres modèles courants pour les valeurs incluent :
+
+* `0SUN` pour chaque dimanche, maintenance à minuit
+* `4TUEX2` pour chaque 2ème mardi, maintenance à 4h du matin
+* `22MONX3` pour chaque troisième lundi, maintenance à 22h
+
+Le diagramme suivant montre comment les tags sur les noeuds gérés, provenant de diverses sources, peuvent s'aligner avec une politique de correctifs.
+
+![Diagramme exemple montrant comment les tags sur les noeuds gérés peuvent s'aligner avec une politique de correctifs](/img/cloudops/solutions/centralized-operations-management/patch-nodes-using-tags/PatchTagging.drawio.png "Diagramme exemple montrant comment les tags sur les noeuds gérés peuvent s'aligner avec une politique de correctifs")
+
+Une implémentation de cette solution proposait des horaires de mise en oeuvre commençant le vendredi soir à 22h. Les propositions d'horaires suivantes étaient créées toutes les quatre heures après 22h le vendredi jusqu'à 22h le dimanche. Cela permettait 13 options hebdomadaires pour l'application des mises à jour qui pouvaient être réparties dans l'environnement selon les besoins, incluant la possibilité de mettre à jour les environnements tels que développement, test et production selon des planifications séparées.
+
+### Étape 2 : Déployer votre stratégie de balisage
+
+Une fois que vous avez décidé de votre stratégie de balisage, vous voudrez vous assurer que vos noeuds existants reçoivent le nouveau tag requis et mettre en place des standards exigeant le tag sur tous les nouveaux noeuds.
+
+#### Application de la conformité
+
+Implémentez des règles AWS Config pour maintenir la gouvernance des tags dans votre environnement. Configurez des règles pour vérifier la présence des tags de mise à jour requis sur tous les noeuds gérés et validez que les valeurs des tags sont conformes aux standards approuvés. Cette supervision automatisée assure un balisage cohérent dans votre infrastructure et aide à identifier rapidement les ressources non conformes.
+
+#### Remédiation automatisée
+
+Établissez des processus de remédiation automatisée en utilisant AWS Systems Manager Automation pour traiter les ressources non conformes. Votre flux de remédiation devrait ajouter les tags manquants avec des valeurs par défaut appropriées basées sur les caractéristiques des ressources. Concevez votre remédiation pour être à la fois automatique pour les cas standards et manuelle pour les exceptions nécessitant une revue humaine.
+
+#### Processus d'audit et de revue
+
+Déployez des règles AWS Config pour surveiller automatiquement les noeuds gérés pour le tag `maintenance:patching`, assurant à la fois la présence du tag et des valeurs de planification valides (par exemple, `2SATX4`, `4TUEX2`). Examinez les rapports de conformité Config hebdomadairement pour identifier les ressources non conformes et valider que la remédiation automatique fonctionne correctement. Créez et maintenez la documentation des exceptions approuvées dans un emplacement centralisé.
+
+#### Modèle de gouvernance
+
+Établissez une propriété et des responsabilités claires pour la gestion des tags, les opérations cloud maintenant les planifications de mise à jour approuvées dans AWS Systems Manager [Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/sysman-paramstore-su-create.html) pour une référence cohérente [à travers l'organisation](https://docs.aws.amazon.com/systems-manager/latest/userguide/parameter-store-shared-parameters.html#share). Définissez des processus pour demander des modifications aux standards de tags et aux planifications de mise à jour, en assurant que les mises à jour sont reflétées à la fois dans Parameter Store et dans les règles Config associées. Créez des flux d'approbation documentés pour les changements, nécessitant la validation de l'équipe de sécurité avant que les opérations cloud ne mettent à jour les paramètres centralisés. Maintenez des boucles de rétroaction entre les équipes d'opérations, de sécurité et applicatives pour assurer que la stratégie de balisage et les fenêtres de maintenance continuent de répondre aux besoins organisationnels, en utilisant Parameter Store comme source de vérité pour les valeurs approuvées.
+
+### Étape 3 : Configurer Systems Manager
+
+Avec votre stratégie de balisage en place, votre équipe d'opérations cloud peut configurer Systems Manager pour exécuter votre stratégie de mise à jour :
+
+#### Guide sur les références de correctifs
+
+Avant de créer une [référence de correctifs personnalisée](https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-predefined-and-custom-patch-baselines.html), évaluez si les références prédéfinies d'AWS répondent à vos exigences de mise à jour. Examinez les références par défaut gérées par AWS pour vos systèmes d'exploitation, qui incluent typiquement les correctifs approuvés pour les mises à jour critiques et les correctifs de sécurité. Si votre organisation a des exigences de conformité spécifiques, des exclusions de correctifs, des approbations retardées de correctifs ou doit gérer des dépendances d'applications particulières, vous aurez probablement besoin d'une référence personnalisée. Cependant, si vous devez simplement appliquer des mises à jour critiques et de sécurité selon un calendrier régulier, les références gérées par AWS fournissent souvent une couverture suffisante tout en nécessitant moins de maintenance. Documentez vos exigences de mise à jour et comparez-les aux configurations de références prédéfinies pour prendre une décision éclairée.
+
+#### Guide de configuration des politiques de correctifs
+
+Pour chaque planification de mise à jour approuvée définie dans Parameter Store, créez une [politique de correctifs](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-patch-manager.html#create-patch-policy) correspondante dans AWS Systems Manager. Nommez votre politique pour refléter clairement sa planification CRON, assurant une corrélation facile avec les planifications de mise à jour (par exemple, `Patch-2SATX4`). Configurez la politique pour les opérations de scan et d'installation, en utilisant l'option Custom Scan schedule pour spécifier votre expression CRON pré-approuvée qui s'aligne avec la planification de mise à jour.
+
+Lors de la définition de la portée de la politique, sélectionnez votre référence de correctifs désignée et configurez le ciblage en utilisant l'option Custom Targets. Spécifiez les unités organisationnelles (OUs) et les régions AWS appropriées où cette politique doit s'appliquer. Plus important encore, définissez les noeuds cibles en utilisant le tag `maintenance:patching`, en entrant la valeur de tag spécifique qui correspond à cette planification de mise à jour (par exemple, `2SATX4`). Cela garantit que seuls les noeuds explicitement balisés pour cette planification de mise à jour seront inclus dans l'opération de mise à jour.
+
+Cette approche de configuration maintient la cohérence entre votre stratégie de balisage, vos planifications de mise à jour et l'exécution de la politique de correctifs, tout en fournissant une visibilité claire sur les noeuds qui seront mis à jour pendant chaque période planifiée.
+
+#### Guide de flux de travail d'automatisation (optionnel)
+
+Améliorez votre stratégie de mise à jour en implémentant des flux de travail d'automatisation supplémentaires dans AWS Systems Manager. Concevez des vérifications de validation pré-mise à jour pour vérifier la préparation du système, telles que la confirmation de l'espace disque disponible, la vérification des processus en cours et la sauvegarde des configurations critiques. Créez une automatisation de tests post-mise à jour pour valider la fonctionnalité du système, incluant les vérifications de l'état des services, la surveillance de la santé des applications et les tests de connectivité de base. Configurez des topics SNS et des voies de notification pour alerter les équipes appropriées du statut d'exécution des correctifs, des échecs de tests ou des problèmes de validation. Ces flux de travail automatisés renforcent votre processus de mise à jour en fournissant une validation cohérente et des canaux de communication clairs tout au long du cycle de mise à jour.
+
+## Feuille de route d'implémentation
+
+Suivez ces étapes pour déployer votre stratégie de mise à jour :
+
+### Phase 1 : Planification et conception (Semaines 1-2)
+
+Cette phase fondamentale aide les clients à établir une compréhension claire de leur environnement actuel et à définir des objectifs atteignables. La documentation détaillée et les définitions de rôles assurent la responsabilité et le bon fonctionnement des opérations entre les équipes. En établissant un balisage standardisé et des flux de travail d'automatisation dès le départ, les organisations peuvent atteindre une gestion des correctifs cohérente et efficace tout en minimisant les erreurs humaines. Cette phase crée le cadre pour maintenir la conformité et les standards de sécurité tout en réduisant la charge opérationnelle.
+
+* Évaluer et documenter l'état actuel de la gestion des correctifs de l'environnement
+* Définir des critères de succès mesurables incluant les objectifs de conformité et les exigences de reporting
+* Établir les standards de tags, incluant les valeurs de planification de mise à jour approuvées à stocker dans Parameter Store
+* Concevoir les flux de travail d'automatisation pour la validation pré-mise à jour et les tests post-mise à jour (optionnel)
+* Documenter les rôles et responsabilités des équipes d'opérations cloud, de sécurité et applicatives
+
+### Phase 2 : Tests et validation (Semaines 3-4)
+
+Les tests dans un environnement contrôlé permettent aux clients d'identifier et de résoudre les problèmes potentiels avant qu'ils n'impactent les systèmes de production, réduisant significativement le risque commercial. Le processus de validation assure que les flux de travail automatisés fonctionnent comme prévu et que le reporting fournit la visibilité nécessaire sur le statut des correctifs et la conformité. Cette phase aide les organisations à affiner leurs procédures et à renforcer la confiance dans leur stratégie de gestion des correctifs tout en maintenant la stabilité et la sécurité du système. Les tests approfondis sur différentes configurations assurent que la solution fonctionne de manière fiable sur l'ensemble de l'infrastructure.
+
+* Déployer les règles AWS Config pour la surveillance de la conformité des tags dans l'environnement de test
+* Implémenter les politiques de correctifs avec les flux de travail d'automatisation associés
+* Valider l'application des tags et les processus de remédiation automatique
+* Vérifier les mécanismes de reporting et l'efficacité du tableau de bord
+* Effectuer des tests approfondis sur différents types d'instances et systèmes d'exploitation
+* Examiner et ajuster les procédures en fonction des résultats des tests
+
+### Phase 3 : Implémentation en production (Semaines 5-6)
+
+L'approche de déploiement progressif minimise les perturbations commerciales tout en assurant une implémentation réussie dans l'environnement de production. La surveillance régulière et la documentation des problèmes aide à créer une base de connaissances pour référence future et l'amélioration continue du processus de gestion des correctifs. Les revues des parties prenantes et la documentation finalisée assurent que la solution répond aux exigences commerciales et peut être maintenue efficacement à long terme. Cette phase établit un système de gestion des correctifs durable et automatisé qui réduit l'effort manuel tout en maintenant les standards de sécurité et de conformité.
+
+* Exécuter le déploiement progressif en commençant par les niveaux d'applications non critiques
+* Surveiller les rapports de conformité Config et les taux de succès de la remédiation
+* Documenter les problèmes rencontrés et les résolutions
+* Ajuster les flux de travail d'automatisation et les procédures en fonction de l'expérience en production
+* Effectuer des revues des parties prenantes sur les résultats d'exécution des correctifs
+* Finaliser la documentation opérationnelle et les procédures de transfert
+
+Chaque phase inclut des points de contrôle réguliers avec les parties prenantes pour assurer l'alignement avec les exigences commerciales et les standards de sécurité.
+
+## Surveillance et maintenance
+
+### Processus opérationnels continus
+
+#### Revue hebdomadaire de conformité des correctifs
+
+Effectuez des revues hebdomadaires des rapports de conformité AWS Config, des [rapports Amazon Athena](https://catalog.workshops.aws/getting-started-with-com/en-US/patch-management/org-patch-reporting) ou d'[Amazon QuickSight](https://catalog.workshops.aws/getting-started-with-com/en-US/advanced-workshops/organization-patch-reporting) pour identifier les noeuds non conformes et l'efficacité de la remédiation. L'équipe des opérations cloud doit vérifier les résultats d'exécution de la politique de correctifs et traiter tout échec de mise à jour. Générez et distribuez des rapports de statut de conformité aux parties prenantes, mettant en évidence les tendances et les problèmes potentiels nécessitant une attention.
+
+#### Audit mensuel de précision des tags
+
+Effectuez une validation mensuelle que les tags `maintenance:patching` s'alignent avec les valeurs approuvées dans Parameter Store. Examinez les rapports de règles Config pour les modifications non autorisées de tags et vérifiez que la remédiation automatique fonctionne correctement. Documentez et investiguez tout modèle de non-conformité répétée, en mettant à jour les procédures si des problèmes systématiques sont identifiés.
+
+#### Évaluation trimestrielle des références de correctifs
+
+L'équipe de sécurité doit examiner et mettre à jour les références de correctifs trimestriellement, s'assurant qu'elles s'alignent avec les exigences de sécurité actuelles et les recommandations des éditeurs. Validez que les correctifs approuvés respectent les standards de conformité et évaluez tout correctif exclu pour le risque. Mettez à jour la documentation des références et communiquez les changements aux parties prenantes.
+
+#### Revue semestrielle du processus
+
+Effectuez une revue complète de l'ensemble du programme de mise à jour deux fois par an. Évaluez l'efficacité des flux de travail d'automatisation, le timing des planifications de mise à jour et les taux de conformité globaux. Recueillez les retours de toutes les parties prenantes et implémentez les améliorations de processus. Mettez à jour la documentation et les matériaux de formation pour refléter tout changement au programme.
+
+Chaque processus de revue inclut une documentation formelle des résultats et des actions entreprises, avec des résultats partagés avec les parties prenantes appropriées.
+
+## Dépannage et support
+
+Les organisations doivent développer et maintenir une documentation de dépannage complète pour les problèmes courants de mise à jour rencontrés dans leur environnement. Créez des guides détaillés pour les équipes de support qui traitent, au minimum, les scénarios suivants :
+
+* Échecs d'installation de correctifs : documentez les modèles d'échec courants, les procédures de collecte de journaux requises et les voies d'escalade lorsque les correctifs échouent de manière constante.
+* Fenêtres de planification de mise à jour manquées : fournissez des orientations pour identifier les causes profondes des planifications manquées et les procédures pour reprogrammer les correctifs de manière appropriée.
+* Vérification de redémarrage manquante : incluez les étapes pour valider les exigences de redémarrage, les procédures pour gérer les états de redémarrage bloqués et les orientations pour les scénarios de redémarrage forcé lorsque nécessaire.
+* Échecs de conformité des tags : documentez les procédures pour investiguer les ressources non conformes, les étapes pour corriger les problèmes de tags et les méthodes pour vérifier le succès de la remédiation.
+* Problèmes de connectivité Systems Manager : détaillez les étapes de dépannage pour les problèmes de connectivité de l'agent, incluant la validation réseau et la vérification des permissions IAM.
+
+Maintenez ces documents dans un emplacement centralisé accessible aux équipes de support, et établissez un cycle de revue régulier pour maintenir les procédures de dépannage à jour avec les changements d'environnement et les problèmes nouvellement découverts.
+
+## Ressources supplémentaires
+
+Maintenez des liens vers :
+
+* La documentation AWS Systems Manager
+* Les guides de dépannage internes
+* Les informations de contact des équipes de support
+* La documentation pertinente des services AWS
+
+N'oubliez pas d'examiner et de mettre à jour ce guide régulièrement à mesure que les services AWS évoluent et que les besoins de votre organisation changent. Les retours réguliers des équipes utilisant ce processus aideront à affiner et améliorer votre stratégie de mise à jour au fil du temps.
+
+Cette approche standardisée de la gestion des correctifs aidera à garantir que votre flotte de noeuds gérés reste sécurisée et à jour tout en minimisant la charge opérationnelle et les erreurs humaines potentielles.

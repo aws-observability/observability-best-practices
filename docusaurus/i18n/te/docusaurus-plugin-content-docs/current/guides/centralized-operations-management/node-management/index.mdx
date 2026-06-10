@@ -1,0 +1,55 @@
+---
+sidebar_position: 4
+---
+
+# Node Management
+
+కస్టమర్‌లు AWS, on-premises, లేదా multicloud environments లో మరియు accounts మరియు Regions అంతటా operate చేయడానికి ఎంచుకున్నా, AWS Systems Manager SSM agent ను సులభంగా manage, diagnose, మరియు remediate చేయడానికి ఒక centralized place అందిస్తుంది. వారి nodes ఎక్కడ ఉన్నా సమగ్ర infrastructure visibility అందిస్తూ, operational efficiency మరియు productivity ను పెంచుతుంది.
+
+## Systems Manager unified console
+
+[Unified Systems Manager console](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-unified-console.html) AWS Organizations organization లో బహుళ AWS accounts మరియు AWS Regions అంతటా, లేదా ఒకే account మరియు Region లో సాధారణ node tasks పూర్తి చేయడంలో సహాయపడటానికి వివిధ tools ను కలిపే consolidated experience. Unified console లో, మీ nodes కు సంబంధించిన వివరమైన insights అందించబడతాయి. మీరు మీ nodes కోసం reports generate చేయవచ్చు, connectivity issues వంటి nodes Systems Manager ద్వారా managed గా report చేయకుండా నిరోధించే సాధారణ issues ను diagnose మరియు remediate చేయవచ్చు. మీ nodes గురించి summaries తో పాటు, software inventory మరియు patching status వంటి node గురించి specific details చూడవచ్చు.
+
+## Demo: Systems Manager unified console
+
+కింది interactive demo లో మేము Systems Manager unified console ను explore చేస్తాము. Interactive demo ను కొత్త window లో చూడటానికి, [ఈ link](https://aws-cloudops.storylane.io/share/1xr2aepwsitb) ఉపయోగించండి.
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/1xr2aepwsitb?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+## Nodes register చేయడానికి Prerequisites
+
+AWS Systems Manager తో nodes ను register చేయడానికి మూడు prerequisites ఉన్నాయి.
+
+మొదటగా, SSM agent install చేయబడి ఉండాలి. SSM agent AWS మరియు trusted third-parties అందించిన [కొన్ని Amazon Machine Images (AMIs) లో preinstall](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) చేయబడి ఉంటుంది.
+
+రెండవది, [SSM agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) కు మీ తరపున node మీద actions నిర్వహించడానికి అవసరమైన permissions ఉండాలి. [AWS Organization కోసం Systems Manager unified console ను enable](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) చేయడం ద్వారా IAM permissions attach మరియు remediate చేసే process ను automate చేయవచ్చు. ప్రత్యామ్నాయంగా, మీరు మీ resources deploy చేసేటప్పుడు IaC ద్వారా అవసరమైన IAM role మరియు permissions add చేయవచ్చు.
+
+చివరగా, SSM agent కు internet ద్వారా లేదా [VPC endpoints](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html) ఉపయోగించి [Systems Manager service endpoints](https://docs.aws.amazon.com/general/latest/gr/ssm.html) కు network connectivity ఉండాలి.
+
+![AWS Systems Manager Agent](/img/cloudops/guides/centralized-operations-management/node-management/BP-Node-Mgmt-1.png "AWS Systems Manager Agent")
+
+SSM Agent Systems Manager ఈ resources ను update, manage, మరియు configure చేయడం సాధ్యం చేస్తుంది. Agent AWS Cloud లోని Systems Manager service నుండి requests ను process చేస్తుంది, తర్వాత request లో specify చేయబడినట్లు వాటిని run చేస్తుంది. SSM Agent తర్వాత status మరియు execution information ను Systems Manager service కు తిరిగి పంపుతుంది.
+
+## Nodes కోసం IAM permissions ను scale లో manage చేయడం
+
+Nodes కోసం IAM permissions manage చేయడానికి కొన్ని మార్గాలు ఉన్నాయి. AWS resources deploy చేయడానికి Infrastructure as Code (IaC) strategy ఉంటే, EC2 instances launch చేసేటప్పుడు IAM instance profile attach చేయాలి.
+
+IaC strategy లేకపోతే లేదా IaC route ద్వారా వెళ్ళడం option కాకపోతే, Quick Setup ద్వారా powered అయిన [Systems Manager unified console ను enable](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) చేయవచ్చు.
+
+[Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) Systems Manager తో సహా AWS services setup చేయడాన్ని simplify చేస్తుంది, AWS Organization లో AWS accounts మరియు Regions అంతటా common లేదా recommended tasks ను automate చేయడం ద్వారా. ఈ tasks లో అవసరమైన AWS Identity and Access Management (IAM) instance profile roles create చేయడం మరియు periodic patch scans మరియు inventory collection వంటి operational best practices setup చేయడం ఉన్నాయి.
+
+## మీ మొత్తం infrastructure environment అంతటా visibility పెంచడం
+
+AWS Systems Manager node management ను simplify చేయడం ద్వారా operational efficiency ను scale చేయడంలో సహాయపడుతుంది, nodes ను manage చేయడం సులభం చేస్తుంది. మీరు ఇప్పుడు మీ organizations యొక్క AWS accounts మరియు Regions అంతటా అన్ని managed మరియు unmanaged nodes ను ఒకే చోట నుండి చూడవచ్చు. మీరు unmanaged nodes ను identify, diagnose, మరియు remediate కూడా చేయవచ్చు.
+
+Remediate చేయబడిన తర్వాత, అంటే Systems Manager ద్వారా managed అయిన తర్వాత, security patches apply చేయడం, sessions initiate మరియు log చేయడం, లేదా operational commands run చేయడం వంటి critical operational tasks ను effectively execute చేయడానికి Systems Manager tools యొక్క full suite ను leverage చేయవచ్చు, మరియు మీ మొత్తం fleet అంతటా comprehensive visibility పొందవచ్చు.
+
+## Systems Manager కోసం AWS Organizations delegated administrator create చేయడం
+
+Unified console setup చేసేటప్పుడు organization అంతటా మీ nodes ను centrally manage చేయడానికి Systems Manager కోసం delegated administrator account configure చేయవచ్చు. ఇందులో AWS Organizations ఉపయోగించి accounts మరియు Regions అంతటా configurations deploy మరియు manage చేయడానికి సహాయపడే Quick Setup ఉంటుంది. Quick Setup కోసం delegated administrator మీ organization లో configuration manager resources create, update, view, మరియు delete చేయవచ్చు. Systems Manager integrated console experience కోసం setup process భాగంగా Quick Setup కోసం delegated administrator ను register చేస్తుంది. మీ organizations యొక్క AWS accounts మరియు Regions అంతటా అన్ని managed మరియు unmanaged nodes ను ఒకే చోట నుండి చూడగల comprehensive, centralized view మీకు అందిస్తుంది.

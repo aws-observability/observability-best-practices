@@ -1,0 +1,29 @@
+{
+  "featureList.guides.description": {
+    "message": "దశల వారీ గైడ్‌లను అనుసరించి క్లౌడ్ మానిటరింగ్‌ను త్వరగా సెటప్ చేయండి."
+  },
+  "featureList.signals.description": {
+    "message": "మెట్రిక్స్, లాగ్‌లు మరియు పనితీరు సూచికలను ఉపయోగించి మీ AWS వాతావరణం అంతటా ఆరోగ్యాన్ని ఒక చూపులో గ్రహించండి."
+  },
+  "featureList.tools.description": {
+    "message": "డేటా సేకరణ నుండి విశ్లేషణ మరియు విజువలైజేషన్ వరకు — AWS మానిటరింగ్ కోసం అనుకూలమైన సాధనాలను పరిచయం చేస్తాము."
+  },
+  "featureList.recipes.description": {
+    "message": "క్షేత్రంలో నిరూపించబడిన Observability నమూనాలతో మానిటరింగ్ మరియు సమస్య పరిష్కారాన్ని త్వరగా అమలు చేయండి."
+  },
+  "featureList.faqs.description": {
+    "message": "AWS Observability గురించి తరచుగా అడిగే ప్రశ్నలు మరియు సమాధానాలు."
+  },
+  "featureList.patterns.description": {
+    "message": "AWS Observability ను దశల వారీగా అమలు చేయడానికి ప్రాక్టికల్ లెర్నింగ్ మెటీరియల్స్."
+  },
+  "featureList.persona.description": {
+    "message": "మీ పాత్రకు అనుగుణంగా Observability ఉత్తమ పద్ధతులు మరియు సిఫార్సు చేయబడిన కాన్ఫిగరేషన్‌లను చూడండి."
+  },
+  "featureList.resources.description": {
+    "message": "AWS Observability కు సంబంధించిన సూచన మెటీరియల్స్ సమాహారం."
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS క్లౌడ్ ఆపరేషన్స్ కోసం ఉత్తమ పద్ధతులను అన్వేషించండి."
+  }
+}

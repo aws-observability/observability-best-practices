@@ -1,0 +1,29 @@
+{
+  "featureList.guides.description": {
+    "message": "Suivez nos guides étape par étape pour mettre en place rapidement la surveillance de votre cloud."
+  },
+  "featureList.signals.description": {
+    "message": "Exploitez les métriques, les logs et les indicateurs de performance pour visualiser l'état de votre environnement AWS."
+  },
+  "featureList.tools.description": {
+    "message": "De la collecte à l'analyse et la visualisation — découvrez les outils optimisés pour la surveillance AWS."
+  },
+  "featureList.recipes.description": {
+    "message": "Résolvez rapidement les problèmes de surveillance et de réponse aux incidents grâce à des patterns d'Observability éprouvés."
+  },
+  "featureList.faqs.description": {
+    "message": "Retrouvez les questions fréquemment posées sur l'Observability AWS et leurs réponses."
+  },
+  "featureList.patterns.description": {
+    "message": "Des ressources d'apprentissage pratiques pour implémenter l'Observability AWS étape par étape."
+  },
+  "featureList.persona.description": {
+    "message": "Découvrez les bonnes pratiques et configurations recommandées selon votre rôle."
+  },
+  "featureList.resources.description": {
+    "message": "Une collection de ressources de référence liées à l'Observability AWS."
+  },
+  "featureList.cloudOps.description": {
+    "message": "Consultez les bonnes pratiques pour les opérations cloud AWS."
+  }
+}

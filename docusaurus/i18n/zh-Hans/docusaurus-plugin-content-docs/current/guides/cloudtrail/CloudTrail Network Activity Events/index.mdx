@@ -1,0 +1,76 @@
+---
+sidebar_position: 5
+---
+# CloudTrail 网络活动事件
+
+通过 VPC endpoint 的网络活动事件，您可以查看谁在访问网络中的资源，从而增强识别和响应数据边界中恶意或未授权操作的能力。例如，作为 VPC endpoint 所有者，您可以查看由于 VPC endpoint 策略而被拒绝的操作的日志，或确定数据边界之外的行为者是否正在尝试访问您 S3 存储桶中的数据。
+
+### 网络活动事件的高级事件选择器
+当您使用网络活动事件时，高级事件选择器可以更好地控制哪些 CloudTrail 事件被摄取到您的事件数据存储中。使用高级事件选择器，您可以包含或排除 errorCode、eventName 和 vpcEndpointId 等字段上的值。高级事件选择器还支持使用部分字符串的模式匹配来包含或排除值。这提高了安全、合规和运营调查的效率和精确度，同时帮助降低成本。例如，您可以根据 vpcEndpointId 属性过滤 CloudTrail 事件，仅包含来自特定 VPC endpoint ID 的事件。这使您能够显著减少摄取到 CloudTrail Lake 中的 CloudTrail 事件量，降低成本同时保持对相关用户和系统活动的可见性。
+
+### [演示：CloudTrail Lake 的网络活动事件](https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi)
+
+在以下互动演示中，我们将探索如何在 CloudTrail Lake 中使用 VPC endpoint 的网络活动事件。
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+### CloudTrail Lake 示例 SQL 查询：
+
+#### VPC 访问被拒绝错误计数
+```
+SELECT count(*) as VPCAccessDenied, userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-21 17:00:00'
+    GROUP BY 
+    userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+    ORDER BY eventName DESC;
+```
+
+#### VPC 访问被拒绝错误
+```
+SELECT userIdentity.arn,
+    userIdentity.accountid,
+    eventType,
+    eventCategory,
+    eventName,
+    errorCode,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-20 17:00:00'
+    ORDER BY eventTime DESC;
+```
+
+### Cloud Operation Show：使用网络活动事件保护您的 VPC Endpoints | AWS CloudTrail
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pAppy_tkWPY?si=sy7w_Yp8nejmwbLv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

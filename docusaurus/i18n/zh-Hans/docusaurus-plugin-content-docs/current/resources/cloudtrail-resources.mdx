@@ -1,0 +1,94 @@
+---
+sidebar_position: 3
+title: AWS CloudTrail 资源
+description: 精选的 AWS 博客文章和 CloudTrail 动手实验，帮助加强 CloudTrail 安全性、事件响应和监控实践。
+---
+
+# AWS CloudTrail 资源
+
+探索精选资源以加强您的 **AWS CloudTrail** 安全实践，改善事件响应并增强监控能力。本页面分为两个部分：提供实用指导的 **AWS 博客文章**和提供常见安全场景实践模拟的 **AWS CloudTrail 动手实验**。
+
+## 近期 CloudTrail 资源
+
+### AWS 博客文章
+- **[Announcing AWS CloudTrail Event Aggregation and Insights for Data Events](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-event-aggregation-and-insights-for-data-events/)**  
+
+- **[New: AWS CloudTrail Lake Event Enrichment: Add Business Context to AWS Activity Logs](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-lake-now-supports-event-enrichment-add-business-context-to-your-aws-activity-logs/)**  
+
+- **[Announcing AWS CloudTrail network activity events for VPC Endpoints](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-network-activity-events-for-vpc-endpoints/)**  
+
+- **[Securing your VPC Endpoints using Network Activity Events | AWS CloudTrail | EP 02](https://www.youtube.com/live/pAppy_tkWPY?si=PsjwRHN6O_YrB9ZL)**
+
+- **[Tag It & Track It: AWS CloudTrail Event Enrichment and Expansions Explained | EP 09](https://www.youtube.com/live/IELtInifymY?si=XDTc8bsOoFU3K40a)**
+
+- **[Simplify AWS CloudTrail log analysis with natural language query generation in CloudTrail Lake (preview)](https://aws.amazon.com/blogs/aws/simplify-aws-cloudtrail-log-analysis-with-natural-language-query-generation-in-cloudtrail-lake-preview/)**
+### 视频
+
+### 交互式演示
+- **[AWS CloudTrail Event Aggregation](https://aws-cloudops.storylane.io/share/tvfcqa5wjrfg)**
+
+- **[AWS CloudTrail Insights for Data Events](https://aws-cloudops.storylane.io/share/6nwa1m48zg1e)**
+
+- **[Network Activity Events for CloudTrail Lake](https://aws-cloudops.storylane.io/share/n5vlqcsmygpi)**
+
+### GitHub
+- **[AWS CloudTrail Lake query samples](https://github.com/aws-samples/cloud-trail-lake-query-samples)**
+
+## AWS 博客文章
+
+这些博客文章提供了利用 AWS CloudTrail 帮助保护 AWS 环境、检测事件和自动化响应的可行洞察。资源按重点领域分组以便于导航。
+
+
+### 事件调查和取证
+- **[Investigate Security Events with CloudTrail Lake](https://aws.amazon.com/blogs/security/investigate-security-events-by-using-aws-cloudtrail-lake-advanced-queries/)**  
+  使用 CloudTrail Lake 查询分析安全事件，例如被泄露的访问密钥。
+- **[CloudTrail Insights: Detect Unusual API Activity](https://aws.amazon.com/blogs/aws/announcing-cloudtrail-insights-identify-and-respond-to-unusual-api-activity/)**  
+  了解如何使用 CloudTrail Insights 识别和响应异常 API 调用。
+- **[Announcing CloudTrail Lake – Managed Audit and Security Lake](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-lake-a-managed-audit-and-security-lake/)**  
+  了解 CloudTrail Lake 的集中化审计和安全日志管理功能。
+
+### 监控和告警
+- **[Monitor Root User Activity](https://aws.amazon.com/blogs/mt/monitor-and-notify-on-aws-account-root-user-activity/)**  
+  设置通知以跟踪 AWS 账户根用户活动，增强安全性。
+- **[Alerts for IAM Access Key Usage](https://repost.aws/knowledge-center/track-access-key-credential)**  
+  配置告警以检测 IAM 访问密钥的使用。
+- **[Notifications for IAM Configuration Changes](https://aws.amazon.com/blogs/security/how-to-receive-alerts-when-your-iam-configuration-changes/)**  
+  为 IAM 配置变更实施告警。
+- **[Monitor IAM User Creation](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/send-a-notification-when-an-iam-user-is-created.html)**  
+  设置新 IAM 用户创建通知以检测未授权变更。
+- **[Track Account and EC2 Security Group Changes](https://aws.amazon.com/blogs/security/how-to-monitor-aws-account-configuration-changes-and-api-calls-to-amazon-ec2-security-groups/)**  
+  监控配置变更和对 EC2 安全组的 API 调用。
+- **[Analyze CloudTrail in CloudWatch](https://aws.amazon.com/blogs/mt/analyzing-cloudtrail-in-cloudwatch/)**  
+  将 CloudTrail 与 CloudWatch 集成以进行实时日志分析。
+
+### 安全最佳实践和自动化
+
+- **[Prevent CloudTrail Modifications](https://catalog.workshops.aws/awscff/en-US/governance)**  
+  了解保护 CloudTrail 免受未授权变更的技术。
+- **[Automate Responses to Compromised Access Keys](https://github.com/aws/aws-health-tools/tree/master/automated-actions/AWS_RISK_CREDENTIALS_EXPOSED)**  
+  使用 GitHub 工具自动响应被泄露的访问密钥。
+
+## AWS CloudTrail 动手实验
+
+这些动手实验模拟常见安全事件，并演示如何使用 AWS CloudTrail 及相关服务进行检测和响应。每个实验都包含 CloudFormation 模板或脚本，用于复现真实场景。
+
+### 实验列表
+- **[Unauthorized IAM Credential Use](https://catalog.us-east-1.prod.workshops.aws/workshops/6a8ad836-10a6-4694-9a3b-f53f193041de/en-US/setup/cloudformation)**  
+  **描述**：通过 CloudShell 脚本模拟未授权的 IAM 凭证使用，模拟侦察和权限提升。  
+  **重要性**：了解如何检测和缓解未授权访问，这是 AWS 环境中常见的攻击向量。
+
+- **[Ransomware on S3](https://catalog.workshops.aws/aws-cirt-ransomware-simulation-and-detection/en-US)**  
+  **描述**：使用 CloudFormation 模板创建 S3 存储桶，并在 CloudShell 中通过数据外泄和删除来模拟勒索软件。  
+  **重要性**：通过检测未授权的 S3 修改来防止数据丢失或泄露。
+
+- **[Cryptominer Security Events](https://catalog.workshops.aws/aws-cirt-cryptominer-simulation-and-detection/en-US)**  
+  **描述**：通过 CloudFormation 部署 EC2 实例，通过向已知域名发送 DNS 请求来模拟加密挖矿。  
+  **重要性**：识别资源密集型的加密挖矿以降低成本并保护 EC2 实例。
+
+- **[SSRF on IMDSv1](https://catalog.us-east-1.prod.workshops.aws/workshops/6a8ad836-10a6-4694-9a3b-f53f193041de/en-US/setup/ssrf)**  
+  **描述**：通过 IMDSv1 漏洞模拟对 EC2 实例凭证的服务器端请求伪造 (SSRF) 攻击。  
+  **重要性**：通过 SSRF 缓解措施防止对实例凭证的未授权访问。
+
+:::tip 开始使用 CloudTrail
+如需全面指导，请浏览 **[AWS CloudTrail User Guide](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/)** 以掌握安全监控、事件响应和最佳实践。
+:::

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>调试指南 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>调试指南</h1></header>
+      <article>
+        <section>
+          <h2>快速分诊工作流（推荐）</h2>
+          <ol>
+            <li><strong>从 SLO 开始（如果已定义）：</strong>识别不健康的服务/操作/依赖项。</li>
+            <li><strong>使用服务视图：</strong>按高延迟或故障率排序，找出主要问题来源。</li>
+            <li><strong>打开服务详情：</strong>检查操作和依赖项边缘；选择一个延迟/故障数据点。</li>
+            <li><strong>跳转到关联的追踪/span：</strong>检查追踪时间线，找到缓慢/失败的下游调用。</li>
+            <li><strong>通过日志/运行时指标确认：</strong>在相关时关联错误日志和 JVM/CPU/GC。</li>
+          </ol>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">使用 Application Signals 监控运行状况</a>。</p>
+        </section>
+
+        <section>
+          <h2>使用 Transaction Search 查找"偶发峰值"</h2>
+          <p>对于间歇性峰值，Transaction Search 帮助您按属性分析 span 并深入查看受影响的用户/请求。常见模式：</p>
+          <ul>
+            <li><strong>分组分析</strong>按业务属性（例如，客户 ID）查找受影响的用户。</li>
+            <li><strong>筛选</strong>按服务/操作和持续时间（p99）来隔离异常值。</li>
+            <li><strong>打开追踪</strong>从异常 span 开始，跟踪依赖项调用路径。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">排查应用程序问题（Transaction Search）</a>。</p>
+        </section>
+
+        <section>
+          <h2>常见的"为什么看不到数据？"检查项</h2>
+          <ul>
+            <li><strong>账户启用：</strong>Application Signals 必须在每个账户/区域启用一次（创建服务关联角色）。</li>
+            <li><strong>时间范围：</strong>服务/操作仅在所选时间窗口内有活动时才会显示。</li>
+            <li><strong>服务命名：</strong>确保 <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code> 设置正确（非 EKS 通常需要显式的服务/环境名称）。</li>
+            <li><strong>管道健康：</strong>CloudWatch Agent/收集器正在运行并接收 OTLP；验证本地端点和 IAM 权限。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">排查 Application Signals 安装问题</a>。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

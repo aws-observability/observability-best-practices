@@ -2,7 +2,7 @@
 
 ## GetMetricData
 
-通常 `GetMetricData` 是由第三方 Observability 工具和/或云财务工具在其平台中使用 CloudWatch Metrics 发起的调用导致的。
+通常 `GetMetricData` 是由第三方可观测性工具和/或云财务工具在其平台中使用 CloudWatch Metrics 发起的调用导致的。
 
 - 考虑降低第三方工具发起请求的频率。例如，将频率从 1 分钟降低到 5 分钟，应该可以将成本降低到原来的 1/5（20%）。
 - 要识别趋势，可以考虑暂时关闭第三方工具的任何数据收集。

@@ -1,6 +1,6 @@
 # 使用 AWS X-Ray 进行容器追踪
 
-在 Observability 最佳实践指南的这一部分中，我们将深入探讨以下与使用 AWS X-Ray 进行容器追踪相关的主题：
+在可观测性最佳实践指南的这一部分中，我们将深入探讨以下与使用 AWS X-Ray 进行容器追踪相关的主题：
 
 * AWS X-Ray 简介
 * 使用 Amazon EKS 附加组件为 AWS Distro for OpenTelemetry 收集 Traces
@@ -155,4 +155,4 @@ ADOT Collector 配置为在名为 `aws-otel-collector` 的 Kubernetes service ac
 
 ## 结论
 
-在 Observability 最佳实践指南的这一部分中，我们学习了如何使用 AWS X-Ray 对 Amazon EKS 上的应用程序进行容器追踪，通过使用 Amazon EKS 附加组件为 AWS Distro for OpenTelemetry 收集 traces。如需进一步了解，请查看[使用 Amazon EKS 附加组件为 AWS Distro for OpenTelemetry 收集 Metrics 和 Traces 到 Amazon Managed Service for Prometheus 和 Amazon CloudWatch](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)。最后，我们简要介绍了如何使用 EKS Blueprints 作为在 Amazon EKS 集群创建过程中设置使用 AWS X-Ray 的容器追踪的工具。如需进一步深入了解，我们强烈建议您在 AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) 的 **AWS 原生** Observability 类别下练习 X-Ray Traces 模块。
+在可观测性最佳实践指南的这一部分中，我们学习了如何使用 AWS X-Ray 对 Amazon EKS 上的应用程序进行容器追踪，通过使用 Amazon EKS 附加组件为 AWS Distro for OpenTelemetry 收集 traces。如需进一步了解，请查看[使用 Amazon EKS 附加组件为 AWS Distro for OpenTelemetry 收集 Metrics 和 Traces 到 Amazon Managed Service for Prometheus 和 Amazon CloudWatch](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)。最后，我们简要介绍了如何使用 EKS Blueprints 作为在 Amazon EKS 集群创建过程中设置使用 AWS X-Ray 的容器追踪的工具。如需进一步深入了解，我们强烈建议您在 AWS [https://catalog.workshops.aws/observability/en-US](https://catalog.workshops.aws/observability/en-US) 的 **AWS 原生** 可观测性类别下练习 X-Ray Traces 模块。

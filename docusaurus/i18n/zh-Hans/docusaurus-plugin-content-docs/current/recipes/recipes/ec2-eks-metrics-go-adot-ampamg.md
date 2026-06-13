@@ -150,7 +150,7 @@ kubectl apply -f adot-collector-ec2.yaml
 
 ## 应用程序
 
-在本方案中，我们将使用 AWS Observability 仓库中的
+在本方案中，我们将使用 AWS 可观测性仓库中的
 [示例应用程序](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)。
 
 此 Prometheus 示例应用生成所有四种 Prometheus metric 类型

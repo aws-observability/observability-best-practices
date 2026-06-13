@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Application Signals for Python FastAPI on ECS</title>
+    <title>AWS Application Signals - Python FastAPI 在 ECS 上的实施</title>
     <style>
         * {
             margin: 0;
@@ -280,78 +280,78 @@
     <div class="container">
         <div class="header">
             <h1>AWS Application Signals for Python FastAPI on ECS</h1>
-            <p class="subtitle">Complete Implementation Guide</p>
+            <p class="subtitle">完整实施指南</p>
             <div class="platform-badge">ECS</div>
             <div class="language-badge">Python</div>
         </div>
 
         <div class="content">
-            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            <a href="index.html" class="back-link">← 返回所有实施方案</a>
             
             <div class="section">
-                <h2>Overview</h2>
-                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Python FastAPI application on Amazon ECS with AWS Application Signals enabled. No CDK required - pure AWS CLI and Docker.</p>
+                <h2>概述</h2>
+                <p>本指南提供<strong>分步说明</strong>，指导您在 Amazon ECS 上部署启用 AWS Application Signals 的 Python FastAPI 应用。无需 CDK - 仅使用 AWS CLI 和 Docker。</p>
                 
                 <div class="highlight">
-                    <strong>What you'll accomplish:</strong>
+                    <strong>完成目标：</strong>
                     <ul>
-                        <li>Deploy a Python FastAPI app on ECS Fargate</li>
-                        <li>Enable AWS Application Signals auto-instrumentation</li>
-                        <li>View your service in CloudWatch Application Signals console</li>
-                        <li>Monitor service metrics, traces, and operations</li>
+                        <li>在 ECS Fargate 上部署 Python FastAPI 应用</li>
+                        <li>启用 AWS Application Signals 自动插桩</li>
+                        <li>在 CloudWatch Application Signals 控制台中查看您的服务</li>
+                        <li>监控服务 metrics、traces 和操作</li>
                     </ul>
                 </div>
 
                 <div class="success">
-                    <strong>Time to complete:</strong> 30-45 minutes
+                    <strong>完成时间：</strong> 30-45 分钟
                 </div>
             </div>
-<h2 id="prerequisites">Prerequisites</h2>
-<h3 id="required-tools">Required Tools</h3>
+<h2 id="prerequisites">前置条件</h2>
+<h3 id="required-tools">必备工具</h3>
 <ul>
-<li>AWS CLI v2 (latest version)</li>
+<li>AWS CLI v2（最新版本）</li>
 <li>Docker Desktop</li>
 <li>Python 3.11+</li>
-<li>AWS Account with appropriate permissions</li>
-<li>Text editor</li>
+<li>具有适当权限的 AWS 账户</li>
+<li>文本编辑器</li>
 </ul>
-<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<h3 id="aws-permissions-required">所需 AWS 权限</h3>
 <ul>
-<li>ECS: Full access (create clusters, services, task definitions)</li>
-<li>ECR: Push images</li>
-<li>IAM: Create roles and policies</li>
-<li>CloudWatch: Logs and Application Signals access</li>
-<li>EC2: VPC, subnet, and security group access</li>
-<li>SSM: Parameter Store write access</li>
+<li>ECS：完全访问（创建集群、服务、任务定义）</li>
+<li>ECR：推送镜像</li>
+<li>IAM：创建角色和策略</li>
+<li>CloudWatch：Logs 和 Application Signals 访问</li>
+<li>EC2：VPC、子网和安全组访问</li>
+<li>SSM：Parameter Store 写入权限</li>
 </ul>
-<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<h3 id="knowledge-assumed">前置知识</h3>
 <ul>
-<li>Basic AWS CLI usage</li>
-<li>Basic Docker commands</li>
-<li>Basic understanding of ECS concepts</li>
+<li>AWS CLI 基础使用</li>
+<li>Docker 基础命令</li>
+<li>ECS 基本概念理解</li>
 </ul>
-<h2 id="architecture">Architecture</h2>
-<p>Your ECS task will contain <strong>3 containers</strong>:</p>
+<h2 id="architecture">架构</h2>
+<p>您的 ECS 任务将包含 <strong>3 个容器</strong>：</p>
 <ol>
-<li><strong>Init Container</strong> (<code>init</code>): Copies ADOT Python auto-instrumentation files</li>
-<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>): Collects traces and metrics  </li>
-<li><strong>Application Container</strong> (<code>your-app</code>): Your FastAPI application</li>
+<li><strong>Init 容器</strong> (<code>init</code>): Copies ADOT Python auto-instrumentation files</li>
+<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>)：收集 traces 和 metrics  </li>
+<li><strong>应用容器</strong> (<code>your-app</code>): Your FastAPI application</li>
 </ol>
-<p><strong>Flow:</strong></p>
+<p><strong>流程：</strong></p>
 <pre><code><span class="hljs-selector-tag">Init</span> <span class="hljs-selector-tag">Container</span> (runs once, copies files) 
   → <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">starts</span> (auto-instrumented via PYTHONPATH)
   → <span class="hljs-selector-tag">Sends</span> <span class="hljs-selector-tag">traces</span>/<span class="hljs-selector-tag">metrics</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> (<span class="hljs-attribute">localhost</span>:<span class="hljs-number">4316</span>)
   → <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> <span class="hljs-selector-tag">sends</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">Signals</span>
-</code></pre><h2 id="step-1-enable-application-signals-in-your-account">Step 1: Enable Application Signals in Your Account</h2>
-<p><strong>Important:</strong> Application Signals must be enabled once per AWS account per region.</p>
-<h3 id="option-1-enable-via-aws-console-recommended-">Option 1: Enable via AWS Console (Recommended)</h3>
+</code></pre><h2 id="step-1-enable-application-signals-in-your-account">步骤 1： 启用 Application Signals in Your Account</h2>
+<p><strong>重要：</strong> 每个 AWS 账户每个区域只需启用一次 Application Signals。</p>
+<h3 id="option-1-enable-via-aws-console-recommended-">方案 1：通过 AWS 控制台启用（推荐）</h3>
 <ol>
-<li>Go to AWS Console → CloudWatch → Application Signals</li>
-<li>Select your region (e.g., <code>us-east-1</code>)</li>
-<li>Click &quot;Get Started&quot; or &quot;Enable Application Signals&quot;</li>
-<li>Wait 2-3 minutes for activation</li>
+<li>前往 AWS 控制台 → CloudWatch → Application Signals</li>
+<li>选择您的区域（例如 <code>us-east-1</code>)</li>
+<li>Click &quot;Get Started&quot; or &quot;启用 Application Signals&quot;</li>
+<li>等待 2-3 分钟激活</li>
 </ol>
-<h3 id="option-2-verify-if-already-enabled">Option 2: Verify if Already Enabled</h3>
+<h3 id="option-2-verify-if-already-enabled">方案 2：验证是否已启用</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Check if service-linked role exists</span>
 <span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">get-role</span> \
   <span class="hljs-built_in">--role-name</span> <span class="hljs-string">AWSServiceRoleForCloudWatchApplicationSignals </span>\
@@ -359,9 +359,9 @@
 
 <span class="hljs-comment"># If role exists, Application Signals is enabled</span>
 </code></pre>
-<p><strong>Output should show:</strong> Role ARN if enabled, error if not.</p>
-<h2 id="step-2-prepare-your-python-fastapi-application">Step 2: Prepare Your Python FastAPI Application</h2>
-<h3 id="2-1-create-application-directory">2.1 Create Application Directory</h3>
+<p><strong>输出应显示：</strong> 如果已启用则显示角色 ARN，否则显示错误。</p>
+<h2 id="step-2-prepare-your-python-fastapi-application">步骤 2： Prepare Your Python FastAPI Application</h2>
+<h3 id="2-1-create-application-directory">2.1 创建应用目录</h3>
 <pre><code class="lang-bash"><span class="hljs-keyword">mkdir</span> -p ~/my-appsignals-<span class="hljs-keyword">app</span>
 <span class="hljs-keyword">cd</span> ~/my-appsignals-<span class="hljs-keyword">app</span>
 </code></pre>
@@ -454,7 +454,7 @@ app = FastAPI(
 <span class="hljs-attr">pydantic</span>==<span class="hljs-number">2.10</span>.<span class="hljs-number">3</span>
 <span class="hljs-attr">requests</span>==<span class="hljs-number">2.32</span>.<span class="hljs-number">3</span>
 </code></pre>
-<p><strong>IMPORTANT:</strong> Do NOT install <code>opentelemetry-*</code> packages. They&#39;re provided by the ADOT init container.</p>
+<p><strong>重要：</strong> Do NOT install <code>opentelemetry-*</code> packages. They&#39;re 提供的 by the ADOT init container.</p>
 <h3 id="2-4-create-start-sh-">2.4 Create <code>start.sh</code></h3>
 <pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash</span>
 <span class="hljs-comment"># Startup script for Application Signals</span>
@@ -467,7 +467,7 @@ app = FastAPI(
 <span class="hljs-comment"># NO --workers flag - auto-instrumentation requires single worker</span>
 <span class="hljs-built_in">exec</span> uvicorn app:app --host 0.0.0.0 --port 80
 </code></pre>
-<p>Make it executable:</p>
+<p>赋予执行权限：</p>
 <pre><code class="lang-bash">chmod +x <span class="hljs-literal">start</span>.sh
 </code></pre>
 <h3 id="2-5-create-dockerfile-">2.5 Create <code>Dockerfile</code></h3>
@@ -509,15 +509,15 @@ app = FastAPI(
 
 <span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"./start.sh"</span>]</span>
 </code></pre>
-<h2 id="step-3-build-and-push-docker-image">Step 3: Build and Push Docker Image</h2>
-<h3 id="3-1-set-variables">3.1 Set Variables</h3>
+<h2 id="step-3-build-and-push-docker-image">步骤 3： 构建并推送 Docker 镜像</h2>
+<h3 id="3-1-set-variables">3.1 设置变量</h3>
 <pre><code class="lang-bash"># Replace <span class="hljs-keyword">with</span> your values
 <span class="hljs-keyword">export</span> AWS_REGION=<span class="hljs-string">"us-east-1"</span>
 <span class="hljs-keyword">export</span> AWS_ACCOUNT_ID=<span class="hljs-string">"YOUR_ACCOUNT_ID"</span>
 <span class="hljs-keyword">export</span> AWS_PROFILE=<span class="hljs-string">"your-profile-name"</span>  # Optional <span class="hljs-keyword">if</span> using default
 <span class="hljs-keyword">export</span> APP_NAME=<span class="hljs-string">"my-appsignals-app"</span>
 </code></pre>
-<p>Get your account ID:</p>
+<p>获取您的账户 ID：</p>
 <pre><code class="lang-bash"><span class="hljs-string">export </span><span class="hljs-string">AWS_ACCOUNT_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">sts </span><span class="hljs-built_in">get-caller-identity</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">Account </span><span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
 <span class="hljs-string">echo </span><span class="hljs-string">"Account ID: $AWS_ACCOUNT_ID"</span>
 </code></pre>
@@ -526,12 +526,12 @@ app = FastAPI(
   <span class="hljs-built_in">--repository-name</span> ${<span class="hljs-string">APP_NAME}</span> \
   <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
 </code></pre>
-<p><strong>Output:</strong> Repository URI (save this)</p>
-<h3 id="3-3-build-docker-image">3.3 Build Docker Image</h3>
+<p><strong>输出：</strong> 存储库 URI（请保存）</p>
+<h3 id="3-3-build-docker-image">3.3 构建 Docker 镜像</h3>
 <pre><code class="lang-bash"><span class="hljs-keyword">cd</span> ~/my-appsignals-<span class="hljs-keyword">app</span>
 docker build -t <span class="hljs-variable">${APP_NAME}</span> .
 </code></pre>
-<h3 id="3-4-push-to-ecr">3.4 Push to ECR</h3>
+<h3 id="3-4-push-to-ecr">3.4 推送到 ECR</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Login to ECR</span>
 <span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">get-login-password</span> <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> | \
   <span class="hljs-string">docker </span><span class="hljs-string">login </span><span class="hljs-built_in">--username</span> <span class="hljs-string">AWS </span><span class="hljs-built_in">--password-stdin</span> \
@@ -544,8 +544,8 @@ docker build -t <span class="hljs-variable">${APP_NAME}</span> .
 <span class="hljs-comment"># Push image</span>
 <span class="hljs-string">docker </span><span class="hljs-string">push </span>${<span class="hljs-string">AWS_ACCOUNT_ID}</span>.<span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span>${<span class="hljs-string">AWS_REGION}</span>.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com/</span>${<span class="hljs-string">APP_NAME}</span>:<span class="hljs-string">latest</span>
 </code></pre>
-<h2 id="step-4-create-cloudwatch-agent-configuration">Step 4: Create CloudWatch Agent Configuration</h2>
-<h3 id="4-1-create-configuration-file">4.1 Create Configuration File</h3>
+<h2 id="step-4-create-cloudwatch-agent-configuration">步骤 4： 创建 CloudWatch Agent 配置</h2>
+<h3 id="4-1-create-configuration-file">4.1 创建配置文件</h3>
 <pre><code class="lang-bash">cat &gt; /tmp/ecs-cwagent.json &lt;&lt; <span class="hljs-string">'EOF'</span>
 {
   <span class="hljs-string">"traces"</span>: {
@@ -561,7 +561,7 @@ docker build -t <span class="hljs-variable">${APP_NAME}</span> .
 }
 EOF
 </code></pre>
-<h3 id="4-2-upload-to-ssm-parameter-store">4.2 Upload to SSM Parameter Store</h3>
+<h3 id="4-2-upload-to-ssm-parameter-store">4.2 上传到 SSM Parameter Store</h3>
 <pre><code class="lang-bash">aws ssm put-parameter \
   -<span class="ruby">-name <span class="hljs-string">"ecs-cwagent-${APP_NAME}"</span> \
 </span>  -<span class="ruby">-type <span class="hljs-string">"String"</span> \
@@ -569,9 +569,9 @@ EOF
 </span>  -<span class="ruby">-region <span class="hljs-string">"${AWS_REGION}"</span> \
 </span>  -<span class="ruby">-overwrite</span>
 </code></pre>
-<p><strong>Output:</strong> Version number (1 if new, incremented if updating)</p>
-<h2 id="step-5-create-iam-roles">Step 5: Create IAM Roles</h2>
-<h3 id="5-1-create-trust-policy">5.1 Create Trust Policy</h3>
+<p><strong>输出：</strong> 版本号（新建为 1，更新时递增）</p>
+<h2 id="step-5-create-iam-roles">Step 5: 创建 IAM 角色</h2>
+<h3 id="5-1-create-trust-policy">5.1 创建信任策略</h3>
 <pre><code class="lang-bash">cat &gt; /tmp/task-trust-policy.json &lt;&lt; <span class="hljs-string">'EOF'</span>
 {
   <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
@@ -587,7 +587,7 @@ EOF
 }
 EOF
 </code></pre>
-<h3 id="5-2-create-task-role">5.2 Create Task Role</h3>
+<h3 id="5-2-create-task-role">5.2 创建任务角色</h3>
 <pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">create-role</span> \
   <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
   <span class="hljs-built_in">--assume-role-policy-document</span> <span class="hljs-string">file:</span>///<span class="hljs-string">tmp/</span><span class="hljs-string">task-trust-</span><span class="hljs-string">policy.</span><span class="hljs-string">json
@@ -601,7 +601,7 @@ EOF
   <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
   <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AWSXRayDaemonWriteAccess</span>
 </code></pre>
-<h3 id="5-3-create-task-execution-role">5.3 Create Task Execution Role</h3>
+<h3 id="5-3-create-task-execution-role">5.3 创建任务执行角色</h3>
 <pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">create-role</span> \
   <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
   <span class="hljs-built_in">--assume-role-policy-document</span> <span class="hljs-string">file:</span>///<span class="hljs-string">tmp/</span><span class="hljs-string">task-trust-</span><span class="hljs-string">policy.</span><span class="hljs-string">json
@@ -615,7 +615,7 @@ EOF
   <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
   <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AmazonSSMReadOnlyAccess</span>
 </code></pre>
-<h3 id="5-4-add-cloudwatch-logs-permissions">5.4 Add CloudWatch Logs Permissions</h3>
+<h3 id="5-4-add-cloudwatch-logs-permissions">5.4 添加 CloudWatch Logs 权限</h3>
 <pre><code class="lang-bash">cat &gt; <span class="hljs-regexp">/tmp/</span>logs-policy.json &lt;&lt; <span class="hljs-string">'EOF'</span>
 {
   <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
@@ -638,17 +638,17 @@ aws iam put-role-policy \
   --policy-name CloudWatchLogsPolicy \
   --policy-document file:<span class="hljs-regexp">//</span><span class="hljs-regexp">/tmp/</span>logs-policy.json
 </code></pre>
-<h2 id="step-6-create-ecs-cluster">Step 6: Create ECS Cluster</h2>
+<h2 id="step-6-create-ecs-cluster">Step 6: 创建 ECS 集群</h2>
 <pre><code class="lang-bash"><span class="hljs-string">export </span><span class="hljs-string">CLUSTER_NAME=</span><span class="hljs-string">"${APP_NAME}-cluster"</span>
 
 <span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-cluster</span> \
   <span class="hljs-built_in">--cluster-name</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
   <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
 </code></pre>
-<p><strong>Output:</strong> Cluster ARN and status should be ACTIVE</p>
-<h2 id="step-7-setup-networking">Step 7: Setup Networking</h2>
-<h3 id="7-1-get-vpc-and-subnets">7.1 Get VPC and Subnets</h3>
-<p>If you already have a VPC:</p>
+<p><strong>输出：</strong> 集群 ARN 和状态应为 ACTIVE</p>
+<h2 id="step-7-setup-networking">Step 7: 设置网络</h2>
+<h3 id="7-1-get-vpc-and-subnets">7.1 获取 VPC 和子网</h3>
+<p>如果您已有 VPC：</p>
 <pre><code class="lang-bash"><span class="hljs-comment"># List VPCs</span>
 aws ec2 describe-vpcs --region <span class="hljs-variable">${AWS_REGION}</span> \
   --query <span class="hljs-string">'Vpcs[*].{VpcId:VpcId,CIDR:CidrBlock,Name:Tags[?Key==`Name`].Value|[0]}'</span>
@@ -665,7 +665,7 @@ aws ec2 describe-subnets --region <span class="hljs-variable">${AWS_REGION}</spa
 <span class="hljs-built_in">export</span> SUBNET_1=<span class="hljs-string">"subnet-xxxxx"</span>
 <span class="hljs-built_in">export</span> SUBNET_2=<span class="hljs-string">"subnet-yyyyy"</span>
 </code></pre>
-<h3 id="7-2-create-security-group">7.2 Create Security Group</h3>
+<h3 id="7-2-create-security-group">7.2 创建安全组</h3>
 <pre><code class="lang-bash">export SG_NAME="${APP_NAME}-ecs-sg"
 
 # Create security group
@@ -688,10 +688,10 @@ aws ec2 authorize-security-group-ingress \
 </span>  -<span class="ruby">-cidr <span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>/<span class="hljs-number">0</span> \
 </span>  -<span class="ruby">-region ${AWS_REGION}</span>
 </code></pre>
-<p><strong>For production:</strong> Replace <code>0.0.0.0/0</code> with specific IP ranges or load balancer security group.</p>
-<h2 id="step-8-create-ecs-task-definition">Step 8: Create ECS Task Definition</h2>
-<h3 id="8-1-create-task-definition-json">8.1 Create Task Definition JSON</h3>
-<p><strong>CRITICAL:</strong> This is the most important step. Pay attention to every detail.</p>
+<p><strong>生产环境：</strong> 替换 <code>0.0.0.0/0</code> 为特定 IP 范围或负载均衡器安全组。</p>
+<h2 id="step-8-create-ecs-task-definition">Step 8: 创建 ECS 任务定义</h2>
+<h3 id="8-1-create-task-definition-json">8.1 创建任务定义 JSON</h3>
+<p><strong>关键：</strong> 这是最重要的步骤。请注意每一个细节。</p>
 <pre><code class="lang-bash">cat &gt; /tmp/app-signals-task-def.json &lt;&lt; EOF
 {
   <span class="hljs-string">"family"</span>: <span class="hljs-string">"${APP_NAME}-task"</span>,
@@ -827,13 +827,13 @@ aws ec2 authorize-security-group-ingress \
 }
 EOF
 </code></pre>
-<h3 id="8-2-register-task-definition">8.2 Register Task Definition</h3>
+<h3 id="8-2-register-task-definition">8.2 注册任务定义</h3>
 <pre><code class="lang-bash">aws ecs register-task-definition \
   --<span class="hljs-keyword">cli</span>-<span class="hljs-keyword">input</span>-json <span class="hljs-keyword">file</span>:<span class="hljs-comment">///tmp/app-signals-task-def.json \</span>
   --region <span class="hljs-variable">${AWS_REGION}</span>
 </code></pre>
-<p><strong>Output:</strong> Should show revision 1 with status ACTIVE</p>
-<h2 id="step-9-deploy-ecs-service">Step 9: Deploy ECS Service</h2>
+<p><strong>输出：</strong> 应显示 版本 1，状态为 ACTIVE</p>
+<h2 id="step-9-deploy-ecs-service">Step 9: 部署 ECS 服务</h2>
 <pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-service</span> \
   <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
   <span class="hljs-built_in">--service-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
@@ -843,17 +843,17 @@ EOF
   <span class="hljs-built_in">--network-configuration</span> <span class="hljs-string">"awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SG_ID}],assignPublicIp=ENABLED}"</span> \
   <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
 </code></pre>
-<p><strong>Note:</strong> <code>assignPublicIp=ENABLED</code> is for testing. For production, use a load balancer.</p>
-<h2 id="step-10-verify-deployment">Step 10: Verify Deployment</h2>
-<h3 id="10-1-check-service-status">10.1 Check Service Status</h3>
+<p><strong>注意：</strong> <code>assignPublicIp=ENABLED</code> 用于测试。生产环境请使用负载均衡器。</p>
+<h2 id="step-10-verify-deployment">Step 10: 验证部署</h2>
+<h3 id="10-1-检查-service-status">10.1 检查服务状态</h3>
 <pre><code class="lang-bash">aws ecs describe-services \
   -<span class="ruby">-cluster ${CLUSTER_NAME} \
 </span>  -<span class="ruby">-services ${APP_NAME}-service \
 </span>  -<span class="ruby">-region ${AWS_REGION} \
 </span>  -<span class="ruby">-query <span class="hljs-string">'services[0].{status:status,runningCount:runningCount,desiredCount:desiredCount}'</span></span>
 </code></pre>
-<p><strong>Expected:</strong> <code>status: ACTIVE</code>, <code>runningCount: 1</code></p>
-<h3 id="10-2-get-running-task">10.2 Get Running Task</h3>
+<p><strong>预期结果：</strong> <code>status: ACTIVE</code>, <code>runningCount: 1</code></p>
+<h3 id="10-2-get-running-task">10.2 获取运行中的任务</h3>
 <pre><code class="lang-bash"><span class="hljs-string">TASK_ARN=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">list-tasks</span> \
   <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
   <span class="hljs-built_in">--service-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
@@ -864,20 +864,20 @@ EOF
 
 <span class="hljs-string">echo </span><span class="hljs-string">"Task ARN: $TASK_ARN"</span>
 </code></pre>
-<h3 id="10-3-check-container-status">10.3 Check Container Status</h3>
+<h3 id="10-3-检查-container-status">10.3 检查容器状态</h3>
 <pre><code class="lang-bash">aws ecs describe-tasks \
   -<span class="ruby">-cluster ${CLUSTER_NAME} \
 </span>  -<span class="ruby">-tasks ${TASK_ARN} \
 </span>  -<span class="ruby">-region ${AWS_REGION} \
 </span>  -<span class="ruby">-query <span class="hljs-string">'tasks[0].{status:lastStatus,containers:containers[*].{name:name,status:lastStatus,exitCode:exitCode}}'</span></span>
 </code></pre>
-<p><strong>Expected output:</strong></p>
+<p><strong>预期输出：</strong></p>
 <ul>
-<li><code>init</code>: status=STOPPED, exitCode=0 (completed successfully)</li>
+<li><code>init</code>: status=STOPPED, exitCode=0 (成功完成)</li>
 <li><code>ecs-cwagent</code>: status=RUNNING</li>
 <li><code>app</code>: status=RUNNING</li>
 </ul>
-<h3 id="10-4-get-public-ip">10.4 Get Public IP</h3>
+<h3 id="10-4-get-public-ip">10.4 获取公网 IP</h3>
 <pre><code class="lang-bash">TASK_IP=$(aws ecs describe-tasks \
   -<span class="ruby">-cluster ${CLUSTER_NAME} \
 </span>  -<span class="ruby">-tasks ${TASK_ARN} \
@@ -892,7 +892,7 @@ EOF
 </span></span>
 echo "Application URL: http://${TASK_IP}/"
 </code></pre>
-<h3 id="10-5-test-application">10.5 Test Application</h3>
+<h3 id="10-5-test-application">10.5 测试应用</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Test root endpoint</span>
 <span class="hljs-attribute">curl</span> http://<span class="hljs-variable">${TASK_IP}</span>/
 
@@ -902,20 +902,20 @@ curl http://<span class="hljs-variable">${TASK_IP}</span>/health
 <span class="hljs-comment"># Test API endpoint</span>
 curl http://<span class="hljs-variable">${TASK_IP}</span>/api/hello/TestUser
 </code></pre>
-<h2 id="step-11-verify-application-signals">Step 11: Verify Application Signals</h2>
-<h3 id="11-1-check-cloudwatch-logs">11.1 Check CloudWatch Logs</h3>
+<h2 id="step-11-verify-application-signals">Step 11: 验证 Application Signals</h2>
+<h3 id="11-1-检查-cloudwatch-logs">11.1 检查 CloudWatch Logs</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Application logs</span>
 aws logs tail <span class="hljs-regexp">/ecs/</span><span class="hljs-variable">${APP_NAME}</span> --region <span class="hljs-variable">${AWS_REGION}</span> --since <span class="hljs-number">5</span>m --format short
 
 <span class="hljs-comment"># CloudWatch agent logs</span>
 aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hljs-variable">${APP_NAME}</span> --region <span class="hljs-variable">${AWS_REGION}</span> --since <span class="hljs-number">5</span>m --format short
 </code></pre>
-<p><strong>Look for:</strong></p>
+<p><strong>查找:</strong></p>
 <ul>
-<li>Application logs: &quot;PYTHONPATH: /otel-auto-instrumentation-python/...&quot;</li>
-<li>Agent logs: &quot;application_signals&quot;, &quot;X-Ray proxy server started&quot;</li>
+<li>应用日志： &quot;PYTHONPATH: /otel-auto-instrumentation-python/...&quot;</li>
+<li>Agent 日志： &quot;application_signals&quot;, &quot;X-Ray proxy server started&quot;</li>
 </ul>
-<h3 id="11-2-check-metrics">11.2 Check Metrics</h3>
+<h3 id="11-2-检查-metrics">11.2 查看 Metrics</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Wait 2-3 minutes after first requests, then check</span>
 <span class="hljs-string">aws </span><span class="hljs-string">cloudwatch </span><span class="hljs-built_in">list-metrics</span> \
   <span class="hljs-built_in">--namespace</span> <span class="hljs-string">ApplicationSignals </span>\
@@ -924,7 +924,7 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
   <span class="hljs-built_in">--query</span> <span class="hljs-string">'Metrics[*].MetricName'</span> \
   <span class="hljs-built_in">--output</span> <span class="hljs-string">text </span>| <span class="hljs-string">tr </span><span class="hljs-string">'\t'</span> <span class="hljs-string">'\n'</span> | <span class="hljs-string">sort </span>-u
 </code></pre>
-<p><strong>Expected metrics:</strong></p>
+<p><strong>预期 metrics：</strong></p>
 <ul>
 <li>PythonProcessCpuUtilization</li>
 <li>PythonProcessRSSMemoryUsed</li>
@@ -933,7 +933,7 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
 <li>Error</li>
 <li>Fault</li>
 </ul>
-<h3 id="11-3-generate-traffic">11.3 Generate Traffic</h3>
+<h3 id="11-3-generate-traffic">11.3 生成流量</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Generate traffic to create traces</span>
 <span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> {1..100}; <span class="hljs-keyword">do</span>
   curl <span class="hljs-_">-s</span> http://<span class="hljs-variable">${TASK_IP}</span>/api/hello/User<span class="hljs-variable">${i}</span> &gt; /dev/null
@@ -942,7 +942,7 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
 
 <span class="hljs-built_in">echo</span> <span class="hljs-string">"100 requests sent! Wait 5-10 minutes for Application Signals..."</span>
 </code></pre>
-<h3 id="11-4-check-application-signals-service-discovery">11.4 Check Application Signals Service Discovery</h3>
+<h3 id="11-4-检查-application-signals-service-discovery">11.4 检查 Application Signals 服务发现</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Wait 5-10 minutes after traffic generation</span>
 <span class="hljs-string">aws </span><span class="hljs-string">application-signals </span><span class="hljs-built_in">list-services</span> \
   <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
@@ -950,12 +950,12 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
   <span class="hljs-built_in">--end-time</span> $(<span class="hljs-string">date </span>-u +%s) \
   <span class="hljs-built_in">--query</span> <span class="hljs-string">'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</span>
 </code></pre>
-<p><strong>Expected:</strong> Your service should appear with:</p>
+<p><strong>预期结果：</strong> 您的服务应显示为：</p>
 <ul>
 <li>Name: <code>${APP_NAME}</code></li>
-<li>Environment: <code>ecs:${AWS_REGION}</code></li>
+<li>环境： <code>ecs:${AWS_REGION}</code></li>
 </ul>
-<h3 id="11-5-check-service-operations">11.5 Check Service Operations</h3>
+<h3 id="11-5-检查-service-operations">11.5 检查服务操作</h3>
 <pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">application-signals </span><span class="hljs-built_in">list-service-operations</span> \
   <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
   <span class="hljs-built_in">--start-time</span> $(<span class="hljs-string">date </span>-u -<span class="hljs-string">v-2H </span>+%s) \
@@ -963,38 +963,38 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
   <span class="hljs-built_in">--key-attributes</span> <span class="hljs-string">Name=</span>${<span class="hljs-string">APP_NAME}</span>,<span class="hljs-string">Type=</span><span class="hljs-string">Service,</span><span class="hljs-string">Environment=</span><span class="hljs-string">ecs:</span>${<span class="hljs-string">AWS_REGION}</span> \
   <span class="hljs-built_in">--query</span> <span class="hljs-string">'ServiceOperations[*].Name'</span>
 </code></pre>
-<p><strong>Expected operations:</strong></p>
+<p><strong>预期操作：</strong></p>
 <ul>
 <li><code>GET /api/hello/{name}</code></li>
 <li><code>GET /health</code></li>
 <li><code>GET /</code></li>
 </ul>
-<h2 id="step-12-view-in-aws-console">Step 12: View in AWS Console</h2>
-<h3 id="console-access">Console Access</h3>
+<h2 id="step-12-view-in-aws-console">Step 12: 在 AWS 控制台中查看</h2>
+<h3 id="console-access">控制台访问</h3>
 <ol>
-<li><p><strong>Navigate to:</strong></p>
+<li><p><strong>导航到:</strong></p>
 <pre><code>AWS <span class="hljs-built_in">Console</span> → CloudWatch → Application Signals → Services
-</code></pre><p>Or direct link:</p>
+</code></pre><p>或直接链接：</p>
 <pre><code>https:<span class="hljs-regexp">//</span><span class="hljs-variable">${AWS_REGION}</span>.console.aws.amazon.com<span class="hljs-regexp">/cloudwatch/</span>home?region=<span class="hljs-variable">${AWS_REGION}</span><span class="hljs-comment">#application-signals:services</span>
 </code></pre></li>
-<li><p><strong>Look for your service:</strong></p>
+<li><p><strong>查找 your service:</strong></p>
 <ul>
-<li>Service Name: Value of <code>${APP_NAME}</code></li>
-<li>Environment: <code>ecs:${AWS_REGION}</code></li>
+<li>服务名称： 值 of <code>${APP_NAME}</code></li>
+<li>环境： <code>ecs:${AWS_REGION}</code></li>
 </ul>
 </li>
-<li><p><strong>Explore:</strong></p>
+<li><p><strong>浏览：</strong></p>
 <ul>
-<li>Service Map: Visual topology</li>
-<li>Service Dashboard: Latency, errors, faults</li>
-<li>Operations: Per-endpoint metrics</li>
-<li>Dependencies: Downstream service calls</li>
+<li>Service Map：可视化拓扑</li>
+<li>Service Dashboard：延迟、错误、故障</li>
+<li>Operations：每个端点的 metrics</li>
+<li>Dependencies：下游服务调用</li>
 </ul>
 </li>
 </ol>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<h3 id="issue-service-not-appearing-in-application-signals">Issue: Service Not Appearing in Application Signals</h3>
-<p><strong>Check:</strong></p>
+<h2 id="troubleshooting">故障排除</h2>
+<h3 id="issue-service-not-appearing-in-application-signals">问题：服务未出现在 Application Signals 中</h3>
+<p><strong>检查：</strong></p>
 <pre><code class="lang-bash"><span class="hljs-comment"># 1. Verify metrics are being published</span>
 <span class="hljs-string">aws </span><span class="hljs-string">cloudwatch </span><span class="hljs-built_in">list-metrics</span> \
   <span class="hljs-built_in">--namespace</span> <span class="hljs-string">ApplicationSignals </span>\
@@ -1008,8 +1008,8 @@ aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hlj
 <span class="hljs-comment"># 3. Check container logs for errors</span>
 <span class="hljs-string">aws </span><span class="hljs-string">logs </span><span class="hljs-string">tail </span>/<span class="hljs-string">ecs/</span>${<span class="hljs-string">APP_NAME}</span> <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> <span class="hljs-built_in">--since</span> <span class="hljs-string">10m</span>
 </code></pre>
-<h3 id="issue-init-container-fails">Issue: Init Container Fails</h3>
-<p><strong>Check:</strong></p>
+<h3 id="issue-init-container-fails">问题：Init 容器失败</h3>
+<p><strong>检查：</strong></p>
 <pre><code class="lang-bash"># Describe task to see init container exit code
 aws ecs describe-tasks \
   -<span class="ruby">-cluster ${CLUSTER_NAME} \
@@ -1017,107 +1017,107 @@ aws ecs describe-tasks \
 </span>  -<span class="ruby">-region ${AWS_REGION} \
 </span>  -<span class="ruby">-query <span class="hljs-string">'tasks[0].containers[?name==`init`].{name:name,exitCode:exitCode,reason:reason}'</span></span>
 </code></pre>
-<p><strong>Expected:</strong> <code>exitCode: 0</code></p>
-<p><strong>If non-zero:</strong> Image might not be available. Verify tag <code>v0.12.1</code> exists:</p>
+<p><strong>预期结果：</strong> <code>exitCode: 0</code></p>
+<p><strong>如果非零：</strong> 镜像可能不可用。验证标签 <code>v0.12.1</code> 是否存在：</p>
 <pre><code class="lang-bash">docker pull <span class="hljs-keyword">public</span>.ecr.aws<span class="hljs-regexp">/aws-observability/</span>adot-autoinstrumentation-<span class="hljs-string">python:</span>v0<span class="hljs-number">.12</span><span class="hljs-number">.1</span>
 </code></pre>
 <h3 id="issue-application-can-t-connect-to-cloudwatch-agent">Issue: Application Can&#39;t Connect to CloudWatch Agent</h3>
-<p><strong>Symptoms:</strong></p>
+<p><strong>症状：</strong></p>
 <pre><code>ConnectionRefusedError: <span class="hljs-string">[Errno 111]</span> Connection refused
-</code></pre><p><strong>Check:</strong></p>
+</code></pre><p><strong>检查：</strong></p>
 <ol>
-<li>Verify CloudWatch agent container is RUNNING</li>
-<li>Check container dependency - app should depend on <code>init</code> with condition SUCCESS</li>
-<li>Verify environment variables (especially endpoints: <code>http://localhost:4316</code> and <code>http://localhost:2000</code>)</li>
+<li>验证 CloudWatch Agent 容器正在运行</li>
+<li>检查容器依赖 - app 应该依赖 <code>init</code> 且条件为 SUCCESS</li>
+<li>验证环境变量（特别是端点： <code>http://localhost:4316</code> and <code>http://localhost:2000</code>)</li>
 </ol>
-<h3 id="issue-no-traces-in-x-ray">Issue: No Traces in X-Ray</h3>
-<p><strong>Common causes:</strong></p>
+<h3 id="issue-no-traces-in-x-ray">问题：X-Ray 中无 Traces</h3>
+<p><strong>常见原因：</strong></p>
 <ol>
 <li><strong>Missing <code>OTEL_PYTHON_DISTRO=aws_distro</code></strong> - Critical for Application Signals</li>
-<li><strong>Missing <code>OTEL_TRACES_SAMPLER_ARG</code></strong> - X-Ray sampler endpoint required</li>
-<li><strong>Using multiple workers</strong> - Must run single worker (<code>uvicorn app:app</code> without <code>--workers</code>)</li>
-<li><strong>Using <code>opentelemetry-instrument</code> wrapper</strong> - Don&#39;t use it, let PYTHONPATH handle instrumentation</li>
+<li><strong>Missing <code>OTEL_TRACES_SAMPLER_ARG</code></strong> - 需要 X-Ray 采样器端点</li>
+<li><strong>使用多个 workers</strong> - 必须运行单个 worker (<code>uvicorn app:app</code> 不使用 <code>--workers</code>)</li>
+<li><strong>Using <code>opentelemetry-instrument</code> wrapper</strong> - 不要使用它，让 PYTHONPATH 处理插桩</li>
 </ol>
-<h3 id="issue-iam-permission-errors">Issue: IAM Permission Errors</h3>
-<p><strong>Symptoms:</strong></p>
+<h3 id="issue-iam-permission-errors">问题：IAM 权限错误</h3>
+<p><strong>症状：</strong></p>
 <pre><code><span class="hljs-string">AccessDeniedException:</span> ... <span class="hljs-string">logs:</span>CreateLogGroup
-</code></pre><p><strong>Fix:</strong>
-Add CloudWatch Logs permissions to execution role (see Step 5.4)</p>
-<h2 id="key-configuration-details">Key Configuration Details</h2>
-<h3 id="critical-environment-variables">Critical Environment Variables</h3>
+</code></pre><p><strong>修复：</strong>
+向执行角色添加 CloudWatch Logs 权限 (see Step 5.4)</p>
+<h2 id="key-configuration-details">关键配置详情</h2>
+<h3 id="critical-environment-variables">关键环境变量</h3>
 <table>
 <thead>
 <tr>
-<th>Variable</th>
-<th>Value</th>
-<th>Purpose</th>
+<th>变量</th>
+<th>值</th>
+<th>用途</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><code>PYTHONPATH</code></td>
 <td><code>/otel-auto-instrumentation-python/opentelemetry/instrumentation/auto_instrumentation:/app:/otel-auto-instrumentation-python</code></td>
-<td>Auto-instrumentation entry point</td>
+<td>自动插桩入口点</td>
 </tr>
 <tr>
 <td><code>OTEL_PYTHON_DISTRO</code></td>
 <td><code>aws_distro</code></td>
-<td>Use AWS distribution (CRITICAL!)</td>
+<td>使用 AWS 发行版（关键！）</td>
 </tr>
 <tr>
 <td><code>OTEL_PYTHON_CONFIGURATOR</code></td>
 <td><code>aws_configurator</code></td>
-<td>AWS-specific configuration</td>
+<td>AWS 特定配置</td>
 </tr>
 <tr>
 <td><code>OTEL_TRACES_SAMPLER</code></td>
 <td><code>xray</code></td>
-<td>Use X-Ray sampling</td>
+<td>使用 X-Ray 采样</td>
 </tr>
 <tr>
 <td><code>OTEL_TRACES_SAMPLER_ARG</code></td>
 <td><code>endpoint=http://localhost:2000</code></td>
-<td>X-Ray sampler endpoint</td>
+<td>X-Ray 采样器端点</td>
 </tr>
 <tr>
 <td><code>OTEL_AWS_APPLICATION_SIGNALS_ENABLED</code></td>
 <td><code>true</code></td>
-<td>Enable Application Signals</td>
+<td>启用 Application Signals</td>
 </tr>
 <tr>
 <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code></td>
 <td><code>http://localhost:4316/v1/traces</code></td>
-<td>Send traces to CW agent</td>
+<td>向 CW Agent 发送 traces</td>
 </tr>
 <tr>
 <td><code>OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT</code></td>
 <td><code>http://localhost:4316/v1/metrics</code></td>
-<td>Send metrics to CW agent</td>
+<td>向 CW Agent 发送 metrics</td>
 </tr>
 <tr>
 <td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
 <td><code>service.name=YOUR_SERVICE,deployment.environment=ecs:REGION</code></td>
-<td>Service identification</td>
+<td>服务标识</td>
 </tr>
 </tbody>
 </table>
-<h3 id="init-container-details">Init Container Details</h3>
+<h3 id="init-container-details">Init 容器详情</h3>
 <p><strong>Image:</strong> <code>public.ecr.aws/aws-observability/adot-autoinstrumentation-python:v0.12.1</code></p>
-<p><strong>Why versioned tag, not <code>:latest</code>?</strong></p>
+<p><strong>为什么使用版本标签而不是 <code>:latest</code>?</strong></p>
 <ul>
 <li>The <code>:latest</code> tag doesn&#39;t exist for Python ADOT images</li>
-<li>Use specific version tags (check <a href="https://github.com/aws-observability/aws-otel-python-instrumentation/releases">https://github.com/aws-observability/aws-otel-python-instrumentation/releases</a>)</li>
-<li>Current stable: <code>v0.12.1</code></li>
+<li>使用特定版本标签 (检查 <a href="https://github.com/aws-observability/aws-otel-python-instrumentation/releases">https://github.com/aws-observability/aws-otel-python-instrumentation/releases</a>)</li>
+<li>当前稳定版： <code>v0.12.1</code></li>
 </ul>
-<p><strong>What it does:</strong></p>
+<p><strong>功能说明：</strong></p>
 <ol>
-<li>Runs once before app container starts</li>
-<li>Copies ADOT Python instrumentation files from <code>/autoinstrumentation/</code> to shared volume</li>
-<li>Exits with code 0</li>
-<li>App container mounts the volume and uses PYTHONPATH to load instrumentation</li>
+<li>在应用容器启动前运行一次</li>
+<li>Copies ADOT Python instrumentation files from <code>/autoinstrumentation/</code> 复制 ADOT Java 插桩文件到共享卷</li>
+<li>以退出码 0 退出</li>
+<li>应用容器挂载该卷并使用 PYTHONPATH to load instrumentation</li>
 </ol>
-<h3 id="cloudwatch-agent-configuration">CloudWatch Agent Configuration</h3>
-<p><strong>Must include BOTH sections:</strong></p>
+<h3 id="cloudwatch-agent-configuration">CloudWatch Agent 配置</h3>
+<p><strong>必须包含两个部分：</strong></p>
 <pre><code class="lang-json">{
   <span class="hljs-attr">"traces"</span>: {
     <span class="hljs-attr">"traces_collected"</span>: {
@@ -1131,23 +1131,23 @@ Add CloudWatch Logs permissions to execution role (see Step 5.4)</p>
   }
 }
 </code></pre>
-<h3 id="application-code-requirements">Application Code Requirements</h3>
+<h3 id="application-code-requirements">应用代码要求</h3>
 <p><strong>DO:</strong></p>
 <ul>
 <li>Write normal FastAPI code</li>
-<li>Use standard libraries (requests, psycopg2, etc.)</li>
-<li>Keep code clean - no OpenTelemetry imports needed</li>
+<li>使用标准库（requests、psycopg2 等）</li>
+<li>保持代码整洁 - 无需 OpenTelemetry 导入</li>
 </ul>
 <p><strong>DON&#39;T:</strong></p>
 <ul>
 <li>Import <code>opentelemetry-*</code> packages</li>
 <li>Call <code>FastAPIInstrumentor.instrument_app()</code></li>
 <li>Use <code>opentelemetry-instrument</code> wrapper in CMD</li>
-<li>Run with <code>--workers</code> flag (must be single worker)</li>
+<li>使用以下参数运行 <code>--workers</code> 标志（必须是单个 worker）</li>
 <li>Install OpenTelemetry packages in requirements.txt</li>
 </ul>
-<h2 id="cleanup">Cleanup</h2>
-<p>To remove all resources:</p>
+<h2 id="cleanup">清理资源</h2>
+<p>删除所有资源：</p>
 <pre><code class="lang-bash"><span class="hljs-comment"># Delete ECS service</span>
 <span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-string">update-service </span>\
   <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \

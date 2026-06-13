@@ -1,6 +1,6 @@
 # Amazon CloudWatch Container Insights
 
-在 Observability 最佳实践指南的这一部分中，我们将深入探讨以下与 Amazon CloudWatch Container Insights 相关的主题：
+在可观测性最佳实践指南的这一部分中，我们将深入探讨以下与 Amazon CloudWatch Container Insights 相关的主题：
 
 * Amazon CloudWatch Container Insights 简介
 * 将 Amazon CloudWatch Container Insights 与 AWS Distro for Open Telemetry 配合使用
@@ -150,7 +150,7 @@ Pipeline 中的最后一个组件是 [AWS CloudWatch EMF Exporter](https://githu
 在使用容器时，建议尽可能通过标准输出 (stdout) 和标准错误输出 (stderr) 方法使用 Docker JSON 日志驱动程序推送所有日志，包括应用程序日志。因此，在 EKS 中，日志驱动程序默认已配置，容器化应用程序写入 `stdout` 或 `stderr` 的所有内容都会流式传输到工作节点上 `"/var/log/containers"` 下的 JSON 文件中。Container Insights 默认将这些日志分为三个不同的类别，并在 Fluent Bit 中为每个类别创建专用的输入流，在 CloudWatch Logs 中创建独立的日志组。这些类别是：
 
 * 应用程序日志：存储在 `"/var/log/containers/*.log"` 下的所有应用程序日志都会流式传输到专用的 `/aws/containerinsights/Cluster_Name/application` 日志组。默认情况下排除所有非应用程序日志，如 kube-proxy 和 aws-node 日志。但是，额外的 Kubernetes 附加组件日志（如 CoreDNS 日志）也会被处理并流式传输到此日志组。
-* 主机日志：每个 EKS 工作节点的系统日志会流式传输到 `/aws/containerinsights/Cluster_Name/host` 日志组。这些系统日志包括 `"/var/log/messages,/var/log/dmesg,/var/log/secure"` 文件的内容。考虑到容器化工作负载的无状态和动态特性（EKS 工作节点在扩展活动期间经常被终止），使用 Fluent Bit 实时流式传输这些日志并在节点终止后仍能在 CloudWatch logs 中获取这些日志，对于 EKS 工作节点的 observability 和健康监控至关重要。它还使您能够在许多情况下无需登录工作节点即可调试或排查集群问题，并以更系统的方式分析这些日志。
+* 主机日志：每个 EKS 工作节点的系统日志会流式传输到 `/aws/containerinsights/Cluster_Name/host` 日志组。这些系统日志包括 `"/var/log/messages,/var/log/dmesg,/var/log/secure"` 文件的内容。考虑到容器化工作负载的无状态和动态特性（EKS 工作节点在扩展活动期间经常被终止），使用 Fluent Bit 实时流式传输这些日志并在节点终止后仍能在 CloudWatch logs 中获取这些日志，对于 EKS 工作节点的可观测性和健康监控至关重要。它还使您能够在许多情况下无需登录工作节点即可调试或排查集群问题，并以更系统的方式分析这些日志。
 * 数据平面日志：EKS 已经提供了[控制平面日志](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html)。通过 Container Insights 中的 Fluent Bit 集成，在每个工作节点上运行并负责维护运行中 pod 的 EKS 数据平面组件生成的日志会被捕获为数据平面日志。这些日志也会流式传输到 CloudWatch 中的专用日志组 `'/aws/containerinsights/Cluster_Name/dataplane`。kube-proxy、aws-node 和 Docker 运行时日志保存在此日志组中。除了控制平面日志外，将数据平面日志存储在 CloudWatch Logs 中有助于提供 EKS 集群的完整视图。
 
 此外，请从 [Fluent Bit 与 Amazon EKS 集成](https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/)了解更多关于 Fluent Bit 配置、Fluent Bit 监控和日志分析的主题。
@@ -247,4 +247,4 @@ processors:
 
 ### 结论
 
-在 Observability 最佳实践指南的这一部分中，我们涵盖了 CloudWatch Container Insights 的许多深入细节，包括 Amazon CloudWatch Container Insights 简介以及它如何帮助您观察 Amazon EKS 上的容器化工作负载。我们深入介绍了将 Amazon CloudWatch Container Insights 与 AWS Distro for Open Telemetry 配合使用，以启用 Container Insight metrics 的收集，在 Amazon CloudWatch 控制台上可视化容器化工作负载的 metrics。接下来，我们详细介绍了 CloudWatch Container Insights 中的 Fluent Bit 集成（适用于 Amazon EKS），以在 Fluent Bit 中创建专用输入流，并在 CloudWatch Logs 中为应用程序、主机和数据平面日志创建独立的日志组。然后，我们讨论了两种不同的方法（如 processor 和 metrics 维度）来实现 CloudWatch Container Insights 的成本节省。最后，我们简要介绍了如何使用 EKS Blueprints 作为在 Amazon EKS 集群创建过程中设置 Container Insights 的工具。您可以通过 [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) 中的 [CloudWatch Container Insights 模块](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights)获得实践经验。
+在可观测性最佳实践指南的这一部分中，我们涵盖了 CloudWatch Container Insights 的许多深入细节，包括 Amazon CloudWatch Container Insights 简介以及它如何帮助您观察 Amazon EKS 上的容器化工作负载。我们深入介绍了将 Amazon CloudWatch Container Insights 与 AWS Distro for Open Telemetry 配合使用，以启用 Container Insight metrics 的收集，在 Amazon CloudWatch 控制台上可视化容器化工作负载的 metrics。接下来，我们详细介绍了 CloudWatch Container Insights 中的 Fluent Bit 集成（适用于 Amazon EKS），以在 Fluent Bit 中创建专用输入流，并在 CloudWatch Logs 中为应用程序、主机和数据平面日志创建独立的日志组。然后，我们讨论了两种不同的方法（如 processor 和 metrics 维度）来实现 CloudWatch Container Insights 的成本节省。最后，我们简要介绍了如何使用 EKS Blueprints 作为在 Amazon EKS 集群创建过程中设置 Container Insights 的工具。您可以通过 [https://catalog.workshops.aws/observability/en-US](https://catalog.workshops.aws/observability/en-US) 中的 [CloudWatch Container Insights 模块](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights)获得实践经验。

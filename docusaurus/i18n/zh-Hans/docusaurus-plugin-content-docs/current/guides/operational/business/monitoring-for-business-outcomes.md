@@ -1,6 +1,6 @@
-# 为什么应该做 Observability？
+# 为什么应该做可观测性？
 
-观看 YouTube 上的 [Developing an Observability Strategy](https://www.youtube.com/watch?v=Ub3ATriFapQ)
+观看 YouTube 上的 [Developing an 可观测性 Strategy](https://www.youtube.com/watch?v=Ub3ATriFapQ)
 
 ## 真正重要的是什么？
 
@@ -17,7 +17,7 @@
 — ITIL Service Transition, AXELOS, 2011, page 44.  
 — 参见 [Change Management in the Cloud AWS Whitepaper](https://docs.aws.amazon.com/whitepapers/latest/change-management-in-the-cloud/change-management-in-the-cloud.html)
 
-使命和业务价值很重要，因为它们应该指导您所做的一切。Observability 有许多好处，包括：
+使命和业务价值很重要，因为它们应该指导您所做的一切。可观测性有许多好处，包括：
 
 - 更好的可用性
 - 更高的可靠性
@@ -29,9 +29,9 @@
 - 降低运营成本
 - 自动化
 
-所有这些好处有一个共同点，它们都直接向客户或间接向组织交付业务价值。在考虑 Observability 时，一切都应该回归到思考您的应用程序是否在交付业务价值。
+所有这些好处有一个共同点，它们都直接向客户或间接向组织交付业务价值。在考虑可观测性时，一切都应该回归到思考您的应用程序是否在交付业务价值。
 
-这意味着 Observability 应该衡量那些有助于交付业务价值的事物，关注业务成果以及当它们面临风险时：您应该考虑客户想要什么和需要什么。
+这意味着可观测性应该衡量那些有助于交付业务价值的事物，关注业务成果以及当它们面临风险时：您应该考虑客户想要什么和需要什么。
 
 ## 从哪里开始？
 
@@ -63,13 +63,13 @@
 
 — Daniel Slater - Worldwide Lead, Culture of Innovation, AWS in [Elements of Amazon\'s Day 1 Culture](https://aws.amazon.com/executive-insights/content/how-amazon-defines-and-operationalizes-a-day-1-culture/)
 
-我们从客户开始，从他们的需求倒推。这不是商业成功的唯一方法，但它是 Observability 的一个好方法。与利益相关者合作，了解什么对您的客户重要，然后从那里倒推。
+我们从客户开始，从他们的需求倒推。这不是商业成功的唯一方法，但它是可观测性的一个好方法。与利益相关者合作，了解什么对您的客户重要，然后从那里倒推。
 
 作为额外的好处，如果您收集对客户和利益相关者重要的 metrics，您可以将这些可视化为近实时 dashboard，避免必须创建报告或回答诸如"加载登录页面需要多长时间？"或"运行网站的成本是多少？"之类的问题 - 利益相关者和高管应该能够自助获取这些信息。
 
 这些是您的应用程序**真正重要**的高级 metrics，它们几乎总是存在问题的最佳指标。例如：一个告警表明在给定时间段内订单数量低于正常预期，这告诉您可能存在影响客户的问题；一个告警表明服务器上的卷几乎已满或某个特定服务有大量 5xx 错误，可能需要修复，但您仍然需要了解客户影响，然后相应地确定优先级 - 这可能需要时间。
 
-当您衡量这些高级业务 metrics 时，影响客户的问题很容易识别。这些 metrics 是发生了**什么**。其他 metrics 和其他形式的 Observability（如 traces 和 logs）是**为什么**会发生这种情况，这将引导您找到可以做什么来修复或改善它。
+当您衡量这些高级业务 metrics 时，影响客户的问题很容易识别。这些 metrics 是发生了**什么**。其他 metrics 和其他形式的可观测性（如 traces 和 logs）是**为什么**会发生这种情况，这将引导您找到可以做什么来修复或改善它。
 
 ## 观察什么
 
@@ -81,7 +81,7 @@
 
 然后您可以评估影响并尝试纠正问题。几乎总是，这些数据会在孤立的技术 metrics（如 CPU 或内存）之前告诉您存在问题。
 
-您可以被动地使用 Observability 来修复影响业务成果的问题，也可以主动使用数据来做一些事情，比如改善客户的搜索体验。
+您可以被动地使用可观测性来修复影响业务成果的问题，也可以主动使用数据来做一些事情，比如改善客户的搜索体验。
 
 ## 结论
 

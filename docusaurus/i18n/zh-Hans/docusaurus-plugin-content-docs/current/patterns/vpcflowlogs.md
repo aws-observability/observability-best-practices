@@ -1,6 +1,6 @@
-# 使用 VPC Flow Logs 实现网络 Observability
+# 使用 VPC Flow Logs 实现网络可观测性
 
-在现代云环境中，网络 Observability 在确保应用程序和基础设施的安全性、性能和可靠性方面发挥着关键作用。Amazon Virtual Private Cloud（VPC）Flow Logs 是 Amazon Web Services（AWS）提供的一项功能，它提供了强大的工具来获取 VPC 内网络流量的可见性，支持有效的故障排除和安全分析。
+在现代云环境中，网络可观测性在确保应用程序和基础设施的安全性、性能和可靠性方面发挥着关键作用。Amazon Virtual Private Cloud（VPC）Flow Logs 是 Amazon Web Services（AWS）提供的一项功能，它提供了强大的工具来获取 VPC 内网络流量的可见性，支持有效的故障排除和安全分析。
 
 VPC Flow Logs 捕获有关进出 VPC 的 IP 流量的元数据，提供对网络通信模式、潜在安全威胁和性能瓶颈的宝贵洞察。通过利用 VPC Flow Logs，组织可以获得以下好处：
 
@@ -17,7 +17,7 @@ VPC Flow Logs 捕获有关进出 VPC 的 IP 流量的元数据，提供对网络
 ![VPC flow logs](./images/vpcflowlogs.png)
 *图 1：使用 Grafana 进行 VPC flow logs 可视化*
 <!--https://aws.amazon.com/blogs/mt/visualize-and-gain-insights-into-your-vpc-flow-logs-with-amazon-managed-grafana/-->
-要利用 VPC Flow Logs 实现网络 Observability 和故障排除，组织可以遵循以下一般步骤：
+要利用 VPC Flow Logs 实现网络可观测性和故障排除，组织可以遵循以下一般步骤：
 
 1. **启用 VPC Flow Logs**：为您的 VPC 或 VPC 内的特定网络接口配置 VPC Flow Logs，指定所需的日志目标（例如 Amazon CloudWatch Logs、Amazon S3 或第三方日志管理解决方案）。
 
@@ -29,8 +29,8 @@ VPC Flow Logs 捕获有关进出 VPC 的 IP 流量的元数据，提供对网络
 
 5. **优化网络配置**：利用 VPC Flow Logs 的洞察来优化网络配置、微调安全组规则，并实施流量整形或过滤机制以增强网络性能和安全态势。
 
-虽然 VPC Flow Logs 提供了有价值的网络 Observability 和故障排除功能，但重要的是要考虑日志数据量和成本管理等潜在挑战。随着网络流量的增加，生成的日志数据量可能会显著增长，可能影响存储成本和性能。实施日志数据保留策略、采样策略和成本优化技术可能是确保高效且经济实惠的日志解决方案所必需的。
+虽然 VPC Flow Logs 提供了有价值的网络可观测性和故障排除功能，但重要的是要考虑日志数据量和成本管理等潜在挑战。随着网络流量的增加，生成的日志数据量可能会显著增长，可能影响存储成本和性能。实施日志数据保留策略、采样策略和成本优化技术可能是确保高效且经济实惠的日志解决方案所必需的。
 
 此外，确保 VPC Flow Logs 的适当访问控制和数据安全至关重要。AWS 提供精细的访问控制机制和加密功能来保护日志数据的机密性和完整性。
 
-总之，VPC Flow Logs 是在 AWS 环境中实现网络 Observability 和有效故障排除的强大工具。通过提供对网络流量模式的详细洞察，VPC Flow Logs 使组织能够监控安全威胁、优化网络配置、排除性能问题并保持合规。通过将 VPC Flow Logs 集成到现有的安全和监控解决方案中，组织可以增强其整体 Observability 并维护安全、高性能和可靠的云基础设施。
+总之，VPC Flow Logs 是在 AWS 环境中实现网络可观测性和有效故障排除的强大工具。通过提供对网络流量模式的详细洞察，VPC Flow Logs 使组织能够监控安全威胁、优化网络配置、排除性能问题并保持合规。通过将 VPC Flow Logs 集成到现有的安全和监控解决方案中，组织可以增强其整体可观测性并维护安全、高性能和可靠的云基础设施。

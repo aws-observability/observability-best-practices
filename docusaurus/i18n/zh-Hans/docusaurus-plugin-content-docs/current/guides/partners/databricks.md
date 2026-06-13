@@ -1,6 +1,6 @@
-# AWS 上的 Databricks 监控和 Observability 最佳实践
+# AWS 上的 Databricks 监控和可观测性最佳实践
 
-Databricks 是一个管理数据分析和 AI/ML 工作负载的平台。本指南旨在帮助在 [AWS 上运行 Databricks](https://aws.amazon.com/solutions/partners/databricks/) 的客户，使用 AWS 原生 Observability 服务或开源托管服务来监控这些工作负载。
+Databricks 是一个管理数据分析和 AI/ML 工作负载的平台。本指南旨在帮助在 [AWS 上运行 Databricks](https://aws.amazon.com/solutions/partners/databricks/) 的客户，使用 AWS 原生可观测性服务或开源托管服务来监控这些工作负载。
 
 ## 为什么要监控 Databricks
 
@@ -23,7 +23,7 @@ Databricks 集群权限还需要使用实例配置文件发送 metrics 和 logs 
 ![Databricks Spark Config](../../images/databricks_spark_config.png)
 *图 1：metrics 命名空间 Spark 配置示例*
 
-## 良好的 Databricks Observability 解决方案的关键组成部分
+## 良好的 Databricks 可观测性解决方案的关键组成部分
 
 **1) Metrics：** Metrics 是描述在一段时间内测量的活动或特定过程的数字。以下是 Databricks 上不同类型的 metrics：
 
@@ -44,7 +44,7 @@ Databricks 集群权限还需要使用实例配置文件发送 metrics 和 logs 
 
 **5) 告警：** 告警通知工程师需要关注的状况。
 
-## AWS 原生 Observability 选项
+## AWS 原生可观测性选项
 
 原生解决方案（如 Ganglia UI 和 Log Delivery）是收集系统 metrics 和查询 Apache Spark metrics 的优秀解决方案。但是，某些方面可以改进：
 
@@ -60,28 +60,28 @@ Databricks 集群权限还需要使用实例配置文件发送 metrics 和 logs 
 有关如何使用 CloudWatch 监控 Databricks 的更多信息，请参阅：
 [How to Monitor Databricks with Amazon CloudWatch](https://aws.amazon.com/blogs/mt/how-to-monitor-databricks-with-amazon-cloudwatch/)
 
-## 开源软件 Observability 选项
+## 开源软件可观测性选项
 
 [Amazon Managed Service for Prometheus](https://aws.amazon.com/prometheus/) 是与 Prometheus 兼容的监控托管无服务器服务，负责存储 metrics 和管理基于这些 metrics 创建的告警。Prometheus 是流行的开源监控技术，是继 Kubernetes 之后第二个属于 Cloud Native Computing Foundation 的项目。
 
-[Amazon Managed Grafana](https://aws.amazon.com/grafana/) 是 Grafana 的托管服务。Grafana 是用于时间序列数据可视化的开源技术，常用于 Observability。我们可以使用 Grafana 可视化来自多个来源的数据，如 Amazon Managed Service for Prometheus、Amazon CloudWatch 等。它将用于可视化 Databricks metrics 和告警。
+[Amazon Managed Grafana](https://aws.amazon.com/grafana/) 是 Grafana 的托管服务。Grafana 是用于时间序列数据可视化的开源技术，常用于可观测性。我们可以使用 Grafana 可视化来自多个来源的数据，如 Amazon Managed Service for Prometheus、Amazon CloudWatch 等。它将用于可视化 Databricks metrics 和告警。
 
-[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) 是 OpenTelemetry 项目的 AWS 支持发行版，提供用于收集 traces 和 metrics 的开源标准、库和服务。通过 OpenTelemetry，我们可以收集多种不同的 Observability 数据格式（如 Prometheus 或 StatsD），丰富这些数据，并将其发送到多个目的地（如 CloudWatch 或 Amazon Managed Service for Prometheus）。
+[AWS Distro for OpenTelemetry](https://aws-otel.github.io/) 是 OpenTelemetry 项目的 AWS 支持发行版，提供用于收集 traces 和 metrics 的开源标准、库和服务。通过 OpenTelemetry，我们可以收集多种不同的可观测性数据格式（如 Prometheus 或 StatsD），丰富这些数据，并将其发送到多个目的地（如 CloudWatch 或 Amazon Managed Service for Prometheus）。
 
 ### 使用场景
 
-虽然 AWS 原生服务将提供管理 Databricks 集群所需的 Observability，但在某些场景中，使用开源托管服务是最佳选择。
+虽然 AWS 原生服务将提供管理 Databricks 集群所需的可观测性，但在某些场景中，使用开源托管服务是最佳选择。
 
-Prometheus 和 Grafana 都是非常流行的技术，已经在许多公司中使用。AWS 开源 Observability 服务将允许运维团队使用相同的现有基础设施、相同的查询语言以及现有的 dashboards 和告警来监控 Databricks 工作负载，而无需承担管理这些服务基础设施、可扩展性和性能的繁重工作。
+Prometheus 和 Grafana 都是非常流行的技术，已经在许多公司中使用。AWS 开源可观测性服务将允许运维团队使用相同的现有基础设施、相同的查询语言以及现有的 dashboards 和告警来监控 Databricks 工作负载，而无需承担管理这些服务基础设施、可扩展性和性能的繁重工作。
 
 ADOT 是需要将 metrics 和 traces 发送到不同目的地（如 CloudWatch 和 Prometheus）或使用不同类型数据源（如 OTLP 和 StatsD）的团队的最佳替代方案。
 
 最后，Amazon Managed Grafana 支持许多不同的数据源，包括 CloudWatch 和 Prometheus，帮助决定使用多个工具的团队关联数据，允许创建适用于所有现有和新 Databricks 集群的模板，以及强大的 API 允许通过基础设施即代码进行配置和管理。
 
-![Databricks OpenSource Observability Diagram](../../images/databricks_oss_diagram.png)
-*图 3：Databricks 开源 Observability 架构*
+![Databricks OpenSource 可观测性 Diagram](../../images/databricks_oss_diagram.png)
+*图 3：Databricks 开源可观测性架构*
 
-要使用 AWS 托管开源 Observability 服务观察 Databricks 集群的 metrics，您需要一个 Amazon Managed Grafana 工作区来可视化 metrics 和告警，以及一个 Amazon Managed Service for Prometheus 工作区（在 Amazon Managed Grafana 工作区中配置为数据源）。
+要使用 AWS 托管开源可观测性服务观察 Databricks 集群的 metrics，您需要一个 Amazon Managed Grafana 工作区来可视化 metrics 和告警，以及一个 Amazon Managed Service for Prometheus 工作区（在 Amazon Managed Grafana 工作区中配置为数据源）。
 
 有两种重要的 metrics 需要收集：Spark metrics 和节点 metrics。
 

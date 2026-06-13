@@ -10,7 +10,7 @@
 [Prometheus](https://prometheus.io/docs/introduction/overview/) 是一个流行的开源系统监控和告警工具包。它已成为使用拉取方式从容器化应用收集 metrics 的事实标准。要使用 Prometheus 捕获 metrics，您首先需要使用 Prometheus [客户端库](https://prometheus.io/docs/instrumenting/clientlibs/)（所有主要编程语言都有提供）对应用代码进行检测。metrics 通常由应用通过 HTTP 暴露，供 Prometheus 服务器读取。
 当 Prometheus 服务器抓取您应用的 HTTP endpoint 时，客户端库将所有跟踪 metrics 的当前状态发送到服务器。服务器可以将 metrics 存储在其管理的本地存储中，或将 metrics 数据发送到远程目标（如 CloudWatch）。
 
-[CloudWatch Container Insights 的 Prometheus 监控](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html)使您能够在 Amazon ECS 集群中利用 Prometheus 的功能。它适用于部署在 EC2 和 Fargate 上的 Amazon ECS 集群。CloudWatch 代理可以作为 Prometheus 服务器的直接替代品使用，减少了提高 observability 所需的监控工具数量。它自动发现部署到 Amazon ECS 的容器化应用中的 Prometheus metrics，并将 metrics 数据作为性能日志事件发送到 CloudWatch。
+[CloudWatch Container Insights 的 Prometheus 监控](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus.html)使您能够在 Amazon ECS 集群中利用 Prometheus 的功能。它适用于部署在 EC2 和 Fargate 上的 Amazon ECS 集群。CloudWatch 代理可以作为 Prometheus 服务器的直接替代品使用，减少了提高可观测性所需的监控工具数量。它自动发现部署到 Amazon ECS 的容器化应用中的 Prometheus metrics，并将 metrics 数据作为性能日志事件发送到 CloudWatch。
 
 :::info
     在 Amazon ECS 集群上部署带有 Prometheus metrics 收集功能的 CloudWatch 代理的步骤记录在 [Amazon CloudWatch 用户指南](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights-Prometheus-install-ECS.html)中

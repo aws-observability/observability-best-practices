@@ -4,7 +4,7 @@
 
 由于不同组件之间的复杂交互，监控 Kotlin Web 应用的性能和健康状况可能具有挑战性。[Kotlin](https://kotlinlang.org/) Web 服务通常构建为 Java Archive (jar) 文件，可以部署在任何运行 Java 的平台上。这些应用通常在分布式环境中运行，涉及多个互连组件，如数据库、外部 API 和缓存层。这种复杂性可能会显著增加您的平均恢复时间（MTTR）。
 
-在本指南中，我们将演示如何对运行在 Linux EC2 服务器上的 Kotlin Web 服务进行自动检测。启用 [CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) 后，可以使用 [AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/introduction) (ADOT) Java 自动检测代理从您的应用中收集 metrics 和 traces，无需进行任何代码变更。您可以利用调用量、可用性、延迟、故障和错误等关键 metrics，快速查看和分类应用服务的当前运行状况，并验证它们是否满足长期性能和业务目标。
+在本指南中，我们将演示如何对运行在 Linux EC2 服务器上的 Kotlin Web 服务进行自动插桩。启用 [CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) 后，可以使用 [AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/introduction) (ADOT) Java 自动插桩代理从您的应用中收集 metrics 和 traces，无需进行任何代码变更。您可以利用调用量、可用性、延迟、故障和错误等关键 metrics，快速查看和分类应用服务的当前运行状况，并验证它们是否满足长期性能和业务目标。
 
 ## 前提条件
 
@@ -18,8 +18,8 @@
 - 启用 CloudWatch Application Signals。
 - 以 fat jar 形式部署 [ktor Web 服务](https://ktor.io/)。
 - 安装配置为从 Web 服务接收 Application Signals 的 CloudWatch agent。
-- 下载 [ADOT](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr#introduction) 自动检测代理。
-- 将 kotlin 服务 jar 与 java agent 一起运行以自动检测服务。
+- 下载 [ADOT](https://aws-otel.github.io/docs/getting-started/java-sdk/auto-instr#introduction) 自动插桩代理。
+- 将 kotlin 服务 jar 与 java agent 一起运行以自动插桩服务。
 - 运行一些测试以生成遥测数据。
 
 ### 架构图
@@ -84,7 +84,7 @@ sudo nano /opt/aws/amazon-cloudwatch-agent/bin/app-signals-config.json
 sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -s -c file:/opt/aws/amazon-cloudwatch-agent/bin/app-signals-config.json
 ```
 
-### 下载 ADOT 自动检测代理
+### 下载 ADOT 自动插桩代理
 
 导航到包含 jar 文件的目录，为了演示方便我们将代理放在这里。在实际场景中，它可能位于单独的文件夹中。
 
@@ -92,7 +92,7 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-c
 cd kotlin-signals/ktor-samples/structured-logging/build/libs
 ```
 
-下载自动检测代理
+下载自动插桩代理
 ```
 wget https://github.com/aws-observability/aws-otel-java-instrumentation/releases/latest/download/aws-opentelemetry-agent.jar
 ```
@@ -124,7 +124,7 @@ for i in {1..1800}; do curl http://localhost:8080 && sleep 2; done
 
 ![kotlin-service-map](./images/kotlin-service-map.png)
 
-检测提供了有价值的 metrics，如延迟：
+插桩提供了有价值的 metrics，如延迟：
 
 ![kotlin-metrics](./images/kotlin-metrics.png)
 

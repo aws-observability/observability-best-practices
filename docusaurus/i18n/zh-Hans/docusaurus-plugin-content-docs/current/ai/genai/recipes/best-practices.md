@@ -1,10 +1,10 @@
-# GenAI Observability 实施最佳实践
+# GenAI 可观测性实施最佳实践
 
 ## 概述
 
-本指南提供了构建生产就绪的 GenAI Observability 解决方案的战术性、实施特定的最佳实践。这些实践基于实际部署和经验教训。
+本指南提供了构建生产就绪的 GenAI 可观测性解决方案的战术性、实施特定的最佳实践。这些实践基于实际部署和经验教训。
 
-## OpenTelemetry 检测
+## OpenTelemetry 插桩
 
 ### Metric 命名约定
 
@@ -50,7 +50,7 @@ optional_dimensions = {
 }
 ```
 
-### 检测代码示例
+### 插桩代码示例
 
 ```python
 from opentelemetry import metrics
@@ -504,7 +504,7 @@ def hash_user_id(user_id):
 
 ### IAM 权限
 
-**Observability 的最小权限 IAM 策略：**
+**可观测性的最小权限 IAM 策略：**
 
 ```json
 {
@@ -557,7 +557,7 @@ logs.associate_kms_key(
 
 ### 负载测试
 
-**在负载下测试 Observability：**
+**在负载下测试可观测性：**
 
 ```python
 import concurrent.futures
@@ -682,7 +682,7 @@ aws cloudwatch list-metrics \
 
 ### 预生产
 
-- [ ] OpenTelemetry 检测已测试
+- [ ] OpenTelemetry 插桩已测试
 - [ ] 所有必需维度已配置
 - [ ] PII 脱敏已实现
 - [ ] IAM 权限已配置（最小权限）
@@ -706,7 +706,7 @@ aws cloudwatch list-metrics \
 
 ## 结论
 
-这些战术最佳实践为在生产环境中实施 GenAI Observability 提供了坚实的基础。请记住：
+这些战术最佳实践为在生产环境中实施 GenAI 可观测性提供了坚实的基础。请记住：
 
 1. 从核心 metrics 开始（tokens、延迟、错误）
 2. 基于实际使用模式进行迭代
@@ -714,9 +714,9 @@ aws cloudwatch list-metrics \
 4. 维护安全性和合规性
 5. 基于反馈持续改进
 
-有关完整的工作示例，请参阅 [GenAI Observability Recipe](./index.md)。
+有关完整的工作示例，请参阅 [GenAI 可观测性 Recipe](./index.md)。
 
 ---
 
 **最后更新：** 2026-03-04
-**反馈：** [提交 Issue](https://github.com/aws-observability/observability-best-practices/issues)
+**反馈：** [提交 Issue](https://github.com/aws-observability/aws-observability/issues)

@@ -1,6 +1,6 @@
 # 实用链接
 
-精选资源合集，帮助您学习和实施 AWS observability 最佳实践。
+精选资源合集，帮助您学习和实施 AWS 可观测性最佳实践。
 
 ### 注册即将举办的活动（在 AWS Connected Community 上）
 注册面向开发人员、DevOps 工程师、解决方案架构师、系统管理员以及对云运维感兴趣的所有人的在线研讨会和动手实验。[点此注册](https://aws-experience.com/amer/smb/events/series/Cloud-Operations-Enablement)
@@ -11,7 +11,7 @@
 
 ### 交互式演示
 
-查看 AWS 云运维监控和 Observability 以及云运维管理的演示。
+查看 AWS 云运维监控和可观测性以及云运维管理的演示。
 
 [在 Storylane 上查看](https://aws-cloudops.storylane.io/hub/9ajhvqeu78kb)
 
@@ -24,16 +24,16 @@
 
 ### One Observability Workshop
 
-这个动手实验提供了 AWS 提供的各种监控和 observability 工具集的实践经验。该 workshop 高度可定制——您可以根据兴趣和时间选择任何模块。
+这个动手实验提供了 AWS 提供的各种监控和可观测性工具集的实践经验。该 workshop 高度可定制——您可以根据兴趣和时间选择任何模块。
 
 [开始 Workshop](https://catalog.workshops.aws/observability/)
 
 
-### AWS Observability 最佳实践指南
+### AWS 可观测性最佳实践指南
 
-本 Observability 最佳实践指南的首页。这份综合资源涵盖了在 AWS 上实施 observability 的最佳实践、模式和实用方案。
+本可观测性最佳实践指南的首页。这份综合资源涵盖了在 AWS 上实施可观测性的最佳实践、模式和实用方案。
 
-[访问指南](https://aws-observability.github.io/observability-best-practices/)
+[访问指南](https://aws-observability.github.io/aws-observability/)
 
 ### AWS 云运维最佳实践指南
 

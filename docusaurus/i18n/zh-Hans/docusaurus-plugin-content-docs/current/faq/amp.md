@@ -24,7 +24,7 @@
 
 ## 如何将 CloudWatch metrics 发送到 Amazon Managed Service for Prometheus？
 
-我们建议使用 [CloudWatch metric streams 将 CloudWatch metrics 发送到 Amazon Managed Service for Prometheus](https://aws-observability.github.io/observability-best-practices/recipes/recipes/lambda-cw-metrics-go-amp/)。此集成的一些潜在不足之处包括：
+我们建议使用 [CloudWatch metric streams 将 CloudWatch metrics 发送到 Amazon Managed Service for Prometheus](https://aws-observability.github.io/aws-observability/recipes/recipes/lambda-cw-metrics-go-amp/)。此集成的一些潜在不足之处包括：
 1. 需要一个 Lambda 函数来调用 Amazon Managed Service for Prometheus API，
 1. 在将 CloudWatch metrics 摄取到 Amazon Managed Service for Prometheus 之前无法用元数据（如 AWS 标签）来丰富它们，
 1. metrics 只能按命名空间过滤（粒度不够细）。作为替代方案，客户可以使用 Prometheus Exporters 将 CloudWatch metrics 数据发送到 Amazon Managed Service for Prometheus：(1) CloudWatch Exporter：基于 Java 的抓取工具，使用 CW ListMetrics 和 GetMetricStatistics (GMS) API。

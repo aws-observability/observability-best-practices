@@ -1,4 +1,4 @@
-# 设置 Application Signals + Transaction Search
+# 设置 Application Signals 和 Transaction Search
 
 ## 高层设置流程
 

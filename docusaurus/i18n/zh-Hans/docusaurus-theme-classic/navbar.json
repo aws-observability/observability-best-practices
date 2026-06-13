@@ -1,6 +1,6 @@
 {
   "title": {
-    "message": "AWS Observability Best Practices"
+    "message": "AWS 可观测性最佳实践"
   },
   "item.label.Home": {
     "message": "首页"
@@ -33,6 +33,6 @@
     "message": "资源"
   },
   "item.label.Contributors": {
-    "message": "Contributors"
+    "message": "贡献者"
   }
 }

@@ -1,8 +1,8 @@
-# 为什么 X-Ray 客户应该采用 Application Signals + Transaction Search
+# 为什么 X-Ray 客户应该采用 Application Signals 和 Transaction Search
 
-## Observability 需求的演进
+## 可观测性需求的演进
 
-随着应用程序的复杂性和规模不断增长，客户的 Observability 需求也发生了显著变化。虽然 [AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html) 一直是可靠的分布式 tracing 解决方案，但现代应用场景需要更全面的可见性。
+随着应用程序的复杂性和规模不断增长，客户的可观测性需求也发生了显著变化。虽然 [AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html) 一直是可靠的分布式 tracing 解决方案，但现代应用场景需要更全面的可见性。
 
 ## 技术架构差异
 
@@ -10,13 +10,13 @@
 
 ![X-Ray 架构](/apm-src/assets/images/deep-dive/X-ray.png)
 
-**Application Signals + Transaction Search：**
+**Application Signals 和 Transaction Search：**
 
-![Application Signals + Transaction Search 架构](/apm-src/assets/images/deep-dive/ap%20ts.png)
+![Application Signals 和 Transaction Search 架构](/apm-src/assets/images/deep-dive/ap%20ts.png)
 
 ## 迁移的主要优势
 
-| 能力 | X-Ray | Application Signals + Transaction Search |
+| 能力 | X-Ray | Application Signals 和 Transaction Search |
 |---|---|---|
 | **数据接入** | 100% 事务（配置后） | 100% 事务（配置后） |
 | **吞吐量限制** | 高流量时受 X-Ray 服务配额限制 | 使用 CloudWatch Logs 具有更高吞吐容量 |

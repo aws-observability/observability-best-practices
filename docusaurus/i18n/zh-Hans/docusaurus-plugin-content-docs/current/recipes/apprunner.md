@@ -9,8 +9,8 @@
 
 ## 通用
 - [Container Day - Docker Con | 开发人员如何轻松实现大规模生产 Web 应用程序](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
-- [AWS 博客 | AWS App Runner 服务的集中式 Observability](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
-- [AWS 博客 | AWS App Runner VPC 网络的 Observability](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
+- [AWS 博客 | AWS App Runner 服务的集中式可观测性](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
+- [AWS 博客 | AWS App Runner VPC 网络的可观测性](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
 - [AWS 博客 | 使用 Amazon EventBridge 控制和监控 AWS App Runner 应用程序](https://aws.amazon.com/blogs/containers/controlling-and-monitoring-aws-app-runner-applications-with-amazon-eventbridge/)
 
 

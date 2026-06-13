@@ -1,6 +1,6 @@
 # 方案
 
-在这里，您将找到精心策划的指南、操作方法以及指向其他资源的链接，帮助您将 observability（o11y）应用于各种用例。这包括托管服务，如 [Amazon Managed Service for Prometheus][amp] 和 [Amazon Managed Grafana][amg]，以及代理，例如 [OpenTelemetry][otel] 和 [Fluent Bit][fluentbit]。这里的内容不仅限于 AWS 工具，还引用了许多开源项目。
+在这里，您将找到精心策划的指南、操作方法以及指向其他资源的链接，帮助您将可观测性（o11y）应用于各种用例。这包括托管服务，如 [Amazon Managed Service for Prometheus][amp] 和 [Amazon Managed Grafana][amg]，以及代理，例如 [OpenTelemetry][otel] 和 [Fluent Bit][fluentbit]。这里的内容不仅限于 AWS 工具，还引用了许多开源项目。
 
 我们希望同等满足开发人员和基础设施人员的需求，因此许多方案"覆盖面很广"。我们鼓励您探索并找到最适合您目标的解决方案。
 
@@ -43,7 +43,7 @@
 - **按目的地**：涵盖遥测和分析
 - **任务**：涵盖异常检测、告警、故障排查等
 
-[了解更多关于维度的信息...](https://aws-observability.github.io/observability-best-practices/recipes/dimensions/)
+[了解更多关于维度的信息...](https://aws-observability.github.io/aws-observability/recipes/dimensions/)
 
 ## 使用方法
 
@@ -66,9 +66,9 @@
 
 本站的方案是最佳实践集合。此外，还有许多地方可以让您了解更多关于我们使用的开源项目的状态以及方案中涉及的托管服务，请查看：
 
-- [observability @ aws][o11yataws]，一个 AWS 人员讨论其项目和服务的播放列表。
-- [AWS observability workshops](https://aws-observability.github.io/observability-best-practices/recipes/workshops/)，以结构化的方式试用各种产品。
-- [AWS 监控和 observability][o11yhome] 主页，包含案例研究和合作伙伴的链接。
+- [可观测性 @ aws][o11yataws]，一个 AWS 人员讨论其项目和服务的播放列表。
+- [AWS 可观测性 workshops](https://aws-observability.github.io/aws-observability/recipes/workshops/)，以结构化的方式试用各种产品。
+- [AWS 监控和可观测性][o11yhome] 主页，包含案例研究和合作伙伴的链接。
 
 [aes]: aes.md "Amazon Elasticsearch Service"
 [adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
@@ -95,6 +95,6 @@
 [rds]: rds.md "Amazon Relational Database Service"
 [msk]: msk.md "Amazon Managed Streaming for Apache Kafka"
 [mit0]: https://github.com/aws/mit-0 "MIT-0"
-[discussion]: https://github.com/aws-observability/observability-best-practices/discussions "Discussions"
-[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube playlist"
-[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS Observability home"
+[discussion]: https://github.com/aws-observability/aws-observability/discussions "Discussions"
+[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "可观测性 @ AWS YouTube playlist"
+[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS 可观测性 home"

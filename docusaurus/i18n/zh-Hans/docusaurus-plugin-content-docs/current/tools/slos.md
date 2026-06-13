@@ -33,4 +33,4 @@ Application Signals 基于应用程序性能最佳实践自动检测应用程序
 
 查看这篇[博客](https://aws.amazon.com/blogs/mt/how-to-monitor-application-health-using-slos-with-amazon-cloudwatch-application-signals/)了解如何在 CloudWatch Application Signals 中设置 SLO 来监控服务的可靠性。
 
-Observability 是建立可靠服务的基础要素，从而使您的组织能够有效地大规模运营。我们相信，[Amazon CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) 将是帮助您实现该目标的出色工具。
+可观测性是建立可靠服务的基础要素，从而使您的组织能够有效地大规模运营。我们相信，[Amazon CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) 将是帮助您实现该目标的出色工具。

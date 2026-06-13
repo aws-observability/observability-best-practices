@@ -238,7 +238,7 @@ MCP server 支持使用 `hours` 参数的自定义时间范围。
    ```
    "Compare all models by latency and token usage"
    ```
-   展示跨提供商的统一 Observability 能力。
+   展示跨提供商的统一可观测性能力。
 
 3. **简单查询**（最易理解）：
    ```
@@ -283,7 +283,7 @@ MCP server 支持使用 `hours` 参数的自定义时间范围。
 **问题**: 查询超时或失败
 
 **解决方案**:
-1. 检查 MCP server 是否正在运行：在 Kiro MCP 面板中查找 "ai-observability"
+1. 检查 MCP server 是否正在运行：在 Kiro MCP 面板中查找 "ai-可观测性"
 2. 验证 AWS 凭证：`aws sts get-caller-identity`
 3. 检查 CloudWatch 权限：确保有 CloudWatch metrics 的读取权限
 4. 重启 Kiro 以重新加载 MCP 配置

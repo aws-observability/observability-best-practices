@@ -93,7 +93,7 @@ scrape_configs:
 
 以下配置抓取 localhost 上端口 `9090` 和 `8081` 的 endpoints。
 
-通过我们的 [One Observability Workshop 中以 EC2 为重点的模块](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/ec2-monitoring)获取关于此主题的深入实践体验。
+通过我们的 [https://catalog.workshops.aws/observability/en-US/aws-managed-oss/ec2-monitoring 中以 EC2 为重点的模块](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/ec2-monitoring)获取关于此主题的深入实践体验。
 
 ```yaml
 global:
@@ -109,7 +109,7 @@ scrape_configs:
 
 以 Deployment 方式运行 collector 在您需要为 collector 提供高可用性时特别有用。根据目标数量、可用于抓取的 metrics 数量等，应调整 Collector 的资源以确保 collector 不会因资源不足而导致信号收集出现问题。
 
-[在此处的指南中阅读更多关于此主题的内容。](https://aws-observability.github.io/observability-best-practices/guides/containers/oss/eks/best-practices-metrics-collection)
+[在此处的指南中阅读更多关于此主题的内容。](https://aws-observability.github.io/aws-observability/guides/containers/oss/eks/best-practices-metrics-collection)
 
 以下架构展示了 collector 如何部署在工作负载节点之外的独立节点上来收集 metrics 和 traces。
 

@@ -48,7 +48,7 @@ Service Level Indicators (SLIs)、Service Level Objectives (SLOs) 和 Service Le
 
 1. 与业务、架构和安全团队合作，帮助细化业务、合规和治理需求，确保它们准确反映业务需求。 This includes [establishing recovery-time and recovery-point targets](https://aws.amazon.com/blogs/mt/establishing-rpo-and-rto-targets-for-cloud-applications/) (RTOs, RPOs). Formulate methods to measure requirements such as [measuring availability](https://docs.aws.amazon.com/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html) and latency (ex. Uptime could allow a small percentage of faults over a 5 min window).
 
-2. 构建有效的[标签策略](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/defining-and-publishing-a-tagging-schema.html) with purpose built schema that aligns to various business functional outcomes. This should especially cover [operational observability](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/operational-observability.html) and [incident management](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/incident-management.html).
+2. 构建有效的[标签策略](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/defining-and-publishing-a-tagging-schema.html) with purpose built schema that aligns to various business functional outcomes. This should especially cover [operational 可观测性](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/operational-observability.html) and [incident management](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/incident-management.html).
 
 3. 尽可能利用动态阈值进行告警 (esp. for metrics that do not have baseline KPIs) using [CloudWatch anomaly detection](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html) which provides machine learning algorithms to establish the baselines. When utilizing  AWS available services that publish CW metrics (or other sources like prometheus metrics) to configure alarms consider creating [composite alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Create_Composite_Alarm.html) to reduce alarm noise. Example: a composite alarm that comprises of a business metric indicative of availability (tracked by successful requests) and latency when configured to alarm when both drop below a critical threshold during deployments could be deterministic indicator of deployment bug.
 
@@ -60,7 +60,7 @@ Service Level Indicators (SLIs)、Service Level Objectives (SLOs) 和 Service Le
 
 6. 利用 [AWS Resilience Hub](https://aws.amazon.com/resilience-hub/) to analyze applications against defined RTOs and RPOs. Validate if the availability, latency and business continuity requirements are met by using controlled experiments using tools like [AWS Fault Injection Simulator](https://aws.amazon.com/fis/). Conduct additional Well-Architected reviews and service specific deep-dives to ensure workloads are designed to meet business requirements following AWS best practices.
 
-7. 有关更多详细信息，请参阅 [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/) guidance, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) whitepaper and AWS Well-Architected Framework Operational Excellence Pillar whitepaper content on '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)'.
+7. 有关更多详细信息，请参阅 [AWS 可观测性 Best Practices](https://https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html.github.io/https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html/) guidance, AWS Cloud Adoption Framework: [Operations Perspective](https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html) whitepaper and AWS Well-Architected Framework Operational Excellence Pillar whitepaper content on '[Understading workload health](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/understanding-workload-health.html)'.
     
 
 ### 3.2 按领域的 TLG（重点关注业务 metrics，即 UX、BX）
@@ -126,7 +126,7 @@ Service Level Indicators (SLIs)、Service Level Objectives (SLOs) 和 Service Le
 
 |AWS Service	|Feature	|Measurement	|Metric	|Example	|Notes	|
 |---	|---	|---	|---	|---	|---	|
-|EKS	|Prometheus metrics	|Availability	|APIServer Request Success Ratio	|(ex. Prometheus metric like  [APIServer Request Success Ratio](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/sample_cloudwatch_dashboards/kubernetes_api_server/cw_dashboard_kubernetes_api_server.json))	|See [best practices for monitoring EKS control plane metrics](https://aws.github.io/aws-eks-best-practices/reliability/docs/controlplane/#monitor-control-plane-metrics) and [EKS observability](https://docs.aws.amazon.com/eks/latest/userguide/eks-observe.html) for details.	|
+|EKS	|Prometheus metrics	|Availability	|APIServer Request Success Ratio	|(ex. Prometheus metric like  [APIServer Request Success Ratio](https://raw.githubusercontent.com/aws-samples/amazon-cloudwatch-container-insights/latest/k8s-deployment-manifest-templates/deployment-mode/service/cwagent-prometheus/sample_cloudwatch_dashboards/kubernetes_api_server/cw_dashboard_kubernetes_api_server.json))	|See [best practices for monitoring EKS control plane metrics](https://aws.github.io/aws-eks-best-practices/reliability/docs/controlplane/#monitor-control-plane-metrics) and [EKS 可观测性](https://docs.aws.amazon.com/eks/latest/userguide/eks-observe.html) for details.	|
 |	|	|	|	|	|	|
 |EKS	|Prometheus metrics	|Performance	|apiserver_request_duration_seconds, etcd_request_duration_seconds	|apiserver_request_duration_seconds, etcd_request_duration_seconds	|	|
 |	|	|	|	|	|	|
@@ -156,7 +156,7 @@ Service Level Indicators (SLIs)、Service Level Objectives (SLOs) 和 Service Le
 
 ### 4.1 Amazon CloudWatch 和 Metric Math
 
-Amazon CloudWatch 为 AWS 资源提供监控和 Observability 服务。Metric Math 允许您使用 CloudWatch metric 数据执行计算，使其成为计算 SLI、SLO 和 SLA 的理想工具。
+Amazon CloudWatch 为 AWS 资源提供监控和可观测性服务。Metric Math 允许您使用 CloudWatch metric 数据执行计算，使其成为计算 SLI、SLO 和 SLA 的理想工具。
 
 #### 4.1.1 启用详细监控
 

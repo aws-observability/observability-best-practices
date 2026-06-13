@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Application Signals for .NET on Lambda</title>
+    <title>AWS Application Signals - .NET 在 Lambda 上的实施</title>
     <style>
         * {
             margin: 0;
@@ -283,78 +283,78 @@
     <div class="container">
         <div class="header">
             <h1>AWS Application Signals for .NET on Lambda</h1>
-            <p class="subtitle">Complete Implementation Guide</p>
+            <p class="subtitle">完整实施指南</p>
             <div class="platform-badge">Lambda</div>
             <div class="language-badge">.NET</div>
         </div>
 
         <div class="content">
-            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            <a href="index.html" class="back-link">← 返回所有实施方案</a>
             
             <div class="section">
-                <h2>Overview</h2>
-                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a .NET Lambda function with AWS Application Signals enabled. The simplest approach using AWS Lambda console with built-in layer support.</p>
+                <h2>概述</h2>
+                <p>本指南提供<strong>分步说明</strong>，指导您部署启用 AWS Application Signals 的 .NET Lambda 函数。这是使用 AWS Lambda 控制台内置层支持的最简单方法。</p>
                 
                 <div class="highlight">
-                    <strong>What you'll accomplish:</strong>
+                    <strong>完成目标：</strong>
                     <ul>
-                        <li>Deploy a .NET Lambda function with Application Signals</li>
-                        <li>Enable AWS Application Signals auto-instrumentation via Lambda Layer</li>
-                        <li>View your service in CloudWatch Application Signals console</li>
-                        <li>Monitor service metrics, traces, and operations</li>
+                        <li>部署启用 Application Signals 的 .NET Lambda 函数</li>
+                        <li>通过 Lambda Layer 启用 AWS Application Signals 自动插桩</li>
+                        <li>在 CloudWatch Application Signals 控制台中查看您的服务</li>
+                        <li>监控服务 metrics、traces 和操作</li>
                     </ul>
                 </div>
 
                 <div class="success">
-                    <strong>Time to complete:</strong> 15-20 minutes
+                    <strong>完成时间：</strong> 15-20 分钟
                 </div>
             </div>
 
-        <h2>Prerequisites</h2>
-        <h3>Required Tools</h3>
+        <h2>前置条件</h2>
+        <h3>必备工具</h3>
         <ul>
-            <li>AWS CLI v2 (latest version)</li>
+            <li>AWS CLI v2（最新版本）</li>
             <li>.NET 8 SDK</li>
-            <li>AWS Account with appropriate permissions</li>
-            <li>Text editor</li>
+            <li>具有适当权限的 AWS 账户</li>
+            <li>文本编辑器</li>
         </ul>
 
-        <h3>AWS Permissions Required</h3>
+        <h3>所需 AWS 权限</h3>
         <ul>
-            <li>Lambda: Create and manage functions</li>
-            <li>IAM: Create roles and policies</li>
-            <li>CloudWatch: Logs and Application Signals access</li>
-            <li>S3: Basic read access (for testing)</li>
+            <li>Lambda：创建和管理函数</li>
+            <li>IAM：创建角色和策略</li>
+            <li>CloudWatch：Logs 和 Application Signals 访问</li>
+            <li>S3：基本读取权限（用于测试）</li>
         </ul>
 
-        <h2>Architecture</h2>
-        <p>Your Lambda function will be automatically instrumented using:</p>
+        <h2>架构</h2>
+        <p>您的 Lambda 函数将通过以下方式自动插桩：</p>
         <ol>
-            <li><strong>AWS Lambda Layer for OpenTelemetry</strong> - Provides auto-instrumentation</li>
-            <li><strong>Application Signals Integration</strong> - Built into the layer</li>
-            <li><strong>Automatic Tracing</strong> - HTTP requests, AWS SDK calls, function execution</li>
+            <li><strong>AWS Lambda Layer for OpenTelemetry</strong> - 提供自动插桩</li>
+            <li><strong>Application Signals 集成</strong> - 内置于层中</li>
+            <li><strong>自动追踪</strong> - HTTP 请求、AWS SDK 调用、函数执行</li>
         </ol>
 
-        <h2>Step 1: Enable Application Signals in Your Account</h2>
+        <h2>步骤 1： 启用 Application Signals in Your Account</h2>
         <div class="warning">
-            <p><strong>Important:</strong> Application Signals must be enabled once per AWS account per region.</p>
+            <p><strong>重要：</strong> 每个 AWS 账户每个区域只需启用一次 Application Signals。</p>
         </div>
 
-        <h3>Option 1: Enable via AWS Console (Recommended)</h3>
+        <h3>方案 1：通过 AWS 控制台启用（推荐）</h3>
         <ol>
-            <li>Go to AWS Console → CloudWatch → Application Signals</li>
-            <li>Select your region (e.g., <code>us-east-1</code>)</li>
-            <li>Click "Get Started" or "Enable Application Signals"</li>
-            <li>Wait 2-3 minutes for activation</li>
+            <li>前往 AWS 控制台 → CloudWatch → Application Signals</li>
+            <li>选择您的区域（例如 <code>us-east-1</code>)</li>
+            <li>Click "Get Started" or "启用 Application Signals"</li>
+            <li>等待 2-3 分钟激活</li>
         </ol>
 
-        <h2>Step 2: Prepare Your .NET Lambda Function</h2>
-        <h3>2.1 Create Application Directory</h3>
+        <h2>步骤 2： 准备 .NET Lambda 函数</h2>
+        <h3>2.1 创建应用目录</h3>
         <pre><code>mkdir -p ~/my-lambda-dotnet-appsignals
 cd ~/my-lambda-dotnet-appsignals</code></pre>
 
         <h3>2.2 Create .NET Project File</h3>
-        <p>Create a <code>lambda-dotnet.csproj</code> file:</p>
+        <p>创建 <code>lambda-dotnet.csproj</code> file:</p>
         <pre><code>&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
 
   &lt;PropertyGroup&gt;
@@ -379,7 +379,7 @@ cd ~/my-lambda-dotnet-appsignals</code></pre>
 &lt;/Project&gt;</code></pre>
 
         <div class="warning">
-            <p><strong>IMPORTANT:</strong> Do NOT add OpenTelemetry dependencies. They're provided by the AWS Lambda Layer.</p>
+            <p><strong>重要：</strong> 不要添加 OpenTelemetry 依赖项。它们由 AWS Lambda Layer 提供。</p>
         </div>
 
         <h3>2.3 Create Program.cs</h3>
@@ -495,7 +495,7 @@ public class Program
 }</code></pre>
 
         <h3>2.4 Create Controllers/DemoController.cs</h3>
-        <p>Create the controller with various endpoints:</p>
+        <p>使用各种端点创建控制器：</p>
         <pre><code>using Amazon.Lambda.Core;
 using Amazon.S3;
 using Amazon.S3.Model;
@@ -727,12 +727,12 @@ public class DemoController
     }
 }</code></pre>
 
-        <h2>Step 3: Build Lambda Deployment Package</h2>
+        <h2>步骤 3： 构建 Lambda 部署包</h2>
         <h3>3.1 Install AWS Lambda Tools</h3>
         <pre><code>dotnet tool install -g Amazon.Lambda.Tools</code></pre>
         
         <div class="warning">
-            <p><strong>IMPORTANT:</strong> After installation, you need to add the tools to your PATH:</p>
+            <p><strong>重要：</strong> 安装后，您需要将工具添加到 PATH：</p>
         </div>
         
         <pre><code># Add .NET tools to PATH
@@ -742,12 +742,12 @@ export PATH="$PATH:/Users/gurusiva/.dotnet/tools"
 dotnet-lambda --version</code></pre>
         
         <div class="info">
-            <p><strong>Alternative:</strong> If PATH export doesn't work, use the full path:</p>
+            <p><strong>Alternative:</strong> 如果 PATH 导出不起作用，请使用完整路径：</p>
         </div>
         
         <pre><code>/Users/gurusiva/.dotnet/tools/dotnet-lambda package</code></pre>
 
-        <h3>3.2 Set Variables</h3>
+        <h3>3.2 设置变量</h3>
         <pre><code>export AWS_REGION="us-east-1"
 export FUNCTION_NAME="lambda-dotnet"</code></pre>
 
@@ -761,14 +761,14 @@ dotnet-lambda package
 # Or using full path if PATH export didn't work
 /Users/gurusiva/.dotnet/tools/dotnet-lambda package</code></pre>
 
-        <h2>Step 4: Create IAM Role for Lambda</h2>
-        <p>Create an IAM role with the following policies:</p>
+        <h2>步骤 4： 为 Lambda 创建 IAM 角色</h2>
+        <p>使用以下策略创建 IAM 角色：</p>
         <ul>
             <li><code>AWSLambdaBasicExecutionRole</code></li>
             <li><code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> (CRITICAL!)</li>
         </ul>
 
-        <h3>4.1 Create IAM Role</h3>
+        <h3>4.1 创建 IAM 角色</h3>
         <pre><code>aws --profile eksworkstream --region us-east-1 iam create-role \
   --role-name lambda-dotnet-execution-role \
   --assume-role-policy-document '{
@@ -780,7 +780,7 @@ dotnet-lambda package
     }]
   }'</code></pre>
 
-        <h3>4.2 Attach Required Policies</h3>
+        <h3>4.2 附加所需策略</h3>
         <pre><code>aws --profile eksworkstream --region us-east-1 iam attach-role-policy \
   --role-name lambda-dotnet-execution-role \
   --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
@@ -789,7 +789,7 @@ aws --profile eksworkstream --region us-east-1 iam attach-role-policy \
   --role-name lambda-dotnet-execution-role \
   --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code></pre>
 
-        <h3>4.3 Get Role ARN</h3>
+        <h3>4.3 获取角色 ARN</h3>
         <pre><code>ROLE_ARN=$(aws --profile eksworkstream --region us-east-1 iam get-role \
   --role-name lambda-dotnet-execution-role \
   --query 'Role.Arn' \
@@ -797,8 +797,8 @@ aws --profile eksworkstream --region us-east-1 iam attach-role-policy \
 
 echo "Role ARN: $ROLE_ARN"</code></pre>
 
-        <h2>Step 5: Deploy Lambda Function</h2>
-        <h3>5.1 Create Lambda Function</h3>
+        <h2>Step 5: 部署 Lambda 函数</h2>
+        <h3>5.1 创建 Lambda 函数</h3>
         <pre><code>aws --profile eksworkstream --region us-east-1 lambda create-function \
   --function-name lambda-dotnet \
   --runtime dotnet8 \
@@ -809,17 +809,17 @@ echo "Role ARN: $ROLE_ARN"</code></pre>
   --memory-size 512</code></pre>
 
         <div class="highlight">
-            <p><strong>Note:</strong> If you plan to enable Application Signals via the Lambda Console (recommended), you can skip the manual layer and environment variable configuration steps below. The console will automatically handle these for you.</p>
+            <p><strong>注意：</strong> If you plan to enable Application Signals via the Lambda Console (recommended), you can skip the manual layer and 环境变量 configuration steps below. The console will automatically handle these for you.</p>
         </div>
 
-        <h3>5.2 Alternative: Manual Layer and Environment Configuration</h3>
+        <h3>5.2 替代方案：手动层和环境配置</h3>
         <p><strong>Only needed if NOT using the Lambda Console method:</strong></p>
         
         <h4>Add AWS Lambda Layer for OpenTelemetry</h4>
-        <p>For <code>us-east-1</code>:</p>
+        <p>对于 <code>us-east-1</code>:</p>
         <pre><code>LAYER_ARN="arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroDotNet:8"</code></pre>
 
-        <h4>Configure Environment Variables</h4>
+        <h4>配置环境变量</h4>
         <pre><code>aws lambda update-function-configuration \
   --function-name lambda-dotnet \
   --environment Variables='{
@@ -828,15 +828,15 @@ echo "Role ARN: $ROLE_ARN"</code></pre>
     "OTEL_RESOURCE_ATTRIBUTES": "service.name=lambda-dotnet,deployment.environment=lambda:us-east-1"
   }'</code></pre>
 
-        <h2>Step 6: Test Lambda Function</h2>
-        <h3>6.1 Test Basic Functionality</h3>
+        <h2>Step 6: 测试 Lambda 函数</h2>
+        <h3>6.1 测试基本功能</h3>
         <pre><code>aws lambda invoke \
   --function-name lambda-dotnet \
   --payload fileb://&lt;(echo '{"path": "/", "httpMethod": "GET"}') \
   --region us-east-1 \
   response.json</code></pre>
 
-        <h3>6.2 Generate Traffic for Application Signals</h3>
+        <h3>6.2 生成流量 for Application Signals</h3>
         <pre><code>for i in {1..50}; do
   aws lambda invoke \
     --function-name lambda-dotnet \
@@ -845,11 +845,11 @@ echo "Role ARN: $ROLE_ARN"</code></pre>
     /dev/null
 done</code></pre>
 
-        <h2>Step 7: Generate Traffic for Testing</h2>
+        <h2>Step 7: 生成流量 for Testing</h2>
         <p>To test Application Signals, you need to generate traffic to your Lambda function. We provide both Python and shell script traffic generators:</p>
 
         <h3>7.1 Python Traffic Generator</h3>
-        <p>Create a <code>traffic-generator.py</code> file:</p>
+        <p>创建 <code>traffic-generator.py</code> file:</p>
         <pre><code>#!/usr/bin/env python3
 
 """
@@ -994,8 +994,8 @@ def main():
 if __name__ == "__main__":
     main()</code></pre>
 
-        <h3>7.2 Shell Script Traffic Generator</h3>
-        <p>Alternative shell script for traffic generation:</p>
+        <h3>7.2 Shell 脚本流量生成器</h3>
+        <p>用于流量生成的替代 shell 脚本：</p>
         <pre><code>#!/bin/bash
 
 # .NET Lambda Traffic Generator for Application Signals Testing
@@ -1123,15 +1123,15 @@ else
     exit 1
 fi</code></pre>
 
-        <h3>7.3 Usage Instructions</h3>
-        <p><strong>Python Traffic Generator:</strong></p>
+        <h3>7.3 使用说明</h3>
+        <p><strong>Python 流量生成器：</strong></p>
         <pre><code># Run with default settings (50 requests)
 python3 traffic-generator.py lambda-dotnet
 
 # Run with custom number of requests
 python3 traffic-generator.py lambda-dotnet 100</code></pre>
 
-        <p><strong>Shell Script Traffic Generator:</strong></p>
+        <p><strong>Shell 脚本流量生成器:</strong></p>
         <pre><code># Run with default settings (50 requests)
 ./generate-traffic.sh lambda-dotnet
 
@@ -1141,18 +1141,18 @@ python3 traffic-generator.py lambda-dotnet 100</code></pre>
 # Run with custom region and profile
 ./generate-traffic.sh lambda-dotnet 50 us-east-1 eksworkstream</code></pre>
 
-        <h3>7.4 Traffic Generator Features</h3>
+        <h3>7.4 流量生成器功能</h3>
         <ul>
-            <li><strong>Weighted Random Selection:</strong> More realistic traffic patterns</li>
-            <li><strong>Simple Endpoints:</strong> Tests basic Lambda functionality</li>
-            <li><strong>Health Monitoring:</strong> Includes health check endpoints</li>
-            <li><strong>Personalized Responses:</strong> Tests dynamic content generation</li>
-            <li><strong>Progress Tracking:</strong> Real-time progress with success/error counts</li>
-            <li><strong>Configurable:</strong> Adjustable number of requests and parameters</li>
+            <li><strong>加权随机选择：</strong> 更真实的流量模式</li>
+            <li><strong>Simple 端点s:</strong> Tests basic Lambda functionality</li>
+            <li><strong>Health Monitoring:</strong> 包含健康检查端点</li>
+            <li><strong>Personalized Responses:</strong> 测试动态内容生成</li>
+            <li><strong>Progress Tracking:</strong> 带有成功/错误计数的实时进度</li>
+            <li><strong>可配置：</strong> 可调整请求数量和参数</li>
         </ul>
 
-        <h2>Step 8: Verify Application Signals</h2>
-        <h3>8.1 Check Application Signals Service Discovery</h3>
+        <h2>Step 8: 验证 Application Signals</h2>
+        <h3>8.1 检查 Application Signals 服务发现</h3>
         <pre><code>aws application-signals list-services \
   --region us-east-1 \
   --start-time $(date -u -v-2H +%s) \
@@ -1160,78 +1160,78 @@ python3 traffic-generator.py lambda-dotnet 100</code></pre>
   --query 'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</code></pre>
 
         <div class="success">
-            <p><strong>Expected:</strong> Your service should appear with:</p>
+            <p><strong>预期结果：</strong> 您的服务应显示为：</p>
             <ul>
                 <li>Name: <code>lambda-dotnet</code></li>
-                <li>Environment: <code>lambda:us-east-1</code></li>
+                <li>环境： <code>lambda:us-east-1</code></li>
             </ul>
         </div>
 
-        <h2>Step 9: View in AWS Console</h2>
-        <h3>9.1 Console Access</h3>
+        <h2>Step 9: 在 AWS 控制台中查看</h2>
+        <h3>9.1 控制台访问</h3>
         <ol>
-            <li><strong>Navigate to:</strong> AWS Console → CloudWatch → Application Signals → Services</li>
-            <li><strong>Look for your service:</strong> Service Name: <code>lambda-dotnet</code></li>
-            <li><strong>Explore:</strong> Service Map, Service Dashboard, Operations, Dependencies</li>
+            <li><strong>导航到:</strong> AWS Console → CloudWatch → Application Signals → Services</li>
+            <li><strong>查找 your service:</strong> 服务名称： <code>lambda-dotnet</code></li>
+            <li><strong>浏览：</strong> Service Map、Service Dashboard、Operations、Dependencies</li>
         </ol>
 
-        <h2>Step 5.3: Enable Application Signals via Lambda Console (Recommended)</h2>
+        <h2>Step 5.3: 启用 Application Signals via Lambda Console (Recommended)</h2>
         <div class="success">
-            <p><strong>RECOMMENDED METHOD!</strong> This is the simplest and most reliable approach. The console automatically handles all the complex configuration.</p>
+            <p><strong>RECOMMENDED METHOD!</strong> 这是最简单和最可靠的方法。控制台自动处理所有复杂配置。</p>
         </div>
         
         <p>After creating your Lambda function via CLI (Step 5.1), enable Application Signals via the console:</p>
         <ol>
             <li>Go to AWS Lambda Console: <a href="https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/lambda-dotnet">https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/lambda-dotnet</a></li>
-            <li>Navigate to your <code>lambda-dotnet</code> function</li>
-            <li>Go to <strong>Configuration</strong> → <strong>Monitoring and operations tools</strong></li>
+            <li>导航到 your <code>lambda-dotnet</code> function</li>
+            <li>Go to <strong>Configuration</strong> → <strong>监控和运维工具</strong></li>
             <li>Click <strong>"Edit"</strong></li>
-            <li>Enable both checkboxes:
+            <li>Enable both 检查boxes:
                 <ul>
-                    <li>✅ <strong>"Automatically collect application traces and standard application metrics with Application Signals"</strong></li>
-                    <li>✅ <strong>"Automatically collect Lambda service traces for end to end visibility with X-Ray"</strong></li>
+                    <li>✅ <strong>"使用 Application Signals 自动收集应用 traces 和标准应用 metrics"</strong></li>
+                    <li>✅ <strong>"使用 X-Ray 自动收集 Lambda 服务 traces 以实现端到端可见性"</strong></li>
                 </ul>
             </li>
             <li>Click <strong>"Save"</strong></li>
         </ol>
 
         <div class="success">
-            <p><strong>That's it!</strong> The console automatically:</p>
+            <p><strong>完成！</strong> 控制台自动完成以下操作：</p>
             <ul>
-                <li>Adds the AWS Lambda Layer for OpenTelemetry</li>
-                <li>Sets the <code>AWS_LAMBDA_EXEC_WRAPPER</code> environment variable</li>
-                <li>Attaches the required IAM policy</li>
+                <li>添加 AWS Lambda Layer for OpenTelemetry</li>
+                <li>设置 <code>AWS_LAMBDA_EXEC_WRAPPER</code> 环境变量</li>
+                <li>附加所需的 IAM 策略</li>
             </ul>
         </div>
 
-        <h2>Troubleshooting</h2>
+        <h2>故障排除</h2>
         
-        <h3>Issue: Shell Environment Problems</h3>
+        <h3>问题：Shell 环境问题</h3>
         <div class="warning">
-            <p><strong>Problem:</strong> Commands fail with errors like <code>parse error near 'cursor_snap_ENV_VARS...'</code> or <code>command not found: dump_zsh_state</code></p>
-            <p><strong>Cause:</strong> Cursor IDE environment variable injection is corrupting the shell environment</p>
+            <p><strong>问题：</strong> 命令因以下错误而失败： <code>parse error near 'cursor_snap_ENV_VARS...'</code> or <code>command not found: dump_zsh_state</code></p>
+            <p><strong>原因：</strong> Cursor IDE 环境变量注入正在破坏 shell 环境</p>
         </div>
         
-        <p><strong>Solutions:</strong></p>
+        <p><strong>解决方案：</strong></p>
         <ol>
-            <li><strong>Use a fresh terminal window</strong> outside of Cursor IDE</li>
-            <li><strong>Restart Cursor IDE</strong> completely and try again</li>
-            <li><strong>Use VS Code</strong> instead of Cursor IDE</li>
-            <li><strong>Use the Lambda Console method</strong> (recommended for shell issues)</li>
+            <li><strong>使用新的终端窗口</strong> 在 Cursor IDE 之外</li>
+            <li><strong>重启 Cursor IDE</strong> 完全关闭后重试</li>
+            <li><strong>使用 VS Code</strong> 代替 Cursor IDE</li>
+            <li><strong>使用 Lambda 控制台方法</strong> （推荐在 shell 问题时使用）</li>
         </ol>
 
-        <h3>Issue: Role ARN is Empty</h3>
+        <h3>问题：角色 ARN 为空</h3>
         <div class="warning">
-            <p><strong>Problem:</strong> <code>aws: error: argument --role: expected one argument</code></p>
-            <p><strong>Cause:</strong> The <code>ROLE_ARN</code> variable is empty, indicating IAM role creation failed</p>
+            <p><strong>问题：</strong> <code>aws: error: argument --role: 需要一个参数</code></p>
+            <p><strong>原因：</strong> The <code>ROLE_ARN</code> variable is empty, indicating IAM role creation failed</p>
         </div>
         
-        <p><strong>Debug Steps:</strong></p>
+        <p><strong>调试步骤：</strong></p>
         <ol>
-            <li><strong>Check if role exists:</strong>
+            <li><strong>Check if role 是否存在：</strong>
                 <pre><code>aws iam get-role --role-name lambda-dotnet-execution-role</code></pre>
             </li>
-            <li><strong>Create role if missing:</strong>
+            <li><strong>如果缺失则创建角色：</strong>
                 <pre><code>aws iam create-role \
   --role-name lambda-dotnet-execution-role \
   --assume-role-policy-document '{
@@ -1243,26 +1243,26 @@ python3 traffic-generator.py lambda-dotnet 100</code></pre>
     }]
   }'</code></pre>
             </li>
-            <li><strong>Get role ARN manually:</strong>
+            <li><strong>手动获取角色 ARN：</strong>
                 <pre><code>aws iam get-role \
   --role-name lambda-dotnet-execution-role \
   --query 'Role.Arn' \
   --output text</code></pre>
             </li>
-            <li><strong>Use ARN directly in create-function command</strong></li>
+            <li><strong>在 create-function 命令中直接使用 ARN</strong></li>
         </ol>
 
-        <h3>Issue: Command Syntax Errors</h3>
+        <h3>问题：命令语法错误</h3>
         <div class="warning">
-            <p><strong>Common mistakes:</strong></p>
+            <p><strong>常见错误：</strong></p>
             <ul>
-                <li>Running multiple commands on the same line with periods</li>
-                <li>Using duplicate parameters (e.g., <code>--role</code> twice)</li>
-                <li>Missing quotes around variables</li>
+                <li>在同一行使用句号分隔多个命令</li>
+                <li>使用重复的参数 (e.g., <code>--role</code> twice)</li>
+                <li>变量缺少引号s</li>
             </ul>
         </div>
         
-        <p><strong>❌ WRONG - Don't do this:</strong></p>
+        <p><strong>❌ 错误 - 不要这样做：</strong></p>
         <pre><code># WRONG: Commands on same line with period
 aws iam create-role \ ... }. aws lambda create-function \ ...
 
@@ -1274,7 +1274,7 @@ aws lambda create-function \
 # WRONG: Missing quotes around variable
 --role $ROLE_ARN</code></pre>
 
-        <p><strong>✅ CORRECT - Do this instead:</strong></p>
+        <p><strong>✅ 正确 - 应该这样做：</strong></p>
         <pre><code># Step 1: Create IAM role (separate command)
 aws iam create-role \
   --role-name lambda-dotnet-execution-role \
@@ -1312,61 +1312,61 @@ aws lambda create-function \
   --timeout 30 \
   --memory-size 512</code></pre>
 
-        <h3>Issue: Service Not Appearing in Application Signals</h3>
-        <p><strong>Check:</strong></p>
+        <h3>问题：服务未出现在 Application Signals 中</h3>
+        <p><strong>检查：</strong></p>
         <ul>
-            <li>Verify Application Signals is enabled in your account</li>
-            <li>Check if the OpenTelemetry layer is attached</li>
-            <li>Verify environment variables are set correctly</li>
-            <li>Wait 5-10 minutes after generating traffic</li>
-            <li>Ensure the IAM policy <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
+            <li>验证您的账户已启用 Application Signals</li>
+            <li>检查 OpenTelemetry 层是否已附加</li>
+            <li>验证环境变量设置正确</li>
+            <li>生成流量后等待 5-10 分钟</li>
+            <li>确保 IAM 策略 <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> 已附加</li>
         </ul>
 
-        <h3>Issue: Lambda Function Errors</h3>
-        <p><strong>Common issues:</strong></p>
+        <h3>问题：Lambda 函数错误</h3>
+        <p><strong>常见问题：</strong></p>
         <ul>
-            <li>Missing IAM policy - Ensure <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
-            <li>Wrong layer ARN - Verify the layer ARN for your region</li>
-            <li>Missing environment variable - Ensure <code>AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument</code></li>
-            <li>Handler mismatch - Ensure handler is <code>lambda_dotnet::lambda_dotnet.Program::FunctionHandlerAsync</code></li>
-            <li>Zip file not found - Ensure dotnet package completed successfully</li>
+            <li>缺少 IAM 策略 - Ensure <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> 已附加</li>
+            <li>错误的层 ARN - 验证您所在区域的层 ARN</li>
+            <li>Missing 环境变量 - Ensure <code>AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument</code></li>
+            <li>Handler 不匹配 - 确保 handler 为 <code>lambda_dotnet::lambda_dotnet.Program::FunctionHandlerAsync</code></li>
+            <li>Zip 文件未找到 - 确保 dotnet 打包成功完成</li>
         </ul>
 
-        <h3>Issue: Permission Denied Errors</h3>
-        <p><strong>Check your AWS credentials:</strong></p>
+        <h3>Issue: 权限拒绝错误</h3>
+        <p><strong>检查您的 AWS 凭证：</strong></p>
         <ul>
-            <li>Verify AWS profile: <code>aws configure list</code></li>
-            <li>Check caller identity: <code>aws sts get-caller-identity</code></li>
-            <li>Ensure you have the required IAM permissions</li>
+            <li>验证 AWS 配置文件： <code>aws configure list</code></li>
+            <li>检查调用者身份： <code>aws sts get-caller-identity</code></li>
+            <li>确保您具有所需的 IAM 权限</li>
         </ul>
 
-        <h2>Key Configuration Details</h2>
-        <h3>Critical Environment Variables</h3>
+        <h2>关键配置详情</h2>
+        <h3>关键环境变量</h3>
         <table>
             <tr>
-                <th>Variable</th>
-                <th>Value</th>
-                <th>Purpose</th>
+                <th>变量</th>
+                <th>值</th>
+                <th>用途</th>
             </tr>
             <tr>
                 <td><code>AWS_LAMBDA_EXEC_WRAPPER</code></td>
                 <td><code>/opt/otel-instrument</code></td>
-                <td>Enables OpenTelemetry instrumentation</td>
+                <td>启用 OpenTelemetry 插桩</td>
             </tr>
             <tr>
                 <td><code>OTEL_SERVICE_NAME</code></td>
                 <td><code>lambda-dotnet</code></td>
-                <td>Service name in Application Signals</td>
+                <td>Application Signals 中的服务名称</td>
             </tr>
             <tr>
                 <td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
                 <td><code>service.name=lambda-dotnet,deployment.environment=lambda:us-east-1</code></td>
-                <td>Service identification</td>
+                <td>服务标识</td>
             </tr>
         </table>
 
       
-        <h2>Additional Resources</h2>
+        <h2>更多资源</h2>
         <ul>
             <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">AWS Application Signals Documentation</a></li>
             <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html">AWS Lambda Layer for OpenTelemetry</a></li>

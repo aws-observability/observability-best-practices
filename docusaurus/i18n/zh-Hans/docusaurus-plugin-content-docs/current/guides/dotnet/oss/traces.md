@@ -2,7 +2,7 @@
 
 .NET 为 OpenTelemetry tracing 提供了强大的支持，为开发人员提供了监控分布式系统中请求流的强大工具。该实现使得应用程序行为和性能瓶颈的端到端可见性成为可能。
 
-在 .NET 生态系统中，OpenTelemetry tracing 建立在 [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) 类之上，这是 .NET 对 W3C Trace Context 规范的实现。与行业标准的对齐确保了与其他服务和 Observability 工具的互操作性。
+在 .NET 生态系统中，OpenTelemetry tracing 建立在 [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) 类之上，这是 .NET 对 W3C Trace Context 规范的实现。与行业标准的对齐确保了与其他服务和可观测性工具的互操作性。
 
 ## Traces 实现
 

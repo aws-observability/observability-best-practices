@@ -10,7 +10,7 @@ sidebar_position: 3
 
 ## Amazon EKS
 
-对于 EKS，配置 Observability 最简单的方式是使用 Amazon EKS add-on。这将安装具有增强 Observability 功能的 Container Insights for Amazon EKS。该 add-on 安装 CloudWatch agent 以从集群发送基础设施 metrics，安装 Fluent Bit 以发送容器日志，还启用 CloudWatch Application Signals 以发送应用程序性能遥测数据。（如果您不需要 Application Signals、Container Insights 等，这是可配置的。）
+对于 EKS，配置可观测性最简单的方式是使用 Amazon EKS add-on。这将安装具有增强可观测性功能的 Container Insights for Amazon EKS。该 add-on 安装 CloudWatch agent 以从集群发送基础设施 metrics，安装 Fluent Bit 以发送容器日志，还启用 CloudWatch Application Signals 以发送应用程序性能遥测数据。（如果您不需要 Application Signals、Container Insights 等，这是可配置的。）
 
 通常，Amazon CloudWatch Observability EKS add-on 作为 DaemonSet 安装。
 
@@ -90,7 +90,7 @@ CloudWatch agent 可用于从 EC2 实例、其他虚拟机和本地服务器向 
 3. 根据您的需求配置遥测收集
 4. 可选择使用 OpenTelemetry 进行供应商中立的检测
 
-有关详细配置指南，请参阅本最佳实践指南中关于您的计算平台和 Observability 工具的特定部分。
+有关详细配置指南，请参阅本最佳实践指南中关于您的计算平台和可观测性工具的特定部分。
 
 ## 后续步骤
 

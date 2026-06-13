@@ -6,11 +6,11 @@ sidebar_position: 1
 
 在大多数情况下，客户需要可视化和关联来自多个 AWS 账户的遥测数据，因为他们的服务运行在多个账户中，有时还跨越多个区域。
 
-如果您只计划在单个账户中运行 Observability 和服务，可以跳过此步骤。
+如果您只计划在单个账户中运行可观测性和服务，可以跳过此步骤。
 
-第一步是设置您的监控账户和源账户，并精确指定要共享的遥测数据。您将利用跨账户 Observability 来实现这一点。请注意，这是按区域工作的。
+第一步是设置您的监控账户和源账户，并精确指定要共享的遥测数据。您将利用跨账户可观测性来实现这一点。请注意，这是按区域工作的。
 
-有关如何设置跨账户 Observability 的更详细说明，请参阅 [CloudWatch 跨账户 Observability](../cloudwatch_cross_account_observability.md) 指南。
+有关如何设置跨账户可观测性的更详细说明，请参阅 [CloudWatch 跨账户可观测性](../cloudwatch_cross_account_observability.md) 指南。
 
 ## 监控账户
 
@@ -27,7 +27,7 @@ sidebar_position: 1
 您将在 CloudWatch 设置中按区域[配置](../cloudwatch_cross_account_observability.md#step-1-set-up-a-monitoring-account)此项。
 
 :::info
-通过跨账户 Observability，logs 和 metrics 不会从源账户复制，但 trace 数据会复制到监控账户（第一个监控账户的 trace 复制不收取额外费用）。您只是集中查看 logs、metrics、traces 和其他遥测数据。
+通过跨账户可观测性，logs 和 metrics 不会从源账户复制，但 trace 数据会复制到监控账户（第一个监控账户的 trace 复制不收取额外费用）。您只是集中查看 logs、metrics、traces 和其他遥测数据。
 :::
 
 ## 多个监控账户

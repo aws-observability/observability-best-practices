@@ -2,7 +2,7 @@
 
 站点可靠性工程 (SRE) 是一种软件工程实践，专注于提高软件系统的可靠性和性能。SRE 的核心目标之一是在可用性、性能、延迟、效率、容量和事件响应等方面提高软件系统的可靠性。SRE 团队用来验证其目标达成情况的一些 metrics 包括服务级别协议 (SLA)、服务级别目标 (SLO)、服务级别指标 (SLI) 和错误预算。
 
-以下是 SRE 重点领域和指导您 observability 策略的最佳实践。
+以下是 SRE 重点领域和指导您可观测性策略的最佳实践。
 
 ## 事件响应和危机管理
 事件响应包括监控、检测和应对计划外事件或中断，其目标是最小化平均事件解决时间 (MTTR) 并满足服务级别协议 (SLA)。
@@ -144,8 +144,8 @@
 
 
 ## 参考资料
-- [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US)
-- [AWS Observability Best Practices](https://aws-observability.github.io/observability-best-practices/)
+- [AWS 可观测性 Workshop](https://catalog.workshops.aws/observability/en-US)
+- [AWS 可观测性 Best Practices](https://aws-observability.github.io/aws-observability/)
 - [Amazon CloudWatch Intelligent Operations](https://aws.amazon.com/cloudwatch/features/intelligent-operations/)
 - [Resilience analysis framework](https://docs.aws.amazon.com/prescriptive-guidance/latest/resilience-analysis-framework/introduction.html)
 - [Chaos Engineering with AWS Fault Injection Simulator](https://aws.amazon.com/blogs/architecture/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/) 

@@ -13,9 +13,9 @@
 
 [![](https://img.youtube.com/vi/Yvv056_RVqs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Yvv056_RVqs)
 
-### ECS 增强 Observability
+### ECS 增强可观测性
 
-*   [Enhanced Observability on ECS with Amazon CloudWatch Container Insights](https://www.youtube.com/watch?v=mH3m4XixjRg) 了解如何深入洞察您的 ECS 容器化应用程序。
+*   [Enhanced 可观测性 on ECS with Amazon CloudWatch Container Insights](https://www.youtube.com/watch?v=mH3m4XixjRg) 了解如何深入洞察您的 ECS 容器化应用程序。
 [![YouTube Video mH3m4XixjRg](https://img.youtube.com/vi/mH3m4XixjRg/maxresdefault.jpg)](https://www.youtube.com/watch?v=mH3m4XixjRg)
 
 ### 网络流量监控

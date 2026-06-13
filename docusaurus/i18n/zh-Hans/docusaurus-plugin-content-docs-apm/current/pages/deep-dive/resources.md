@@ -18,5 +18,5 @@
 - [ADOT 社区示例](https://github.com/aws-observability/aws-otel-community)
 
 ## 培训资源
-- [AWS Observability Workshop](https://observability.workshop.aws/)
+- [AWS 可观测性 Workshop](https://observability.workshop.aws/)
 - [OpenTelemetry 社区资源](https://opentelemetry.io/community/)

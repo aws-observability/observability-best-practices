@@ -18,7 +18,7 @@ Kubernetes 中最常见的资源规格是 [CPU 和内存的 requests 和 limits]
 Requests 和 limits 在 Kubernetes 中各自发挥不同的功能，对调度和资源限制的影响也不同。
 
 ## 建议
-应用所有者需要为其 CPU 和内存资源 requests 选择"正确"的值。理想的方式是在开发环境中对应用进行负载测试，并使用 observability 工具测量资源使用情况。虽然这对您组织中最关键的应用可能有意义，但对集群中部署的每个容器化应用来说可能不太可行。让我们讨论可以帮助我们优化和调整工作负载大小的工具：
+应用所有者需要为其 CPU 和内存资源 requests 选择"正确"的值。理想的方式是在开发环境中对应用进行负载测试，并使用可观测性工具测量资源使用情况。虽然这对您组织中最关键的应用可能有意义，但对集群中部署的每个容器化应用来说可能不太可行。让我们讨论可以帮助我们优化和调整工作负载大小的工具：
 
 ### Vertical Pod Autoscaler (VPA)
 [VPA](https://github.com/kubernetes/autoscaler/tree/master/vertical-pod-autoscaler) 是由 Autoscaling 特别兴趣小组 (SIG) 拥有的 Kubernetes 子项目。它旨在基于观察到的应用性能自动设置 Pod requests。VPA 默认使用 [Kubernetes Metric Server](https://github.com/kubernetes-sigs/metrics-server) 收集资源使用情况，但也可以选择配置为使用 Prometheus 作为数据源。

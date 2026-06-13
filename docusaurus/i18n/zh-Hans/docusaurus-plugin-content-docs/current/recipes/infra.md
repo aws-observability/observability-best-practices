@@ -10,7 +10,7 @@
 ## 计算
 
 - [Amazon EKS 控制平面日志][eks-cp]
-- [AWS Lambda 监控与 observability][lambda-docs]
+- [AWS Lambda 监控与可观测性][lambda-docs]
 
 ## 数据库、存储与队列
 

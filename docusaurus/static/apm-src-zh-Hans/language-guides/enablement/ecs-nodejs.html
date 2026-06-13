@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Application Signals for Node.js Express on ECS</title>
+    <title>AWS Application Signals - Node.js Express 在 ECS 上的实施</title>
     <style>
         * {
             margin: 0;
@@ -280,76 +280,76 @@
     <div class="container">
         <div class="header">
             <h1>AWS Application Signals for Node.js Express on ECS</h1>
-            <p class="subtitle">Complete Implementation Guide</p>
+            <p class="subtitle">完整实施指南</p>
             <div class="platform-badge">ECS</div>
             <div class="language-badge">Node.js</div>
         </div>
 
         <div class="content">
-            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            <a href="index.html" class="back-link">← 返回所有实施方案</a>
             
             <div class="section">
-                <h2>Overview</h2>
-                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Node.js Express application on Amazon ECS with AWS Application Signals enabled. No CDK required - pure AWS CLI and Docker.</p>
+                <h2>概述</h2>
+                <p>本指南提供<strong>分步说明</strong>，指导您在 Amazon ECS 上部署启用 AWS Application Signals 的 Node.js Express 应用。无需 CDK - 仅使用 AWS CLI 和 Docker。</p>
                 
                 <div class="highlight">
-                    <strong>What you'll accomplish:</strong>
+                    <strong>完成目标：</strong>
                     <ul>
-                        <li>Deploy a Node.js Express app on ECS Fargate</li>
-                        <li>Enable AWS Application Signals auto-instrumentation</li>
-                        <li>View your service in CloudWatch Application Signals console</li>
-                        <li>Monitor service metrics, traces, and operations</li>
+                        <li>在 ECS Fargate 上部署 Node.js Express 应用</li>
+                        <li>启用 AWS Application Signals 自动插桩</li>
+                        <li>在 CloudWatch Application Signals 控制台中查看您的服务</li>
+                        <li>监控服务 metrics、traces 和操作</li>
                     </ul>
                 </div>
 
                 <div class="success">
-                    <strong>Time to complete:</strong> 30-45 minutes
+                    <strong>完成时间：</strong> 30-45 分钟
                 </div>
             </div>
-<h2 id="prerequisites">Prerequisites</h2>
-<h3 id="required-tools">Required Tools</h3>
+<h2 id="prerequisites">前置条件</h2>
+<h3 id="required-tools">必备工具</h3>
 <ul>
-<li>AWS CLI v2 (latest version)</li>
+<li>AWS CLI v2（最新版本）</li>
 <li>Docker Desktop</li>
-<li>Node.js 18+ (for local development)</li>
-<li>npm (for local development)</li>
-<li>AWS Account with appropriate permissions</li>
-<li>Text editor</li>
+<li>Node.js 18+（用于本地开发）</li>
+<li>npm（用于本地开发）</li>
+<li>具有适当权限的 AWS 账户</li>
+<li>文本编辑器</li>
 </ul>
-<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<h3 id="aws-permissions-required">所需 AWS 权限</h3>
 <ul>
-<li>ECS: Full access (create clusters, services, task definitions)</li>
-<li>ECR: Push images</li>
-<li>IAM: Create roles and policies</li>
-<li>CloudWatch: Logs and Application Signals access</li>
-<li>EC2: VPC, subnet, and security group access</li>
-<li>SSM: Parameter Store write access</li>
+<li>ECS：完全访问（创建集群、服务、任务定义）</li>
+<li>ECR：推送镜像</li>
+<li>IAM：创建角色和策略</li>
+<li>CloudWatch：Logs 和 Application Signals 访问</li>
+<li>EC2：VPC、子网和安全组访问</li>
+<li>SSM：Parameter Store 写入权限</li>
 </ul>
-<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<h3 id="knowledge-assumed">前置知识</h3>
 <ul>
-<li>Basic AWS CLI usage</li>
-<li>Basic Docker commands</li>
-<li>Basic understanding of ECS concepts</li>
+<li>AWS CLI 基础使用</li>
+<li>Docker 基础命令</li>
+<li>ECS 基本概念理解</li>
 <li>Basic Node.js/Express knowledge</li>
 </ul>
-<h2 id="architecture">Architecture</h2>
-<p>Your ECS task will contain <strong>3 containers</strong>:</p>
+<h2 id="architecture">架构</h2>
+<p>您的 ECS 任务将包含 <strong>3 个容器</strong>：</p>
 <ol>
-<li><strong>Init Container</strong> (<code>init</code>): Copies ADOT Node.js auto-instrumentation files</li>
-<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>): Collects traces and metrics  </li>
-<li><strong>Application Container</strong> (<code>app</code>): Your Node.js Express application</li>
+<li><strong>Init 容器</strong> (<code>init</code>): Copies ADOT Node.js auto-instrumentation files</li>
+<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>)：收集 traces 和 metrics  </li>
+<li><strong>应用容器</strong> (<code>app</code>): Your Node.js Express application</li>
 </ol>
-<p><strong>Flow:</strong></p>
+<p><strong>流程：</strong></p>
 <pre><code><span class="hljs-selector-tag">Init</span> <span class="hljs-selector-tag">Container</span> (runs once, copies files) 
   → <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">starts</span> (auto-instrumented via NODE_OPTIONS)
   → <span class="hljs-selector-tag">Sends</span> <span class="hljs-selector-tag">traces</span>/<span class="hljs-selector-tag">metrics</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> (<span class="hljs-attribute">localhost</span>:<span class="hljs-number">4316</span>)
   → <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> <span class="hljs-selector-tag">sends</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">Signals</span>
-</code></pre><h2 id="step-1-create-the-application">Step 1: Create the Application</h2>
-<h3 id="1-1-create-project-structure">1.1 Create Project Structure</h3>
+</code></pre><h2 id="step-1-create-the-application">步骤 1： 创建应用</h2>
+<h3 id="1-1-create-project-structure">1.1 创建项目结构</h3>
 <pre><code class="lang-bash"><span class="hljs-built_in">mkdir</span> ecs-nodejs
 <span class="hljs-built_in">cd</span> ecs-nodejs
 </code></pre>
-<h3 id="1-2-create-package-json">1.2 Create Package.json</h3>
+<h3 id="1-2-create-package-json">1.2 创建 Package.json</h3>
 <p>Create <code>package.json</code>:</p>
 <pre><code class="lang-json">{
   <span class="hljs-attr">"name"</span>: <span class="hljs-string">"ecs-nodejs-appsignals"</span>,
@@ -384,7 +384,7 @@
   }
 }
 </code></pre>
-<h3 id="1-3-create-main-application">1.3 Create Main Application</h3>
+<h3 id="1-3-create-main-application">1.3 创建主应用</h3>
 <p>Create <code>index.js</code>:</p>
 <pre><code class="lang-javascript"><span class="hljs-comment">/**
  * Node.js Express application for AWS Application Signals testing on ECS
@@ -602,7 +602,7 @@ app.listen(port, <span class="hljs-string">'0.0.0.0'</span>, () =&gt; {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Service: ecs-nodejs`</span>);
 });
 </code></pre>
-<h3 id="1-4-create-dockerfile">1.4 Create Dockerfile</h3>
+<h3 id="1-4-create-dockerfile">1.4 创建 Dockerfile</h3>
 <p>Create <code>Dockerfile</code>:</p>
 <pre><code class="lang-dockerfile"><span class="hljs-comment"># Use the official Node.js 18 runtime as base image</span>
 <span class="hljs-keyword">FROM</span> node:<span class="hljs-number">18</span>-alpine
@@ -631,14 +631,14 @@ app.listen(port, <span class="hljs-string">'0.0.0.0'</span>, () =&gt; {
 <span class="hljs-comment"># Start the application</span>
 <span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"node"</span>, <span class="hljs-string">"index.js"</span>]</span>
 </code></pre>
-<h2 id="step-2-build-and-test-locally">Step 2: Build and Test Locally</h2>
-<h3 id="2-1-install-dependencies">2.1 Install Dependencies</h3>
+<h2 id="step-2-build-and-test-locally">步骤 2： 本地构建和测试</h2>
+<h3 id="2-1-install-dependencies">2.1 安装依赖</h3>
 <pre><code class="lang-bash">npm <span class="hljs-keyword">install</span>
 </code></pre>
-<h3 id="2-2-test-locally">2.2 Test Locally</h3>
+<h3 id="2-2-test-locally">2.2 本地测试</h3>
 <pre><code class="lang-bash"><span class="hljs-built_in">npm</span> start
 </code></pre>
-<p>The application will start on <code>http://localhost:80</code>. Test the endpoints:</p>
+<p>应用将启动在 <code>http://localhost:80</code>. 测试端点：</p>
 <pre><code class="lang-bash"><span class="hljs-meta"># Root endpoint</span>
 curl http:<span class="hljs-comment">//localhost:80</span>
 
@@ -666,7 +666,7 @@ curl http:<span class="hljs-comment">//localhost:80/api/database</span>
 <span class="hljs-meta"># Complex operation</span>
 curl http:<span class="hljs-comment">//localhost:80/api/complex</span>
 </code></pre>
-<h2 id="step-3-deploy-to-ecs">Step 3: Deploy to ECS</h2>
+<h2 id="step-3-deploy-to-ecs">步骤 3： Deploy to ECS</h2>
 <h3 id="3-1-create-ecr-repository">3.1 Create ECR Repository</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Get your AWS account ID</span>
 <span class="hljs-string">ACCOUNT_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">sts </span><span class="hljs-built_in">get-caller-identity</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">Account </span><span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
@@ -678,7 +678,7 @@ curl http:<span class="hljs-comment">//localhost:80/api/complex</span>
 <span class="hljs-comment"># Get login token</span>
 <span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">get-login-password</span> <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1 | <span class="hljs-string">docker </span><span class="hljs-string">login </span><span class="hljs-built_in">--username</span> <span class="hljs-string">AWS </span><span class="hljs-built_in">--password-stdin</span> $<span class="hljs-string">ACCOUNT_ID.</span><span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span><span class="hljs-string">us-east-</span>1.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com</span>
 </code></pre>
-<h3 id="3-2-build-and-push-docker-image">3.2 Build and Push Docker Image</h3>
+<h3 id="3-2-build-and-push-docker-image">3.2 构建并推送 Docker 镜像</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Build the image</span>
 docker build -t <span class="hljs-keyword">my</span>-appsignals-nodejs-app .
 
@@ -688,7 +688,7 @@ docker tag <span class="hljs-keyword">my</span>-appsignals-nodejs-app:latest $AC
 <span class="hljs-comment"># Push the image</span>
 docker <span class="hljs-keyword">push</span> $ACCOUNT_ID.dkr.ecr.us-east-<span class="hljs-number">1</span>.amazonaws.com/<span class="hljs-keyword">my</span>-appsignals-nodejs-app:latest
 </code></pre>
-<h3 id="3-3-create-iam-roles">3.3 Create IAM Roles</h3>
+<h3 id="3-3-create-iam-roles">3.3 创建 IAM 角色</h3>
 <h4 id="3-3-1-create-ecs-execution-role">3.3.1 Create ECS Execution Role</h4>
 <pre><code class="lang-bash"><span class="hljs-comment"># Create execution role</span>
 aws iam create-<span class="hljs-keyword">role</span> <span class="hljs-title">\
@@ -745,7 +745,7 @@ aws iam attach-role-policy \
     --role-name my-appsignals-nodejs-app-ecs-task-<span class="hljs-keyword">role</span> <span class="hljs-title">\
     --policy-arn</span> arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
 </code></pre>
-<h3 id="3-4-create-cloudwatch-agent-configuration">3.4 Create CloudWatch Agent Configuration</h3>
+<h3 id="3-4-create-cloudwatch-agent-configuration">3.4 创建 CloudWatch Agent 配置</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Create CloudWatch agent configuration</span>
 aws ssm <span class="hljs-keyword">put</span>-parameter \
     <span class="hljs-comment">--name "ecs-cwagent-my-appsignals-nodejs-app" \</span>
@@ -810,11 +810,11 @@ aws ssm <span class="hljs-keyword">put</span>-parameter \
     <span class="hljs-comment">--type "String" \</span>
     <span class="hljs-comment">--region us-east-1</span>
 </code></pre>
-<h3 id="3-5-create-ecs-cluster">3.5 Create ECS Cluster</h3>
+<h3 id="3-5-create-ecs-cluster">3.5 创建 ECS 集群</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Create ECS cluster</span>
 <span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-cluster</span> <span class="hljs-built_in">--cluster-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
 </code></pre>
-<h3 id="3-6-create-task-definition">3.6 Create Task Definition</h3>
+<h3 id="3-6-create-task-definition">3.6 创建任务定义</h3>
 <p>Create <code>nodejs-task-def.json</code>:</p>
 <pre><code class="lang-json">{
     <span class="hljs-attr">"family"</span>: <span class="hljs-string">"my-appsignals-nodejs-app-task"</span>,
@@ -955,7 +955,7 @@ aws ssm <span class="hljs-keyword">put</span>-parameter \
     ]
 }
 </code></pre>
-<p>Update the task definition with your account ID:</p>
+<p>使用您的账户 ID 更新任务定义：</p>
 <pre><code class="lang-bash"><span class="hljs-comment"># Replace YOUR_ACCOUNT_ID with your actual account ID</span>
 <span class="hljs-attribute">sed</span> -i <span class="hljs-string">"s/YOUR_ACCOUNT_ID/<span class="hljs-variable">$ACCOUNT_ID</span>/g"</span> nodejs-task-def.json
 
@@ -1004,8 +1004,8 @@ aws ecs register-task-definition --cli-input-json file://nodejs-task-def.json --
     <span class="hljs-built_in">--network-configuration</span> <span class="hljs-string">"awsvpcConfiguration={subnets=[$SUBNET_IDS],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"</span> \
     <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
 </code></pre>
-<h2 id="step-4-generate-traffic-and-monitor">Step 4: Generate Traffic and Monitor</h2>
-<h3 id="4-1-get-service-endpoint">4.1 Get Service Endpoint</h3>
+<h2 id="step-4-generate-traffic-and-monitor">步骤 4： 生成流量并监控</h2>
+<h3 id="4-1-get-service-endpoint">4.1 Get Service 端点</h3>
 <pre><code class="lang-bash"><span class="hljs-comment"># Get the public IP of the running task</span>
 <span class="hljs-string">TASK_ARN=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">list-tasks</span> <span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--service-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-service </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'taskArns[0]'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
 <span class="hljs-string">echo </span><span class="hljs-string">"Task ARN: $TASK_ARN"</span>
@@ -1018,7 +1018,7 @@ aws ecs register-task-definition --cli-input-json file://nodejs-task-def.json --
 <span class="hljs-string">PUBLIC_IP=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-network-</span><span class="hljs-string">interfaces </span><span class="hljs-built_in">--network-interface-ids</span> $<span class="hljs-string">TASK_DETAILS </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'NetworkInterfaces[0].Association.PublicIp'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
 <span class="hljs-string">echo </span><span class="hljs-string">"Public IP: $PUBLIC_IP"</span>
 </code></pre>
-<h3 id="4-2-generate-traffic">4.2 Generate Traffic</h3>
+<h3 id="4-2-generate-traffic">4.2 生成流量</h3>
 <p>Create <code>generate-traffic.sh</code>:</p>
 <pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
 </span>
@@ -1062,38 +1062,38 @@ BASE_URL=<span class="hljs-string">"http://<span class="hljs-variable">$PUBLIC_I
 
 <span class="hljs-built_in">echo</span> <span class="hljs-string">"Traffic generation complete!"</span>
 </code></pre>
-<p>Make it executable and run:</p>
+<p>赋予执行权限并运行：</p>
 <pre><code class="lang-bash">chmod +x <span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
 ./<span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
 </code></pre>
 <h3 id="4-3-monitor-in-cloudwatch">4.3 Monitor in CloudWatch</h3>
 <ol>
-<li><p><strong>Open CloudWatch Console</strong></p>
+<li><p><strong>打开 CloudWatch 控制台</strong></p>
 <ul>
-<li>Go to AWS Console → CloudWatch</li>
-<li>Navigate to &quot;Application Signals&quot;</li>
+<li>前往 AWS 控制台 → CloudWatch</li>
+<li>导航到 &quot;Application Signals&quot;</li>
 </ul>
 </li>
-<li><p><strong>View Service Map</strong></p>
+<li><p><strong>查看 Service Map</strong></p>
 <ul>
-<li>Look for &quot;my-appsignals-nodejs-app&quot; service</li>
-<li>See the service dependencies and health</li>
+<li>查找 &quot;my-appsignals-nodejs-app&quot; service</li>
+<li>查看服务依赖关系和健康状况</li>
 </ul>
 </li>
-<li><p><strong>Check Metrics</strong></p>
+<li><p><strong>查看 Metrics</strong></p>
 <ul>
-<li>View latency, error rate, and throughput</li>
-<li>Compare with Lambda metrics</li>
+<li>查看延迟、错误率和吞吐量</li>
+<li>与 Lambda metrics 进行比较</li>
 </ul>
 </li>
-<li><p><strong>Analyze Traces</strong></p>
+<li><p><strong>分析 Traces</strong></p>
 <ul>
-<li>Click on service to see detailed traces</li>
-<li>View operation-level metrics</li>
+<li>点击服务查看详细 traces</li>
+<li>查看操作级别 metrics</li>
 </ul>
 </li>
 </ol>
-<h2 id="step-5-clean-up">Step 5: Clean Up</h2>
+<h2 id="step-5-clean-up">Step 5: 清理资源</h2>
 <h3 id="5-1-stop-ecs-service">5.1 Stop ECS Service</h3>
 <pre><code class="lang-bash"># Update service to 0 desired count
 aws ecs update-service \
@@ -1149,8 +1149,8 @@ aws ecs update-service \
 <span class="hljs-comment"># Delete security group</span>
 <span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-security-group</span> <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SECURITY_GROUP_ID</span>
 </code></pre>
-<h2 id="troubleshooting">Troubleshooting</h2>
-<h3 id="common-issues">Common Issues</h3>
+<h2 id="troubleshooting">故障排除</h2>
+<h3 id="common-issues">常见问题</h3>
 <ol>
 <li><p><strong>Task fails to start</strong></p>
 <ul>
@@ -1159,17 +1159,17 @@ aws ecs update-service \
 <li>Check CloudWatch logs for error details</li>
 </ul>
 </li>
-<li><p><strong>No data in Application Signals</strong></p>
+<li><p><strong>Application Signals 中无数据</strong></p>
 <ul>
 <li>Verify CloudWatch agent is running</li>
-<li>Check environment variables are set correctly</li>
+<li>Check 环境变量s are set correctly</li>
 <li>Ensure ADOT auto-instrumentation is working</li>
 </ul>
 </li>
 <li><p><strong>Service not accessible</strong></p>
 <ul>
-<li>Check security group allows inbound traffic on port 80</li>
-<li>Verify task is running and healthy</li>
+<li>检查安全组是否允许端口 80 的入站流量</li>
+<li>验证任务正在运行且健康</li>
 <li>Check VPC and subnet configuration</li>
 </ul>
 </li>

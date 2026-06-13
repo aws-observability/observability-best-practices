@@ -1,11 +1,11 @@
 # Amazon CloudWatch
 
-[Amazon CloudWatch][cw-main] (CW) 是一项为 DevOps 工程师、开发人员、站点可靠性工程师 (SRE) 和 IT 管理人员构建的监控和 observability 服务。CloudWatch 以 logs、metrics 和事件的形式收集监控和运营数据，为您提供 AWS 资源、应用程序以及在 AWS 和本地服务器上运行的服务的统一视图。
+[Amazon CloudWatch][cw-main] (CW) 是一项为 DevOps 工程师、开发人员、站点可靠性工程师 (SRE) 和 IT 管理人员构建的监控和可观测性服务。CloudWatch 以 logs、metrics 和事件的形式收集监控和运营数据，为您提供 AWS 资源、应用程序以及在 AWS 和本地服务器上运行的服务的统一视图。
 
 查看以下实用方案：
 
 - [使用 CW Logs、Lambda 和 SNS 构建 RDS 主动数据库监控][rds-cw]
-- [在 EKS 中为 Kubernetes 原生开发人员实施以 CloudWatch 为中心的 observability][swa-eks-cw]
+- [在 EKS 中为 Kubernetes 原生开发人员实施以 CloudWatch 为中心的可观测性][swa-eks-cw]
 - [通过 CW Synthetics 创建 Canaries][cw-synths]
 - [使用 CloudWatch Logs Insights 查询日志][cw-logsi]
 - [Lambda Insights][cw-lambda]

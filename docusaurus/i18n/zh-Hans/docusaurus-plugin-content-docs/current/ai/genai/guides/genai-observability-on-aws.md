@@ -1,10 +1,10 @@
-# AWS 上的 GenAI Observability
+# AWS 上的 GenAI 可观测性
 
 ## 概述
 
-生成式 AI 工作负载在多个方面与传统应用不同，这使得从第一天起 Observability 就至关重要。响应是非确定性的，延迟随提示复杂度急剧变化，成本直接与 token 使用量挂钩，单个 Agent 调用可以在几秒内跨 Bedrock、S3、Lambda 和 KMS 链接数十个 API 调用。
+生成式 AI 工作负载在多个方面与传统应用不同，这使得从第一天起可观测性就至关重要。响应是非确定性的，延迟随提示复杂度急剧变化，成本直接与 token 使用量挂钩，单个 Agent 调用可以在几秒内跨 Bedrock、S3、Lambda 和 KMS 链接数十个 API 调用。
 
-如果没有适当的 Observability，团队会面临可预见的问题：
+如果没有适当的可观测性，团队会面临可预见的问题：
 
 - **成本超支** — 未跟踪的 token 使用导致意外账单。单个失控的 Agent 循环可以在几分钟内消耗数百美元。
 - **性能下降** — 慢响应影响用户体验，而您无法修复看不到的问题。Agent 工作流可能在编排层静默失败，而模型调用却成功。
@@ -15,7 +15,7 @@
 
 ---
 
-## 为什么 GenAI Observability 不同
+## 为什么 GenAI 可观测性不同
 
 ### 独特挑战
 
@@ -27,18 +27,18 @@
 
 **多服务复杂性** — Agent 跨多个 AWS 服务链接 API 调用。没有单一的日志源能讲述完整的故事。
 
-**快速迭代** — 模型和提示频繁变化。您的 Observability 必须跟踪模型版本、提示模板和配置随时间的变化。
+**快速迭代** — 模型和提示频繁变化。您的可观测性必须跟踪模型版本、提示模板和配置随时间的变化。
 
 ### 业务影响
 
-将 Observability 视为事后考虑的组织通常在事后发现这些模式：
+将可观测性视为事后考虑的组织通常在事后发现这些模式：
 
-- A single untuned prompt consuming 80% of the monthly Bedrock budget
-- Agent workflows failing at the tool layer while model metrics look healthy
-- PII leaking into logs because redaction wasn't configured upfront
-- Cost attribution impossible because no team tags were applied
+- 单个未调优的提示消耗了每月 Bedrock 预算的 80%
+- Agent 工作流在工具层失败，而模型 metrics 看起来正常
+- PII 泄漏到 logs 中，因为未提前配置脱敏
+- 由于未应用团队标签，成本归因无法实现
 
-Getting observability right early prevents expensive retrofits later.
+尽早做好可观测性可以避免日后昂贵的改造。
 
 ---
 
@@ -50,10 +50,10 @@ Getting observability right early prevents expensive retrofits later.
 
 **需要跟踪的关键 metrics：**
 
-- **Token usage** — input tokens per request, output tokens per request, total tokens by model and user, token cost calculations
-- **Latency** — time to first token (TTFT), total response time, P50/P95/P99 percentiles, latency by model and region
-- **Request volume** — requests per second/minute/hour, success vs error rates, concurrent requests
-- **Cost** — cost per request, cost by model/user/team, daily/monthly trends, cost efficiency (output tokens per dollar)
+- **Token 用量** — 每次请求的输入 token 数、每次请求的输出 token 数、按模型和用户统计的总 token 数、token 成本计算
+- **延迟** — 首 token 时间 (TTFT)、总响应时间、P50/P95/P99 百分位数、按模型和区域统计的延迟
+- **请求量** — 每秒/每分钟/每小时请求数、成功率与错误率、并发请求数
+- **成本** — 每次请求成本、按模型/用户/团队统计的成本、每日/每月趋势、成本效率（每美元输出 token 数）
 
 ### Logs
 
@@ -61,19 +61,19 @@ Getting observability right early prevents expensive retrofits later.
 
 **需要记录的内容：**
 
-- Request/response pairs (with PII redaction)
-- Prompt templates and variables
-- Model parameters (temperature, max_tokens, top_p)
-- Error messages and stack traces
-- User context and session IDs
-- A/B test variants
+- 请求/响应对（需进行 PII 脱敏）
+- 提示模板和变量
+- 模型参数（temperature、max_tokens、top_p）
+- 错误消息和堆栈跟踪
+- 用户上下文和会话 ID
+- A/B 测试变体
 
-**Log levels:**
+**Log 级别：**
 
-- `DEBUG` — detailed prompt engineering iterations
-- `INFO` — successful requests with metadata
-- `WARN` — retries, fallbacks, rate limits
-- `ERROR` — failures, timeouts, invalid responses
+- `DEBUG` — 详细的提示工程迭代
+- `INFO` — 成功请求及其元数据
+- `WARN` — 重试、降级、速率限制
+- `ERROR` — 失败、超时、无效响应
 
 ### Traces
 
@@ -81,63 +81,63 @@ Getting observability right early prevents expensive retrofits later.
 
 **需要捕获的内容：**
 
-- End-to-end request flow
-- Prompt preprocessing steps
-- Model invocation spans
-- Tool and function call spans
-- Post-processing and validation
-- Integration with downstream services
-- Multi-hop agent workflows
+- 端到端请求流
+- 提示预处理步骤
+- 模型调用 span
+- 工具和函数调用 span
+- 后处理和验证
+- 与下游服务的集成
+- 多跳 Agent 工作流
 
 ---
 
 ## 战略最佳实践
 
-1. **Instrument early** — add observability when you build, not after you ship. Use OpenTelemetry so your instrumentation is vendor-neutral and portable.
-2. **Multi-dimensional tagging** — tag every metric with `model`, `environment`, `application`, `team`, and `region` dimensions so you can slice costs and performance later.
-3. **Set baselines before alarms** — run in production for at least a week to establish normal behavior before setting alarm thresholds. Alarms without baselines create noise fatigue.
-4. **Watch business metrics, not just technical** — track output quality, user satisfaction (thumbs up/down), and cost-per-feature alongside latency and error rates.
-5. **Plan for PII from day one** — redact sensitive data in logs before it lands. Use [CloudWatch Logs data protection policies](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html) for automated masking.
-6. **Set retention policies** — log volume grows fast. Differentiate retention by purpose:
-   - Operational logs: 7 days
-   - Model invocations: 30-90 days
-   - Audit/compliance: per regulatory requirement (often 7 years)
-7. **Track model version and prompt template** — when something changes, you need to correlate with what was in production at the time.
+1. **尽早插桩** — 在构建时就添加可观测性，而不是上线之后。使用 OpenTelemetry 使您的插桩与供应商无关且可移植。
+2. **多维度标签** — 为每个 metric 添加 `model`、`environment`、`application`、`team` 和 `region` 维度标签，以便后续可以按维度切分成本和性能。
+3. **先建立基线再设告警** — 在生产环境中运行至少一周以建立正常行为基线，然后再设置告警阈值。没有基线的告警会造成告警疲劳。
+4. **关注业务 metrics，而非仅技术 metrics** — 除延迟和错误率之外，还要跟踪输出质量、用户满意度（点赞/点踩）和每功能成本。
+5. **从第一天起就规划 PII 处理** — 在数据落盘之前就对 logs 中的敏感数据进行脱敏。使用 [CloudWatch Logs 数据保护策略](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html) 进行自动遮蔽。
+6. **设置保留策略** — log 量增长迅速。按用途区分保留期：
+   - 运维 logs：7 天
+   - 模型调用记录：30-90 天
+   - 审计/合规：按监管要求（通常 7 年）
+7. **跟踪模型版本和提示模板** — 当出现变化时，您需要能够关联当时生产环境中运行的具体版本。
 
 ---
 
 ## AWS 上的两个数据管道
 
-Amazon CloudWatch 通过两个互补的数据管道为 GenAI 提供端到端的 Observability。它们服务于不同的目的，捕获不同的数据，并以不同的方式启用。大多数生产环境需要两者兼备。
+Amazon CloudWatch 通过两个互补的数据管道为 GenAI 提供端到端的可观测性。它们服务于不同的目的，捕获不同的数据，并以不同的方式启用。大多数生产环境需要两者兼备。
 
 ![GenAI Telemetry Pipelines](../../../images/GenAI/genai-telemetry-pipelines.png)
 
-### Pipeline 1: Bedrock Model Invocation Logging
+### Pipeline 1：Bedrock 模型调用日志
 
-A Bedrock-level logging feature that captures the raw request and response for every model invocation. This is **Bedrock-only** — it only covers calls made to Amazon Bedrock foundation models. If you are using non-Bedrock models (self-hosted on SageMaker, external providers), this pipeline does not apply.
+这是 Bedrock 级别的日志功能，用于捕获每次模型调用的原始请求和响应。这是 **仅限 Bedrock** 的功能 — 它只覆盖对 Amazon Bedrock 基础模型的调用。如果您使用的是非 Bedrock 模型（在 SageMaker 上自托管、外部提供商），此 Pipeline 不适用。
 
-**What it captures:**
+**捕获的内容：**
 
-| Field | Why it matters |
+| 字段 | 重要性 |
 | --- | --- |
-| Full request payload | See exactly what was sent to the model, including system prompt and message history |
-| Full response payload | See exactly what the model returned, verbatim |
-| Inference parameters (`temperature`, `max_tokens`, `top_p`) | Debug unexpected model behavior — was it called with temp 0.7 or 0.0? |
-| Caller IAM identity (role ARN) | Security audit, cost attribution per team/role |
-| Bedrock operation type | `InvokeModel`, `Converse`, `ConverseStream` |
-| Model version | Exact model ID including suffix (e.g., `cohere.command-r-plus-v1:0`) |
-| Token counts | Input and output token counts tied directly to content |
+| 完整请求负载 | 查看发送给模型的确切内容，包括系统提示和消息历史 |
+| 完整响应负载 | 查看模型返回的确切内容，逐字记录 |
+| 推理参数（`temperature`、`max_tokens`、`top_p`） | 调试意外的模型行为 — 调用时使用的是 temp 0.7 还是 0.0？ |
+| 调用者 IAM 身份（角色 ARN） | 安全审计、按团队/角色进行成本归因 |
+| Bedrock 操作类型 | `InvokeModel`、`Converse`、`ConverseStream` |
+| 模型版本 | 包含后缀的确切模型 ID（例如 `cohere.command-r-plus-v1:0`） |
+| Token 计数 | 与内容直接关联的输入和输出 token 数 |
 
-**What it does NOT capture:**
+**未捕获的内容：**
 
-- Agent orchestration flow (which tools were called, agent loop behavior)
-- Client-side latency
-- Distributed trace correlation (no traceId/spanId — only requestId)
-- Tool call details
-- Infrastructure context
-- Non-Bedrock model calls
+- Agent 编排流程（调用了哪些工具、Agent 循环行为）
+- 客户端延迟
+- 分布式 trace 关联（无 traceId/spanId — 只有 requestId）
+- 工具调用详情
+- 基础设施上下文
+- 非 Bedrock 模型调用
 
-**Sample log entry:**
+**示例 log 条目：**
 
 ```json
 {
@@ -169,51 +169,51 @@ A Bedrock-level logging feature that captures the raw request and response for e
 }
 ```
 
-**How to enable:**
+**如何启用：**
 
-Manual opt-in via the Amazon Bedrock console (or API). This is the same step whether the model is invoked by an agent, a direct API call, an SDK, or anything else. It applies account-wide to all Bedrock model invocations once turned on.
+通过 Amazon Bedrock 控制台（或 API）手动启用。无论模型是由 Agent、直接 API 调用、SDK 还是其他方式调用的，启用步骤都相同。启用后，它将应用于账户范围内的所有 Bedrock 模型调用。
 
-1. Open the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/)
-2. Choose **Settings**
-3. Under **Model invocation logging**, select **Model invocation logging**
-4. Choose the required data types to include in the logs. Choose to send the logs to CloudWatch Logs only, or both Amazon S3 and CloudWatch Logs.
-5. Under the CloudWatch Logs configurations, create a log group name and select the appropriate service roles
-6. Choose **Save settings**
+1. 打开 [Amazon Bedrock 控制台](https://console.aws.amazon.com/bedrock/)
+2. 选择 **Settings**
+3. 在 **Model invocation logging** 下，选择 **Model invocation logging**
+4. 选择要包含在 logs 中的所需数据类型。选择仅将 logs 发送到 CloudWatch Logs，或同时发送到 Amazon S3 和 CloudWatch Logs。
+5. 在 CloudWatch Logs 配置下，创建 log group 名称并选择相应的服务角色
+6. 选择 **Save settings**
 
-For more information, see [Model Invocations](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html) and [Set up a CloudWatch Logs destination](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html#setup-cloudwatch-logs-destination).
+更多信息请参阅 [Model Invocations](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html) 和 [Set up a CloudWatch Logs destination](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html#setup-cloudwatch-logs-destination)。
 
-**Pre-configured dashboards:**
+**预配置的 dashboard：**
 
-After enabling Model Invocation Logging, CloudWatch automatically provides dashboards showing:
+启用模型调用日志后，CloudWatch 自动提供显示以下内容的 dashboard：
 
-- **Invocation count** — Number of successful requests to the Converse, ConverseStream, InvokeModel, and InvokeModelWithResponseStream APIs
-- **Invocation latency** — Latency of the invocations
-- **Token Counts by Model** — Input and output token counts by model
-- **Daily Token Counts by ModelID** — Daily total token counts by model ID
-- **Requests grouped by input tokens** — Number of requests grouped into token ranges
-- **Invocation Throttles** — Number of throttled invocations
-- **Invocation Error Count** — Count of invocations resulting in errors
+- **调用次数** — 对 Converse、ConverseStream、InvokeModel 和 InvokeModelWithResponseStream API 的成功请求数
+- **调用延迟** — 调用的延迟
+- **按模型统计的 Token 数** — 按模型统计的输入和输出 token 数
+- **按模型 ID 统计的每日 Token 数** — 按模型 ID 统计的每日总 token 数
+- **按输入 token 分组的请求** — 按 token 范围分组的请求数
+- **调用限流** — 被限流的调用数
+- **调用错误计数** — 产生错误的调用计数
 
-### Pipeline 2: Agent Telemetry (via ADOT SDK)
+### Pipeline 2：Agent 遥测（通过 ADOT SDK）
 
-OpenTelemetry-based traces, spans, and logs captured by the [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) SDK. Unlike Model Invocation Logging, Agent Telemetry works with any model provider (Bedrock, SageMaker, external), not just Bedrock.
+基于 OpenTelemetry 的 traces、span 和 logs，由 [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) SDK 捕获。与模型调用日志不同，Agent 遥测适用于任何模型提供商（Bedrock、SageMaker、外部），而不仅限于 Bedrock。
 
-**What it captures:**
+**捕获的内容：**
 
-- **Agent orchestration flow** — which tools were called, in what order, agent loop iterations
-- **Model call metadata** — model ID, token counts (input/output), latency, status codes, finish reasons
-- **Tool execution details** — tool name, duration, success/failure for every tool call
-- **Distributed trace correlation** — traceId, spanId, parentSpanId for full end-to-end request tracing
-- **Session tracking** — session.id ties multiple invocations to a single user session
-- **Platform and environment context** — cloud.platform, deployment.environment, service metadata
+- **Agent 编排流程** — 调用了哪些工具、调用顺序、Agent 循环迭代
+- **模型调用元数据** — 模型 ID、token 计数（输入/输出）、延迟、状态码、完成原因
+- **工具执行详情** — 每次工具调用的工具名称、持续时间、成功/失败
+- **分布式 trace 关联** — traceId、spanId、parentSpanId，用于完整的端到端请求追踪
+- **会话跟踪** — session.id 将多次调用关联到单个用户会话
+- **平台和环境上下文** — cloud.platform、deployment.environment、服务元数据
 
-**What it does NOT capture:**
+**未捕获的内容：**
 
-- Inference parameters (temperature, max_tokens, top_p)
-- Caller IAM identity
-- Full prompt/response content by default (framework-dependent — Strands, LangChain, CrewAI etc. are supported; others vary)
+- 推理参数（temperature、max_tokens、top_p）
+- 调用者 IAM 身份
+- 默认情况下不包含完整提示/响应内容（取决于框架 — Strands、LangChain、CrewAI 等受支持；其他框架各有不同）
 
-**Sample model call span** (`aws/spans`):
+**示例模型调用 span**（`aws/spans`）：
 
 ```json
 {
@@ -241,7 +241,7 @@ OpenTelemetry-based traces, spans, and logs captured by the [AWS Distro for Open
 }
 ```
 
-**Sample tool execution span** (`aws/spans`):
+**示例工具执行 span**（`aws/spans`）：
 
 ```json
 {
@@ -258,182 +258,182 @@ OpenTelemetry-based traces, spans, and logs captured by the [AWS Distro for Open
 }
 ```
 
-**Where the data lands:**
+**数据落地位置：**
 
-| Log Group | What's in it |
+| Log Group | 内容 |
 | --- | --- |
-| `aws/spans` | OTel trace spans — model calls, tool executions, agent loop iterations |
-| `/aws/bedrock-agentcore/runtimes/<agent>` (runtime-logs) | Application stdout/stderr — startup logs, errors, custom app logging |
-| `/aws/bedrock-agentcore/runtimes/<agent>` (otel-rt-logs) | OTel log records from agent framework (prompt/response content for supported frameworks) |
+| `aws/spans` | OTel trace span — 模型调用、工具执行、Agent 循环迭代 |
+| `/aws/bedrock-agentcore/runtimes/<agent>` (runtime-logs) | 应用程序 stdout/stderr — 启动 logs、错误、自定义应用日志 |
+| `/aws/bedrock-agentcore/runtimes/<agent>` (otel-rt-logs) | 来自 Agent 框架的 OTel log 记录（支持的框架包含提示/响应内容） |
 
-**What it powers in CloudWatch:**
+**在 CloudWatch 中支持的功能：**
 
-- **Application Signals dashboards** — latency percentiles, error rates, throughput
-- **Application Maps** — visualize agent → model → tool call chains
-- **Distributed Tracing** — end-to-end request tracing across services
-- **SLO monitoring**
-- **Trace analytics** — drill into individual requests end-to-end
-- **Correlation with infrastructure metrics**
+- **Application Signals dashboard** — 延迟百分位数、错误率、吞吐量
+- **Application Maps** — 可视化 Agent → 模型 → 工具调用链
+- **分布式追踪** — 跨服务的端到端请求追踪
+- **SLO 监控**
+- **Trace 分析** — 深入到单个请求的端到端详情
+- **与基础设施 metrics 的关联**
 
-**How to enable:**
+**如何启用：**
 
-| Deployment Model | What you do |
+| 部署模型 | 需要做的事情 |
 | --- | --- |
-| Bedrock AgentCore | Nothing — ADOT SDK is baked into the runtime. Telemetry flows automatically. |
-| Non-AgentCore (EKS/ECS/self-hosted) | Attach the ADOT auto-instrumentation agent. No code changes needed. |
+| Bedrock AgentCore | 无需操作 — ADOT SDK 已内置于运行时。遥测数据自动流转。 |
+| 非 AgentCore（EKS/ECS/自托管） | 附加 ADOT 自动插桩代理。无需代码更改。 |
 
 ---
 
 ## 并行比较
 
-| What you want to know | Model Invocation Logging (Bedrock only) | Agent Telemetry (ADOT) |
+| 您想了解的内容 | 模型调用日志（仅 Bedrock） | Agent 遥测（ADOT） |
 | --- | --- | --- |
-| Which model was called? | ✅ | ✅ |
-| Latency / duration? | ❌ | ✅ (client-side) |
-| Token counts? | ✅ | ✅ |
-| Error rates / status? | ✅ | ✅ |
-| Agent orchestration flow? | ❌ | ✅ |
-| Tool call details? | ❌ | ✅ |
-| Full prompt text? | ✅ | Framework-dependent |
-| Full model response? | ✅ | Framework-dependent |
-| Inference parameters? | ✅ | ❌ |
-| Caller IAM identity? | ✅ | ❌ |
-| Distributed trace correlation? | ❌ | ✅ |
-| Works for non-agent Bedrock calls? | ✅ | ❌ |
-| Works for non-Bedrock models? | ❌ (Bedrock only) | ✅ |
-| Application Signals / Application Maps? | ❌ | ✅ |
+| 调用了哪个模型？ | ✅ | ✅ |
+| 延迟/持续时间？ | ❌ | ✅（客户端） |
+| Token 计数？ | ✅ | ✅ |
+| 错误率/状态？ | ✅ | ✅ |
+| Agent 编排流程？ | ❌ | ✅ |
+| 工具调用详情？ | ❌ | ✅ |
+| 完整提示文本？ | ✅ | 取决于框架 |
+| 完整模型响应？ | ✅ | 取决于框架 |
+| 推理参数？ | ✅ | ❌ |
+| 调用者 IAM 身份？ | ✅ | ❌ |
+| 分布式 trace 关联？ | ❌ | ✅ |
+| 适用于非 Agent 的 Bedrock 调用？ | ✅ | ❌ |
+| 适用于非 Bedrock 模型？ | ❌（仅 Bedrock） | ✅ |
+| Application Signals / Application Maps？ | ❌ | ✅ |
 
-Prompt/response content capture in Pipeline 2 depends on the agent framework's OTel instrumentation. Strands, LangChain, and CrewAI are supported; other frameworks may vary.
+Pipeline 2 中的提示/响应内容捕获取决于 Agent 框架的 OTel 插桩。Strands、LangChain 和 CrewAI 受支持；其他框架可能有所不同。
 
-**In summary:** Agent Telemetry tells you *how your agent is performing*. Model Invocation Logging tells you *what your model is saying and who is asking*. For complete observability, enable both.
+**总结：** Agent 遥测告诉您*您的 Agent 表现如何*。模型调用日志告诉您*模型说了什么以及谁在提问*。要获得完整的可观测性，请同时启用两者。
 
 ---
 
-## 为 Agentic 工作负载启用 Observability
+## 为 Agentic 工作负载启用可观测性
 
-在开始之前，启用 [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) 以解锁完整的 GenAI Observability 体验。
+在开始之前，启用 [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) 以解锁完整的 GenAI 可观测性体验。
 
-### AgentCore Runtime hosted agents
+### AgentCore Runtime 托管的 Agent
 
-AgentCore Runtime is a secure, serverless runtime purpose-built for deploying and scaling dynamic AI agents and tools. It supports any open-source framework including LangGraph, CrewAI, Strands Agents, any protocol, and any model.
+AgentCore Runtime 是一个安全的无服务器运行时，专门为部署和扩展动态 AI Agent 和工具而构建。它支持任何开源框架，包括 LangGraph、CrewAI、Strands Agents，以及任何协议和任何模型。
 
-Observability is built in — the ADOT SDK is baked into the AgentCore runtime. Metrics are automatically generated, and traces flow without any code changes.
+可观测性已内置 — ADOT SDK 已集成在 AgentCore 运行时中。Metrics 自动生成，traces 无需任何代码更改即可流转。
 
-- [Configure custom observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-custom)
-- [Step-by-step tutorial: Enabling observability for AgentCore Runtime hosted agents](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#enabling-observability-for-agentcore-runtime-hosted-agents)
+- [配置自定义可观测性](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-custom)
+- [分步教程：为 AgentCore Runtime 托管的 Agent 启用可观测性](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#enabling-observability-for-agentcore-runtime-hosted-agents)
 
-### Non-AgentCore hosted agents (EKS, ECS, self-hosted)
+### 非 AgentCore 托管的 Agent（EKS、ECS、自托管）
 
-You can host your agents outside of AgentCore and bring your observability data into CloudWatch for end-to-end monitoring in one location. Attach the ADOT auto-instrumentation agent to your workload — no code changes needed.
+您可以在 AgentCore 之外托管您的 Agent，并将可观测性数据引入 CloudWatch 以在一个位置进行端到端监控。将 ADOT 自动插桩代理附加到您的工作负载 — 无需代码更改。
 
-- [Configure third-party observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-3p)
-- [Step-by-step tutorial: Enabling observability for non-AgentCore hosted agents](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#enabling-observability-for-non-agentcore-hosted-agents)
+- [配置第三方可观测性](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-3p)
+- [分步教程：为非 AgentCore 托管的 Agent 启用可观测性](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#enabling-observability-for-non-agentcore-hosted-agents)
 
-### AgentCore memory, gateway, and built-in tool resources
+### AgentCore memory、gateway 和内置工具资源
 
-Gain visibility into the metrics and traces of AgentCore modular services. See [Configure CloudWatch observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-cloudwatch).
+获得对 AgentCore 模块化服务的 metrics 和 traces 的可见性。请参阅[配置 CloudWatch 可观测性](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-cloudwatch)。
 
 ### AgentCore Evaluations
 
-AgentCore Evaluations provide capabilities to monitor and assess the performance, quality, and reliability of your AI agents. See [AgentCore evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html).
+AgentCore Evaluations 提供监控和评估 AI Agent 性能、质量和可靠性的功能。请参阅 [AgentCore evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html)。
 
-### Enablement Summary
+### 启用总结
 
-| Component | AgentCore | Non-AgentCore (EKS/ECS) |
+| 组件 | AgentCore | 非 AgentCore（EKS/ECS） |
 | --- | --- | --- |
-| Metrics | Automatic | ADOT auto-instrumentation agent |
-| Agent traces and spans | Automatic (ADOT baked in) | ADOT auto-instrumentation agent |
-| Model Invocation Logging | Manual opt-in via Bedrock console | Manual opt-in via Bedrock console |
+| Metrics | 自动 | ADOT 自动插桩代理 |
+| Agent traces 和 span | 自动（ADOT 已内置） | ADOT 自动插桩代理 |
+| 模型调用日志 | 通过 Bedrock 控制台手动启用 | 通过 Bedrock 控制台手动启用 |
 
-The only thing that truly requires manual opt-in across both paths is Model Invocation Logging. Everything else is either automatic or handled by attaching the ADOT auto-instrumentation agent.
+在两种路径中，唯一真正需要手动启用的是模型调用日志。其他一切要么是自动的，要么通过附加 ADOT 自动插桩代理来处理。
 
 ---
 
 ## 保护敏感数据
 
-When logging model invocations, prompts and responses may contain PII or sensitive information. Amazon CloudWatch Logs provides data protection policies to identify and mask sensitive data using machine learning and pattern matching.
+在记录模型调用时，提示和响应可能包含 PII 或敏感信息。Amazon CloudWatch Logs 提供数据保护策略，使用机器学习和模式匹配来识别和遮蔽敏感数据。
 
-You can configure data protection at two levels:
+您可以在两个级别配置数据保护：
 
-### Account-level data protection
+### 账户级别数据保护
 
-1. Open the Amazon CloudWatch console
-2. In the navigation pane, choose **Settings**
-3. Choose the **Logs** tab
-4. Choose **Configure the Data protection account policy**
-5. Specify the data identifiers relevant to your data (managed or custom)
-6. (Optional) Choose a destination for audit findings (CloudWatch Logs, Firehose, or S3)
-7. Choose **Activate data protection**
+1. 打开 Amazon CloudWatch 控制台
+2. 在导航窗格中，选择 **Settings**
+3. 选择 **Logs** 选项卡
+4. 选择 **Configure the Data protection account policy**
+5. 指定与您的数据相关的数据标识符（托管或自定义）
+6. （可选）为审计结果选择目标位置（CloudWatch Logs、Firehose 或 S3）
+7. 选择 **Activate data protection**
 
-### Log-group-level data protection
+### Log group 级别数据保护
 
-1. Open the Amazon CloudWatch console
-2. In the navigation panel, choose **Logs**, **Log Management**
-3. Choose the **Log groups** tab, select the log group (e.g., `aws/bedrock/modelinvocations`), and choose **Create data protection policy**
-4. Specify the data identifiers relevant to your data
-5. (Optional) Choose a destination for audit findings
-6. Choose **Activate data protection**
+1. 打开 Amazon CloudWatch 控制台
+2. 在导航面板中，选择 **Logs**、**Log Management**
+3. 选择 **Log groups** 选项卡，选择 log group（例如 `aws/bedrock/modelinvocations`），然后选择 **Create data protection policy**
+4. 指定与您的数据相关的数据标识符
+5. （可选）为审计结果选择目标位置
+6. 选择 **Activate data protection**
 
-For more information, see [Protecting sensitive log data with masking](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html) and [Protect sensitive data](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html).
+更多信息请参阅[使用遮蔽保护敏感 log 数据](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html)和[保护敏感数据](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html)。
 
 ---
 
 ## 何时启用什么
 
-| Scenario | Model Invocation Logging | Agent Telemetry (ADOT) |
+| 场景 | 模型调用日志 | Agent 遥测（ADOT） |
 | --- | --- | --- |
-| Using Bedrock without agents (direct API) | ✅ Only option | ❌ Not applicable |
-| Compliance/audit trail of all LLM interactions | ✅ Required | Nice to have |
-| Debugging prompt quality or unexpected model outputs | ✅ Required (inference params + content) | Helpful for context |
-| Cost attribution per team/role | ✅ Required (IAM identity) | ❌ Cannot do this |
-| Building evaluation/fine-tuning pipelines | ✅ Required (structured content) | Framework-dependent |
-| Running agents, wants operational dashboards | Nice to have | ✅ Required |
-| Latency/error monitoring only | Not needed | ✅ Sufficient |
+| 不使用 Agent 直接调用 Bedrock（直接 API） | ✅ 唯一选项 | ❌ 不适用 |
+| 所有 LLM 交互的合规/审计跟踪 | ✅ 必需 | 有则更好 |
+| 调试提示质量或意外的模型输出 | ✅ 必需（推理参数 + 内容） | 有助于提供上下文 |
+| 按团队/角色进行成本归因 | ✅ 必需（IAM 身份） | ❌ 无法实现 |
+| 构建评估/微调 Pipeline | ✅ 必需（结构化内容） | 取决于框架 |
+| 运行 Agent，需要运维 dashboard | 有则更好 | ✅ 必需 |
+| 仅需延迟/错误监控 | 不需要 | ✅ 足够 |
 
 ---
 
 ## 构建 Dashboard
 
-Once both pipelines are flowing, you can build dashboards for different audiences. For ready-to-use queries, see the [Creating Custom Dashboards for GenAI Telemetry](../custom-dashboards-for-genai-telemetry) guide.
+当两个 Pipeline 的数据都在流转时，您可以为不同受众构建 dashboard。有关即用型查询，请参阅[为 GenAI 遥测数据创建自定义 Dashboard](../custom-dashboards-for-genai-telemetry) 指南。
 
-### Dashboard Tiers by Audience
+### 按受众分层的 Dashboard
 
-**Executive dashboard** — high-level KPIs:
+**高管 dashboard** — 高层 KPI：
 
-- Total daily cost
-- Request volume trends
-- Error rate
-- Top models by usage
+- 每日总成本
+- 请求量趋势
+- 错误率
+- 按使用量排名的热门模型
 
-**DevOps dashboard** — real-time monitoring:
+**DevOps dashboard** — 实时监控：
 
-- Stop reason breakdown (end_turn vs tool_use vs max_tokens)
-- Completion rate vs truncation trend
-- Agent traces vs errors (hourly)
-- Span error drill-down
-- Component performance breakdown (P50/P95/P99)
-- Cross-region inference latency
+- 停止原因分布（end_turn vs tool_use vs max_tokens）
+- 完成率 vs 截断趋势
+- Agent traces vs 错误（按小时）
+- Span 错误深入分析
+- 组件性能分布（P50/P95/P99）
+- 跨区域推理延迟
 
-**FinOps dashboard** — cost management:
+**FinOps dashboard** — 成本管理：
 
-- Total spend (hourly, daily, monthly)
-- Cost distribution by model
-- Top 10 spenders by role/user
-- Input vs output cost split
-- Prompt caching opportunities
-- Daily cost trend with anomaly detection
+- 总支出（按小时、每日、每月）
+- 按模型的成本分布
+- 按角色/用户排名的前 10 大消费者
+- 输入 vs 输出成本分割
+- 提示缓存优化机会
+- 每日成本趋势与异常检测
 
-**Developer dashboard** — debugging and optimization:
+**开发者 dashboard** — 调试和优化：
 
-- Request traces
-- Token usage by feature
-- Latency breakdown
-- Error details with stack traces
-- Token efficiency (high input, low output waste detection)
+- 请求 traces
+- 按功能的 token 使用量
+- 延迟分解
+- 错误详情和堆栈跟踪
+- Token 效率（高输入、低输出浪费检测）
 
-### Sample DevOps Query: Completion Rate
+### 示例 DevOps 查询：完成率
 
-Tracks hourly ratio of successful completions vs truncated responses. Target 95%+ completion rate.
+跟踪每小时成功完成与截断响应的比率。目标完成率 95% 以上。
 
 ```text
 fields @timestamp, modelId,
@@ -446,7 +446,7 @@ fields @timestamp, modelId,
 | sort hour desc
 ```
 
-### Sample FinOps Query: Top Spenders by Role
+### 示例 FinOps 查询：按角色排名的最大消费者
 
 ```text
 SOURCE "bedrock-model-invocation-logging"
@@ -458,39 +458,39 @@ SOURCE "bedrock-model-invocation-logging"
 | limit 10
 ```
 
-See the [dashboard queries guide](../custom-dashboards-for-genai-telemetry) for the full cost calculation and more examples.
+有关完整的成本计算和更多示例，请参阅 [dashboard 查询指南](../custom-dashboards-for-genai-telemetry)。
 
 ---
 
 ## 告警策略
 
-Set up alerts in tiers matching urgency and impact.
+按紧急程度和影响范围分层设置告警。
 
-### Critical Alerts (page immediately)
+### 严重告警（立即响应）
 
-- Error rate above 5%
-- P95 latency above 10 seconds
-- Daily cost above 150% of baseline
-- Model unavailability
-- Agent error rate above 10% for 15 minutes
+- 错误率超过 5%
+- P95 延迟超过 10 秒
+- 每日成本超过基线的 150%
+- 模型不可用
+- Agent 错误率在 15 分钟内超过 10%
 
-### Warning Alerts (investigate during business hours)
+### 警告告警（工作时间内调查）
 
-- Token usage trending up 20% week-over-week
-- Latency degradation over 7 days
-- Cache hit rate dropping
-- Unusual request patterns
-- Completion rate below 95% for 2 hours
-- Component P95 above 5000ms
+- Token 使用量周环比上升 20%
+- 延迟在 7 天内持续劣化
+- 缓存命中率下降
+- 异常请求模式
+- 完成率在 2 小时内低于 95%
+- 组件 P95 超过 5000ms
 
-### Informational Alerts (daily digest)
+### 信息告警（每日摘要）
 
-- Daily cost summaries
-- Weekly usage reports
-- Model performance comparisons
-- Top spenders report
+- 每日成本摘要
+- 每周使用报告
+- 模型性能比较
+- 最大消费者报告
 
-### Alert Routing Example
+### 告警路由示例
 
 ```yaml
 route:
@@ -513,102 +513,102 @@ route:
 
 ---
 
-## Observability 成熟度模型
+## 可观测性成熟度模型
 
-**Level 1: Basic Monitoring**
+**第 1 级：基础监控**
 
-- Track request counts and errors
-- Basic latency metrics
-- Manual cost tracking
+- 跟踪请求计数和错误
+- 基本延迟 metrics
+- 手动成本跟踪
 
-**Level 2: Comprehensive Metrics**
+**第 2 级：全面 Metrics**
 
-- Token-level tracking
-- Multi-dimensional metrics (model, team, environment)
-- Automated dashboards
-- Basic alerting with baselines
+- Token 级别跟踪
+- 多维度 metrics（模型、团队、环境）
+- 自动化 dashboard
+- 基于基线的基本告警
 
-**Level 3: Advanced Analytics**
+**第 3 级：高级分析**
 
-- Distributed tracing across agent workflows
-- Cost attribution per team/feature
-- Quality scoring and user feedback integration
-- Predictive alerting based on trends
+- 跨 Agent 工作流的分布式追踪
+- 按团队/功能的成本归因
+- 质量评分和用户反馈集成
+- 基于趋势的预测性告警
 
-**Level 4: AI-Powered Observability**
+**第 4 级：AI 驱动的可观测性**
 
-- Anomaly detection on cost and behavior
-- Automated root cause analysis
-- Self-healing systems (automatic fallback to cheaper models)
-- Continuous optimization loops
+- 成本和行为异常检测
+- 自动化根因分析
+- 自愈系统（自动降级到更便宜的模型）
+- 持续优化闭环
 
 ---
 
 ## 与 MLOps 的集成
 
-Observability should extend across the ML lifecycle, not just production:
+可观测性应贯穿整个 ML 生命周期，而不仅仅是生产环境：
 
-**Training Phase:**
+**训练阶段：**
 
-- Track training costs and duration
-- Monitor model quality metrics
-- Version control for models and prompts
+- 跟踪训练成本和持续时间
+- 监控模型质量 metrics
+- 模型和提示的版本控制
 
-**Deployment Phase:**
+**部署阶段：**
 
-- Canary deployments with metric comparison
-- Blue-green deployment monitoring
-- Rollback triggers based on observability signals
+- 带有 metric 比较的金丝雀部署
+- 蓝绿部署监控
+- 基于可观测性信号的回滚触发
 
-**Production Phase:**
+**生产阶段：**
 
-- Continuous monitoring
-- Automated retraining triggers based on drift detection
-- Performance degradation detection
+- 持续监控
+- 基于漂移检测的自动化重训练触发
+- 性能劣化检测
 
-**Optimization Phase:**
+**优化阶段：**
 
-- A/B testing frameworks for prompts and models
-- Cost-performance tradeoff analysis
-- Prompt engineering feedback loops
+- 提示和模型的 A/B 测试框架
+- 成本-性能权衡分析
+- 提示工程反馈闭环
 
 ---
 
 ## 需要避免的常见反模式
 
-1. **Logging full prompts and responses without PII redaction** — compliance violations, data breach risk. Configure data protection policies *before* enabling Model Invocation Logging.
-2. **Tracking only aggregate metrics** — you can't debug individual issues or attribute costs without per-request detail.
-3. **Setting alerts without baselines** — alert fatigue from false positives. Always establish normal behavior first.
-4. **Ignoring token usage until the bill arrives** — by the time you see the bill, the damage is done. Monitor daily.
-5. **Using different metric names per provider** — you can't compare performance across models. Standardize on OpenTelemetry GenAI semantic conventions.
-6. **Storing telemetry data indefinitely** — compliance issues and unnecessary storage costs. Set retention policies per data class.
-7. **Manual dashboard creation** — inconsistency and maintenance burden. Use Infrastructure as Code for dashboards.
-8. **Monitoring only technical metrics** — you miss quality and business impact issues. Track user satisfaction alongside latency.
+1. **在未进行 PII 脱敏的情况下记录完整提示和响应** — 合规违规、数据泄露风险。在启用模型调用日志*之前*配置数据保护策略。
+2. **仅跟踪聚合 metrics** — 没有每次请求的详细信息，您无法调试单个问题或归因成本。
+3. **在没有基线的情况下设置告警** — 误报导致的告警疲劳。始终先建立正常行为基线。
+4. **忽视 token 使用量直到账单到来** — 等您看到账单时，损失已经造成。每天监控。
+5. **每个提供商使用不同的 metric 名称** — 无法跨模型比较性能。标准化使用 OpenTelemetry GenAI 语义约定。
+6. **无限期存储遥测数据** — 合规问题和不必要的存储成本。按数据类别设置保留策略。
+7. **手动创建 dashboard** — 不一致且维护负担重。使用基础设施即代码来管理 dashboard。
+8. **仅监控技术 metrics** — 会遗漏质量和业务影响问题。在监控延迟的同时跟踪用户满意度。
 
 ---
 
 ## 入门清单
 
-### Pre-Production
+### 预生产
 
-- [ ] Enable CloudWatch Transaction Search
-- [ ] For AgentCore: deploy your agent — telemetry flows automatically
-- [ ] For non-AgentCore: attach the ADOT auto-instrumentation agent
-- [ ] Enable Bedrock Model Invocation Logging via the Bedrock console
-- [ ] Configure data protection policies for PII redaction
-- [ ] Set log retention policies for each log group
-- [ ] Build initial dashboards using the [dashboard queries guide](../custom-dashboards-for-genai-telemetry)
-- [ ] Document baseline metrics (latency, token usage, cost)
-- [ ] Configure alarms with appropriate thresholds
-- [ ] Create runbooks for common issues
+- [ ] 启用 CloudWatch Transaction Search
+- [ ] 对于 AgentCore：部署您的 Agent — 遥测数据自动流转
+- [ ] 对于非 AgentCore：附加 ADOT 自动插桩代理
+- [ ] 通过 Bedrock 控制台启用 Bedrock 模型调用日志
+- [ ] 配置 PII 脱敏的数据保护策略
+- [ ] 为每个 log group 设置 log 保留策略
+- [ ] 使用 [dashboard 查询指南](../custom-dashboards-for-genai-telemetry) 构建初始 dashboard
+- [ ] 记录基线 metrics（延迟、token 使用量、成本）
+- [ ] 配置适当阈值的告警
+- [ ] 为常见问题创建运维手册
 
-### Production
+### 生产环境
 
-- [ ] Monitoring enabled in production
-- [ ] Alerts routed to correct channels (PagerDuty, Slack)
-- [ ] Team access configured (read-only dashboards for stakeholders)
-- [ ] Backup and disaster recovery tested
-- [ ] Regular review schedule established (weekly cost review, monthly performance review)
+- [ ] 在生产环境中启用监控
+- [ ] 告警路由到正确的渠道（PagerDuty、Slack）
+- [ ] 配置团队访问权限（为利益相关者提供只读 dashboard）
+- [ ] 测试备份和灾难恢复
+- [ ] 建立定期审查计划（每周成本审查、每月性能审查）
 
 ---
 
@@ -616,25 +616,25 @@ Observability should extend across the ML lifecycle, not just production:
 
 ### 配套指南
 
-- [Creating Custom Dashboards for GenAI Telemetry](../custom-dashboards-for-genai-telemetry) — Turn the telemetry into persona-based dashboards for DevOps, FinOps, and other stakeholders
+- [为 GenAI 遥测数据创建自定义 Dashboard](../custom-dashboards-for-genai-telemetry) — 将遥测数据转化为面向 DevOps、FinOps 和其他利益相关者的基于角色的 dashboard
 
-### AWS Documentation
+### AWS 文档
 
-- [Model Invocations — CloudWatch GenAI Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html)
-- [Getting Started with AgentCore Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html)
-- [Set up Bedrock Model Invocation Logging](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html#setup-cloudwatch-logs-destination)
-- [Protect Sensitive Data in CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html)
-- [Configure Custom Observability for AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-custom)
-- [Configure Third-Party Observability](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-3p)
+- [Model Invocations — CloudWatch GenAI 可观测性](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html)
+- [AgentCore 可观测性入门](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html)
+- [设置 Bedrock 模型调用日志](https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html#setup-cloudwatch-logs-destination)
+- [在 CloudWatch Logs 中保护敏感数据](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/mask-sensitive-data.html)
+- [为 AgentCore 配置自定义可观测性](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-custom)
+- [配置第三方可观测性](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-configure.html#observability-configure-3p)
 - [AgentCore Evaluations](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/evaluations.html)
 
-### Standards and Tools
+### 标准和工具
 
 - [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction)
-- [OpenTelemetry GenAI Semantic Conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
-- [OpenTelemetry Specification](https://opentelemetry.io/docs/)
+- [OpenTelemetry GenAI 语义约定](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+- [OpenTelemetry 规范](https://opentelemetry.io/docs/)
 
 ---
 
-**Contributors:** AWS Observability Team
-**Last Updated:** 2026-04-21
+**贡献者：** AWS Observability 团队
+**最后更新：** 2026-04-21

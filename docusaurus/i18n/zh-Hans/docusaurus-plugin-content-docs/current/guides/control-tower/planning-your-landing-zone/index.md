@@ -14,7 +14,7 @@ Control Tower 主区域存储着 Landing Zone 的关键配置项。AWS Organizat
 
 ### 拒绝未使用的区域，治理所有允许的区域
 
-Control Tower 提供了拒绝使用大多数 AWS 区域并仅启用满足业务需求的子集的功能。这可以减少攻击面，降低工作负载产生不必要成本的可能性，并简化治理和 Observability 需求。
+Control Tower 提供了拒绝使用大多数 AWS 区域并仅启用满足业务需求的子集的功能。这可以减少攻击面，降低工作负载产生不必要成本的可能性，并简化治理和可观测性需求。
 
 [全局区域拒绝控制](https://docs.aws.amazon.com/controltower/latest/userguide/region-deny.html)可以在创建或更新 Landing Zone 时设置。这与 Control Tower 治理区域列表配合使用，即如果该区域未启用治理，它将被拒绝。要进一步限制特定组织单元 (OU) 的区域使用，您还可以实施 [OU 区域拒绝控制](https://docs.aws.amazon.com/controltower/latest/controlreference/ou-region-deny.html)。这两种控制都是使用[服务控制策略 (SCP)](https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html) 实现的。如果某个区域未被拒绝，用户可以根据 IAM 权限向其部署资源。在拒绝某个区域之前，请确保该区域中没有正在使用的资源，以避免影响您的工作负载。
 

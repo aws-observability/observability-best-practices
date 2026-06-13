@@ -154,7 +154,7 @@ Which model is consuming the most tokens?
 ```
 
 3. **Kiro 将自动**：
-   - 识别这是一个 Observability 查询
+   - 识别这是一个可观测性查询
    - 调用 MCP server 的 `get_token_usage` 工具
    - 返回结构化结果
 
@@ -384,7 +384,7 @@ MCP server 提供 5 个工具：
 
 1. 将 `.kiro/settings/mcp.json` 提交到您的仓库
 2. 团队成员将自动获得 MCP 访问权限
-3. 每个人都可以从 IDE 中查询 Observability 数据
+3. 每个人都可以从 IDE 中查询可观测性数据
 
 ---
 

@@ -35,9 +35,9 @@ Amazon Managed Grafana [与 AWS CloudFormation 集成](https://docs.aws.amazon.c
 > 相关博客：[宣布 Amazon Managed Grafana 支持私有 VPC 数据源](https://aws.amazon.com/blogs/mt/announcing-private-vpc-data-source-support-for-amazon-managed-grafana/)
 
 ## 我的组织使用 Terraform 进行自动化。Amazon Managed Grafana 是否支持 Terraform？
-是的，[Amazon Managed Grafana 支持](https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-automation-tf/) Terraform 进行[自动化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)
+是的，[Amazon Managed Grafana 支持](https://aws-observability.github.io/aws-observability/recipes/recipes/amg-automation-tf/) Terraform 进行[自动化](https://registry.terraform.io/modules/terraform-aws-modules/managed-service-grafana/aws/latest)
 
-> 示例：[Terraform 支持的参考实现](https://github.com/aws-observability/terraform-aws-observability-accelerator/tree/main/examples/managed-grafana-workspace)
+> 示例：[Terraform 支持的参考实现](https://github.com/aws-observability/terraform-aws-aws-observability/tree/main/examples/managed-grafana-workspace)
 
 ## 我在当前的 Grafana 设置中使用了常用的 Dashboard。有没有办法在 Amazon Managed Grafana 上使用它们而不需要重新创建？
 
@@ -53,6 +53,6 @@ Amazon Managed Grafana 与 [AWS CloudTrail](https://docs.aws.amazon.com/awscloud
 
 ## 有哪些其他可用信息？
 
-要了解更多关于 Amazon Managed Grafana 的信息，客户可以阅读 AWS [文档](https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html)，参加关于 [Amazon Managed Grafana](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amg) 的 AWS Observability Workshop，还可以查看[产品页面](https://aws.amazon.com/grafana/)了解[功能](https://aws.amazon.com/grafana/features/?nc=sn&loc=2)、[定价](https://aws.amazon.com/grafana/pricing/?nc=sn&loc=3)详情、最新[博客文章](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Latest_blog_posts)和[视频](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Videos)。
+要了解更多关于 Amazon Managed Grafana 的信息，客户可以阅读 AWS [文档](https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html)，参加关于 [Amazon Managed Grafana](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amg) 的 AWS 可观测性 Workshop，还可以查看[产品页面](https://aws.amazon.com/grafana/)了解[功能](https://aws.amazon.com/grafana/features/?nc=sn&loc=2)、[定价](https://aws.amazon.com/grafana/pricing/?nc=sn&loc=3)详情、最新[博客文章](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Latest_blog_posts)和[视频](https://aws.amazon.com/grafana/resources/?nc=sn&loc=4&msg-blogs.sort-by=item.additionalFields.createdDate&msg-blogs.sort-order=desc#Videos)。
 
 **产品常见问题：** [https://aws.amazon.com/grafana/faqs/](https://aws.amazon.com/grafana/faqs/)

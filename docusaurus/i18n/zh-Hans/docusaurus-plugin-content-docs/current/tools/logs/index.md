@@ -1,6 +1,6 @@
 # 日志
 
-日志工具的选择与您对数据传输、过滤、保留、采集以及与生成数据的应用集成的需求密切相关。在使用 Amazon Web Services 进行 Observability 时（无论您是在本地还是在其他云环境中托管），您可以利用 [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) 或其他工具（如 [Fluentd](https://www.fluentd.org/)）来发送日志数据进行分析。
+日志工具的选择与您对数据传输、过滤、保留、采集以及与生成数据的应用集成的需求密切相关。在使用 Amazon Web Services 进行可观测性时（无论您是在本地还是在其他云环境中托管），您可以利用 [CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) 或其他工具（如 [Fluentd](https://www.fluentd.org/)）来发送日志数据进行分析。
 
 在此，我们将详细介绍使用 CloudWatch agent 进行日志记录的最佳实践，以及在 AWS 控制台或 API 中使用 CloudWatch Logs。
 
@@ -11,7 +11,7 @@
 
 ### 转发
 
-采用[云优先方法](../../faq/general.md#what-is-a-cloud-first-approach)进行 Observability 时，一般原则是：如果您需要登录到机器上才能获取日志，那么这就是一种反模式。您的工作负载应该近乎实时地将日志数据发送到外部的日志分析系统，传输与原始事件之间的延迟代表着在灾难降临工作负载时可能丢失的时间点信息。
+采用[云优先方法](../../faq/general.md#what-is-a-cloud-first-approach)进行可观测性时，一般原则是：如果您需要登录到机器上才能获取日志，那么这就是一种反模式。您的工作负载应该近乎实时地将日志数据发送到外部的日志分析系统，传输与原始事件之间的延迟代表着在灾难降临工作负载时可能丢失的时间点信息。
 
 作为架构师，您需要确定日志数据的可接受损失量，并相应地调整 CloudWatch agent 的 [`force_flush_interval`](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html#CloudWatch-Agent-Configuration-File-Logssection)。
 

@@ -1,2 +1,2 @@
-# 创建 observability 策略
+# 创建可观测性策略
 

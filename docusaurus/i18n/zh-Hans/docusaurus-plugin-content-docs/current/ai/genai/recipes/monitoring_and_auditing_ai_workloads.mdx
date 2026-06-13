@@ -20,7 +20,7 @@ AWS 上的现代 AI 工作负载跨三个独立管道生成遥测数据 — Clou
 2. **在 CloudTrail 上构建检测规则** — 用于安全和审计面的 metric 过滤器、告警和 Contributor Insights 规则，涵盖 Bedrock 和 AgentCore 数据事件。
 3. **运行跨管道关联查询** — 将 CloudTrail 与 Bedrock Model Invocation Logging 和 ADOT spans 连接，以回答单个管道无法独自回答的问题。
 
-The [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) and the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) define the security dimensions organizations need to address when building AI applications, including audit and logging, identity context, agency perimeters, and data protection. This guide provides the concrete implementation for those dimensions using CloudTrail, CloudWatch, and cross-pipeline correlation. The tabs below map each matrix dimension to the guide sections that implement it.
+[Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 和 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 定义了组织在构建 AI 应用程序时需要解决的安全维度，包括审计和日志记录、身份上下文、Agent 权限边界和数据保护。本指南使用 CloudTrail、CloudWatch 和跨管道关联为这些维度提供具体实现。下面的标签页将每个矩阵维度映射到实现它的指南章节。
 
 <Tabs>
   <TabItem value="agentic" label="Agentic AI" default>
@@ -47,29 +47,29 @@ The [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/g
 </Tabs>
 
 :::info[Shared Responsibility Model]
-AWS is responsible for the security of the cloud infrastructure running CloudTrail, CloudWatch, and Bedrock services. Customers are responsible for security in the cloud, including configuring event selectors, creating detection rules, setting alarm thresholds, and responding to security events. This guide focuses on customer configuration and monitoring responsibilities for AI workloads. For more information, see the [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/).
+AWS 负责运行 CloudTrail、CloudWatch 和 Bedrock 服务的云基础设施的安全性。客户负责云中的安全性，包括配置事件选择器、创建检测规则、设置告警阈值以及响应安全事件。本指南重点介绍 AI 工作负载的客户配置和监控职责。有关更多信息，请参阅 [AWS Shared Responsibility Model](https://aws.amazon.com/compliance/shared-responsibility-model/)。
 :::
 
-### Three Compounding Challenges
+### 三重叠加挑战
 
-**Volume** — AI model invocations can generate high event volumes. Without precise event selectors and aggregation, events of interest are difficult to isolate at high volume and the cost of capturing everything is prohibitive.
+**数据量** — AI 模型调用可能产生大量事件。如果没有精确的事件选择器和聚合，在高数据量下很难隔离感兴趣的事件，而且捕获所有事件的成本过高。
 
-**Speed** — Agent-initiated activity sequences may involve multiple API calls, tool invocations, and model interactions within seconds. Near-real-time detection rules help surface operational anomalies closer to when they occur, supporting faster triage and shorter mean-time-to-investigate.
+**速度** — Agent 发起的活动序列可能在几秒钟内涉及多个 API 调用、工具调用和模型交互。近实时检测规则有助于在异常发生时更快地浮现运营异常，支持更快的分类和更短的平均调查时间。
 
-**Complexity:** - AI workload activity spans multiple AWS services. No single log source provides complete visibility. Correlation across pipelines is where investigations actually happen.
+**复杂性** — AI 工作负载活动跨越多个 AWS 服务。没有任何单一 log 源能提供完整的可见性。跨管道关联才是调查真正发生的地方。
 
-### What This Guide Covers
+### 本指南涵盖的内容
 
-- The three telemetry pipelines and what each uniquely captures
-- Enablement for all three (CloudTrail in depth; the other two with brief steps + deep links)
-- CloudTrail-specific detection: metric filters, alarms, Contributor Insights for both Bedrock and AgentCore data events
-- AgentCore data events: gateway traffic, built-in tool usage, credential access, memory operations, and runtime activity
-- Cross-pipeline correlation queries for investigations
-- A unified dashboard combining all three data sources
+- 三个遥测管道及其各自独特捕获的内容
+- 所有三个管道的启用方法（CloudTrail 深入讲解；其他两个提供简要步骤和深层链接）
+- CloudTrail 专属检测：metric 过滤器、告警、Contributor Insights，涵盖 Bedrock 和 AgentCore 数据事件
+- AgentCore 数据事件：网关流量、内置工具使用、凭证访问、内存操作和运行时活动
+- 用于调查的跨管道关联查询
+- 结合所有三个数据源的统一 dashboard
 
-## The GenAI Telemetry Landscape: Three Complementary Pipelines
+## GenAI 遥测全景：三条互补管道
 
-CloudTrail is one of three telemetry pipelines that together provide full observability for AI workloads on AWS. Each captures different data, serves different purposes, and is enabled differently. Security investigations almost always require correlating at least two.
+CloudTrail 是三条遥测管道之一，它们共同为 AWS 上的 AI 工作负载提供完整的可观测性。每条管道捕获不同的数据，服务于不同的目的，并以不同的方式启用。安全调查几乎总是需要关联至少两条管道。
 
 ![Three GenAI Telemetry Pipelines](/img/cloudops/recipes/AWS%20CloudTrail/monitoring-and-auditing-genAI/pipelines.png)
 
@@ -77,36 +77,36 @@ CloudTrail is one of three telemetry pipelines that together provide full observ
 | --- | --- | --- | --- |
 | **CloudTrail** | Who did what — every API call, caller ARN, source IP, error codes, access denials, control-plane changes | `YOUR_CLOUDTRAIL_LOG_GROUP` | Security audit, access investigation, configuration change tracking |
 | **Bedrock Model Invocation Logging** | What the model said — full prompt, full response, inference parameters (temperature, max_tokens), caller IAM identity, token counts | `bedrock-model-invocation-logging` | Content audit, compliance, prompt quality debugging, cost attribution |
-| **Agent Telemetry (collected by AWS Distro for OpenTelemetry — ADOT)** | How the agent performed — model call latency, tool execution, distributed trace correlation, session tracking | `aws/spans`, `/aws/bedrock-agentcore/runtimes/<agent>` | Operational monitoring, performance debugging, agent workflow observability |
+| **Agent Telemetry (collected by AWS Distro for OpenTelemetry — ADOT)** | How the agent performed — model call latency, tool execution, distributed trace correlation, session tracking | `aws/spans`, `/aws/bedrock-agentcore/runtimes/<agent>` | Operational monitoring, performance debugging, agent workflow 可观测性 |
 
-### What Each Pipeline Answers on Its Own
+### 每条管道独自能回答什么
 
-**CloudTrail alone tells you:**
+**CloudTrail 单独告诉您：**
 
-- Which IAM identity called `InvokeModel`?
-- What was the source IP, user agent, and region?
-- Was the call denied (AccessDenied, UnauthorizedOperation)?
-- Did someone modify a guardrail, stop logging, or escalate IAM permissions?
-- Which VPC endpoint blocked the call?
+- 哪个 IAM 身份调用了 `InvokeModel`？
+- 源 IP、用户代理和区域是什么？
+- 调用是否被拒绝（AccessDenied、UnauthorizedOperation）？
+- 是否有人修改了 Guardrail、停止了日志记录或提升了 IAM 权限？
+- 哪个 VPC 端点阻止了调用？
 
-**Model Invocation Logging alone tells you:**
+**Model Invocation Logging 单独告诉您：**
 
-- What prompt was sent to the model?
-- What did the model return?
-- What temperature and max_tokens were used?
-- How many input and output tokens did the call consume?
-- Was the response truncated (stop_reason = max_tokens)?
+- 向模型发送了什么 prompt？
+- 模型返回了什么？
+- 使用了什么 temperature 和 max_tokens？
+- 调用消耗了多少输入和输出 token？
+- 响应是否被截断（stop_reason = max_tokens）？
 
-**Agent Telemetry (ADOT SDK) alone tells you:**
+**Agent Telemetry（ADOT SDK）单独告诉您：**
 
-- How long did the model call take (client-side latency)?
-- Which tools did the agent call, in what order?
-- Did a tool fail, and which component caused the error?
-- How is the agent session chained across multiple model calls?
+- 模型调用花了多长时间（客户端延迟）？
+- Agent 调用了哪些工具，顺序是什么？
+- 工具是否失败了，哪个组件导致了错误？
+- Agent 会话如何在多次模型调用之间链接？
 
-### Where Correlation Unlocks Investigation
+### 关联如何解锁调查
 
-**Questions only correlation can answer**
+**只有关联才能回答的问题**
 
 | Investigation Question | Pipelines to Join | Join Key |
 |---|---|---|
@@ -117,46 +117,46 @@ CloudTrail is one of three telemetry pipelines that together provide full observ
 | Which external caller triggered this agent through the Gateway, and what credentials did the agent use? | CloudTrail Gateway data events (JWT subject, source IP) + CloudTrail credential data events (TokenVault/OAuth2 access) | time + agent runtime ARN |
 | Is an agent executing code or browsing websites outside its intended scope? | CloudTrail AgentCore tool data events (CodeInterpreter/Browser) + ADOT spans (agent session context) | session + time |
 
-The [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries) section gives you the actual JOIN queries for these scenarios.
+[跨管道关联查询](#cross-pipeline-correlation-queries)章节为您提供这些场景的实际 JOIN 查询。
 :::
 
-## Implementation Overview
+## 实施概述
 
-A phased rollout that enables all three pipelines, then layers detection and correlation on top.
+分阶段推出，先启用所有三条管道，然后在其上叠加检测和关联。
 
-### Phase 1: Enable Observability Pipelines
+### 第 1 阶段：启用可观测性管道
 
-Start with the two observability pipelines (Bedrock Model Invocation Logging and Agent Telemetry collected by the ADOT SDK). They're quick to enable and they're what makes the correlation queries possible. CloudTrail setup follows in Phase 2.
+首先启用两条可观测性管道（Bedrock Model Invocation Logging 和 ADOT SDK 收集的 Agent Telemetry）。它们启用速度快，而且是关联查询得以实现的基础。CloudTrail 设置在第 2 阶段进行。
 
-**Pipeline A: Bedrock Model Invocation Logging**
+**管道 A：Bedrock Model Invocation Logging**
 
-Captures full prompt, response, inference parameters, and caller IAM identity for every Bedrock model call. Manual opt-in only. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Governance & Compliance dimension by capturing model interactions to support data sovereignty requirements and compliance audit workflows.)*
+捕获每次 Bedrock 模型调用的完整 prompt、响应、推理参数和调用者 IAM 身份。需要手动选择启用。*（通过捕获模型交互来支持数据主权要求和合规审计工作流，实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Governance & Compliance 维度。）*
 
-1. Open the [Amazon Bedrock console](https://console.aws.amazon.com/bedrock/)
-2. Choose **Settings** → **Model invocation logging**
-3. Enable logging and choose CloudWatch Logs (and/or S3) as the destination
-4. Configure the log group name (default: `bedrock-model-invocation-logging`) and service role
+1. 打开 [Amazon Bedrock 控制台](https://console.aws.amazon.com/bedrock/)
+2. 选择 **Settings** → **Model invocation logging**
+3. 启用日志记录并选择 CloudWatch Logs（和/或 S3）作为目标
+4. 配置 log group 名称（默认：`bedrock-model-invocation-logging`）和服务角色
 
-For detailed configuration, PII masking, and dashboard setup, see [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#pipeline-1-bedrock-model-invocation-logging).
+有关详细配置、PII 脱敏和 dashboard 设置，请参阅 [GenAI 可观测性 on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#pipeline-1-bedrock-model-invocation-logging)。
 
-**Pipeline B: Agent Telemetry (collected by ADOT SDK)**
+**管道 B：Agent Telemetry（由 ADOT SDK 收集）**
 
-Captures agent orchestration, distributed traces, and tool execution.
+捕获 Agent 编排、分布式 traces 和工具执行。
 
-- **AgentCore:** No action required because the ADOT SDK is included in the runtime by default, and telemetry flows automatically to `aws/spans` and `/aws/bedrock-agentcore/runtimes/<agent>`
-- **EKS/ECS/self-hosted:** Attach the ADOT auto-instrumentation agent to your workload. No code changes needed
+- **AgentCore：** 无需操作，因为 ADOT SDK 默认包含在运行时中，遥测数据自动流向 `aws/spans` 和 `/aws/bedrock-agentcore/runtimes/<agent>`
+- **EKS/ECS/自托管：** 将 ADOT 自动插桩 Agent 附加到您的工作负载。无需代码更改
 
-Enable [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) to unlock the full Application Signals experience.
+启用 [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) 以解锁完整的 Application Signals 体验。
 
-For detailed enablement steps, see [GenAI Observability on AWS — Enabling Observability for Agentic Workloads](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#enabling-observability-for-agentic-workloads) and the [AgentCore Observability Quickstart](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability).
+有关详细启用步骤，请参阅 [GenAI 可观测性 on AWS — 为 Agentic 工作负载启用可观测性](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#enabling-observability-for-agentic-workloads) 和 [AgentCore 可观测性快速入门](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability)。
 
-### Phase 2: Enable CloudTrail — Start with Bedrock, Expand Coverage, Ingest to CloudWatch
+### 第 2 阶段：启用 CloudTrail — 从 Bedrock 开始，扩大覆盖范围，导入 CloudWatch
 
-Configure CloudTrail to capture the full AI workload audit surface, starting with the highest-value resource (Bedrock) and expanding outward. Deliver everything to CloudWatch Logs so it can be joined with Pipelines A and B.
+配置 CloudTrail 以捕获完整的 AI 工作负载审计面，从最高价值的资源（Bedrock）开始向外扩展。将所有数据传送到 CloudWatch Logs，以便与管道 A 和 B 进行关联。
 
-**Step 1: Bedrock and AgentCore data events and management events**
+**步骤 1：Bedrock 和 AgentCore 数据事件及管理事件**
 
-**Enable Bedrock Data Events** on your trail using advanced event selectors. These operations are not logged by default. See [Amazon Bedrock Data Events](#amazon-bedrock-data-events).
+使用高级事件选择器在您的 trail 上**启用 Bedrock 数据事件**。这些操作默认不会被记录。请参阅 [Amazon Bedrock 数据事件](#amazon-bedrock-data-events)。
 
 :::note[Bedrock resource types to enable]
 
@@ -170,7 +170,7 @@ Configure CloudTrail to capture the full AI workload audit surface, starting wit
 
 :::
 
-**Enable AgentCore Data Events** using advanced event selectors. See [Amazon Bedrock AgentCore Data Events](#amazon-bedrock-agentcore-data-events).
+使用高级事件选择器**启用 AgentCore 数据事件**。请参阅 [Amazon Bedrock AgentCore 数据事件](#amazon-bedrock-agentcore-data-events)。
 
 :::note[AgentCore resource types to enable]
 
@@ -181,51 +181,51 @@ Configure CloudTrail to capture the full AI workload audit surface, starting wit
 | Identity & Credentials | `AWS::BedrockAgentCore::WorkloadIdentity`, `AWS::BedrockAgentCore::TokenVault`, `AWS::BedrockAgentCore::OAuth2CredentialProvider`, `AWS::BedrockAgentCore::APIKeyCredentialProvider` |
 | Memory & Evaluation | `AWS::BedrockAgentCore::Memory`, `AWS::BedrockAgentCore::Evaluator` |
 
-Plus any remaining AgentCore resource types as they become available.
+以及其他 AgentCore 资源类型（随着其可用性增加）。
 
 :::
 
-**Verify Management Events** (Read and Write) are enabled in all regions — this captures `InvokeModel` and `Converse` as management events automatically, and AgentCore management events like `CreateGateway`, `CreateGatewayTarget`, etc. See [CloudTrail Management Events](#cloudtrail-management-events).
+**验证管理事件**（读和写）已在所有区域启用 — 这会自动将 `InvokeModel` 和 `Converse` 作为管理事件捕获，以及 AgentCore 管理事件如 `CreateGateway`、`CreateGatewayTarget` 等。请参阅 [CloudTrail 管理事件](#cloudtrail-management-events)。
 
-**Enable CloudTrail Insights** (`ApiCallRateInsight` and `ApiErrorRateInsight`) for anomaly detection. See [CloudTrail Insights Events](#cloudtrail-insights-events).
+**启用 CloudTrail Insights**（`ApiCallRateInsight` 和 `ApiErrorRateInsight`）以进行异常检测。请参阅 [CloudTrail Insights 事件](#cloudtrail-insights-events)。
 
-**Step 2: Expand to S3, Lambda, and network activity**
+**步骤 2：扩展到 S3、Lambda 和网络活动**
 
-- Enable Amazon S3 Data Events (write-only) for training data, model artifacts, and CI/CD pipeline buckets. See [Amazon S3 and Lambda Data Events](#amazon-s3-and-lambda-data-events).
-- Enable Lambda Data Events for production AI pipeline functions, excluding dev/test. See [Amazon S3 and Lambda Data Events](#amazon-s3-and-lambda-data-events).
-- Enable Network Activity Events for Bedrock, S3, and Lambda VPC endpoints, targeting `VpceAccessDenied`. See [CloudTrail Network Activity Events](#cloudtrail-network-activity-events).
+- 为训练数据、模型制品和 CI/CD 管道存储桶启用 Amazon S3 数据事件（仅写入）。请参阅 [Amazon S3 和 Lambda 数据事件](#amazon-s3-and-lambda-data-events)。
+- 为生产 AI 管道函数启用 Lambda 数据事件，排除开发/测试函数。请参阅 [Amazon S3 和 Lambda 数据事件](#amazon-s3-and-lambda-data-events)。
+- 为 Bedrock、S3 和 Lambda VPC 端点启用网络活动事件，针对 `VpceAccessDenied`。请参阅 [CloudTrail 网络活动事件](#cloudtrail-network-activity-events)。
 
-**Step 3: Deliver to CloudWatch Logs**
+**步骤 3：传送到 CloudWatch Logs**
 
-- Configure your CloudTrail trail to deliver to a [CloudWatch Logs log group](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html).
+- 配置您的 CloudTrail trail 以传送到 [CloudWatch Logs log group](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)。
 
-### Phase 3: Build Detection Rules on CloudTrail
+### 第 3 阶段：在 CloudTrail 上构建检测规则
 
-- Create metric filters for CloudTrail events (unauthorized Bedrock access, guardrail changes, logging disruption). See [Metric Filters](#metric-filters).
-- Create CloudWatch Alarms on each metric filter with SNS notification targets. See [CloudWatch Alarms](#cloudwatch-alarms).
-- Create Contributor Insights rules to identify top IAM identities and source IPs. See [Contributor Insights Rules](#contributor-insights-rules).
+- 为 CloudTrail 事件创建 metric 过滤器（未授权的 Bedrock 访问、Guardrail 变更、日志中断）。请参阅 [Metric 过滤器](#metric-filters)。
+- 在每个 metric 过滤器上创建 CloudWatch Alarms 并配置 SNS 通知目标。请参阅 [CloudWatch Alarms](#cloudwatch-alarms)。
+- 创建 Contributor Insights 规则以识别排名靠前的 IAM 身份和源 IP。请参阅 [Contributor Insights 规则](#contributor-insights-rules)。
 
-### Phase 4: Build Cross-Pipeline Correlation Queries
+### 第 4 阶段：构建跨管道关联查询
 
-- Develop CloudWatch Logs Insights queries for standard CloudTrail detection. See [Security Analytics](#security-analytics).
-- Build cross-pipeline JOIN queries that combine CloudTrail with Bedrock Model Invocation Logging and ADOT spans. See [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries).
-- Save validated queries for recurring use by security and operations analysts.
+- 开发 CloudWatch Logs Insights 查询用于标准 CloudTrail 检测。请参阅[安全分析](#security-analytics)。
+- 构建跨管道 JOIN 查询，将 CloudTrail 与 Bedrock Model Invocation Logging 和 ADOT spans 结合。请参阅[跨管道关联查询](#cross-pipeline-correlation-queries)。
+- 保存经过验证的查询，供安全和运营分析师反复使用。
 
-### Phase 5: Optimize with Event Aggregation
+### 第 5 阶段：通过事件聚合进行优化
 
-- Enable CloudTrail Event Aggregation (`API_ACTIVITY`, `RESOURCE_ACCESS`, `USER_ACTIONS` templates) for 5-minute summaries alongside raw data events. See [CloudTrail Data Event Aggregation](#cloudtrail-data-event-aggregation).
-- Use CloudWatch Subscription Filters to forward only management and aggregated events to downstream SIEM, reducing ingestion volume.
+- 启用 CloudTrail 事件聚合（`API_ACTIVITY`、`RESOURCE_ACCESS`、`USER_ACTIONS` 模板）以在原始数据事件旁提供 5 分钟摘要。请参阅 [CloudTrail 数据事件聚合](#cloudtrail-data-event-aggregation)。
+- 使用 CloudWatch Subscription Filters 仅将管理事件和聚合事件转发到下游 SIEM，减少摄入量。
 
-### Phase 6: Assemble the Unified Dashboard
+### 第 6 阶段：组装统一 Dashboard
 
-- Build a CloudWatch Dashboard combining CloudTrail alarms, Contributor Insights widgets, Model Invocation Log cost widgets, ADOT performance widgets, and correlation query results into a single pane. See [Unified Audit & Monitoring Dashboard](#unified-audit--monitoring-dashboard).
-## Amazon Bedrock Data Events
+- 构建一个 CloudWatch Dashboard，将 CloudTrail 告警、Contributor Insights 小组件、Model Invocation Log 成本小组件、ADOT 性能小组件和关联查询结果整合到单一视图中。请参阅[统一审计和监控 Dashboard](#unified-audit--monitoring-dashboard)。
+## Amazon Bedrock 数据事件
 
-By default, CloudTrail logs [management events](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html) for your account, which already captures common Bedrock runtime calls like `InvokeModel`, `Converse`, and `ConverseStream`. Many key AI workload operations are logged as data events, including agent invocations, knowledge base retrievals, flow executions, guardrail applications, bidirectional streaming, async invocations, and prompt rendering. These operations require advanced event selectors on your trail. Data events provide your security team with visibility into model invocations. See [Advanced Event Selectors for Bedrock](#advanced-event-selectors-for-bedrock) below for the specific selectors to apply.
+默认情况下，CloudTrail 为您的账户记录[管理事件](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html)，这已经捕获了常见的 Bedrock 运行时调用，如 `InvokeModel`、`Converse` 和 `ConverseStream`。许多关键的 AI 工作负载操作被记录为数据事件，包括 Agent 调用、知识库检索、Flow 执行、Guardrail 应用、双向流式传输、异步调用和 Prompt 渲染。这些操作需要在您的 trail 上配置高级事件选择器。数据事件为您的安全团队提供了对模型调用的可见性。请参阅下面的[Bedrock 高级事件选择器](#advanced-event-selectors-for-bedrock)了解要应用的具体选择器。
 
-### Key APIs to Monitor
+### 需要监控的关键 API
 
-The table below shows which Bedrock APIs are captured automatically and which require advanced event selector configuration on your trail.
+下表显示了哪些 Bedrock API 会被自动捕获，哪些需要在您的 trail 上配置高级事件选择器。
 
 <Tabs>
   <TabItem value="management" label="Management Events (captured by default)" default>
@@ -241,7 +241,7 @@ The table below shows which Bedrock APIs are captured automatically and which re
   <TabItem value="data" label="Data Events (require advanced event selectors)">
 
   :::tip
-  Data events require [advanced event selectors](#advanced-event-selectors-for-bedrock) to be configured.
+  数据事件需要配置[高级事件选择器](#advanced-event-selectors-for-bedrock)。
   :::
 
   | API | Event Name | Resource Type | Why It Matters |
@@ -269,15 +269,15 @@ The table below shows which Bedrock APIs are captured automatically and which re
 </Tabs>
 
 :::warning[Important]
-Because `InvokeModel`, `Converse`, and `ConverseStream` are logged as management events, they are captured by default on any trail with management event logging enabled. However, agent invocations, knowledge base retrievals, flow invocations, guardrail applications, prompt rendering, async invocations, bidirectional streaming, session activity, flow executions, automated reasoning, data automation, blueprint operations, advanced prompt optimization, and tool operations are only logged when you configure advanced event selectors for the corresponding Bedrock resource types on your trail. See [Advanced Event Selectors for Bedrock](#advanced-event-selectors-for-bedrock) for the configuration, and the [Amazon Bedrock CloudTrail documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html) for the full list of supported resource types.
+由于 `InvokeModel`、`Converse` 和 `ConverseStream` 作为管理事件记录，它们在启用了管理事件日志的任何 trail 上都会被默认捕获。但是，Agent 调用、知识库检索、Flow 调用、Guardrail 应用、Prompt 渲染、异步调用、双向流式传输、会话活动、Flow 执行、自动推理、数据自动化、蓝图操作、高级 Prompt 优化和工具操作仅在您为 trail 上相应的 Bedrock 资源类型配置高级事件选择器时才会被记录。请参阅[Bedrock 高级事件选择器](#advanced-event-selectors-for-bedrock)了解配置方法，以及 [Amazon Bedrock CloudTrail 文档](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html)了解支持的完整资源类型列表。
 :::
 
-### Advanced Event Selectors for Bedrock
+### Bedrock 高级事件选择器
 
-Use the following advanced event selectors to capture Bedrock data events on your CloudTrail trail. Each Bedrock resource type requires its own selector, and each selector should scope logging to your specific resources using `resources.ARN` prefixes. This configures eighteen separate selectors — one per resource type. Most filter on `eventCategory = Data` with a `resources.ARN` prefix scoped to your account. The `Model` and `AsyncInvoke` selectors use `eventName` filtering instead because foundation model ARNs are AWS-owned and don't contain your account ID.
+使用以下高级事件选择器在您的 CloudTrail trail 上捕获 Bedrock 数据事件。每个 Bedrock 资源类型需要自己的选择器，每个选择器应使用 `resources.ARN` 前缀将日志范围限定到您的特定资源。这配置了十八个独立的选择器 — 每种资源类型一个。大多数过滤器基于 `eventCategory = Data` 并使用范围限定到您账户的 `resources.ARN` 前缀。`Model` 和 `AsyncInvoke` 选择器改用 `eventName` 过滤，因为基础模型的 ARN 是 AWS 拥有的，不包含您的账户 ID。
 
 :::warning
-The selectors below are **examples**. Applying them without replacing placeholders will capture no events.
+以下选择器是**示例**。在不替换占位符的情况下应用它们将不会捕获任何事件。
 :::
 
 :::note[Bedrock placeholder reference]
@@ -297,7 +297,7 @@ The selectors below are **examples**. Applying them without replacing placeholde
 | `BEDROCK_EXECUTION_ROLE_NAME` | IAM role name for Bedrock calls | IAM console → **Roles** |
 | `YOUR_CLOUDTRAIL_LOG_GROUP` | CloudWatch Logs log group for your CloudTrail trail | CloudTrail console → trail → **CloudWatch Logs** |
 
-To log **all** resources of a given type, remove the resource ID from the ARN prefix (e.g., `agent-alias/AGENT_ID/ALIAS_ID` → `agent-alias/`) — this increases event volume and cost. If you use `readOnly` or `eventName` filters, verify they match the operations you need.
+要记录给定类型的**所有**资源，请从 ARN 前缀中删除资源 ID（例如，`agent-alias/AGENT_ID/ALIAS_ID` → `agent-alias/`）— 这会增加事件量和成本。如果您使用 `readOnly` 或 `eventName` 过滤器，请验证它们是否与您需要的操作匹配。
 :::
 
 <details>
@@ -672,9 +672,9 @@ To log **all** resources of a given type, remove the resource ID from the ARN pr
 
 </details>
 
-### Bedrock Data Event Resource Types
+### Bedrock 数据事件资源类型
 
-CloudTrail is designed to support data events for the following Bedrock resource types, providing full visibility into your AI pipeline:
+CloudTrail 设计支持以下 Bedrock 资源类型的数据事件，为您的 AI 管道提供完整可见性：
 
 **Agent & Orchestration**
 
@@ -689,8 +689,8 @@ CloudTrail is designed to support data events for the following Bedrock resource
 <details>
 <summary>Selector notes for Agent & Orchestration resources</summary>
 
-- **FlowExecution** — Narrow `resources.ARN` to a specific flow ID (e.g., `flow/FLOW_ID/alias/`) since flow execution ARNs share the `flow/` prefix with flow aliases.
-- **Session** — Uses `readOnly = false` to focus on write operations (session creation and updates) and reduce volume from high-frequency read operations.
+- **FlowExecution** — 将 `resources.ARN` 缩小到特定的 Flow ID（例如，`flow/FLOW_ID/alias/`），因为 Flow 执行的 ARN 与 Flow 别名共享 `flow/` 前缀。
+- **Session** — 使用 `readOnly = false` 聚焦于写操作（会话创建和更新），减少高频读操作的数据量。
 
 </details>
 
@@ -706,9 +706,9 @@ CloudTrail is designed to support data events for the following Bedrock resource
 <details>
 <summary>Selector notes for Model Invocation resources</summary>
 
-- **Model** — Foundation model ARNs are AWS-owned (e.g., `arn:aws:bedrock:REGION::foundation-model/...`) and do not contain your account ID, so this selector uses `eventName` filtering instead of `resources.ARN`.
-- **AsyncInvoke** — Uses `eventName` filtering to scope to specific async operations. Async invocations require selectors for **both** `AWS::Bedrock::Model` and `AWS::Bedrock::AsyncInvoke`.
-- **AdvancedOptimizePromptJob** — Uses `readOnly = false` to focus on write operations (job starts).
+- **Model** — 基础模型的 ARN 是 AWS 拥有的（例如，`arn:aws:bedrock:REGION::foundation-model/...`），不包含您的账户 ID，因此此选择器使用 `eventName` 过滤而非 `resources.ARN`。
+- **AsyncInvoke** — 使用 `eventName` 过滤来限定特定的异步操作。异步调用需要为 `AWS::Bedrock::Model` 和 `AWS::Bedrock::AsyncInvoke` **两者**配置选择器。
+- **AdvancedOptimizePromptJob** — 使用 `readOnly = false` 聚焦于写操作（作业启动）。
 
 </details>
 
@@ -723,8 +723,8 @@ CloudTrail is designed to support data events for the following Bedrock resource
 <details>
 <summary>Selector notes for Safety & Guardrails resources</summary>
 
-- **AutomatedReasoningPolicy** — Narrow to a specific policy ID to avoid capturing all policies in the account.
-- **AutomatedReasoningPolicyVersion** — Uses the same policy ID prefix as the policy selector.
+- **AutomatedReasoningPolicy** — 缩小到特定的策略 ID，避免捕获账户中的所有策略。
+- **AutomatedReasoningPolicyVersion** — 使用与策略选择器相同的策略 ID 前缀。
 
 </details>
 
@@ -738,7 +738,7 @@ CloudTrail is designed to support data events for the following Bedrock resource
 <details>
 <summary>Selector notes for Knowledge & RAG resources</summary>
 
-- **Tool** — Narrow to a specific tool ID to avoid capturing all tool activity in the account.
+- **Tool** — 缩小到特定的工具 ID，避免捕获账户中的所有工具活动。
 
 </details>
 
@@ -754,40 +754,40 @@ CloudTrail is designed to support data events for the following Bedrock resource
 <details>
 <summary>Selector notes for Data Automation resources</summary>
 
-- **DataAutomationProject** — Narrow to a specific project ID.
-- **DataAutomationInvocation**, **DataAutomationProfile**, **Blueprint** — All use `readOnly = false` to focus on write operations.
+- **DataAutomationProject** — 缩小到特定的项目 ID。
+- **DataAutomationInvocation**、**DataAutomationProfile**、**Blueprint** — 均使用 `readOnly = false` 聚焦于写操作。
 
 </details>
 
 :::note[Cost optimization for InlineAgent]
-The `AWS::Bedrock::InlineAgent` selector does not include a `resources.ARN` filter because inline agents don't have persistent resource ARNs. To reduce volume and cost, the selector uses an `eventName` filter (scoped to `InvokeInlineAgent`) and a [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) filter to scope logging to specific IAM roles. Replace `BEDROCK_EXECUTION_ROLE_NAME` with your actual role name. If you don't use inline agents, remove this selector entirely. See [Inline Agent: Filter by IAM Identity](#inline-agent-filter-by-iam-identity) for the complete selector JSON.
+`AWS::Bedrock::InlineAgent` 选择器不包含 `resources.ARN` 过滤器，因为内联 Agent 没有持久的资源 ARN。为了减少数据量和成本，该选择器使用 `eventName` 过滤器（范围限定为 `InvokeInlineAgent`）和 [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) 过滤器将日志范围限定到特定的 IAM 角色。请将 `BEDROCK_EXECUTION_ROLE_NAME` 替换为您的实际角色名称。如果您不使用内联 Agent，请完全删除此选择器。请参阅 [Inline Agent: Filter by IAM Identity](#inline-agent-filter-by-iam-identity) 了解完整的选择器 JSON。
 :::
 
 :::warning
-Configuring the [advanced event selectors above](#advanced-event-selectors-for-bedrock) across all relevant resource types is the **critical first step for enabling AI workload visibility** in this guide. Do not enable data events without specifying advanced event selectors — unfiltered data event logging can generate high volume and cost. For the latest supported resource types, see [Amazon Bedrock data events in CloudTrail](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html).
+在所有相关资源类型上配置[上述高级事件选择器](#advanced-event-selectors-for-bedrock)是本指南中**启用 AI 工作负载可见性的关键第一步**。不要在未指定高级事件选择器的情况下启用数据事件 — 未过滤的数据事件日志可能产生大量数据和高成本。有关最新支持的资源类型，请参阅 [Amazon Bedrock data events in CloudTrail](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html)。
 :::
 
-## Amazon Bedrock AgentCore Data Events
+## Amazon Bedrock AgentCore 数据事件
 
-[Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/) provides managed infrastructure for running, securing, and connecting AI agents — including hosted runtimes, built-in tools (code interpreters, browsers), identity and credential management, API gateways, and persistent memory. Each of these components generates data-plane activity that CloudTrail can capture as data events, giving you visibility into how your agents execute code, browse the web, authenticate to third-party services, and interact with users through gateways.
+[Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/) 提供用于运行、保护和连接 AI Agent 的托管基础设施 — 包括托管运行时、内置工具（代码解释器、浏览器）、身份和凭证管理、API 网关和持久内存。这些组件中的每一个都会生成数据面活动，CloudTrail 可以将其作为数据事件捕获，让您了解 Agent 如何执行代码、浏览网页、向第三方服务认证以及通过网关与用户交互。
 
-AgentCore data events provide runtime visibility into agent behavior, including code runs, tool usage, memory operations — which tools they're invoking, which credentials they're fetching, which gateways are receiving traffic, or whether unrecognized callers are accessing your agent infrastructure.
+AgentCore 数据事件提供对 Agent 行为的运行时可见性，包括代码执行、工具使用、内存操作 — 它们正在调用哪些工具、获取哪些凭证、哪些网关正在接收流量，或者是否有未识别的调用者正在访问您的 Agent 基础设施。
 
-### Why AgentCore Data Events Matter for AI Security
+### 为什么 AgentCore 数据事件对 AI 安全至关重要
 
-AgentCore components represent the operational surface of your AI agents — the layer where agents take real-world actions. While Bedrock data events (covered above) capture what the agent is asked to do (invoke a model, retrieve from a knowledge base), AgentCore data events capture what the agent actually does. The [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) defines six critical security dimensions for agentic systems — the bullets below map each AgentCore capability to the matrix dimension it addresses:
+AgentCore 组件代表您 AI Agent 的操作面 — 即 Agent 采取实际行动的层。Bedrock 数据事件（上面已介绍）捕获的是 Agent 被要求做什么（调用模型、从知识库检索），而 AgentCore 数据事件捕获的是 Agent 实际做了什么。[Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 为 Agent 系统定义了六个关键安全维度 — 以下要点将每个 AgentCore 功能映射到它所对应的矩阵维度：
 
-- **Code runs** — Agents running user-provided code through CodeInterpreter can access files, make network calls, and produce side effects. Monitoring these invocations detects unintended code runs or agents operating outside their intended scope. *(Agentic Matrix: [Guardrails](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — sandboxing and isolation mechanisms)*
-- **Web browsing** — Agents using the Browser tool navigate external websites, potentially accessing sensitive URLs or verify data transfer stays within intended boundaries. Logging browser activity provides an audit trail of every page an agent visits. *(Agentic Matrix: [Guardrails](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — behavioral monitoring)*
-- **Credential access** — Agents authenticate to third-party APIs using OAuth2 tokens, API keys, and workload identity tokens stored in TokenVault. Unexpected credential access patterns may indicate anomalous agent activity or permission escalation. *(Agentic Matrix: [Identity](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — identity delegation and credential management)*
-- **Gateway traffic** — AgentCore Gateways expose agents to external callers via MCP protocol with JWT-based authentication. Gateway data events capture every inbound request, including authentication failures — key for detecting unintended access attempts from outside your AWS environment. *(Agentic Matrix: [Scope](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — clear operational boundaries)*
-- **Agent runtime activity** — Runtime and RuntimeEndpoint events track agent lifecycle operations, session management, and endpoint invocations. Anomalous patterns here indicate agents being started, stopped, or accessed outside normal operational windows. *(Agentic Matrix: [Orchestration](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — agent-to-system interaction management)*
-- **Memory operations** — Agents with persistent memory store and retrieve conversation context across sessions. Unintended memory access may allow retrieval of conversation history or modification of agent context. Monitoring memory operations helps verify access stays within authorized scope. *(Agentic Matrix: [Data](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — persistent memory and state security)*
-- **Agent evaluation** — Evaluator events track automated quality and safety assessments of agent outputs. Monitoring these helps verify your evaluation pipeline remains configured as intended. *(Agentic Matrix: [Audit & Logging](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — action-level agent action tracking)*
+- **代码执行** — Agent 通过 CodeInterpreter 运行用户提供的代码时可以访问文件、进行网络调用并产生副作用。监控这些调用可以检测到意外的代码运行或 Agent 在预期范围之外操作。*（Agentic Matrix：[Guardrails](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 沙箱和隔离机制）*
+- **网页浏览** — 使用 Browser 工具的 Agent 会浏览外部网站，可能访问敏感 URL 或验证数据传输是否在预期范围内。记录浏览器活动为 Agent 访问的每个页面提供审计跟踪。*（Agentic Matrix：[Guardrails](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 行为监控）*
+- **凭证访问** — Agent 使用存储在 TokenVault 中的 OAuth2 token、API 密钥和工作负载身份 token 向第三方 API 进行认证。意外的凭证访问模式可能表明异常的 Agent 活动或权限提升。*（Agentic Matrix：[Identity](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 身份委托和凭证管理）*
+- **网关流量** — AgentCore Gateway 通过 MCP 协议和基于 JWT 的认证将 Agent 暴露给外部调用者。Gateway 数据事件捕获每个入站请求，包括认证失败 — 这对于检测来自 AWS 环境外部的意外访问尝试至关重要。*（Agentic Matrix：[Scope](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 明确的操作边界）*
+- **Agent 运行时活动** — Runtime 和 RuntimeEndpoint 事件跟踪 Agent 生命周期操作、会话管理和端点调用。此处的异常模式表明 Agent 在正常操作窗口之外被启动、停止或访问。*（Agentic Matrix：[Orchestration](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Agent 到系统的交互管理）*
+- **内存操作** — 具有持久内存的 Agent 跨会话存储和检索对话上下文。意外的内存访问可能允许检索对话历史或修改 Agent 上下文。监控内存操作有助于验证访问是否在授权范围内。*（Agentic Matrix：[Data](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 持久内存和状态安全）*
+- **Agent 评估** — Evaluator 事件跟踪对 Agent 输出的自动化质量和安全评估。监控这些事件有助于验证您的评估管道是否保持按预期配置。*（Agentic Matrix：[Audit & Logging](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 操作级别的 Agent 行为跟踪）*
 
-### AgentCore Data Event Resource Types
+### AgentCore 数据事件资源类型
 
-CloudTrail supports data events for the following AgentCore resource types:
+CloudTrail 支持以下 AgentCore 资源类型的数据事件：
 
 <Tabs>
   <TabItem value="tools" label="Built-in Tools" default>
@@ -830,12 +830,12 @@ CloudTrail supports data events for the following AgentCore resource types:
   </TabItem>
 </Tabs>
 
-### Advanced Event Selectors for AgentCore
+### AgentCore 高级事件选择器
 
-Use the following advanced event selectors to capture AgentCore data events on your CloudTrail trail. These selectors are organized into four groups based on security function: built-in tools, identity and credentials, runtime and gateway, and memory and evaluation. Each selector scopes logging using `resources.ARN` prefixes. For AWS-managed built-in tools (`CodeInterpreter` and `Browser`), the `resources.ARN` filter is omitted because these use AWS-owned ARNs — the `resources.type` filter alone is sufficient.
+使用以下高级事件选择器在您的 CloudTrail trail 上捕获 AgentCore 数据事件。这些选择器按安全功能分为四组：内置工具、身份和凭证、运行时和网关、以及内存和评估。每个选择器使用 `resources.ARN` 前缀来限定日志范围。对于 AWS 托管的内置工具（`CodeInterpreter` 和 `Browser`），省略了 `resources.ARN` 过滤器，因为它们使用 AWS 拥有的 ARN — 仅 `resources.type` 过滤器就足够了。
 
 :::warning
-The selectors below are **examples**. Applying them without replacing placeholders will capture no events. Replace `ACCOUNT_ID` and `REGION` with your values (see the [Bedrock placeholder table](#advanced-event-selectors-for-bedrock) above). AgentCore-specific placeholders are listed below.
+以下选择器是**示例**。在不替换占位符的情况下应用它们将不会捕获任何事件。 Replace `ACCOUNT_ID` and `REGION` with your values (see the [Bedrock placeholder table](#advanced-event-selectors-for-bedrock) above). AgentCore-specific placeholders are listed below.
 :::
 
 :::note[AgentCore placeholder reference]
@@ -850,16 +850,16 @@ The selectors below are **examples**. Applying them without replacing placeholde
 | `EVALUATOR_ID` | AgentCore Evaluator ID | AgentCore console |
 | `CUSTOM_TOOL_ID` / `CUSTOM_BROWSER_ID` | Custom tool or browser configuration IDs | AgentCore console |
 
-To log **all** resources of a given type, remove the resource ID from the ARN prefix (e.g., `gateway/GATEWAY_ID` → `gateway/`) — this increases event volume and cost.
+要记录给定类型的**所有**资源，请从 ARN 前缀中删除资源 ID（例如，`gateway/GATEWAY_ID` → `gateway/`）— 这会增加事件量和成本。
 :::
 
 <Tabs>
   <TabItem value="tools" label="Group 1: Built-in Tools" default>
 
-These selectors capture agent tool usage — the actions agents take in the real world. Code interpreter events reveal what code agents execute; browser events reveal what websites agents visit. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension — sandboxing, isolation mechanisms, and behavioral monitoring for agent actions.)*
+这些选择器捕获 Agent 工具使用情况 — Agent 在现实世界中采取的行动。代码解释器事件揭示 Agent 执行了什么代码；浏览器事件揭示 Agent 访问了哪些网站。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度 — Agent 操作的沙箱、隔离机制和行为监控。）*
 
 :::warning[Important]
-AWS-managed built-in tools (`CodeInterpreter` and `Browser`) use AWS-owned resource ARNs with the account segment set to `aws` (e.g., `arn:aws:bedrock-agentcore:REGION:aws:code-interpreter/`), not your account ID. Custom tools (`CodeInterpreterCustom` and `BrowserCustom`) use your account ID. The selectors below reflect this distinction. If you only use the managed tools, you can omit the custom tool selectors.
+AWS 托管的内置工具（`CodeInterpreter` 和 `Browser`）使用账户段设置为 `aws` 的 AWS 拥有的资源 ARN（例如，`arn:aws:bedrock-agentcore:REGION:aws:code-interpreter/`），而不是您的账户 ID。自定义工具（`CodeInterpreterCustom` 和 `BrowserCustom`）使用您的账户 ID。以下选择器反映了这种区别。如果您只使用托管工具，可以省略自定义工具选择器。
 :::
 
 ```json title="AgentCore-BuiltInTools-DataEvents.json"
@@ -900,7 +900,7 @@ AWS-managed built-in tools (`CodeInterpreter` and `Browser`) use AWS-owned resou
   </TabItem>
   <TabItem value="identity" label="Group 2: Identity & Credentials">
 
-These selectors capture how agents authenticate to third-party services and manage credentials. Unexpected credential access patterns may indicate unauthorized agent access. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Identity dimension — identity delegation, credential management, and avoiding the Confused Deputy Problem.)*
+这些选择器捕获 Agent 如何向第三方服务认证和管理凭证。意外的凭证访问模式可能表明未授权的 Agent 访问。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Identity 维度 — 身份委托、凭证管理和避免混淆代理问题。）*
 
 ```json title="AgentCore-IdentityCredentials-DataEvents.json"
 [
@@ -950,10 +950,10 @@ These selectors capture how agents authenticate to third-party services and mana
   </TabItem>
   <TabItem value="runtime" label="Group 3: Runtime & Gateway">
 
-These selectors capture agent lifecycle and external access patterns. Runtime events show when agents start, stop, and process requests. Gateway events capture every inbound MCP request, including JWT authentication failures. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — agent-to-system interaction management, execution flow control, and the Scope dimension — clear operational boundaries.)*
+这些选择器捕获 Agent 生命周期和外部访问模式。Runtime 事件显示 Agent 何时启动、停止和处理请求。Gateway 事件捕获每个入站 MCP 请求，包括 JWT 认证失败。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — Agent 到系统的交互管理、执行流控制，以及 Scope 维度 — 明确的操作边界。）*
 
 :::warning[Important]
-AgentCore Gateway data events use JWT-based authentication rather than SigV4. This means identity information is captured in the `additionalEventData.jwt.claims` field rather than the standard `userIdentity` fields. Error information appears in `responseElements` rather than top-level `errorCode` and `errorMessage` fields. Your queries and metric filters for Gateway events must account for this difference. See [Gateway Data Event Queries](#security-analytics) for examples.
+AgentCore Gateway 数据事件使用基于 JWT 的认证而非 SigV4。这意味着身份信息被捕获在 `additionalEventData.jwt.claims` 字段中，而不是标准的 `userIdentity` 字段中。错误信息出现在 `responseElements` 中，而不是顶级的 `errorCode` 和 `errorMessage` 字段中。您的 Gateway 事件查询和 metric 过滤器必须考虑这种差异。请参阅 [Gateway 数据事件查询](#security-analytics)了解示例。
 :::
 
 ```json title="AgentCore-RuntimeGateway-DataEvents.json"
@@ -988,7 +988,7 @@ AgentCore Gateway data events use JWT-based authentication rather than SigV4. Th
   </TabItem>
   <TabItem value="memory" label="Group 4: Memory & Evaluation">
 
-These selectors capture agent memory operations and evaluation activity. Memory events reveal when agents store or retrieve conversation context. Evaluator events track automated quality assessments. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Data dimension — persistent memory and state security with memory integrity verification.)*
+这些选择器捕获 Agent 内存操作和评估活动。内存事件揭示 Agent 何时存储或检索对话上下文。Evaluator 事件跟踪自动化质量评估。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Data 维度 — 具有内存完整性验证的持久内存和状态安全。）*
 
 ```json title="AgentCore-MemoryEvaluation-DataEvents.json"
 [
@@ -1015,41 +1015,41 @@ These selectors capture agent memory operations and evaluation activity. Memory 
 </Tabs>
 
 :::note[Cost optimization for AgentCore data events]
-AgentCore data events can generate significant volume, especially for Gateway (every inbound MCP request) and Runtime (every agent session operation).
+AgentCore 数据事件可能产生大量数据，尤其是 Gateway（每个入站 MCP 请求）和 Runtime（每个 Agent 会话操作）。
 
 **Recommended rollout order:**
-1. Start with **Group 2** (credentials) and **Group 3** (gateway) — these are typically the highest security priority.
-2. Expand to **Groups 1 and 4** after establishing baseline volume and cost.
+1. 从**第 2 组**（凭证）和**第 3 组**（网关）开始 — 这些通常是最高安全优先级。
+2. 在建立基线数据量和成本后扩展到**第 1 组和第 4 组**。
 
-**Narrowing selectors by resource ID:** Use specific `resources.ARN` values to target individual resources — for example, `arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/PROD_GATEWAY_ID` for a single gateway. For managed built-in tools (`CodeInterpreter` and `Browser`), the `resources.ARN` filter is omitted because these use AWS-owned ARNs — the `resources.type` filter alone is sufficient.
+**按资源 ID 缩小选择器范围：** 使用特定的 `resources.ARN` 值来针对单个资源 — 例如，`arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/PROD_GATEWAY_ID` 用于单个网关。对于 AWS 托管的内置工具（`CodeInterpreter` 和 `Browser`），省略了 `resources.ARN` 过滤器，因为它们使用 AWS 拥有的 ARN — 仅 `resources.type` 过滤器就足够了。
 :::
 
-## CloudTrail Insights Events
+## CloudTrail Insights 事件
 
-[CloudTrail Insights](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html) is designed to identify unusual API activity by continuously analyzing your account's operational baseline. For AI workloads, where legitimate usage can itself involve high call volumes, Insights provides a way to detect anomalous spikes that deviate from the established norm — even when the absolute call volume appears reasonable in isolation.
+[CloudTrail Insights](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html) 旨在通过持续分析您账户的运营基线来识别异常 API 活动。对于 AI 工作负载，合法使用本身可能涉及大量调用，Insights 提供了一种检测偏离既定基线的异常激增的方法 — 即使绝对调用量在单独来看时似乎合理。
 
-### Insight Types
+### Insight 类型
 
 | Insight Type | Detection Purpose |
 |-------------|-------------------|
 | ApiCallRateInsight | Detects spikes in API call volume that deviate from the baseline. |
 | ApiErrorRateInsight | Detects unusual error rate patterns. A sudden increase in AccessDenied or ThrottlingException errors can indicate repeated access attempts to credentials, repeated unintended access attempts, or an automated agent hitting rate limits. |
 
-### Configuration Guidance
+### 配置指导
 
-Enable Insights on your CloudTrail trail by navigating to the trail in the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/), selecting **Edit**, and enabling both Insights event types under the **Insights** section.
+在 [CloudTrail 控制台](https://console.aws.amazon.com/cloudtrail/)中导航到您的 trail，选择 **Edit**，并在 **Insights** 部分下启用两种 Insights 事件类型，即可在 CloudTrail trail 上启用 Insights。
 
-For trails, you can enable Insights for both management events and data events. Select the event type (management events, data events, or both) and then choose the Insights types (API call rate, API error rate, or both). Your trail must be logging **Write** management or data events to enable **API call rate** Insights, and must be logging **Read** or **Write** management or data events to enable **API error rate** Insights.
+对于 trail，您可以为管理事件和数据事件都启用 Insights。选择事件类型（管理事件、数据事件或两者）然后选择 Insights 类型（API 调用率、API 错误率或两者）。您的 trail 必须正在记录 **Write** 管理或数据事件才能启用 **API call rate** Insights，必须正在记录 **Read** 或 **Write** 管理或数据事件才能启用 **API error rate** Insights。
 
-CloudTrail Insights events are delivered to the same Amazon S3 bucket and CloudWatch Logs log group as your standard events, under an `Insights` prefix. You can create metric filters and alarms directly on Insights events to trigger automated responses when anomalous activity is detected. CloudTrail may take up to 36 hours to begin delivering Insights events after enablement, provided unusual activity is detected during that time.
+CloudTrail Insights 事件被传送到与标准事件相同的 Amazon S3 存储桶和 CloudWatch Logs log group，位于 `Insights` 前缀下。您可以直接在 Insights 事件上创建 metric 过滤器和告警，以在检测到异常活动时触发自动响应。CloudTrail 在启用后可能需要最多 36 小时才能开始传送 Insights 事件（前提是在此期间检测到异常活动）。
 
-## CloudTrail Management Events
+## CloudTrail 管理事件
 
-CloudTrail Management events are designed to record control-plane operations in your AWS environment: creating and deleting resources, modifying configurations, and changing permissions. For AI workload security, these events surface unexpected access patterns for review — disabling logging, redirecting audit trails, or weakening AI service guardrails.
+CloudTrail 管理事件旨在记录 AWS 环境中的控制面操作：创建和删除资源、修改配置以及更改权限。对于 AI 工作负载安全，这些事件可以浮现需要审查的意外访问模式 — 如禁用日志记录、重定向审计跟踪或削弱 AI 服务的 Guardrail。
 
-Verify that both **Read** and **Write** management events are logged on all regions. The default CloudTrail trail provides one free copy of management events per region; additional copies incur charges. See [CloudTrail pricing](https://aws.amazon.com/cloudtrail/pricing/) for details.
+验证**读取**和**写入**管理事件在所有区域都已启用日志记录。默认的 CloudTrail trail 为每个区域提供一份免费的管理事件副本；额外副本会产生费用。详情请参阅 [CloudTrail 定价](https://aws.amazon.com/cloudtrail/pricing/)。
 
-### Key Management Events for AI Security
+### AI 安全的关键管理事件
 
 <Tabs>
   <TabItem value="bedrock-config" label="Bedrock Configuration" default>
@@ -1091,38 +1091,38 @@ Verify that both **Read** and **Write** management events are logged on all regi
 </Tabs>
 
 :::note
-A common unintended access pattern involves changes to logging configurations, such as disabling trails or redirecting logs to an externally controlled bucket, before conducting further activity. Monitoring for `StopLogging`, `DeleteTrail`, and `PutModelInvocationLoggingConfiguration` is recommended to protect the integrity of your audit trail.
+一种常见的意外访问模式涉及在进行进一步活动之前更改日志配置，例如禁用 trail 或将 log 重定向到外部控制的存储桶。建议监控 `StopLogging`、`DeleteTrail` 和 `PutModelInvocationLoggingConfiguration` 以保护审计跟踪的完整性。
 :::
 
-## Amazon S3 and Lambda Data Events
+## Amazon S3 和 Lambda 数据事件
 
-AI workloads frequently interact with Amazon S3 buckets (for training data, model artifacts, and CI/CD pipeline assets) and Lambda functions (for AI inference, data preprocessing, and agent orchestration). Monitoring these resource types at the [data event](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html) level gives you visibility into the object-level and function-invocation-level activity that management events do not capture.
+AI 工作负载频繁与 Amazon S3 存储桶（用于训练数据、模型制品和 CI/CD 管道资产）和 Lambda 函数（用于 AI 推理、数据预处理和 Agent 编排）交互。在[数据事件](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html)级别监控这些资源类型，可以让您了解管理事件无法捕获的对象级别和函数调用级别的活动。
 
-### Amazon S3 Target Buckets and Event Types
+### Amazon S3 目标存储桶和事件类型
 
-Enable Amazon S3 data events for buckets containing:
+为包含以下内容的存储桶启用 Amazon S3 数据事件：
 
-- AI training datasets and fine-tuning data
-- Model artifacts and configuration files
-- CI/CD pipeline artifacts and code repositories
+- AI 训练数据集和微调数据
+- 模型制品和配置文件
+- CI/CD 管道制品和代码仓库
 
-Key Amazon S3 operations to monitor:
+需要监控的关键 Amazon S3 操作：
 
-- **PutObject** — Detects unauthorized write access or data staging for unauthorized data access
-- **GetObject** — Detects bulk downloads of training data or model artifacts
-- **DeleteObject** — Detects data deletion or log modification activity
-- **CopyObject** — Detects unintended data movement across buckets
+- **PutObject** — 检测未授权的写入访问或为未授权数据访问进行的数据暂存
+- **GetObject** — 检测训练数据或模型制品的批量下载
+- **DeleteObject** — 检测数据删除或日志修改活动
+- **CopyObject** — 检测跨存储桶的意外数据移动
 
-### Amazon S3 Write-Only Selector
+### Amazon S3 仅写入选择器
 
-The following selector reduces Amazon S3 data event volume by logging only write operations on specifically named AI-related buckets:
+以下选择器通过仅记录特定命名的 AI 相关存储桶上的写入操作来减少 Amazon S3 数据事件量：
 
 :::warning[Replace bucket name prefixes with your actual bucket names]
-The bucket name prefixes below (`ai-training-data-`, `model-artifacts-`, `cicd-pipeline-`) are **examples**. Replace them with the actual names or naming prefixes of your S3 buckets that contain AI training data, model artifacts, and pipeline assets. You can find your bucket names in the [S3 console](https://console.aws.amazon.com/s3/) or by running `aws s3 ls`. If your buckets use a different naming convention, adjust the `StartsWith` values accordingly.
+以下存储桶名称前缀（`ai-training-data-`、`model-artifacts-`、`cicd-pipeline-`）是**示例**。请将它们替换为包含 AI 训练数据、模型制品和管道资产的 S3 存储桶的实际名称或命名前缀。您可以在 [S3 控制台](https://console.aws.amazon.com/s3/)中找到存储桶名称，或运行 `aws s3 ls`。如果您的存储桶使用不同的命名约定，请相应调整 `StartsWith` 值。
 :::
 
 :::info[What this does]
-Filters Amazon S3 data events to capture only write operations (`readOnly = false`) on buckets whose names start with `ai-training-data-`, `model-artifacts-`, or `cicd-pipeline-`. This avoids logging high-volume read operations (like `GetObject`) while still detecting unauthorized writes, deletions, and data staging.
+过滤 Amazon S3 数据事件，仅捕获名称以 `ai-training-data-`、`model-artifacts-` 或 `cicd-pipeline-` 开头的存储桶上的写入操作（`readOnly = false`）。这避免了记录高流量读取操作（如 `GetObject`），同时仍能检测未授权的写入、删除和数据暂存。
 :::
 
 ```json title="S3-AI-Sensitive-WriteOnly"
@@ -1155,28 +1155,28 @@ Filters Amazon S3 data events to capture only write operations (`readOnly = fals
 ]
 ```
 
-### Lambda AI Pipeline Functions
+### Lambda AI 管道函数
 
-Enable Lambda data events to log `InvokeFunction` calls for:
+启用 Lambda 数据事件以记录以下函数的 `InvokeFunction` 调用：
 
-- AI inference pipeline functions
-- Data preprocessing and feature engineering workflows
-- Bedrock agent orchestration functions
+- AI 推理管道函数
+- 数据预处理和特征工程工作流
+- Bedrock Agent 编排函数
 
 :::note
-An unexpected spike in Lambda invocations, especially from an unfamiliar IAM role, is an early indicator that an unintended access to your Lambda-based AI pipeline functions.
+Lambda 调用的意外激增，特别是来自不熟悉的 IAM 角色的调用，是您基于 Lambda 的 AI 管道函数遭受意外访问的早期指标。
 :::
 
-### Lambda Production-Only Selector
+### Lambda 仅生产环境选择器
 
-This selector excludes development and test functions to focus logging on production AI workloads:
+此选择器排除开发和测试函数，将日志记录集中在生产 AI 工作负载上：
 
 :::warning[Replace function name prefixes with your actual naming convention]
-The function name prefixes below (`prod-`, `ai-agent-`) are **examples**. Replace them with the actual naming prefixes your organization uses for production AI Lambda functions. Also replace `ACCOUNT_ID` with your AWS account ID and `REGION` with your region. You can find your function names in the [Lambda console](https://console.aws.amazon.com/lambda/) or by running `aws lambda list-functions`.
+以下函数名称前缀（`prod-`、`ai-agent-`）是**示例**。请将它们替换为您组织用于生产 AI Lambda 函数的实际命名前缀。同时将 `ACCOUNT_ID` 替换为您的 AWS 账户 ID，将 `REGION` 替换为您的区域。您可以在 [Lambda 控制台](https://console.aws.amazon.com/lambda/)中找到函数名称，或运行 `aws lambda list-functions`。
 :::
 
 :::info[What this does]
-Logs Lambda `Invoke` data events only for functions whose ARN starts with `prod-` or `ai-agent-`. Because `StartsWith` already scopes to these specific prefixes, development and test functions are excluded by definition — CloudTrail does not allow two field selectors on the same field (`resources.ARN`) within a single selector, even with different operators. Replace `ACCOUNT_ID` and region with your values.
+仅记录 ARN 以 `prod-` 或 `ai-agent-` 开头的函数的 Lambda `Invoke` 数据事件。由于 `StartsWith` 已将范围限定到这些特定前缀，开发和测试函数按定义被排除 — CloudTrail 不允许在单个选择器中对同一字段（`resources.ARN`）使用两个字段选择器，即使使用不同的运算符。请将 `ACCOUNT_ID` 和区域替换为您的值。
 :::
 
 ```json title="Lambda-AI-Production-Invocations"
@@ -1204,15 +1204,15 @@ Logs Lambda `Invoke` data events only for functions whose ARN starts with `prod-
 ]
 ```
 
-## CloudTrail Network Activity Events
+## CloudTrail 网络活动事件
 
-[CloudTrail Network Activity Events](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-network-events-with-cloudtrail.html) are designed to enable VPC endpoint owners to record AWS API calls made through VPC endpoints from a private VPC to AWS services. For AI workloads, this provides visibility into whether your Bedrock-integrated VPCs are making unexpected outbound calls or whether VPC endpoint access controls are being violated. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Scope dimension — enforcing clear operational boundaries and detecting agents operating outside their intended network perimeter.)*
+[CloudTrail 网络活动事件](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-network-events-with-cloudtrail.html)旨在让 VPC 端点所有者记录从私有 VPC 通过 VPC 端点到 AWS 服务的 API 调用。对于 AI 工作负载，这提供了对您的 Bedrock 集成 VPC 是否正在进行意外出站调用或 VPC 端点访问控制是否被违反的可见性。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Scope 维度 — 强制明确的操作边界并检测在预期网络边界之外操作的 Agent。）*
 
-### AI Workload VPC Endpoints
+### AI 工作负载 VPC 端点
 
-CloudTrail Network activity events support Amazon Bedrock (`bedrock.amazonaws.com`), Amazon S3 (`s3.amazonaws.com`), and AWS Lambda (`lambda.amazonaws.com`) as event sources. Enable these events on your VPC endpoints to capture API calls routed through each endpoint, including both permitted and denied access attempts. For AI workloads, this is particularly important because Bedrock agents operating within a VPC access downstream services — Amazon S3 for knowledge base data sources, Lambda for action group handlers — through VPC endpoints. Denied access at the VPC endpoint level indicates either a misconfigured endpoint policy or an unauthorized workload attempting to reach AI resources from within your private network.
+CloudTrail 网络活动事件支持 Amazon Bedrock（`bedrock.amazonaws.com`）、Amazon S3（`s3.amazonaws.com`）和 AWS Lambda（`lambda.amazonaws.com`）作为事件源。在您的 VPC 端点上启用这些事件，以捕获通过每个端点路由的 API 调用，包括允许和拒绝的访问尝试。对于 AI 工作负载，这特别重要，因为在 VPC 内运行的 Bedrock Agent 通过 VPC 端点访问下游服务 — Amazon S3 用于知识库数据源，Lambda 用于操作组处理程序。VPC 端点级别的拒绝访问表明端点策略配置错误或未授权的工作负载试图从您的私有网络内访问 AI 资源。
 
-Additional event sources to consider enabling:
+可考虑启用的其他事件源：
 
 | Event Source | Monitoring Purpose |
 |-------------|-------------------|
@@ -1222,12 +1222,12 @@ Additional event sources to consider enabling:
 | lambda.amazonaws.com | Track Lambda invocations through VPC endpoints from AI pipeline functions. |
 | sagemaker.amazonaws.com | Track SageMaker endpoint activity in AI workload environments. |
 
-### Advanced event selector fields for network activity events
+### 网络活动事件的高级事件选择器字段
 
-For initial deployment, focus on capturing `VpceAccessDenied` errors across all AI-relevant VPC endpoints to detect violations of your [VPC endpoint policies](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html) with minimal additional data volume. The selectors below cover Bedrock, Amazon S3, and Lambda — the three services most commonly accessed by AI agents through VPC endpoints.
+对于初始部署，重点捕获所有 AI 相关 VPC 端点上的 `VpceAccessDenied` 错误，以最小的额外数据量检测 [VPC 端点策略](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)违规。以下选择器覆盖 Bedrock、Amazon S3 和 Lambda — AI Agent 通过 VPC 端点最常访问的三种服务。
 
 :::info[What this does]
-Logs network activity events where Bedrock, Amazon S3, or Lambda returned a `VpceAccessDenied` error, indicating traffic from within your VPC was blocked by a VPC endpoint policy. This captures denied access across the full AI workload surface without the volume of logging all successful network activity. Amazon S3 denials detect agents blocked from reaching training data or model artifact buckets. Lambda denials detect agents blocked from invoking action group handlers or AI pipeline functions.
+记录 Bedrock、Amazon S3 或 Lambda 返回 `VpceAccessDenied` 错误的网络活动事件，表明来自 VPC 内部的流量被 VPC 端点策略阻止。这捕获了整个 AI 工作负载面上的拒绝访问，而无需记录所有成功网络活动的数据量。Amazon S3 拒绝检测 Agent 被阻止访问训练数据或模型制品存储桶。Lambda 拒绝检测 Agent 被阻止调用操作组处理程序或 AI 管道函数。
 :::
 
 <details>
@@ -1291,9 +1291,9 @@ Logs network activity events where Bedrock, Amazon S3, or Lambda returned a `Vpc
 
 </details>
 
-## Implementation Priority Checklist
+## 实施优先级清单
 
-The following table presents the recommended implementation order for enabling CloudTrail event types in your AI workload environment. Each step builds on the previous, starting with the high-impact changes and progressing to more targeted monitoring configurations.
+下表展示了在 AI 工作负载环境中启用 CloudTrail 事件类型的推荐实施顺序。每个步骤都建立在前一步的基础上，从高影响力的变更开始，逐步推进到更有针对性的监控配置。
 
 | Step | Event Type | What to Enable | Details |
 |------|-----------|----------------|---------|
@@ -1305,20 +1305,20 @@ The following table presents the recommended implementation order for enabling C
 | 6 | Data Events | `AWS::Lambda::Function` | Production AI functions only; exclude dev and test function name prefixes |
 | 7 | Network Activity Events | Bedrock, S3, and Lambda VPC endpoints | `VpceAccessDenied` on `bedrock.amazonaws.com`, `s3.amazonaws.com`, and `lambda.amazonaws.com` |
 
-## Optimizing Data Event Collection
+## 优化数据事件收集
 
-[Advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html#creating-data-event-selectors-advanced) enable precise filtering to control both costs and log volume. The following strategies show how to narrow each major resource type to only the events of security interest.
+[高级事件选择器](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html#creating-data-event-selectors-advanced)支持精确过滤以控制成本和 log 数据量。以下策略展示了如何将每种主要资源类型缩小到仅包含安全关注的事件。
 
-### Bedrock: Narrow to Production Resources
+### Bedrock：缩小到生产资源
 
-The [advanced event selectors above](#advanced-event-selectors-for-bedrock) already scope Bedrock data events to specific resources by ARN. To further reduce volume, narrow the ARN prefixes to only production agents and knowledge bases, excluding non-production or experimental resources:
+[上述高级事件选择器](#advanced-event-selectors-for-bedrock)已经通过 ARN 将 Bedrock 数据事件范围限定到特定资源。要进一步减少数据量，请将 ARN 前缀缩小到仅生产 Agent 和知识库，排除非生产或实验性资源：
 
 :::warning[Replace resource IDs with your actual production resource identifiers]
-The resource IDs below (`PROD_AGENT_ID`, `PROD_KB_ID`) are **examples**. Replace them with the actual agent and knowledge base IDs from your production environment. You can find these IDs in the [Bedrock console](https://console.aws.amazon.com/bedrock/) under **Agents** and **Knowledge bases**, or by running `aws bedrock list-agents` and `aws bedrock list-knowledge-bases`.
+以下资源 ID（`PROD_AGENT_ID`、`PROD_KB_ID`）是**示例**。请将它们替换为您生产环境中的实际 Agent 和知识库 ID。您可以在 [Bedrock 控制台](https://console.aws.amazon.com/bedrock/)的 **Agents** 和 **Knowledge bases** 下找到这些 ID，或运行 `aws bedrock list-agents` 和 `aws bedrock list-knowledge-bases`。
 :::
 
 :::info[What this does]
-Restricts Bedrock data event logging to only agent aliases and knowledge bases whose ARNs match specific resource ID prefixes. Use this when you have identified the exact agent and knowledge base IDs used in production and want to exclude all others. Replace `ACCOUNT_ID` and the resource IDs with your values.
+将 Bedrock 数据事件日志限制为仅记录 ARN 匹配特定资源 ID 前缀的 Agent 别名和知识库。当您已确定生产中使用的确切 Agent 和知识库 ID 并希望排除所有其他资源时使用此选择器。请将 `ACCOUNT_ID` 和资源 ID 替换为您的值。
 :::
 
 ```json title="Bedrock-Production-Agents-Only"
@@ -1364,22 +1364,22 @@ Restricts Bedrock data event logging to only agent aliases and knowledge bases w
 ]
 ```
 
-### Amazon S3: Write-Only on AI Buckets
+### Amazon S3：AI 存储桶仅写入
 
-Reduce Amazon S3 data event volume by logging only write operations on AI-specific buckets. Read operations can be added later for high-value buckets if unauthorized data transfer detection is prioritized.
+通过仅记录 AI 专用存储桶上的写入操作来减少 Amazon S3 数据事件量。如果优先考虑检测未授权数据传输，可以稍后为高价值存储桶添加读取操作。
 
-> Refer to [Section 6.2](#amazon-s3-write-only-selector) for the complete Amazon S3 write-only advanced event selector JSON.
+> 请参阅 [6.2 节](#amazon-s3-write-only-selector)了解完整的 Amazon S3 仅写入高级事件选择器 JSON。
 
-### Inline Agent: Filter by IAM Identity
+### 内联 Agent：按 IAM 身份过滤
 
-The `AWS::Bedrock::InlineAgent` selector does not support `resources.ARN` filtering because inline agents do not have persistent resource ARNs. Without additional filtering, this selector captures all `InvokeInlineAgent` calls across the account, which can generate high data event volume and cost. Use the [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) field to scope logging to specific IAM roles — for example, your production Bedrock execution roles — while excluding development or automated service roles that generate high-volume inline agent calls.
+`AWS::Bedrock::InlineAgent` 选择器不支持 `resources.ARN` 过滤，因为内联 Agent 没有持久的资源 ARN。如果没有额外的过滤，此选择器会捕获账户中所有的 `InvokeInlineAgent` 调用，这可能产生大量数据事件和高成本。使用 [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) 字段将日志范围限定到特定的 IAM 角色 — 例如，您的生产 Bedrock 执行角色 — 同时排除产生大量内联 Agent 调用的开发或自动化服务角色。
 
 :::warning[Replace role names with your actual IAM role names]
-The role names below (`BEDROCK_EXECUTION_ROLE_NAME`, `dev-`, `test-`) are **examples**. Replace `ACCOUNT_ID` with your AWS account ID and `BEDROCK_EXECUTION_ROLE_NAME` with the actual name of the IAM role your application uses to call `InvokeInlineAgent`. You can find your role names in the [IAM console](https://console.aws.amazon.com/iam/) under **Roles**, or check the execution role configured on your Bedrock agents. In the "Exclude Dev Roles" tab, replace `dev-` and `test-` with the actual naming prefixes your organization uses for non-production roles.
+以下角色名称（`BEDROCK_EXECUTION_ROLE_NAME`、`dev-`、`test-`）是**示例**。请将 `ACCOUNT_ID` 替换为您的 AWS 账户 ID，将 `BEDROCK_EXECUTION_ROLE_NAME` 替换为您的应用程序用于调用 `InvokeInlineAgent` 的实际 IAM 角色名称。您可以在 [IAM 控制台](https://console.aws.amazon.com/iam/)的 **Roles** 下找到角色名称，或检查 Bedrock Agent 上配置的执行角色。在 "Exclude Dev Roles" 标签页中，将 `dev-` 和 `test-` 替换为您组织用于非生产角色的实际命名前缀。
 :::
 
 :::info[What this does]
-Restricts InlineAgent data event logging to only invocations made by IAM roles matching a specific ARN prefix. The `eventName` filter restricts capture to only `InvokeInlineAgent` calls are captured, and the `userIdentity.arn` filter scopes to your production roles. Replace `ACCOUNT_ID` with your AWS account ID and `BEDROCK_EXECUTION_ROLE_NAME` with the actual name of the IAM role your application uses to call `InvokeInlineAgent`.
+将 InlineAgent 数据事件日志限制为仅记录由匹配特定 ARN 前缀的 IAM 角色发起的调用。`eventName` 过滤器限制仅捕获 `InvokeInlineAgent` 调用，`userIdentity.arn` 过滤器将范围限定到您的生产角色。请将 `ACCOUNT_ID` 替换为您的 AWS 账户 ID，将 `BEDROCK_EXECUTION_ROLE_NAME` 替换为您的应用程序用于调用 `InvokeInlineAgent` 的实际 IAM 角色名称。
 :::
 
 <Tabs>
@@ -1449,31 +1449,31 @@ Restricts InlineAgent data event logging to only invocations made by IAM roles m
 </Tabs>
 
 :::tip
-The `userIdentity.arn` field is supported on all advanced event selectors, not just InlineAgent. You can apply the same filtering technique to any high-volume data event selector where `resources.ARN` filtering is insufficient. For the full list of supported fields and operators, see [Filtering data events by using advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html).
+`userIdentity.arn` 字段支持所有高级事件选择器，不仅仅是 InlineAgent。您可以将相同的过滤技术应用于任何 `resources.ARN` 过滤不足的高流量数据事件选择器。有关支持的字段和运算符的完整列表，请参阅[使用高级事件选择器过滤数据事件](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html)。
 :::
 
-### Lambda: Production Functions Only
+### Lambda：仅生产函数
 
-Focus data event logging on production AI workloads by scoping the `StartsWith` operator to only production function prefixes (`prod-`, `ai-agent-`). Development and test functions are excluded by definition because their prefixes do not match.
+通过将 `StartsWith` 运算符限定到仅生产函数前缀（`prod-`、`ai-agent-`），将数据事件日志集中在生产 AI 工作负载上。开发和测试函数由于前缀不匹配而按定义被排除。
 
-> Refer to [Section 6.4](#lambda-production-only-selector) for the complete Lambda production-only advanced event selector JSON.
+> 请参阅 [6.4 节](#lambda-production-only-selector)了解完整的 Lambda 仅生产环境高级事件选择器 JSON。
 
-### CloudTrail Network Activity Events: VpceAccessDenied Only
+### CloudTrail 网络活动事件：仅 VpceAccessDenied
 
-For network activity events, logging only denied access across Bedrock, Amazon S3, and Lambda VPC endpoints captures the key security events while reducing the volume compared to logging all network activity.
+对于网络活动事件，仅记录 Bedrock、Amazon S3 和 Lambda VPC 端点上的拒绝访问，即可捕获关键安全事件，同时相比记录所有网络活动减少了数据量。
 
-> Refer to [Advanced event selector fields for network activity events](#advanced-event-selector-fields-for-network-activity-events) for the complete Bedrock, Amazon S3, and Lambda VpceAccessDenied network activity event selector JSON.
+> 请参阅[网络活动事件的高级事件选择器字段](#advanced-event-selector-fields-for-network-activity-events)了解完整的 Bedrock、Amazon S3 和 Lambda VpceAccessDenied 网络活动事件选择器 JSON。
 
-### AgentCore: Phased Enablement by Security Priority
+### AgentCore：按安全优先级分阶段启用
 
-AgentCore data events span fourteen resource types. Enable them in phases based on security priority:
+AgentCore 数据事件涵盖十四种资源类型。根据安全优先级分阶段启用：
 
-1. **Phase 1 (Highest priority):** Gateway (`AWS::BedrockAgentCore::Gateway`) and credential access (`TokenVault`, `OAuth2CredentialProvider`, `APIKeyCredentialProvider`) — these capture external access and credential retrieval, the two most security-sensitive surfaces.
-2. **Phase 2:** Runtime and RuntimeEndpoint — captures agent lifecycle and session management.
-3. **Phase 3:** Built-in tools (`CodeInterpreter`, `Browser` and their Custom variants) — captures agent actions in the real world.
-4. **Phase 4:** Memory, WorkloadIdentity, WorkloadIdentityDirectory, and Evaluator — captures agent state and identity management.
+1. **第 1 阶段（最高优先级）：** Gateway（`AWS::BedrockAgentCore::Gateway`）和凭证访问（`TokenVault`、`OAuth2CredentialProvider`、`APIKeyCredentialProvider`）— 捕获外部访问和凭证检索，这是两个最敏感的安全面。
+2. **第 2 阶段：** Runtime 和 RuntimeEndpoint — 捕获 Agent 生命周期和会话管理。
+3. **第 3 阶段：** 内置工具（`CodeInterpreter`、`Browser` 及其 Custom 变体）— 捕获 Agent 在现实世界中的行动。
+4. **第 4 阶段：** Memory、WorkloadIdentity、WorkloadIdentityDirectory 和 Evaluator — 捕获 Agent 状态和身份管理。
 
-To narrow Gateway data events to specific gateways, replace the broad `gateway/` prefix with the specific gateway ID:
+要将 Gateway 数据事件缩小到特定网关，请将宽泛的 `gateway/` 前缀替换为特定的网关 ID：
 
 ```json
 {
@@ -1482,7 +1482,7 @@ To narrow Gateway data events to specific gateways, replace the broad `gateway/`
 }
 ```
 
-Similarly, to narrow Runtime data events to a specific agent runtime:
+类似地，要将 Runtime 数据事件缩小到特定的 Agent 运行时：
 
 ```json
 {
@@ -1491,14 +1491,14 @@ Similarly, to narrow Runtime data events to a specific agent runtime:
 }
 ```
 
-### CloudTrail Advanced Event Selectors for Organization Level Trail
+### 组织级别 Trail 的 CloudTrail 高级事件选择器
 
-For an AWS Organizations trail covering multiple accounts, combine all AI workload selectors into a single trail configuration. This defines a complete set of advanced event selectors combining Bedrock data events, AgentCore data events, S3 write-only filtering, Lambda production function logging, and Bedrock network activity denied-access detection — all in one trail.
+对于覆盖多个账户的 AWS Organizations trail，将所有 AI 工作负载选择器组合到单个 trail 配置中。这定义了一套完整的高级事件选择器，组合了 Bedrock 数据事件、AgentCore 数据事件、S3 仅写入过滤、Lambda 生产函数日志记录和 Bedrock 网络活动拒绝访问检测 — 全部在一个 trail 中。
 
 :::warning[Replace all placeholder values before applying]
-The selectors below are **examples** that combine all service selectors into a single organization trail. Every placeholder must be replaced with your actual resource identifiers before applying.
+以下选择器是**示例**，将所有服务选择器组合到单个组织 trail 中。在应用之前，必须将所有占位符替换为您的实际资源标识符。
 
-See the [Bedrock](#advanced-event-selectors-for-bedrock) and [AgentCore](#advanced-event-selectors-for-agentcore) sections above for the full placeholder reference tables. For organization trails spanning multiple accounts, you may need to duplicate selectors with different `ACCOUNT_ID` values or use broader ARN prefixes scoped to each member account.
+请参阅上面的 [Bedrock](#advanced-event-selectors-for-bedrock) 和 [AgentCore](#advanced-event-selectors-for-agentcore) 部分了解完整的占位符参考表。对于跨多个账户的组织 trail，您可能需要使用不同的 `ACCOUNT_ID` 值复制选择器，或使用范围限定到每个成员账户的更宽泛的 ARN 前缀。
 :::
 
 <details>
@@ -1798,29 +1798,29 @@ See the [Bedrock](#advanced-event-selectors-for-bedrock) and [AgentCore](#advanc
 
 </details>
 
-## Security Analytics for Your AI Workloads {#security-analytics}
+## AI 工作负载的安全分析 {#security-analytics}
 
-The previous sections configured what CloudTrail captures — event selectors, resource types, and delivery to CloudWatch Logs. This section shifts from enablement to detection: the queries below surface the security signals buried in those events, from unintended access attempts and guardrail modification to agent credential access and gateway authentication failures.
+前面的章节配置了 CloudTrail 捕获的内容 — 事件选择器、资源类型和传送到 CloudWatch Logs。本节从启用转向检测：以下查询从这些事件中浮现安全信号，从意外访问尝试和 Guardrail 修改到 Agent 凭证访问和网关认证失败。
 
-CloudWatch Logs Insights supports [OpenSearch SQL syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html), enabling complex JOINs across log groups, sub-queries for cross-service correlation, and a rich set of SQL functions for time-based and aggregation analysis. All queries below are specifically scoped to the AI workload use case. The queries cover management events, data events (agent invocations, knowledge base retrievals, flow invocations, AgentCore gateway traffic, built-in tool usage, credential access, memory operations), network activity events (VPC endpoint denials), and cross-service correlation for agent-to-resource access patterns.
+CloudWatch Logs Insights 支持 [OpenSearch SQL 语法](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html)，支持跨 log group 的复杂 JOIN、用于跨服务关联的子查询，以及丰富的 SQL 函数用于基于时间的分析和聚合分析。以下所有查询都专门针对 AI 工作负载用例。这些查询涵盖管理事件、数据事件（Agent 调用、知识库检索、Flow 调用、AgentCore 网关流量、内置工具使用、凭证访问、内存操作）、网络活动事件（VPC 端点拒绝）以及 Agent 到资源访问模式的跨服务关联。
 
 :::note[Replace log group names in all queries]
-All queries use `YOUR_CLOUDTRAIL_LOG_GROUP` as a placeholder. Replace it with the name of the CloudWatch Logs log group where your CloudTrail trail delivers events (e.g., `aws-cloudtrail-logs/management-events`). You can find this in the CloudTrail console under your trail's **CloudWatch Logs** configuration. Cross-pipeline queries also reference `bedrock-model-invocation-logging` and `aws/spans` — replace those if your log groups use different names.
+所有查询使用 `YOUR_CLOUDTRAIL_LOG_GROUP` 作为占位符。请将其替换为您的 CloudTrail trail 传送事件的 CloudWatch Logs log group 的名称（例如，`aws-cloudtrail-logs/management-events`）。您可以在 CloudTrail 控制台中您的 trail 的 **CloudWatch Logs** 配置下找到它。跨管道查询还引用了 `bedrock-model-invocation-logging` 和 `aws/spans` — 如果您的 log group 使用不同的名称，请相应替换。
 :::
 
 :::warning[Important]
-When using OpenSearch SQL syntax in CloudWatch Logs Insights, enclose fields with special characters in backticks. For example: `` `userIdentity.arn` ``, `` `responseElements.ConsoleLogin` ``. Set the query language to **SQL** when creating these query widgets in your dashboard.
+在 CloudWatch Logs Insights 中使用 OpenSearch SQL 语法时，请使用反引号括起包含特殊字符的字段。例如：`` `userIdentity.arn` ``、`` `responseElements.ConsoleLogin` ``。在 dashboard 中创建这些查询小组件时，请将查询语言设置为 **SQL**。
 :::
 
 <Tabs>
   <TabItem value="access" label="Access & Identity" default>
 
-**Query 1: Detect Unauthorized Bedrock Access (Management and Data Events)**
+**查询 1：检测未授权的 Bedrock 访问（管理事件和数据事件）**
 
 <details>
 <summary>Surfaces all IAM identities receiving AccessDenied or UnauthorizedOperation errors against Bedrock APIs</summary>
 
-Surfaces all IAM identities receiving `AccessDenied` or `UnauthorizedOperation` errors against Bedrock APIs across both management events (model invocations) and data events (agent, knowledge base, flow, guardrail operations), ranked by frequency. A high count from an unfamiliar identity is an indicator of unintended access attempts.
+浮现所有在 Bedrock API 上收到 `AccessDenied` 或 `UnauthorizedOperation` 错误的 IAM 身份，涵盖管理事件（模型调用）和数据事件（Agent、知识库、Flow、Guardrail 操作），按频率排序。来自不熟悉身份的高计数是意外访问尝试的指标。
 
 ```sql title="Query 1: Detect Unauthorized Bedrock Access"
 GROUP BY `userIdentity.arn`, eventName, errorCode, errorMessage, sourceIPAddress
@@ -1829,12 +1829,12 @@ ORDER BY attempt_count DESC
 
 </details>
 
-**Query 2: Monitor Bedrock Agent Invocations by IAM Identity**
+**查询 2：按 IAM 身份监控 Bedrock Agent 调用**
 
 <details>
 <summary>Tracks which IAM identities are triggering Bedrock agent and inline agent invocations</summary>
 
-Tracks which IAM identities are triggering Bedrock agent and inline agent invocations. Agents chain multiple downstream API calls per invocation — an unfamiliar identity or volume spike here has a high scope of access. This query targets data events captured by the `AWS::Bedrock::AgentAlias` and `AWS::Bedrock::InlineAgent` advanced event selectors.
+跟踪哪些 IAM 身份正在触发 Bedrock Agent 和内联 Agent 调用。Agent 每次调用会链接多个下游 API 调用 — 此处不熟悉的身份或数据量激增具有较高的访问范围。此查询针对 `AWS::Bedrock::AgentAlias` 和 `AWS::Bedrock::InlineAgent` 高级事件选择器捕获的数据事件。
 
 ```sql title="Query 2: Bedrock Agent Invocations by IAM Identity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -1851,12 +1851,12 @@ ORDER BY agent_invocation_count DESC
 
 </details>
 
-**Query 3: Monitor Knowledge Base Retrieval Activity by IAM Identity**
+**查询 3：按 IAM 身份监控知识库检索活动**
 
 <details>
 <summary>Ranks which IAM identities are making Retrieve and RetrieveAndGenerate calls against Bedrock Knowledge Bases</summary>
 
-Ranks which IAM identities are making `Retrieve` and `RetrieveAndGenerate` calls against Bedrock Knowledge Bases. Knowledge bases contain your organization's proprietary data — an unfamiliar identity or unexpected volume spike may indicate anomalous data access. This query targets data events captured by the `AWS::Bedrock::KnowledgeBase` advanced event selector.
+排列哪些 IAM 身份正在对 Bedrock Knowledge Bases 进行 `Retrieve` 和 `RetrieveAndGenerate` 调用。知识库包含您组织的专有数据 — 不熟悉的身份或意外的数据量激增可能表明异常数据访问。此查询针对 `AWS::Bedrock::KnowledgeBase` 高级事件选择器捕获的数据事件。
 
 ```sql title="Query 3: Knowledge Base Retrieval Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -1872,12 +1872,12 @@ ORDER BY retrieval_count DESC
 
 </details>
 
-**Query 4: Detect Agent Cross-Service Access Denied**
+**查询 4：检测 Agent 跨服务访问被拒绝**
 
 <details>
 <summary>Surfaces assumed roles being denied access to downstream services like S3, Lambda, KMS, Secrets Manager, or SageMaker</summary>
 
-Surfaces assumed roles — typically Bedrock agent execution roles — that are being denied access when attempting to reach Amazon S3, Lambda, KMS, Secrets Manager, or SageMaker. This is the key query for detecting agent-to-resource access control exceptions. A high count from a single role indicates either a misconfigured agent permission boundary or an agent accessing resources outside its intended scope. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Identity dimension — detecting the Confused Deputy Problem — and the Scope dimension — enforcing operational boundaries. Also implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Controls dimension — least privilege access enforcement.)*
+浮现被拒绝访问的 assumed role — 通常是 Bedrock Agent 执行角色 — 它们在尝试访问 Amazon S3、Lambda、KMS、Secrets Manager 或 SageMaker 时被拒绝。这是检测 Agent 到资源访问控制异常的关键查询。来自单个角色的高计数表明 Agent 权限边界配置错误或 Agent 正在访问其预期范围之外的资源。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Identity 维度 — 检测混淆代理问题 — 以及 Scope 维度 — 强制操作边界。同时实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Controls 维度 — 最小权限访问强制执行。）*
 
 ```sql title="Query 4: Agent Cross-Service Access Denied"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -1903,12 +1903,12 @@ ORDER BY denied_count DESC
 
 </details>
 
-**Query 6: Detect Bedrock Calls from Unexpected Source IPs**
+**查询 6：检测来自意外源 IP 的 Bedrock 调用**
 
 <details>
 <summary>Lists all unique source IP addresses making Bedrock and AgentCore calls</summary>
 
-Lists all unique source IP addresses making Bedrock and AgentCore calls — including model invocations, agent invocations, knowledge base retrievals, flow invocations, async invocations, guardrail applications, and AgentCore gateway invocations. If your AI workloads should only originate from specific CIDR ranges (VPC NAT gateway, corporate network), an unfamiliar IP address should be investigated to confirm it is authorized.
+列出所有进行 Bedrock 和 AgentCore 调用的唯一源 IP 地址 — 包括模型调用、Agent 调用、知识库检索、Flow 调用、异步调用、Guardrail 应用和 AgentCore 网关调用。如果您的 AI 工作负载应仅来自特定的 CIDR 范围（VPC NAT 网关、企业网络），则应调查不熟悉的 IP 地址以确认其是否经过授权。
 
 ```sql title="Query 6: Bedrock Calls from Unexpected Source IPs"
 SELECT sourceIPAddress,
@@ -1932,12 +1932,12 @@ ORDER BY call_count DESC
 
 </details>
 
-**Query 10: Root Account Activity Detection**
+**查询 10：Root 账户活动检测**
 
 <details>
 <summary>Returns all non-login events performed by the root account</summary>
 
-Returns all non-login events performed by the root account. Root usage outside of emergency access scenarios is a key security event.
+返回 root 账户执行的所有非登录事件。紧急访问场景之外的 root 使用是关键安全事件。
 
 ```sql title="Query 10: Root Account Activity Detection"
 SELECT eventTime,
@@ -1954,12 +1954,12 @@ ORDER BY eventTime DESC
 
 </details>
 
-**Query 23: Monitor Bedrock Session Activity**
+**查询 23：监控 Bedrock 会话活动**
 
 <details>
 <summary>Tracks session-level API activity for multi-turn Bedrock conversations</summary>
 
-Surfaces all session operations across Bedrock, including session creation, updates, and retrievals. Sessions maintain state across multi-turn conversations — an unfamiliar identity creating or accessing sessions may indicate anomalous use of conversational AI resources. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — agent-to-system interaction management and session flow control.)*
+浮现 Bedrock 上的所有会话操作，包括会话创建、更新和检索。会话跨多轮对话维护状态 — 不熟悉的身份创建或访问会话可能表明对对话式 AI 资源的异常使用。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — Agent 到系统的交互管理和会话流控制。）*
 
 ```sql title="Query 23: Bedrock Session Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -1977,12 +1977,12 @@ ORDER BY session_operation_count DESC
 
 </details>
 
-**Query 24: Monitor Bedrock Flow Execution Activity**
+**查询 24：监控 Bedrock Flow 执行活动**
 
 <details>
 <summary>Tracks flow execution operations for monitoring prompt flow runs</summary>
 
-Flow executions represent active runs of Bedrock Prompt Flows — multi-step AI pipelines that chain model calls, data transformations, and conditional logic. An unexpected flow execution from an unfamiliar identity or a volume spike may indicate anomalous orchestration activity. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — execution flow control and agent-to-system interaction management.)*
+Flow 执行代表 Bedrock Prompt Flow 的活跃运行 — 链接模型调用、数据转换和条件逻辑的多步 AI 管道。来自不熟悉身份的意外 Flow 执行或数据量激增可能表明异常的编排活动。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — 执行流控制和 Agent 到系统的交互管理。）*
 
 ```sql title="Query 24: Bedrock Flow Execution Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2001,12 +2001,12 @@ ORDER BY execution_count DESC
 
 </details>
 
-**Query 25: Monitor Bedrock Data Automation Activity**
+**查询 25：监控 Bedrock 数据自动化活动**
 
 <details>
 <summary>Tracks data automation project and invocation activity for document and media processing</summary>
 
-Bedrock Data Automation processes documents, images, and media through AI pipelines. Unintended invocations may process documents or move data outside intended boundaries through automation workflows. This query surfaces all data automation activity across projects and invocations. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Governance & Compliance dimension — audit trail for data processing operations and data sovereignty.)*
+Bedrock Data Automation 通过 AI 管道处理文档、图像和媒体。意外的调用可能通过自动化工作流处理文档或将数据移动到预期边界之外。此查询浮现所有项目和调用中的数据自动化活动。*（实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Governance & Compliance 维度 — 数据处理操作的审计跟踪和数据主权。）*
 
 ```sql title="Query 25: Bedrock Data Automation Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2029,12 +2029,12 @@ ORDER BY automation_count DESC
 
 </details>
 
-**Query 26: Monitor Bedrock Tool Invocations**
+**查询 26：监控 Bedrock 工具调用**
 
 <details>
 <summary>Tracks Bedrock tool API activity for tool-use operations</summary>
 
-Bedrock Tool events capture when models invoke tools during conversations — these are the actions models take in the real world through tool-use. An unexpected tool invocation pattern or unfamiliar caller indicates a model operating outside its intended scope. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension — behavioral monitoring for tool-use actions — and the Scope dimension — enforcing operational boundaries on what tools models can invoke.)*
+Bedrock Tool 事件捕获模型在对话期间调用工具的情况 — 这些是模型通过工具使用在现实世界中采取的行动。意外的工具调用模式或不熟悉的调用者表明模型在其预期范围之外运行。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度 — 工具使用操作的行为监控 — 以及 Scope 维度 — 强制模型可调用工具的操作边界。）*
 
 ```sql title="Query 26: Bedrock Tool Invocations"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2054,12 +2054,12 @@ ORDER BY tool_invocation_count DESC
   </TabItem>
   <TabItem value="config" label="Configuration Changes">
 
-**Query 5: Detect Logging Configuration Changes**
+**查询 5：检测日志配置变更**
 
 <details>
 <summary>Returns all events where someone attempted to stop logging, delete a trail, or modify Bedrock invocation logging</summary>
 
-Returns all events where someone attempted to stop logging, delete a trail, or modify Bedrock invocation logging configurations. A single event from an unexpected identity should be reviewed by your security team.
+返回所有尝试停止日志记录、删除 trail 或修改 Bedrock 调用日志配置的事件。来自意外身份的任何单个事件都应由您的安全团队审查。
 
 ```sql title="Query 5: Detect Logging Configuration Changes"
 SELECT eventTime,
@@ -2080,12 +2080,12 @@ ORDER BY eventTime DESC
 
 </details>
 
-**Query 7: Track All Security-Relevant Configuration Changes to AI Infrastructure**
+**查询 7：跟踪 AI 基础设施所有安全相关配置变更**
 
 <details>
 <summary>Shows all configuration changes that could weaken your AI workload security posture</summary>
 
-Shows all configuration changes that could weaken your AI workload security posture — disabling CloudTrail, modifying Bedrock guardrails, escalating IAM permissions, or modifying AgentCore gateway configurations.
+显示所有可能削弱 AI 工作负载安全态势的配置变更 — 禁用 CloudTrail、修改 Bedrock Guardrail、提升 IAM 权限或修改 AgentCore 网关配置。
 
 ```sql title="Query 7: All Security-Relevant AI Config Changes"
 SELECT eventTime,
@@ -2113,12 +2113,12 @@ ORDER BY eventTime DESC
 
 </details>
 
-**Query 8: Monitor Bedrock Guardrail Changes**
+**查询 8：监控 Bedrock Guardrail 变更**
 
 <details>
 <summary>Tracks create, update, and delete operations against Bedrock Guardrail resources</summary>
 
-Tracks create, update, and delete operations against Bedrock Guardrail resources. Changes to guardrails modify content filtering scope and safety controls, making this a key security event. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension and the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Risk Management dimension — detecting when guardrail protections are weakened or removed.)*
+跟踪对 Bedrock Guardrail 资源的创建、更新和删除操作。对 Guardrail 的更改会修改内容过滤范围和安全控制，使其成为关键安全事件。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度和 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Risk Management 维度 — 检测 Guardrail 保护被削弱或移除的情况。）*
 
 ```sql title="Query 8: Bedrock Guardrail Changes"
 SELECT eventTime,
@@ -2136,12 +2136,12 @@ ORDER BY eventTime DESC
 
 </details>
 
-**Query 27: Monitor Automated Reasoning Policy Changes**
+**查询 27：监控自动推理策略变更**
 
 <details>
 <summary>Tracks activity on automated reasoning policies and their versions</summary>
 
-Automated reasoning policies support verifiable AI outputs through formal logic — they are a guardrail mechanism that helps verify model responses against mathematical correctness criteria. Changes to these policies or their versions may reduce the scope of verification coverage, potentially allowing model outputs to proceed without the same level of formal validation. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Risk Management dimension — guardrail integrity monitoring — and the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension — detecting when verification mechanisms are modified or bypassed.)*
+自动推理策略通过形式逻辑支持可验证的 AI 输出 — 它们是一种 Guardrail 机制，帮助根据数学正确性标准验证模型响应。对这些策略或其版本的更改可能会减少验证覆盖范围，可能允许模型输出在没有相同级别的形式化验证的情况下继续。*（实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Risk Management 维度 — Guardrail 完整性监控 — 以及 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度 — 检测验证机制何时被修改或绕过。）*
 
 ```sql title="Query 27: Automated Reasoning Policy Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2167,12 +2167,12 @@ ORDER BY policy_operation_count DESC
   </TabItem>
   <TabItem value="network" label="Network & VPC">
 
-**Query 9: VPC Endpoint Access Denied Across AI Services**
+**查询 9：AI 服务的 VPC 端点访问拒绝**
 
 <details>
 <summary>Surfaces VPC endpoint access denials for Bedrock, Amazon S3, and Lambda API calls</summary>
 
-Surfaces VPC endpoint access denials for Bedrock, Amazon S3, and Lambda API calls — traffic from within a VPC that was blocked by an endpoint policy. Bedrock denials indicate unauthorized model or agent access attempts. Amazon S3 denials indicate agents blocked from reaching knowledge base data sources or training data. Lambda denials indicate agents blocked from invoking action group handlers.
+浮现 Bedrock、Amazon S3 和 Lambda API 调用的 VPC 端点访问拒绝 — 来自 VPC 内部被端点策略阻止的流量。Bedrock 拒绝表明未授权的模型或 Agent 访问尝试。Amazon S3 拒绝表明 Agent 被阻止访问知识库数据源或训练数据。Lambda 拒绝表明 Agent 被阻止调用操作组处理程序。
 
 ```sql title="Query 9: VPC Endpoint Access Denied Across AI Services"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2199,14 +2199,14 @@ ORDER BY denied_count DESC
   </TabItem>
   <TabItem value="agentcore" label="AgentCore">
 
-AgentCore Gateway data events differ from standard CloudTrail events in two important ways: (1) identity is captured via JWT claims in `additionalEventData.jwt.claims` rather than standard `userIdentity` fields, because Gateway uses JWT-based authentication instead of SigV4, and (2) error information appears in `responseElements` rather than top-level `errorCode`/`errorMessage` fields. The queries below account for these differences.
+AgentCore Gateway 数据事件与标准 CloudTrail 事件有两个重要区别：（1）身份通过 `additionalEventData.jwt.claims` 中的 JWT 声明捕获，而不是标准的 `userIdentity` 字段，因为 Gateway 使用基于 JWT 的认证而非 SigV4；（2）错误信息出现在 `responseElements` 中，而不是顶级的 `errorCode`/`errorMessage` 字段中。以下查询考虑了这些差异。
 
-**Query 11: Detect AgentCore Gateway Authentication Failures**
+**查询 11：检测 AgentCore Gateway 认证失败**
 
 <details>
 <summary>Surfaces all Gateway invocations that returned a non-200 status code</summary>
 
-Surfaces all Gateway invocations that returned a non-200 status code, including invalid JWT tokens, expired tokens, and unintended access attempts. Since Gateway errors are in `responseElements` rather than top-level `errorCode`, this query filters on the HTTP status code. A spike in 401/403 responses indicates repeated token attempts or misconfigured client authentication.
+浮现所有返回非 200 状态码的 Gateway 调用，包括无效的 JWT token、过期的 token 和意外的访问尝试。由于 Gateway 错误在 `responseElements` 中而非顶级 `errorCode`，此查询按 HTTP 状态码过滤。401/403 响应的激增表明重复的 token 尝试或客户端认证配置错误。
 
 ```sql title="Query 11: AgentCore Gateway Authentication Failures"
 SELECT eventTime,
@@ -2226,12 +2226,12 @@ ORDER BY eventTime DESC
 
 </details>
 
-**Query 12: Monitor AgentCore Gateway Traffic by JWT Subject**
+**查询 12：按 JWT 主体监控 AgentCore Gateway 流量**
 
 <details>
 <summary>Ranks which JWT subjects (external callers) are making the most Gateway requests</summary>
 
-Ranks which JWT subjects (external callers) are making the most Gateway requests. Since Gateway uses JWT authentication, the `sub` claim is the primary identity field. An unfamiliar subject or unexpected volume spike indicates unauthorized external access to your agent infrastructure.
+排列哪些 JWT 主体（外部调用者）发出了最多的 Gateway 请求。由于 Gateway 使用 JWT 认证，`sub` 声明是主要的身份字段。不熟悉的主体或意外的数据量激增表明对您的 Agent 基础设施的未授权外部访问。
 
 ```sql title="Query 12: Gateway Traffic by JWT Subject"
 SELECT `additionalEventData.jwt.claims.sub` AS jwtSubject,
@@ -2253,12 +2253,12 @@ ORDER BY request_count DESC
 
 </details>
 
-**Query 13: Monitor AgentCore Built-in Tool Usage (CodeInterpreter and Browser)**
+**查询 13：监控 AgentCore 内置工具使用（CodeInterpreter 和 Browser）**
 
 <details>
 <summary>Tracks code runs and web browsing activity by agents</summary>
 
-Tracks code runs and web browsing activity by agents. These are the high-impact agent actions — code interpreters can execute user-provided code and browsers can navigate to external URLs. An unexpected spike or unfamiliar caller indicates an agent operating outside its intended scope.
+跟踪 Agent 的代码执行和网页浏览活动。这些是高影响的 Agent 操作 — 代码解释器可以执行用户提供的代码，浏览器可以导航到外部 URL。意外的激增或不熟悉的调用者表明 Agent 在其预期范围之外运行。
 
 ```sql title="Query 13: AgentCore Built-in Tool Usage"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2281,12 +2281,12 @@ ORDER BY tool_invocation_count DESC
 
 </details>
 
-**Query 14: Detect Unauthorized Credential Access (TokenVault, OAuth2, APIKey)**
+**查询 14：检测未授权的凭证访问（TokenVault、OAuth2、APIKey）**
 
 <details>
 <summary>Surfaces all credential retrieval activity across AgentCore's identity and credential management services</summary>
 
-Surfaces all credential retrieval activity across AgentCore's identity and credential management services. Unexpected credential access patterns may indicate anomalous use of third-party API tokens. Review the IAM identity and credential ARN to verify the access was authorized.
+浮现 AgentCore 身份和凭证管理服务中的所有凭证检索活动。意外的凭证访问模式可能表明第三方 API token 的异常使用。请审查 IAM 身份和凭证 ARN 以验证访问是否经过授权。
 
 ```sql title="Query 14: Detect Unauthorized Credential Access"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2311,12 +2311,12 @@ ORDER BY access_count DESC
 
 </details>
 
-**Query 15: Monitor AgentCore Runtime and Endpoint Activity**
+**查询 15：监控 AgentCore Runtime 和端点活动**
 
 <details>
 <summary>Tracks agent runtime lifecycle operations and endpoint invocations</summary>
 
-Tracks agent runtime lifecycle operations and endpoint invocations. Anomalous patterns — agents being started outside business hours, unexpected endpoint access, or unfamiliar IAM identities — indicate anomalous agent infrastructure access.
+跟踪 Agent 运行时生命周期操作和端点调用。异常模式 — Agent 在工作时间之外启动、意外的端点访问或不熟悉的 IAM 身份 — 表明异常的 Agent 基础设施访问。
 
 ```sql title="Query 15: AgentCore Runtime and Endpoint Activity"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2338,12 +2338,12 @@ ORDER BY operation_count DESC
 
 </details>
 
-**Query 16: Monitor AgentCore Memory Operations**
+**查询 16：监控 AgentCore 内存操作**
 
 <details>
 <summary>Tracks read and write operations against agent persistent memory</summary>
 
-Tracks read and write operations against agent persistent memory. Memory operations outside expected patterns may indicate unintended access to conversation context or unintended modification of agent state in subsequent sessions. Review the IAM identity and memory ARN to verify the operation was authorized.
+跟踪对 Agent 持久内存的读写操作。超出预期模式的内存操作可能表明对对话上下文的意外访问或对后续会话中 Agent 状态的意外修改。请审查 IAM 身份和内存 ARN 以验证操作是否经过授权。
 
 ```sql title="Query 16: AgentCore Memory Operations"
 SELECT `userIdentity.arn` AS iam_identity,
@@ -2361,12 +2361,12 @@ ORDER BY memory_operation_count DESC
 
 </details>
 
-**Query 17: AgentCore Gateway Traffic Joined with Runtime Sessions**
+**查询 17：AgentCore Gateway 流量与 Runtime 会话的关联**
 
 <details>
 <summary>Correlates inbound Gateway requests with AgentCore Runtime activity to trace external requests to agents</summary>
 
-Correlates inbound Gateway requests (external callers via JWT) with AgentCore Runtime activity (internal agent execution) to trace an external request through to the agent that processed it. This is the key query for answering "which external caller triggered which agent, and what did the agent do?" *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — agent-to-system interaction management with execution flow control.)*
+将入站 Gateway 请求（通过 JWT 的外部调用者）与 AgentCore Runtime 活动（内部 Agent 执行）关联，以追踪外部请求到处理它的 Agent。这是回答"哪个外部调用者触发了哪个 Agent，Agent 做了什么？"的关键查询。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — 具有执行流控制的 Agent 到系统交互管理。）*
 
 ```sql title="Query 17: Gateway Traffic Joined with Runtime Sessions"
 SELECT gw.eventTime AS gatewayTime,
@@ -2394,20 +2394,20 @@ LIMIT 50
   </TabItem>
 </Tabs>
 
-## Cross-Pipeline Correlation Queries
+## 跨管道关联查询
 
-The queries above operate on CloudTrail alone. The queries below join CloudTrail with Bedrock Model Invocation Logging and ADOT spans to answer questions that no single pipeline can answer on its own.
+上面的查询仅在 CloudTrail 上运行。以下查询将 CloudTrail 与 Bedrock Model Invocation Logging 和 ADOT spans 关联，以回答任何单一管道无法独自回答的问题。
 
 :::info[Prerequisites]
-These queries require all three pipelines enabled:
+这些查询需要启用所有三条管道：
 
-- CloudTrail delivering to `YOUR_CLOUDTRAIL_LOG_GROUP` with Bedrock and AgentCore management and data events
-- [Bedrock Model Invocation Logging](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html) enabled, delivering to `bedrock-model-invocation-logging`
-- [Agent Telemetry (ADOT SDK)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html) flowing to `aws/spans`
-- Query language set to **SQL** when creating these widgets (all correlation queries use OpenSearch SQL)
+- CloudTrail 传送到 `YOUR_CLOUDTRAIL_LOG_GROUP`，包含 Bedrock 和 AgentCore 管理事件及数据事件
+- [Bedrock Model Invocation Logging](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html) 已启用，传送到 `bedrock-model-invocation-logging`
+- [Agent Telemetry（ADOT SDK）](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html)流向 `aws/spans`
+- 创建这些小组件时查询语言设置为 **SQL**（所有关联查询使用 OpenSearch SQL）
 :::
 
-### Correlation Keys
+### 关联键
 
 | Join | Key Field | Notes |
 | --- | --- | --- |
@@ -2417,18 +2417,18 @@ These queries require all three pipelines enabled:
 | Across agent sessions | `attributes.session.id` (spans) | Agent framework sets session; not in CloudTrail or MIL |
 
 :::tip[Expand each query]
-Click on any query title below to expand it and view the full description, metadata, and SQL statement.
+点击下面的任何查询标题以展开并查看完整描述、元数据和 SQL 语句。
 :::
 
-**Query 18: Who Asked What, and What Did the Model Say?**
+**查询 18：谁问了什么，模型说了什么？**
 
 <details>
 <summary>Joins CloudTrail caller identity with Bedrock Model Invocation Logging prompt and response content</summary>
 
-- **Purpose:** Joins CloudTrail (caller identity, source IP) with Bedrock Model Invocation Logging (prompt and response content) on `requestId`. This is a frequently used query for answering "who asked the model what, and what did it say?" — the foundation for security audit, compliance reviews, and hallucination investigations. Example: a customer reports an offensive model response; this query gives you the caller's IAM role, source IP, the exact prompt sent, the inference parameters used, and the response in one row. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Governance & Compliance dimension — audit trail to support your data sovereignty and compliance review processes — and the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Audit & Logging dimension — action-level action tracking with identity context.)*
-- **Source:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
-- **View:** Table
-- **Query Language:** OpenSearch SQL
+- **用途：** 通过 `requestId` 将 CloudTrail（调用者身份、源 IP）与 Bedrock Model Invocation Logging（prompt 和响应内容）关联。这是回答"谁问了模型什么，模型说了什么？"最常用的查询 — 是安全审计、合规审查和幻觉调查的基础。示例：客户报告了攻击性的模型响应；此查询在一行中为您提供调用者的 IAM 角色、源 IP、发送的确切 prompt、使用的推理参数和响应。*（实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Governance & Compliance 维度 — 支持数据主权和合规审查流程的审计跟踪 — 以及 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Audit & Logging 维度 — 带有身份上下文的操作级别行为跟踪。）*
+- **数据源：** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
+- **视图：** 表格
+- **查询语言：** OpenSearch SQL
 
 ```sql title="Query 18: Who Asked What, and What Did the Model Say?"
 SELECT
@@ -2460,15 +2460,15 @@ LIMIT 20
 
 </details>
 
-**Query 19: Agent Session Performance with Caller Identity**
+**查询 19：Agent 会话性能与调用者身份**
 
 <details>
 <summary>Joins ADOT spans with CloudTrail to link agent session performance to caller identity</summary>
 
-- **Purpose:** Joins ADOT spans (session.id, latency, token counts) with CloudTrail (caller IAM role, source IP) by `requestId`. Answers "which IAM identity is behind this agent session, and how is it performing?" Example: the ADOT dashboard shows a slow agent session with p95 latency of 12s; this query reveals it's being triggered by a specific Lambda function or AgentCore runtime calling an expensive model — now you can tune the caller's model selection.
-- **Source:** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
-- **View:** Table
-- **Query Language:** OpenSearch SQL
+- **用途：** 通过 `requestId` 将 ADOT spans（session.id、延迟、token 计数）与 CloudTrail（调用者 IAM 角色、源 IP）关联。回答"哪个 IAM 身份在这个 Agent 会话背后，它表现如何？"示例：ADOT dashboard 显示一个 p95 延迟为 12 秒的慢速 Agent 会话；此查询揭示它是由特定的 Lambda 函数或 AgentCore 运行时调用昂贵模型触发的 — 现在您可以调整调用者的模型选择。
+- **数据源：** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
+- **视图：** 表格
+- **查询语言：** OpenSearch SQL
 
 ```sql title="Query 19: Agent Session Performance with Caller Identity"
 SELECT
@@ -2493,15 +2493,15 @@ LIMIT 50
 
 </details>
 
-**Query 20: Full Three-Pipeline Join — Session, Content, and Performance**
+**查询 20：完整三管道 JOIN — 会话、内容和性能**
 
 <details>
 <summary>Joins all three log groups on requestId for a unified view of a single model invocation</summary>
 
-- **Purpose:** Joins all three log groups on `requestId` to give a single row containing agent session (ADOT), model call content (Model Invocation Logging), and caller identity (CloudTrail). This is a unified view of a single model invocation across the entire telemetry stack. Use for deep event investigations where you need everything — who called, what they asked, what the model said, how long it took, and which agent session it belonged to.
-- **Source:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging` + `aws/spans`
-- **View:** Table
-- **Query Language:** OpenSearch SQL
+- **用途：** 通过 `requestId` 关联所有三个 log group，在单行中提供 Agent 会话（ADOT）、模型调用内容（Model Invocation Logging）和调用者身份（CloudTrail）。这是整个遥测栈中单次模型调用的统一视图。用于需要所有信息的深入事件调查 — 谁调用了、问了什么、模型说了什么、花了多长时间以及它属于哪个 Agent 会话。
+- **数据源：** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging` + `aws/spans`
+- **视图：** 表格
+- **查询语言：** OpenSearch SQL
 
 ```sql title="Query 20: Full Three-Pipeline Join"
 SELECT
@@ -2531,15 +2531,15 @@ LIMIT 20
 
 </details>
 
-**Query 21: Guardrail Modification Correlated with Downstream Model Content**
+**查询 21：Guardrail 修改与下游模型内容的关联**
 
 <details>
 <summary>Finds guardrail changes in CloudTrail and correlates them with model responses after the change</summary>
 
-- **Purpose:** Finds `UpdateGuardrail` or `DeleteGuardrail` events in CloudTrail and correlates them with model responses in the window after the change. Detects whether a guardrail modification preceded unvalidated or off-policy model output. Example: a security alert triggers on `UpdateGuardrail`; this query immediately shows the model responses produced under the weakened guardrail for review. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension — dynamic behavioral monitoring — and the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Risk Management dimension — detecting guardrail modification and its downstream impact.)*
-- **Source:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
-- **View:** Table
-- **Query Language:** OpenSearch SQL
+- **用途：** 在 CloudTrail 中查找 `UpdateGuardrail` 或 `DeleteGuardrail` 事件，并将其与变更后时间窗口内的模型响应关联。检测 Guardrail 修改是否先于未验证或偏离策略的模型输出。示例：`UpdateGuardrail` 触发安全告警；此查询立即显示在削弱的 Guardrail 下产生的模型响应以供审查。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度 — 动态行为监控 — 以及 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Risk Management 维度 — 检测 Guardrail 修改及其下游影响。）*
+- **数据源：** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
+- **视图：** 表格
+- **查询语言：** OpenSearch SQL
 
 ```sql title="Query 21: Guardrail Modification Correlated with Model Content"
 SELECT
@@ -2562,15 +2562,15 @@ LIMIT 50
 
 </details>
 
-**Query 22: Agent Session with Cross-Service Access Denied**
+**查询 22：Agent 会话与跨服务访问拒绝**
 
 <details>
 <summary>Correlates ADOT agent sessions with CloudTrail AccessDenied events from the same assumed role</summary>
 
-- **Purpose:** Correlates ADOT agent sessions with CloudTrail AccessDenied events from the same assumed role. Answers "which agent sessions triggered a permission error on a downstream service?" Example: your agent returns 5xx responses from a tool; this query shows whether the root cause is IAM denial at the downstream service rather than the tool itself — often a misconfigured agent permission boundary.
-- **Source:** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
-- **View:** Table
-- **Query Language:** OpenSearch SQL
+- **用途：** 将 ADOT Agent 会话与来自相同 assumed role 的 CloudTrail AccessDenied 事件关联。回答"哪些 Agent 会话在下游服务上触发了权限错误？"示例：您的 Agent 从工具返回 5xx 响应；此查询显示根本原因是下游服务的 IAM 拒绝而非工具本身 — 通常是 Agent 权限边界配置错误。
+- **数据源：** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
+- **视图：** 表格
+- **查询语言：** OpenSearch SQL
 
 ```sql title="Query 22: Agent Session with Cross-Service Access Denied"
 SELECT
@@ -2600,22 +2600,22 @@ LIMIT 50
 </details>
 
 :::tip[Performance Note]
-Cross-log-group JOINs in CloudWatch Logs Insights SQL may be slow on large datasets. Test with narrow time windows (last 15 minutes, last hour) before scheduling these as dashboard widgets with long time ranges. For continuous correlation, consider exporting all three log groups to a single destination (S3, OpenSearch) and running the joins there.
+CloudWatch Logs Insights SQL 中的跨 log group JOIN 在大型数据集上可能较慢。在将它们安排为具有长时间范围的 dashboard 小组件之前，请先使用较窄的时间窗口（最近 15 分钟、最近一小时）进行测试。对于持续关联，考虑将所有三个 log group 导出到单个目标（S3、OpenSearch）并在那里运行 JOIN。
 :::
 
-## Metric Filters
+## Metric 过滤器
 
-[Metric filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) are designed to extract values from CloudTrail log events and create custom CloudWatch metrics, enabling near real-time alerting without continuous querying. The [filter pattern syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html) uses JSON property selectors to match specific fields in CloudTrail event records. The filters below are scoped specifically to AI workload security events — detecting unauthorized access to Bedrock resources, agent activity anomalies, guardrail modification, and AI infrastructure configuration changes.
+[Metric 过滤器](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html)旨在从 CloudTrail log 事件中提取值并创建自定义 CloudWatch metrics，实现近实时告警而无需持续查询。[过滤器模式语法](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html)使用 JSON 属性选择器来匹配 CloudTrail 事件记录中的特定字段。以下过滤器专门针对 AI 工作负载安全事件 — 检测对 Bedrock 资源的未授权访问、Agent 活动异常、Guardrail 修改和 AI 基础设施配置变更。
 
 <Tabs>
   <TabItem value="bedrock-access" label="Bedrock Access & Activity" default>
 
-**Metric Filter 1: Unauthorized Access to Bedrock Services**
+**Metric 过滤器 1：未授权的 Bedrock 服务访问**
 
 <details>
 <summary>Captures AccessDenied and UnauthorizedOperation errors against Bedrock APIs</summary>
 
-A sudden increase in denied Bedrock calls from a single identity often indicates repeated unintended access attempts or an agent attempting to access models or knowledge bases outside its authorized scope.
+来自单个身份的 Bedrock 拒绝调用的突然增加通常表明重复的意外访问尝试或 Agent 试图访问其授权范围之外的模型或知识库。
 
 **Filter Pattern:**
 
@@ -2628,12 +2628,12 @@ A sudden increase in denied Bedrock calls from a single identity often indicates
 
 </details>
 
-**Metric Filter 2: Bedrock Agent Invocations**
+**Metric 过滤器 2：Bedrock Agent 调用**
 
 <details>
 <summary>Counts invocations of Bedrock agents and inline agents</summary>
 
-Agents can chain multiple API calls across services within a single invocation, making them a high-impact surface. Track this metric to detect unexpected agent activity or volume spikes that may indicate an agent is being triggered by an unrecognized caller.
+Agent 可以在单次调用中链接跨服务的多个 API 调用，使其成为高影响面。跟踪此 metric 以检测可能表明 Agent 被未识别调用者触发的意外 Agent 活动或数据量激增。
 
 **Filter Pattern:**
 
@@ -2646,12 +2646,12 @@ Agents can chain multiple API calls across services within a single invocation, 
 
 </details>
 
-**Metric Filter 3: Bedrock Knowledge Base Retrieval Activity**
+**Metric 过滤器 3：Bedrock 知识库检索活动**
 
 <details>
 <summary>Tracks Retrieve and RetrieveAndGenerate calls against Knowledge Bases</summary>
 
-Knowledge bases contain your organization's proprietary data — anomalous retrieval activity may indicate unauthorized data access. Monitor for unexpected identities or volume spikes.
+知识库包含您组织的专有数据 — 异常的检索活动可能表明未授权的数据访问。监控意外的身份或数据量激增。
 
 **Filter Pattern:**
 
@@ -2664,12 +2664,12 @@ Knowledge bases contain your organization's proprietary data — anomalous retri
 
 </details>
 
-**Metric Filter 6: Bedrock Model Invocation Volume**
+**Metric 过滤器 6：Bedrock 模型调用量**
 
 <details>
 <summary>Counts all Bedrock model invocation calls for baseline and spike detection</summary>
 
-Use this metric to establish a baseline of normal AI model usage and detect volume spikes that may indicate unintended automated activity, unintended credential use, or an agent in an unintended recursive cycle.
+使用此 metric 建立正常 AI 模型使用的基线，并检测可能表明意外自动化活动、意外凭证使用或 Agent 处于意外递归循环中的数据量激增。
 
 **Filter Pattern:**
 
@@ -2682,12 +2682,12 @@ Use this metric to establish a baseline of normal AI model usage and detect volu
 
 </details>
 
-**Metric Filter 8: Bedrock Flow Invocations**
+**Metric 过滤器 8：Bedrock Flow 调用**
 
 <details>
 <summary>Tracks InvokeFlow calls against Bedrock Prompt Flow aliases</summary>
 
-Flows orchestrate multi-step AI pipelines — an unexpected flow invocation from an unfamiliar identity or a unexpected volume change may indicate that an unrecognized identity is triggering your orchestration logic. This is a data event captured by the `AWS::Bedrock::FlowAlias` advanced event selector.
+Flow 编排多步 AI 管道 — 来自不熟悉身份的意外 Flow 调用或意外的数据量变化可能表明未识别的身份正在触发您的编排逻辑。这是由 `AWS::Bedrock::FlowAlias` 高级事件选择器捕获的数据事件。
 
 **Filter Pattern:**
 
@@ -2700,12 +2700,12 @@ Flows orchestrate multi-step AI pipelines — an unexpected flow invocation from
 
 </details>
 
-**Metric Filter 21: Bedrock Session Activity**
+**Metric 过滤器 21：Bedrock 会话活动**
 
 <details>
 <summary>Counts session-level API operations for multi-turn Bedrock conversations</summary>
 
-Sessions maintain state across multi-turn conversations. Track this metric to detect unexpected session creation or access patterns that may indicate unintended use of conversational AI resources. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — agent-to-system interaction management and session flow control.)*
+会话跨多轮对话维护状态。跟踪此 metric 以检测可能表明对对话式 AI 资源意外使用的意外会话创建或访问模式。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — Agent 到系统的交互管理和会话流控制。）*
 
 **Filter Pattern:**
 
@@ -2718,12 +2718,12 @@ Sessions maintain state across multi-turn conversations. Track this metric to de
 
 </details>
 
-**Metric Filter 22: Bedrock Flow Execution Activity**
+**Metric 过滤器 22：Bedrock Flow 执行活动**
 
 <details>
 <summary>Counts flow execution operations for monitoring prompt flow runs</summary>
 
-Flow executions represent active runs of multi-step AI pipelines. An unexpected volume change indicates unintended orchestration of your AI pipeline or a flow stuck in a retry loop. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Orchestration dimension — execution flow control and agent-to-system interaction management.)*
+Flow 执行代表多步 AI 管道的活跃运行。意外的数据量变化表明 AI 管道的意外编排或 Flow 陷入重试循环。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Orchestration 维度 — 执行流控制和 Agent 到系统的交互管理。）*
 
 **Filter Pattern:**
 
@@ -2736,12 +2736,12 @@ Flow executions represent active runs of multi-step AI pipelines. An unexpected 
 
 </details>
 
-**Metric Filter 23: Bedrock Data Automation Invocations**
+**Metric 过滤器 23：Bedrock 数据自动化调用**
 
 <details>
 <summary>Counts data automation invocations for document and media processing</summary>
 
-Data automation processes documents, images, and media through AI pipelines. Unintended invocations may process documents or move data outside intended boundaries through automation workflows. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Governance & Compliance dimension — audit trail for data processing operations.)*
+数据自动化通过 AI 管道处理文档、图像和媒体。意外的调用可能通过自动化工作流处理文档或将数据移动到预期边界之外。*（实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Governance & Compliance 维度 — 数据处理操作的审计跟踪。）*
 
 **Filter Pattern:**
 
@@ -2754,12 +2754,12 @@ Data automation processes documents, images, and media through AI pipelines. Uni
 
 </details>
 
-**Metric Filter 24: Bedrock Tool Invocations**
+**Metric 过滤器 24：Bedrock 工具调用**
 
 <details>
 <summary>Counts Bedrock tool API activity for tool-use operations</summary>
 
-Tool events capture when models invoke tools during conversations — these are the actions models take in the real world. An unexpected spike indicates a model operating outside its intended scope or an unrecognized caller triggering tool-use. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Guardrails dimension — behavioral monitoring for tool-use actions.)*
+工具事件捕获模型在对话期间调用工具的情况 — 这些是模型在现实世界中采取的行动。意外的激增表明模型在其预期范围之外运行或未识别的调用者触发了工具使用。*（实现 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 的 Guardrails 维度 — 工具使用操作的行为监控。）*
 
 **Filter Pattern:**
 
@@ -2775,12 +2775,12 @@ Tool events capture when models invoke tools during conversations — these are 
   </TabItem>
   <TabItem value="guardrails-config" label="Guardrails & Configuration">
 
-**Metric Filter 4: Bedrock Guardrail Modifications**
+**Metric 过滤器 4：Bedrock Guardrail 修改**
 
 <details>
 <summary>Captures create, update, and delete operations against Bedrock Guardrails</summary>
 
-Guardrails enforce content filtering, topic restrictions, and safety controls on your AI workloads. Any modification — especially a deletion — reduces the effectiveness of your AI safety controls and should trigger prompt review.
+Guardrail 对您的 AI 工作负载强制执行内容过滤、主题限制和安全控制。任何修改 — 尤其是删除 — 都会降低 AI 安全控制的有效性，应触发及时审查。
 
 **Filter Pattern:**
 
@@ -2793,12 +2793,12 @@ Guardrails enforce content filtering, topic restrictions, and safety controls on
 
 </details>
 
-**Metric Filter 5: Bedrock Model Invocation Logging Configuration Changes**
+**Metric 过滤器 5：Bedrock Model Invocation Logging 配置变更**
 
 <details>
 <summary>Detects changes to or deletion of Bedrock's model invocation logging configuration</summary>
 
-Disabling invocation logging means prompt and response content is no longer captured for audit. Re-enabling logging restores this telemetry. A non-zero value should trigger prioritized review.
+禁用调用日志意味着 prompt 和响应内容不再被捕获用于审计。重新启用日志记录可恢复此遥测数据。非零值应触发优先审查。
 
 **Filter Pattern:**
 
@@ -2811,12 +2811,12 @@ Disabling invocation logging means prompt and response content is no longer capt
 
 </details>
 
-**Metric Filter 7: IAM Permission Changes on AI Service Roles**
+**Metric 过滤器 7：AI 服务角色的 IAM 权限变更**
 
 <details>
 <summary>Captures IAM policy changes that could escalate AI service role permissions</summary>
 
-Monitor IAM permission changes on AI service roles to help verify least privilege is maintained.
+监控 AI 服务角色上的 IAM 权限变更，以帮助验证最小权限是否得到维护。
 
 **Filter Pattern:**
 
@@ -2829,12 +2829,12 @@ Monitor IAM permission changes on AI service roles to help verify least privileg
 
 </details>
 
-**Metric Filter 13: CloudTrail Insights Anomaly Events**
+**Metric 过滤器 13：CloudTrail Insights 异常事件**
 
 <details>
 <summary>Captures CloudTrail Insights events indicating anomalous API patterns</summary>
 
-Since Insights is enabled for both management and data events, this filter surfaces anomalies across your entire AI workload surface.
+由于 Insights 已为管理事件和数据事件启用，此过滤器在整个 AI 工作负载面上浮现异常。
 
 **Filter Pattern:**
 
@@ -2847,12 +2847,12 @@ Since Insights is enabled for both management and data events, this filter surfa
 
 </details>
 
-**Metric Filter 14: CloudTrail Logging Disruption**
+**Metric 过滤器 14：CloudTrail 日志中断**
 
 <details>
 <summary>Captures attempts to stop logging, delete a trail, or modify trail configuration</summary>
 
-Disabling the audit trail means this activity is no longer captured in your telemetry against your AI infrastructure. Any non-zero value warrants prompt investigation.
+禁用审计跟踪意味着此活动不再被捕获在针对 AI 基础设施的遥测中。任何非零值都需要及时调查。
 
 **Filter Pattern:**
 
@@ -2865,12 +2865,12 @@ Disabling the audit trail means this activity is no longer captured in your tele
 
 </details>
 
-**Metric Filter 25: Automated Reasoning Policy Changes**
+**Metric 过滤器 25：自动推理策略变更**
 
 <details>
 <summary>Captures activity on automated reasoning policies and their versions</summary>
 
-Automated reasoning policies provide verifiable AI outputs through formal logic. Changes to these policies may reduce the scope of verification coverage — any modification should trigger review. *(Implements the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) Risk Management dimension — guardrail integrity monitoring.)*
+自动推理策略通过形式逻辑提供可验证的 AI 输出。对这些策略的更改可能会减少验证覆盖范围 — 任何修改都应触发审查。*（实现 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 的 Risk Management 维度 — Guardrail 完整性监控。）*
 
 **Filter Pattern:**
 
@@ -2886,12 +2886,12 @@ Automated reasoning policies provide verifiable AI outputs through formal logic.
   </TabItem>
   <TabItem value="network-cross" label="Network & Cross-Service">
 
-**Metric Filter 9: VPC Endpoint Access Denied Across AI Services**
+**Metric 过滤器 9：AI 服务的 VPC 端点访问拒绝**
 
 <details>
 <summary>Captures VpceAccessDenied errors for Bedrock, S3, and Lambda</summary>
 
-These indicate that traffic from within your VPC was blocked by a VPC endpoint policy — either a misconfigured agent trying to reach a service through the wrong endpoint, or an unauthorized workload attempting to access AI resources from within your private network.
+这些表明来自 VPC 内部的流量被 VPC 端点策略阻止 — 要么是配置错误的 Agent 试图通过错误的端点访问服务，要么是未授权的工作负载试图从私有网络内访问 AI 资源。
 
 **Filter Pattern:**
 
@@ -2904,12 +2904,12 @@ These indicate that traffic from within your VPC was blocked by a VPC endpoint p
 
 </details>
 
-**Metric Filter 10: Agent Cross-Service Access Denied**
+**Metric 过滤器 10：Agent 跨服务访问被拒绝**
 
 <details>
 <summary>Captures AccessDenied errors from agent execution roles on downstream services</summary>
 
-Captures `AccessDenied` errors from Bedrock agent execution roles when they attempt to access Amazon S3, Lambda, KMS, or SageMaker resources. Bedrock agents assume IAM roles to interact with action groups and knowledge base data sources — when those roles are denied access to downstream resources, it indicates either a misconfigured agent permission boundary or an agent accessing resources outside its intended scope. This is a key detection for agent-to-resource access control exceptions.
+在 Bedrock Agent 执行角色尝试访问 Amazon S3、Lambda、KMS 或 SageMaker 资源时捕获 `AccessDenied` 错误。Bedrock Agent 承担 IAM 角色以与操作组和知识库数据源交互 — 当这些角色被拒绝访问下游资源时，表明 Agent 权限边界配置错误或 Agent 正在访问其预期范围之外的资源。这是 Agent 到资源访问控制异常的关键检测。
 
 **Filter Pattern:**
 
@@ -2923,15 +2923,15 @@ Captures `AccessDenied` errors from Bedrock agent execution roles when they atte
 </details>
 
 :::tip[Tuning guidance]
-This filter captures all `AssumedRole` access denials against AI-adjacent services. If your environment has non-AI assumed roles generating noise, narrow the filter by adding a condition on `$.userIdentity.sessionContext.sessionIssuer.userName` to match only your Bedrock agent execution role names (e.g., roles prefixed with `AmazonBedrockExecutionRole`).
+此过滤器捕获针对 AI 相邻服务的所有 `AssumedRole` 访问拒绝。如果您的环境中有非 AI assumed role 产生噪音，请通过添加 `$.userIdentity.sessionContext.sessionIssuer.userName` 条件来缩小过滤器范围，仅匹配您的 Bedrock Agent 执行角色名称（例如，以 `AmazonBedrockExecutionRole` 为前缀的角色）。
 :::
 
-**Metric Filter 11: Amazon S3 AI Training Data Write Operations**
+**Metric 过滤器 11：Amazon S3 AI 训练数据写入操作**
 
 <details>
 <summary>Counts write operations against S3 AI training data buckets</summary>
 
-When combined with the S3 write-only data event selector, this metric tracks unauthorized or unexpected modifications to your AI training data, model artifacts, and pipeline assets.
+与 S3 仅写入数据事件选择器结合使用时，此 metric 跟踪对 AI 训练数据、模型制品和管道资产的未授权或意外修改。
 
 **Filter Pattern:**
 
@@ -2944,12 +2944,12 @@ When combined with the S3 write-only data event selector, this metric tracks una
 
 </details>
 
-**Metric Filter 12: Lambda AI Pipeline Invocation Volume**
+**Metric 过滤器 12：Lambda AI 管道调用量**
 
 <details>
 <summary>Counts Lambda Invoke events for AI pipeline functions</summary>
 
-When combined with the Lambda production-only data event selector, this metric detects invocation spikes that may indicate unauthorized access to a Lambda-based AI inference endpoint or agent action group handler.
+与 Lambda 仅生产环境数据事件选择器结合使用时，此 metric 检测可能表明对基于 Lambda 的 AI 推理端点或 Agent 操作组处理程序未授权访问的调用激增。
 
 **Filter Pattern:**
 
@@ -2965,12 +2965,12 @@ When combined with the Lambda production-only data event selector, this metric d
   </TabItem>
   <TabItem value="agentcore-mf" label="AgentCore">
 
-**Metric Filter 15: AgentCore Gateway Invocations**
+**Metric 过滤器 15：AgentCore Gateway 调用**
 
 <details>
 <summary>Counts all InvokeGateway events against AgentCore Gateways</summary>
 
-Every inbound MCP request from an external caller generates this event. Track this metric to detect unexpected gateway traffic volume or unauthorized external access.
+来自外部调用者的每个入站 MCP 请求都会生成此事件。跟踪此 metric 以检测意外的网关流量或未授权的外部访问。
 
 **Filter Pattern:**
 
@@ -2983,12 +2983,12 @@ Every inbound MCP request from an external caller generates this event. Track th
 
 </details>
 
-**Metric Filter 16: AgentCore Gateway Authentication Failures**
+**Metric 过滤器 16：AgentCore Gateway 认证失败**
 
 <details>
 <summary>Captures Gateway invocations returning HTTP 401 or 403 status codes</summary>
 
-Since Gateway errors appear in `responseElements` rather than top-level `errorCode`, this filter matches on the response status code field. A spike indicates repeated token attempts or misconfigured client authentication.
+由于 Gateway 错误出现在 `responseElements` 中而非顶级 `errorCode`，此过滤器匹配响应状态码字段。激增表明重复的 token 尝试或客户端认证配置错误。
 
 **Filter Pattern:**
 
@@ -3001,12 +3001,12 @@ Since Gateway errors appear in `responseElements` rather than top-level `errorCo
 
 </details>
 
-**Metric Filter 17: AgentCore Built-in Tool Invocations (CodeInterpreter and Browser)**
+**Metric 过滤器 17：AgentCore 内置工具调用（CodeInterpreter 和 Browser）**
 
 <details>
 <summary>Counts invocations of AgentCore's built-in tools — code interpreters and browsers</summary>
 
-These are the high-impact agent actions: code interpreters execute user-provided code in sandboxed environments, and browsers navigate external websites. An unexpected spike indicates an agent operating outside its intended scope.
+这些是高影响的 Agent 操作：代码解释器在沙箱环境中执行用户提供的代码，浏览器导航到外部网站。意外的激增表明 Agent 在其预期范围之外运行。
 
 **Filter Pattern:**
 
@@ -3019,12 +3019,12 @@ These are the high-impact agent actions: code interpreters execute user-provided
 
 </details>
 
-**Metric Filter 18: AgentCore Credential Access (TokenVault, OAuth2, APIKey)**
+**Metric 过滤器 18：AgentCore 凭证访问（TokenVault、OAuth2、APIKey）**
 
 <details>
 <summary>Captures all credential retrieval activity across AgentCore's identity services</summary>
 
-Unexpected credential access patterns may indicate inappropriate agent activity or permission escalation — an unintended access to third-party service tokens through your agent infrastructure.
+意外的凭证访问模式可能表明不适当的 Agent 活动或权限提升 — 通过 Agent 基础设施对第三方服务 token 的意外访问。
 
 **Filter Pattern:**
 
@@ -3037,12 +3037,12 @@ Unexpected credential access patterns may indicate inappropriate agent activity 
 
 </details>
 
-**Metric Filter 19: AgentCore Memory Operations**
+**Metric 过滤器 19：AgentCore 内存操作**
 
 <details>
 <summary>Counts read and write operations against agent persistent memory</summary>
 
-Unauthorized memory access could allow unintended access to conversation history or allow unauthorized context modification.
+未授权的内存访问可能允许对对话历史的意外访问或允许未授权的上下文修改。
 
 **Filter Pattern:**
 
@@ -3055,12 +3055,12 @@ Unauthorized memory access could allow unintended access to conversation history
 
 </details>
 
-**Metric Filter 20: AgentCore Gateway Configuration Changes**
+**Metric 过滤器 20：AgentCore Gateway 配置变更**
 
 <details>
 <summary>Captures management events for AgentCore Gateway creation, modification, and deletion</summary>
 
-Gateway changes affect how external callers access your agents — an unintended gateway creation may allow external access to agent infrastructure.
+Gateway 变更影响外部调用者如何访问您的 Agent — 意外的网关创建可能允许对 Agent 基础设施的外部访问。
 
 **Filter Pattern:**
 
@@ -3077,14 +3077,14 @@ Gateway changes affect how external callers access your agents — an unintended
 </Tabs>
 
 
-## CloudWatch Alarms
+## CloudWatch Alarms 告警
 
-Create [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) on each of the metric filters defined in [Section 11](#metric-filters). Route alarm notifications through [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) to your security operations team with appropriate severity tiers. The table below provides recommended thresholds and evaluation periods for each alarm.
+在 [Metric 过滤器](#metric-filters)中定义的每个 metric 过滤器上创建 [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html)。通过 [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) 将告警通知路由到安全运营团队，并设置适当的严重级别。下表提供了每个告警的推荐阈值和评估周期。
 
 <Tabs>
   <TabItem value="security" label="Security Team Alarms" default>
 
-  These alarms trigger on configuration changes, unauthorized access, and authentication failures — route to your security team via SNS.
+  这些告警在配置变更、未授权访问和认证失败时触发 — 通过 SNS 路由到您的安全团队。
 
   | Alarm Name | Metric | Threshold | Period |
   |---|---|---|---|
@@ -3104,7 +3104,7 @@ Create [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/m
   </TabItem>
   <TabItem value="ops" label="AI Ops Team Alarms">
 
-  These alarms trigger on volume spikes and operational anomalies — route to your AI operations team via SNS.
+  这些告警在数据量激增和运营异常时触发 — 通过 SNS 路由到您的 AI 运营团队。
 
   | Alarm Name | Metric | Threshold | Period |
   |---|---|---|---|
@@ -3125,12 +3125,12 @@ Create [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/m
   </TabItem>
 </Tabs>
 
-## Contributor Insights Rules
+## Contributor Insights 规则
 
-[CloudWatch Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) is designed to analyze time-series data in near real time to surface the top contributors influencing activity patterns in your CloudWatch Logs log groups. Applied to your CloudTrail log group, Contributor Insights rules continuously identify the top IAM identities, resources, and source IPs driving activity across your AI workload — without requiring manual query execution. The rules below cover every event category the guide captures: management events, data events, network activity events, and security configuration changes.
+[CloudWatch Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) 旨在近实时分析时间序列数据，以浮现影响 CloudWatch Logs log group 中活动模式的排名靠前的贡献者。应用于您的 CloudTrail log group，Contributor Insights 规则持续识别驱动 AI 工作负载活动的排名靠前的 IAM 身份、资源和源 IP — 无需手动执行查询。以下规则涵盖本指南捕获的每个事件类别：管理事件、数据事件、网络活动事件和安全配置变更。
 
 :::warning[Important]
-Contributor Insights rules can only be applied to CloudWatch Logs **Standard** log class log groups. Verify your CloudTrail delivery log group is set to the Standard class.
+Contributor Insights 规则只能应用于 CloudWatch Logs **Standard** log class 的 log group。请验证您的 CloudTrail 传送 log group 设置为 Standard 类。
 :::
 
 <Tabs>
@@ -3198,7 +3198,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 3: Top IAM Identities Retrieving from Knowledge Bases**
+**规则 3：知识库检索的排名靠前的 IAM 身份**
 
 <details>
 <summary>Ranks which IAM principals are retrieving from Bedrock Knowledge Bases</summary>
@@ -3276,7 +3276,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 20: Top IAM Identities by Bedrock Flow Execution Activity**
+**规则 20：Bedrock Flow 执行活动的排名靠前的 IAM 身份**
 
 <details>
 <summary>Surfaces which IAM principals are running Bedrock flow executions</summary>
@@ -3301,7 +3301,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 21: Top IAM Identities by Bedrock Data Automation Activity**
+**规则 21：Bedrock 数据自动化活动的排名靠前的 IAM 身份**
 
 <details>
 <summary>Surfaces which IAM principals are invoking Bedrock data automation for document and media processing</summary>
@@ -3386,7 +3386,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 6: Top Agent Roles Denied Access to Downstream Services**
+**规则 6：被拒绝访问下游服务的排名靠前的 Agent 角色**
 
 <details>
 <summary>Identifies assumed roles denied access to S3, Lambda, KMS, Secrets Manager, or SageMaker</summary>
@@ -3417,7 +3417,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 7: Top VPC Endpoint Access Denials Across AI Services**
+**规则 7：AI 服务的排名靠前的 VPC 端点访问拒绝**
 
 <details>
 <summary>Surfaces top identities and VPC endpoints generating VpceAccessDenied errors</summary>
@@ -3474,7 +3474,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 
 </details>
 
-**Rule 23: Top Automated Reasoning Policy Changes by Identity**
+**规则 23：按身份排列的排名靠前的自动推理策略变更**
 
 <details>
 <summary>Surfaces which IAM principals are modifying automated reasoning policies</summary>
@@ -3534,7 +3534,7 @@ A sudden new identity appearing as a top contributor, or an existing identity wi
 ```
 
 :::note
-AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `DeleteGateway`, `CreateGatewayTarget`, `UpdateGatewayTarget`, `DeleteGatewayTarget`) are covered by [Rule 18: AgentCore Gateway Configuration Changes](#agentcore) rather than this rule. Contributor Insights limits `In` arrays to 10 elements, so these are tracked in a dedicated rule.
+AgentCore 网关配置变更（`CreateGateway`、`UpdateGateway`、`DeleteGateway`、`CreateGatewayTarget`、`UpdateGatewayTarget`、`DeleteGatewayTarget`）由[规则 18：AgentCore Gateway 配置变更](#agentcore)覆盖，而非此规则。Contributor Insights 将 `In` 数组限制为 10 个元素，因此这些在专用规则中跟踪。
 :::
 
 </details>
@@ -3572,7 +3572,7 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
   </TabItem>
   <TabItem value="s3-lambda" label="S3 & Lambda">
 
-**Rule 8: Top Amazon S3 Buckets Accessed for AI Training Data**
+**规则 8：AI 训练数据访问的排名靠前的 Amazon S3 存储桶**
 
 <details>
 <summary>Identifies which S3 buckets are being accessed most frequently and by whom</summary>
@@ -3600,7 +3600,7 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
 
 </details>
 
-**Rule 9: Top Lambda AI Pipeline Functions by Invocation Volume**
+**规则 9：按调用量排列的排名靠前的 Lambda AI 管道函数**
 
 <details>
 <summary>Tracks which Lambda functions in AI pipelines are invoked most frequently</summary>
@@ -3769,7 +3769,7 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
 
 </details>
 
-#### Rule 18: AgentCore Gateway Configuration Changes {#agentcore}
+#### 规则 18：AgentCore Gateway 配置变更 {#agentcore}
 
 <details>
 <summary>Monitors creation, modification, and deletion of AgentCore Gateways and targets</summary>
@@ -3801,21 +3801,21 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
   </TabItem>
 </Tabs>
 
-## CloudTrail Data Event Aggregation
+## CloudTrail 数据事件聚合
 
-[Event Aggregation](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/aggregating-data-events.html) is designed to consolidate data events into 5-minute summaries, providing visibility into key trends such as access frequency, error rates, and most frequently used API actions. This significantly reduces the volume of data transmitted to downstream analysis systems while preserving the recommended insights needed for security monitoring and trend analysis. Aggregated events use the `eventCategory = Aggregated` and `eventType = AwsAggregatedEvent` fields in the [aggregated event record](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aggregated-events.html).
+[事件聚合](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/aggregating-data-events.html)旨在将数据事件合并为 5 分钟摘要，提供对关键趋势的可见性，如访问频率、错误率和最常用的 API 操作。这显著减少了传输到下游分析系统的数据量，同时保留了安全监控和趋势分析所需的推荐洞察。聚合事件在[聚合事件记录](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aggregated-events.html)中使用 `eventCategory = Aggregated` 和 `eventType = AwsAggregatedEvent` 字段。
 
-### Enabling Aggregation
+### 启用聚合
 
-Navigate to the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/) and select your trail. Under the **Aggregated Events** section, choose **Edit** and enable the following aggregation templates:
+导航到 [CloudTrail 控制台](https://console.aws.amazon.com/cloudtrail/)并选择您的 trail。在 **Aggregated Events** 部分下，选择 **Edit** 并启用以下聚合模板：
 
-- **API Activity** — 5-minute summary of data events based on API calls made, including frequency, top callers, and source IP distribution
-- **Resource Access** — Activity patterns on your AWS resources showing who is accessing which resources and how many times
-- **User Actions** — Activity patterns based on IAM principals making API calls, useful for identifying behavioral anomalies
+- **API Activity** — 基于 API 调用的数据事件 5 分钟摘要，包括频率、排名靠前的调用者和源 IP 分布
+- **Resource Access** — AWS 资源上的活动模式，显示谁在访问哪些资源以及访问次数
+- **User Actions** — 基于 IAM 主体进行 API 调用的活动模式，有助于识别行为异常
 
-### Querying CloudTrail Aggregated Events
+### 查询 CloudTrail 聚合事件
 
-Aggregated events are delivered alongside standard events in your CloudWatch Logs log group with `eventCategory = 'Aggregated'`. Use the following OpenSearch SQL query to surface aggregated Bedrock API activity summaries:
+聚合事件与标准事件一起传送到您的 CloudWatch Logs log group 中，带有 `eventCategory = 'Aggregated'`。使用以下 OpenSearch SQL 查询来浮现聚合的 Bedrock API 活动摘要：
 
 ```sql title="Query: Aggregated Bedrock API Activity"
 SELECT eventTime,
@@ -3829,54 +3829,54 @@ WHERE eventCategory = 'Aggregated'
 ORDER BY eventTime DESC
 ```
 
-### Subscription Filter for Downstream Efficiency
+### 用于下游效率的 Subscription Filter
 
-To reduce the volume sent to downstream systems such as a SIEM or Kinesis Data Firehose, create a [CloudWatch Logs Subscription Filter](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html) that forwards only management events and aggregated summaries instead of raw data events. This reduces downstream ingestion volume while maintaining recommended security insights from the 5-minute aggregated summaries.
+要减少发送到下游系统（如 SIEM 或 Kinesis Data Firehose）的数据量，请创建一个 [CloudWatch Logs Subscription Filter](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html)，仅转发管理事件和聚合摘要，而不是原始数据事件。这减少了下游摄入量，同时保持了 5 分钟聚合摘要中推荐的安全洞察。
 
-**Subscription Filter Pattern (management + aggregated events only):**
+**Subscription Filter 模式（仅管理事件 + 聚合事件）：**
 
 ```
 { ($.eventCategory = "Management") || ($.eventCategory = "Aggregated") }
 ```
 
-## Unified Audit & Monitoring Dashboard
+## 统一审计和监控 Dashboard
 
-Build a unified [CloudWatch dashboard](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) that combines the security/audit surface (CloudTrail) with operational monitoring (Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK)) into a centralized view. The layout below organizes widgets by audience — security/audit on the left, operational monitoring in the middle, cost/FinOps on the right — and tiers them from high-level status indicators to detailed investigation queries.
+构建一个统一的 [CloudWatch dashboard](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)，将安全/审计面（CloudTrail）与运营监控（Bedrock Model Invocation Logging 和 Agent Telemetry（ADOT SDK））整合到集中视图中。以下布局按受众组织小组件 — 安全/审计在左侧，运营监控在中间，成本/FinOps 在右侧 — 并从高级状态指标到详细调查查询分层排列。
 
-### Dashboard Name
+### Dashboard 名称
 
-Create the dashboard with the name `AI-Workload-Security-Dashboard` in your primary monitoring region.
+在您的主要监控区域中使用名称 `AI-Workload-Security-Dashboard` 创建 dashboard。
 
 ![AI-Workload-Security-Dashboard](/img/cloudops/recipes/AWS%20CloudTrail/monitoring-and-auditing-genAI/dashboard.png)
-### Recommended Widget Layout
+### 推荐的小组件布局
 
 :::tip[Pro Tip]
-For Logs Insights widgets, select **SQL** or **CWLI** as the query language depending on the query source. Cross-log-group JOIN queries (from [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries)) must use SQL. Single-log-group queries can use either.
+对于 Logs Insights 小组件，根据查询来源选择 **SQL** 或 **CWLI** 作为查询语言。跨 log group 的 JOIN 查询（来自[跨管道关联查询](#cross-pipeline-correlation-queries)）必须使用 SQL。单个 log group 的查询可以使用任何一种。
 :::
 
 <Tabs>
   <TabItem value="status" label="Status Overview" default>
 
-  **Row 1** — High-level health and key counters.
+  **第 1 行** — 高级健康状况和关键计数器。
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
   | Alarm Status Grid | Alarm Status | All metric filter alarms from [CloudWatch Alarms](#cloudwatch-alarms) |
   | Bedrock Model Invocations Count | Number (Metric) | AIWorkloadMetrics/BedrockModelInvocations |
-  | Total Bedrock Spend | Single value (Logs) | Model Invocation Log — total cost query ([FinOps dashboard](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/#finops-persona-dashboard)) |
+  | Total Bedrock Spend | Single value (Logs) | Model Invocation Log — total cost query ([FinOps dashboard](https://aws-observability.github.io/aws-observability/guides/genai/custom-dashboards-for-genai-telemetry/#finops-persona-dashboard)) |
   | Agent Cross-Service Denied Count | Number (Metric) | AIWorkloadMetrics/AgentCrossServiceAccessDenied |
 
   </TabItem>
   <TabItem value="audit-bedrock" label="Audit — Bedrock">
 
-  **Row 2** — Model & Agent Activity
+  **第 2 行** — 模型和 Agent 活动
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
   | Top Bedrock Model Callers | Contributor Insights | Rule 1: AI-TopBedrockModelCallers |
   | Top Bedrock Agent Callers | Contributor Insights | Rule 2: AI-TopBedrockAgentCallers |
 
-  **Row 3** — Data & Access Denied
+  **第 3 行** — 数据和访问拒绝
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
@@ -3905,7 +3905,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
   </TabItem>
   <TabItem value="audit-agentcore" label="Audit — AgentCore">
 
-  **Row 4.5** — AgentCore Activity
+  **第 4.5 行** — AgentCore 活动
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
@@ -3923,7 +3923,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
-  | Completion Rate (ok vs truncated) | Time series (Logs) | Model Invocation Log — DevOps query ([DevOps dashboard](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/#devops-persona-dashboard)) |
+  | Completion Rate (ok vs truncated) | Time series (Logs) | Model Invocation Log — DevOps query ([DevOps dashboard](https://aws-observability.github.io/aws-observability/guides/genai/custom-dashboards-for-genai-telemetry/#devops-persona-dashboard)) |
   | Cross-Region Latency by Model | Table (Logs) | Model Invocation Log — latency query |
 
   **Row 6** — Agent Workflow
@@ -3955,7 +3955,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
   | Data Automation & Tool Activity | Logs Insights (SQL) | Query 25: Bedrock Data Automation Activity |
   | Automated Reasoning Policy Changes | Logs Insights (SQL) | Query 27: Automated Reasoning Policy Activity |
 
-  **Row 9** — Cross-Pipeline Correlation
+  **第 9 行** — 跨管道关联
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
@@ -3967,30 +3967,30 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
 </Tabs>
 
 :::note
-Rows 5-7 use queries from the companion [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) guide. Use those queries directly rather than duplicating them here.
+第 5-7 行使用配套指南 [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/aws-observability/guides/genai/custom-dashboards-for-genai-telemetry/) 中的查询。请直接使用那些查询，而不是在此处复制。
 :::
 
-## Conclusion and Next Steps
+## 结论和后续步骤
 
-This guide covered the end-to-end monitoring and auditing architecture for AI workloads on AWS — the three telemetry pipelines, enablement for each, CloudTrail-specific detection (metric filters, alarms, Contributor Insights) for both Bedrock and AgentCore data events, cross-pipeline correlation queries that join CloudTrail with Bedrock Model Invocation Logging and ADOT spans, and a unified CloudWatch dashboard. Each section is designed to be implemented incrementally following the phased roadmap in the [Implementation Overview](#implementation-overview).
+本指南涵盖了 AWS 上 AI 工作负载的端到端监控和审计架构 — 三条遥测管道、每条管道的启用方法、针对 Bedrock 和 AgentCore 数据事件的 CloudTrail 专属检测（metric 过滤器、告警、Contributor Insights）、将 CloudTrail 与 Bedrock Model Invocation Logging 和 ADOT spans 关联的跨管道关联查询，以及统一的 CloudWatch dashboard。每个章节都设计为按照[实施概述](#implementation-overview)中的分阶段路线图逐步实施。
 
-The core idea: CloudTrail alone shows *who did what*, Model Invocation Logging shows *what the model said*, and ADOT shows *how the agent performed*. With AgentCore data events, CloudTrail now also shows *what the agent actually did* — which tools it invoked, which credentials it accessed, which gateways received traffic, and what it stored in memory. The value comes from joining these signals during investigations — no single pipeline answers every question.
+核心思想：CloudTrail 单独显示*谁做了什么*，Model Invocation Logging 显示*模型说了什么*，ADOT 显示 *Agent 表现如何*。借助 AgentCore 数据事件，CloudTrail 现在还显示 *Agent 实际做了什么* — 它调用了哪些工具、访问了哪些凭证、哪些网关接收了流量以及它在内存中存储了什么。价值来自于在调查期间关联这些信号 — 没有任何单一管道能回答所有问题。
 
-Together, these capabilities provide concrete implementation for the security dimensions defined in the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) and the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/).
+这些功能共同为 [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) 和 [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) 中定义的安全维度提供了具体实现。
 
-### Next Steps
+### 后续步骤
 
-1. **Start with Phase 1.** Enable all three telemetry pipelines. The other two (Model Invocation Logging, ADOT) which makes the correlation queries possible.
-2. **Enable CloudTrail Bedrock data events.** A critical step for auditing AI workloads.
-3. **Enable CloudTrail AgentCore data events.** Start with Gateway and credential access (Groups 2 and 3), then expand to built-in tools and memory (Groups 1 and 4) after establishing baseline volume.
-4. **Validate your baseline.** Run Queries 2 and 4 from [Security Analytics](#security-analytics) and Queries 12-14 from the AgentCore tab in [Security Analytics](#security-analytics) to establish normal usage before setting alarm thresholds.
-4. **Automate response.** Connect your CloudWatch Alarms to [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) topics, [AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) functions, or [Systems Manager runbooks](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html) to close the gap between detection and remediation.
-5. **Integrate with GuardDuty.** [Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html) provides managed threat detection that complements the custom monitoring here. GuardDuty analyzes CloudTrail events for known threat patterns without requiring you to maintain detection rules.
-6. **Review costs.** Data events, Insights analysis, and network activity events all incur charges. Use the [CloudTrail pricing page](https://aws.amazon.com/cloudtrail/pricing/) and the volume reduction strategies in [Optimizing Data Event Collection](#optimizing-data-event-collection).
+1. **从第 1 阶段开始。** 启用所有三条遥测管道。另外两条（Model Invocation Logging、ADOT）使关联查询成为可能。
+2. **启用 CloudTrail Bedrock 数据事件。** 这是审计 AI 工作负载的关键步骤。
+3. **启用 CloudTrail AgentCore 数据事件。** 从 Gateway 和凭证访问开始（第 2 和第 3 组），然后在建立基线数据量后扩展到内置工具和内存（第 1 和第 4 组）。
+4. **验证您的基线。** 运行[安全分析](#security-analytics)中的查询 2 和 4，以及[安全分析](#security-analytics)中 AgentCore 标签页的查询 12-14，在设置告警阈值之前建立正常使用基线。
+4. **自动化响应。** 将您的 CloudWatch Alarms 连接到 [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) 主题、[AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html) 函数或 [Systems Manager runbooks](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html)，以弥合检测和修复之间的差距。
+5. **与 GuardDuty 集成。** [Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html) 提供托管威胁检测，补充此处的自定义监控。GuardDuty 分析 CloudTrail 事件中的已知威胁模式，无需您维护检测规则。
+6. **审查成本。** 数据事件、Insights 分析和网络活动事件都会产生费用。请使用 [CloudTrail 定价页面](https://aws.amazon.com/cloudtrail/pricing/)和[优化数据事件收集](#optimizing-data-event-collection)中的数据量减少策略。
 
-### Companion Guides
+### 配套指南
 
-- [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — Security dimensions for generative AI workloads (Governance & Compliance, Legal & Privacy, Risk Management, Controls, Resilience)
-- [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Security dimensions for agentic AI systems (Identity, Data, Audit & Logging, Guardrails, Scope, Orchestration)
-- [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
-- [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
+- [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — 生成式 AI 工作负载的安全维度（Governance & Compliance、Legal & Privacy、Risk Management、Controls、Resilience）
+- [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Agent 式 AI 系统的安全维度（Identity、Data、Audit & Logging、Guardrails、Scope、Orchestration）
+- [GenAI 可观测性 on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — 深入了解 Bedrock Model Invocation Logging 和 Agent Telemetry（ADOT SDK）管道
+- [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/aws-observability/guides/genai/custom-dashboards-for-genai-telemetry/) — 基于角色的 dashboard（DevOps、FinOps），提供即用型查询

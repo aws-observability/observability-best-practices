@@ -70,7 +70,7 @@ kubectl apply -f adot-collector-fargate.yaml
 
 ## 信号生成器
 
-我们将使用 `ho11y`，一个可通过方案仓库的 [sandbox](https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/ho11y) 获取的合成信号生成器。如果您尚未将仓库克隆到本地环境，请现在执行：
+我们将使用 `ho11y`，一个可通过方案仓库的 [sandbox](https://github.com/aws-observability/aws-observability/tree/main/sandbox/ho11y) 获取的合成信号生成器。如果您尚未将仓库克隆到本地环境，请现在执行：
 
 ```
 git clone https://github.com/aws-observability/aws-o11y-recipes.git

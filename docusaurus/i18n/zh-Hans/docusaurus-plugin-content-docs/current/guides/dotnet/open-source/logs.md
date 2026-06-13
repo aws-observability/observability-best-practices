@@ -1,6 +1,6 @@
 # 日志
 
-.NET 为 OpenTelemetry 日志提供全面支持，与 metrics 和 traces 一起构成 observability 三大支柱。此集成实现了结构化、上下文化的日志记录，可无缝流入现代 observability 平台。
+.NET 为 OpenTelemetry 日志提供全面支持，与 metrics 和 traces 一起构成可观测性三大支柱。此集成实现了结构化、上下文化的日志记录，可无缝流入现代可观测性平台。
 
 .NET 中的 OpenTelemetry 日志实现建立在成熟的 Microsoft.Extensions.Logging 抽象之上，允许开发人员在不更改现有日志代码的情况下采用 OpenTelemetry。这种向后兼容性使得在新应用程序和现有应用程序中的采用都很简单。
 
@@ -26,15 +26,15 @@ using var activity = MyActivitySource.StartActivity("ProcessOrder");
 logger.LogInformation("Processing order {OrderId}", orderId);
 ```
 
-通过在 .NET 应用程序中实现 OpenTelemetry 日志，开发团队获得了一种标准化的日志记录方法，可与更广泛的 observability 生态系统顺畅集成。此集成为故障排除提供关键上下文，连接跨服务的相关信号，并在分布式环境中实现更有效的监控和调试。
+通过在 .NET 应用程序中实现 OpenTelemetry 日志，开发团队获得了一种标准化的日志记录方法，可与更广泛的可观测性生态系统顺畅集成。此集成为故障排除提供关键上下文，连接跨服务的相关信号，并在分布式环境中实现更有效的监控和调试。
 
 ## 后续步骤
 
-现在您的应用程序已完成 instrumentation，请使用 collector 代理（如 OpenTelemetry Collector、CloudWatch Agent 或 Fluent Bit）将日志路由到您选择的 observability 后端。请参阅以下链接获取详细信息和实施指导。
+现在您的应用程序已完成 instrumentation，请使用 collector 代理（如 OpenTelemetry Collector、CloudWatch Agent 或 Fluent Bit）将日志路由到您选择的可观测性后端。请参阅以下链接获取详细信息和实施指导。
 
-- [使用 OpenTelemetry 实现 Observability](https://aws-observability.github.io/observability-best-practices/patterns/otel) - 在应用程序中实现 OpenTelemetry 的全面指南，提供使用 AWS 服务收集、处理和可视化遥测数据以实现全栈 observability 的模式。
+- [使用 OpenTelemetry 实现可观测性](https://aws-observability.github.io/aws-observability/patterns/otel) - 在应用程序中实现 OpenTelemetry 的全面指南，提供使用 AWS 服务收集、处理和可视化遥测数据以实现全栈可观测性的模式。
 
-- [操作 AWS Distro for OpenTelemetry (ADOT) Collector](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) - 在生产环境中部署、扩展和管理 ADOT Collector 的实用指导，包括配置最佳实践和与 AWS observability 服务的集成。
+- [操作 AWS Distro for OpenTelemetry (ADOT) Collector](https://aws-observability.github.io/aws-observability/guides/operational/adot-at-scale/operating-adot-collector) - 在生产环境中部署、扩展和管理 ADOT Collector 的实用指导，包括配置最佳实践和与 AWS 可观测性服务的集成。
 
 - [使用 CloudWatch agent 收集 metrics、logs 和 traces](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - 安装和配置 CloudWatch agent 以从应用程序和基础设施收集遥测数据的分步说明，与 AWS CloudWatch 无缝集成。
 

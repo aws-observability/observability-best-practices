@@ -18,7 +18,7 @@ HTTP endpoint 或 [S3 bucket](https://aws.amazon.com/s3)。
 * 在您的环境中已[安装](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)并[配置](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)了 AWS CLI。
 * 在您的环境中已安装 [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html)。
 * Node.js 和 Go。
-* 已将[仓库](https://github.com/aws-observability/observability-best-practices/)克隆到本地机器。此项目的代码位于 `/sandbox/CWMetricStreamExporter` 下。
+* 已将[仓库](https://github.com/aws-observability/aws-observability/)克隆到本地机器。此项目的代码位于 `/sandbox/CWMetricStreamExporter` 下。
 
 ### 创建 AMP 工作区
 

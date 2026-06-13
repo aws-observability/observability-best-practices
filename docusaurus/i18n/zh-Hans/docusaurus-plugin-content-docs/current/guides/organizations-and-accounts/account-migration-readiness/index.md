@@ -31,7 +31,7 @@ sidebar_position: 1
 | **策略条件** | `aws:PrincipalOrgID` / `aws:PrincipalOrgPaths` | 引用源组织 ID 的策略将拒绝访问 |
 | **计费** | Reserved Instances / Savings Plans | 失去组织范围的共享优惠 |
 | **计费** | 成本分配标签 | 必须在目标组织中重新激活 |
-| **Observability** | Amazon EventBridge 跨账户 | 引用组织 ID 的事件总线策略将失效 |
+| **可观测性** | Amazon EventBridge 跨账户 | 引用组织 ID 的事件总线策略将失效 |
 | **账户访问** | Root 用户 / `OrganizationAccountAccessRole` | 如果在转移前未验证，可能失去所有访问权限 |
 
 ## 概述

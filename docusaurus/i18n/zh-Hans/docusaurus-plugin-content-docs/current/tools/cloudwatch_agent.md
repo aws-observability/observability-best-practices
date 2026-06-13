@@ -56,4 +56,4 @@ b. 如果您要求 agent 流量不通过互联网路由，您可以利用由 AWS
 
 [^4]: [本地私有连接博客](https://aws.amazon.com/blogs/networking-and-content-delivery/hybrid-networking-using-vpc-endpoints-aws-privatelink-and-amazon-cloudwatch-for-financial-services/)
 
-[^5]: 所有与 observability 相关的 AWS API 的使用通常通过[实例配置文件](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)来完成——这是一种向在 AWS 中运行的实例和容器授予临时访问凭证的机制。
+[^5]: 所有与可观测性相关的 AWS API 的使用通常通过[实例配置文件](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_use_switch-role-ec2_instance-profiles.html)来完成——这是一种向在 AWS 中运行的实例和容器授予临时访问凭证的机制。

@@ -9,19 +9,19 @@
     "message": "从数据采集到分析和可视化——了解针对 AWS 监控优化的工具。"
   },
   "featureList.recipes.description": {
-    "message": "使用经过验证的 Observability 模式快速解决监控和故障响应问题。"
+    "message": "使用经过验证的可观测性模式快速解决监控和故障响应问题。"
   },
   "featureList.faqs.description": {
-    "message": "汇集有关 AWS Observability 的常见问题及解答。"
+    "message": "汇集有关 AWS 可观测性的常见问题及解答。"
   },
   "featureList.patterns.description": {
-    "message": "分步实现 AWS Observability 的实践学习资源。"
+    "message": "分步实现 AWS 可观测性的实践学习资源。"
   },
   "featureList.persona.description": {
-    "message": "根据您的角色查看 Observability 最佳实践和推荐配置。"
+    "message": "根据您的角色查看可观测性最佳实践和推荐配置。"
   },
   "featureList.resources.description": {
-    "message": "与 AWS Observability 相关的参考资源合集。"
+    "message": "与 AWS 可观测性相关的参考资源合集。"
   },
   "featureList.cloudOps.description": {
     "message": "了解 AWS 云运维最佳实践。"

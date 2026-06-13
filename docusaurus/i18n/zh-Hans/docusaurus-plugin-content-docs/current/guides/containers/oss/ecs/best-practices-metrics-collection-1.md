@@ -8,7 +8,7 @@
 2. 在集中式 collector 模式中，集群上部署单个 ADOT collector 实例来处理集群上所有运行任务的遥测数据。这是最常用的部署模式。collector 使用 REPLICA 或 DAEMON 服务调度策略进行部署。
 ![ADOT architecture](../../../../images/ADOT-central.png)
 
-ADOT collector 架构有 pipeline 的概念。单个 collector 可以包含多个 pipeline。每个 pipeline 专门处理三种类型遥测数据中的一种，即 metrics、traces 和 logs。您可以为每种类型的遥测数据配置多个 pipeline。这种灵活的架构允许单个 collector 执行多个 observability 代理的角色，否则这些代理都需要部署在集群上。它显著减少了集群上 observability 代理的部署开销。组成 pipeline 的 collector 主要组件分为三类：Receiver、Processor 和 Exporter。还有称为 Extensions 的辅助组件，它们提供可添加到 collector 的功能，但不属于 pipeline 的一部分。
+ADOT collector 架构有 pipeline 的概念。单个 collector 可以包含多个 pipeline。每个 pipeline 专门处理三种类型遥测数据中的一种，即 metrics、traces 和 logs。您可以为每种类型的遥测数据配置多个 pipeline。这种灵活的架构允许单个 collector 执行多个可观测性代理的角色，否则这些代理都需要部署在集群上。它显著减少了集群上可观测性代理的部署开销。组成 pipeline 的 collector 主要组件分为三类：Receiver、Processor 和 Exporter。还有称为 Extensions 的辅助组件，它们提供可添加到 collector 的功能，但不属于 pipeline 的一部分。
 
 :::info
     请参阅 OpenTelemetry [文档](https://opentelemetry.io/docs/collector/configuration/#basics)以获取关于 Receivers、Processors、Exporters 和 Extensions 的详细说明。

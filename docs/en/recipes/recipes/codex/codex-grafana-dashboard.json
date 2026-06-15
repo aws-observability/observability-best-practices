@@ -1015,6 +1015,407 @@
       },
       "id": 18,
       "options": {
+        "content": "## Performance & Latency",
+        "mode": "markdown"
+      },
+      "title": "",
+      "transparent": true,
+      "type": "text"
+    },
+    {
+      "datasource": {
+        "type": "grafana-amazonprometheus-datasource",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 6,
+        "x": 0,
+        "y": 36
+      },
+      "id": 19,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "title": "Cache Hit Rate",
+      "type": "stat",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "sum({__name__=\"codex.turn.token_usage\", token_type=\"cached_input\", \"@resource.service.name\"=~\"codex.*\"}) / (sum({__name__=\"codex.turn.token_usage\", token_type=\"input\", \"@resource.service.name\"=~\"codex.*\"}) + sum({__name__=\"codex.turn.token_usage\", token_type=\"cached_input\", \"@resource.service.name\"=~\"codex.*\"})) * 100",
+          "refId": "A",
+          "legendFormat": "Cache Hit %"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-amazonprometheus-datasource",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 6,
+        "y": 36
+      },
+      "id": 20,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "Turn Latency (ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.5, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "A",
+          "legendFormat": "p50"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.9, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "B",
+          "legendFormat": "p90"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.99, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "C",
+          "legendFormat": "p99"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-amazonprometheus-datasource",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 9,
+        "x": 15,
+        "y": 36
+      },
+      "id": 21,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "Time to First Token (ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.5, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "A",
+          "legendFormat": "p50"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.9, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "B",
+          "legendFormat": "p90"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.99, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "C",
+          "legendFormat": "p99"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-amazonprometheus-datasource",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 0,
+        "y": 42
+      },
+      "id": 22,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "API Request Latency p90 by Model (ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.9, sum by (model)({__name__=\"codex.api_request.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
+          "refId": "A",
+          "legendFormat": "{{model}}"
+        }
+      ]
+    },
+    {
+      "datasource": {
+        "type": "grafana-amazonprometheus-datasource",
+        "uid": "$datasource"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisPlacement": "auto",
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "lineWidth": 2,
+            "pointSize": 5,
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 12,
+        "x": 12,
+        "y": 42
+      },
+      "id": 23,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "title": "Tool Call Latency (ms)",
+      "type": "timeseries",
+      "targets": [
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.5, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "A",
+          "legendFormat": "p50"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.9, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "B",
+          "legendFormat": "p90"
+        },
+        {
+          "datasource": {
+            "type": "grafana-amazonprometheus-datasource",
+            "uid": "$datasource"
+          },
+          "expr": "histogram_quantile(0.99, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "refId": "C",
+          "legendFormat": "p99"
+        }
+      ]
+    },
+    {
+      "gridPos": {
+        "h": 2,
+        "w": 24,
+        "x": 0,
+        "y": 48
+      },
+      "id": 24,
+      "options": {
         "content": "## Organizational Breakdown",
         "mode": "markdown"
       },
@@ -1062,9 +1463,9 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 36
+        "y": 50
       },
-      "id": 19,
+      "id": 25,
       "options": {
         "legend": {
           "calcs": [],
@@ -1129,9 +1530,9 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 36
+        "y": 50
       },
-      "id": 20,
+      "id": 26,
       "options": {
         "legend": {
           "calcs": [],
@@ -1196,9 +1597,9 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 42
+        "y": 56
       },
-      "id": 21,
+      "id": 27,
       "options": {
         "legend": {
           "calcs": [],
@@ -1263,9 +1664,9 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 42
+        "y": 56
       },
-      "id": 22,
+      "id": 28,
       "options": {
         "legend": {
           "calcs": [],
@@ -1330,9 +1731,9 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 48
+        "y": 62
       },
-      "id": 23,
+      "id": 29,
       "options": {
         "legend": {
           "calcs": [],
@@ -1397,9 +1798,9 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 48
+        "y": 62
       },
-      "id": 24,
+      "id": 30,
       "options": {
         "legend": {
           "calcs": [],

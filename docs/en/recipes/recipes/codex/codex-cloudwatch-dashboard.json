@@ -836,7 +836,7 @@
       "width": 24,
       "height": 2,
       "properties": {
-        "markdown": "## Organizational Breakdown",
+        "markdown": "## Performance & Latency",
         "background": "transparent"
       }
     },
@@ -844,6 +844,339 @@
       "type": "chart",
       "x": 0,
       "y": 36,
+      "width": 6,
+      "height": 6,
+      "properties": {
+        "title": "Cache Hit Rate (%)",
+        "view": "number",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", token_type=\"cached_input\", \"@resource.service.name\"=~\"codex.*\"}) / (sum({\"codex.turn.token_usage\", token_type=\"input\", \"@resource.service.name\"=~\"codex.*\"}) + sum({\"codex.turn.token_usage\", token_type=\"cached_input\", \"@resource.service.name\"=~\"codex.*\"})) * 100",
+              "step": 60,
+              "label": "Cache Hit %"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": true
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 6,
+      "y": 36,
+      "width": 9,
+      "height": 6,
+      "properties": {
+        "title": "Turn Latency (p50/p90/p99 ms)",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "p50",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.5, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p50"
+            },
+            {
+              "id": "p90",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.9, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p90"
+            },
+            {
+              "id": "p99",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.99, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p99"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 15,
+      "y": 36,
+      "width": 9,
+      "height": 6,
+      "properties": {
+        "title": "Time to First Token (p50/p90/p99 ms)",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "p50",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.5, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p50"
+            },
+            {
+              "id": "p90",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.9, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p90"
+            },
+            {
+              "id": "p99",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.99, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p99"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 42,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "API Request Latency p90 by Model (ms)",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.9, sum by (model)({\"codex.api_request.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 42,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Tool Call Latency (p50/p90/p99 ms)",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "p50",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.5, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p50"
+            },
+            {
+              "id": "p90",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.9, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p90"
+            },
+            {
+              "id": "p99",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "histogram_quantile(0.99, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "p99"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 48,
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "## Organizational Breakdown",
+        "background": "transparent"
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 50,
       "width": 12,
       "height": 6,
       "properties": {
@@ -897,7 +1230,7 @@
     {
       "type": "chart",
       "x": 12,
-      "y": 36,
+      "y": 50,
       "width": 12,
       "height": 6,
       "properties": {
@@ -951,7 +1284,7 @@
     {
       "type": "chart",
       "x": 0,
-      "y": 42,
+      "y": 56,
       "width": 12,
       "height": 6,
       "properties": {
@@ -1005,7 +1338,7 @@
     {
       "type": "chart",
       "x": 12,
-      "y": 42,
+      "y": 56,
       "width": 12,
       "height": 6,
       "properties": {
@@ -1059,7 +1392,7 @@
     {
       "type": "chart",
       "x": 0,
-      "y": 48,
+      "y": 62,
       "width": 12,
       "height": 6,
       "properties": {
@@ -1113,7 +1446,7 @@
     {
       "type": "chart",
       "x": 12,
-      "y": 48,
+      "y": 62,
       "width": 12,
       "height": 6,
       "properties": {

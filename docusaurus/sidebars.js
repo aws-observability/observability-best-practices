@@ -370,6 +370,13 @@ module.exports = {
         },
         {
           type: 'category',
+          label: 'By AI Coding Agent',
+          items: [
+            'recipes/codex',
+          ],
+        },
+        {
+          type: 'category',
           label: 'By Destination',
           items: [
             'recipes/cw',

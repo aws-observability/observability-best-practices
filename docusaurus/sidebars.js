@@ -374,6 +374,7 @@ module.exports = {
           label: 'By AI Coding Agent',
           items: [
             'recipes/codex',
+            'recipes/copilot',
           ],
         },
         {

@@ -1,0 +1,1168 @@
+{
+  "widgets": [
+    {
+      "type": "text",
+      "x": 0,
+      "y": 0,
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "## Overview",
+        "background": "transparent"
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 2,
+      "width": 6,
+      "height": 4,
+      "properties": {
+        "title": "Total Tokens",
+        "view": "number",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Tokens"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": true
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 6,
+      "y": 2,
+      "width": 6,
+      "height": 4,
+      "properties": {
+        "title": "API Requests",
+        "view": "number",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.api_request\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Requests"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": true
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 2,
+      "width": 6,
+      "height": 4,
+      "properties": {
+        "title": "Active Users",
+        "view": "number",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "count(group by (\"@resource.user.email\")({\"codex.api_request\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60,
+              "label": "Users"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": true
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 18,
+      "y": 2,
+      "width": 6,
+      "height": 4,
+      "properties": {
+        "title": "Conversation Turns",
+        "view": "number",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.conversation.turn.count\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Turns"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": true
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 6,
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "## Token Usage",
+        "background": "transparent"
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 8,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage Over Time",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Tokens"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 8,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Type",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "input",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", token_type=\"input\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Input"
+            },
+            {
+              "id": "output",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", token_type=\"output\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Output"
+            },
+            {
+              "id": "cached",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", token_type=\"cached_input\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Cached Input"
+            },
+            {
+              "id": "reasoning",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.turn.token_usage\", token_type=\"reasoning_output\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Reasoning Output"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 14,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Model",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (model)({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 14,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Top Users by Token Usage",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.user.email\")({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 20,
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "## API & Tool Activity",
+        "background": "transparent"
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 22,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "API Requests by Outcome",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "ok",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.api_request\", success=\"true\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Success"
+            },
+            {
+              "id": "err",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.api_request\", success=\"false\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Failure"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 8,
+      "y": 22,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "API Requests by Model",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (model)({\"codex.api_request\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 16,
+      "y": 22,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "Conversation Turns Over Time",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "sum({\"codex.conversation.turn.count\", \"@resource.service.name\"=~\"codex.*\"})",
+              "step": 60,
+              "label": "Turns"
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 28,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "Tool Calls by Tool",
+        "view": "pie",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (tool)({\"codex.tool.call\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 8,
+      "y": 28,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "Tool Call Outcomes",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (success)({\"codex.tool.call\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 16,
+      "y": 28,
+      "width": 8,
+      "height": 6,
+      "properties": {
+        "title": "Approval Decisions",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (decision)({\"codex.approval.requested\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": false,
+              "stacked": false,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "text",
+      "x": 0,
+      "y": 34,
+      "width": 24,
+      "height": 2,
+      "properties": {
+        "markdown": "## Organizational Breakdown",
+        "background": "transparent"
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 36,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Department",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.department\")({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 36,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Team",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.team.id\")({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 42,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "API Requests by Department",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.department\")({\"codex.api_request\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 42,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Active Users by Team",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, count by (\"@resource.team.id\")(group by (\"@resource.team.id\", \"@resource.user.email\")({\"codex.api_request\", \"@resource.service.name\"=~\"codex.*\"})))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0,
+      "y": 48,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Cost Center",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.cost_center\")({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12,
+      "y": 48,
+      "width": 12,
+      "height": 6,
+      "properties": {
+        "title": "Token Usage by Environment",
+        "view": "line",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            {
+              "id": "a",
+              "type": "cloudwatch-metrics",
+              "language": "PromQL",
+              "query": "topk(500, sum by (\"@resource.environment\")({\"codex.turn.token_usage\", \"@resource.service.name\"=~\"codex.*\"}))",
+              "step": 60
+            }
+          ]
+        },
+        "plotOptions": {
+          "legend": {
+            "position": "bottom",
+            "show": true
+          },
+          "xAxis": {
+            "type": "datetime"
+          },
+          "yAxis": [
+            {
+              "type": "linear"
+            }
+          ],
+          "style": {
+            "lineOptions": {
+              "filled": true,
+              "stacked": true,
+              "width": 2,
+              "pattern": "solid",
+              "spline": false
+            },
+            "numberOptions": {
+              "sparkline": false
+            },
+            "pieOptions": {
+              "innerSize": "50%"
+            },
+            "barOptions": {},
+            "gaugeOptions": {}
+          }
+        }
+      }
+    }
+  ]
+}

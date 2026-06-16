@@ -39,7 +39,7 @@ Amazon Managed Grafana は、Amazon CloudWatch、Amazon OpenSearch Service、AWS
 ## プライベート VPC にあるワークロードのデータソースを Amazon Managed Grafana に安全に接続するにはどうすればよいですか？
 
 [VPC 内のプライベートデータソース](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-configure-vpc.html)は、AWS PrivateLink を通じて Amazon Managed Grafana に接続でき、トラフィックを安全に保つことができます。
-[VPC エンドポイント](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-configure-nac.html)からの Amazon Managed Grafana サービスへのアクセス制御は、[Amazon VPC エンドポイント](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/aws-privatelink/what-are-vpc-endpoints.html)に [IAM リソースポリシー](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/VPC-endpoints.html)を適用することでさらに制限できます。
+[VPC エンドポイント](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/AMG-configure-nac.html)からの Amazon Managed Grafana サービスへのアクセス制御は、[Amazon VPC エンドポイント](https://docs.aws.amazon.com/vpc/latest/privatelink/concepts.html)に [IAM リソースポリシー](https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/VPC-endpoints.html)を適用することでさらに制限できます。
 
 
 

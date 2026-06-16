@@ -25,13 +25,13 @@
 
 GitOps는 배포 구성의 진실의 원천(source of truth)으로 Git를 사용하는 소프트웨어 개발 및 운영 방법론입니다. 애플리케이션이나 인프라의 원하는 상태를 Git 저장소에 유지하고 Git 기반 워크플로우를 사용하여 변경 사항을 관리하고 배포하는 것을 포함합니다. GitOps는 전체 시스템이 Git 저장소에서 선언적으로 설명되도록 애플리케이션 및 인프라 배포를 관리하는 방법입니다. 버전 제어, 불변 아티팩트 및 자동화의 모범 사례를 활용하여 여러 Kubernetes 클러스터의 상태를 관리할 수 있는 운영 모델을 제공합니다.
 
-Flux는 Kubernetes에서 애플리케이션 배포를 자동화하는 GitOps 도구입니다. Git 저장소의 상태를 지속적으로 모니터링하고 클러스터에 변경 사항을 적용합니다. Flux는 GitHub, [GitLab](https://dzone.com/articles/auto-deploy-spring-boot-app-using-gitlab-cicd/), Bitbucket과 같은 다양한 Git 제공자와 통합됩니다. 저장소에 변경이 이루어지면 Flux가 자동으로 이를 감지하고 클러스터를 업데이트합니다.
+Flux는 Kubernetes에서 애플리케이션 배포를 자동화하는 GitOps 도구입니다. Git 저장소의 상태를 지속적으로 모니터링하고 클러스터에 변경 사항을 적용합니다. Flux는 GitHub, [GitLab](https://dzone.com/articles/auto-deploy-spring-boot-app-using-gitlab-cicd), Bitbucket과 같은 다양한 Git 제공자와 통합됩니다. 저장소에 변경이 이루어지면 Flux가 자동으로 이를 감지하고 클러스터를 업데이트합니다.
 
 ### Flux 사용의 장점
 
 * **자동화된 배포**: Flux는 배포 프로세스를 자동화하여 수동 오류를 줄이고 개발자가 다른 작업에 집중할 수 있게 합니다.
 * **Git 기반 워크플로우**: Flux는 Git를 진실의 원천으로 활용하여 변경 사항을 추적하고 되돌리기가 쉽습니다.
-* **선언적 구성**: Flux는 [Kubernetes](https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co/) 매니페스트를 사용하여 클러스터의 원하는 상태를 정의하므로 변경 사항을 관리하고 추적하기가 더 쉽습니다.
+* **선언적 구성**: Flux는 [Kubernetes](https://dzone.com/articles/kubernetes-full-stack-example-with-kong-ingress-co) 매니페스트를 사용하여 클러스터의 원하는 상태를 정의하므로 변경 사항을 관리하고 추적하기가 더 쉽습니다.
 
 ### Flux 채택의 과제
 

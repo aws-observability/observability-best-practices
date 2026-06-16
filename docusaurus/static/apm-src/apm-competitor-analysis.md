@@ -89,7 +89,7 @@ Metrics of success
 
 Appendix: Example Developer Quick Start (suggestion)
 1. Clone sample app:
-   git clone https://github.com/aws-samples/cw-apm-sample-node
+   git clone <!-- Repository no longer available -->
 2. Run the app:
    npm install && node app.js
 3. Send test traffic:

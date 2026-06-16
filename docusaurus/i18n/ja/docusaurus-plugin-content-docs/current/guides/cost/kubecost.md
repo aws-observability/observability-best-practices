@@ -87,7 +87,7 @@ idle_cost = sum(node_cost) - (cpu_allocation_cost + ram_allocation_cost + gpu_al
 
 ### ネットワークコスト
 
-Kubecost は、ワークロードが生成するネットワーク転送コストを、ベストエフォートで割り当てます。ネットワークコストを正確に判断するには、[AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations) と [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration) を組み合わせて使用します。
+Kubecost は、ワークロードが生成するネットワーク転送コストを、ベストエフォートで割り当てます。ネットワークコストを正確に判断するには、[AWS Cloud Integration](https://docs.kubecost.com/install-and-configure/install/cloud-integration/aws-cloud-integrations/aws-cloud-integrations) と [Network costs daemonset](https://docs.kubecost.com/install-and-configure/advanced-configuration/network-costs-configuration) を組み合わせて使用します。
 
 クラスターの潜在能力を最大限に活用するためには、効率性スコアとアイドルコストを考慮してワークロードを微調整する必要があります。これは、次のトピックであるクラスターのライトサイジングにつながります。
 
@@ -161,7 +161,7 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 ### Kubecost UI へのアクセス
 
 Kubecost は、kubectl port-forward、Ingress、またはロードバランサーを通じてアクセスできる Web ダッシュボードを提供しています。
-Kubecost のエンタープライズバージョンでは、[SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc) を使用してダッシュボードへのアクセスを制限し、様々なレベルのアクセス権を提供することもできます。
+Kubecost のエンタープライズバージョンでは、[SSO/SAML](https://docs.kubecost.com/install-and-configure/advanced-configuration/user-management-oidc/user-management-oidc) を使用してダッシュボードへのアクセスを制限し、様々なレベルのアクセス権を提供することもできます。
 例えば、チームの表示を担当する製品のみに制限することができます。
 
 AWS 環境では、[AWS Load Balancer Controller](https://docs.aws.amazon.com/ja_jp/eks/latest/userguide/aws-load-balancer-controller.html) を使用して Kubecost を公開し、認証、認可、ユーザー管理に [Amazon Cognito](https://aws.amazon.com/jp/cognito/) を使用することを検討してください。

@@ -35,7 +35,7 @@ Amazon Managed Service for Prometheus は、完全マネージド型の Promethe
 これを使用して、本番環境の EKS クラスターのトラブルシューティング時にメトリクスを理解できるようにします。
 Amazon EKS クラスターのトラブルシューティング時に、収集されたメトリクスの重要性をより深く理解できるように説明していきます。
 
-まず、[ADOT コレクターをセットアップして、Amazon EKS クラスターから Amazon Manager Service for Prometheus にメトリクスを収集](https://aws.amazon.com/jp/blogs/news/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)します。
+まず、[ADOT コレクターをセットアップして、Amazon EKS クラスターから Amazon Manager Service for Prometheus にメトリクスを収集](https://aws.amazon.com/jp/blogs/news/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry)します。
 このセットアップでは、EKS ADOT アドオンを使用します。これにより、EKS クラスターの起動後いつでも ADOT をアドオンとして有効にすることができます。
 ADOT アドオンには、最新のセキュリティパッチとバグ修正が含まれており、Amazon EKS で動作することが AWS によって検証されています。
 このセットアップでは、EKS クラスターに ADOT アドオンをインストールし、クラスターからメトリクスを収集する方法を説明します。

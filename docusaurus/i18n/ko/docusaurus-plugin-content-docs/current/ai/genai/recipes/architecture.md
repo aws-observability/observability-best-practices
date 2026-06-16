@@ -493,7 +493,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 ### 관련 패턴
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
-- [Observability Best Practices](https://aws.amazon.com/blogs/mt/observability-best-practices/)
+- [Observability Best Practices](https://aws.amazon.com/blogs/mt/best-practices-implementing-observability-with-aws/)
 - [Multi-Cloud Architecture Patterns](https://aws.amazon.com/blogs/architecture/)
 
 ---

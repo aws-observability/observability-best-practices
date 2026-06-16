@@ -59,7 +59,7 @@ You can also add Conditions to the Control Tower roles [to further restrict acce
 
 ## Protect your data with AWS Backup
 
-The Control Tower [AWS Backup integration](https://docs.aws.amazon.com/controltower/latest/userguide/backup.html/) can help you set up a best practice backup solution with a backup vault in each member account, a central vault in a shared account and some standard backup policies (hourly, weekly, daily, monthly). Backup can be enabled at the OU level and individual resources can be tagged to target them for the relevant backup schedule. 
+The Control Tower [AWS Backup integration](https://docs.aws.amazon.com/controltower/latest/userguide/backup.html) can help you set up a best practice backup solution with a backup vault in each member account, a central vault in a shared account and some standard backup policies (hourly, weekly, daily, monthly). Backup can be enabled at the OU level and individual resources can be tagged to target them for the relevant backup schedule. 
 
 You can deploy additional backup plans to accounts as required, using your Control Tower customization method of choice ([AFC](https://docs.aws.amazon.com/controltower/latest/userguide/af-customization-page.html), [CfCT](https://docs.aws.amazon.com/controltower/latest/userguide/cfct-overview.html), [AFT](https://docs.aws.amazon.com/controltower/latest/userguide/aft-overview.html), [StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html)). These can reuse the [aws-controltower-BackupRole](https://docs.aws.amazon.com/controltower/latest/userguide/backup-resources.html) role or you can create new roles as needed. 
 

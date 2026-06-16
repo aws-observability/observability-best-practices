@@ -268,7 +268,7 @@ Below you can find details about the resources created by the CloudFormation tem
 
 The following walkthrough will use a delegated administrator account for CloudFormation to deploy a StackSet with [service-managed permissions](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/stacksets-orgs-associate-stackset-with-org.html) to deploy the AWS Organization compatible resource data sync.
 
-1. Download the [Sample CloudFormation template for organizational resource data syncs](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/patch-reporting/organizational-resource-data-sync.yaml) to your local machine.
+1. Download the [Sample CloudFormation template for organizational resource data syncs](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/patch-reporting/organization-resource-data-sync.yaml) to your local machine.
 1. In the delegated administrator account for CloudFormation, navigate to the [AWS CloudFormation console](https://console.aws.amazon.com/cloudformation/home).
 1. In left navigation pane, choose **StackSets**, and then choose **Create StackSet**.
 1. On the **Choose a template** page, perform the following steps:

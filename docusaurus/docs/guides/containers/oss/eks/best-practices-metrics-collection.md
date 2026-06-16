@@ -127,7 +127,7 @@ config: |
           exporters: [logging, prometheusremotewrite]
 ```
 
-A complete best practices collector configuration, ADOT pipeline configuration and Prometheus scrape configuration can be found here as [a Helm Chart in the Observability Accelerator](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml).
+A complete best practices collector configuration, ADOT pipeline configuration and Prometheus scrape configuration can be found here as [a Helm Chart in the Observability Accelerator](https://github.com/aws-observability/terraform-aws-observability-accelerator).
 
 
 ### Destination: Amazon Managed Service for Prometheus
@@ -144,7 +144,7 @@ The ADOT collector pipeline utilizes Prometheus Remote Write capabilities to exp
         loglevel: warn
 ```
 
-A complete best practices collector configuration, ADOT pipeline configuration and Prometheus scrape configuration can be found here as [a Helm Chart in the Observability Accelerator](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/modules/eks-monitoring/otel-config/templates/opentelemetrycollector.yaml).
+A complete best practices collector configuration, ADOT pipeline configuration and Prometheus scrape configuration can be found here as [a Helm Chart in the Observability Accelerator](https://github.com/aws-observability/terraform-aws-observability-accelerator).
 
 Best practices on AMP configuration and usage is [here](https://aws-observability.github.io/observability-best-practices/recipes/amp/).
 
@@ -264,7 +264,7 @@ Kube State Metrics and Prometheus node exporter gathers metric statistics on the
 
 [https://aws.amazon.com/blogs/containers/](https://aws.amazon.com/blogs/containers/)
 
-[https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)
+[https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-from-amazon-ecs-using-aws-distro-for-opentelemetry-with-dynamic-service-discovery/](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-from-amazon-ecs-using-aws-distro-for-opentelemetry-with-dynamic-service-discovery/)
 
 [https://aws.amazon.com/blogs/containers/](https://aws.amazon.com/blogs/containers/)
 

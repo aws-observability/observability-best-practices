@@ -6,7 +6,7 @@ sidebar_position: 4
 
 This section contains a collection of samples of policy examples when using Systems Manager just-in-time node access (JITNA). The samples are designed to educate AWS customers on how to implement Cedar policies to permit or forbid automatic access to just-in-time node session requests.
 
-For more information on the schema for just-in-time node access, see [Statement structure and built-in operators for auto-approval and deny-access policies](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html). Learn more about authoring Cedar policies in the [Cedar playground](https://www.cedarpolicy.com/en/playground).
+For more information on the schema for just-in-time node access, see [Statement structure and built-in operators for auto-approval and deny-access policies](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html). Learn more about authoring Cedar policies in the [Cedar playground](https://www.cedarpolicy.com/).
 
 Please keep in mind that this is sample code and should be thoroughly tested and validated in a development environment prior to any usage in a production environment.
 

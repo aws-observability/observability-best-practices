@@ -22,7 +22,7 @@ Amazon EKS 관리형 컨트롤 플레인을 모니터링하는 것은 EKS 클러
 
 Prometheus로 [Amazon Elastic Kubernetes Service(Amazon EKS)](https://aws.amazon.com/eks) API Server를 문제 해결하는 데 도움이 되는 AMP를 사용한 스타터 대시보드를 설정하겠습니다. 이를 사용하여 프로덕션 EKS 클러스터를 문제 해결하면서 메트릭을 이해하는 데 도움을 드리겠습니다. 수집된 메트릭에 대해 더 깊이 초점을 맞추어 Amazon EKS 클러스터 문제 해결 시 그 중요성을 이해하겠습니다.
 
-먼저 [Amazon EKS 클러스터에서 Amazon Managed Service for Prometheus로 메트릭을 수집하기 위한 ADOT Collector를 설정](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/)합니다. 이 설정에서는 EKS ADOT 애드온을 사용하며, 이를 통해 EKS 클러스터가 가동된 후 언제든지 ADOT를 애드온으로 활성화할 수 있습니다. ADOT 애드온에는 최신 보안 패치와 버그 수정이 포함되어 있으며 Amazon EKS와 함께 작동하도록 AWS에서 검증되었습니다. 이 설정은 EKS 클러스터에 ADOT 애드온을 설치하고 클러스터에서 메트릭을 수집하는 방법을 보여줍니다.
+먼저 [Amazon EKS 클러스터에서 Amazon Managed Service for Prometheus로 메트릭을 수집하기 위한 ADOT Collector를 설정](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-from-amazon-ecs-using-aws-distro-for-opentelemetry-with-dynamic-service-discovery/)합니다. 이 설정에서는 EKS ADOT 애드온을 사용하며, 이를 통해 EKS 클러스터가 가동된 후 언제든지 ADOT를 애드온으로 활성화할 수 있습니다. ADOT 애드온에는 최신 보안 패치와 버그 수정이 포함되어 있으며 Amazon EKS와 함께 작동하도록 AWS에서 검증되었습니다. 이 설정은 EKS 클러스터에 ADOT 애드온을 설치하고 클러스터에서 메트릭을 수집하는 방법을 보여줍니다.
 
 다음으로, 첫 번째 단계에서 설정한 AMP를 데이터 소스로 사용하여 [메트릭을 시각화하기 위한 Amazon Managed Grafana 작업 공간을 설정](https://aws.amazon.com/blogs/mt/amazon-managed-grafana-getting-started/)합니다. 마지막으로 [API 문제 해결 대시보드](https://github.com/RiskyAdventure/Troubleshooting-Dashboards/blob/main/api-troubleshooter.json)를 다운로드하고, Amazon Managed Grafana로 이동하여 추가 문제 해결을 위해 메트릭을 시각화하는 API 문제 해결 대시보드 JSON을 업로드합니다.
 

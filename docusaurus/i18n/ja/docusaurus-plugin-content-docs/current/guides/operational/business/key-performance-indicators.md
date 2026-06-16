@@ -44,7 +44,7 @@ Service Level Indicator (SLI)、Service Level Objective (SLO)、Service Level Ag
 |BX	|可用性	|テンプレートの M2 を参照	|ホワイトペーパー: [Avaiability and Beyond (可用性の測定)](https://docs.aws.amazon.com/ja_jp/whitepapers/latest/availability-and-beyond-improving-resilience/measuring-availability.html)	|
 |BX	|事業継続計画 (BCP)	|定義された RTO/RPO に対する Amazon Resilience Hub (ARH) のレジリエンススコア	|ドキュメント: [ARH ユーザーガイド (レジリエンススコアの理解)](https://docs.aws.amazon.com/ja_jp/resilience-hub/latest/userguide/resil-score.html)	|
 |SecX	|コンプライアンス (非準拠)	|テンプレートの M3 を参照	|ドキュメント: [AWS Control Tower ユーザーガイド (コンソールでのコンプライアンスステータス)](https://docs.aws.amazon.com/ja_jp/controltower/latest/userguide/compliance-statuses.html)	|
-|DevX	|アジリティ	|テンプレートの M4 を参照	|ドキュメント: [AWS での DevOps モニタリングダッシュボード (DevOps メトリクスリスト)](https://docs.aws.amazon.com/ja_jp/solutions/latest/devops-monitoring-dashboard-on-aws/devops-metrics-list.html)	|
+|DevX	|アジリティ	|テンプレートの M4 を参照	|ドキュメント: [AWS での DevOps モニタリングダッシュボード (DevOps メトリクスリスト)](https://docs.aws.amazon.com/solutions/latest/devops-monitoring-dashboard-on-aws/devops-metrics-list.html)	|
 |OpsX	|キャパシティ (クォータ)	|テンプレートの M5 を参照	|ドキュメント: [Amazon CloudWatch ユーザーガイド (サービスクォータの可視化とアラームの設定)](https://docs.aws.amazon.com/ja_jp/AmazonCloudWatch/latest/monitoring/CloudWatch-Quotas-Visualize-Alarms.html)	|
 |OpsX	|予算の異常	|	|ドキュメント:<br/> 1. [AWS Billing and Cost Management (AWS Cost Anomaly Detection)](https://docs.aws.amazon.com/ja_jp/cost-management/latest/userguide/getting-started-ad.html) <br/> 2. [AWS Budgets](https://aws.amazon.com/jp/aws-cost-management/aws-budgets/)	|
 

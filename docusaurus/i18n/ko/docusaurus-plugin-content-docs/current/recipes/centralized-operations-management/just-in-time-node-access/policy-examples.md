@@ -6,7 +6,7 @@ sidebar_position: 4
 
 이 섹션에서는 Systems Manager just-in-time 노드 접근(JITNA) 사용 시 정책 예제 모음을 제공합니다. 이 샘플들은 AWS 고객이 just-in-time 노드 세션 요청에 대한 자동 접근을 허용하거나 거부하는 Cedar 정책을 구현하는 방법을 교육하기 위해 설계되었습니다.
 
-just-in-time 노드 접근의 스키마에 대한 자세한 내용은 [자동 승인 및 거부 접근 정책의 명령문 구조 및 내장 연산자](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html)를 참조하세요. [Cedar playground](https://www.cedarpolicy.com/en/playground)에서 Cedar 정책 작성에 대해 자세히 알아보세요.
+just-in-time 노드 접근의 스키마에 대한 자세한 내용은 [자동 승인 및 거부 접근 정책의 명령문 구조 및 내장 연산자](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html)를 참조하세요. [Cedar playground](https://www.cedarpolicy.com/)에서 Cedar 정책 작성에 대해 자세히 알아보세요.
 
 이것은 샘플 코드이며, 프로덕션 환경에서 사용하기 전에 개발 환경에서 철저하게 테스트하고 검증해야 합니다.
 

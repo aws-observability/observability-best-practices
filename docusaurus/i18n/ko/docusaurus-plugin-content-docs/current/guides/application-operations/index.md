@@ -123,7 +123,7 @@ Observability를 처음 접하거나 metrics, 알람을 설정하거나 Observab
 
 1. 애플리케이션 이름, 환경, 비즈니스 단위, 비용 센터에 초점을 맞춘 포괄적인 태깅 전략을 개발하는 것으로 시작하세요. [태깅 전략 구축](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/building-your-tagging-strategy.html)
 2. 이러한 태그를 모든 관련 리소스에 체계적으로 적용하여 프로비저닝 프로세스의 일부로 만드세요. AWS Resource Groups & Tag Editor를 사용하여 태그를 기반으로 리소스를 생성, 관리, 검색할 수 있습니다. 계정 수준에서 여러 AWS 서비스의 태그를 관리하는 중앙 집중식 방법을 제공합니다. [Resource Groups and Tagging for AWS](https://aws.amazon.com/blogs/aws/resource-groups-and-tagging/)
-3. 이러한 태그를 기반으로 리소스 그룹을 생성합니다. 예를 들어 모든 프로덕션 POS 시스템 리소스를 함께 그룹화합니다. AWS Service Catalog AppRegistry를 사용하여 POS 및 재고 관리와 같은 시스템의 모든 구성 요소와 상호 의존성을 포함하는 애플리케이션을 공식적으로 정의합니다. [AWS Service Catalog AppRegistry의 핵심 개념](https://docs.aws.amazon.com/serviwecatalog/latest/arguide/overview-appreg.html#ar-user-tags)
+3. 이러한 태그를 기반으로 리소스 그룹을 생성합니다. 예를 들어 모든 프로덕션 POS 시스템 리소스를 함께 그룹화합니다. AWS Service Catalog AppRegistry를 사용하여 POS 및 재고 관리와 같은 시스템의 모든 구성 요소와 상호 의존성을 포함하는 애플리케이션을 공식적으로 정의합니다. [AWS Service Catalog AppRegistry의 핵심 개념](https://docs.aws.amazon.com/servicecatalog/latest/arguide/overview-appreg.html#ar-user-tags)
 4. myApplications 대시보드를 활용하여 소매 애플리케이션의 통합된 뷰를 확보하고, 사이버 위크 세일과 같은 중요 이벤트 동안 핵심 metrics를 모니터링합니다. 애플리케이션 생성 마법사를 사용하면 콘솔의 단일 뷰에서 AWS 계정의 리소스를 연결하여 애플리케이션을 더 쉽게 생성할 수 있습니다. 생성된 애플리케이션은 myApplications에 자동으로 표시되며, 애플리케이션에 대한 조치를 취할 수 있습니다. [AWS Management Console의 myApplications로 애플리케이션 리소스 관리 간소화](https://aws.amazon.com/blogs/aws/new-myapplications-in-the-aws-management-console-simplifies-managing-your-application-resources/)
 
 ### **추가 읽기 자료:**

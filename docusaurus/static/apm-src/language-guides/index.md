@@ -431,7 +431,7 @@ OTEL_TRACES_SAMPLER="xray"
 ## Support & Resources
 
 ### **Documentation**
-- [AWS Application Signals Documentation](https://docs.aws.amazon.com/cloudwatch/latest/monitoring/CloudWatch-Application-Signals.html)
+- [AWS Application Signals Documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html)
 - [ADOT Documentation](https://aws-otel.github.io/docs/introduction)
 - [OpenTelemetry Specification](https://opentelemetry.io/docs/specs/otel/)
 

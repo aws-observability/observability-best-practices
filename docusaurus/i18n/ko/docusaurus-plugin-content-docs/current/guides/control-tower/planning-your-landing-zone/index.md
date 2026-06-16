@@ -59,7 +59,7 @@ Control Tower는 AWS 서비스가 맡을 수 있는 멤버 계정에 [다양한 
 
 ## AWS Backup으로 데이터 보호
 
-Control Tower [AWS Backup 통합](https://docs.aws.amazon.com/controltower/latest/userguide/backup.html/)은 각 멤버 계정에 백업 볼트, 공유 계정에 중앙 볼트, 표준 백업 정책(시간별, 주별, 일별, 월별)을 포함하는 모범 사례 백업 솔루션을 구성하는 데 도움이 됩니다. 백업은 OU 수준에서 활성화할 수 있으며 개별 리소스에 태그를 지정하여 해당 백업 일정의 대상으로 설정할 수 있습니다.
+Control Tower [AWS Backup 통합](https://docs.aws.amazon.com/controltower/latest/userguide/backup.html)은 각 멤버 계정에 백업 볼트, 공유 계정에 중앙 볼트, 표준 백업 정책(시간별, 주별, 일별, 월별)을 포함하는 모범 사례 백업 솔루션을 구성하는 데 도움이 됩니다. 백업은 OU 수준에서 활성화할 수 있으며 개별 리소스에 태그를 지정하여 해당 백업 일정의 대상으로 설정할 수 있습니다.
 
 선택한 Control Tower 사용자 지정 방법([AFC](https://docs.aws.amazon.com/controltower/latest/userguide/af-customization-page.html), [CfCT](https://docs.aws.amazon.com/controltower/latest/userguide/cfct-overview.html), [AFT](https://docs.aws.amazon.com/controltower/latest/userguide/aft-overview.html), [StackSets](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/what-is-cfnstacksets.html))을 사용하여 필요에 따라 계정에 추가 백업 계획을 배포할 수 있습니다. 이러한 계획은 [aws-controltower-BackupRole](https://docs.aws.amazon.com/controltower/latest/userguide/backup-resources.html) 역할을 재사용하거나 필요에 따라 새 역할을 생성할 수 있습니다.
 

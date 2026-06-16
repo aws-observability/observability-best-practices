@@ -27,7 +27,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Tokens"
             }
@@ -73,7 +73,7 @@
       "width": 6,
       "height": 4,
       "properties": {
-        "title": "Sessions",
+        "title": "Sessions (VS Code)",
         "view": "number",
         "region": "us-east-1",
         "data": {
@@ -82,7 +82,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Sessions"
             }
@@ -137,7 +137,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "count(group by (\"@resource.user.email\")({\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+              "query": "count(group by (\"@resource.user.email\")({\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60,
               "label": "Users"
             }
@@ -192,7 +192,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Tool Calls"
             }
@@ -258,7 +258,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Tokens"
             }
@@ -313,7 +313,7 @@
               "id": "input",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Input"
             },
@@ -321,7 +321,7 @@
               "id": "output",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Output"
             }
@@ -376,7 +376,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, histogram_sum(sum by (\"gen_ai.request.model\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+              "query": "topk(500, histogram_sum(sum by (\"gen_ai.request.model\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
               "step": 60
             }
           ]
@@ -430,7 +430,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, histogram_sum(sum by (\"@resource.user.email\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+              "query": "topk(500, histogram_sum(sum by (\"@resource.user.email\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
               "step": 60
             }
           ]
@@ -495,7 +495,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.5, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p50"
             },
@@ -503,7 +503,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.9, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p90"
             },
@@ -511,7 +511,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.99, {\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p99"
             }
@@ -566,7 +566,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.5, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p50"
             },
@@ -574,7 +574,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.9, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p90"
             },
@@ -582,7 +582,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.99, {\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p99"
             }
@@ -637,7 +637,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, sum by (\"gen_ai.request.model\")({\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"}))",
+              "query": "histogram_quantile(0.9, sum by (\"gen_ai.request.model\")({\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60
             }
           ]
@@ -682,7 +682,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "Tool Call Latency (p50/p90/p99 ms)",
+        "title": "Tool Call Latency (p50/p90/p99 s)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -691,7 +691,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.5, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p50"
             },
@@ -699,7 +699,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.9, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p90"
             },
@@ -707,7 +707,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.99, {\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p99"
             }
@@ -753,7 +753,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "Agent Invocation Duration (p90 s)",
+        "title": "Agent Invocation Duration (p90 s, VS Code)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -762,7 +762,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"copilot_chat.agent.invocation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.9, {\"copilot_chat.agent.invocation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p90"
             }
@@ -817,7 +817,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"copilot_chat.agent.turn.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "histogram_quantile(0.9, {\"copilot_chat.agent.turn.count\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.agent.turn.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "p90"
             }
@@ -883,7 +883,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, sum by (\"gen_ai.tool.name\")({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+              "query": "topk(500, sum by (\"gen_ai.tool.name\")({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60
             }
           ]
@@ -937,7 +937,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, sum by (success)({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+              "query": "topk(500, sum by (success)({\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60
             }
           ]
@@ -982,7 +982,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "Lines of Code (total)",
+        "title": "Lines of Code (total, VS Code)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -991,7 +991,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.lines_of_code.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.lines_of_code.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Lines"
             }
@@ -1037,7 +1037,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "Edit Acceptance Decisions (total)",
+        "title": "Edit Acceptance Decisions (total, VS Code)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -1046,7 +1046,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.edit.acceptance.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.edit.acceptance.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Edits"
             }
@@ -1092,7 +1092,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "User Feedback (total)",
+        "title": "User Feedback (total, VS Code)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -1101,7 +1101,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.user.feedback.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.user.feedback.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "Feedback"
             }
@@ -1147,7 +1147,7 @@
       "width": 8,
       "height": 6,
       "properties": {
-        "title": "Pull Requests",
+        "title": "Pull Requests (VS Code)",
         "view": "line",
         "region": "us-east-1",
         "data": {
@@ -1156,7 +1156,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "sum({\"copilot_chat.pull_request.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+              "query": "sum({\"copilot_chat.pull_request.count\", \"@resource.service.name\"=~\"copilot.*\"})",
               "step": 60,
               "label": "PRs"
             }
@@ -1222,7 +1222,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, histogram_sum(sum by (\"@resource.department\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+              "query": "topk(500, histogram_sum(sum by (\"@resource.department\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
               "step": 60
             }
           ]
@@ -1276,7 +1276,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, histogram_sum(sum by (\"@resource.team.id\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+              "query": "topk(500, histogram_sum(sum by (\"@resource.team.id\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
               "step": 60
             }
           ]
@@ -1330,7 +1330,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, histogram_sum(sum by (\"@resource.cost_center\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+              "query": "topk(500, histogram_sum(sum by (\"@resource.cost_center\")({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
               "step": 60
             }
           ]
@@ -1384,7 +1384,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "topk(500, sum by (\"@resource.environment\")({\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+              "query": "topk(500, sum by (\"@resource.environment\")({\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60
             }
           ]

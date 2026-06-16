@@ -4,10 +4,19 @@ If your engineering organization uses AI coding agents like [GitHub Copilot](htt
 
 With Amazon CloudWatch OpenTelemetry Protocol (OTLP) in General Availability, metrics ingestion is now possible with bearer token authentication. GitHub Copilot Chat in VS Code emits OpenTelemetry metrics natively, so it can ship them directly to CloudWatch with a single authorization header. No collectors, no sidecars, no IAM credential wiring on developer machines. Connect the signals in minutes and get per-developer attribution, team-level usage analytics, and operational alerting, all queryable with Prometheus Query Language (PromQL).
 
-This recipe walks through the end-to-end setup for GitHub Copilot Chat. It is the companion to the Claude Code and OpenAI Codex recipes and follows the same bearer-token, direct-to-CloudWatch pattern.
+This recipe walks through the end-to-end setup for GitHub Copilot. It is the companion to the Claude Code and OpenAI Codex recipes and follows the same bearer-token, direct-to-CloudWatch pattern.
 
 !!! note
-    Copilot's OpenTelemetry support is evolving. The metric **names** below are taken from the official [VS Code "Monitor agent usage with OpenTelemetry"](https://code.visualstudio.com/docs/copilot/guides/monitoring-agents) guide and the [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai). Some per-metric **breakdown attribute keys** (for example, the label distinguishing accepted vs rejected edits) are not published in the docs at the time of writing — those panels show totals (see [Metrics Copilot emits](#metrics-copilot-emits)). Verify against your installed VS Code/Copilot version with the `console` exporter before relying on specific labels.
+    There are **two** Copilot products that emit OpenTelemetry, and they emit *different* metrics. This recipe and its dashboards cover **both**:
+
+    | | VS Code Copilot Chat extension | GitHub Copilot CLI |
+    | --- | --- | --- |
+    | `service.name` | `copilot-chat` | `github-copilot` |
+    | Tool metric prefix | `copilot_chat.tool.call.*` | `github.copilot.tool.call.*` |
+    | Default OTLP protocol | `http/protobuf` | `http/json` |
+    | Metric breadth | ~20 metrics | 5 metrics (tokens, LLM duration, tool count/duration, agent turns) |
+
+    The dashboards match either product with `@resource.service.name=~"copilot.*"` and union the two tool-metric names. Both share `gen_ai.client.token.usage` and `gen_ai.client.operation.duration` (OTel GenAI semantic conventions). Panels that only the VS Code extension emits (sessions, edits, feedback, lines of code, PRs, time-to-first-token) are labelled **(VS Code)**. Metric names come from the official [VS Code monitoring guide](https://code.visualstudio.com/docs/copilot/guides/monitoring-agents), the GitHub Copilot CLI's own `copilot help monitoring`, and the [OTel GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai). Some per-metric **breakdown attribute keys** (e.g. accepted vs rejected edits) are not published — those panels show totals (see [Metrics Copilot emits](#metrics-copilot-emits)).
 
 ## Bearer token authentication
 
@@ -28,7 +37,7 @@ The setup has three components:
 
 * An AWS account with permissions to create CloudWatch and IAM resources.
 * AWS CLI v2 installed and configured.
-* VS Code with the GitHub Copilot Chat extension, signed in to Copilot.
+* One (or both) Copilot client: VS Code with the GitHub Copilot Chat extension signed in to Copilot, and/or the GitHub Copilot CLI authenticated (`copilot` then `/login`, or a `GITHUB_TOKEN`).
 * A CloudWatch metrics API key (created below).
 
 ## Create a bearer token
@@ -55,9 +64,18 @@ The response includes a `ServiceCredentialSecret` field — this is your bearer 
 
 ## Configure Copilot
 
-Copilot OpenTelemetry is enabled through VS Code settings, while the **authentication header must be supplied through an environment variable** — the VS Code docs state: *"Authentication headers for remote collectors are only configurable through the `OTEL_EXPORTER_OTLP_HEADERS` environment variable."*
+Configure whichever client(s) you use. Both honor `OTEL_RESOURCE_ATTRIBUTES` (for attribution) and `OTEL_EXPORTER_OTLP_HEADERS` (for the bearer token). Replace `<AWS_REGION>` (for example `us-east-1`) and `<YOUR_BEARER_TOKEN>` (the `ServiceCredentialSecret` value) throughout.
 
-In VS Code `settings.json`:
+Set these common environment variables first — define them in the shell that launches the client:
+
+```bash
+export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer <YOUR_BEARER_TOKEN>"
+export OTEL_RESOURCE_ATTRIBUTES="user.id=$(whoami),user.email=${USER_EMAIL},team.id=${TEAM:-engineering},cost_center=${COST_CENTER:-default},department=${DEPARTMENT:-engineering},environment=${ENV:-dev}"
+```
+
+### VS Code Copilot Chat extension
+
+Enable OTel in `settings.json` (the **auth header must come from the environment** — the VS Code docs state: *"Authentication headers for remote collectors are only configurable through the `OTEL_EXPORTER_OTLP_HEADERS` environment variable"*):
 
 ```json
 {
@@ -67,19 +85,23 @@ In VS Code `settings.json`:
 }
 ```
 
-Then set the auth header, attribution, and (optionally) service name in the environment **before launching VS Code** so the Copilot extension inherits them:
+Then launch VS Code from the shell that has the variables set: `code .`. The default OTLP protocol is `http/protobuf`, which the CloudWatch endpoint accepts. `service.name` defaults to `copilot-chat`.
+
+### GitHub Copilot CLI
+
+The CLI is configured entirely through environment variables (run `copilot help monitoring` for the full reference). Setting the endpoint auto-enables OTel:
 
 ```bash
-export OTEL_EXPORTER_OTLP_HEADERS="Authorization=Bearer <YOUR_BEARER_TOKEN>"
-export OTEL_RESOURCE_ATTRIBUTES="user.id=$(whoami),user.email=${USER_EMAIL},team.id=${TEAM:-engineering},cost_center=${COST_CENTER:-default},department=${DEPARTMENT:-engineering},environment=${ENV:-dev}"
-export OTEL_SERVICE_NAME="copilot-chat"   # default; the dashboards filter on this value
-code .
+export OTEL_EXPORTER_OTLP_ENDPOINT="https://monitoring.<AWS_REGION>.amazonaws.com"
+export OTEL_EXPORTER_OTLP_PROTOCOL="http/json"   # CLI default; CloudWatch accepts json and protobuf
+# OTEL_EXPORTER_OTLP_HEADERS + OTEL_RESOURCE_ATTRIBUTES from the common block above
+copilot
 ```
 
-Replace `<AWS_REGION>` with your target Region (for example `us-east-1`) and `<YOUR_BEARER_TOKEN>` with the `ServiceCredentialSecret` value. The default OTLP protocol is `http/protobuf`, which the CloudWatch endpoint accepts.
+`service.name` defaults to `github-copilot`. The CLI emits a smaller metric set (see the table below); the dashboards already account for both naming schemes.
 
 !!! warning
-    Copilot sends **traces, metrics, and events to the same endpoint** — there is no documented metrics-only mode. The CloudWatch metrics endpoint (`/v1/metrics`) ingests the metrics; the trace and log POSTs to that host are simply rejected and dropped, which is harmless but means you will see client-side export errors for the non-metrics signals. If you want to capture traces/logs too, or to cleanly separate signals, run a local OpenTelemetry Collector and route each signal to its matching CloudWatch endpoint instead of pointing Copilot directly at `/v1/metrics`.
+    Both clients send **traces, metrics, and events to the same endpoint** — there is no documented metrics-only mode. The CloudWatch metrics endpoint (`/v1/metrics`) ingests the metrics; the trace and log POSTs to that host are simply rejected and dropped, which is harmless but means you will see client-side export errors for the non-metrics signals. To capture traces/logs too, or to cleanly separate signals, run a local OpenTelemetry Collector and route each signal to its matching CloudWatch endpoint instead of pointing the client directly at `/v1/metrics`.
 
 ### Identity and team attribution
 
@@ -96,35 +118,37 @@ Copilot honors the standard `OTEL_RESOURCE_ATTRIBUTES` environment variable on i
 
 ## Verify metrics are flowing
 
-Open VS Code (launched from the configured shell), start a Copilot Chat session, and send a couple of prompts. Then open [CloudWatch Query Studio](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-PromQL-QueryStudio.html) and type `copilot` or `gen_ai`, or run an instant query such as:
+Start a Copilot session (a VS Code Chat session, or `copilot` in the configured shell) and send a couple of prompts. Then open [CloudWatch Query Studio](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-PromQL-QueryStudio.html) and type `copilot` or `gen_ai`, or run an instant query such as:
 
 ```
-histogram_sum({"gen_ai.client.token.usage", "@resource.service.name"="copilot-chat"})
+histogram_sum({"gen_ai.client.token.usage", "@resource.service.name"=~"copilot.*"})
 ```
 
-If metrics appear, the configuration is correct. If not, confirm the endpoint URL, that `OTEL_EXPORTER_OTLP_HEADERS` is set in the shell that launched VS Code, and that you have completed at least one chat interaction. CloudWatch ingestion can take a few minutes to become queryable.
+If metrics appear, the configuration is correct. If not, confirm the endpoint URL, that `OTEL_EXPORTER_OTLP_HEADERS` is set in the shell that launched the client, and that you have completed at least one interaction. CloudWatch ingestion can take a few minutes to become queryable.
 
 ### Metrics Copilot emits
 
-The dashboards are built on these metrics (names from the VS Code monitoring guide; `gen_ai.*` follow the OTel GenAI semantic conventions).
+The dashboards build on these metrics. The **Source** column shows which client emits each one — the dashboards match both via `@resource.service.name=~"copilot.*"` and union the two tool-metric names.
 
-| Metric | Type | Notes |
-| --- | --- | --- |
-| `gen_ai.client.token.usage` | Histogram | Token counts; attribute `gen_ai.token.type` ∈ `input`, `output`; `gen_ai.request.model`. Query with `histogram_sum(...)`. |
-| `gen_ai.client.operation.duration` | Histogram | LLM API call duration (seconds); `gen_ai.request.model`, `error.type`. |
-| `copilot_chat.tool.call.count` | Counter | Tool invocations; `gen_ai.tool.name`, success. |
-| `copilot_chat.tool.call.duration` | Histogram | Tool execution latency (ms). |
-| `copilot_chat.time_to_first_token` | Histogram | Time to first SSE token (seconds). |
-| `copilot_chat.agent.invocation.duration` | Histogram | Agent end-to-end duration (seconds). |
-| `copilot_chat.agent.turn.count` | Histogram | LLM round-trips per agent invocation. |
-| `copilot_chat.session.count` | Counter | Chat sessions started. |
-| `copilot_chat.lines_of_code.count` | Counter | Lines added or removed by accepted edits.¹ |
-| `copilot_chat.edit.acceptance.count` | Counter | Edit accept/reject decisions.¹ |
-| `copilot_chat.user.feedback.count` | Counter | Thumbs up/down votes.¹ |
-| `copilot_chat.user.action.count` | Counter | Engagement actions (copy, insert, apply, followup).¹ |
-| `copilot_chat.pull_request.count` | Counter | Pull requests created via the CLI agent. |
+| Metric | Type | Source | Notes |
+| --- | --- | --- | --- |
+| `gen_ai.client.token.usage` | Histogram | both | Token counts; `gen_ai.token.type` ∈ `input`, `output`; `gen_ai.request.model`. Query with `histogram_sum(...)`. |
+| `gen_ai.client.operation.duration` | Histogram | both | LLM call duration (seconds); `gen_ai.request.model`, `error.type`. |
+| `copilot_chat.tool.call.count` / `github.copilot.tool.call.count` | Counter | VS Code / CLI | Tool invocations; `gen_ai.tool.name`, success. |
+| `copilot_chat.tool.call.duration` / `github.copilot.tool.call.duration` | Histogram | VS Code / CLI | Tool execution latency. |
+| `copilot_chat.agent.turn.count` / `github.copilot.agent.turn.count` | Histogram | VS Code / CLI | LLM round-trips per agent invocation. |
+| `copilot_chat.time_to_first_token` | Histogram | VS Code | Time to first SSE token (seconds). |
+| `copilot_chat.agent.invocation.duration` | Histogram | VS Code | Agent end-to-end duration (seconds). |
+| `copilot_chat.session.count` | Counter | VS Code | Chat sessions started. |
+| `copilot_chat.lines_of_code.count` | Counter | VS Code | Lines added or removed by accepted edits.¹ |
+| `copilot_chat.edit.acceptance.count` | Counter | VS Code | Edit accept/reject decisions.¹ |
+| `copilot_chat.user.feedback.count` | Counter | VS Code | Thumbs up/down votes.¹ |
+| `copilot_chat.user.action.count` | Counter | VS Code | Engagement actions (copy, insert, apply, followup).¹ |
+| `copilot_chat.pull_request.count` | Counter | VS Code | Pull requests created. |
 
-¹ The VS Code docs describe these breakdowns (added/removed, accepted/rejected, up/down) but do **not** publish the attribute keys/values that carry them. The dashboards therefore chart **totals** for these metrics; add the breakdown grouping once you confirm the label names from a real Copilot emission (use `"github.copilot.chat.otel.exporterType": "console"` to inspect them). The page confirms these filtering attributes exist across metrics: `gen_ai.request.model`, `gen_ai.provider.name`, `gen_ai.tool.name`, `copilot_chat.edit.source`, `error.type`.
+The **GitHub Copilot CLI emits only the first three rows** (`gen_ai.*` plus `github.copilot.tool.call.*` and `github.copilot.agent.turn.count`) — verified via `copilot help monitoring`. The remaining `copilot_chat.*` metrics are VS Code-extension-only, and their panels are labelled **(VS Code)** on the dashboards.
+
+¹ The VS Code docs describe these breakdowns (added/removed, accepted/rejected, up/down) but do **not** publish the attribute keys/values that carry them. The dashboards therefore chart **totals** for these metrics; add the breakdown grouping once you confirm the label names from a real emission (set `"github.copilot.chat.otel.exporterType": "console"` in VS Code, or `COPILOT_OTEL_FILE_EXPORTER_PATH` for the CLI, to inspect them). Confirmed cross-metric filter attributes: `gen_ai.request.model`, `gen_ai.provider.name`, `gen_ai.tool.name`, `copilot_chat.edit.source`, `error.type`.
 
 !!! note
     Like Claude Code on Amazon Bedrock, Copilot does **not** emit a dollar-cost metric. The dashboards report token consumption; derive cost downstream from token counts and your plan's pricing if needed.

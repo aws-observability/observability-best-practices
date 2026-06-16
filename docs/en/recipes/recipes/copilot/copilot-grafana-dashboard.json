@@ -91,7 +91,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Tokens"
         }
@@ -141,7 +141,7 @@
         },
         "textMode": "auto"
       },
-      "title": "Sessions",
+      "title": "Sessions (VS Code)",
       "type": "stat",
       "targets": [
         {
@@ -149,7 +149,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Sessions"
         }
@@ -207,7 +207,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "count(count by (\"@resource.user.email\")({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+          "expr": "count(count by (\"@resource.user.email\")({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "Users"
         }
@@ -265,7 +265,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Tool Calls"
         }
@@ -348,7 +348,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Tokens"
         }
@@ -415,7 +415,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Input"
         },
@@ -424,7 +424,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "B",
           "legendFormat": "Output"
         }
@@ -491,9 +491,9 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, histogram_sum(sum by (\"gen_ai.request.model\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+          "expr": "topk(10, histogram_sum(sum by (\"gen_ai.request.model\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
           "refId": "A",
-          "legendFormat": "{{@resource.gen_ai.request.model}}"
+          "legendFormat": "{{gen_ai.request.model}}"
         }
       ]
     },
@@ -558,7 +558,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, histogram_sum(sum by (\"@resource.user.email\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+          "expr": "topk(10, histogram_sum(sum by (\"@resource.user.email\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
           "refId": "A",
           "legendFormat": "{{@resource.user.email}}"
         }
@@ -642,7 +642,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.5, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -651,7 +651,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.9, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -660,7 +660,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.99, {__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -728,7 +728,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.5, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -737,7 +737,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -746,7 +746,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.99, {__name__=\"copilot_chat.time_to_first_token\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -814,7 +814,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, sum by (\"gen_ai.request.model\")({__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=\"copilot-chat\"}))",
+          "expr": "histogram_quantile(0.9, sum by (\"gen_ai.request.model\")({__name__=\"gen_ai.client.operation.duration\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "{{gen_ai.request.model}}"
         }
@@ -882,7 +882,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.5, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -891,7 +891,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -900,7 +900,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.99, {__name__=\"copilot_chat.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -960,7 +960,7 @@
           "mode": "single"
         }
       },
-      "title": "Agent Invocation Duration (s)",
+      "title": "Agent Invocation Duration (s, VS Code)",
       "type": "timeseries",
       "targets": [
         {
@@ -968,7 +968,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.agent.invocation.duration\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.agent.invocation.duration\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "p90"
         }
@@ -1035,7 +1035,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.agent.turn.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "histogram_quantile(0.9, {__name__=\"copilot_chat.agent.turn.count\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.agent.turn.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "p90"
         }
@@ -1115,7 +1115,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, sum by (\"gen_ai.tool.name\")({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+          "expr": "topk(10, sum by (\"gen_ai.tool.name\")({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "{{gen_ai.tool.name}}"
         }
@@ -1182,7 +1182,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, sum by (success)({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+          "expr": "topk(10, sum by (success)({__name__=\"copilot_chat.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"} or {__name__=\"github.copilot.tool.call.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "{{success}}"
         }
@@ -1241,7 +1241,7 @@
           "mode": "single"
         }
       },
-      "title": "Lines of Code (total)",
+      "title": "Lines of Code (total, VS Code)",
       "type": "timeseries",
       "targets": [
         {
@@ -1249,7 +1249,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.lines_of_code.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.lines_of_code.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Lines"
         }
@@ -1308,7 +1308,7 @@
           "mode": "single"
         }
       },
-      "title": "Edit Acceptance Decisions (total)",
+      "title": "Edit Acceptance Decisions (total, VS Code)",
       "type": "timeseries",
       "targets": [
         {
@@ -1316,7 +1316,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.edit.acceptance.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.edit.acceptance.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Edits"
         }
@@ -1375,7 +1375,7 @@
           "mode": "single"
         }
       },
-      "title": "User Feedback (total)",
+      "title": "User Feedback (total, VS Code)",
       "type": "timeseries",
       "targets": [
         {
@@ -1383,7 +1383,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.user.feedback.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.user.feedback.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "Feedback"
         }
@@ -1442,7 +1442,7 @@
           "mode": "single"
         }
       },
-      "title": "Pull Requests",
+      "title": "Pull Requests (VS Code)",
       "type": "timeseries",
       "targets": [
         {
@@ -1450,7 +1450,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "sum({__name__=\"copilot_chat.pull_request.count\", \"@resource.service.name\"=\"copilot-chat\"})",
+          "expr": "sum({__name__=\"copilot_chat.pull_request.count\", \"@resource.service.name\"=~\"copilot.*\"})",
           "refId": "A",
           "legendFormat": "PRs"
         }
@@ -1533,7 +1533,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, histogram_sum(sum by (\"@resource.department\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+          "expr": "topk(10, histogram_sum(sum by (\"@resource.department\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
           "refId": "A",
           "legendFormat": "{{@resource.department}}"
         }
@@ -1600,7 +1600,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, histogram_sum(sum by (\"@resource.team.id\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+          "expr": "topk(10, histogram_sum(sum by (\"@resource.team.id\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
           "refId": "A",
           "legendFormat": "{{@resource.team.id}}"
         }
@@ -1667,7 +1667,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, histogram_sum(sum by (\"@resource.cost_center\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=\"copilot-chat\"})))",
+          "expr": "topk(10, histogram_sum(sum by (\"@resource.cost_center\")({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})))",
           "refId": "A",
           "legendFormat": "{{@resource.cost_center}}"
         }
@@ -1734,7 +1734,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "topk(10, sum by (\"@resource.environment\")({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=\"copilot-chat\"}))",
+          "expr": "topk(10, sum by (\"@resource.environment\")({__name__=\"copilot_chat.session.count\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "{{@resource.environment}}"
         }

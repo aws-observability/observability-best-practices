@@ -1143,7 +1143,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.5, sum({__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -1152,7 +1152,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.9, sum({__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -1161,7 +1161,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.99, sum({__name__=\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -1229,7 +1229,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.5, sum({__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -1238,7 +1238,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.9, sum({__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -1247,7 +1247,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.99, sum({__name__=\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "C",
           "legendFormat": "p99"
         }
@@ -1383,7 +1383,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.5, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.5, sum({__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "A",
           "legendFormat": "p50"
         },
@@ -1392,7 +1392,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.9, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.9, sum({__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "B",
           "legendFormat": "p90"
         },
@@ -1401,7 +1401,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_quantile(0.99, {__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+          "expr": "histogram_quantile(0.99, sum({__name__=\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
           "refId": "C",
           "legendFormat": "p99"
         }

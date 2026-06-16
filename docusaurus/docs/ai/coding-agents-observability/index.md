@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# AI IDE Observability
+# Coding Agents Observability
 
 As AI coding agents become integral to software development workflows, understanding their usage patterns, costs, and performance is essential. These guides show how to ship native OpenTelemetry metrics from AI coding agents directly to Amazon CloudWatch using bearer token authentication — no collectors or sidecars required.
 

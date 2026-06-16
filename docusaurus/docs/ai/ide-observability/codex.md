@@ -1,20 +1,21 @@
+---
+sidebar_position: 3
+title: OpenAI Codex
+---
+
 # Analyzing OpenAI Codex Usage with CloudWatch and OpenTelemetry
 
-If your engineering organization uses AI coding agents like [OpenAI Codex](https://developers.openai.com/codex), usage is likely growing faster than your ability to track it. Token consumption, model mix, tool activity, and per-team adoption are questions that existing dashboards don't answer, because the telemetry never made it to your observability backend.
-
-With Amazon CloudWatch OpenTelemetry Protocol (OTLP) in General Availability, metrics ingestion is now possible with bearer token authentication. Codex emits OpenTelemetry metrics natively, so it can ship them directly to CloudWatch with a single authorization header. No collectors, no sidecars, no IAM credential wiring on developer machines. Connect the signals in minutes and get per-developer attribution, team-level usage analytics, and operational alerting, all queryable with Prometheus Query Language (PromQL).
-
-This recipe walks through the end-to-end setup for Codex. It is the companion to the Claude Code recipe and follows the same bearer-token, direct-to-CloudWatch, metrics-only pattern.
-
-!!! note
-    This guide takes approximately 15 minutes for a single developer. Everything described here was validated against **Codex CLI 0.139.0**. Codex's telemetry is evolving quickly — metric names and configuration keys may differ in other versions, so verify against your installed version (see [Verify metrics are flowing](#verify-metrics-are-flowing)).
+:::note
+This guide takes approximately 15 minutes for a single developer. Everything described here was validated against **Codex CLI 0.139.0**. Codex's telemetry is evolving quickly — metric names and configuration keys may differ in other versions, so verify against your installed version (see [Verify metrics are flowing](#verify-metrics-are-flowing)).
+:::
 
 ## Bearer token authentication
 
 Bearer tokens (CloudWatch metrics API keys) allow tools running outside AWS (like Codex on developer laptops) to send metrics to CloudWatch without requiring the AWS SDK or IAM credential chains. Each token is tied to an AWS IAM user scoped exclusively to the [CloudWatchAPIKeyAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/CloudWatchAPIKeyAccess.html) managed policy.
 
-!!! warning
-    Bearer tokens are long-term credentials. This recipe uses them because AI coding agents run on developer laptops outside of AWS, where SigV4 with short-term credentials would require a central collector or a per-machine collector process. For workloads running inside AWS where SigV4 with short-term credentials is feasible, prefer that approach for a stronger security posture. The CloudWatch OTLP endpoint requires HTTPS; requests over plain HTTP are rejected. For more information, see [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html).
+:::warning
+Bearer tokens are long-term credentials. This recipe uses them because AI coding agents run on developer laptops outside of AWS, where SigV4 with short-term credentials would require a central collector or a per-machine collector process. For workloads running inside AWS where SigV4 with short-term credentials is feasible, prefer that approach for a stronger security posture. The CloudWatch OTLP endpoint requires HTTPS; requests over plain HTTP are rejected. For more information, see [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html).
+:::
 
 ## Solution overview
 
@@ -72,13 +73,15 @@ protocol = "binary"  # OTLP/protobuf; "json" also works — both are accepted by
 "Authorization" = "Bearer <YOUR_BEARER_TOKEN>"
 ```
 
-!!! note
-    Set the `environment` dimension through `OTEL_RESOURCE_ATTRIBUTES` (next section), which lands as `@resource.environment`. Avoid the `[otel] environment = "..."` config key — it surfaces under a *different* label (`@resource.env`), which the dashboards do not use.
+:::note
+Set the `environment` dimension through `OTEL_RESOURCE_ATTRIBUTES` (next section), which lands as `@resource.environment`. Avoid the `[otel] environment = "..."` config key — it surfaces under a *different* label (`@resource.env`), which the dashboards do not use.
+:::
 
 Replace `<AWS_REGION>` with your target Region (for example `us-east-1`) and `<YOUR_BEARER_TOKEN>` with the `ServiceCredentialSecret` value.
 
-!!! warning
-    Paste the **literal token value** into the header. Codex 0.139.0 does not expand environment-variable references (such as `Bearer ${MY_TOKEN}`) inside header values — it sends the text verbatim, and CloudWatch rejects it with HTTP 403. Because the token then lives in the file, restrict its permissions: `chmod 600 ~/.codex/config.toml`. Both `protocol = "binary"` (OTLP/protobuf) and `protocol = "json"` are accepted by CloudWatch.
+:::warning
+Paste the **literal token value** into the header. Codex 0.139.0 does not expand environment-variable references (such as `Bearer ${MY_TOKEN}`) inside header values — it sends the text verbatim, and CloudWatch rejects it with HTTP 403. Because the token then lives in the file, restrict its permissions: `chmod 600 ~/.codex/config.toml`. Both `protocol = "binary"` (OTLP/protobuf) and `protocol = "json"` are accepted by CloudWatch.
+:::
 
 ### Add identity and team attribution
 
@@ -88,8 +91,9 @@ Codex reads the standard `OTEL_RESOURCE_ATTRIBUTES` environment variable and att
 export OTEL_RESOURCE_ATTRIBUTES="user.id=$(whoami),user.email=${USER_EMAIL},team.id=${TEAM:-engineering},cost_center=${COST_CENTER:-default},department=${DEPARTMENT:-engineering},environment=${ENV:-dev}"
 ```
 
-!!! note
-    These dimensions arrive as **resource** attributes, so in PromQL they are referenced with the `@resource.` prefix — for example `@resource.team.id`. The pre-built dashboards already use this prefix. The Codex service name is fixed by the CLI (`codex` for the interactive TUI, `codex_exec` for non-interactive runs) and cannot be overridden, so the dashboards match it with the regex `@resource.service.name=~"codex.*"`.
+:::note
+These dimensions arrive as **resource** attributes, so in PromQL they are referenced with the `@resource.` prefix — for example `@resource.team.id`. The pre-built dashboards already use this prefix. The Codex service name is fixed by the CLI (`codex` for the interactive TUI, `codex_exec` for non-interactive runs) and cannot be overridden, so the dashboards match it with the regex `@resource.service.name=~"codex.*"`.
+:::
 
 The attributes you can rely on for grouping and filtering:
 
@@ -135,8 +139,9 @@ Codex 0.139.0 emits these usage-relevant metrics (all counters/histograms; metri
 | `codex.turn.e2e_duration_ms` | Histogram | End-to-end turn latency |
 | `codex.thread.started` | Counter | Threads/sessions started |
 
-!!! note
-    Unlike Claude Code on Amazon Bedrock, **Codex does not emit a cost metric**. The dashboards report token consumption by model; if you need a cost figure, multiply token counts by your model pricing downstream. The full list of metrics and events is in the [Codex observability documentation](https://developers.openai.com/codex/config-advanced).
+:::note
+Unlike Claude Code on Amazon Bedrock, **Codex does not emit a cost metric**. The dashboards report token consumption by model; if you need a cost figure, multiply token counts by your model pricing downstream. The full list of metrics and events is in the [Codex observability documentation](https://developers.openai.com/codex/config-advanced).
+:::
 
 ## Sample usage dashboards
 
@@ -144,7 +149,7 @@ This recipe ships two equivalent pre-built dashboards. As long as your resource 
 
 ### CloudWatch dashboard
 
-Download [codex-cloudwatch-dashboard.json](./codex/codex-cloudwatch-dashboard.json) and deploy it:
+Download [codex-cloudwatch-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/cloudwatch-dashboards/codex/codex-cloudwatch-dashboard.json) and deploy it:
 
 ```bash
 aws cloudwatch put-dashboard \
@@ -166,7 +171,7 @@ The dashboard is organized into five sections:
 
 ### Grafana dashboard
 
-If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [codex-grafana-dashboard.json](./codex/codex-grafana-dashboard.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
+If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [codex-grafana-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/grafana-dashboards/codex/codex-grafana-dashboard.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
 
 ## Alerting
 
@@ -203,8 +208,9 @@ CloudWatch OTLP metrics ingestion is billed at $0.50/GB. A single OTLP metric da
 
 ## Cleanup
 
-!!! warning
-    CloudWatch metrics data persists after you stop telemetry (up to 15 months retention) at no additional charge. CloudWatch alarms, if created, incur $0.10/alarm/month until deleted. Leaving IAM users and bearer tokens active poses a security risk.
+:::warning
+CloudWatch metrics data persists after you stop telemetry (up to 15 months retention) at no additional charge. CloudWatch alarms, if created, incur $0.10/alarm/month until deleted. Leaving IAM users and bearer tokens active poses a security risk.
+:::
 
 ```bash
 # Delete the dashboard

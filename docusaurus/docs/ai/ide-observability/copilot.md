@@ -1,29 +1,30 @@
+---
+sidebar_position: 2
+title: GitHub Copilot
+---
+
 # Analyzing GitHub Copilot Usage with CloudWatch and OpenTelemetry
 
-If your engineering organization uses AI coding agents like [GitHub Copilot](https://github.com/features/copilot), usage is likely growing faster than your ability to track it. Token consumption, model mix, tool activity, edit-acceptance, and per-team adoption are questions that existing dashboards don't answer, because the telemetry never made it to your observability backend.
+:::note
+There are **two** Copilot products that emit OpenTelemetry, and they emit *different* metrics. This recipe and its dashboards cover **both**:
 
-With Amazon CloudWatch OpenTelemetry Protocol (OTLP) in General Availability, metrics ingestion is now possible with bearer token authentication. GitHub Copilot Chat in VS Code emits OpenTelemetry metrics natively, so it can ship them directly to CloudWatch with a single authorization header. No collectors, no sidecars, no IAM credential wiring on developer machines. Connect the signals in minutes and get per-developer attribution, team-level usage analytics, and operational alerting, all queryable with Prometheus Query Language (PromQL).
+| | VS Code Copilot Chat extension | GitHub Copilot CLI |
+| --- | --- | --- |
+| `service.name` | `copilot-chat` | `github-copilot` |
+| Tool metric prefix | `copilot_chat.tool.call.*` | `github.copilot.tool.call.*` |
+| Default OTLP protocol | `http/protobuf` | `http/json` |
+| Metric breadth | ~20 metrics | 5 metrics (tokens, LLM duration, tool count/duration, agent turns) |
 
-This recipe walks through the end-to-end setup for GitHub Copilot. It is the companion to the Claude Code and OpenAI Codex recipes and follows the same bearer-token, direct-to-CloudWatch pattern.
-
-!!! note
-    There are **two** Copilot products that emit OpenTelemetry, and they emit *different* metrics. This recipe and its dashboards cover **both**:
-
-    | | VS Code Copilot Chat extension | GitHub Copilot CLI |
-    | --- | --- | --- |
-    | `service.name` | `copilot-chat` | `github-copilot` |
-    | Tool metric prefix | `copilot_chat.tool.call.*` | `github.copilot.tool.call.*` |
-    | Default OTLP protocol | `http/protobuf` | `http/json` |
-    | Metric breadth | ~20 metrics | 5 metrics (tokens, LLM duration, tool count/duration, agent turns) |
-
-    The dashboards match either product with `@resource.service.name=~"copilot.*"` and union the two tool-metric names. Both share `gen_ai.client.token.usage` and `gen_ai.client.operation.duration` (OTel GenAI semantic conventions). Panels that only the VS Code extension emits (sessions, edits, feedback, lines of code, PRs, time-to-first-token) are labelled **(VS Code)**. Metric names come from the official [VS Code monitoring guide](https://code.visualstudio.com/docs/copilot/guides/monitoring-agents), the GitHub Copilot CLI's own `copilot help monitoring`, and the [OTel GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai). Some per-metric **breakdown attribute keys** (e.g. accepted vs rejected edits) are not published — those panels show totals (see [Metrics Copilot emits](#metrics-copilot-emits)).
+The dashboards match either product with `@resource.service.name=~"copilot.*"` and union the two tool-metric names. Both share `gen_ai.client.token.usage` and `gen_ai.client.operation.duration` (OTel GenAI semantic conventions). Panels that only the VS Code extension emits (sessions, edits, feedback, lines of code, PRs, time-to-first-token) are labelled **(VS Code)**. Metric names come from the official [VS Code monitoring guide](https://code.visualstudio.com/docs/copilot/guides/monitoring-agents), the GitHub Copilot CLI's own `copilot help monitoring`, and the [OTel GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai). Some per-metric **breakdown attribute keys** (e.g. accepted vs rejected edits) are not published — those panels show totals (see [Metrics Copilot emits](#metrics-copilot-emits)).
+:::
 
 ## Bearer token authentication
 
 Bearer tokens (CloudWatch metrics API keys) allow tools running outside AWS (like Copilot on developer laptops) to send metrics to CloudWatch without requiring the AWS SDK or IAM credential chains. Each token is tied to an AWS IAM user scoped exclusively to the [CloudWatchAPIKeyAccess](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/CloudWatchAPIKeyAccess.html) managed policy.
 
-!!! warning
-    Bearer tokens are long-term credentials. This recipe uses them because AI coding agents run on developer laptops outside of AWS, where SigV4 with short-term credentials would require a central collector or a per-machine collector process. For workloads running inside AWS where SigV4 with short-term credentials is feasible, prefer that approach for a stronger security posture. The CloudWatch OTLP endpoint requires HTTPS; requests over plain HTTP are rejected. For more information, see [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html).
+:::warning
+Bearer tokens are long-term credentials. This recipe uses them because AI coding agents run on developer laptops outside of AWS, where SigV4 with short-term credentials would require a central collector or a per-machine collector process. For workloads running inside AWS where SigV4 with short-term credentials is feasible, prefer that approach for a stronger security posture. The CloudWatch OTLP endpoint requires HTTPS; requests over plain HTTP are rejected. For more information, see [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html).
+:::
 
 ## Solution overview
 
@@ -100,8 +101,9 @@ copilot
 
 `service.name` defaults to `github-copilot`. The CLI emits a smaller metric set (see the table below); the dashboards already account for both naming schemes.
 
-!!! warning
-    Both clients send **traces, metrics, and events to the same endpoint** — there is no documented metrics-only mode. The CloudWatch metrics endpoint (`/v1/metrics`) ingests the metrics; the trace and log POSTs to that host are simply rejected and dropped, which is harmless but means you will see client-side export errors for the non-metrics signals. To capture traces/logs too, or to cleanly separate signals, run a local OpenTelemetry Collector and route each signal to its matching CloudWatch endpoint instead of pointing the client directly at `/v1/metrics`.
+:::warning
+Both clients send **traces, metrics, and events to the same endpoint** — there is no documented metrics-only mode. The CloudWatch metrics endpoint (`/v1/metrics`) ingests the metrics; the trace and log POSTs to that host are simply rejected and dropped, which is harmless but means you will see client-side export errors for the non-metrics signals. To capture traces/logs too, or to cleanly separate signals, run a local OpenTelemetry Collector and route each signal to its matching CloudWatch endpoint instead of pointing the client directly at `/v1/metrics`.
+:::
 
 ### Identity and team attribution
 
@@ -150,14 +152,15 @@ The **GitHub Copilot CLI emits only the first three rows** (`gen_ai.*` plus `git
 
 ¹ The VS Code docs describe these breakdowns (added/removed, accepted/rejected, up/down) but do **not** publish the attribute keys/values that carry them. The dashboards therefore chart **totals** for these metrics; add the breakdown grouping once you confirm the label names from a real emission (set `"github.copilot.chat.otel.exporterType": "console"` in VS Code, or `COPILOT_OTEL_FILE_EXPORTER_PATH` for the CLI, to inspect them). Confirmed cross-metric filter attributes: `gen_ai.request.model`, `gen_ai.provider.name`, `gen_ai.tool.name`, `copilot_chat.edit.source`, `error.type`.
 
-!!! note
-    Like Claude Code on Amazon Bedrock, Copilot does **not** emit a dollar-cost metric. The dashboards report token consumption; derive cost downstream from token counts and your plan's pricing if needed.
+:::note
+Like Claude Code on Amazon Bedrock, Copilot does **not** emit a dollar-cost metric. The dashboards report token consumption; derive cost downstream from token counts and your plan's pricing if needed.
+:::
 
 ## Sample usage dashboards
 
 ### CloudWatch dashboard
 
-Download [copilot-cloudwatch-dashboard.json](./copilot/copilot-cloudwatch-dashboard.json) and deploy it:
+Download [copilot-cloudwatch-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/cloudwatch-dashboards/copilot/copilot-cloudwatch-dashboard.json) and deploy it:
 
 ```bash
 aws cloudwatch put-dashboard \
@@ -179,7 +182,7 @@ The dashboard is organized into five sections:
 
 ### Grafana dashboard
 
-If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [copilot-grafana-dashboard.json](./copilot/copilot-grafana-dashboard.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
+If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [copilot-grafana-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/grafana-dashboards/copilot/copilot-grafana-dashboard.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
 
 ## Alerting
 
@@ -210,8 +213,9 @@ CloudWatch OTLP metrics ingestion is billed at $0.50/GB. A single OTLP metric da
 
 ## Cleanup
 
-!!! warning
-    CloudWatch metrics data persists after you stop telemetry (up to 15 months retention) at no additional charge. CloudWatch alarms, if created, incur $0.10/alarm/month until deleted. Leaving IAM users and bearer tokens active poses a security risk.
+:::warning
+CloudWatch metrics data persists after you stop telemetry (up to 15 months retention) at no additional charge. CloudWatch alarms, if created, incur $0.10/alarm/month until deleted. Leaving IAM users and bearer tokens active poses a security risk.
+:::
 
 ```bash
 # Delete the dashboard

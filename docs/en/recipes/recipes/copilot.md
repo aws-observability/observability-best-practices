@@ -173,7 +173,7 @@ The dashboard is organized into five sections:
 
 * **Overview** — total tokens, sessions, active users, tool calls.
 * **Token Usage** — tokens over time, by type (input / output), by model, and top users.
-* **Performance & Latency** — LLM operation duration and time-to-first-token (p50/p90/p99), LLM latency p90 by model, tool-call latency, and agent invocation/turn metrics. Latency panels use CloudWatch's native histogram function — `histogram_quantile(0.9, {"gen_ai.client.operation.duration"})` — since OTLP histograms in CloudWatch do not expose classic Prometheus `le` buckets.
+* **Performance & Latency** — LLM operation duration and time-to-first-token (p50/p90/p99), LLM latency p90 by model, tool-call latency, and agent invocation/turn metrics. Latency panels use CloudWatch's native histogram function over an aggregated selector — `histogram_quantile(0.9, sum({"gen_ai.client.operation.duration"}))` — since OTLP histograms in CloudWatch do not expose classic Prometheus `le` buckets. (Wrap the selector in `sum(...)` so the quantile aggregates across all series instead of one line per user.)
 * **Tool & Developer Activity** — tool calls by tool and outcome, lines of code, edit-acceptance, user feedback, and pull requests.
 * **Organizational Breakdown** — token usage by department, team, and cost center, and sessions by environment.
 
@@ -194,7 +194,7 @@ sum by ("@resource.team.id") (increase(histogram_sum({"gen_ai.client.token.usage
 **LLM latency regression** — alert when p90 LLM operation duration exceeds 30s:
 
 ```
-histogram_quantile(0.9, {"gen_ai.client.operation.duration"}) > 30
+histogram_quantile(0.9, sum({"gen_ai.client.operation.duration"})) > 30
 ```
 
 **Adoption regression** — detect when a team's daily sessions drop below half their 7-day average:

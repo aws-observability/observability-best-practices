@@ -911,7 +911,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.5, sum({\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p50"
             },
@@ -919,7 +919,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.9, sum({\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p90"
             },
@@ -927,7 +927,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.99, sum({\"codex.turn.e2e_duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p99"
             }
@@ -982,7 +982,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.5, sum({\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p50"
             },
@@ -990,7 +990,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.9, sum({\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p90"
             },
@@ -998,7 +998,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.99, sum({\"codex.turn.ttft.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p99"
             }
@@ -1107,7 +1107,7 @@
               "id": "p50",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.5, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.5, sum({\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p50"
             },
@@ -1115,7 +1115,7 @@
               "id": "p90",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.9, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.9, sum({\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p90"
             },
@@ -1123,7 +1123,7 @@
               "id": "p99",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_quantile(0.99, {\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"})",
+              "query": "histogram_quantile(0.99, sum({\"codex.tool.call.duration_ms\", \"@resource.service.name\"=~\"codex.*\"}))",
               "step": 60,
               "label": "p99"
             }

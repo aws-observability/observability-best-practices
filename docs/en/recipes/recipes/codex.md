@@ -161,7 +161,7 @@ The dashboard is organized into five sections:
 * **Overview** — total tokens, API requests, active users, conversation turns.
 * **Token Usage** — total tokens over time, breakdown by type (input / output / cached input / reasoning output), by model, and top users.
 * **API & Tool Activity** — API requests by outcome and by model, conversation turns, tool calls by tool, tool-call outcomes, and approval decisions.
-* **Performance & Latency** — cache hit rate, turn latency and time-to-first-token (p50/p90/p99), API request latency p90 by model, and tool-call latency. Latency panels use CloudWatch's native histogram function — `histogram_quantile(0.9, {"codex.turn.e2e_duration_ms"})` — since OTLP histograms in CloudWatch do not expose classic Prometheus `le` buckets.
+* **Performance & Latency** — cache hit rate, turn latency and time-to-first-token (p50/p90/p99), API request latency p90 by model, and tool-call latency. Latency panels use CloudWatch's native histogram function over an aggregated selector — `histogram_quantile(0.9, sum({"codex.turn.e2e_duration_ms"}))` — since OTLP histograms in CloudWatch do not expose classic Prometheus `le` buckets. (Wrap the selector in `sum(...)` so the quantile is computed across all series, not one line per user/tool.)
 * **Organizational Breakdown** — tokens and API requests by department and team, plus token usage by cost center and environment.
 
 ### Grafana dashboard
@@ -187,7 +187,7 @@ sum(increase({"codex.api_request", success="false"}[1h])) > 50
 **Latency regression** — alert when p90 turn latency exceeds a threshold (for example 30s):
 
 ```
-histogram_quantile(0.9, {"codex.turn.e2e_duration_ms"}) > 30000
+histogram_quantile(0.9, sum({"codex.turn.e2e_duration_ms"})) > 30000
 ```
 
 **Adoption regression** — detect when a team's daily threads drop below half their 7-day average:

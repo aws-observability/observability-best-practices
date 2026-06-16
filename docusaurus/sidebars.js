@@ -368,14 +368,7 @@ module.exports = {
             'recipes/nodejs',
           ],
         },
-        {
-          type: 'category',
-          label: 'By AI Coding Agent',
-          items: [
-            'recipes/codex',
-            'recipes/copilot',
-          ],
-        },
+
         {
           type: 'category',
           label: 'By Destination',

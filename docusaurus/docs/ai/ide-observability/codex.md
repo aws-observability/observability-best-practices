@@ -149,7 +149,7 @@ This recipe ships two equivalent pre-built dashboards. As long as your resource 
 
 ### CloudWatch dashboard
 
-Download [codex-cloudwatch-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/cloudwatch-dashboards/codex/codex-cloudwatch-dashboard.json) and deploy it:
+Download [codex-cloudwatch-dashboard.json](https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/cloudwatch-dashboards/codex/codex.json) and deploy it:
 
 ```bash
 aws cloudwatch put-dashboard \
@@ -171,7 +171,7 @@ The dashboard is organized into five sections:
 
 ### Grafana dashboard
 
-If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [codex-grafana-dashboard.json](https://github.com/aws-observability/terraform-aws-observability-accelerator/blob/main/artifacts/grafana-dashboards/codex/codex-grafana-dashboard.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
+If your organization uses Amazon Managed Grafana (or self-managed Grafana), import [codex-grafana-dashboard.json](https://raw.githubusercontent.com/aws-observability/aws-observability-accelerator/main/artifacts/grafana-dashboards/codex/codex.json). It uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
 
 ## Alerting
 

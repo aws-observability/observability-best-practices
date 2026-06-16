@@ -27,7 +27,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
+              "query": "sum(histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60,
               "label": "Tokens"
             }
@@ -258,7 +258,7 @@
               "id": "a",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
+              "query": "sum(histogram_sum({\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60,
               "label": "Tokens"
             }
@@ -313,7 +313,7 @@
               "id": "input",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"})",
+              "query": "sum(histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60,
               "label": "Input"
             },
@@ -321,7 +321,7 @@
               "id": "output",
               "type": "cloudwatch-metrics",
               "language": "PromQL",
-              "query": "histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"})",
+              "query": "sum(histogram_sum({\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"}))",
               "step": 60,
               "label": "Output"
             }

@@ -91,7 +91,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
+          "expr": "sum(histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "Tokens"
         }
@@ -348,7 +348,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"})",
+          "expr": "sum(histogram_sum({__name__=\"gen_ai.client.token.usage\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "Tokens"
         }
@@ -415,7 +415,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"})",
+          "expr": "sum(histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"input\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "A",
           "legendFormat": "Input"
         },
@@ -424,7 +424,7 @@
             "type": "grafana-amazonprometheus-datasource",
             "uid": "$datasource"
           },
-          "expr": "histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"})",
+          "expr": "sum(histogram_sum({__name__=\"gen_ai.client.token.usage\", \"gen_ai.token.type\"=\"output\", \"@resource.service.name\"=~\"copilot.*\"}))",
           "refId": "B",
           "legendFormat": "Output"
         }

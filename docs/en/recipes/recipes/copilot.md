@@ -121,7 +121,7 @@ Copilot honors the standard `OTEL_RESOURCE_ATTRIBUTES` environment variable on i
 Start a Copilot session (a VS Code Chat session, or `copilot` in the configured shell) and send a couple of prompts. Then open [CloudWatch Query Studio](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-PromQL-QueryStudio.html) and type `copilot` or `gen_ai`, or run an instant query such as:
 
 ```
-histogram_sum({"gen_ai.client.token.usage", "@resource.service.name"=~"copilot.*"})
+sum(histogram_sum({"gen_ai.client.token.usage", "@resource.service.name"=~"copilot.*"}))
 ```
 
 If metrics appear, the configuration is correct. If not, confirm the endpoint URL, that `OTEL_EXPORTER_OTLP_HEADERS` is set in the shell that launched the client, and that you have completed at least one interaction. CloudWatch ingestion can take a few minutes to become queryable.
@@ -132,7 +132,7 @@ The dashboards build on these metrics. The **Source** column shows which client 
 
 | Metric | Type | Source | Notes |
 | --- | --- | --- | --- |
-| `gen_ai.client.token.usage` | Histogram | both | Token counts; `gen_ai.token.type` ∈ `input`, `output`; `gen_ai.request.model`. Query with `histogram_sum(...)`. |
+| `gen_ai.client.token.usage` | Histogram | both | Token counts; `gen_ai.token.type` ∈ `input`, `output`; `gen_ai.request.model`. Query totals with `sum(histogram_sum(...))` — `histogram_sum` alone is per-series, so wrap it in `sum(...)` (or `sum by (...)`) to aggregate. |
 | `gen_ai.client.operation.duration` | Histogram | both | LLM call duration (seconds); `gen_ai.request.model`, `error.type`. |
 | `copilot_chat.tool.call.count` / `github.copilot.tool.call.count` | Counter | VS Code / CLI | Tool invocations; `gen_ai.tool.name`, success. |
 | `copilot_chat.tool.call.duration` / `github.copilot.tool.call.duration` | Histogram | VS Code / CLI | Tool execution latency. |

@@ -20,8 +20,8 @@ Thank you to the following people for their contributions :
 | Kiran Prakash       | Bobby Hallahan              | Toshal Dudhwala   | Franklin Aguinaldo |
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
-| Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan     | Xavier Figueroa
-
+| Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan     | Xavier Figueroa    |
+| Jean Velez
 
 
 Note that all recipes published on this site are available via the

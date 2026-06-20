@@ -1,80 +1,56 @@
 # Amazon Elastic Kubernetes Service
 
-[Amazon Elastic Kubernetes Service][eks-main] (EKS) は、AWS クラウドまたはオンプレミスで Kubernetes アプリケーションを起動、実行、スケーリングする柔軟性を提供します。
+[Amazon Elastic Kubernetes Service][eks-main] (EKS) は、AWS Cloud またはオンプレミスで Kubernetes アプリケーションを起動、実行、スケーリングする柔軟性を提供します。
 
-以下のレシピをコンピュートエンジン別にご確認ください：
+コンピューティングエンジン別にグループ化された以下のレシピを確認してください。
 
-
-
-
-## EKS on EC2
-
-
-
+## EC2 上の EKS
 
 ### ログ
 
-- [CloudWatch Container Insights for EKS における Fluent Bit の統合][eks-cw-fb]
+- [EKS の CloudWatch Container Insights における Fluent Bit 統合][eks-cw-fb]
 - [EFK スタックを使用したロギング][eks-ws-efk]
 - [EKS における Fluent Bit と FluentD のサンプルロギングアーキテクチャ][eks-logging]
 
-
-
-
 ### メトリクス
 
-- [Amazon Managed Service for Prometheus 入門][amp-gettingstarted]
-- [EC2 上の EKS で ADOT を使用してメトリクスを AMP に取り込み、AMG で可視化する][ec2-eks-metrics-go-adot-ampamg]
+- [Amazon Managed Service for Prometheus の開始方法][amp-gettingstarted]
+- [EC2 上の EKS で ADOT を使用して AMP にメトリクスを取り込み、AMG で可視化する][ec2-eks-metrics-go-adot-ampamg]
 - [Amazon Managed Service for Prometheus 用の Grafana Cloud Agent の設定][gcwa-amp]
 - [Prometheus と Grafana を使用したクラスターのモニタリング][eks-ws-prom-grafana]
 - [Managed Prometheus と Managed Grafana を使用したモニタリング][eks-ws-amp-amg]
 - [CloudWatch Container Insights][eks-ws-cw-ci]
-- [AMP ワークスペースのクロスリージョンメトリクス収集のセットアップ][amp-xregion]
+- [AMP ワークスペースのクロスリージョンメトリクス収集の設定][amp-xregion]
 - [Amazon Managed Service for Prometheus を使用した EKS 上の App Mesh 環境のモニタリング][eks-am-amp-amg]
 - [Amazon Managed Prometheus と Amazon Managed Grafana を使用した EKS 上の Istio のモニタリング][eks-istio-monitoring]
-- [KEDA と Amazon CloudWatch を使用した Kubernetes ワークロードのプロアクティブな自動スケーリング][eks-keda-cloudwatch-scaling]
+- [KEDA と Amazon CloudWatch を使用した Kubernetes ワークロードのプロアクティブなオートスケーリング][eks-keda-cloudwatch-scaling]
 - [Amazon Managed Service for Prometheus と Amazon Managed Grafana を使用した Amazon EKS Anywhere のモニタリング][eks-anywhere-monitoring]
-
-
-
 
 ### トレース
 
-- [X-Ray トレースを AWS Distro for OpenTelemetry に移行する][eks-otel-xray]
-- [X-Ray を使用したトレース][eks-ws-xray]
+- [X-Ray トレーシングを AWS Distro for OpenTelemetry に移行する][eks-otel-xray]
+- [X-Ray によるトレーシング][eks-ws-xray]
 
-
-
-
-## EKS on Fargate
-
-
-
+## Fargate 上の EKS
 
 ### ログ
 
-- [Amazon EKS on AWS Fargate 向けの Fluent Bit が登場][eks-fargate-logging]
-- [EKS における Fluent Bit と FluentD のサンプルロギングアーキテクチャ][eks-fb-example]
-
-
-
+- [AWS Fargate 上の Amazon EKS 用 Fluent Bit はこちら][eks-fargate-logging]
+- [EKS 上の Fluent Bit と FluentD のサンプルロギングアーキテクチャ][eks-fb-example]
 
 ### メトリクス
 
-- [Fargate 上の EKS で ADOT を使用してメトリクスを AMP に取り込み、AMG で可視化する][fargate-eks-metrics-go-adot-ampamg]
+- [EKS on Fargate で ADOT を使用して AMP にメトリクスを取り込み、AMG で可視化する][fargate-eks-metrics-go-adot-ampamg]
 - [CloudWatch Container Insights][eks-ws-cw-ci]
-- [AMP ワークスペースのリージョン間メトリクス収集のセットアップ][amp-xregion]
-
-
-
+- [AMP ワークスペースのクロスリージョンメトリクス収集を設定する][amp-xregion]
 
 ### トレース
 
-- [AWS X-Ray を使用した Fargate 上の EKS での ADOT の使用][fargate-eks-xray-go-adot-amg]
-- [X-Ray を使用したトレース][eks-ws-xray]
+- [Fargate 上の EKS で ADOT と AWS X-Ray を使用する][fargate-eks-xray-go-adot-amg]
+- [X-Ray によるトレーシング][eks-ws-xray]
 
 
-[eks-main]: https://aws.amazon.com/jp/eks/
+[eks-main]: https://aws.amazon.com/eks/
 [eks-cw-fb]: https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/
 [eks-ws-efk]: https://www.eksworkshop.com/intermediate/230_logging/
 [eks-logging]: https://github.com/aws-samples/amazon-eks-fluent-logging-examples

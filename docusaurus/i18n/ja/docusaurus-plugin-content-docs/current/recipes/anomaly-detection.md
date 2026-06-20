@@ -1,7 +1,8 @@
-# 異常検知
+# 異常検出
 
-このセクションには異常検知のレシピが含まれています。
+このセクションには、異常検知のレシピが含まれています。
 
-- [CloudWatch メトリクスの異常検知を有効にする][am-oow]
+- [CloudWatch メトリクスの異常検出を有効にする][am-oow]
 
 [am-oow]: https://observability.workshop.aws/en/anomalydetection.html
+

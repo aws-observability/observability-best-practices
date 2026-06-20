@@ -1,20 +1,20 @@
-# 各编程语言的检测示例
+# 各编程语言的插桩示例
 
-本节提供使用 AWS Application Signals 在不同编程语言和框架中检测应用程序的指导。
+本节提供使用 AWS Application Signals 在不同编程语言和框架中插桩应用程序的指导。
 
 ## 演示应用程序
 
-- [Application Signals PetClinic Demo](https://github.com/aws-observability/application-signals-demo) - 多语言 Spring Boot 微服务，包含全面的检测示例
-- [One Observability PetAdoptions Demo](https://github.com/aws-samples/one-observability-demo) - 全栈应用程序，包含 Java、Python、.NET、Go、Rust 和 Node.js 服务
-- [CloudWatch Application Signals SkillBuilder Demo](https://github.com/aws-samples/sample-cloudwatch-application-signals-skillbuilder-demo) - 教育性示例，包含逐步检测指南
+- [Application Signals PetClinic Demo](https://github.com/aws-observability/application-signals-demo) - 多语言 Spring Boot 微服务，包含全面的插桩示例
+- [One 可观测性 PetAdoptions Demo](https://github.com/aws-samples/one-observability-demo) - 全栈应用程序，包含 Java、Python、.NET、Go、Rust 和 Node.js 服务
+- [CloudWatch Application Signals SkillBuilder Demo](https://github.com/aws-samples/sample-cloudwatch-application-signals-skillbuilder-demo) - 教育性示例，包含逐步插桩指南
 
-## 自动检测
+## 自动插桩
 
-自动检测通过自动检测和检测流行的框架和库来提供零代码的 Observability。这是快速开始使用 Application Signals 的推荐方法。
+自动插桩通过自动发现和插桩流行的框架和库来提供零代码的可观测性。这是快速开始使用 Application Signals 的推荐方法。
 
 ### Java Spring Boot 应用程序
 
-**自动检测设置：**
+**自动插桩设置：**
 
 ```bash
 java -javaagent:/path/to/aws-opentelemetry-agent.jar \
@@ -29,11 +29,11 @@ java -javaagent:/path/to/aws-opentelemetry-agent.jar \
   - [Customers Service](https://github.com/aws-observability/application-signals-demo/tree/main/spring-petclinic-customers-service)
   - [Vets Service](https://github.com/aws-observability/application-signals-demo/tree/main/spring-petclinic-vets-service)
   - [Visits Service](https://github.com/aws-observability/application-signals-demo/tree/main/spring-petclinic-visits-service)
-- **One Observability Demo：** [Pet Search Service (Java)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsearch-java)
+- **https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsearch-java：** [Pet Search Service (Java)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsearch-java)
 
 ### Python 应用程序
 
-**自动检测设置：**
+**自动插桩设置：**
 
 ```bash
 pip install pip install aws-opentelemetry-distro
@@ -50,7 +50,7 @@ opentelemetry-instrument \
 
 ### Node.js 应用程序
 
-**自动检测设置：**
+**自动插桩设置：**
 
 ```bash
 npm install @aws/opentelemetry-auto-instrumentation
@@ -68,7 +68,7 @@ node --require @aws/opentelemetry-auto-instrumentation \
 
 ### .NET 应用程序
 
-**自动检测设置：**
+**自动插桩设置：**
 
 ```csharp
 // Configure in Program.cs
@@ -81,11 +81,11 @@ builder.Services.AddOpenTelemetry()
 **参考微服务：**
 
 - **PetClinic Demo：** [Payment Service (.NET)](https://github.com/aws-observability/application-signals-demo/tree/main/dotnet-petclinic-payment)
-- **One Observability Demo：** [Pet Site Service (.NET)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsite-net)
+- **https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsite-net：** [Pet Site Service (.NET)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsite-net)
 
-## 手动检测
+## 手动插桩
 
-手动检测涉及完整的端到端 OpenTelemetry SDK 集成，不使用任何自动检测 agent。这种方法提供了对遥测收集的最大控制，且是不支持自动检测的语言所必需的。
+手动插桩涉及完整的端到端 OpenTelemetry SDK 集成，不使用任何自动插桩 agent。这种方法提供了对遥测收集的最大控制，且是不支持自动插桩的语言所必需的。
 
 ### Java — 手动 Spans
 
@@ -169,7 +169,7 @@ async function processOrder(order) {
 
 ### Go 应用程序（仅手动）
 
-Go 需要手动检测（没有可用的自动检测）。
+Go 需要手动插桩（没有可用的自动插桩）。
 
 ```go
 import (
@@ -197,20 +197,20 @@ defer span.End()
 
 - [Pet Food Service (Rust)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petfood-rs)
 
-## 组合检测（自动 + 手动）
+## 组合插桩（自动 + 手动）
 
-组合检测使用自动检测 agent 获取基线遥测数据，同时通过手动检测添加自定义 spans、属性和业务上下文。
+组合插桩使用自动插桩 agent 获取基线遥测数据，同时通过手动插桩添加自定义 spans、属性和业务上下文。
 
 **参考实现：**
 
 - [Customers Service (Java)](https://github.com/aws-observability/application-signals-demo/tree/main/spring-petclinic-customers-service)
 - [Pet Search Service (Java)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsearch-java)
 
-### 手动检测关键最佳实践
+### 手动插桩关键最佳实践
 
 - **业务上下文：** 始终向 spans 添加相关业务属性（customer_id、order_value、product_category）
 - **错误处理：** 记录异常并设置适当的 span 状态码
 - **自定义 Metrics：** 在技术 metrics 之外创建业务特定的 metrics
 - **Span 层次结构：** 使用子 spans 分解复杂操作
 - **属性命名：** 尽可能遵循 OpenTelemetry 语义约定
-- **性能影响：** 注意高吞吐量路径中检测的开销
+- **性能影响：** 注意高吞吐量路径中插桩的开销

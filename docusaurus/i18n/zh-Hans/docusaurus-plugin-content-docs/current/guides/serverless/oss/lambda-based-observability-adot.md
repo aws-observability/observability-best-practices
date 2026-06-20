@@ -1,13 +1,13 @@
-# 基于 AWS Lambda 的无服务器 Observability 与 OpenTelemetry
+# 基于 AWS Lambda 的无服务器可观测性与 OpenTelemetry
 
-本指南涵盖了使用托管开源工具和技术配合 AWS 原生监控服务（如 AWS X-Ray 和 Amazon CloudWatch）为基于 Lambda 的无服务器应用程序配置 observability 的最佳实践。我们将介绍 [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction)、[AWS X-Ray](https://aws.amazon.com/xray) 和 [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/) 等工具，以及如何使用这些工具获取无服务器应用程序的可操作洞察、排查问题和优化应用程序性能。
+本指南涵盖了使用托管开源工具和技术配合 AWS 原生监控服务（如 AWS X-Ray 和 Amazon CloudWatch）为基于 Lambda 的无服务器应用程序配置可观测性的最佳实践。我们将介绍 [AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction)、[AWS X-Ray](https://aws.amazon.com/xray) 和 [Amazon Managed Service for Prometheus (AMP)](https://aws.amazon.com/prometheus/) 等工具，以及如何使用这些工具获取无服务器应用程序的可操作洞察、排查问题和优化应用程序性能。
 
 ## **涵盖的关键主题**
 
-在 observability 最佳实践指南的这一部分中，我们将深入探讨以下主题：
+在可观测性最佳实践指南的这一部分中，我们将深入探讨以下主题：
 
 * AWS Distro for OpenTelemetry (ADOT) 和 ADOT Lambda Layer 简介
-* 使用 ADOT Lambda Layer 自动检测 Lambda 函数
+* 使用 ADOT Lambda Layer 自动插桩 Lambda 函数
 * ADOT Collector 的自定义配置支持
 * 与 Amazon Managed Service for Prometheus (AMP) 的集成
 * 使用 ADOT Lambda Layer 的优缺点
@@ -16,17 +16,17 @@
 
 ## **AWS Distro for OpenTelemetry (ADOT) 简介**
 
-[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) 是由 AWS 支持的安全、可用于生产环境的 Cloud Native Computing Foundation (CNCF) [OpenTelemetry (OTel)](https://opentelemetry.io/) 项目发行版。使用 ADOT，您只需对应用程序进行一次检测，即可将关联的 metrics 和 traces 发送到多个监控解决方案。
+[AWS Distro for OpenTelemetry (ADOT)](https://aws-otel.github.io/docs/introduction) 是由 AWS 支持的安全、可用于生产环境的 Cloud Native Computing Foundation (CNCF) [OpenTelemetry (OTel)](https://opentelemetry.io/) 项目发行版。使用 ADOT，您只需对应用程序进行一次插桩，即可将关联的 metrics 和 traces 发送到多个监控解决方案。
 
-AWS 托管的 [OpenTelemetry Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda) 利用 [OpenTelemetry Lambda Layer](https://github.com/open-telemetry/opentelemetry-lambda) 来导出遥测数据。它通过包装 AWS Lambda 函数，并打包 OpenTelemetry 运行时特定的 SDK、精简版 ADOT collector 以及用于自动检测 AWS Lambda 函数的开箱即用配置，提供即插即用的用户体验。ADOT Lambda Layer collector 组件（如 Receivers、Exporters 和 Extensions）支持与 Amazon CloudWatch、Amazon OpenSearch Service、Amazon Managed Service for Prometheus、AWS X-Ray 等的集成。完整列表请参见[此处](https://github.com/aws-observability/aws-otel-lambda)。ADOT 还支持与[合作伙伴解决方案](https://aws.amazon.com/otel/partners)的集成。
+AWS 托管的 [OpenTelemetry Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda) 利用 [OpenTelemetry Lambda Layer](https://github.com/open-telemetry/opentelemetry-lambda) 来导出遥测数据。它通过包装 AWS Lambda 函数，并打包 OpenTelemetry 运行时特定的 SDK、精简版 ADOT collector 以及用于自动插桩 AWS Lambda 函数的开箱即用配置，提供即插即用的用户体验。ADOT Lambda Layer collector 组件（如 Receivers、Exporters 和 Extensions）支持与 Amazon CloudWatch、Amazon OpenSearch Service、Amazon Managed Service for Prometheus、AWS X-Ray 等的集成。完整列表请参见[此处](https://github.com/aws-observability/aws-otel-lambda)。ADOT 还支持与[合作伙伴解决方案](https://aws.amazon.com/otel/partners)的集成。
 
-ADOT Lambda Layer 支持自动检测（适用于 Python、NodeJS 和 Java）以及针对任何特定库和 SDK 集的自定义检测。对于自动检测，默认情况下 Lambda Layer 配置为将 traces 导出到 AWS X-Ray。对于自定义检测，您需要从相应的 [OpenTelemetry 运行时检测仓库](https://github.com/open-telemetry) 中包含对应的库检测，并修改代码以在函数中初始化它。
+ADOT Lambda Layer 支持自动插桩（适用于 Python、NodeJS 和 Java）以及针对任何特定库和 SDK 集的自定义插桩。对于自动插桩，默认情况下 Lambda Layer 配置为将 traces 导出到 AWS X-Ray。对于自定义插桩，您需要从相应的 [OpenTelemetry 运行时插桩仓库](https://github.com/open-telemetry) 中包含对应的库插桩，并修改代码以在函数中初始化它。
 
-## **使用 ADOT Lambda Layer 与 AWS Lambda 进行自动检测**
+## **使用 ADOT Lambda Layer 与 AWS Lambda 进行自动插桩**
 
-您可以轻松地使用 ADOT Lambda Layer 启用 Lambda 函数的自动检测，无需任何代码更改。让我们以将 ADOT Lambda Layer 添加到现有的基于 Java 的 Lambda 函数并在 CloudWatch 中查看执行日志和 traces 为例。
+您可以轻松地使用 ADOT Lambda Layer 启用 Lambda 函数的自动插桩，无需任何代码更改。让我们以将 ADOT Lambda Layer 添加到现有的基于 Java 的 Lambda 函数并在 CloudWatch 中查看执行日志和 traces 为例。
 
-1. 根据[文档](https://aws-otel.github.io/docs/getting-started/lambda)，基于 `runtime`、`region` 和 `arch type` 选择 Lambda Layer 的 ARN。确保使用与 Lambda 函数相同区域的 Lambda Layer。例如，用于 Java 自动检测的 Lambda Layer 为 `arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-java-agent-x86_64-ver-1-28-1:1`
+1. 根据[文档](https://aws-otel.github.io/docs/getting-started/lambda)，基于 `runtime`、`region` 和 `arch type` 选择 Lambda Layer 的 ARN。确保使用与 Lambda 函数相同区域的 Lambda Layer。例如，用于 Java 自动插桩的 Lambda Layer 为 `arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-java-agent-x86_64-ver-1-28-1:1`
 2. 通过控制台或您选择的 IaC 将 Layer 添加到 Lambda 函数。
     * 使用 AWS 控制台时，按照[说明](https://docs.aws.amazon.com/lambda/latest/dg/adding-layers.html)将 Layer 添加到 Lambda 函数。在"指定 ARN"下粘贴上面选择的 Layer ARN。
     * 使用 IaC 选项时，Lambda 函数的 SAM 模板如下所示：
@@ -80,7 +80,7 @@ REPORT RequestId: ed8f8444-3c29-40fe-a4a1-aca7af8cd940 Duration: 5144.38 ms Bill
 <b>XRAY TraceId: 1-65105691-384f7da75714148655fa631b SegmentId: 2c52a147021ebd20 Sampled: true</b>
 </code></pre>
 
-从日志中可以看到，OpenTelemetry Lambda 扩展开始使用 opentelemetry-javaagent 监听和检测 Lambda 函数，并在 AWS X-Ray 中生成 traces。
+从日志中可以看到，OpenTelemetry Lambda 扩展开始使用 opentelemetry-javaagent 监听和插桩 Lambda 函数，并在 AWS X-Ray 中生成 traces。
 
 要查看上述 Lambda 函数调用的 traces，请导航到 AWS X-Ray 控制台，并在 Traces 下选择 trace id。您应该会看到如下所示的 Trace Map 和 Segments Timeline：
 ![Lambda Insights](../../../images/Serverless/oss/xray-trace.png)
@@ -94,7 +94,7 @@ ADOT Lambda Layer 结合了 OpenTelemetry SDK 和 ADOT Collector 组件。ADOT C
 
 您可以使用自定义 collector 配置将 Lambda 函数的 metrics 导出到 Amazon Managed Prometheus (AMP)。
 
-1. 按照上面自动检测的步骤，配置 Lambda Layer，设置环境变量 `AWS_LAMBDA_EXEC_WRAPPER`。
+1. 按照上面自动插桩的步骤，配置 Lambda Layer，设置环境变量 `AWS_LAMBDA_EXEC_WRAPPER`。
 2. 按照[说明](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-create-workspace.html)在您的 AWS 账户中创建 Amazon Managed Prometheus 工作空间，Lambda 函数将向其发送 metrics。记下 AMP 工作空间中的 `Endpoint - remote write URL`。您需要将其配置在 ADOT collector 配置中。
 3. 在 Lambda 函数的根目录中创建一个自定义 ADOT collector 配置文件（例如 `collector.yaml`），其中包含上一步中 AMP endpoint remote write URL 的详细信息。您也可以从 S3 存储桶加载配置文件。
 示例 ADOT collector 配置文件：
@@ -167,20 +167,20 @@ counter.add(123, attributes);
 
 ## **使用 ADOT Lambda Layer 的优缺点**
 
-如果您打算从 Lambda 函数将 traces 发送到 AWS X-Ray，可以使用 [X-Ray SDK](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-nodejs.html) 或 [AWS Distro for OpenTelemetry (ADOT) Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda)。虽然 X-Ray SDK 支持对各种 AWS 服务进行简单检测，但它只能将 traces 发送到 X-Ray。而 ADOT collector 作为 Lambda Layer 的一部分，支持大量针对各种语言的库检测。您可以使用它来收集和发送 metrics 及 traces 到 AWS X-Ray 和其他监控解决方案，如 Amazon CloudWatch、Amazon OpenSearch Service、Amazon Managed Service for Prometheus 和其他[合作伙伴](https://aws-otel.github.io/docs/components/otlp-exporter#appdynamics)解决方案。
+如果您打算从 Lambda 函数将 traces 发送到 AWS X-Ray，可以使用 [X-Ray SDK](https://docs.aws.amazon.com/xray/latest/devguide/xray-sdk-nodejs.html) 或 [AWS Distro for OpenTelemetry (ADOT) Lambda Layer](https://aws-otel.github.io/docs/getting-started/lambda)。虽然 X-Ray SDK 支持对各种 AWS 服务进行简单插桩，但它只能将 traces 发送到 X-Ray。而 ADOT collector 作为 Lambda Layer 的一部分，支持大量针对各种语言的库插桩。您可以使用它来收集和发送 metrics 及 traces 到 AWS X-Ray 和其他监控解决方案，如 Amazon CloudWatch、Amazon OpenSearch Service、Amazon Managed Service for Prometheus 和其他[合作伙伴](https://aws-otel.github.io/docs/components/otlp-exporter#appdynamics)解决方案。
 
 然而，由于 ADOT 提供的灵活性，您的 Lambda 函数可能需要额外的内存，并且可能对冷启动延迟产生明显影响。因此，如果您正在优化 Lambda 函数的低延迟且不需要 OpenTelemetry 的高级功能，使用 AWS X-Ray SDK 而不是 ADOT 可能更合适。有关选择正确追踪工具的详细比较和指导，请参阅 AWS 文档中关于[在 ADOT 和 X-Ray SDK 之间选择](https://docs.aws.amazon.com/xray/latest/devguide/xray-instrumenting-your-app.html#xray-instrumenting-choosing)的内容。
 
 
 ## **使用 ADOT 时管理冷启动延迟**
-ADOT Lambda Layer for Java 是基于代理的，这意味着当您启用自动检测时，Java Agent 将尝试检测所有 OTel [支持的](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation)库。这将显著增加 Lambda 函数的冷启动延迟。因此，我们建议您仅为应用程序使用的库/框架启用自动检测。
+ADOT Lambda Layer for Java 是基于代理的，这意味着当您启用自动插桩时，Java Agent 将尝试插桩所有 OTel [支持的](https://github.com/open-telemetry/opentelemetry-java-instrumentation/tree/main/instrumentation)库。这将显著增加 Lambda 函数的冷启动延迟。因此，我们建议您仅为应用程序使用的库/框架启用自动插桩。
 
-要仅启用特定的检测，您可以使用以下环境变量：
+要仅启用特定的插桩，您可以使用以下环境变量：
 
-* `OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED`：设置为 false 时，禁用 Layer 中的自动检测，需要单独启用每个检测。
-* `OTEL_INSTRUMENTATION_<NAME>_ENABLED`：设置为 true 以启用特定库或框架的自动检测。将"NAME"替换为您要启用的检测。有关可用检测的列表，请参阅"抑制特定代理检测"。
+* `OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED`：设置为 false 时，禁用 Layer 中的自动插桩，需要单独启用每个插桩。
+* `OTEL_INSTRUMENTATION_<NAME>_ENABLED`：设置为 true 以启用特定库或框架的自动插桩。将"NAME"替换为您要启用的插桩。有关可用插桩的列表，请参阅"抑制特定代理插桩"。
 
-例如，要仅启用 Lambda 和 AWS SDK 的自动检测，您需要设置以下环境变量：
+例如，要仅启用 Lambda 和 AWS SDK 的自动插桩，您需要设置以下环境变量：
 ```
 OTEL_INSTRUMENTATION_COMMON_DEFAULT_ENABLED=false
 OTEL_INSTRUMENTATION_AWS_LAMBDA_ENABLED=true
@@ -195,6 +195,6 @@ OTEL_INSTRUMENTATION_AWS_SDK_ENABLED=true
 
 ## **总结**
 
-在本使用开源技术的基于 AWS Lambda 的无服务器应用程序 observability 最佳实践指南中，我们介绍了 AWS Distro for OpenTelemetry (ADOT) 和 Lambda Layer，以及如何使用它来检测您的 AWS Lambda 函数。我们介绍了如何轻松启用自动检测，以及如何通过简单配置自定义 ADOT collector 以将 observability 信号发送到多个目的地。我们强调了使用 ADOT 的优缺点及其对 Lambda 函数冷启动延迟的影响，并推荐了管理冷启动时间的最佳实践。通过采用这些最佳实践，您只需对应用程序进行一次检测，即可以供应商无关的方式将 logs、metrics 和 traces 发送到多个监控解决方案。
+在本使用开源技术的基于 AWS Lambda 的无服务器应用程序可观测性最佳实践指南中，我们介绍了 AWS Distro for OpenTelemetry (ADOT) 和 Lambda Layer，以及如何使用它来插桩您的 AWS Lambda 函数。我们介绍了如何轻松启用自动插桩，以及如何通过简单配置自定义 ADOT collector 以将可观测性信号发送到多个目的地。我们强调了使用 ADOT 的优缺点及其对 Lambda 函数冷启动延迟的影响，并推荐了管理冷启动时间的最佳实践。通过采用这些最佳实践，您只需对应用程序进行一次插桩，即可以供应商无关的方式将 logs、metrics 和 traces 发送到多个监控解决方案。
 
-如需进一步深入了解，我们强烈建议您练习 [AWS One Observability Workshop](https://catalog.workshops.aws/observability/en-US) 中的 AWS 托管开源 Observability 模块。
+如需进一步深入了解，我们强烈建议您练习 [AWS https://catalog.workshops.aws/observability/en-US](https://catalog.workshops.aws/observability/en-US) 中的 AWS 托管开源可观测性模块。

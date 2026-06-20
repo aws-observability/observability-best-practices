@@ -17,7 +17,7 @@
 * AWS CLI 已在您的环境中[安装](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)并[配置](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)。
 * [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html) 已在您的环境中安装。
 * Node.js。
-* [仓库](https://github.com/aws-observability/observability-best-practices/)已克隆到本地。本项目的代码位于 `/sandbox/grafana_subnet_ip_monitoring`。
+* [仓库](https://github.com/aws-observability/aws-observability/)已克隆到本地。本项目的代码位于 `/sandbox/grafana_subnet_ip_monitoring`。
 
 ### 安装依赖
 

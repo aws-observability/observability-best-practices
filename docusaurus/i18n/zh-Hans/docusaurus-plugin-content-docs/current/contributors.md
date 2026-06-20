@@ -1,15 +1,15 @@
-# Contributors
+# 贡献者
 
-The content on this site is maintained by Solution Architects, AWS Observability service team members and other volunteers from across the organization. Our goal is to improve the discovery of relevant best practices on how to set up and use AWS services and open source projects in the observability space.
+本站内容由解决方案架构师、AWS 可观测性服务团队成员以及组织内的其他志愿者共同维护。我们的目标是帮助大家更好地发现关于如何设置和使用 AWS 服务及开源项目的可观测性最佳实践。
 
-| Owners             | Owners                     | 
+| 负责人             | 负责人                     | 
 | ------------------ | --------------------------- |
 | Imaya Kumar Jagannathan       | Siva Guruvareddiar  |    
 
 
-Thank you to the following people for their contributions :
+感谢以下贡献者：
 
-| Authors             | Authors                     | Authors           | Authors            |
+| 作者             | 作者                     | 作者           | 作者            |
 | ------------------- | --------------------------- | ----------------- | ------------------ |
 | Alolita Sharma      | Aly Shah Imtiaz             | Helen Ashton      | Elamaran Shanmugam |
 | Dinesh Boddula      | Imaya Kumar Jagannathan     | Dieter Adant      | Eric Hsueh         |
@@ -25,8 +25,6 @@ Thank you to the following people for their contributions :
 
 
 
-Note that all recipes published on this site are available via the
-[MIT-0][mit0] license, a modification to the usual MIT license
-that removes the requirement for attribution.
+请注意，本站发布的所有方案均基于 [MIT-0][mit0] 许可证提供，这是标准 MIT 许可证的修改版本，去除了署名要求。
 
 [mit0]: https://github.com/aws/mit-0

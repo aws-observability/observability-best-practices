@@ -1,8 +1,8 @@
-# 云无关 AI Observability 平台 - 架构
+# 云无关 AI 可观测性平台 - 架构
 
 ## 概述
 
-本文档描述了基于 AWS 托管服务构建的云无关 AI Observability 平台的架构。该平台为跨多个云提供商的大语言模型 (LLM) 工作负载提供统一监控、成本优化和运营洞察。
+本文档描述了基于 AWS 托管服务构建的云无关 AI 可观测性平台的架构。该平台为跨多个云提供商的大语言模型 (LLM) 工作负载提供统一监控、成本优化和运营洞察。
 
 ## 架构图
 
@@ -15,7 +15,7 @@
 该平台支持跨多个提供商监控 LLM 调用：
 
 :::info 模型灵活性
-以下列出的模型是此演示中使用的模型。由于该平台使用 [LiteLLM](https://docs.litellm.ai/) 作为 AI 网关，您可以替换 LiteLLM 支持的任何 LLM — 只需使用您首选的模型更新 `gateway/litellm-config.yaml`。无论您选择哪些模型，Observability 管道的工作方式都相同。
+以下列出的模型是此演示中使用的模型。由于该平台使用 [LiteLLM](https://docs.litellm.ai/) 作为 AI 网关，您可以替换 LiteLLM 支持的任何 LLM — 只需使用您首选的模型更新 `gateway/litellm-config.yaml`。无论您选择哪些模型，可观测性管道的工作方式都相同。
 :::
 
 #### AWS Bedrock
@@ -60,7 +60,7 @@
   - 转换和丰富数据
   - 导出到 AWS 服务
 
-### 3. AWS Observability 堆栈
+### 3. AWS 可观测性堆栈
 
 #### Amazon CloudWatch
 - **服务类型**：托管 metrics 和监控
@@ -188,7 +188,7 @@
   - "估算过去一小时的 LLM 成本"
 
 #### Kiro IDE 集成
-- **用途**：以开发者为中心的 Observability
+- **用途**：以开发者为中心的可观测性
 - **功能**：
   - IDE 中的自然语言查询
   - 无需切换到 dashboard
@@ -467,7 +467,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 1. **高级分析**：BigQuery/Athena 集成
 2. **自定义 Dashboard**：团队特定视图
-3. **集成测试**：自动化 Observability 测试
+3. **集成测试**：自动化可观测性测试
 4. **API Gateway**：用于外部集成的 RESTful API
 
 ### 长期（6-12 个月）
@@ -493,7 +493,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 ### 相关模式
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
-- [Observability Best Practices](https://aws.amazon.com/blogs/mt/observability-best-practices/)
+- [可观测性 Best Practices](https://aws.amazon.com/blogs/mt/observability-best-practices/)
 - [Multi-Cloud Architecture Patterns](https://aws.amazon.com/blogs/architecture/)
 
 ---

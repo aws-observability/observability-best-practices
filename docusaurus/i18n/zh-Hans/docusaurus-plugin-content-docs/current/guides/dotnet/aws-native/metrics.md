@@ -1,6 +1,6 @@
 # Metrics
 
-Metrics 在 Observability 中至关重要，因为它们提供有关系统性能和行为的量化数据。这使得趋势分析成为可能，并支持主动监控以在问题影响用户之前发现问题。
+Metrics 在可观测性中至关重要，因为它们提供有关系统性能和行为的量化数据。这使得趋势分析成为可能，并支持主动监控以在问题影响用户之前发现问题。
 
 要了解 Metrics 的一般概念以及 Amazon CloudWatch 在 Metric 收集和分析方面的功能，请访问 [**Amazon CloudWatch 中的 Metrics**](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html)
 

@@ -12,7 +12,7 @@ CloudWatch Logs Insights 为以下类别提供了开箱即用的示例查询：
 - AWS AppSync
 - NAT Gateway
 
-在最佳实践指南的本节中，我们提供了一些当前未包含在开箱即用示例中的其他类型日志的示例查询。此列表将随时间演变和变化，您可以通过在 GitHub 上提交 [issue](https://github.com/aws-observability/observability-best-practices/issues) 来提交您自己的示例供审查。
+在最佳实践指南的本节中，我们提供了一些当前未包含在开箱即用示例中的其他类型日志的示例查询。此列表将随时间演变和变化，您可以通过在 GitHub 上提交 [issue](https://github.com/aws-observability/aws-observability/issues) 来提交您自己的示例供审查。
 
 ## API Gateway
 

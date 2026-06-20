@@ -1,7 +1,7 @@
 # 使用 AWS 开源服务进行 EKS 监控
 <!-- Workloads with Node Exporter, Amazon Managed Prometheus, and Grafana Visualization
 -->
-在容器化应用程序和 Kubernetes 的世界中，监控和 Observability 对于确保工作负载的可靠性、性能和效率至关重要。Amazon Elastic Kubernetes Service（EKS）提供了一个强大且可扩展的平台来部署和管理容器化应用程序，当与 Node Exporter、Amazon Managed Prometheus 和 Grafana 等工具结合使用时，您可以为 EKS 工作负载解锁全面的监控解决方案。
+在容器化应用程序和 Kubernetes 的世界中，监控和可观测性对于确保工作负载的可靠性、性能和效率至关重要。Amazon Elastic Kubernetes Service（EKS）提供了一个强大且可扩展的平台来部署和管理容器化应用程序，当与 Node Exporter、Amazon Managed Prometheus 和 Grafana 等工具结合使用时，您可以为 EKS 工作负载解锁全面的监控解决方案。
 
 Node Exporter 是一个 Prometheus 导出器，它从主机机器公开各种硬件和内核相关的 metrics。通过在 EKS 集群中将 Node Exporter 部署为 DaemonSet，您可以从每个工作节点收集有价值的 metrics，包括 CPU、内存、磁盘和网络使用情况，以及各种系统级 metrics。
 

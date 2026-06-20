@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Application Signals for Node.js Express on EKS</title>
+    <title>AWS Application Signals - Node.js Express 在 EKS 上的实施</title>
     <style>
         * {
             margin: 0;
@@ -280,79 +280,79 @@
     <div class="container">
         <div class="header">
             <h1>AWS Application Signals for Node.js Express on EKS</h1>
-            <p class="subtitle">Complete Implementation Guide</p>
+            <p class="subtitle">完整实施指南</p>
             <div class="platform-badge">EKS</div>
             <div class="language-badge">Node.js</div>
         </div>
 
         <div class="content">
-            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            <a href="index.html" class="back-link">← 返回所有实施方案</a>
             
             <div class="section">
-                <h2>Overview</h2>
-                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Node.js Express application on Amazon EKS with AWS Application Signals auto-instrumentation. This is the EKS equivalent of the Lambda Node.js function, reusing the same business logic and endpoints.</p>
+                <h2>概述</h2>
+                <p>本指南提供<strong>分步说明</strong>，指导您在 Amazon EKS 上部署带有 AWS Application Signals 自动插桩的 Node.js Express 应用。这是 Lambda Node.js 函数的 EKS 等效实现，复用了相同的业务逻辑和端点。</p>
                 
                 <div class="highlight">
-                    <strong>What you'll accomplish:</strong>
+                    <strong>完成目标：</strong>
                     <ul>
-                        <li>Deploy a Node.js Express app on EKS</li>
-                        <li>Enable AWS Application Signals auto-instrumentation</li>
-                        <li>View your service in CloudWatch Application Signals console</li>
-                        <li>Monitor service metrics, traces, and operations</li>
+                        <li>在 EKS 上部署 Node.js Express 应用</li>
+                        <li>启用 AWS Application Signals 自动插桩</li>
+                        <li>在 CloudWatch Application Signals 控制台中查看您的服务</li>
+                        <li>监控服务 metrics、traces 和操作</li>
                     </ul>
                 </div>
 
                 <div class="success">
-                    <strong>Time to complete:</strong> 30-45 minutes
+                    <strong>完成时间：</strong> 30-45 分钟
                 </div>
             </div>
 
             <div class="section">
-                <h2>Prerequisites</h2>
-                <h3>Required Tools</h3>
+                <h2>前置条件</h2>
+                <h3>必备工具</h3>
                 <ul>
-                    <li>AWS CLI v2 (latest version)</li>
+                    <li>AWS CLI v2（最新版本）</li>
                     <li>Docker Desktop</li>
-                    <li>kubectl (latest version)</li>
-                    <li>Node.js 18+ (for local development)</li>
-                    <li>npm (for local development)</li>
-                    <li>AWS Account with appropriate permissions</li>
-                    <li>Text editor</li>
+                    <li>kubectl（最新版本）</li>
+                    <li>Node.js 18+（用于本地开发）</li>
+                    <li>npm（用于本地开发）</li>
+                    <li>具有适当权限的 AWS 账户</li>
+                    <li>文本编辑器</li>
                 </ul>
 
-                <h3>AWS Permissions Required</h3>
+                <h3>所需 AWS 权限</h3>
                 <ul>
-                    <li>EKS: Full access (create clusters, node groups, add-ons)</li>
-                    <li>IAM: Create roles and policies</li>
-                    <li>CloudWatch: Logs and Application Signals access</li>
-                    <li>ECR: Push/pull container images</li>
-                    <li>VPC: Create and manage VPC resources</li>
+                    <li>EKS：完全访问（创建集群、节点组、插件）</li>
+                    <li>IAM：创建角色和策略</li>
+                    <li>CloudWatch：Logs 和 Application Signals 访问</li>
+                    <li>ECR：推送/拉取容器镜像</li>
+                    <li>VPC：创建和管理 VPC 资源</li>
                 </ul>
 
-                <h3>Knowledge Assumed</h3>
+                <h3>前置知识</h3>
                 <ul>
-                    <li>Basic AWS CLI usage</li>
-                    <li>Basic Docker commands</li>
-                    <li>Basic kubectl commands</li>
-                    <li>Basic understanding of EKS concepts</li>
+                    <li>AWS CLI 基础使用</li>
+                    <li>Docker 基础命令</li>
+                    <li>kubectl 基础命令</li>
+                    <li>EKS 基本概念理解</li>
                     <li>Basic Node.js/Express knowledge</li>
                 </ul>
             </div>
 
             <div class="section">
-                <h2>Architecture</h2>
+                <h2>架构</h2>
                 <div class="highlight">
-                    <strong>EKS Observability Add-on (Standard Approach):</strong> This guide uses the official EKS observability add-on, which is the recommended and standard way to enable Application Signals on EKS clusters. The add-on automatically handles telemetry collection without requiring manual CloudWatch Agent configuration.
+                    <strong>EKS 可观测性插件（标准方式）：</strong> This guide uses the official EKS observability add-on, which is the recommended and standard way to enable Application Signals on EKS clusters. The add-on automatically handles telemetry collection 不使用 requiring manual CloudWatch Agent configuration.
                 </div>
                 
-                <p>Your EKS cluster will run:</p>
+                <p>您的 EKS 集群将运行：</p>
                 <ol>
-                    <li><strong>Node.js Express Application</strong>: Your web API with auto-instrumentation annotations</li>
-                    <li><strong>EKS Observability Add-on</strong>: Official AWS add-on for automatic tracing and metrics collection</li>
-                    <li><strong>CloudWatch Agent (managed by add-on)</strong>: Automatically deployed and configured by the add-on</li>
+                    <li><strong>Node.js Express Application</strong>：带有自动插桩注解的 Web API</li>
+                    <li><strong>EKS 可观测性插件</strong>：用于自动追踪和 metrics 收集的官方 AWS 插件</li>
+                    <li><strong>CloudWatch Agent（由插件管理）</strong>：由插件自动部署和配置</li>
                 </ol>
                 
-                <p><strong>Flow:</strong></p>
+                <p><strong>流程：</strong></p>
                 <pre><code>EKS Cluster
   → Node.js Express App (auto-instrumented via annotation)
   → EKS Observability Add-on
@@ -360,19 +360,19 @@
   → CloudWatch Application Signals</code></pre>
                 
                 <div class="success">
-                    <strong>Key Benefits of EKS Observability Add-on:</strong>
+                    <strong>EKS 可观测性插件的主要优势：</strong>
                     <ul>
-                        <li>No manual CloudWatch Agent configuration required</li>
-                        <li>Automatic auto-instrumentation for supported languages</li>
-                        <li>Built-in support for Application Signals</li>
-                        <li>Simplified deployment and management</li>
+                        <li>无需手动配置 CloudWatch Agent</li>
+                        <li>支持语言的自动插桩</li>
+                        <li>内置 Application Signals 支持</li>
+                        <li>简化部署和管理</li>
                     </ul>
                 </div>
             </div>
 
             <div class="section">
-                <h2>Step 1: Create the Application</h2>
-                <h3>1.1 Create Project Structure</h3>
+                <h2>步骤 1： 创建应用</h2>
+                <h3>1.1 创建项目结构</h3>
                 <pre><code class="lang-bash">mkdir eks-nodejs
 cd eks-nodejs</code></pre>
 
@@ -482,7 +482,7 @@ app.listen(port, '0.0.0.0', () => {
   }
 }</code></pre>
 
-                <h3>1.4 Create Dockerfile</h3>
+                <h3>1.4 创建 Dockerfile</h3>
                 <p>Create <code>Dockerfile</code>:</p>
                 <pre><code class="lang-dockerfile">FROM node:18-alpine
 WORKDIR /app
@@ -494,13 +494,13 @@ CMD ["npm", "start"]</code></pre>
             </div>
 
             <div class="section">
-                <h2>Step 2: Build and Test Locally</h2>
-                <h3>2.1 Install Dependencies</h3>
+                <h2>步骤 2： 本地构建和测试</h2>
+                <h3>2.1 安装依赖</h3>
                 <pre><code class="lang-bash">npm install</code></pre>
 
-                <h3>2.2 Test Locally</h3>
+                <h3>2.2 本地测试</h3>
                 <pre><code class="lang-bash">npm start</code></pre>
-                <p>The application will start on <code>http://localhost:8080</code>. Test the endpoints:</p>
+                <p>应用将启动在 <code>http://localhost:8080</code>. 测试端点：</p>
                 <pre><code class="lang-bash"># Root endpoint
 curl http://localhost:8080/
 
@@ -521,17 +521,17 @@ curl http://localhost:8080/api/external</code></pre>
             </div>
 
             <div class="section">
-                <h2>Step 3: Deploy to EKS</h2>
-                <h3>3.1 Create EKS Cluster</h3>
+                <h2>步骤 3： 部署到 EKS</h2>
+                <h3>3.1 创建 EKS 集群</h3>
                 <pre><code class="lang-bash"># Create EKS cluster
 eksctl create cluster --name appsignals-cluster --region us-east-1 --nodegroup-name workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3
 
 # Create namespace
 kubectl create namespace appsignals-demo</code></pre>
 
-                <h3>3.2 Install EKS Observability Add-on (Required)</h3>
+                <h3>3.2 安装 EKS 可观测性插件（必需）</h3>
                 <div class="highlight">
-                    <strong>Important:</strong> The EKS observability add-on is the standard and recommended way to enable Application Signals on EKS. This add-on automatically handles telemetry collection and provides auto-instrumentation capabilities.
+                    <strong>重要：</strong> EKS 可观测性插件是在 EKS 上启用 Application Signals 的标准和推荐方式。该插件自动处理遥测数据收集并提供自动插桩功能。
                 </div>
                 
                 <pre><code class="lang-bash"># Install the EKS observability add-on (REQUIRED for Application Signals)
@@ -541,16 +541,16 @@ aws eks create-addon --cluster-name appsignals-cluster --addon-name amazon-cloud
 aws eks describe-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1</code></pre>
                 
                 <div class="success">
-                    <strong>What the EKS Observability Add-on provides:</strong>
+                    <strong>EKS 可观测性插件提供：</strong>
                     <ul>
-                        <li>Automatic CloudWatch Agent deployment</li>
-                        <li>Built-in support for Application Signals</li>
-                        <li>Auto-instrumentation for Java, Python, Node.js, and .NET</li>
-                        <li>No manual configuration required</li>
+                        <li>自动部署 CloudWatch Agent</li>
+                        <li>内置 Application Signals 支持</li>
+                        <li>支持 Java、Python、Node.js 和 .NET 的自动插桩</li>
+                        <li>无需手动配置</li>
                     </ul>
                 </div>
 
-                <h3>3.3 Build and Push Docker Image</h3>
+                <h3>3.3 构建并推送 Docker 镜像</h3>
                 <pre><code class="lang-bash"># Create ECR repository
 aws ecr create-repository --repository-name my-appsignals-nodejs-app --region us-east-1
 
@@ -564,7 +564,7 @@ docker tag my-appsignals-nodejs-app:latest 188524202814.dkr.ecr.us-east-1.amazon
 # Push image
 docker push 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-nodejs-app:latest</code></pre>
 
-                <h3>3.4 Deploy Application</h3>
+                <h3>3.4 部署应用</h3>
                 <p>Create <code>deployment.yaml</code>:</p>
                 <pre><code class="lang-yaml">apiVersion: v1
 kind: ConfigMap
@@ -774,13 +774,13 @@ spec:
     protocol: TCP
   type: ClusterIP</code></pre>
 
-                <p>Deploy the application:</p>
+                <p>部署应用：</p>
                 <pre><code class="lang-bash">kubectl apply -f deployment.yaml</code></pre>
             </div>
 
             <div class="section">
-                <h2>Step 4: Generate Traffic and Monitor</h2>
-                <h3>4.1 Generate Traffic</h3>
+                <h2>步骤 4： 生成流量并监控</h2>
+                <h3>4.1 生成流量</h3>
                 <p>Create <code>generate-traffic.sh</code>:</p>
                 <pre><code class="lang-bash">#!/bin/bash
 
@@ -824,70 +824,70 @@ echo "Traffic generation complete!"
 
 # Clean up port forward
 kill $PORT_FORWARD_PID</code></pre>
-                <p>Make it executable and run:</p>
+                <p>赋予执行权限并运行：</p>
                 <pre><code class="lang-bash">chmod +x generate-traffic.sh
 ./generate-traffic.sh</code></pre>
 
                 <h3>4.2 Monitor in CloudWatch</h3>
                 <ol>
-                    <li><p><strong>Open CloudWatch Console</strong></p>
+                    <li><p><strong>打开 CloudWatch 控制台</strong></p>
                         <ul>
-                            <li>Go to AWS Console → CloudWatch</li>
-                            <li>Navigate to "Application Signals"</li>
+                            <li>前往 AWS 控制台 → CloudWatch</li>
+                            <li>导航到 "Application Signals"</li>
                         </ul>
                     </li>
-                    <li><p><strong>View Service Map</strong></p>
+                    <li><p><strong>查看 Service Map</strong></p>
                         <ul>
-                            <li>Look for "nodejs-eks-service" service</li>
-                            <li>See the service dependencies and health</li>
+                            <li>查找 "nodejs-eks-service" 服务</li>
+                            <li>查看服务依赖关系和健康状况</li>
                         </ul>
                     </li>
-                    <li><p><strong>Check Metrics</strong></p>
+                    <li><p><strong>查看 Metrics</strong></p>
                         <ul>
-                            <li>View latency, error rate, and throughput</li>
-                            <li>Compare with Lambda metrics</li>
+                            <li>查看延迟、错误率和吞吐量</li>
+                            <li>与 Lambda metrics 进行比较</li>
                         </ul>
                     </li>
-                    <li><p><strong>Analyze Traces</strong></p>
+                    <li><p><strong>分析 Traces</strong></p>
                         <ul>
-                            <li>Click on service to see detailed traces</li>
-                            <li>View operation-level metrics</li>
+                            <li>点击服务查看详细 traces</li>
+                            <li>查看操作级别 metrics</li>
                         </ul>
                     </li>
                 </ol>
             </div>
 
             <div class="section">
-                <h2>Step 5: Clean Up</h2>
-                <h3>5.1 Delete Application</h3>
+                <h2>Step 5: 清理资源</h2>
+                <h3>5.1 删除应用</h3>
                 <pre><code class="lang-bash">kubectl delete -f deployment.yaml</code></pre>
 
-                <h3>5.2 Delete EKS Cluster</h3>
+                <h3>5.2 删除 EKS 集群</h3>
                 <pre><code class="lang-bash">eksctl delete cluster --name appsignals-cluster --region us-east-1</code></pre>
             </div>
 
             <div class="section">
-                <h2>Troubleshooting</h2>
-                <h3>Common Issues</h3>
+                <h2>故障排除</h2>
+                <h3>常见问题</h3>
                 <ol>
-                    <li><p><strong>Application won't start</strong></p>
+                    <li><p><strong>应用无法启动</strong></p>
                         <ul>
-                            <li>Check pod status: <code>kubectl get pods -n appsignals-demo</code></li>
-                            <li>Check pod logs: <code>kubectl logs -n appsignals-demo -l app=nodejs-eks-service</code></li>
-                            <li>Verify EKS observability add-on is installed</li>
+                            <li>检查 Pod 状态： <code>kubectl get pods -n appsignals-demo</code></li>
+                            <li>检查 Pod 日志： <code>kubectl logs -n appsignals-demo -l app=nodejs-eks-service</code></li>
+                            <li>验证 EKS 可观测性插件已安装</li>
                         </ul>
                     </li>
-                    <li><p><strong>No data in Application Signals</strong></p>
+                    <li><p><strong>Application Signals 中无数据</strong></p>
                         <ul>
-                            <li>Verify auto-instrumentation annotation is present</li>
-                            <li>Check environment variables are set correctly</li>
-                            <li>Ensure EKS observability add-on is running</li>
+                            <li>验证自动插桩注解是否存在</li>
+                            <li>Check 环境变量s are set correctly</li>
+                            <li>确保 EKS 可观测性插件正在运行</li>
                         </ul>
                     </li>
-                    <li><p><strong>Port forward issues</strong></p>
+                    <li><p><strong>端口转发问题</strong></p>
                         <ul>
-                            <li>Check service is running: <code>kubectl get svc -n appsignals-demo</code></li>
-                            <li>Verify pods are ready: <code>kubectl get pods -n appsignals-demo</code></li>
+                            <li>检查服务是否运行： <code>kubectl get svc -n appsignals-demo</code></li>
+                            <li>验证 Pod 是否就绪： <code>kubectl get pods -n appsignals-demo</code></li>
                         </ul>
                     </li>
                 </ol>

@@ -169,7 +169,7 @@ Amazon Managed Grafana (AMG) 告警功能允许客户从其 Amazon Managed Grafa
 
 ## 基线监控的推荐告警
 
-告警是强大的监控和 Observability 最佳实践的关键方面。告警机制应在告警疲劳和遗漏关键告警之间取得平衡。以下是一些推荐的告警，可以提高工作负载的整体可靠性。组织中的各个团队从不同角度来监控其基础设施和工作负载，因此可以根据需求和场景进行扩展或更改，这当然不是一个全面的列表。
+告警是强大的监控和可观测性最佳实践的关键方面。告警机制应在告警疲劳和遗漏关键告警之间取得平衡。以下是一些推荐的告警，可以提高工作负载的整体可靠性。组织中的各个团队从不同角度来监控其基础设施和工作负载，因此可以根据需求和场景进行扩展或更改，这当然不是一个全面的列表。
 
 - 容器节点使用超过一定比例（例如 80%）的分配内存限制。
 - 容器节点使用超过一定比例（例如 80%）的分配 CPU 限制。
@@ -283,6 +283,6 @@ $ aws amp describe-rule-groups-namespace --workspace-id ws-8da31ad6-f09d-44ff-93
 
 用户使用规则的权限也可以使用 [IAM 策略](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alertmanager-IAM-permissions.html)（文档示例）进行限制。
 
-有关更多信息，客户可以阅读 [AWS 文档](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alert-manager.html)，并查看关于 Amazon Managed Service for Prometheus Alert Manager 的 [AWS Observability Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/setup-alert-manager)。
+有关更多信息，客户可以阅读 [AWS 文档](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-alert-manager.html)，并查看关于 Amazon Managed Service for Prometheus Alert Manager 的 [AWS 可观测性 Workshop](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/setup-alert-manager)。
 
 附加参考：[Amazon Managed Service for Prometheus Is Now Generally Available with Alert Manager and Ruler](https://aws.amazon.com/blogs/aws/amazon-managed-service-for-prometheus-is-now-generally-available-with-alert-manager-and-ruler/)

@@ -45,6 +45,6 @@ annotations:
 
 - 认证和授权：AMP 支持各种认证和授权机制，包括 IAM 角色和 service account，以保护对监控数据的访问安全。
 
-- 与 AWS Observability 服务集成：您可以将 AMP 与其他 AWS observability 服务（如 AWS CloudWatch 和 AWS X-Ray）集成，实现 AWS 环境中的全面 observability。
+- 与 AWS 可观测性服务集成：您可以将 AMP 与其他 AWS 可观测性服务（如 AWS CloudWatch 和 AWS X-Ray）集成，实现 AWS 环境中的全面可观测性。
 
 通过利用 AMP 中的 Managed Prometheus Collector，您可以高效地从 EKS 容器化工作负载中收集和分析 metrics，无需管理和扩展底层 Prometheus 基础设施。AMP 为监控 EKS 应用程序和基础设施提供了完全托管且可扩展的解决方案。

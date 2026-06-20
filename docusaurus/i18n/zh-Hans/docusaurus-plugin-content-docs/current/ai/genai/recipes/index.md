@@ -1,11 +1,11 @@
-# AI Observability 演示
+# AI 可观测性演示
 
-多云 AI 原生全栈 Observability 平台，用于监控 LLM 工作负载。
+多云 AI 原生全栈可观测性平台，用于监控 LLM 工作负载。
 
 ## 快速开始
 
 ### 先决条件
-- 具有 Bedrock 访问权限的 AWS 账户。此演示在 us-east-1 中使用 Claude 3 Haiku/Sonnet，但您可以通过更新 `gateway/litellm-config.yaml` 中的模型 ID 来替换任何 Bedrock 支持的模型。Observability 管道与模型无关，可与 LiteLLM 支持的任何 LLM 提供商配合使用。
+- 具有 Bedrock 访问权限的 AWS 账户。此演示在 us-east-1 中使用 Claude 3 Haiku/Sonnet，但您可以通过更新 `gateway/litellm-config.yaml` 中的模型 ID 来替换任何 Bedrock 支持的模型。可观测性管道与模型无关，可与 LiteLLM 支持的任何 LLM 提供商配合使用。
 - 配置了 AdministratorAccess 的 AWS CLI
 - Docker Desktop 正在运行
 - Docker Compose v2
@@ -79,7 +79,7 @@ awscurl --service aps --region us-east-1 \
 
 ### 阶段 5：Grafana Dashboard
 
-1. 打开 AWS 控制台 → Amazon Managed Grafana → ai-observability-demo
+1. 打开 AWS 控制台 → Amazon Managed Grafana → ai-可观测性-demo
 2. 点击 "Open Grafana"
 3. 添加数据源：
    - Prometheus：使用 AMP endpoint 和 SigV4 认证
@@ -114,7 +114,7 @@ pip3 install -r requirements.txt
 ```
 
 :::tip 区域配置
-将 `AWS_REGION` 设置为您的 Observability 资源（AMP、CloudWatch、X-Ray）所在的区域。支持这些服务的任何 AWS 区域都可以使用。
+将 `AWS_REGION` 设置为您的可观测性资源（AMP、CloudWatch、X-Ray）所在的区域。支持这些服务的任何 AWS 区域都可以使用。
 :::
 
 ### 在 Kiro 中进行自然语言查询
@@ -148,7 +148,7 @@ rm -rf AI-OBS_DEMO
 - **Amazon Managed Prometheus**：使用 SigV4 认证的可扩展 metrics 存储
 - **AWS X-Ray**：LLM 调用的分布式追踪
 - **Amazon Managed Grafana**：跨 AMP、CloudWatch、X-Ray 的统一可视化
-- **自定义 MCP Server**：通过 Kiro 进行自然语言 Observability 查询
+- **自定义 MCP Server**：通过 Kiro 进行自然语言可观测性查询
 
 ## 扩展到多云
 
@@ -163,4 +163,4 @@ rm -rf AI-OBS_DEMO
 - [Amazon Managed Prometheus](https://docs.aws.amazon.com/prometheus/)
 - [Amazon Managed Grafana](https://docs.aws.amazon.com/grafana/)
 - [LiteLLM Proxy](https://docs.litellm.ai/docs/proxy/quick_start)
-- [AWS Bedrock Observability](https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-cloudwatch.html)
+- [AWS Bedrock 可观测性](https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-cloudwatch.html)

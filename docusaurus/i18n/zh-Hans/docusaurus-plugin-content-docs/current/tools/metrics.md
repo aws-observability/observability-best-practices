@@ -68,7 +68,7 @@ CloudWatch 还支持条件语句。例如，要为每个延迟超过特定阈值
 :::
 ## 异常检测
 
-CloudWatch 有一个[异常检测](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html)功能，它通过学习基于已记录 metrics 的*正常*行为来增强您的 Observability 策略。使用异常检测是任何 metric 信号收集系统的[最佳实践](../signals/metrics.md#use-anomaly-detection-algorithms)。
+CloudWatch 有一个[异常检测](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Anomaly_Detection.html)功能，它通过学习基于已记录 metrics 的*正常*行为来增强您的可观测性策略。使用异常检测是任何 metric 信号收集系统的[最佳实践](../signals/metrics.md#use-anomaly-detection-algorithms)。
 
 异常检测在两周的时间内构建模型。
 

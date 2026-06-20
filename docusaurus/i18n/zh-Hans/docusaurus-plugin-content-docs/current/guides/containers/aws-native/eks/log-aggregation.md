@@ -1,6 +1,6 @@
 # 日志聚合
 
-在 Observability 最佳实践指南的这一部分中，我们将深入探讨以下与使用 AWS 原生服务进行 Amazon EKS 日志记录相关的主题：
+在可观测性最佳实践指南的这一部分中，我们将深入探讨以下与使用 AWS 原生服务进行 Amazon EKS 日志记录相关的主题：
 
 * AWS EKS 日志记录简介
 * Amazon EKS 控制平面日志记录
@@ -364,4 +364,4 @@ fields @logStream, @timestamp, @message| filter @logStream like /^kube-apiserver
 
 ## 结论
 
-在 Observability 最佳实践指南的这一部分中，我们首先深入了解了 Kubernetes 日志记录的三种类型：控制平面日志记录、节点日志记录和应用程序日志记录。此外，我们还了解了如何使用 AWS 原生服务（如 Kinesis Data Firehose 和 Amazon OpenSearch Service）从 Amazon EKS 和其他计算平台进行统一日志聚合。如需进一步深入了解，我们强烈建议您在 AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) 的 AWS 原生 Observability 类别下练习 Logs 和 Insights 模块。
+在可观测性最佳实践指南的这一部分中，我们首先深入了解了 Kubernetes 日志记录的三种类型：控制平面日志记录、节点日志记录和应用程序日志记录。此外，我们还了解了如何使用 AWS 原生服务（如 Kinesis Data Firehose 和 Amazon OpenSearch Service）从 Amazon EKS 和其他计算平台进行统一日志聚合。如需进一步深入了解，我们强烈建议您在 AWS [https://catalog.workshops.aws/observability/en-US](https://catalog.workshops.aws/observability/en-US) 的 AWS 原生可观测性类别下练习 Logs 和 Insights 模块。

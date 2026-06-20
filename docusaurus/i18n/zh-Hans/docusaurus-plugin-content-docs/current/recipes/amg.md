@@ -1,6 +1,6 @@
 # Amazon Managed Grafana
 
-[Amazon Managed Grafana][amg-main] 是一项基于开源 Grafana 的完全托管服务，使您能够分析 metrics、logs 和 traces，而无需配置服务器、配置和更新软件，或承担在生产环境中保护和扩展 Grafana 的繁重工作。您可以创建、探索和与团队共享 observability dashboards，连接多个数据源。
+[Amazon Managed Grafana][amg-main] 是一项基于开源 Grafana 的完全托管服务，使您能够分析 metrics、logs 和 traces，而无需配置服务器、配置和更新软件，或承担在生产环境中保护和扩展 Grafana 的繁重工作。您可以创建、探索和与团队共享可观测性 dashboards，连接多个数据源。
 
 请查看以下方案：
 
@@ -48,4 +48,4 @@
 [amg-anywhere-monitoring]: https://aws.amazon.com/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-amp-statsd]: https://aws.amazon.com/blogs/mt/viewing-custom-metrics-from-statsd-with-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-grafana-teams]: https://aws.amazon.com/blogs/mt/fine-grained-access-control-in-amazon-managed-grafana-using-grafana-teams/
-[amg-subnet-free-ip-monitoring]: https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-subnet-free-ip-monitoring/
+[amg-subnet-free-ip-monitoring]: https://aws-observability.github.io/aws-observability/recipes/recipes/amg-subnet-free-ip-monitoring/

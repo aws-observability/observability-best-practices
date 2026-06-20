@@ -47,7 +47,7 @@ X-Ray 从 ADOT collector 接收 trace 数据，提供对请求流和服务依赖
 
 - 必须为 ECS 任务配置适当的 IAM 角色和权限，以允许向 X-Ray 和 Prometheus 传输数据。
 - ECS 任务中的资源分配应同时考虑应用程序和 ADOT collector 的需求。
-- 考虑在 metrics 和 traces 之外实施日志收集，以获得完整的 observability 解决方案。
+- 考虑在 metrics 和 traces 之外实施日志收集，以获得完整的可观测性解决方案。
 
 ## 结论
 

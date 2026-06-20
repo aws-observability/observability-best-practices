@@ -4,9 +4,9 @@ sidebar_position: 1
 
 # AI
 
-AI 驱动的 observability 以及 AWS 上 AI 工作负载的 observability。
+AI 驱动的可观测性以及 AWS 上 AI 工作负载的可观测性。
 
-## [GenAI Observability](./genai/)
+## [GenAI 可观测性](./genai/)
 
 监控、审计和运营生成式 AI 工作负载 -- Amazon Bedrock、基础模型、AI 代理和提示管道。
 

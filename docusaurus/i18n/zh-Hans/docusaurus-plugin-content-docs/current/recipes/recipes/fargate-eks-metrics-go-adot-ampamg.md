@@ -150,7 +150,7 @@ kubectl apply -f adot-collector-fargate.yaml
 
 ## 应用程序
 
-在本方案中，我们将使用 AWS Observability 仓库中的一个
+在本方案中，我们将使用 AWS 可观测性仓库中的一个
 [示例应用程序](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus-sample-app)。
 
 这个 Prometheus 示例应用生成所有四种 Prometheus metric 类型

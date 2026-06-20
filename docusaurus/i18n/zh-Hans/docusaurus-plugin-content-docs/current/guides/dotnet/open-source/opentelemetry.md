@@ -10,9 +10,9 @@
 
 1. **Instrumentation** 包自动从各种 .NET 组件和流行库中收集遥测数据，从 ASP.NET Core、HTTP 客户端和 Entity Framework 等来源捕获 metrics、traces 和日志。
 
-1. **Exporter** 包充当通往不同 observability 平台的桥梁，允许您将收集的遥测数据发送到各种目标，如 Jaeger、Prometheus 或任何支持 OTLP 协议的系统。
+1. **Exporter** 包充当通往不同可观测性平台的桥梁，允许您将收集的遥测数据发送到各种目标，如 Jaeger、Prometheus 或任何支持 OTLP 协议的系统。
 
-这些组件作为一个内聚系统协同工作，通过 NuGet 提供，为 .NET 应用程序提供完整的 observability 解决方案。
+这些组件作为一个内聚系统协同工作，通过 NuGet 提供，为 .NET 应用程序提供完整的可观测性解决方案。
 
 下表描述了这些包。
 
@@ -30,7 +30,7 @@
 
 ## AWS .NET OpenTelemetry 库
 
-AWS 发布了最新版本的 OpenTelemetry 包，可在 NuGet 上获取。这些包已重新设计以简化使用并符合最新的 OpenTelemetry 命名约定。它们包括新功能，如支持 AWS SDK for .NET 中的增强 observability 和对 AWS 服务（包括 Amazon Bedrock）的额外 instrumentation，以及 OpenTelemetry 社区的多项错误修复、增强和贡献。
+AWS 发布了最新版本的 OpenTelemetry 包，可在 NuGet 上获取。这些包已重新设计以简化使用并符合最新的 OpenTelemetry 命名约定。它们包括新功能，如支持 AWS SDK for .NET 中的增强可观测性和对 AWS 服务（包括 Amazon Bedrock）的额外 instrumentation，以及 OpenTelemetry 社区的多项错误修复、增强和贡献。
 
 下表描述了这些包。
 

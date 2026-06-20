@@ -1,6 +1,6 @@
-# AWS Observability 服务与成本
+# AWS 可观测性服务与成本
 
-当您投资 Observability 技术栈时，定期监控 observability 产品的**成本**非常重要。这使您能够确保只产生需要的成本，并且不会在不需要的资源上超支。
+当您投资可观测性技术栈时，定期监控可观测性产品的**成本**非常重要。这使您能够确保只产生需要的成本，并且不会在不需要的资源上超支。
 
 ## AWS 成本优化工具
 
@@ -36,7 +36,7 @@
     - 手动部署请参考 AWS Well-Architected **[成本优化实验室][cost-optimization-lab]**。
     - 自动化部署请参考 [GitHub 仓库][GitHub-repo]。
 
-Cloud Intelligence dashboards 非常适合财务团队、高管和 IT 经理。然而，我们从客户那里收到的一个常见问题是如何深入了解 Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus 和 Amazon Managed Grafana 等各个 AWS Observability 产品的组织范围成本。
+Cloud Intelligence dashboards 非常适合财务团队、高管和 IT 经理。然而，我们从客户那里收到的一个常见问题是如何深入了解 Amazon CloudWatch、AWS X-Ray、Amazon Managed Service for Prometheus 和 Amazon Managed Grafana 等各个 AWS 可观测性产品的组织范围成本。
 
 在下一节中，您将深入了解每个产品的成本和使用量。任何规模的公司都可以采用这种主动的云成本优化策略，通过云成本分析和数据驱动的决策提高业务效率，而不会影响性能或产生运营开销。
 

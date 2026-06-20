@@ -39,7 +39,7 @@ AWS 多账户监控提供了一系列可以显著增强组织云运营的好处�
 
 ## 参考资料：
 
-1. AWS 文档："CloudWatch cross-account observability"（https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html）
+1. AWS 文档："CloudWatch cross-account 可观测性"（https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html）
 2. Cloud Conformity 报告："The State of AWS Security and Compliance in the Cloud"（https://www.trendmicro.com/cloudoneconformity/knowledge-base/aws/）
 3. Forrester Research："The Total Economic Impact™ Of AWS Cloud Operations"（https://pages.awscloud.com/rs/112-TZM-766/images/GEN_forrester-tei-cloud-ops_May-2022.pdf）
-4. How Audible used Amazon CloudWatch cross-account observability to resolve severity tickets faster（https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/）
+4. How Audible used Amazon CloudWatch cross-account 可观测性 to resolve severity tickets faster（https://aws.amazon.com/blogs/mt/how-audible-used-amazon-cloudwatch-cross-account-observability-to-resolve-severity-tickets-faster/）

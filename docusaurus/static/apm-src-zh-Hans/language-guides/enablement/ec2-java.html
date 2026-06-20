@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Complete Guide:  Java on EC2 with Application Signals</title>
+    <title>完整指南：Java 在 EC2 上使用 Application Signals</title>
     <style>
         * {
             margin: 0;
@@ -242,103 +242,103 @@
     <div class="container">
         <div class="header">
             <h1>Quarkus Java on EC2 with Application Signals</h1>
-            <p class="subtitle">Step-by-Step Guide for AWS CloudWatch Application Signals</p>
+            <p class="subtitle">AWS CloudWatch Application Signals 分步指南</p>
             <div class="platform-badge">Platform: Amazon EC2 | Language: Java (Quarkus) | OpenTelemetry Enabled</div>
         </div>
 
         <div class="toc">
-            <h2>Table of Contents</h2>
+            <h2>目录</h2>
             <ul>
-                <li><a href="#overview">1. Overview</a></li>
-                <li><a href="#prerequisites">2. Prerequisites</a></li>
-                <li><a href="#enable-app-signals">3. Enable Application Signals</a></li>
-                <li><a href="#iam-setup">4. IAM Role Setup</a></li>
-                <li><a href="#cloudwatch-agent">5. Install CloudWatch Agent</a></li>
+                <li><a href="#overview">1. 概述</a></li>
+                <li><a href="#prerequisites">2. 前置条件</a></li>
+                <li><a href="#enable-app-signals">3. 启用 Application Signals</a></li>
+                <li><a href="#iam-setup">4. IAM 角色设置</a></li>
+                <li><a href="#cloudwatch-agent">5. 安装 CloudWatch Agent</a></li>
                 <li><a href="#build-app">6. Build Quarkus Application</a></li>
-                <li><a href="#deploy-app">7. Deploy Application</a></li>
-                <li><a href="#traffic-gen">8. Traffic Generation</a></li>
-                <li><a href="#verify">9. Verify Application Signals</a></li>
-                <li><a href="#troubleshooting">10. Troubleshooting</a></li>
+                <li><a href="#deploy-app">7. 部署应用</a></li>
+                <li><a href="#traffic-gen">8. 流量生成</a></li>
+                <li><a href="#verify">9. 验证 Application Signals</a></li>
+                <li><a href="#troubleshooting">10. 故障排除</a></li>
             </ul>
         </div>
 
         <div class="section" id="overview">
-            <h2>1. Overview</h2>
+            <h2>1. 概述</h2>
             <p>
-                This guide walks you through deploying a Quarkus Java application on Amazon EC2 with AWS CloudWatch Application Signals enabled. 
-                Application Signals provides automatic instrumentation for monitoring application health, performance, and dependencies.
+                本指南将引导您在 Amazon EC2 上部署启用 AWS CloudWatch Application Signals 的 Quarkus Java 应用。 
+                Application Signals 提供自动插桩功能，用于监控应用健康状况、性能和依赖关系。
             </p>
             
             <div class="info-box">
-                <strong>What You'll Build:</strong>
+                <strong>构建内容：</strong>
                 <ul>
-                    <li>Quarkus Java REST API application with 8+ endpoints</li>
-                    <li>CloudWatch agent configured for Application Signals</li>
-                    <li>AWS Distro for OpenTelemetry (ADOT) Java agent for auto-instrumentation</li>
-                    <li>Automated traffic generation for testing</li>
-                    <li>Complete observability in CloudWatch Application Signals</li>
+                    <li>带有 8 个以上端点的 Quarkus Java REST API 应用</li>
+                    <li>配置了 Application Signals 的 CloudWatch Agent</li>
+                    <li>用于自动插桩的 AWS Distro for OpenTelemetry (ADOT) Java Agent</li>
+                    <li>用于测试的自动化流量生成</li>
+                    <li>在 CloudWatch Application Signals 中实现完整的可观测性</li>
                 </ul>
             </div>
 
-            <h3>Architecture</h3>
-            <p>The solution consists of:</p>
+            <h3>架构</h3>
+            <p>该解决方案由以下组件组成：</p>
             <ul>
-                <li><strong>Quarkus Application:</strong> Java 21 application with REST endpoints</li>
-                <li><strong>ADOT Java Agent:</strong> Auto-instruments the application for traces and metrics</li>
-                <li><strong>CloudWatch Agent:</strong> Collects telemetry data and sends to AWS</li>
-                <li><strong>Application Signals:</strong> Visualizes service health, traces, and metrics</li>
+                <li><strong>Quarkus Application:</strong> 带有 REST 端点的 Java 21 应用</li>
+                <li><strong>ADOT Java Agent:</strong> 自动为应用插桩以收集 traces 和 metrics</li>
+                <li><strong>CloudWatch Agent:</strong> 收集遥测数据并发送到 AWS</li>
+                <li><strong>Application Signals:</strong> 可视化服务健康状况、traces 和 metrics</li>
             </ul>
         </div>
 
         <div class="section" id="prerequisites">
-            <h2>2. Prerequisites</h2>
+            <h2>2. 前置条件</h2>
             
-            <h3>Required Tools</h3>
+            <h3>必备工具</h3>
             <ul>
-                <li>AWS CLI configured with appropriate profile</li>
+                <li>配置了相应配置文件的 AWS CLI</li>
                 <li>EC2 instance (Amazon Linux 2 or Amazon Linux 2023)</li>
                 <li>Java 21 (Amazon Corretto)</li>
                 <li>Maven 3.8+</li>
-                <li>Access to EC2 instance via SSM Session Manager or SSH</li>
+                <li>通过 SSM Session Manager 或 SSH 访问 EC2 实例</li>
             </ul>
 
-            <h3>AWS Permissions</h3>
-            <p>Your EC2 instance needs an IAM role with:</p>
+            <h3>AWS 权限</h3>
+            <p>您的 EC2 实例需要一个具有以下策略的 IAM 角色：</p>
             <ul>
                 <li>CloudWatchAgentServerPolicy</li>
-                <li>AmazonSSMManagedInstanceCore (if using SSM)</li>
-                <li>S3 read access (if deploying via S3)</li>
+                <li>AmazonSSMManagedInstanceCore (如果使用 SSM)</li>
+                <li>S3 读取权限（如果通过 S3 部署）</li>
             </ul>
 
-            <h3>Network Requirements</h3>
+            <h3>网络要求</h3>
             <ul>
-                <li>Security group allows port 8080 (application)</li>
-                <li>Outbound internet access for downloading dependencies</li>
+                <li>安全组允许端口 8080（应用）</li>
+                <li>出站互联网访问用于下载依赖</li>
             </ul>
         </div>
 
         <div class="section" id="enable-app-signals">
-            <h2>3. Enable Application Signals</h2>
+            <h2>3. 启用 Application Signals</h2>
             
             <div class="step">
-                <h3><span class="step-number">1</span>Enable in AWS Console</h3>
+                <h3><span class="step-number">1</span>在 AWS 控制台中启用</h3>
                 <ol>
-                    <li>Open AWS Console and navigate to CloudWatch</li>
-                    <li>Go to <strong>Application Signals</strong> → <strong>Get started</strong></li>
-                    <li>Click <strong>Enable Application Signals</strong></li>
-                    <li>This is a one-time account-level configuration</li>
+                    <li>打开 AWS 控制台并导航到 CloudWatch</li>
+                    <li>前往 <strong>Application Signals</strong> → <strong>Get started</strong></li>
+                    <li>Click <strong>启用 Application Signals</strong></li>
+                    <li>这是一次性的账户级别配置</li>
                 </ol>
             </div>
 
             <div class="info-box">
-                <strong>Note:</strong> Application Signals must be enabled in your AWS account before proceeding. This allows CloudWatch to receive and display telemetry data from your applications.
+                <strong>注意：</strong> 在继续操作之前，必须在您的 AWS 账户中启用 Application Signals。这使 CloudWatch 能够接收和显示来自应用的遥测数据。
             </div>
         </div>
 
         <div class="section" id="iam-setup">
-            <h2>4. IAM Role Setup</h2>
+            <h2>4. IAM 角色设置</h2>
 
-            <h3>Check Existing IAM Role</h3>
+            <h3>检查现有 IAM 角色</h3>
             <div class="code-block">
 <span class="comment"># Get the IAM role attached to your EC2 instance</span>
 <span class="command">aws ec2 describe-instances \
@@ -348,7 +348,7 @@
   --region us-east-1</span>
             </div>
 
-            <h3>Attach CloudWatch Policy</h3>
+            <h3>附加 CloudWatch 策略</h3>
             <div class="code-block">
 <span class="comment"># Extract role name from the ARN</span>
 <span class="command">ROLE_NAME=$(aws ec2 describe-instances \
@@ -367,7 +367,7 @@
   --profile YOUR_PROFILE</span>
             </div>
 
-            <h3>Verify Policy Attachment</h3>
+            <h3>验证策略附加</h3>
             <div class="code-block">
 <span class="comment"># List attached policies</span>
 <span class="command">aws iam list-attached-role-policies \
@@ -383,13 +383,13 @@
         </div>
 
         <div class="section" id="cloudwatch-agent">
-            <h2>5. Install CloudWatch Agent</h2>
+            <h2>5. 安装 CloudWatch Agent</h2>
 
             <div class="warning-box">
-                <strong>Important:</strong> SSH to your EC2 instance or use SSM Session Manager before running these commands.
+                <strong>重要：</strong> 在运行这些命令之前，通过 SSH 或 SSM Session Manager 连接到您的 EC2 实例。
             </div>
 
-            <h3>Download and Install</h3>
+            <h3>下载和安装</h3>
             <div class="code-block">
 <span class="comment"># Download CloudWatch agent</span>
 <span class="command">wget https://amazoncloudwatch-agent.s3.amazonaws.com/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm</span>
@@ -398,7 +398,7 @@
 <span class="command">sudo rpm -U ./amazon-cloudwatch-agent.rpm</span>
             </div>
 
-            <h3>Configure for Application Signals</h3>
+            <h3>配置 Application Signals</h3>
             <div class="code-block">
 <span class="comment"># Create configuration directory if needed</span>
 <span class="command">sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc</span>
@@ -423,7 +423,7 @@
 <span class="command">cat /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
             </div>
 
-            <h3>Start CloudWatch Agent</h3>
+            <h3>启动 CloudWatch Agent</h3>
             <div class="code-block">
 <span class="comment"># Start the agent with Application Signals config</span>
 <span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
@@ -438,10 +438,10 @@
             </div>
 
             <div class="success-box">
-                <strong>Expected Output:</strong> You should see <code>"status": "running"</code> in the JSON output.
+                <strong>Expected 输出：</strong> 您应该在 JSON 输出中看到 <code>"status": "running"</code>。
             </div>
 
-            <h3>Verify Ports</h3>
+            <h3>验证端口</h3>
             <div class="code-block">
 <span class="comment"># Check if Application Signals ports are listening</span>
 <span class="command">sudo netstat -tlnp | grep 431</span>
@@ -450,10 +450,10 @@
             </div>
 
             <div class="info-box">
-                <strong>Port Information:</strong>
+                <strong>端口信息：</strong>
                 <ul>
-                    <li><strong>4315:</strong> OTLP gRPC receiver</li>
-                    <li><strong>4316:</strong> OTLP HTTP receiver (used by ADOT Java agent)</li>
+                    <li><strong>4315:</strong> OTLP gRPC 接收器</li>
+                    <li><strong>4316:</strong> OTLP HTTP 接收器（ADOT Java Agent 使用）</li>
                 </ul>
             </div>
         </div>
@@ -462,10 +462,10 @@
             <h2>6. Build Quarkus Application</h2>
 
             <div class="info-box">
-                <strong>Note:</strong> Run these commands on your <strong>local machine</strong> where you have the source code.
+                <strong>注意：</strong> 在拥有源代码的<strong>本地机器</strong>上运行这些命令。
             </div>
 
-            <h3>Build Application</h3>
+            <h3>构建应用</h3>
             <div class="code-block">
 <span class="comment"># Navigate to project directory</span>
 <span class="command">cd ec2-quarkus-java</span>
@@ -482,7 +482,7 @@
 <span class="command">cd ..</span>
             </div>
 
-            <h3>Download ADOT Java Agent</h3>
+            <h3>下载 ADOT Java Agent</h3>
             <div class="code-block">
 <span class="comment"># Download AWS Distro for OpenTelemetry Java agent</span>
 <span class="command">wget -O deployment/aws-opentelemetry-agent.jar \
@@ -491,10 +491,10 @@
 <span class="command">echo "Build complete! Files ready for deployment."</span>
             </div>
 
-            <h3>Upload to EC2</h3>
-            <p>Transfer the files to your EC2 instance using one of these methods:</p>
+            <h3>上传到 EC2</h3>
+            <p>使用以下方法之一将文件传输到您的 EC2 实例：</p>
 
-            <h4>Option A: Via S3</h4>
+            <h4>方案 A：通过 S3</h4>
             <div class="code-block">
 <span class="comment"># Upload to S3</span>
 <span class="command">aws s3 cp target/quarkus-app.tar.gz s3://YOUR-BUCKET/ \
@@ -504,13 +504,13 @@
 <span class="command">aws s3 cp s3://YOUR-BUCKET/quarkus-app.tar.gz /home/ec2-user/</span>
             </div>
 
-            <h4>Option B: Via SCP (if using SSH)</h4>
+            <h4>方案 B：通过 SCP（如果使用 SSH）</h4>
             <div class="code-block">
 <span class="command">scp -i YOUR-KEY.pem target/quarkus-app.tar.gz ec2-user@YOUR-EC2-IP:/home/ec2-user/</span>
 <span class="command">scp -i YOUR-KEY.pem deployment/aws-opentelemetry-agent.jar ec2-user@YOUR-EC2-IP:/home/ec2-user/</span>
             </div>
 
-            <h4>Option C: Download ADOT agent directly on EC2</h4>
+            <h4>方案 C：直接在 EC2 上下载 ADOT Agent</h4>
             <div class="code-block">
 <span class="comment"># On EC2 instance</span>
 <span class="command">cd /home/ec2-user</span>
@@ -520,13 +520,13 @@
         </div>
 
         <div class="section" id="deploy-app">
-            <h2>7. Deploy Application on EC2</h2>
+            <h2>7. 部署应用 on EC2</h2>
 
             <div class="warning-box">
-                <strong>Important:</strong> Run these commands on your <strong>EC2 instance</strong> via SSH or SSM Session Manager.
+                <strong>重要：</strong> 通过 SSH 或 SSM Session Manager 在您的 <strong>EC2 实例</strong>上运行这些命令。
             </div>
 
-            <h3>Install Java 21</h3>
+            <h3>安装 Java 21</h3>
             <div class="code-block">
 <span class="comment"># Install Amazon Corretto 21</span>
 <span class="command">sudo yum install -y java-21-amazon-corretto-devel</span>
@@ -540,7 +540,7 @@
 <span class="comment"># Expected: openjdk version "21.x.x"</span>
             </div>
 
-            <h3>Extract Application</h3>
+            <h3>解压应用</h3>
             <div class="code-block">
 <span class="command">cd /home/ec2-user</span>
 
@@ -557,7 +557,7 @@
 <span class="command">ls -la quarkus-app/</span>
             </div>
 
-            <h3>Create Startup Script</h3>
+            <h3>创建启动脚本</h3>
             <div class="code-block">
 <span class="comment"># Create startup script with OpenTelemetry configuration</span>
 <span class="command">cat &gt; start-app.sh &lt;&lt;'EOF'</span>
@@ -578,17 +578,17 @@ java -javaagent:/home/ec2-user/aws-opentelemetry-agent.jar \
             </div>
 
             <div class="info-box">
-                <strong>Environment Variables Explained:</strong>
+                <strong>环境变量说明：</strong>
                 <ul>
-                    <li><strong>OTEL_RESOURCE_ATTRIBUTES:</strong> Sets service name and environment for Application Signals dashboard</li>
-                    <li><strong>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:</strong> CloudWatch agent endpoint for traces</li>
-                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_ENABLED:</strong> Enables Application Signals specific features</li>
-                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT:</strong> CloudWatch agent endpoint for metrics</li>
-                    <li><strong>OTEL_METRICS_EXPORTER/OTEL_LOGS_EXPORTER:</strong> Disabled to use only Application Signals exporter</li>
+                    <li><strong>OTEL_RESOURCE_ATTRIBUTES：</strong> 设置 Application Signals dashboard 的服务名称和环境</li>
+                    <li><strong>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT：</strong> CloudWatch Agent 的 traces 端点</li>
+                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_ENABLED：</strong> 启用 Application Signals 特定功能</li>
+                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT：</strong> CloudWatch Agent 的 metrics 端点</li>
+                    <li><strong>OTEL_METRICS_EXPORTER/OTEL_LOGS_EXPORTER：</strong> 禁用以仅使用 Application Signals 导出器</li>
                 </ul>
             </div>
 
-            <h3>Start Application</h3>
+            <h3>启动应用</h3>
             <div class="code-block">
 <span class="comment"># Start application in background</span>
 <span class="command">nohup ./start-app.sh &gt; app.log 2&gt;&amp;1 &amp;</span>
@@ -603,7 +603,7 @@ java -javaagent:/home/ec2-user/aws-opentelemetry-agent.jar \
 <span class="command">tail -30 app.log</span>
             </div>
 
-            <h3>Test Application Locally</h3>
+            <h3>本地测试应用</h3>
             <div class="code-block">
 <span class="comment"># Test root endpoint</span>
 <span class="command">curl http://localhost:8080</span>
@@ -616,75 +616,75 @@ java -javaagent:/home/ec2-user/aws-opentelemetry-agent.jar \
             </div>
 
             <div class="success-box">
-                <strong>Expected Response:</strong>
+                <strong>预期响应：</strong>
                 <pre>{"environment":"ec2","message":"Hello from Quarkus EC2 Application!","timestamp":1760817129049,"status":"running"}</pre>
             </div>
 
-            <h3>Available Endpoints</h3>
+            <h3>可用端点</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Endpoint</th>
-                        <th>Method</th>
-                        <th>Description</th>
+                        <th>端点</th>
+                        <th>方法</th>
+                        <th>描述</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <td>/</td>
                         <td>GET</td>
-                        <td>Root endpoint with basic info</td>
+                        <td>返回基本信息的根端点</td>
                     </tr>
                     <tr>
                         <td>/health</td>
                         <td>GET</td>
-                        <td>Health check endpoint</td>
+                        <td>健康检查端点</td>
                     </tr>
                     <tr>
                         <td>/hello/{name}</td>
                         <td>GET</td>
-                        <td>Personalized greeting</td>
+                        <td>个性化问候</td>
                     </tr>
                     <tr>
                         <td>/slow</td>
                         <td>GET</td>
-                        <td>Simulated slow operation (2-5s)</td>
+                        <td>模拟的慢操作（2-5 秒）</td>
                     </tr>
                     <tr>
                         <td>/error</td>
                         <td>GET</td>
-                        <td>Simulated error (500 status)</td>
+                        <td>模拟的错误（500 状态码）</td>
                     </tr>
                     <tr>
                         <td>/external</td>
                         <td>GET</td>
-                        <td>Simulated external API call</td>
+                        <td>模拟的外部 API 调用</td>
                     </tr>
                     <tr>
                         <td>/s3</td>
                         <td>GET</td>
-                        <td>Simulated S3 operation</td>
+                        <td>模拟的 S3 操作</td>
                     </tr>
                     <tr>
                         <td>/database</td>
                         <td>GET</td>
-                        <td>Simulated database query</td>
+                        <td>模拟的数据库查询</td>
                     </tr>
                     <tr>
                         <td>/complex</td>
                         <td>GET</td>
-                        <td>Multi-step complex operation</td>
+                        <td>多步骤复杂操作</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
         <div class="section" id="traffic-gen">
-            <h2>8. Traffic Generation</h2>
+            <h2>8. 流量生成</h2>
 
-            <p>To populate Application Signals with data, generate continuous traffic to your application.</p>
+            <p>要在 Application Signals 中生成数据，需要向您的应用持续发送流量。</p>
 
-            <h3>Create Traffic Generator Script</h3>
+            <h3>创建流量生成器脚本</h3>
             <div class="code-block">
 <span class="comment"># On EC2 instance</span>
 <span class="command">cd /home/ec2-user</span>
@@ -729,7 +729,7 @@ done</span>
 <span class="command">chmod +x traffic-generator.sh</span>
             </div>
 
-            <h3>Schedule with Cron</h3>
+            <h3>使用 Cron 调度</h3>
             <div class="code-block">
 <span class="comment"># Add to crontab to run every minute</span>
 <span class="command">(crontab -l 2>/dev/null; echo "* * * * * /home/ec2-user/traffic-generator.sh") | crontab -</span>
@@ -739,10 +739,10 @@ done</span>
             </div>
 
             <div class="info-box">
-                <strong>Traffic Pattern:</strong> This generates 5 requests per minute (300 requests/hour) hitting random endpoints to create diverse traces and metrics.
+                <strong>流量模式：</strong> 这将每分钟生成 5 个请求（每小时 300 个请求），随机访问不同端点以创建多样化的 traces 和 metrics。
             </div>
 
-            <h3>Monitor Traffic</h3>
+            <h3>监控流量</h3>
             <div class="code-block">
 <span class="comment"># Watch traffic log in real-time</span>
 <span class="command">tail -f /home/ec2-user/traffic-generator.log</span>
@@ -754,7 +754,7 @@ done</span>
 <span class="command">tail -30 /home/ec2-user/traffic-generator.log</span>
             </div>
 
-            <h3>Stop Traffic Generator</h3>
+            <h3>停止流量生成器</h3>
             <div class="code-block">
 <span class="comment"># Remove from crontab</span>
 <span class="command">crontab -r</span>
@@ -765,61 +765,61 @@ done</span>
         </div>
 
         <div class="section" id="verify">
-            <h2>9. Verify Application Signals</h2>
+            <h2>9. 验证 Application Signals</h2>
 
-            <h3>Wait for Data</h3>
+            <h3>等待数据</h3>
             <div class="info-box">
-                <strong>Important:</strong> Wait 5-10 minutes after starting traffic generation for data to appear in Application Signals.
+                <strong>重要：</strong> 开始生成流量后等待 5-10 分钟，数据将出现在 Application Signals 中。
             </div>
 
-            <h3>Access CloudWatch Console</h3>
+            <h3>访问 CloudWatch 控制台</h3>
             <ol>
-                <li>Open AWS Console: <a href="https://console.aws.amazon.com/cloudwatch/" target="_blank">https://console.aws.amazon.com/cloudwatch/</a></li>
-                <li>Navigate to <strong>Application Signals</strong> → <strong>Services</strong></li>
-                <li>Look for service: <strong>ec2-quarkus-java</strong></li>
+                <li>打开 AWS 控制台： <a href="https://console.aws.amazon.com/cloudwatch/" target="_blank">https://console.aws.amazon.com/cloudwatch/</a></li>
+                <li>导航到 <strong>Application Signals</strong> → <strong>Services</strong></li>
+                <li>查找 service: <strong>ec2-quarkus-java</strong></li>
             </ol>
 
-            <h3>Service Details</h3>
-            <p>In Application Signals, you should see:</p>
+            <h3>服务详情</h3>
+            <p>在 Application Signals 中，您应该能看到：</p>
             <ul>
-                <li><strong>Service Map:</strong> Visual representation of your service and dependencies</li>
-                <li><strong>Service Operations:</strong> List of all endpoints with metrics</li>
+                <li><strong>Service Map:</strong> 服务及其依赖关系的可视化表示</li>
+                <li><strong>Service Operations:</strong> 所有端点及其 metrics 的列表</li>
                 <li><strong>Traces:</strong> Individual request traces via X-Ray</li>
-                <li><strong>Metrics:</strong> Latency, error rate, request rate</li>
-                <li><strong>Service Health:</strong> Overall health indicators and SLOs</li>
+                <li><strong>Metrics:</strong> 延迟、错误率、请求率</li>
+                <li><strong>Service Health:</strong> 整体健康指标和 SLOs</li>
             </ul>
 
-            <h3>View Traces in X-Ray</h3>
+            <h3>在 X-Ray 中查看 Traces</h3>
             <ol>
-                <li>Navigate to <strong>X-Ray</strong> → <strong>Traces</strong></li>
-                <li>Filter by service name: <code>ec2-quarkus-java</code></li>
-                <li>Click on individual traces to see detailed timing information</li>
+                <li>导航到 <strong>X-Ray</strong> → <strong>Traces</strong></li>
+                <li>按服务名称筛选： <code>ec2-quarkus-java</code></li>
+                <li>点击单个 trace 查看详细的时间信息</li>
             </ol>
 
-            <h3>View Metrics in CloudWatch</h3>
+            <h3>在 CloudWatch 中查看 Metrics</h3>
             <ol>
-                <li>Navigate to <strong>CloudWatch</strong> → <strong>Metrics</strong></li>
-                <li>Look for <strong>ApplicationSignals</strong> namespace</li>
-                <li>Explore metrics by service, operation, and dimension</li>
+                <li>导航到 <strong>CloudWatch</strong> → <strong>Metrics</strong></li>
+                <li>查找 <strong>ApplicationSignals</strong> namespace</li>
+                <li>按服务、操作和维度浏览 metrics</li>
             </ol>
 
             <div class="success-box">
-                <strong>Success Indicators:</strong>
+                <strong>成功指标：</strong>
                 <ul>
-                    <li>Service "ec2-quarkus-java" appears in Service Map</li>
-                    <li>Traces visible in X-Ray with proper service name</li>
-                    <li>Metrics showing request rate, latency, and errors</li>
-                    <li>Service health status is "Healthy"</li>
+                    <li>Service "ec2-quarkus-java" 出现在 Service Map 中</li>
+                    <li>使用正确的服务名称在 X-Ray 中可见 Traces</li>
+                    <li>Metrics 显示请求率、延迟和错误</li>
+                    <li>服务健康状态为 "健康"</li>
                 </ul>
             </div>
         </div>
 
         <div class="section" id="troubleshooting">
-            <h2>10. Troubleshooting</h2>
+            <h2>10. 故障排除</h2>
 
-            <h3>Application Won't Start</h3>
+            <h3>应用无法启动</h3>
             
-            <h4>Check Java Version</h4>
+            <h4>检查 Java 版本</h4>
             <div class="code-block">
 <span class="command">java -version</span>
 <span class="comment"># Should show Java 21</span>
@@ -828,33 +828,33 @@ done</span>
 <span class="command">sudo alternatives --config java</span>
             </div>
 
-            <h4>Check Application Logs</h4>
+            <h4>Check 应用日志</h4>
             <div class="code-block">
 <span class="command">tail -100 /home/ec2-user/app.log</span>
 <span class="command">grep -i error /home/ec2-user/app.log</span>
             </div>
 
-            <h4>Check if Process is Running</h4>
+            <h4>检查进程是否运行</h4>
             <div class="code-block">
 <span class="command">ps aux | grep quarkus</span>
 <span class="command">netstat -tlnp | grep 8080</span>
             </div>
 
-            <h3>CloudWatch Agent Issues</h3>
+            <h3>CloudWatch Agent 问题</h3>
 
-            <h4>Check Agent Status</h4>
+            <h4>检查 Agent 状态</h4>
             <div class="code-block">
 <span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
   -a status \
   -m ec2</span>
             </div>
 
-            <h4>Check Agent Logs</h4>
+            <h4>检查 Agent 日志</h4>
             <div class="code-block">
 <span class="command">sudo tail -100 /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log</span>
             </div>
 
-            <h4>Restart CloudWatch Agent</h4>
+            <h4>重启 CloudWatch Agent</h4>
             <div class="code-block">
 <span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
   -a stop \
@@ -866,25 +866,25 @@ done</span>
   -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
             </div>
 
-            <h4>Verify Ports</h4>
+            <h4>验证端口</h4>
             <div class="code-block">
 <span class="command">sudo netstat -tlnp | grep 431</span>
 <span class="comment"># Should show ports 4315 and 4316 listening</span>
             </div>
 
-            <h3>No Data in Application Signals</h3>
+            <h3>Application Signals 中无数据</h3>
 
-            <h4>Checklist</h4>
+            <h4>检查清单</h4>
             <ul>
-                <li>CloudWatch agent is running and listening on ports 4315/4316</li>
-                <li>Application is running and receiving requests</li>
-                <li>Traffic generator is active (check crontab and logs)</li>
-                <li>IAM role has CloudWatchAgentServerPolicy attached</li>
-                <li>Application Signals is enabled in the AWS account</li>
-                <li>Wait 5-10 minutes for initial data to appear</li>
+                <li>CloudWatch Agent 正在运行并监听端口 4315/4316</li>
+                <li>应用正在运行并接收请求</li>
+                <li>流量生成器处于活动状态（检查 crontab 和日志）</li>
+                <li>IAM 角色已附加 CloudWatchAgentServerPolicy</li>
+                <li>AWS 账户已启用 Application Signals</li>
+                <li>等待 5-10 分钟以显示初始数据</li>
             </ul>
 
-            <h4>Verify OTLP Connection</h4>
+            <h4>验证 OTLP 连接</h4>
             <div class="code-block">
 <span class="comment"># Check application logs for OTLP errors</span>
 <span class="command">grep -i "otlp\|exporter" /home/ec2-user/app.log | tail -20</span>
@@ -893,7 +893,7 @@ done</span>
 <span class="command">tail -20 /home/ec2-user/traffic-generator.log</span>
             </div>
 
-            <h3>Port Already in Use</h3>
+            <h3>端口已被占用</h3>
             <div class="code-block">
 <span class="comment"># Find what's using the port</span>
 <span class="command">sudo netstat -tlnp | grep 4315</span>
@@ -911,7 +911,7 @@ done</span>
   -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
             </div>
 
-            <h3>Permission Denied Errors</h3>
+            <h3>权限拒绝错误</h3>
             <div class="code-block">
 <span class="comment"># Check IAM role policies</span>
 <span class="command">aws iam list-attached-role-policies \
@@ -922,19 +922,19 @@ done</span>
 <span class="command">sudo tail -50 /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log | grep -i "permission\|denied\|403"</span>
             </div>
 
-            <h3>Application Logs</h3>
+            <h3>应用日志</h3>
             
-            <h4>View Real-time Logs</h4>
+            <h4>查看实时日志</h4>
             <div class="code-block">
 <span class="command">tail -f /home/ec2-user/app.log</span>
             </div>
 
-            <h4>Search for Errors</h4>
+            <h4>搜索错误</h4>
             <div class="code-block">
 <span class="command">grep -i "error\|exception\|failed" /home/ec2-user/app.log | tail -30</span>
             </div>
 
-            <h3>Restart Everything</h3>
+            <h3>全部重启</h3>
             <div class="code-block">
 <span class="comment"># Stop application</span>
 <span class="command">pkill -f quarkus-run.jar</span>
@@ -957,26 +957,26 @@ done</span>
 <span class="command">ps aux | grep quarkus</span>
             </div>
 
-            <h3>Common Error Messages</h3>
+            <h3>常见错误信息</h3>
 
             <h4>"Failed to connect to localhost:4316"</h4>
-            <p><strong>Solution:</strong> CloudWatch agent is not running or not configured properly. Restart the agent.</p>
+            <p><strong>解决方案：</strong> CloudWatch Agent 未运行或配置不正确。请重启 Agent。</p>
 
             <h4>"class file version 65.0"</h4>
-            <p><strong>Solution:</strong> Application compiled with Java 21 but running on older Java. Install Java 21.</p>
+            <p><strong>解决方案：</strong> 应用使用 Java 21 编译但运行在旧版 Java 上。请安装 Java 21。</p>
 
             <h4>"Port 8080 already in use"</h4>
-            <p><strong>Solution:</strong> Another process is using port 8080. Kill the process or use a different port.</p>
+            <p><strong>解决方案：</strong> 另一个进程正在使用端口 8080。请终止该进程或使用其他端口。</p>
 
             <h4>"Permission denied" writing to CloudWatch</h4>
-            <p><strong>Solution:</strong> IAM role missing CloudWatchAgentServerPolicy. Attach the policy.</p>
+            <p><strong>解决方案：</strong> IAM 角色缺少 CloudWatchAgentServerPolicy。请附加该策略。</p>
         </div>
 
         <div class="section">
-            <h2>Additional Resources</h2>
+            <h2>更多资源</h2>
             <ul>
                 <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html" target="_blank">AWS Application Signals Documentation</a></li>
-                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-EC2Main.html" target="_blank">Enable Application Signals on EC2</a></li>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-EC2Main.html" target="_blank">启用 Application Signals on EC2</a></li>
                 <li><a href="https://github.com/aws-observability/aws-otel-java-instrumentation" target="_blank">AWS Distro for OpenTelemetry Java</a></li>
                 <li><a href="https://quarkus.io/guides/" target="_blank">Quarkus Guides</a></li>
                 <li><a href="https://opentelemetry.io/docs/" target="_blank">OpenTelemetry Documentation</a></li>

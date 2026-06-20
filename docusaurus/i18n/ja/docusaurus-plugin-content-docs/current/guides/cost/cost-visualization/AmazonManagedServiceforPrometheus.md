@@ -1,53 +1,45 @@
-# リアルタイムのコスト監視
+# リアルタイムコスト監視
 
-Amazon Managed Service for Prometheus は、コンテナメトリクスのためのサーバーレスな Prometheus 互換の監視サービスで、大規模なコンテナ環境を安全に監視することを容易にします。Amazon Managed Service for Prometheus の料金モデルは、取り込まれたメトリクスサンプル、処理されたクエリサンプル、保存されたメトリクスに基づいています。最新の料金の詳細は[こちら][pricing]で確認できます。
+Amazon Managed Service for Prometheus は、サーバーレスで Prometheus 互換のコンテナメトリクス監視サービスであり、大規模なコンテナ環境を安全に監視することを容易にします。Amazon Managed Service for Prometheus の料金モデルは、取り込まれたメトリクスサンプル、処理されたクエリサンプル、保存されたメトリクスに基づいています。最新の料金詳細は[こちら][pricing]で確認できます。
 
-マネージドサービスとして、Amazon Managed Service for Prometheus は、ワークロードのスケールアップとダウンに応じて、運用メトリクスの取り込み、保存、クエリを自動的にスケールします。一部のお客様から、`metric samples ingestion rate` とそのコストをリアルタイムで追跡する方法についてのガイダンスを求められました。それを実現する方法を見ていきましょう。
+マネージドサービスとして、Amazon Managed Service for Prometheus は、ワークロードのスケールアップおよびスケールダウンに応じて、運用メトリクスの取り込み、保存、クエリを自動的にスケーリングします。一部のお客様から、追跡方法に関するガイダンスを求められました `metric samples ingestion rate` そしてそれはリアルタイムのコストです。それを実現する方法を見ていきましょう。
 
+### ソリューション
+Amazon Managed Service for Prometheus は、Amazon CloudWatch に[使用状況メトリクスを提供します][vendedmetrics]。これらのメトリクスを使用して、Amazon Managed Service for Prometheus ワークスペースの可視性を向上させることができます。提供されるメトリクスは、 `AWS/Usage` および `AWS/Prometheus` CloudWatch の名前空間にあり、これらの[メトリクス][AMPMetrics]は追加料金なしで CloudWatch で利用できます。これらのメトリクスをさらに調査して視覚化するために、CloudWatch ダッシュボードをいつでも作成できます。
 
+今回は、Amazon CloudWatch を Amazon Managed Grafana のデータソースとして使用し、Grafana でダッシュボードを構築してこれらのメトリクスを可視化します。アーキテクチャ図は以下を示しています。
 
-### 解決策
-Amazon Managed Service for Prometheus は [ベンダーメトリクス][vendedmetrics] を Amazon CloudWatch に提供します。これらのメトリクスを使用することで、Amazon Managed Service for Prometheus ワークスペースの可視性を向上させることができます。
-ベンダーメトリクスは CloudWatch の `AWS/Usage` および `AWS/Prometheus` 名前空間で確認でき、これらの [メトリクス][AMPMetrics] は追加料金なしで CloudWatch で利用できます。
-CloudWatch ダッシュボードを作成して、これらのメトリクスをさらに探索し、視覚化することができます。
-
-今日は、Amazon CloudWatch を Amazon Managed Grafana のデータソースとして使用し、Grafana でこれらのメトリクスを視覚化するためのダッシュボードを構築します。
-アーキテクチャ図は以下を示しています。
-
-- Amazon Managed Service for Prometheus から Amazon CloudWatch へのベンダーメトリクスの提供
+- Amazon Managed Service for Prometheus が Amazon CloudWatch にベンダーメトリクスを発行
 
 - Amazon Managed Grafana のデータソースとしての Amazon CloudWatch
 
-- Amazon Managed Grafana で作成されたダッシュボードへのユーザーアクセス
+- Amazon Managed Grafana で作成されたダッシュボードにアクセスするユーザー
 
 ![prometheus-ingestion-rate](../../../images/ampmetricsingestionrate.png)
 
-
-
 ### Amazon Managed Grafana ダッシュボード
 
-Amazon Managed Grafana で作成されたダッシュボードでは、以下を可視化できます。
+Amazon Managed Grafana で作成されたダッシュボードにより、以下を可視化できます。
 
-1. ワークスペースごとの Prometheus 取り込みレート  
+1. ワークスペースあたりの Prometheus 取り込みレート  
 ![prometheus-ingestion-rate-dash1](../../../images/ampwsingestionrate-1.png)  
 
 2. ワークスペースごとの Prometheus 取り込みレートとリアルタイムコスト  
-   リアルタイムのコスト追跡には、公式の [AWS 料金ドキュメント][pricing] に記載されている「最初の 20 億サンプル」の「メトリクス取り込み層」の料金に基づいた `math expression` を使用します。数式演算は、数値と時系列を入力として受け取り、それらを異なる数値と時系列に変換します。ビジネス要件に合わせてさらにカスタマイズする場合は、この[ドキュメント][mathexpression]を参照してください。  
+   リアルタイムコスト追跡には、次を使用します `math expression` の価格に基づいて `Metrics Ingested Tier` のための `First 2 billion samples` 公式の [AWS 料金ドキュメント][pricing]に記載されています。数学演算は、数値と時系列を入力として受け取り、それらを異なる数値と時系列に変換します。ビジネス要件に合わせてさらにカスタマイズする方法については、この[ドキュメント][mathexpression]を参照してください。  
 ![prometheus-ingestion-rate-dash2](../../../images/ampwsingestionrate-2.png)  
 
-3. ワークスペースごとの Prometheus アクティブシリーズ  
+3. ワークスペースあたりの Prometheus アクティブシリーズ  
 ![prometheus-ingestion-rate-dash3](../../../images/ampwsingestionrate-3.png)
 
-Grafana のダッシュボードは JSON オブジェクトで表現され、そのダッシュボードのメタデータが保存されます。
-ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルからのメタデータ、テンプレート変数、パネルクエリなどが含まれます。
 
-上記ダッシュボードの **JSON テンプレート**には<mark>[こちら](AmazonPrometheusMetrics.json)</mark>からアクセスできます。
+Grafana のダッシュボードは JSON オブジェクトで表され、ダッシュボードのメタデータを保存します。ダッシュボードのメタデータには、ダッシュボードのプロパティ、パネルからのメタデータ、テンプレート変数、パネルクエリなどが含まれます。
 
-このダッシュボードを使用することで、ワークスペースごとの取り込みレートを特定し、メトリクス取り込みレートに基づいてワークスペースごとのリアルタイムコストを監視できるようになります。
-要件に合わせた視覚化を構築するために、他の Grafana [ダッシュボードパネル][panels] を使用することもできます。
+上記のダッシュボードの **JSON テンプレート**にアクセスできます <mark>[こちら](AmazonPrometheusMetrics.json)。</mark>
 
-[pricing]: https://aws.amazon.com/jp/prometheus/pricing/
-[AMPMetrics]: https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-CW-usage-metrics.html
+前述のダッシュボードを使用することで、ワークスペースごとの取り込みレートを特定し、Amazon Managed Service for Prometheus のメトリクス取り込みレートに基づいてワークスペースごとのリアルタイムコストを監視できるようになります。他の Grafana [ダッシュボードパネル][panels]を使用して、要件に合わせたビジュアルを構築できます。
+
+[pricing]: https://aws.amazon.com/prometheus/pricing/
+[AMPMetrics]: https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-CW-usage-metrics.html
 [vendedmetrics]: https://aws.amazon.com/blogs/mt/introducing-vended-metrics-for-amazon-managed-service-for-prometheus/
 [mathexpression]: https://grafana.com/docs/grafana/latest/panels-visualizations/query-transform-data/expression-queries/#math
-[panels]: https://docs.aws.amazon.com/ja_jp/grafana/latest/userguide/Grafana-panels.html
+[panels]: https://docs.aws.amazon.com/grafana/latest/userguide/Grafana-panels.html

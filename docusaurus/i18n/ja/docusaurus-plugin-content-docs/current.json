@@ -163,21 +163,9 @@
     "message": "FAQ",
     "description": "The label for category 'FAQ' in sidebar 'recipes'"
   },
-  "sidebar.recipes.category.faq-cloudtrail": {
-    "message": "CloudTrail",
-    "description": "The label for category 'CloudTrail' in sidebar 'recipes'"
-  },
   "sidebar.recipes.category.Control Tower": {
     "message": "Control Tower",
     "description": "The label for category 'Control Tower' in sidebar 'recipes'"
-  },
-  "sidebar.recipes.category.faq-application-operations": {
-    "message": "アプリケーション運用",
-    "description": "The label for category 'Application Operations' in sidebar 'recipes'"
-  },
-  "sidebar.recipes.category.faq-centralized-operations": {
-    "message": "一元的なオペレーション",
-    "description": "The label for category 'Centralized Operations' in sidebar 'recipes'"
   },
   "sidebar.recipes.category.By Compute": {
     "message": "コンピューティング別",
@@ -203,25 +191,13 @@
     "message": "タスク",
     "description": "The label for category 'Tasks' in sidebar 'recipes'"
   },
-  "sidebar.recipes.category.recipes-cloudtrail": {
-    "message": "CloudTrail",
-    "description": "The label for category 'CloudTrail' in sidebar 'recipes'"
-  },
   "sidebar.recipes.category.セキュリティインシデントレスポンスとフォレンジック分析": {
     "message": "セキュリティインシデントレスポンスとフォレンジック分析",
     "description": "The label for category 'セキュリティインシデントレスポンスとフォレンジック分析' in sidebar 'recipes'"
   },
-  "sidebar.recipes.category.recipes-centralized-operations": {
-    "message": "一元的なオペレーション",
-    "description": "The label for category 'Centralized Operations' in sidebar 'recipes'"
-  },
   "sidebar.recipes.category.ジャストインタイムノードアクセス (JITNA)": {
     "message": "ジャストインタイムノードアクセス (JITNA)",
     "description": "The label for category 'ジャストインタイムノードアクセス (JITNA)' in sidebar 'recipes'"
-  },
-  "sidebar.recipes.category.recipes-application-operations": {
-    "message": "アプリケーション運用",
-    "description": "The label for category 'Application Operations' in sidebar 'recipes'"
   },
   "sidebar.ai.category.GenAI": {
     "message": "GenAI",
@@ -258,5 +234,17 @@
   "sidebar.patterns.category.Tracing": {
     "message": "トレーシング",
     "description": "The label for category 'Tracing' in sidebar 'patterns'"
+  },
+  "sidebar.recipes.category.CloudTrail": {
+    "message": "CloudTrail",
+    "description": "The label for category 'CloudTrail' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.Application Operations": {
+    "message": "アプリケーション運用",
+    "description": "The label for category 'Application Operations' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.Centralized Operations": {
+    "message": "一元的なオペレーション",
+    "description": "The label for category 'Centralized Operations' in sidebar 'recipes'"
   }
 }

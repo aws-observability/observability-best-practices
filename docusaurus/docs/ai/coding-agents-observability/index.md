@@ -10,7 +10,8 @@ Each guide covers end-to-end setup: creating a CloudWatch metrics API key, confi
 
 | Guide | Agent | Key Metrics |
 | --- | --- | --- |
+| [Claude Code](./claude-code) | Claude Code CLI | Tokens, cost, sessions, lines of code, commits, edit acceptance |
 | [GitHub Copilot](./copilot) | VS Code extension & CLI | Tokens, sessions, tool calls, edit acceptance, latency |
 | [OpenAI Codex](./codex) | Codex CLI | Tokens, API requests, tool calls, conversation turns, latency |
 
-Both guides follow the same pattern: bearer-token auth → direct-to-CloudWatch OTLP → PromQL dashboards & alerts.
+All guides follow the same pattern: bearer-token auth → direct-to-CloudWatch OTLP → PromQL dashboards & alerts.

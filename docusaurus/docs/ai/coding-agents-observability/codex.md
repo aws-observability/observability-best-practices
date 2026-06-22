@@ -1,5 +1,5 @@
 ---
-sidebar_position: 3
+sidebar_position: 4
 title: OpenAI Codex
 ---
 
@@ -33,6 +33,10 @@ The setup has three components:
     * **OpenAI** (default provider) — run `codex login`.
     * **Amazon Bedrock** — do **not** use `codex login`. Authenticate with your AWS credentials (e.g. `export AWS_PROFILE=... AWS_REGION=...`, or any provider in the AWS credential chain) or a Bedrock bearer token via `AWS_BEARER_TOKEN_BEDROCK`, and set `model_provider = "amazon-bedrock"` with `[model_providers.amazon-bedrock.aws] region = "<region>"` in `~/.codex/config.toml`.
 * A CloudWatch metrics API key (created below).
+
+:::tip
+For enterprise rollouts — corporate SSO (Okta, Azure AD, Auth0, AWS IAM Identity Center), IdP federation, centralized Amazon Bedrock access, and per-user attribution via `aws sso login` — see the [Guidance for OpenAI Codex on AWS](https://github.com/openai-on-aws/guidance-codex) repository. It provides production-ready deployment patterns (Native AWS Access, AgentCore Gateway, and LLM Gateway) with CloudFormation templates, optional quota enforcement, and observability. That guidance handles **how developers authenticate to the model at scale**; the CloudWatch metrics setup in this recipe is independent and layers on top of it.
+:::
 
 ## Create a bearer token
 
@@ -226,6 +230,7 @@ To stop telemetry export, remove the `[otel]` section from `~/.codex/config.toml
 
 ## Resources
 
+* [Guidance for OpenAI Codex on AWS (enterprise SSO, IdP federation, and Bedrock access patterns)](https://github.com/openai-on-aws/guidance-codex)
 * [OpenAI Codex: Observability and Telemetry](https://developers.openai.com/codex/config-advanced)
 * [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html)
 * [Query Amazon CloudWatch metrics using PromQL (Amazon Managed Grafana)](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html)

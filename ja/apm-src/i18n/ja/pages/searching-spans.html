@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>スパンの検索と分析 — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>スパンの検索と分析</h1></header>
+<article>
+<section>
+<h2>Transaction Search</h2>
+<p>CloudWatch <strong>Transaction Search</strong> は、スパン属性を使用して取り込まれたスパンを検索・分析するためのインタラクティブな分析エクスペリエンスです。以下をサポートしています：</p>
+<ul>
+<li><strong>リスト</strong>：個々のトランザクションのトラブルシューティング、遅いスパンの検出、エラーの検出</li>
+<li><strong>時系列</strong>：レイテンシーと頻度のトレンドを可視化（P50/P90/P99）</li>
+<li><strong>グループ分析</strong>：属性による集計（例：影響を受けた上位顧客）</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">スパンの検索と分析</a>.</p>
+</section>
+<section>
+<h2>スパンに対する Logs Insights</h2>
+<p>CloudWatch Logs Insights を使用してスパンをクエリすることもできます（例：DB ステートメント別の p99 レイテンシー、HTTP 5xx のスパン数）。</p>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>.</p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

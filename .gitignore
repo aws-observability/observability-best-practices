@@ -27,14 +27,3 @@ build
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Local reference file
-SITE_STRUCTURE.md
-
-# Local review report
-HINDI_TRANSLATION_REVIEW_REPORT.md
-
-tools/translator
-.hypothesis/
-.kiro/
-tmp/

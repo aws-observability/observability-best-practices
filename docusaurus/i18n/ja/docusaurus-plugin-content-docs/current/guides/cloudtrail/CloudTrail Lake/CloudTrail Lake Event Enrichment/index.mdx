@@ -1,0 +1,114 @@
+---
+sidebar_position: 3
+---
+# CloudTrail Lake イベントエンリッチメントのベストプラクティス
+
+CloudTrail イベントエンリッチメントを使用すると、イベントデータストアの作成または更新時に、リソースタグキーおよびプリンシパルタグキーを含む IAM グローバル条件キーを追加することで、管理イベントとデータイベントを強化できます。このエンリッチメントにより、コスト配分、財務管理、オペレーション、データセキュリティ要件などのビジネスコンテキストに基づいて、CloudTrail イベントのカテゴリ分類、検索、分析が向上します。エンリッチされたイベントには、API アクションのコンテキスト情報を提供する eventContext フィールドが含まれており、CloudTrail Lake でクエリを実行するか、Amazon Athena とのフェデレーションを通じて分析できます。この機能は、リソース、プリンシパル、および認可条件に関する追加メタデータをイベントログに組み込むことで、組織が AWS リソースの使用状況とセキュリティ体制をより適切に把握および追跡するのに役立ちます。
+
+### リソースタグエンリッチメント
+
+* イベントデータストアの作成または更新時にリソースタグキーを設定して、ビジネスコンテキストに基づいてイベントを分類および分析する
+* リソース作成後に追加されたリソースタグは、CloudTrail イベントに表示されるまでに遅延が生じる場合があることを考慮する
+* 削除されたリソースのリソースタグにはタグ情報が含まれない場合があることに注意する
+* リソース作成時に適用されたタグは遅延が最小限またはゼロであることを理解する
+
+### IAM グローバル条件キーのエンリッチメント
+
+* 認可プロセスに関する追加のコンテキストを含めるために、関連する IAM グローバル条件キーを選択してください
+* 設定された条件キーは、IAM ポリシー評価に関連しなかった場合、すべてのイベントに表示されるとは限らないことに注意してください
+* 次のような[サポートされている条件キー](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services)の使用を検討してください。
+    * aws:FederatedProvider
+    * aws:MultiFactorAuthPresent
+    * aws:PrincipalAccount
+    * aws:PrincipalType
+    * aws:ViaAWSService
+    * aws:SecureTransport
+    * その他多数（[エンリッチされたイベントに対してサポートされている IAM グローバル条件キー](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#condition-keys-supported-services)）
+
+### サービスに関する考慮事項
+
+* リソースタグの更新に遅延が発生する可能性がある[サービス](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)に注意してください。以下が含まれます。
+    * Amazon S3
+    * AWS CloudTrail
+    * AWS Lambda
+    * Amazon DynamoDB
+    * AWS Organizations
+    * AWS KMS
+    * Amazon SQS
+    * その他多数（[AWS ドキュメント](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-context-events.html#resource-tags-supported-services)には追加のサービスが記載されています）
+
+### イベントコンテキスト管理
+
+* CloudTrail イベントの eventContext フィールドを監視して、エンリッチされた情報を取得してください
+* eventContext フィールドは、エンリッチメントが設定されたイベントデータストアのイベントにのみ存在することに注意してください
+* 遅延イベントには eventContext データが含まれません。配信が遅延したイベントには、イベントが遅延した理由に関する情報を示す "addendum" フィールドが含まれます。詳細については、[CloudTrail イベントレコード](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)をご覧ください。
+* AWSServiceRoleForCloudTrailEventContext サービスにリンクされたロールを維持して、適切なタグの設定を確保してください
+* イベントコンテキストを追加すると、イベント全体のサイズが増加し、CloudTrail Lake の追加の取り込みコストが発生する可能性があります
+
+### 運用上の考慮事項
+
+* サービス停止によりリソースタグの更新が遅延する可能性に備えて計画を立ててください
+* サービス停止後のリソースタグ変更に関する情報を含む CloudTrail イベントの補遺フィールドを監視してください
+* Event history、EventBridge、およびトレイルのイベントには eventContext フィールドが含まれないことを理解してください
+* エンリッチメントのタグキーと条件キーを選択する際は、コスト配分、運用、およびセキュリティに関するビジネス要件を考慮してください
+
+### CloudTrail Lake のサンプル SQL クエリ
+
+#### **イベントエンリッチメントのリソースタグ**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+eventContext.tagContext.resourceTags[1].tags as tags,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL 
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **データ分類タグのイベントエンリッチメント用リソースタグ**
+
+```
+SELECT eventtime, eventName, substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+```
+
+#### **イベントエンリッチメントの可視化チャートを作成するサンプルクエリ**
+
+```
+SELECT count(*) as count, eventName, substr(userIdentity.arn, 
+strpos(userIdentity.arn, '/') +1) as IAM,
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') as DataClassification,
+eventContext.tagContext.resourceTags[1].arn as resourceArn, 
+element_at(requestParameters, 'key') as S3Object
+FROM $EDS_ID
+WHERE eventContext IS NOT NULL
+and element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification') = 'sensitive'
+and eventSource = 's3.amazonaws.com'
+and eventname in ('DeleteObject', 'PutObject')
+AND eventtime >= '2025-06-05 00:00:00'
+AND eventtime <= '2025-06-05 23:59:59'
+Group BY eventName,
+substr(userIdentity.arn, strpos(userIdentity.arn, '/') +1),
+element_at(eventContext.tagContext.resourceTags[1].tags, 'DataClassification'),
+eventContext.tagContext.resourceTags[1].arn,
+element_at(requestParameters, 'key')
+```
+
+### Cloud Operation Show: タグ付けと追跡：AWS CloudTrail イベントエンリッチメントと拡張機能の解説
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/IELtInifymY?si=uupyo9_wx0Kcx1Vw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

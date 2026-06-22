@@ -1,0 +1,112 @@
+---
+sidebar_position: 2
+---
+# Infrastructure-as-Code (IaC) を使用して JITNA を有効にする
+
+以下のセクションでは、AWS Organization において CloudFormation を使用してジャストインタイムノードアクセスをデプロイする方法について説明します。ジャストインタイムノードアクセスをデプロイするには、まず環境に対してジャストインタイムノードアクセスを有効にし、その後、承認ポリシー、セッション設定、通知設定などのジャストインタイムノードアクセスリソースをデプロイします。
+
+:::info
+Systems Manager の統合コンソールおよびジャストインタイムノードアクセスは、委任管理者アカウント内で機能を有効にするのではなく、ローカルデプロイメントを実行することで、アカウント/リージョン単位で有効にすることもできます。
+:::
+
+## ジャストインタイムノードアクセスを有効にする
+
+1. 組織の AWS 管理アカウントで、Systems Manager の委任管理者アカウントを指定します。
+1. [Systems Manager 統合コンソール](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)をデプロイします。
+1. [ジャストインタイムノードアクセス](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html)をデプロイします。
+
+統合コンソールおよびジャストインタイムノードアクセス用の Quick Setup 設定マネージャーをデプロイするためのアーキテクチャ図の例を以下に示します。
+
+![Example architecture diagram for deploying Quick Setup configuration managers for the unified console and just-in-time node access](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-organization.png "Just-in-time node access architecture diagram")
+
+1. Systems Manager の委任管理者アカウント内に CloudFormation スタックを作成します。
+1. CloudFormation スタックは Quick Setup 設定マネージャーを作成します。
+1. 統合コンソール用の Quick Setup 設定マネージャーが、組織内のすべての OU（A、B、C）にデプロイされます。
+1. JITNA 用の Quick Setup 設定マネージャーが OU A および B にデプロイされます。
+
+:::info
+ジャストインタイムノードアクセスは、AWS Organization 全体、または組織内の特定の組織単位 (OU) に対して有効化できます。ジャストインタイムノードアクセスのデプロイ可能なリージョンには、Systems Manager 統合コンソールで有効化したすべてのリージョンが含まれます。統合コンソールが有効化されていないリージョンでは、JITNA を有効化することはできません。
+:::
+
+### Quick Setup 設定マネージャーのデプロイ
+
+インフラストラクチャーアズコード (IaC) を使用してジャストインタイムノードアクセスを有効にするには、次の手順を実行する必要があります。
+
+1. Quick Setup IAM サービスロールをデプロイします。
+    :::info
+    Quick Setup の IAM サービスロールの詳細については、[Quick Setup API をプログラムで使用するための手動オンボーディング](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-getting-started.html#quick-setup-api-manual-onboarding)を参照してください。
+    :::
+1. 2 つの[Quick Setup 設定マネージャー](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-ssmquicksetup-configurationmanager.html)をデプロイします。
+    1. Systems Manager 統合コンソール。
+    1. Systems Manager ジャストインタイムノードアクセス。
+
+次の例の CloudFormation テンプレートには、2 つの必須 Quick Setup IAM サービスロールの作成が含まれており、Systems Manager 統合コンソールと JITNA 用の 2 つの Quick Setup 設定マネージャーをデプロイします。
+
+#### CloudFormation テンプレートのサンプル
+
+[ジャストインタイムノードアクセスのサンプル CFN テンプレート - クイックセットアップ設定マネージャー](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-quick-setup-cfn-template.yaml)
+
+##### CloudFormation テンプレートパラメータ
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="type"
+    defaultValue="organization"
+    values={[
+        {label: 'AWS Organization の有効化', value: 'organization'},
+    ]}>
+<TabItem value="organization">
+
+| パラメータ名 | 説明 | 値の例 |
+| -------------- | ----------- | ------------- |
+| `AgentUpdateSchedule` | (オプション) エージェント更新アソシエーションを実行する間隔。オプトアウトするには none を入力します。 | rate(14 days) |
+| `DelegatedAdminAccountId` | Systems Manager 委任管理者アカウントの AWS アカウント ID。 | 123456789012 |
+| `EnableDHMCSchedule` | (オプション) DHMC アソシエーションを実行する間隔。オプトアウトするには none を入力します。 | rate(1 day) |
+| `HomeRegion` | Systems Manager 統合コンソールがデプロイされている AWS リージョン。 | us-east-1 |
+| `IdentityProviderSetting` | 現在のアクセス制御テンプレートの承認者を判断するために使用される ID プロバイダー（IAM (IAM Identity Access Management) または Single Sign-On (SSO)）を指定します。 | IAM |
+| `InventoryCollectionSchedule` | (オプション) インベントリ収集を実行する間隔。オプトアウトするには none を入力します。 | rate(24 hours) |
+| `JITNATargetOrganizationalUnits` | ジャストインタイムノードアクセスをセットアップする AWS Organization Unit ID のカンマ区切りリスト。 | ou-a1b2-abcd1234,ou-a1b2-efgh1234,ou-a1b2-hijk1234 |
+| `JITNATargetRegions` | ジャストインタイムノードアクセスを有効にするリージョン。指定するリージョンは、パラメータ `UnifiedConsoleTargetRegions` で指定したリージョンと一致するか、その部分集合である必要があります。 | us-east-1,us-east-2,us-west-2 |
+| `UnifiedConsoleRootOrganizationUnitID` | ルート AWS Organization unit ID。 | r-abcd |
+| `UnifiedConsoleTargetRegions` | Systems Manager 統合コンソールがセットアップされている AWS リージョンのカンマ区切りリスト。データはこれらのリージョンから集約され、ホームリージョンにレプリケートされます。 | us-east-1,us-east-2,us-west-2 |
+
+</TabItem>
+</Tabs>
+
+## ジャストインタイムノードアクセスの設定
+
+環境のジャストインタイムノードアクセスを有効にすると、承認ポリシー、セッション設定、および通知設定のデプロイを開始できます。
+
+* [ノードの承認ポリシー](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-approval-policies.html)。
+* [ジャストインタイムセッションのセッション設定](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-session-preferences.html)。
+* [ジャストインタイムアクセスリクエストの通知設定](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access-notifications.html)。
+
+### ノードの承認ポリシーをデプロイする
+
+ジャストインタイムノードアクセス承認ポリシーとセッション設定をデプロイするためのアーキテクチャ図の例を以下に示します。
+
+![Example architecture diagram for deploying just-in-time node access approval policies and session preferences](/img/cloudops/recipes/centralized-operations-management/just-in-time-node-access/jitna-resources.png "Just-in-time node access approval policies and preferences architecture diagram")
+
+1. CloudFormation StackSet を作成して、自動承認ポリシー、手動承認ポリシー（または複数のポリシー）、およびセッション設定を Systems Manager ドキュメントとしてデプロイします。
+1. 各ターゲットアカウントおよびリージョンで、CloudFormation スタックが必要なリソースをデプロイします。
+1. Systems Manager の拒否専用アクセスポリシーをデプロイするために、委任管理者アカウントに CloudFormation スタックを作成します。
+
+:::info
+組織ごとに拒否アクセスポリシーは 1 つのみ設定できます。アカウントおよびリージョンごとに自動承認ポリシーは 1 つのみ設定できます。
+
+AWS アカウントおよび AWS Region ごとに、最大 50 件の手動承認ポリシーを作成できます。ただし、複数の手動承認ポリシーがノードに適用される場合、競合が発生し、ユーザーはそのノードへのアクセスをリクエストできなくなります。手動承認ポリシーを作成する際は、ユースケースによってはインスタンスに複数のタグが付与される場合があることを念頭に置いてください。
+:::
+
+以下の例の CloudFormation テンプレートは、次のものを作成します。
+
+1. リソースタグのキーと値のペアで識別される開発マネージドノードへの自動アクセスを許可する自動承認ポリシー `ENV:DEV`.
+1. 2 つの手動承認ポリシー:
+    1. E コマースアプリケーション用の手動承認ポリシー。リソースタグのキーと値のペアを持つマネージドノードに適用されます。 `Workload:Ecommerce`.
+    1. Finance アプリケーション用の 1 つの手動承認ポリシー。リソースタグのキーと値のペアを持つマネージドノードに適用されます。 `Workload:Finance`.
+1. ジャストインタイムノードアクセスセッション中に使用されるセッション設定ドキュメント。
+
+#### CloudFormation テンプレートのサンプル - JITNA 設定
+
+[ジャストインタイムノードアクセスのサンプル CFN テンプレート - 承認ポリシーとセッション設定](https://github.com/aws-samples/cloud-operations-best-practices/blob/main/cloud-operations-best-practices/static/cfn-templates/just-in-time-node-access/just-in-time-cfn-approval-policies.yaml)

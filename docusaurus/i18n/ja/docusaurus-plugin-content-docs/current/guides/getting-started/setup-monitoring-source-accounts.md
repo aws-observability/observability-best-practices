@@ -1,63 +1,62 @@
 ---
 sidebar_position: 1
 ---
+# モニタリングアカウントとソースアカウントのセットアップ
 
-# Setup Monitoring and Source Accounts
+ほとんどの場合、サービスが複数のアカウント、場合によっては複数のリージョンにまたがって実行されているため、お客様は複数の AWS アカウントからのテレメトリデータを可視化して相関させる必要があります。
 
-In the majority of cases, customers need to visualize and correlate telemetry data from multiple AWS accounts because their services run across many accounts, and sometimes, many regions.
+オブザーバビリティとサービスを単一のアカウントのみで実行する予定の場合は、このステップをスキップできます。
 
-If you only plan to run your observability and services in a single account, you can skip this step.
+最初のステップは、モニタリングアカウントとソースアカウントをセットアップし、共有するテレメトリを正確に指定することです。これを行うために、クロスアカウントオブザーバビリティを活用します。これはリージョンごとに機能することに注意してください。
 
-The first step is to setup your monitoring and source accounts and specify exactly what telemetry you wish to share. You will leverage cross-account observability to do so. Please note that this works on a per-region basis.
+クロスアカウントオブザーバビリティの設定方法に関する詳細な手順については、[CloudWatch クロスアカウントオブザーバビリティ](../cloudwatch_cross_account_observability.md)ガイドを参照してください。
 
-For more detailed instructions on how to setup cross-account observability, please refer to the [CloudWatch Cross-Account Observability](../cloudwatch_cross_account_observability.md) guide.
+## モニタリングアカウント
 
-## Monitoring Account
+テレメトリデータを一元的に表示するモニタリングアカウントを指定します。
 
-Nominate a monitoring account from which you want to view the telemetry data in a centralized manner.
+次に、どのアカウントがモニタリングアカウントとデータを共有するかを定義します。AWS organization 内のすべてのアカウントを選択するか、個別のソースアカウントを選択することができます。また、モニタリングアカウントと共有するテレメトリデータ（ログ、メトリクス、トレース、アプリケーションシグナルなど）を指定します。
 
-Then define which accounts will share the data with your monitoring account. You can choose all accounts in your AWS organization or pick individual source accounts. You will also specify what telemetry data you want to share with the monitoring account (e.g. logs, metrics, traces, application signals etc).
+セットアップを完了するには、[ソースアカウントをリンク](../cloudwatch_cross_account_observability.md#step-2-link-the-source-accounts)します。
 
-You will then [link the source accounts](../cloudwatch_cross_account_observability.md#step-2-link-the-source-accounts) to complete the setup.
-
-Your typical monitoring account structure will look similar to this:
+一般的なモニタリングアカウントの構造は、次のようになります。
 
 ![Monitoring Account Structure](../../images/GettingStarted/monitoring-acct-struct.png)
 
-You will [configure](../cloudwatch_cross_account_observability.md#step-1-set-up-a-monitoring-account) this on a per-region basis in CloudWatch settings.
+CloudWatch の設定で、リージョンごとに[設定](../cloudwatch_cross_account_observability.md#step-1-set-up-a-monitoring-account)します。
 
 :::info
-With cross-account observability, logs and metrics are NOT copied from the source accounts, but trace data is copied to the monitoring account (with trace copy to the 1st monitoring account included at no additional cost). You simply view logs, metrics, traces and other telemetry centrally.
+クロスアカウントオブザーバビリティでは、ログとメトリクスはソースアカウントからコピーされませんが、トレースデータはモニタリングアカウントにコピーされます（最初のモニタリングアカウントへのトレースコピーは追加費用なしで含まれます）。ログ、メトリクス、トレース、その他のテレメトリを一元的に表示できます。
 :::
 
-## Multiple Monitoring Accounts
+## 複数のモニタリングアカウント
 
-Each monitoring account can be linked with up to 100,000 source accounts.
+各モニタリングアカウントは、最大 100,000 個のソースアカウントとリンクできます。
 
-However, there may be operational situations where you need multiple monitoring accounts. You can have multiple monitoring accounts based on your own requirements. This setup might look something like this:
+ただし、複数のモニタリングアカウントが必要な運用上の状況が生じる場合があります。独自の要件に基づいて複数のモニタリングアカウントを持つことができます。このセットアップは次のようになります。
 
 ![Multiple Monitoring Accounts](../../images/GettingStarted/multiple-mon-accts.png)
 
 :::info
-If you need to share data from a single source account with multiple monitoring accounts, that is also configurable as each source account can share data with up to 5 monitoring accounts.
+単一のソースアカウントからのデータを複数のモニタリングアカウントと共有する必要がある場合も設定可能です。各ソースアカウントは最大 5 つのモニタリングアカウントとデータを共有できます。
 :::
 
-## Telemetry Control
+## テレメトリコントロール
 
-You also have control of what telemetry data you share with the ability to specify metric and log filters allowing you extra granularity.
+メトリクスおよびログフィルターを指定する機能により、共有するテレメトリデータをより細かく制御することができます。
 
 ![Telemetry Configuration](../../images/GettingStarted/telemetry-config.png)
 
-You will now be able to [visualize and query cross-account](../cloudwatch_cross_account_observability.md#querying-cross-account-telemetry-data) data from multiple accounts in a single monitoring account (per region).
+[クロスアカウントのデータを可視化およびクエリ](../cloudwatch_cross_account_observability.md#querying-cross-account-telemetry-data)して、単一のモニタリングアカウント（リージョンごと）から複数のアカウントのデータを参照できるようになります。
 
-## Summary
+## 概要
 
-To summarize:
-1. Nominate and configure monitoring account(s)
-2. Configure source accounts
-3. Fine tune which telemetry you want to share
-4. Visualize and query all the source account data from the monitoring account
+まとめると、以下の手順になります。
+1. モニタリングアカウントを指定して設定する
+2. ソースアカウントを設定する
+3. 共有するテレメトリを細かく調整する
+4. モニタリングアカウントからすべてのソースアカウントデータを可視化してクエリする
 
-## Next Steps
+## 次のステップ
 
-Continue to [Setup Unified Data Store](setup-unified-data-store.md)
+[統合データストアのセットアップ](./setup-unified-data-store.md)に進みます。

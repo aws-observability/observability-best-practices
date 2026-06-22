@@ -1,0 +1,76 @@
+---
+sidebar_position: 5
+---
+# CloudTrail ネットワークアクティビティイベント
+
+VPC エンドポイントのネットワークアクティビティイベントを使用すると、ネットワーク内のリソースにアクセスしているユーザーの詳細を確認でき、データ境界における悪意のある行為や不正なアクションを特定して対応する能力が向上します。たとえば、VPC エンドポイントの所有者として、VPC エンドポイントポリシーによって拒否されたアクションのログを確認したり、データ境界外のアクターが S3 バケット内のデータにアクセスしようとしているかどうかを判断したりすることができます。
+
+### ネットワークアクティビティイベントの高度なイベントセレクター
+ネットワークアクティビティイベントを使用する場合、高度なイベントセレクターにより、イベントデータストアに取り込まれる CloudTrail イベントをより細かく制御できます。高度なイベントセレクターを使用すると、errorCode、eventName、vpcEndpointId などのフィールドの値を含めたり除外したりすることができます。高度なイベントセレクターは、部分文字列のパターンマッチングによる値の包含または除外もサポートしています。これにより、セキュリティ、コンプライアンス、および運用調査の効率と精度が向上し、コスト削減にも役立ちます。たとえば、vpcEndpointId 属性に基づいて CloudTrail イベントをフィルタリングし、特定の VPC エンドポイント ID からのイベントのみを含めることができます。これにより、CloudTrail Lake に取り込まれる CloudTrail イベントの量を大幅に削減し、関連するユーザーおよびシステムアクティビティへの可視性を維持しながらコストを低減できます。
+
+### [Demo: CloudTrail Lake のネットワークアクティビティイベント](https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi)
+
+以下のインタラクティブなデモでは、CloudTrail Lake で VPC エンドポイントのネットワークアクティビティイベントを使用する方法を探ります。 
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+### CloudTrail Lake のサンプル SQL クエリ
+
+#### VPC アクセス拒否エラーの数
+```
+SELECT count(*) as VPCAccessDenied, userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-21 17:00:00'
+    GROUP BY 
+    userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+    ORDER BY eventName DESC;
+```
+
+#### VPC アクセス拒否エラー
+```
+SELECT userIdentity.arn,
+    userIdentity.accountid,
+    eventType,
+    eventCategory,
+    eventName,
+    errorCode,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-20 17:00:00'
+    ORDER BY eventTime DESC;
+```
+
+### Cloud Operation Show: Network Activity Events を使用した VPC エンドポイントのセキュリティ保護 | AWS CloudTrail
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pAppy_tkWPY?si=sy7w_Yp8nejmwbLv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

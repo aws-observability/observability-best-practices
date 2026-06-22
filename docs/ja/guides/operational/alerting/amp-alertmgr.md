@@ -125,8 +125,6 @@ Amazon SNS の設定は、明示的に上書きされない限り、次のテン
 
 参考資料: [通知テンプレートの例](https://prometheus.io/docs/alerting/latest/notification_examples/)
 
-</sns></aws>
-
 ## Amazon SNS を介して E メール、Webhook、Slack など、さまざまな先にアラートをルーティングする
 
 Amazon Managed Service for Prometheus の Alert Manager は、[Amazon SNS を使用して E メール、Webhook(HTTP)、Slack、PageDuty、OpsGenie などの他の先に接続できます](https://docs.aws.amazon.com/ja_jp/prometheus/latest/userguide/AMP-alertmanager-SNS-otherdestinations.html)。

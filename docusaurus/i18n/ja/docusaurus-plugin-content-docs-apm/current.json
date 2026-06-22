@@ -1,0 +1,54 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.apmSidebar.category.Overview": {
+    "message": "概要",
+    "description": "The label for category 'Overview' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Implementation guides": {
+    "message": "実装ガイド",
+    "description": "The label for category 'Implementation guides' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Features & capabilities": {
+    "message": "機能と能力",
+    "description": "The label for category 'Features & capabilities' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Examples & code samples": {
+    "message": "例とコードサンプル",
+    "description": "The label for category 'Examples & code samples' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Examples": {
+    "message": "例",
+    "description": "The label for category 'Examples' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.API reference": {
+    "message": "API リファレンス",
+    "description": "The label for category 'API reference' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Best practices": {
+    "message": "ベストプラクティス",
+    "description": "The label for category 'Best practices' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Troubleshooting": {
+    "message": "トラブルシューティング",
+    "description": "The label for category 'Troubleshooting' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Security & compliance": {
+    "message": "セキュリティとコンプライアンス",
+    "description": "The label for category 'Security & compliance' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Integrations": {
+    "message": "統合",
+    "description": "The label for category 'Integrations' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.category.Reference": {
+    "message": "リファレンス",
+    "description": "The label for category 'Reference' in sidebar 'apmSidebar'"
+  },
+  "sidebar.apmSidebar.doc.APM Home": {
+    "message": "APM ホーム",
+    "description": "The label for the doc item 'APM Home' in sidebar 'apmSidebar', linking to the doc index"
+  }
+}

@@ -23,8 +23,16 @@
     "message": "包括的でわかりやすい教育リソースを通じて、AWS オブザーバビリティの実装を段階的に学べます。",
     "description": "Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources."
   },
+  "featureList.persona.description": {
+    "message": "AWS オブザーバビリティに関する、ペルソナ別のベストプラクティスと推奨事項。",
+    "description": "Persona specific best practices and recommendations for AWS observability."
+  },
+  "featureList.resources.description": {
+    "message": "AWS オブザーバビリティに関するリソース。",
+    "description": "Resources for AWS observability."
+  },
   "featureList.cloudOps.description": {
-    "message": "AWS クラウド運用のベストプラクティスを学べます。",
-    "description": "Learn the AWS Cloud Operations Best Practices."
+    "message": "ガバナンス、コンプライアンス、運用上の卓越性のための AWS Cloud Operations のベストプラクティス。",
+    "description": "AWS Cloud Operations best practices for governance, compliance, and operational excellence."
   }
 }

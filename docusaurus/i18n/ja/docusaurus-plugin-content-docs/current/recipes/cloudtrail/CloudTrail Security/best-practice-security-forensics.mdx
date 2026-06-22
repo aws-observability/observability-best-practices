@@ -1,0 +1,125 @@
+---
+sidebar_position: 2
+title: セキュリティフォレンジックのベストプラクティス
+---
+# セキュリティフォレンジックのベストプラクティス
+
+セキュリティフォレンジックとインシデントレスポンスは、IT セキュリティインシデントの特定、調査、および軽減のための重要なサイバーセキュリティプラクティスです。フォレンジックは、ログやシステムアーティファクトなどのデジタル証拠を体系的に収集・分析し、侵害の詳細を明らかにします。インシデントレスポンスは、被害を最小限に抑え、再発を防ぐために、インシデントの検出、封じ込め、および修復に重点を置いています。これらを組み合わせることで、組織は侵害を把握し、アクションを特定し、規制へのコンプライアンスを確保することができます。CloudTrail のベストプラクティスを実装することで、効果的なセキュリティフォレンジックとインシデントレスポンスのためのログ記録、分析、およびタイムリーな修復が強化されます。
+
+:::tip AWS セキュリティサービスを強化しましょう。
+AWS セキュリティサービスを強化し、実装戦略を改善し、貴重なクラウドリソースを効果的に保護するために、
+**最新の[AWS セキュリティサービスのベストプラクティス](https://aws.github.io/aws-security-services-best-practices/)をご覧ください**。
+セキュリティ設定の検証方法、実証済みのテクニックの実装方法、そして堅牢なセキュリティ体制のためにコミュニティが貢献するベストプラクティスの採用方法をご確認ください。
+:::
+
+:::tip CloudTrail のセキュリティを強化する
+AWS CloudTrail の設定を強化し、インシデント調査中のアクティビティログを保護するには、**最新の[AWS CloudTrail セキュリティのベストプラクティス](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html)をご覧ください**。イベントデータストアのセキュリティ保護、暗号化の有効化、アクセス制限の方法を学び、堅牢なセキュリティ体制を構築しましょう。
+:::
+
+## 包括的なログ設定
+
+### すべてのリージョンとアカウントにわたる包括的なログ記録の有効化
+
+すべての AWS リージョンおよび組織内のアカウントで、管理イベント、データイベント、およびネットワークアクティビティイベントをログに記録するよう CloudTrail を設定してください。マルチリージョントレイルまたは組織トレイルを使用して、グローバルサービスイベント（例：IAM、Route 53）を含むすべての API アクティビティをキャプチャしてください。
+
+**メリット**: 未使用のリージョンやアカウントでの不正なアクションを検出できるよう、イベントを見逃さないことを保証します。
+
+**例**: 休止中のリージョンでの予期しないアクティビティは、攻撃者による偵察を示している可能性があります。
+
+### 高リスクなデータイベントに焦点を当てるための高度なイベントセレクターの使用
+
+S3 の DeleteObject や Lambda の InvokeFunction 呼び出しなど、リスクの高いデータイベントをログに記録するための高度なイベントセレクターを設定し、コストを削減するために大量かつリスクの低いイベントを除外します。
+
+**メリット**: コストを管理しながら、重要なアクティビティに対するフォレンジック分析を集中させます。
+
+**例**: クエリに示すように、セレクターを使用して機密データを含む特定の S3 バケットの DeleteObject イベントのみをログに記録します。
+```sql
+SELECT * FROM <event-data-store-ID> 
+WHERE eventName = 'DeleteObject' 
+AND resources.ARN LIKE 'arn:aws:s3:::sensitive-bucket%'
+```
+
+## ログ分析とクエリ
+
+### 高度なクエリに CloudTrail Lake を使用する
+
+CloudTrail Lake を活用して、イベントデータストアに対して SQL ベースのクエリを実行し、大量のログを迅速に分析できます。
+
+**メリット**: eventName、userIdentity.arn、sourceIPAddress などのフィールドによるイベントの効率的なフィルタリングを可能にし、悪意のある活動を特定します。
+
+**クエリの例**:
+```sql
+SELECT eventTime, userIdentity.arn, eventName 
+FROM <event-data-store-ID> 
+WHERE eventName = 'CreateAccessKey'
+```
+
+**ベストプラクティス**: デフォルトの 90 日間よりも長く CloudTrail Lake にイベントを保存し、長期的な調査をサポートします。
+
+### 効率的なログ分析のための Amazon Athena との統合
+
+Amazon Athena を使用して S3 に保存された CloudTrail ログをクエリし、パーティション化されたテーブルを活用してクエリコストを削減しパフォーマンスを向上させます。
+:::tip CloudTrail 分析の自動化
+**[AWS CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena)** を GitHub で探索し、事前構築済みのクエリと CloudTrail および Athena 統合の自動化でインシデント調査を効率化します。
+:::
+
+**メリット**: 特定のアカウント、リージョン、または期間に対するターゲットクエリを可能にします。
+
+**クエリの例**:
+```sql
+SELECT * FROM trail_123456789012 
+WHERE eventName = 'DeleteObject' 
+AND eventTime > '2025-05-01'
+```
+
+**実装**: アカウント、リージョン、日付でパーティション分割されたアカウント固有のテーブルと組織全体のテーブルを作成します。
+
+:::note 保存済みセキュリティクエリへのアクセス
+**事前構築済みの Athena クエリを使用して、AWS CloudTrail によるインシデント調査を強化しましょう。** Athena テーブルでの CloudTrail ログ分析を効率化するために、GitHub で**[保存済みセキュリティインシデントクエリを探索する](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**ことができます。
+:::
+
+
+
+## モニタリングと検出
+
+### 異常検出のための CloudTrail Insights の有効化
+
+CreateUser や AssumeRole の呼び出しの急増など、侵害の可能性を示す異常な API アクティビティを検出するために、CloudTrail Insights を有効にしてください。
+
+**設定**: Insights を設定して、S3 バケットまたは CloudTrail Lake イベントデータストアにイベントを配信し、Amazon EventBridge と統合してアラートをトリガーしたり、自動応答のための Lambda 関数を起動したりします。
+
+**例**: GetCallerIdentity の過剰な呼び出しに対する Insights イベントは、セキュリティチームへのメール通知をトリガーする可能性があります。
+
+### 不審なアクティビティをリアルタイムで監視してアラートを発行する
+
+:::tip CloudTrail イベントを CloudWatch にストリーミングする
+**AWS CloudTrail と Amazon CloudWatch Logs を統合**して、セキュリティイベントをほぼリアルタイムで監視できます。**[ドキュメントでイベントストリーミングの設定方法を確認する](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)**。
+:::
+
+**実装**: CloudWatch Logs Insights を使用してログをクエリし、Root ログインや認証失敗の試みなどの高リスクイベントに対してアラームを設定します。
+
+**CloudWatch アラームのメトリクスフィルターを使用した例**: 以下の場合にセキュリティチームに通知するアラームを作成します。
+```
+{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }
+```
+
+:::tip IAM ポリシーの変更を監視する
+**AWS CloudTrail の CloudWatch アラームを設定**して、IAM ポリシーの変更を検出します。[AWS ドキュメントで詳細を確認する](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html#cloudwatch-alarms-for-cloudtrail-iam-policy-changes)。
+:::
+
+
+## ログのセキュリティと整合性
+
+### 堅牢なコントロールで CloudTrail ログを保護する
+
+フォレンジック分析のための整合性と可用性を確保するために、CloudTrail ログを保護します。
+
+1. **集中ストレージ**: 不正な変更を防ぐためにアクセスを制限した、別の AWS アカウントの集中管理された S3 バケットにログを保存します。
+
+2. **削除保護**: S3 バケットで MFA 削除または S3 Object Lock とバージョニングを有効にして、ログの誤削除や悪意のある削除を防止します。
+
+3. **暗号化**: AWS KMS マネージドキー (SSE-KMS) を使用して保存中のログを暗号化し、機密データを保護します。Amazon S3 Bucket Keys を使用して KMS リクエストコストを削減します。
+
+4. **整合性の検証**: SHA-256 ハッシュと RSA 署名を使用したログファイルの整合性検証を有効にして、改ざんや削除を検出し、フォレンジック調査においてログの信頼性を確保します。
+
+

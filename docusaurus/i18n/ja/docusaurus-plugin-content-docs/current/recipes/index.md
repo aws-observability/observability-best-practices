@@ -10,14 +10,14 @@
 
 o11y 空間について考える方法は次のとおりです。これを[6 つのディメンション][dimensions]に分解し、それらを組み合わせて特定のソリューションに到達できます。
 
-| dimension | examples |
+| ディメンション | 例 |
 |---------------|--------------|
-| Destinations  | [Prometheus][amp] &middot; [Grafana][amg] &middot; [OpenSearch][aes] &middot; [CloudWatch][cw] &middot; [Jaeger][jaeger] |
-| Agents        | [ADOT][adot] &middot; [Fluent Bit][fluentbit] &middot; CW agent &middot; X-Ray agent |
-| Languages     | [Java][java] &middot; Python &middot; .NET &middot; [JavaScript][nodejs] &middot; Go &middot; Rust |
-| Infra & databases  |  [RDS][rds] &middot; [DynamoDB][dynamodb] &middot; [MSK][msk] |
-| Compute unit | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
-| Compute engine | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
+| 送信先  | [Prometheus][amp] &middot; [Grafana][amg] &middot; [OpenSearch][aes] &middot; [CloudWatch][cw] &middot; [Jaeger][jaeger] |
+| エージェント        | [ADOT][adot] &middot; [Fluent Bit][fluentbit] &middot; CW エージェント &middot; X-Ray エージェント |
+| 言語     | [Java][java] &middot; Python &middot; .NET &middot; [JavaScript][nodejs] &middot; Go &middot; Rust |
+| インフラとデータベース  |  [RDS][rds] &middot; [DynamoDB][dynamodb] &middot; [MSK][msk] |
+| コンピューティングユニット | [Batch][batch] &middot; [ECS][ecs] &middot; [EKS][eks] &middot; [AEB][beans] &middot; [Lambda][lambda] &middot; [AppRunner][apprunner] |
+| コンピューティングエンジン | [Fargate][fargate] &middot; [EC2][ec2] &middot; [Lightsail][lightsail] |
 
 :::note
     「ソリューション要件の例」

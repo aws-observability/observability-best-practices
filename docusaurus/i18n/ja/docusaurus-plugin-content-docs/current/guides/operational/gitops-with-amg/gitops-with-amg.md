@@ -19,7 +19,7 @@ Grafana を使用する際にお客様が直面する一般的な課題の 1 つ
 
 [grafana-operator](https://github.com/grafana-operator/grafana-operator#:~:text=The%20grafana%2Doperator%20is%20a,an%20easy%20and%20scalable%20way.) は、Kubernetes 内の Grafana インスタンスの管理を支援するために構築された Kubernetes オペレーターです。Grafana Operator を使用すると、複数のインスタンス間で Grafana ダッシュボード、データソースなどを宣言的に管理および作成することが、簡単かつスケーラブルな方法で可能になります。Grafana オペレーターは現在、Amazon Managed Grafana などの外部環境でホストされているダッシュボード、データソースなどのリソースの管理をサポートしています。これにより、最終的には [Flux](https://fluxcd.io/) などの CNCF プロジェクトを使用した GitOps メカニズムを利用して、Amazon EKS クラスターから Amazon Managed Grafana のリソースのライフサイクルを作成および管理できるようになります。
 
-## GitOps の概要
+## GitOps の概要 {#gitops-の概要}
 
 ### GitOps と Flux とは
 

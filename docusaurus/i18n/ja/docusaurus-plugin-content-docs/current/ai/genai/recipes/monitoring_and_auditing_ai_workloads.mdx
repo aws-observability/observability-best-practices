@@ -1,0 +1,4003 @@
+---
+sidebar_position: 3
+description: CloudTrail、Bedrock モデル呼び出しログ、および ADOT を使用した AWS 上の AI ワークロードの監視と監査に関する完全ガイド。
+keywords:
+- cloudtrail
+- bedrock
+- agentcore
+- ai security
+- monitoring
+- audit
+- genai
+- observability
+toc_max_heading_level: 3
+---
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# AWS 上の AI ワークロードのモニタリングと監査
+
+## はじめに
+
+AWS 上の最新の AI ワークロードは、3 つの独立したパイプラインにわたってテレメトリを生成します。CloudTrail（誰が何を呼び出したか）、Bedrock Model Invocation Logging（モデルが何を返したか）、そして ADOT SDK によって収集される Agent Telemetry（エージェントがどのように動作したか）です。各パイプラインはそれぞれ不可欠です。CloudTrail 単体では、IAM ロールが `InvokeModel` を呼び出したことは確認できますが、そのロールがモデルに何を要求したか、またはエージェントがどのように応答したかは記録されません。モデル呼び出しログはコンテンツをキャプチャしますが、エージェントのオーケストレーションはキャプチャしません。ADOT はオーケストレーションをキャプチャしますが、推論パラメータや IAM アイデンティティはキャプチャしません。セキュリティおよび運用上の調査では、ほぼ常に少なくとも 2 つを相関させる必要があります。
+
+このガイドでは、以下の方法で AI ワークロードの完全なモニタリングと監査のストーリーを構築する方法を説明します。
+
+1. **3 つのテレメトリパイプラインをすべて有効化する** — このガイドでの簡単なセットアップと、詳細については各コンパニオンガイドへのディープリンクを提供します。
+2. **CloudTrail に基づく検出ルールを構築する** — セキュリティおよび監査サーフェスに対するメトリクスフィルター、アラーム、および Contributor Insights ルール。Bedrock と AgentCore の両方のデータイベントをカバーします。
+3. **クロスパイプライン相関クエリを実行する** — CloudTrail と Bedrock モデル呼び出しログおよび ADOT スパンを結合し、単一のパイプラインだけでは回答できない問いに答えます。
+
+[生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)と[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)は、監査とログ記録、ID コンテキスト、エージェンシー境界、データ保護など、AI アプリケーションを構築する際に組織が対処すべきセキュリティ上の側面を定義しています。このガイドでは、CloudTrail、CloudWatch、およびクロスパイプライン相関を使用して、これらの側面に対する具体的な実装方法を提供します。以下のタブは、各マトリックスの側面をそれを実装するガイドのセクションにマッピングしています。
+
+<Tabs>
+  <TabItem value="agentic" label="エージェント型 AI" default>
+
+  | ディメンション | ガイドセクション |
+  |---|---|
+  | **アイデンティティ** — ユーザー、サービス、エージェントのアイデンティティ管理 | [AgentCore Identity & Credentials (グループ 2)](#agentcore-の高度なイベントセレクター)、[クエリ 4](#security-analytics)、[クエリ 12](#security-analytics)、[クエリ 14](#security-analytics)、[メトリクスフィルター 7](#メトリクスフィルター)、[メトリクスフィルター 18](#メトリクスフィルター) |
+  | **データ** — 永続メモリと状態のセキュリティ | [AgentCore Memory & Evaluation (グループ 4)](#agentcore-の高度なイベントセレクター)、[クエリ 16](#security-analytics)、[メトリクスフィルター 19](#メトリクスフィルター) |
+  | **監査とログ記録** — アクションレベルのエージェントアクション追跡 | [3 つのテレメトリパイプライン](#genai-テレメトリの全体像3-つの補完的なパイプライン)、[セキュリティアナリティクス](#security-analytics)、[クロスパイプライン相関](#クロスパイプライン相関クエリ)、[メトリクスフィルター](#メトリクスフィルター)、[コントリビューターインサイト](#contributor-insights-ルール) |
+  | **ガードレール** — 動作監視、サンドボックス化、分離 | [AgentCore Built-in Tools (グループ 1)](#agentcore-の高度なイベントセレクター)、[クエリ 8](#security-analytics)、[クエリ 21](#クロスパイプライン相関クエリ)、[クエリ 26](#security-analytics)、[クエリ 27](#security-analytics)、[メトリクスフィルター 4](#メトリクスフィルター)、[メトリクスフィルター 17](#メトリクスフィルター)、[メトリクスフィルター 24](#メトリクスフィルター)、[メトリクスフィルター 25](#メトリクスフィルター) |
+  | **スコープ** — 運用境界と制約評価 | [ネットワークアクティビティイベント](#cloudtrail-ネットワークアクティビティイベント)、[クエリ 4](#security-analytics)、[クエリ 9](#security-analytics)、[クエリ 26](#security-analytics)、[メトリクスフィルター 9](#メトリクスフィルター)、[メトリクスフィルター 10](#メトリクスフィルター)、[メトリクスフィルター 24](#メトリクスフィルター) |
+  | **オーケストレーション** — エージェントとシステムの相互作用およびフロー制御 | [AgentCore Runtime & Gateway (グループ 3)](#agentcore-の高度なイベントセレクター)、[クエリ 15](#security-analytics)、[クエリ 17](#security-analytics)、[クエリ 19](#クロスパイプライン相関クエリ)、[クエリ 23](#security-analytics)、[クエリ 24](#security-analytics)、[メトリクスフィルター 21](#メトリクスフィルター)、[メトリクスフィルター 22](#メトリクスフィルター) |
+
+  </TabItem>
+  <TabItem value="genai" label="生成 AI">
+
+  | ディメンション | ガイドセクション |
+  |---|---|
+  | **ガバナンスとコンプライアンス** — データ主権、監査 | [モデル呼び出しログ](#フェーズ-1-observability-pipelines-を有効にする)、[クエリ 18](#クロスパイプライン相関クエリ)、[クエリ 25](#security-analytics)、[メトリクスフィルター 5](#メトリクスフィルター)、[メトリクスフィルター 23](#メトリクスフィルター) |
+  | **リスク管理** — 脅威モデリング、ガードレール | [Bedrock ガードレールモニタリング](#amazon-bedrock-データイベント)、[クエリ 8](#security-analytics)、[クエリ 21](#クロスパイプライン相関クエリ)、[クエリ 27](#security-analytics)、[メトリクスフィルター 4](#メトリクスフィルター)、[メトリクスフィルター 25](#メトリクスフィルター) |
+  | **コントロール** — ID、アクセス管理、最小権限 | [管理イベント](#cloudtrail-管理イベント)、[クエリ 1](#security-analytics)、[クエリ 2](#security-analytics)、[クエリ 4](#security-analytics)、[メトリクスフィルター 1](#メトリクスフィルター)、[メトリクスフィルター 7](#メトリクスフィルター) |
+
+  </TabItem>
+</Tabs>
+
+:::info[Shared Responsibility Model]
+AWS は、CloudTrail、CloudWatch、および Bedrock サービスを実行するクラウドインフラストラクチャのセキュリティに責任を負います。お客様は、イベントセレクターの設定、検出ルールの作成、アラームしきい値の設定、セキュリティイベントへの対応など、クラウド内のセキュリティに責任を負います。このガイドでは、AI ワークロードに対するお客様の設定および監視の責任に焦点を当てています。詳細については、[AWS 責任共有モデル](https://aws.amazon.com/compliance/shared-responsibility-model/)を参照してください。
+:::
+
+### 3 つの複合的な課題
+
+**ボリューム** — AI モデルの呼び出しは、大量のイベントを生成する可能性があります。正確なイベントセレクターと集約がなければ、大量のイベントの中から関心のあるイベントを分離することが難しく、すべてをキャプチャするコストは非常に高くなります。
+
+**スピード** — エージェントが開始するアクティビティシーケンスは、数秒以内に複数の API 呼び出し、ツールの呼び出し、モデルとのインタラクションを伴う場合があります。ニアリアルタイムの検出ルールは、運用上の異常が発生した時点により近いタイミングで検出を可能にし、より迅速なトリアージと平均調査時間の短縮をサポートします。
+
+**複雑性：** - AI ワークロードのアクティビティは複数の AWS サービスにまたがっています。単一のログソースで完全な可視性を提供することはできません。調査が実際に行われるのは、パイプライン全体での相関分析においてです。
+
+### このガイドの内容
+
+- 3 つのテレメトリパイプラインと、それぞれが固有にキャプチャする内容
+- 3 つすべての有効化（CloudTrail の詳細、他の 2 つは簡単な手順とディープリンク）
+- CloudTrail 固有の検出：Bedrock と AgentCore データイベントの両方に対するメトリクスフィルター、アラーム、Contributor Insights
+- AgentCore データイベント：ゲートウェイトラフィック、組み込みツールの使用状況、認証情報アクセス、メモリ操作、ランタイムアクティビティ
+- 調査のためのクロスパイプライン相関クエリ
+- 3 つのデータソースすべてを組み合わせた統合ダッシュボード
+
+## GenAI テレメトリの全体像：3 つの補完的なパイプライン
+
+CloudTrail は、AWS 上の AI ワークロードに対して完全なオブザーバビリティを提供する 3 つのテレメトリパイプラインのうちの 1 つです。それぞれが異なるデータをキャプチャし、異なる目的を果たし、異なる方法で有効化されます。セキュリティ調査では、ほぼ常に少なくとも 2 つを相関させる必要があります。
+
+![Three GenAI Telemetry Pipelines](/img/cloudops/recipes/AWS%20CloudTrail/monitoring-and-auditing-genAI/pipelines.png)
+
+| パイプライン | キャプチャする内容 | ロググループ | 主な用途 |
+| --- | --- | --- | --- |
+| **CloudTrail** | 誰が何をしたか — すべての API 呼び出し、呼び出し元 ARN、送信元 IP、エラーコード、アクセス拒否、コントロールプレーンの変更 | `YOUR_CLOUDTRAIL_LOG_GROUP` | セキュリティ監査、アクセス調査、設定変更の追跡 |
+| **Bedrock Model Invocation Logging** | モデルが何を返したか — 完全なプロンプト、完全なレスポンス、推論パラメータ（temperature、max_tokens）、呼び出し元 IAM アイデンティティ、トークン数 | `bedrock-model-invocation-logging` | コンテンツ監査、コンプライアンス、プロンプト品質のデバッグ、コスト配分 |
+| **Agent Telemetry (AWS Distro for OpenTelemetry — ADOT によって収集)** | エージェントがどのように動作したか — モデル呼び出しのレイテンシー、ツールの実行、分散トレースの相関、セッション追跡 | `aws/spans`, `/aws/bedrock-agentcore/runtimes/<agent>` | 運用モニタリング、パフォーマンスデバッグ、エージェントワークフローのオブザーバビリティ |
+
+### 各パイプラインが単独で答えること
+
+**CloudTrail だけでわかること:**
+
+- どの IAM アイデンティティが `InvokeModel` を呼び出したか？
+- 送信元 IP、ユーザーエージェント、およびリージョンは何でしたか？
+- 呼び出しは拒否されましたか（AccessDenied、UnauthorizedOperation）？
+- 誰かがガードレールを変更したり、ログ記録を停止したり、IAM 権限を昇格させましたか？
+- どの VPC エンドポイントが呼び出しをブロックしましたか？
+
+**モデル呼び出しログだけでわかること：**
+
+- モデルに送信されたプロンプトは何ですか？
+- モデルは何を返しましたか？
+- 使用された temperature と max_tokens は何ですか？
+- 呼び出しで消費された入力トークンと出力トークンの数は何ですか？
+- レスポンスは切り捨てられましたか（stop_reason = max_tokens）？
+
+**エージェントテレメトリ (ADOT SDK) だけでわかること:**
+
+- モデルの呼び出しにどれくらいの時間がかかりましたか（クライアント側のレイテンシー）？
+- エージェントはどのツールをどの順序で呼び出しましたか？
+- ツールが失敗しましたか？また、どのコンポーネントがエラーを引き起こしましたか？
+- エージェントセッションは複数のモデル呼び出しにわたってどのように連鎖していますか？
+
+### 相関関係が調査を解き明かす場所
+
+**相関のみが答えられる質問**
+
+| 調査の問い | 結合するパイプライン | 結合キー |
+|---|---|---|
+| 誰がモデルにこの質問をし、モデルは何と答えたか？ | CloudTrail（呼び出し元）+ Model Invocation Logging（プロンプト/レスポンス） | requestId |
+| エージェントが失敗したのは、モデルの問題、ツールの問題、それとも権限の問題が原因か？ | ADOT スパン（コンポーネントのレイテンシー/エラー）+ CloudTrail（AccessDenied イベント） | session + time |
+| これらの安全でないモデルレスポンスの直前に、ガードレールが弱められたか？ | CloudTrail（UpdateGuardrail イベント）+ Model Invocation Logging（レスポンス内容） | timestamp |
+| エージェントロールは最小権限に違反する Bedrock 呼び出しを行っているか？ | CloudTrail（引き受けたロールからのクロスサービス AccessDenied）+ ADOT（エージェントセッション ID） | session + time |
+| どの外部呼び出し元が Gateway を通じてこのエージェントをトリガーし、エージェントはどの認証情報を使用したか？ | CloudTrail Gateway データイベント（JWT サブジェクト、送信元 IP）+ CloudTrail 認証情報データイベント（TokenVault/OAuth2 アクセス） | time + agent runtime ARN |
+| エージェントが意図したスコープ外でコードを実行したり Web サイトを閲覧したりしているか？ | CloudTrail AgentCore ツールデータイベント（CodeInterpreter/Browser）+ ADOT スパン（エージェントセッションコンテキスト） | session + time |
+
+[クロスパイプライン相関クエリ](#クロスパイプライン相関クエリ)セクションでは、これらのシナリオに対応する実際の JOIN クエリを紹介しています。
+:::
+
+## 実装の概要
+
+3 つのパイプラインをすべて有効化し、その上に検出と相関を重ねていくフェーズ型のロールアウトです。
+
+### フェーズ 1: Observability Pipelines を有効にする
+
+2 つのオブザーバビリティパイプライン（Bedrock Model Invocation Logging と ADOT SDK によって収集される Agent Telemetry）から始めます。これらはすぐに有効化でき、相関クエリを可能にするものです。CloudTrail のセットアップはフェーズ 2 で行います。
+
+**Pipeline A: Bedrock モデル呼び出しログ記録**
+
+すべての Bedrock モデル呼び出しに対して、完全なプロンプト、レスポンス、推論パラメータ、および呼び出し元の IAM アイデンティティをキャプチャします。手動オプトインのみ。*(モデルのインタラクションをキャプチャしてデータ主権要件およびコンプライアンス監査ワークフローをサポートすることで、[生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)のガバナンスとコンプライアンスディメンションを実装します。)*
+
+1. [Amazon Bedrock コンソール](https://console.aws.amazon.com/bedrock/)を開きます
+2. **設定** → **モデル呼び出しログ記録**を選択します
+3. ログ記録を有効にし、送信先として CloudWatch Logs（および/または S3）を選択します
+4. ロググループ名（デフォルト: `bedrock-model-invocation-logging`）とサービスロールを設定します
+
+詳細な設定、PII マスキング、およびダッシュボードのセットアップについては、[AWS での GenAI Observability](/observability-best-practices/ja/ai/genai/guides/genai-observability-on-aws/#pipeline-1-bedrock-model-invocation-logging) を参照してください。
+
+**パイプライン B: エージェントテレメトリ (ADOT SDK によって収集)**
+
+エージェントのオーケストレーション、分散トレース、およびツールの実行をキャプチャします。
+
+- **AgentCore:** デフォルトでランタイムに ADOT SDK が含まれており、テレメトリが `aws/spans` および `/aws/bedrock-agentcore/runtimes/<agent>` に自動的に送信されるため、操作は不要です
+- **EKS/ECS/セルフホスト型:** ADOT 自動インストルメンテーションエージェントをワークロードにアタッチします。コードの変更は不要です。
+
+[CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) を有効にすることで、Application Signals のフル機能をご利用いただけます。
+
+詳細な有効化手順については、[GenAI Observability on AWS — エージェント型ワークロードの Observability の有効化](/observability-best-practices/ja/ai/genai/guides/genai-observability-on-aws/#enabling-observability-for-agentic-workloads)および[AgentCore Observability クイックスタート](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability)を参照してください。
+
+### フェーズ 2: CloudTrail を有効化する — Bedrock から開始し、カバレッジを拡大して CloudWatch に取り込む
+
+CloudTrail を設定して、最も価値の高いリソース（Bedrock）から始めて外側に拡張しながら、AI ワークロードの完全な監査サーフェスをキャプチャします。すべてを CloudWatch Logs に配信して、パイプライン A および B と結合できるようにします。
+
+**ステップ 1: Bedrock および AgentCore のデータイベントと管理イベント**
+
+**トレイルで Bedrock データイベントを有効化**するには、高度なイベントセレクターを使用します。これらのオペレーションはデフォルトではログに記録されません。[Amazon Bedrock データイベント](#amazon-bedrock-データイベント)を参照してください。
+
+:::note[Bedrock resource types to enable]
+
+| カテゴリ | リソースタイプ |
+|---|---|
+| エージェントとオーケストレーション | `AWS::Bedrock::AgentAlias`, `AWS::Bedrock::InlineAgent`, `AWS::Bedrock::FlowAlias`, `AWS::Bedrock::FlowExecution`, `AWS::Bedrock::Session` |
+| モデル呼び出し | `AWS::Bedrock::Model`, `AWS::Bedrock::AsyncInvoke`, `AWS::Bedrock::PromptVersion`, `AWS::Bedrock::AdvancedOptimizePromptJob` |
+| 安全性とガードレール | `AWS::Bedrock::Guardrail`, `AWS::Bedrock::AutomatedReasoningPolicy`, `AWS::Bedrock::AutomatedReasoningPolicyVersion` |
+| ナレッジと RAG | `AWS::Bedrock::KnowledgeBase`, `AWS::Bedrock::Tool` |
+| データ自動化 | `AWS::Bedrock::DataAutomationProject`, `AWS::Bedrock::DataAutomationInvocation`, `AWS::Bedrock::DataAutomationProfile`, `AWS::Bedrock::Blueprint` |
+
+:::
+
+**高度なイベントセレクターを使用して AgentCore Data Events を有効化します。** [Amazon Bedrock AgentCore Data Events](#amazon-bedrock-agentcore-データイベント) を参照してください。
+
+:::note[AgentCore resource types to enable]
+
+| カテゴリ | リソースタイプ |
+|---|---|
+| ランタイムとゲートウェイ | `AWS::BedrockAgentCore::Gateway`, `AWS::BedrockAgentCore::Runtime`, `AWS::BedrockAgentCore::RuntimeEndpoint` |
+| 組み込みツール | `AWS::BedrockAgentCore::CodeInterpreter`, `AWS::BedrockAgentCore::Browser` |
+| ID と認証情報 | `AWS::BedrockAgentCore::WorkloadIdentity`, `AWS::BedrockAgentCore::TokenVault`, `AWS::BedrockAgentCore::OAuth2CredentialProvider`, `AWS::BedrockAgentCore::APIKeyCredentialProvider` |
+| メモリと評価 | `AWS::BedrockAgentCore::Memory`, `AWS::BedrockAgentCore::Evaluator` |
+
+今後利用可能になる追加の AgentCore リソースタイプも含まれます。
+
+:::
+
+**管理イベントの確認** (読み取りと書き込み) がすべてのリージョンで有効になっていることを確認してください — これにより `InvokeModel` と `Converse` が管理イベントとして自動的にキャプチャされ、`CreateGateway`、`CreateGatewayTarget` などの AgentCore 管理イベントもキャプチャされます。詳細については、[CloudTrail 管理イベント](#cloudtrail-管理イベント)を参照してください。
+
+**CloudTrail Insights を有効にする** (`ApiCallRateInsight` および `ApiErrorRateInsight`) は異常検出に使用されます。[CloudTrail Insights イベント](#cloudtrail-insights-イベント)を参照してください。
+
+**ステップ 2: S3、Lambda、およびネットワークアクティビティへの拡張**
+
+- トレーニングデータ、モデルアーティファクト、CI/CD パイプラインバケットに対して Amazon S3 データイベント（書き込み専用）を有効にします。[Amazon S3 と Lambda データイベント](#amazon-s3-と-lambda-データイベント)を参照してください。
+- 開発/テストを除く本番 AI パイプライン関数に対して Lambda データイベントを有効にします。[Amazon S3 と Lambda データイベント](#amazon-s3-と-lambda-データイベント)を参照してください。
+- Bedrock、S3、Lambda VPC エンドポイントに対して、`VpceAccessDenied` をターゲットとするネットワークアクティビティイベントを有効にします。[CloudTrail ネットワークアクティビティイベント](#cloudtrail-ネットワークアクティビティイベント)を参照してください。
+
+**ステップ 3: CloudWatch Logs への配信**
+
+- CloudTrail トレイルを [CloudWatch Logs ロググループ](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)に配信するように設定します。
+
+### フェーズ 3: CloudTrail での検出ルールの構築
+
+- CloudTrail イベント（未承認の Bedrock アクセス、ガードレールの変更、ログの中断）のメトリクスフィルターを作成します。[メトリクスフィルター](#メトリクスフィルター)を参照してください。
+- 各メトリクスフィルターに SNS 通知ターゲットを設定した CloudWatch アラームを作成します。[CloudWatch アラーム](#cloudwatch-alarms)を参照してください。
+- 上位の IAM アイデンティティとソース IP を特定するための Contributor Insights ルールを作成します。[Contributor Insights ルール](#contributor-insights-ルール)を参照してください。
+
+### フェーズ 4: クロスパイプライン相関クエリの構築
+
+- CloudTrail の標準的な検出のための CloudWatch Logs Insights クエリを開発します。[セキュリティ分析](#security-analytics)を参照してください。
+- CloudTrail と Bedrock Model Invocation Logging および ADOT スパンを組み合わせたクロスパイプライン JOIN クエリを構築します。[クロスパイプライン相関クエリ](#クロスパイプライン相関クエリ)を参照してください。
+- セキュリティおよびオペレーションアナリストが繰り返し使用できるよう、検証済みクエリを保存します。
+
+### フェーズ 5: イベント集約による最適化
+
+- CloudTrail イベント集約を有効にする (`API_ACTIVITY`, `RESOURCE_ACCESS`, `USER_ACTIONS` テンプレート) を使用して、生データイベントと並行して 5 分間のサマリーを作成します。[CloudTrail データイベント集約](#cloudtrail-データイベントの集約)を参照してください。
+- CloudWatch Subscription Filters を使用して、管理イベントと集約イベントのみをダウンストリーム SIEM に転送し、インジェスト量を削減します。
+
+### フェーズ 6: 統合ダッシュボードの組み立て
+
+- CloudTrail アラーム、Contributor Insights ウィジェット、モデル呼び出しログコストウィジェット、ADOT パフォーマンスウィジェット、および相関クエリ結果を単一のペインに組み合わせた CloudWatch ダッシュボードを構築します。[統合監査 & モニタリングダッシュボード](#unified-audit--monitoring-dashboard)を参照してください。
+## Amazon Bedrock データイベント
+
+デフォルトでは、CloudTrail はアカウントの[管理イベント](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html)をログに記録しており、これにより一般的な Bedrock ランタイム呼び出しがすでにキャプチャされます。例えば、 `InvokeModel`, `Converse`、および `ConverseStream`多くの重要な AI ワークロード操作がデータイベントとして記録されます。これには、エージェントの呼び出し、ナレッジベースの取得、フローの実行、ガードレールの適用、双方向ストリーミング、非同期呼び出し、プロンプトのレンダリングが含まれます。これらの操作には、トレイルの高度なイベントセレクターが必要です。データイベントにより、セキュリティチームはモデルの呼び出しを可視化できます。適用する具体的なセレクターについては、以下の[Bedrock の高度なイベントセレクター](#bedrock-の高度なイベントセレクター)を参照してください。
+
+### 監視すべき主要な API
+
+以下の表は、どの Bedrock API が自動的にキャプチャされ、どれがトレイルの高度なイベントセレクター設定を必要とするかを示しています。
+
+<Tabs>
+  <TabItem value="management" label="管理イベント（デフォルトでキャプチャ）" default>
+
+  | API | イベント名 | 重要な理由 |
+  |-----|-----------|----------------|
+  | InvokeModel | InvokeModel | どの IAM アイデンティティがいつファウンデーションモデルを呼び出しているかを追跡します。 |
+  | ストリーミング呼び出し | InvokeModelWithResponseStream | 長文生成タスクのストリーミングモデルインタラクションをキャプチャします。 |
+  | 会話型 AI | Converse / ConverseStream | ファウンデーションモデルに対するマルチターンの会話型 AI アクティビティを記録します。 |
+  | 非同期呼び出しの一覧表示 | ListAsyncInvokes | 非同期呼び出しジョブの一覧表示を監視します。 |
+
+  </TabItem>
+  <TabItem value="data" label="データイベント（高度なイベントセレクターが必要）">
+
+  :::tip
+  データイベントには、[高度なイベントセレクター](#bedrock-の高度なイベントセレクター)の設定が必要です。
+  :::
+
+| API | イベント名 | リソースタイプ | 重要な理由 |
+  |-----|-----------|---------------|----------------|
+  | 双方向ストリーミング | InvokeModelWithBidirectionalStream | AWS::Bedrock::Model | 双方向ストリーミングモデルのインタラクションをキャプチャします。 |
+  | 非同期呼び出し | GetAsyncInvoke / StartAsyncInvoke | AWS::Bedrock::Model, AWS::Bedrock::AsyncInvoke | 非同期モデル呼び出しジョブを監視します。両方のリソースタイプにセレクターが必要です。 |
+  | エージェント呼び出し | InvokeAgent | AWS::Bedrock::AgentAlias | デプロイされた Bedrock エージェントエイリアスの呼び出しを追跡します。 |
+  | インラインエージェント | InvokeInlineAgent | AWS::Bedrock::InlineAgent | インラインエージェントの呼び出しをキャプチャします。 |
+  | RAG アクティビティ | Retrieve / RetrieveAndGenerate | AWS::Bedrock::KnowledgeBase | Bedrock Knowledge Bases に対する Retrieval-Augmented Generation 呼び出しを監視します。 |
+  | フロー呼び出し | InvokeFlow | AWS::Bedrock::FlowAlias | Bedrock Prompt Flows の呼び出しを追跡します。 |
+  | ガードレール適用 | ApplyGuardrail | AWS::Bedrock::Guardrail | ガードレール適用操作をキャプチャします。 |
+  | プロンプトレンダリング | RenderPrompt | AWS::Bedrock::PromptVersion | [プロンプト管理](https://docs.aws.amazon.com/bedrock/latest/userguide/prompt-management.html)を使用して作成されたプロンプトのプロンプトレンダリング操作をキャプチャします。 |
+  | セッションアクティビティ | Session API 操作 | AWS::Bedrock::Session | マルチターン Bedrock 会話のセッションレベル API アクティビティをキャプチャします。 |
+  | フロー実行 | フロー実行 API 操作 | AWS::Bedrock::FlowExecution | プロンプトフロー実行の監視のために Bedrock フロー実行アクティビティをキャプチャします。 |
+  | 自動推論 | 自動推論ポリシー API 操作 | AWS::Bedrock::AutomatedReasoningPolicy | 検証可能な AI 出力に使用される自動推論ポリシーのアクティビティをキャプチャします。 |
+  | 自動推論バージョン | 自動推論ポリシーバージョン API 操作 | AWS::Bedrock::AutomatedReasoningPolicyVersion | 自動推論ポリシーの特定バージョンのアクティビティをキャプチャします。 |
+  | データ自動化プロジェクト | データ自動化プロジェクト API 操作 | AWS::Bedrock::DataAutomationProject | ドキュメントおよびメディア処理のための Bedrock データ自動化プロジェクトアクティビティをキャプチャします。 |
+  | データ自動化呼び出し | データ自動化呼び出し API 操作 | AWS::Bedrock::DataAutomationInvocation | Bedrock データ自動化呼び出しアクティビティをキャプチャします。 |
+  | データ自動化プロファイル | データ自動化プロファイル API 操作 | AWS::Bedrock::DataAutomationProfile | Bedrock データ自動化プロファイルアクティビティをキャプチャします。 |
+  | ブループリント | ブループリント API 操作 | AWS::Bedrock::Blueprint | データ自動化設定のための Bedrock ブループリントアクティビティをキャプチャします。 |
+  | 高度なプロンプト最適化 | 高度な最適化プロンプトジョブ API 操作 | AWS::Bedrock::AdvancedOptimizePromptJob | 高度なプロンプト最適化ジョブアクティビティをキャプチャします。 |
+  | ツールアクティビティ | ツール API 操作 | AWS::Bedrock::Tool | ツール使用操作のための Bedrock ツール API アクティビティをキャプチャします。 |
+
+  </TabItem>
+</Tabs>
+
+:::warning[Important]
+`InvokeModel`、`Converse`、および `ConverseStream` は管理イベントとしてログに記録されるため、管理イベントのログ記録が有効になっているすべてのトレイルでデフォルトでキャプチャされます。ただし、エージェントの呼び出し、ナレッジベースの取得、フローの呼び出し、ガードレールの適用、プロンプトのレンダリング、非同期呼び出し、双方向ストリーミング、セッションアクティビティ、フロー実行、自動推論、データオートメーション、ブループリント操作、高度なプロンプト最適化、およびツール操作は、トレイル上の対応する Bedrock リソースタイプに対して高度なイベントセレクターを設定した場合にのみログに記録されます。設定については[Bedrock の高度なイベントセレクター](#bedrock-の高度なイベントセレクター)を参照し、サポートされているリソースタイプの完全なリストについては[Amazon Bedrock CloudTrail ドキュメント](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html)を参照してください。
+:::
+
+### Bedrock の高度なイベントセレクター
+
+以下の高度なイベントセレクターを使用して、CloudTrail トレイルで Bedrock データイベントをキャプチャします。各 Bedrock リソースタイプには独自のセレクターが必要であり、各セレクターは `resources.ARN` プレフィックスを使用してログ記録を特定のリソースにスコープする必要があります。これにより、リソースタイプごとに 1 つずつ、18 個の個別のセレクターが設定されます。ほとんどのセレクターは、アカウントにスコープされた `resources.ARN` プレフィックスとともに `eventCategory = Data` でフィルタリングします。`Model` および `AsyncInvoke` セレクターは、基盤モデルの ARN が AWS 所有でありアカウント ID を含まないため、代わりに `eventName` フィルタリングを使用します。
+
+:::warning
+以下のセレクターは**例**です。プレースホルダーを置き換えずに適用しても、イベントはキャプチャされません。
+:::
+
+:::note[Bedrock placeholder reference]
+
+| プレースホルダー | 置き換える値 | 確認場所 |
+|---|---|---|
+| `ACCOUNT_ID` | 12 桁の AWS アカウント ID | AWS コンソール右上のメニュー |
+| `REGION` | AWS リージョン（例: `us-east-1`） | コンソールのリージョンセレクター |
+| `AGENT_ID` / `ALIAS_ID` | エージェント ID とエイリアス ID | Bedrock コンソール → **Agents** |
+| `KB_ID` | ナレッジベース ID | Bedrock コンソール → **Knowledge bases** |
+| `FLOW_ID` | フロー ID | Bedrock コンソール → **Prompt flows** |
+| `GUARDRAIL_ID` | ガードレール ID | Bedrock コンソール → **Guardrails** |
+| `PROMPT_ID` | プロンプト ID | Bedrock コンソール → **Prompt management** |
+| `POLICY_ID` | 自動推論ポリシー ID | Bedrock コンソール → **Automated reasoning** |
+| `PROJECT_ID` | データ自動化プロジェクト ID | Bedrock コンソール → **Data automation** |
+| `TOOL_ID` | Bedrock ツール ID | Bedrock コンソール → **Tools** |
+| `BEDROCK_EXECUTION_ROLE_NAME` | Bedrock 呼び出し用の IAM ロール名 | IAM コンソール → **Roles** |
+| `YOUR_CLOUDTRAIL_LOG_GROUP` | CloudTrail トレイル用の CloudWatch Logs ロググループ | CloudTrail コンソール → トレイル → **CloudWatch Logs** |
+
+特定のタイプの**すべての**リソースをログに記録するには、ARN プレフィックスからリソース ID を削除します(例： `agent-alias/AGENT_ID/ALIAS_ID` → `agent-alias/`) — これによりイベントのボリュームとコストが増加します。使用する場合は `readOnly` または `eventName` フィルターが必要な操作と一致していることを確認してください。
+:::
+
+<details>
+<summary>18 件の Bedrock 高度なイベントセレクター (JSON) をすべて表示</summary>
+
+```json title="bedrock-advanced-event-selectors.json"
+[
+  {
+    "Name": "Bedrock-AgentAlias-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AgentAlias"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:agent-alias/AGENT_ID/ALIAS_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-InlineAgent-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::InlineAgent"]
+      },
+      {
+        "Field": "eventName",
+        "Equals": ["InvokeInlineAgent"]
+      },
+      {
+        "Field": "userIdentity.arn",
+        "StartsWith": [
+          "arn:aws:sts::ACCOUNT_ID:assumed-role/BEDROCK_EXECUTION_ROLE_NAME"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-KnowledgeBase-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::KnowledgeBase"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:knowledge-base/KB_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-FlowAlias-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::FlowAlias"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:flow/FLOW_ID/alias/"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Guardrail-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::Guardrail"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:guardrail/GUARDRAIL_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Model-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::Model"]
+      },
+      {
+        "Field": "eventName",
+        "Equals": ["InvokeModelWithBidirectionalStream"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-AsyncInvoke-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AsyncInvoke"]
+      },
+      {
+        "Field": "eventName",
+        "Equals": ["GetAsyncInvoke", "StartAsyncInvoke"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Prompt-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::PromptVersion"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:prompt/PROMPT_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Session-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::Session"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:session/"
+        ]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-FlowExecution-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::FlowExecution"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:flow/FLOW_ID/alias/"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-AutomatedReasoningPolicy-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AutomatedReasoningPolicy"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:automated-reasoning-policy/POLICY_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-AutomatedReasoningPolicyVersion-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AutomatedReasoningPolicyVersion"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:automated-reasoning-policy/POLICY_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-DataAutomationProject-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::DataAutomationProject"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-project/PROJECT_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-DataAutomationInvocation-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::DataAutomationInvocation"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-invocation/"
+        ]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-DataAutomationProfile-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::DataAutomationProfile"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-profile/"
+        ]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Blueprint-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::Blueprint"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:blueprint/"
+        ]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-AdvancedOptimizePromptJob-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AdvancedOptimizePromptJob"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:advanced-optimize-prompt-job/"
+        ]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Tool-DataEvents",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::Tool"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:tool/TOOL_ID"
+        ]
+      }
+    ]
+  }
+]
+```
+
+</details>
+
+### Bedrock データイベントリソースタイプ
+
+CloudTrail は、以下の Bedrock リソースタイプのデータイベントをサポートするように設計されており、AI パイプラインへの完全な可視性を提供します。
+
+**エージェントとオーケストレーション**
+
+| リソースタイプ | 主要 API | 説明 |
+|---|---|---|
+| `AWS::Bedrock::AgentAlias` | `InvokeAgent` | デプロイされた Bedrock エージェントエイリアスの呼び出しを追跡します |
+| `AWS::Bedrock::InlineAgent` | `InvokeInlineAgent` | インラインエージェントの呼び出しをキャプチャします |
+| `AWS::Bedrock::FlowAlias` | `InvokeFlow` | Bedrock Prompt Flow の呼び出しを追跡します |
+| `AWS::Bedrock::FlowExecution` | フロー実行 API | プロンプトフロー実行の監視のためにフロー実行アクティビティをキャプチャします |
+| `AWS::Bedrock::Session` | セッション API | マルチターン会話のセッションレベル API アクティビティをキャプチャします |
+
+<details>
+<summary>Agent & Orchestration リソースのセレクターに関する注意事項</summary>
+
+- **FlowExecution** — Narrow `resources.ARN` 特定のフロー ID に (例: `flow/FLOW_ID/alias/`) フロー実行 ARN が共有されているため `flow/` フローエイリアスのプレフィックスを使用します。
+- **Session** — 使用します `readOnly = false` 書き込み操作（セッションの作成と更新）に集中し、高頻度の読み取り操作によるボリュームを削減するため。
+
+</details>
+
+**モデル呼び出し**
+
+| リソースタイプ | 主要 API | 説明 |
+|---|---|---|
+| `AWS::Bedrock::Model` | `InvokeModelWithBidirectionalStream` | 双方向ストリーミング呼び出しをログに記録します |
+| `AWS::Bedrock::AsyncInvoke` | `GetAsyncInvoke`, `StartAsyncInvoke` | 非同期呼び出し操作をログに記録します |
+| `AWS::Bedrock::PromptVersion` | `RenderPrompt` | プロンプトレンダリング操作をキャプチャします |
+| `AWS::Bedrock::AdvancedOptimizePromptJob` | 高度なプロンプト最適化 API | 高度なプロンプト最適化ジョブのアクティビティをキャプチャします |
+
+<details>
+<summary>モデル呼び出しリソースのセレクターに関する注意事項</summary>
+
+- **モデル** — Foundation model の ARN は AWS が所有しています(例： `arn:aws:bedrock:REGION::foundation-model/...`) はアカウント ID を含まないため、このセレクターは `eventName` フィルタリングの代わりに `resources.ARN`.
+- **AsyncInvoke** — 使用 `eventName` 特定の非同期操作にスコープを絞るためのフィルタリング。非同期呼び出しには、**両方**のセレクターが必要です。 `AWS::Bedrock::Model` および `AWS::Bedrock::AsyncInvoke`.
+- **AdvancedOptimizePromptJob** — 使用します `readOnly = false` 書き込み操作（ジョブの開始）に焦点を当てます。
+
+</details>
+
+**安全性とガードレール**
+
+| リソースタイプ | 主要 API | 説明 |
+|---|---|---|
+| `AWS::Bedrock::Guardrail` | `ApplyGuardrail` | ガードレール適用操作をキャプチャします |
+| `AWS::Bedrock::AutomatedReasoningPolicy` | 自動推論 API | 検証可能な AI 出力のための自動推論ポリシーのアクティビティをキャプチャします |
+| `AWS::Bedrock::AutomatedReasoningPolicyVersion` | 自動推論バージョン API | 自動推論ポリシーの特定バージョンのアクティビティをキャプチャします |
+
+<details>
+<summary>Safety & Guardrails リソースのセレクターに関する注意事項</summary>
+
+- **AutomatedReasoningPolicy** — アカウント内のすべてのポリシーをキャプチャしないよう、特定のポリシー ID に絞り込みます。
+- **AutomatedReasoningPolicyVersion** — ポリシーセレクターと同じポリシー ID プレフィックスを使用します。
+
+</details>
+
+**ナレッジ & RAG**
+
+| リソースタイプ | 主要 API | 説明 |
+|---|---|---|
+| `AWS::Bedrock::KnowledgeBase` | `Retrieve`, `RetrieveAndGenerate` | データソースの取得および取り込みアクティビティを監視します |
+| `AWS::Bedrock::Tool` | ツール API | ツール使用操作のためのツール API アクティビティをキャプチャします |
+
+<details>
+<summary>Knowledge & RAG リソースのセレクターに関する注意事項</summary>
+
+- **Tool** — アカウント内のすべてのツールアクティビティをキャプチャしないように、特定のツール ID に絞り込みます。
+
+</details>
+
+**データ自動化**
+
+| リソースタイプ | 主要 API | 説明 |
+|---|---|---|
+| `AWS::Bedrock::DataAutomationProject` | データ自動化プロジェクト API | ドキュメントおよびメディア処理のためのプロジェクトアクティビティをキャプチャします |
+| `AWS::Bedrock::DataAutomationInvocation` | データ自動化呼び出し API | データ自動化呼び出しアクティビティをキャプチャします |
+| `AWS::Bedrock::DataAutomationProfile` | データ自動化プロファイル API | データ自動化プロファイルアクティビティをキャプチャします |
+| `AWS::Bedrock::Blueprint` | ブループリント API | データ自動化設定のためのブループリントアクティビティをキャプチャします |
+
+<details>
+<summary>Data Automation リソースのセレクターに関する注意事項</summary>
+
+- **DataAutomationProject** — 特定のプロジェクト ID に絞り込みます。
+- **DataAutomationInvocation**、**DataAutomationProfile**、**Blueprint** — すべて使用 `readOnly = false` 書き込み操作に集中します。
+
+</details>
+
+:::note[Cost optimization for InlineAgent]
+The `AWS::Bedrock::InlineAgent` セレクターには含まれていません。 `resources.ARN` インラインエージェントには永続的なリソース ARN がないため、フィルタリングされます。ボリュームとコストを削減するために、セレクターは `eventName` filter (スコープ対象: `InvokeInlineAgent`) および [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) フィルターを使用して、特定の IAM ロールへのログ記録をスコープします。置き換えてください。 `BEDROCK_EXECUTION_ROLE_NAME` 実際のロール名に置き換えてください。インラインエージェントを使用しない場合は、このセレクターを完全に削除してください。完全なセレクター JSON については、[インラインエージェント: IAM アイデンティティによるフィルタリング](#インラインエージェント-iam-identity-によるフィルタリング)を参照してください。
+:::
+
+:::warning
+[上記の高度なイベントセレクター](#bedrock-の高度なイベントセレクター)をすべての関連リソースタイプにわたって設定することが、このガイドにおける **AI ワークロードの可視性を有効にするための重要な最初のステップ**です。高度なイベントセレクターを指定せずにデータイベントを有効にしないでください。フィルタリングされていないデータイベントのログ記録は、大量のデータとコストを発生させる可能性があります。最新のサポートされているリソースタイプについては、[CloudTrail の Amazon Bedrock データイベント](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html)を参照してください。
+:::
+
+## Amazon Bedrock AgentCore データイベント
+
+[Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/) は、AI エージェントの実行、セキュリティ保護、および接続のためのマネージドインフラストラクチャを提供します。これには、ホスト型ランタイム、組み込みツール（コードインタープリター、ブラウザー）、ID およびクレデンシャル管理、API ゲートウェイ、永続メモリが含まれます。これらのコンポーネントはそれぞれデータプレーンのアクティビティを生成し、CloudTrail はそれをデータイベントとしてキャプチャできます。これにより、エージェントがコードを実行する方法、ウェブを閲覧する方法、サードパーティサービスへの認証方法、およびゲートウェイを通じてユーザーと対話する方法を把握できます。
+
+AgentCore データイベントは、コード実行、ツール使用、メモリ操作など、エージェントの動作に対するランタイムの可視性を提供します。具体的には、どのツールが呼び出されているか、どの認証情報が取得されているか、どのゲートウェイがトラフィックを受信しているか、または認識されていない呼び出し元がエージェントインフラストラクチャにアクセスしているかどうかを確認できます。
+
+### AgentCore Data Events が AI セキュリティにとって重要な理由
+
+AgentCore コンポーネントは、AI エージェントの運用サーフェス、つまりエージェントが実際のアクションを実行するレイヤーを表します。Bedrock データイベント（上記で説明）がエージェントに何を求めるか（モデルの呼び出し、ナレッジベースからの取得）をキャプチャするのに対し、AgentCore データイベントはエージェントが実際に何を行うかをキャプチャします。[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)は、エージェント型システムに対して 6 つの重要なセキュリティディメンションを定義しています。以下の箇条書きは、各 AgentCore 機能をそれが対応するマトリックスディメンションにマッピングしたものです。
+
+- **コードの実行** — CodeInterpreter を通じてユーザー提供のコードを実行するエージェントは、ファイルへのアクセス、ネットワーク呼び出し、副作用の生成が可能です。これらの呼び出しを監視することで、意図しないコードの実行や、意図した範囲外で動作するエージェントを検出できます。*(Agentic Matrix: [ガードレール](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — サンドボックスと分離メカニズム)*
+- **Web ブラウジング** — Browser ツールを使用するエージェントは外部 Web サイトをナビゲートし、機密性の高い URL にアクセスしたり、データ転送が意図した境界内に収まっているかを確認したりする可能性があります。ブラウザのアクティビティをログに記録することで、エージェントが訪問したすべてのページの監査証跡が得られます。*(Agentic Matrix: [ガードレール](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 行動監視)*
+- **認証情報へのアクセス** — エージェントは、TokenVault に保存された OAuth2 トークン、API キー、ワークロード ID トークンを使用してサードパーティ API に認証します。予期しない認証情報アクセスパターンは、異常なエージェントアクティビティや権限昇格を示している可能性があります。*(Agentic Matrix: [ID 管理](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — ID の委任と認証情報管理)*
+- **ゲートウェイトラフィック** — AgentCore Gateway は、JWT ベースの認証を備えた MCP プロトコルを介してエージェントを外部の呼び出し元に公開します。ゲートウェイのデータイベントは、認証失敗を含むすべての受信リクエストをキャプチャします。これは、AWS 環境外からの意図しないアクセス試行を検出するうえで重要です。*(Agentic Matrix: [スコープ](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 明確な運用境界)*
+- **エージェントランタイムアクティビティ** — Runtime および RuntimeEndpoint イベントは、エージェントのライフサイクル操作、セッション管理、エンドポイント呼び出しを追跡します。ここでの異常なパターンは、通常の運用時間外にエージェントが起動、停止、またはアクセスされていることを示します。*(Agentic Matrix: [オーケストレーション](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — エージェントとシステムのインタラクション管理)*
+- **メモリ操作** — 永続メモリを持つエージェントは、セッションをまたいで会話コンテキストを保存および取得します。意図しないメモリアクセスにより、会話履歴の取得やエージェントコンテキストの変更が可能になる場合があります。メモリ操作を監視することで、アクセスが認可されたスコープ内に収まっていることを確認できます。*(Agentic Matrix: [データ](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — 永続メモリと状態のセキュリティ)*
+- **エージェント評価** — Evaluator イベントは、エージェント出力の自動品質・安全性評価を追跡します。これらを監視することで、評価パイプラインが意図したとおりに設定されたままであることを確認できます。*(Agentic Matrix: [監査とログ記録](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — アクションレベルのエージェントアクション追跡)*
+
+### AgentCore データイベントリソースタイプ
+
+CloudTrail は、以下の AgentCore リソースタイプのデータイベントをサポートしています。
+
+<Tabs>
+  <TabItem value="tools" label="組み込みツール" default>
+
+  | リソースタイプ | `resources.type` | セキュリティ関連性 |
+  |---|---|---|
+  | コードインタープリター | `AWS::BedrockAgentCore::CodeInterpreter` | 意図しないコードの実行、サンドボックス境界の問題を検出する |
+  | コードインタープリター (カスタム) | `AWS::BedrockAgentCore::CodeInterpreterCustom` | 不正なカスタムコード実行の検出 |
+  | ブラウザ | `AWS::BedrockAgentCore::Browser` | 監査エージェントの Web ナビゲーション、URL を介した意図しないデータ転送の検出 |
+  | ブラウザ (カスタム) | `AWS::BedrockAgentCore::BrowserCustom` | カスタムブラウザツールの使用状況を監査する |
+
+  </TabItem>
+  <TabItem value="identity" label="ID と認証情報">
+
+  | リソースタイプ | `resources.type` | セキュリティの関連性 |
+  |---|---|---|
+  | ワークロード ID | `AWS::BedrockAgentCore::WorkloadIdentity` | 不正な ID トークンリクエストの検出 |
+  | ワークロード ID ディレクトリ | `AWS::BedrockAgentCore::WorkloadIdentityDirectory` | ID ディレクトリの列挙または変更を監視する |
+  | Token Vault | `AWS::BedrockAgentCore::TokenVault` | 不正な認証情報アクセスまたはデータ転送の検出 |
+  | OAuth2 認証情報プロバイダー | `AWS::BedrockAgentCore::OAuth2CredentialProvider` | OAuth2 トークン取得の不正アクセスを監視する |
+  | API キー認証情報プロバイダー | `AWS::BedrockAgentCore::APIKeyCredentialProvider` | API キーの取得パターンを異常検知のために監視する |
+
+  </TabItem>
+  <TabItem value="runtime" label="ランタイムとゲートウェイ">
+
+  | リソースタイプ | `resources.type` | セキュリティの関連性 |
+  |---|---|---|
+  | ランタイム | `AWS::BedrockAgentCore::Runtime` | 不正なエージェントの起動、停止、または設定変更を検出する |
+  | ランタイムエンドポイント | `AWS::BedrockAgentCore::RuntimeEndpoint` | モニターエージェントエンドポイントのアクセスパターン |
+  | ゲートウェイ | `AWS::BedrockAgentCore::Gateway` | 不正な外部アクセス、認証失敗の検出 |
+
+  </TabItem>
+  <TabItem value="memory" label="メモリと評価">
+
+  | リソースタイプ | `resources.type` | セキュリティの関連性 |
+  |---|---|---|
+  | メモリ | `AWS::BedrockAgentCore::Memory` | 不正なメモリ読み取りまたはコンテキスト変更の検出 |
+  | エバリュエーター | `AWS::BedrockAgentCore::Evaluator` | 評価パイプラインの整合性を監視する |
+
+  </TabItem>
+</Tabs>
+
+### AgentCore の高度なイベントセレクター
+
+CloudTrail トレイルで AgentCore データイベントをキャプチャするには、以下の高度なイベントセレクターを使用します。これらのセレクターは、セキュリティ機能に基づいて、組み込みツール、ID と認証情報、ランタイムとゲートウェイ、メモリと評価の 4 つのグループに分類されています。各セレクターは、以下を使用してログのスコープを設定します。 `resources.ARN` プレフィックス。AWS マネージドの組み込みツール (`CodeInterpreter` および `Browser`)、その `resources.ARN` filter は省略されています。これらは AWS が所有する ARN を使用しているためです — `resources.type` filter だけで十分です。
+
+:::warning
+以下のセレクターは**例**です。プレースホルダーを置き換えずに適用してもイベントはキャプチャされません。置き換えてください `ACCOUNT_ID` および `REGION` 値を入力してください（上記の [Bedrock プレースホルダーテーブル](#bedrock-の高度なイベントセレクター) を参照）。AgentCore 固有のプレースホルダーは以下に示します。
+:::
+
+:::note[AgentCore placeholder reference]
+
+| プレースホルダー | 置き換える値 | 確認場所 |
+|---|---|---|
+| `GATEWAY_ID` | AgentCore Gateway ID | AgentCore コンソールまたは `ListGateways` API |
+| `RUNTIME_ID` | AgentCore Runtime ID | `ListRuntimes` API |
+| `DIRECTORY_ID` | Workload Identity Directory ID | AgentCore コンソール |
+| `PROVIDER_NAME` | OAuth2 または APIKey 認証情報プロバイダー名 | AgentCore コンソール |
+| `MEMORY_ID` | AgentCore Memory ID | AgentCore コンソール |
+| `EVALUATOR_ID` | AgentCore Evaluator ID | AgentCore コンソール |
+| `CUSTOM_TOOL_ID` / `CUSTOM_BROWSER_ID` | カスタムツールまたはブラウザー設定 ID | AgentCore コンソール |
+
+特定のタイプの**すべての**リソースをログに記録するには、ARN プレフィックスからリソース ID を削除します(例： `gateway/GATEWAY_ID` → `gateway/`) — これによりイベントのボリュームとコストが増加します。
+:::
+
+<Tabs>
+  <TabItem value="tools" label="グループ 1: 組み込みツール" default>
+
+これらのセレクターは、エージェントのツール使用状況（エージェントが現実世界で実行するアクション）をキャプチャします。コードインタープリターイベントはエージェントが実行するコードを明らかにし、ブラウザーイベントはエージェントが訪問するウェブサイトを明らかにします。*([ エージェント AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のガードレール次元（エージェントアクションのサンドボックス化、分離メカニズム、および動作監視）を実装します。)*
+
+:::warning[Important]
+AWS が管理する組み込みツール (`CodeInterpreter` および `Browser`) AWS 所有のリソース ARN をアカウントセグメントに設定して使用します。 `aws` (例： `arn:aws:bedrock-agentcore:REGION:aws:code-interpreter/`)、アカウント ID ではありません。カスタムツール (`CodeInterpreterCustom` および `BrowserCustom`) アカウント ID を使用します。以下のセレクターはこの違いを反映しています。マネージドツールのみを使用する場合は、カスタムツールセレクターを省略できます。
+:::
+
+```json title="AgentCore-BuiltInTools-DataEvents.json"
+[
+  {
+    "Name": "AgentCore-CodeInterpreter-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::CodeInterpreter"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-CodeInterpreterCustom-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::CodeInterpreterCustom"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:code-interpreter-custom/CUSTOM_TOOL_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-Browser-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Browser"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-BrowserCustom-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::BrowserCustom"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:browser-custom/CUSTOM_BROWSER_ID"] }
+    ]
+  }
+]
+```
+
+  </TabItem>
+  <TabItem value="identity" label="グループ 2: ID と認証情報">
+
+これらのセレクターは、エージェントがサードパーティサービスに対して認証を行い、クレデンシャルを管理する方法を捉えます。予期しないクレデンシャルアクセスパターンは、不正なエージェントアクセスを示している可能性があります。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」の Identity ディメンション — ID 委任、クレデンシャル管理、および Confused Deputy Problem の回避を実装します。)*
+
+```json title="AgentCore-IdentityCredentials-DataEvents.json"
+[
+  {
+    "Name": "AgentCore-WorkloadIdentity-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::WorkloadIdentity"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:workload-identity-directory/DIRECTORY_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-WorkloadIdentityDirectory-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::WorkloadIdentityDirectory"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:workload-identity-directory/DIRECTORY_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-TokenVault-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::TokenVault"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-APIKeyCredentialProvider-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::APIKeyCredentialProvider"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default/apikeycredentialprovider/PROVIDER_NAME"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-OAuth2CredentialProvider-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::OAuth2CredentialProvider"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default/oauth2credentialprovider/PROVIDER_NAME"] }
+    ]
+  }
+]
+```
+
+  </TabItem>
+  <TabItem value="runtime" label="グループ 3: ランタイムとゲートウェイ">
+
+これらのセレクターは、エージェントのライフサイクルと外部アクセスパターンをキャプチャします。ランタイムイベントは、エージェントがいつ起動、停止し、リクエストを処理するかを示します。ゲートウェイイベントは、JWT 認証の失敗を含む、すべての受信 MCP リクエストをキャプチャします。*([Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) のオーケストレーション次元（エージェントとシステムの相互作用管理、実行フロー制御）およびスコープ次元（明確な運用境界）を実装しています。)*
+
+:::warning[Important]
+AgentCore Gateway データイベントは、SigV4 ではなく JWT ベースの認証を使用します。つまり、ID 情報は次の場所にキャプチャされます。 `additionalEventData.jwt.claims` フィールドではなく標準の `userIdentity` フィールド。エラー情報は次の場所に表示されます。 `responseElements` トップレベルではなく `errorCode` および `errorMessage` フィールドです。Gateway イベントのクエリとメトリクスフィルターは、この違いを考慮する必要があります。例については、[Gateway データイベントクエリ](#security-analytics)を参照してください。
+:::
+
+```json title="AgentCore-RuntimeGateway-DataEvents.json"
+[
+  {
+    "Name": "AgentCore-Runtime-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Runtime"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:runtime/RUNTIME_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-RuntimeEndpoint-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::RuntimeEndpoint"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:runtime/RUNTIME_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-Gateway-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Gateway"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/GATEWAY_ID"] }
+    ]
+  }
+]
+```
+
+  </TabItem>
+  <TabItem value="memory" label="グループ 4: メモリと評価">
+
+これらのセレクターは、エージェントのメモリ操作と評価アクティビティをキャプチャします。メモリイベントは、エージェントが会話コンテキストを保存または取得するタイミングを明らかにします。エバリュエーターイベントは、自動品質評価を追跡します。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のデータディメンション — 永続的なメモリと状態のセキュリティ、およびメモリ整合性検証を実装します。)*
+
+```json title="AgentCore-MemoryEvaluation-DataEvents.json"
+[
+  {
+    "Name": "AgentCore-Memory-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Memory"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:memory/MEMORY_ID"] }
+    ]
+  },
+  {
+    "Name": "AgentCore-Evaluator-DataEvents",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Evaluator"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:evaluator/EVALUATOR_ID"] }
+    ]
+  }
+]
+```
+
+  </TabItem>
+</Tabs>
+
+:::note[Cost optimization for AgentCore data events]
+AgentCore データイベントは、特に Gateway（すべての受信 MCP リクエスト）および Runtime（すべてのエージェントセッション操作）において、大量のデータを生成する可能性があります。
+
+**推奨されるロールアウト順序:**
+1. **グループ 2**（認証情報）と**グループ 3**（ゲートウェイ）から開始します。これらは通常、最も優先度の高いセキュリティ項目です。
+2. ベースラインのボリュームとコストを確立した後、**グループ 1 と 4** に拡張します。
+
+**リソース ID によるセレクターの絞り込み:** 特定の `resources.ARN` 個々のリソースをターゲットにする値 — 例えば、 `arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/PROD_GATEWAY_ID` 単一のゲートウェイに対して。マネージド組み込みツール (`CodeInterpreter` および `Browser`)、その `resources.ARN` filter は省略されています。これらは AWS が所有する ARN を使用しているためです — `resources.type` filter だけで十分です。
+:::
+
+## CloudTrail Insights イベント
+
+[CloudTrail Insights](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html) は、アカウントの運用ベースラインを継続的に分析することで、異常な API アクティビティを特定するように設計されています。AI ワークロードでは、正当な使用自体が大量のコール数を伴う場合がありますが、Insights は絶対的なコール数が単独では合理的に見える場合でも、確立された基準から逸脱した異常なスパイクを検出する手段を提供します。
+
+### インサイトタイプ
+
+| インサイトタイプ | 検出目的 |
+|-------------|-------------------|
+| ApiCallRateInsight | ベースラインから逸脱した API コール量の急増を検出します。 |
+| ApiErrorRateInsight | 異常なエラー率パターンを検出します。AccessDenied または ThrottlingException エラーの急増は、認証情報への繰り返しのアクセス試行、繰り返される意図しないアクセス試行、またはレート制限に達した自動エージェントを示している可能性があります。 |
+
+### 設定ガイダンス
+
+[CloudTrail コンソール](https://console.aws.amazon.com/cloudtrail/)でトレイルに移動し、**編集**を選択して、**Insights** セクションの両方の Insights イベントタイプを有効にすることで、CloudTrail トレイルで Insights を有効にします。
+
+トレイルでは、管理イベントとデータイベントの両方に対して Insights を有効にできます。イベントタイプ（管理イベント、データイベント、またはその両方）を選択し、次に Insights タイプ（API コール率、API エラー率、またはその両方）を選択します。**API コール率** Insights を有効にするには、トレイルが **Write** 管理イベントまたはデータイベントをログに記録している必要があります。また、**API エラー率** Insights を有効にするには、**Read** または **Write** 管理イベントまたはデータイベントをログに記録している必要があります。
+
+CloudTrail Insights イベントは、標準イベントと同じ Amazon S3 バケットおよび CloudWatch Logs ロググループに配信されます。 `Insights` プレフィックスを使用します。Insights イベントに対してメトリクスフィルターとアラームを直接作成し、異常なアクティビティが検出されたときに自動応答をトリガーすることができます。CloudTrail は、有効化後に Insights イベントの配信を開始するまで最大 36 時間かかる場合があります。ただし、その間に異常なアクティビティが検出された場合に限ります。
+
+## CloudTrail 管理イベント
+
+CloudTrail Management イベントは、AWS 環境におけるコントロールプレーン操作（リソースの作成と削除、設定の変更、権限の変更）を記録するように設計されています。AI ワークロードのセキュリティにおいて、これらのイベントはレビューが必要な予期しないアクセスパターン（ロギングの無効化、監査証跡のリダイレクト、AI サービスのガードレールの弱体化など）を表面化させます。
+
+**読み取り**と**書き込み**の両方の管理イベントがすべてのリージョンでログに記録されていることを確認してください。デフォルトの CloudTrail トレイルは、リージョンごとに管理イベントの無料コピーを 1 つ提供します。追加のコピーには料金が発生します。詳細については、[CloudTrail の料金](https://aws.amazon.com/cloudtrail/pricing/)を参照してください。
+
+### AI セキュリティのキー管理イベント
+
+<Tabs>
+  <TabItem value="bedrock-config" label="Bedrock 設定" default>
+
+  | イベント名 | 重要な理由 |
+  |---|---|
+  | `UpdateAccountSettings` | アカウントレベルの Bedrock 設定への変更を検出します。 |
+  | `PutModelInvocationLoggingConfiguration` | Bedrock 呼び出しログ設定による設定変更を検出します。 |
+  | `DeleteModelInvocationLoggingConfiguration` | Bedrock ロギング設定が完全に削除されたことを検出します。 |
+  | `CreateGuardrail` / `UpdateGuardrail` / `DeleteGuardrail` | Bedrock のコンテンツフィルタリングおよび安全制御への変更を検出します。|
+
+  </TabItem>
+  <TabItem value="bedrock-invocation" label="Bedrock 呼び出し">
+
+  | イベント名 | 重要な理由 |
+  |---|---|
+  | `InvokeModel` / `InvokeModelWithResponseStream` | デフォルトで管理イベントとしてログに記録されます — どの IAM アイデンティティが基盤モデルを呼び出しているかを追跡します。 |
+  | `Converse` / `ConverseStream` | デフォルトで管理イベントとして記録されます — マルチターンの会話型 AI アクティビティを記録します。 |
+  | `ListAsyncInvokes` | デフォルトでは管理イベントとして記録されます — 非同期呼び出しジョブのリストをモニタリングします。 |
+
+  </TabItem>
+  <TabItem value="agentcore" label="AgentCore">
+
+  | イベント名 | 重要な理由 |
+  |---|---|
+  | `CreateGateway` / `UpdateGateway` / `DeleteGateway` | エージェントを外部の呼び出し元に公開する AgentCore Gateway の作成、変更、または削除を検出します。 |
+  | `CreateGatewayTarget` / `UpdateGatewayTarget` / `DeleteGatewayTarget` | ゲートウェイルーティングターゲットへの変更を検出します。エージェントトラフィックが意図しないエンドポイントに意図せずリダイレクトされることを検知します。 |
+
+  </TabItem>
+  <TabItem value="audit-iam" label="監査証跡と IAM">
+
+  | イベント名 | サービス | 重要な理由 |
+  |---|---|---|
+  | `DeleteTrail` / `StopLogging` | CloudTrail | 監査証跡を完全に無効化しようとする試みを検出します。 |
+  | `PutBucketPolicy` / `DeleteBucketPolicy` | S3 | ログ送信先バケットのバケットポリシーの変更を検出します。 |
+  | `AttachRolePolicy` / `DetachRolePolicy` / `PutRolePolicy` | IAM | AI ワークロードアクセスを拡大する可能性のある IAM 権限昇格を検出します。 |
+
+  </TabItem>
+</Tabs>
+
+:::note
+一般的な意図しないアクセスパターンとして、さらなる活動を行う前に、トレイルの無効化や外部から制御されたバケットへのログのリダイレクトなど、ログ設定の変更が挙げられます。以下の監視を行うことで、 `StopLogging`, `DeleteTrail`、および `PutModelInvocationLoggingConfiguration` 監査証跡の整合性を保護するために推奨されます。
+:::
+
+## Amazon S3 と Lambda データイベント
+
+AI ワークロードは、Amazon S3 バケット（トレーニングデータ、モデルアーティファクト、CI/CD パイプラインアセット用）および Lambda 関数（AI 推論、データ前処理、エージェントオーケストレーション用）と頻繁にやり取りします。これらのリソースタイプを[データイベント](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html)レベルで監視することで、管理イベントでは取得できないオブジェクトレベルおよび関数呼び出しレベルのアクティビティを可視化できます。
+
+### Amazon S3 ターゲットバケットとイベントタイプ
+
+以下のバケットに対して Amazon S3 データイベントを有効にします。
+
+- AI トレーニングデータセットとファインチューニングデータ
+- モデルアーティファクトと設定ファイル
+- CI/CD パイプラインアーティファクトとコードリポジトリ
+
+監視すべき主要な Amazon S3 オペレーション：
+
+- **PutObject** — 不正な書き込みアクセスや不正なデータアクセスのためのデータステージングを検出します
+- **GetObject** — トレーニングデータやモデルアーティファクトの大量ダウンロードを検出します
+- **DeleteObject** — データの削除やログの改ざんアクティビティを検出します
+- **CopyObject** — バケット間の意図しないデータ移動を検出します
+
+### Amazon S3 書き込み専用セレクター
+
+次のセレクターは、特定の名前が付いた AI 関連バケットへの書き込み操作のみをログに記録することで、Amazon S3 データイベントのボリュームを削減します。
+
+:::warning[Replace bucket name prefixes with your actual bucket names]
+以下のバケット名プレフィックス (`ai-training-data-`, `model-artifacts-`, `cicd-pipeline-`) は**例**です。AI トレーニングデータ、モデルアーティファクト、およびパイプラインアセットを含む S3 バケットの実際の名前または命名プレフィックスに置き換えてください。バケット名は [S3 コンソール](https://console.aws.amazon.com/s3/) で確認するか、以下を実行することで確認できます。 `aws s3 ls`バケットが異なる命名規則を使用している場合は、 `StartsWith` 値を適宜設定します。
+:::
+
+:::info[What this does]
+Amazon S3 データイベントをフィルタリングして、書き込み操作のみをキャプチャします (`readOnly = false`名前が次で始まるバケットに対して `ai-training-data-`, `model-artifacts-`、または `cicd-pipeline-`これにより、大量の読み取り操作（例えば `GetObject`) 不正な書き込み、削除、およびデータのステージングを検出しながら。
+:::
+
+```json title="S3-AI-Sensitive-WriteOnly"
+[
+  {
+    "Name": "S3-AI-Sensitive-WriteOnly",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::S3::Object"]
+      },
+      {
+        "Field": "readOnly",
+        "Equals": ["false"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:s3:::ai-training-data-",
+          "arn:aws:s3:::model-artifacts-",
+          "arn:aws:s3:::cicd-pipeline-"
+        ]
+      }
+    ]
+  }
+]
+```
+
+### Lambda AI パイプライン関数
+
+Lambda データイベントを有効にしてログを記録します。 `InvokeFunction` 以下が必要です。
+
+- AI 推論パイプライン関数
+- データ前処理および特徴エンジニアリングワークフロー
+- Bedrock エージェントオーケストレーション関数
+
+:::note
+Lambda の呼び出し数の予期しない急増、特に見慣れない IAM ロールからの急増は、Lambda ベースの AI パイプライン関数への意図しないアクセスが発生している早期の兆候です。
+:::
+
+### Lambda 本番環境専用セレクター
+
+このセレクターは、開発およびテスト関数を除外し、本番環境の AI ワークロードのログ記録に集中します。
+
+:::warning[Replace function name prefixes with your actual naming convention]
+以下の関数名プレフィックス (`prod-`, `ai-agent-`) は**例**です。実際の組織が本番 AI Lambda 関数に使用する命名プレフィックスに置き換えてください。また、 `ACCOUNT_ID` AWS アカウント ID と `REGION` お使いのリージョンに置き換えてください。関数名は [Lambda コンソール](https://console.aws.amazon.com/lambda/) で確認するか、以下を実行することで確認できます。 `aws lambda list-functions`.
+:::
+
+:::info[What this does]
+Logs Lambda `Invoke` ARN が次の文字列で始まる関数のデータイベントのみ `prod-` または `ai-agent-`。なぜなら `StartsWith` すでにこれらの特定のプレフィックスにスコープが限定されているため、開発およびテスト関数は定義上除外されます。CloudTrail では、同じフィールドに対して 2 つのフィールドセレクターを使用することはできません (`resources.ARN`) を単一のセレクター内で使用する場合、異なる演算子を使用する場合でも同様です。置き換えてください。 `ACCOUNT_ID` と、リージョンをご自身の値に置き換えてください。
+:::
+
+```json title="Lambda-AI-Production-Invocations"
+[
+  {
+    "Name": "Lambda-AI-Production-Invocations",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Lambda::Function"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:lambda:REGION:ACCOUNT_ID:function:prod-",
+          "arn:aws:lambda:REGION:ACCOUNT_ID:function:ai-agent-"
+        ]
+      }
+    ]
+  }
+]
+```
+
+## CloudTrail ネットワークアクティビティイベント
+
+[CloudTrail ネットワークアクティビティイベント](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-network-events-with-cloudtrail.html)は、VPC エンドポイントの所有者がプライベート VPC から AWS サービスへの VPC エンドポイントを通じて行われた AWS API 呼び出しを記録できるように設計されています。AI ワークロードにおいては、Bedrock と統合された VPC が予期しないアウトバウンド呼び出しを行っているかどうか、または VPC エンドポイントのアクセス制御が侵害されているかどうかを可視化します。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のスコープ次元を実装し、明確な運用境界を強制し、意図されたネットワーク境界の外で動作するエージェントを検出します。)*
+
+### AI ワークロード VPC エンドポイント
+
+CloudTrail ネットワークアクティビティイベントは Amazon Bedrock をサポートしています (`bedrock.amazonaws.com`)、Amazon S3 (`s3.amazonaws.com`)、および AWS Lambda (`lambda.amazonaws.com`) をイベントソースとして使用します。各エンドポイントを経由してルーティングされた API 呼び出し（許可されたアクセスと拒否されたアクセスの両方を含む）をキャプチャするために、VPC エンドポイントでこれらのイベントを有効にしてください。AI ワークロードの場合、これは特に重要です。VPC 内で動作する Bedrock エージェントは、VPC エンドポイントを通じてダウンストリームサービス（ナレッジベースデータソース用の Amazon S3、アクショングループハンドラー用の Lambda）にアクセスするためです。VPC エンドポイントレベルでのアクセス拒否は、エンドポイントポリシーの設定ミス、またはプライベートネットワーク内から AI リソースへのアクセスを試みる不正なワークロードのいずれかを示しています。
+
+有効化を検討すべき追加のイベントソース：
+
+| イベントソース | 監視目的 |
+|-------------|-------------------|
+| bedrock.amazonaws.com | AI モデルへのアクセスを監視し、VPC エンドポイント経由の不正な呼び出しを検出します。 |
+| s3.amazonaws.com | VPC エンドポイント経由でのトレーニングデータバケットへの不正な Amazon S3 アクセスを検出します。 |
+| kms.amazonaws.com | AI モデルの暗号化操作のための暗号化キーアクセスパターンを監視します。 |
+| lambda.amazonaws.com | AI パイプライン関数から VPC エンドポイント経由の Lambda 呼び出しを追跡します。 |
+| sagemaker.amazonaws.com | AI ワークロード環境における SageMaker エンドポイントのアクティビティを追跡します。 |
+
+### ネットワークアクティビティイベントの高度なイベントセレクターフィールド
+
+初期デプロイでは、キャプチャに集中してください `VpceAccessDenied` すべての AI 関連 VPC エンドポイント全体のエラーを監視し、最小限の追加データ量で[VPC エンドポイントポリシー](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html)の違反を検出します。以下のセレクターは、Bedrock、Amazon S3、および Lambda をカバーしています。これらは、AI エージェントが VPC エンドポイントを通じて最も一般的にアクセスする 3 つのサービスです。
+
+:::info[What this does]
+Bedrock、Amazon S3、または Lambda がレスポンスを返したネットワークアクティビティイベントをログに記録します。 `VpceAccessDenied` エラーを示しており、VPC 内からのトラフィックが VPC エンドポイントポリシーによってブロックされたことを意味します。これにより、成功したすべてのネットワークアクティビティをログに記録するボリュームを必要とせず、AI ワークロード全体の表面にわたって拒否されたアクセスをキャプチャします。Amazon S3 の拒否は、トレーニングデータやモデルアーティファクトバケットへのアクセスがブロックされたエージェントを検出します。Lambda の拒否は、アクショングループハンドラーや AI パイプライン関数の呼び出しがブロックされたエージェントを検出します。
+:::
+
+<details>
+<summary>ネットワークアクティビティ VpceAccessDenied セレクター (JSON) を表示</summary>
+
+```json title="network-activity-vpce-access-denied.json"
+[
+  {
+    "Name": "Bedrock-NetworkActivity-VpceAccessDenied",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["NetworkActivity"]
+      },
+      {
+        "Field": "eventSource",
+        "Equals": ["bedrock.amazonaws.com"]
+      },
+      {
+        "Field": "errorCode",
+        "Equals": ["VpceAccessDenied"]
+      }
+    ]
+  },
+  {
+    "Name": "S3-NetworkActivity-VpceAccessDenied",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["NetworkActivity"]
+      },
+      {
+        "Field": "eventSource",
+        "Equals": ["s3.amazonaws.com"]
+      },
+      {
+        "Field": "errorCode",
+        "Equals": ["VpceAccessDenied"]
+      }
+    ]
+  },
+  {
+    "Name": "Lambda-NetworkActivity-VpceAccessDenied",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["NetworkActivity"]
+      },
+      {
+        "Field": "eventSource",
+        "Equals": ["lambda.amazonaws.com"]
+      },
+      {
+        "Field": "errorCode",
+        "Equals": ["VpceAccessDenied"]
+      }
+    ]
+  }
+]
+```
+
+</details>
+
+## 実装優先度チェックリスト
+
+次の表は、AI ワークロード環境で CloudTrail イベントタイプを有効化するための推奨実装順序を示しています。各ステップは前のステップを基盤として構築されており、影響度の高い変更から始まり、より詳細なモニタリング設定へと進んでいきます。
+
+| ステップ | イベントタイプ | 有効化する対象 | 詳細 |
+|------|-----------|----------------|---------|
+| 1 | 管理イベント | すべてのサービス、すべてのリージョン（読み取り + 書き込み） | `InvokeModel`、`Converse`、`ListAsyncInvokes`、および AgentCore 管理イベントをデフォルトでキャプチャします |
+| 2 | データイベント | 18 個すべての Bedrock リソースタイプ | エージェント呼び出し、RAG、フロー、ガードレール、セッション、データ自動化、ツールなど。[Bedrock セレクター](#bedrock-の高度なイベントセレクター)を参照 |
+| 3 | データイベント | 14 個すべての AgentCore リソースタイプ | ゲートウェイトラフィック、ランタイム操作、組み込みツール、認証情報、メモリ、評価。[AgentCore セレクター](#agentcore-の高度なイベントセレクター)を参照 |
+| 4 | Insights イベント | アカウント全体 | 管理イベントとデータイベントに対する `ApiCallRateInsight` および `ApiErrorRateInsight` |
+| 5 | データイベント | `AWS::S3::Object`（AI バケット） | `ai-training-data`、`model-artifacts`、`cicd-pipeline` プレフィックスのバケットに対する書き込み専用 |
+| 6 | データイベント | `AWS::Lambda::Function` | 本番 AI 関数のみ。開発およびテスト関数名プレフィックスを除外します |
+| 7 | ネットワークアクティビティイベント | Bedrock、S3、Lambda VPC エンドポイント | `bedrock.amazonaws.com`、`s3.amazonaws.com`、`lambda.amazonaws.com` に対する `VpceAccessDenied` |
+
+## データイベント収集の最適化
+
+[高度なイベントセレクター](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html#creating-data-event-selectors-advanced)を使用すると、コストとログボリュームの両方を制御するための精密なフィルタリングが可能になります。以下の戦略では、主要なリソースタイプごとに、セキュリティ上重要なイベントのみに絞り込む方法を示します。
+
+### Bedrock: 本番リソースへの絞り込み
+
+上記の[高度なイベントセレクター](#bedrock-の高度なイベントセレクター)は、ARN によって Bedrock データイベントを特定のリソースにスコープしています。ボリュームをさらに削減するには、ARN プレフィックスを本番環境のエージェントとナレッジベースのみに絞り込み、非本番環境または実験的なリソースを除外します。
+
+:::warning[Replace resource IDs with your actual production resource identifiers]
+以下のリソース ID (`PROD_AGENT_ID`, `PROD_KB_ID`) は**例**です。実際のエージェントおよびナレッジベース ID は、本番環境のものに置き換えてください。これらの ID は、[Bedrock コンソール](https://console.aws.amazon.com/bedrock/) の **Agents** および **Knowledge bases** から確認するか、または実行することで取得できます。 `aws bedrock list-agents` および `aws bedrock list-knowledge-bases`.
+:::
+
+:::info[What this does]
+ARN が特定のリソース ID プレフィックスに一致するエージェントエイリアスとナレッジベースのみに Bedrock データイベントのログを制限します。本番環境で使用されている正確なエージェントとナレッジベースの ID を特定済みで、それ以外をすべて除外したい場合に使用します。置き換えてください。 `ACCOUNT_ID` リソース ID をご自身の値に置き換えてください。
+:::
+
+```json title="Bedrock-Production-Agents-Only"
+[
+  {
+    "Name": "Bedrock-Production-Agents-Only",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::AgentAlias"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:agent-alias/PROD_AGENT_ID"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "Bedrock-Production-KnowledgeBases-Only",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::KnowledgeBase"]
+      },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:bedrock:REGION:ACCOUNT_ID:knowledge-base/PROD_KB_ID"
+        ]
+      }
+    ]
+  }
+]
+```
+
+### Amazon S3: AI バケットへの書き込み専用
+
+AI 専用バケットへの書き込み操作のみをログに記録することで、Amazon S3 データイベントのボリュームを削減します。不正なデータ転送の検出を優先する場合は、高価値バケットに対して後から読み取り操作を追加できます。
+
+> Amazon S3 書き込み専用の高度なイベントセレクター JSON の完全な内容については、[セクション 6.2](#amazon-s3-書き込み専用セレクター) を参照してください。
+
+### インラインエージェント: IAM Identity によるフィルタリング
+
+The `AWS::Bedrock::InlineAgent` セレクターはサポートしていません `resources.ARN` インラインエージェントには永続的なリソース ARN がないため、フィルタリングが行われます。追加のフィルタリングがない場合、このセレクターはすべてをキャプチャします。 `InvokeInlineAgent` アカウント全体の呼び出しは、大量のデータイベントとコストを生成する可能性があります。[`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) フィールドを使用して、特定の IAM ロール（例えば、本番環境の Bedrock 実行ロール）にロギングをスコープし、大量のインラインエージェント呼び出しを生成する開発ロールや自動化されたサービスロールを除外します。
+
+:::warning[Replace role names with your actual IAM role names]
+以下のロール名 (`BEDROCK_EXECUTION_ROLE_NAME`, `dev-`, `test-`) は**例**です。置き換えてください `ACCOUNT_ID` AWS アカウント ID と `BEDROCK_EXECUTION_ROLE_NAME` アプリケーションが呼び出しに使用する IAM ロールの実際の名前に置き換えてください `InvokeInlineAgent`ロール名は、[IAM コンソール](https://console.aws.amazon.com/iam/)の **[ロール]** で確認するか、Bedrock エージェントに設定された実行ロールを確認してください。[Exclude Dev Roles] タブで、置き換えます。 `dev-` および `test-` 組織が非本番環境のロールに使用する実際の命名プレフィックスに置き換えてください。
+:::
+
+:::info[What this does]
+特定の ARN プレフィックスに一致する IAM ロールによって行われた呼び出しのみに、InlineAgent データイベントのログを制限します。 `eventName` フィルターはキャプチャを以下のみに制限します `InvokeInlineAgent` 呼び出しはキャプチャされ、 `userIdentity.arn` フィルタースコープを本番ロールに絞り込みます。置き換えてください。 `ACCOUNT_ID` AWS アカウント ID と `BEDROCK_EXECUTION_ROLE_NAME` アプリケーションが呼び出しに使用する IAM ロールの実際の名前に置き換えてください。 `InvokeInlineAgent`.
+:::
+
+<Tabs>
+  <TabItem value="include" label="本番ロールを含める" default>
+
+```json title="Bedrock-InlineAgent-ProductionRolesOnly"
+[
+  {
+    "Name": "Bedrock-InlineAgent-ProductionRolesOnly",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::InlineAgent"]
+      },
+      {
+        "Field": "eventName",
+        "Equals": ["InvokeInlineAgent"]
+      },
+      {
+        "Field": "userIdentity.arn",
+        "StartsWith": [
+          "arn:aws:sts::ACCOUNT_ID:assumed-role/BEDROCK_EXECUTION_ROLE_NAME"
+        ]
+      }
+    ]
+  }
+]
+```
+
+  </TabItem>
+  <TabItem value="exclude" label="開発ロールを除外する">
+
+```json title="Bedrock-InlineAgent-ExcludeDevRoles"
+[
+  {
+    "Name": "Bedrock-InlineAgent-ExcludeDevRoles",
+    "FieldSelectors": [
+      {
+        "Field": "eventCategory",
+        "Equals": ["Data"]
+      },
+      {
+        "Field": "resources.type",
+        "Equals": ["AWS::Bedrock::InlineAgent"]
+      },
+      {
+        "Field": "eventName",
+        "Equals": ["InvokeInlineAgent"]
+      },
+      {
+        "Field": "userIdentity.arn",
+        "NotStartsWith": [
+          "arn:aws:sts::ACCOUNT_ID:assumed-role/dev-",
+          "arn:aws:sts::ACCOUNT_ID:assumed-role/test-"
+        ]
+      }
+    ]
+  }
+]
+```
+
+  </TabItem>
+</Tabs>
+
+:::tip
+The `userIdentity.arn` フィールドはすべての高度なイベントセレクターでサポートされており、InlineAgent に限定されません。大量のデータイベントセレクターであれば、同じフィルタリング手法を適用できます。 `resources.ARN` フィルタリングでは不十分です。サポートされているフィールドと演算子の完全なリストについては、[高度なイベントセレクターを使用したデータイベントのフィルタリング](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html)を参照してください。
+:::
+
+### Lambda: 本番環境の関数のみ
+
+本番 AI ワークロードに対してデータイベントのログ記録をスコープ設定することで、 `StartsWith` operator を本番環境の関数プレフィックスのみに (`prod-`, `ai-agent-`)。開発およびテスト関数は、プレフィックスが一致しないため、定義上除外されます。
+
+> Lambda の本番環境専用の高度なイベントセレクター JSON の完全な内容については、[セクション 6.4](#lambda-本番環境専用セレクター) を参照してください。
+
+### CloudTrail ネットワークアクティビティイベント: VpceAccessDenied のみ
+
+ネットワークアクティビティイベントについては、Bedrock、Amazon S3、および Lambda VPC エンドポイント全体で拒否されたアクセスのみをログに記録することで、すべてのネットワークアクティビティをログに記録する場合と比較してボリュームを削減しながら、重要なセキュリティイベントを捉えることができます。
+
+> Bedrock、Amazon S3、および Lambda の VpceAccessDenied ネットワークアクティビティイベントセレクターの完全な JSON については、[ネットワークアクティビティイベントの高度なイベントセレクターフィールド](#ネットワークアクティビティイベントの高度なイベントセレクターフィールド)を参照してください。
+
+### AgentCore: セキュリティ優先度による段階的な有効化
+
+AgentCore データイベントは 14 種類のリソースタイプにまたがります。セキュリティの優先度に基づいて、段階的に有効化してください。
+
+1. **フェーズ 1 (最高優先度):** Gateway (`AWS::BedrockAgentCore::Gateway`) および認証情報アクセス (`TokenVault`, `OAuth2CredentialProvider`, `APIKeyCredentialProvider`) — これらは外部アクセスと認証情報の取得（セキュリティ上最も重要な 2 つのサーフェス）をキャプチャします。
+2. **フェーズ 2:** Runtime と RuntimeEndpoint — エージェントのライフサイクルとセッション管理をキャプチャします。
+3. **フェーズ 3:** 組み込みツール (`CodeInterpreter`, `Browser` およびそれらのカスタムバリアント) — 現実世界でのエージェントのアクションをキャプチャします。
+4. **フェーズ 4:** Memory、WorkloadIdentity、WorkloadIdentityDirectory、および Evaluator — エージェントの状態と ID 管理をキャプチャします。
+
+特定のゲートウェイに Gateway データイベントを絞り込むには、広範な `gateway/` 特定のゲートウェイ ID をプレフィックスとして付加します。
+
+```json
+{
+  "Field": "resources.ARN",
+  "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/PROD_GATEWAY_ID"]
+}
+```
+
+同様に、Runtime データイベントを特定のエージェントランタイムに絞り込むには、次のようにします。
+
+```json
+{
+  "Field": "resources.ARN",
+  "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:runtime/PROD_RUNTIME_ID"]
+}
+```
+
+### CloudTrail の組織レベルトレイルの高度なイベントセレクター
+
+複数のアカウントをカバーする AWS Organizations トレイルの場合、すべての AI ワークロードセレクターを 1 つのトレイル設定にまとめます。これにより、Bedrock データイベント、AgentCore データイベント、S3 書き込み専用フィルタリング、Lambda 本番関数ログ、および Bedrock ネットワークアクティビティの拒否アクセス検出を組み合わせた完全な高度なイベントセレクターのセットが、1 つのトレイルで定義されます。
+
+:::warning[Replace all placeholder values before applying]
+以下のセレクターは、すべてのサービスセレクターを単一の組織トレイルに組み合わせた**例**です。適用する前に、すべてのプレースホルダーを実際のリソース識別子に置き換える必要があります。
+
+プレースホルダー参照テーブルの全内容については、上記の [Bedrock](#bedrock-の高度なイベントセレクター) および [AgentCore](#agentcore-の高度なイベントセレクター) セクションを参照してください。複数のアカウントにまたがる組織トレイルの場合、異なる設定でセレクターを複製する必要がある場合があります。 `ACCOUNT_ID` 値を使用するか、各メンバーアカウントにスコープされたより広い ARN プレフィックスを使用します。
+:::
+
+<details>
+<summary>完全な Organization Trail セレクター (34 セレクター — JSON) を表示</summary>
+
+```json title="org-trail-all-ai-workload-selectors.json"
+[
+  {
+    "Name": "OrgTrail-Bedrock-AgentInvocations",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::AgentAlias"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:agent-alias/AGENT_ID/"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-InlineAgent",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::InlineAgent"] },
+      { "Field": "eventName", "Equals": ["InvokeInlineAgent"] },
+      { "Field": "userIdentity.arn", "StartsWith": ["arn:aws:sts::ACCOUNT_ID:assumed-role/BEDROCK_EXECUTION_ROLE_NAME"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-KnowledgeBase",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::KnowledgeBase"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:knowledge-base/KB_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-FlowAlias",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::FlowAlias"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:flow/FLOW_ID/alias/"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Guardrail",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::Guardrail"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:guardrail/GUARDRAIL_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Model",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::Model"] },
+      { "Field": "eventName", "Equals": ["InvokeModelWithBidirectionalStream"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-AsyncInvoke",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::AsyncInvoke"] },
+      { "Field": "eventName", "Equals": ["GetAsyncInvoke", "StartAsyncInvoke"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Prompt",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::PromptVersion"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:prompt/PROMPT_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Session",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::Session"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:session/"] },
+      { "Field": "readOnly", "Equals": ["false"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-FlowExecution",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::FlowExecution"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:flow/FLOW_ID/alias/"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-AutomatedReasoningPolicy",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::AutomatedReasoningPolicy"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:automated-reasoning-policy/POLICY_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-AutomatedReasoningPolicyVersion",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::AutomatedReasoningPolicyVersion"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:automated-reasoning-policy/POLICY_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-DataAutomationProject",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::DataAutomationProject"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-project/PROJECT_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-DataAutomationInvocation",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::DataAutomationInvocation"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-invocation/"] },
+      { "Field": "readOnly", "Equals": ["false"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-DataAutomationProfile",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::DataAutomationProfile"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:data-automation-profile/"] },
+      { "Field": "readOnly", "Equals": ["false"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Blueprint",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::Blueprint"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:blueprint/"] },
+      { "Field": "readOnly", "Equals": ["false"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-AdvancedOptimizePromptJob",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::AdvancedOptimizePromptJob"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:advanced-optimize-prompt-job/"] },
+      { "Field": "readOnly", "Equals": ["false"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Bedrock-Tool",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Bedrock::Tool"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock:REGION:ACCOUNT_ID:tool/TOOL_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-Gateway",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Gateway"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/GATEWAY_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-Runtime",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Runtime"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:runtime/RUNTIME_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-RuntimeEndpoint",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::RuntimeEndpoint"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:runtime/RUNTIME_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-CodeInterpreter",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::CodeInterpreter"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-Browser",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Browser"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-WorkloadIdentity",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::WorkloadIdentity"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:workload-identity-directory/DIRECTORY_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-TokenVault",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::TokenVault"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-OAuth2CredentialProvider",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::OAuth2CredentialProvider"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default/oauth2credentialprovider/PROVIDER_NAME"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-APIKeyCredentialProvider",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::APIKeyCredentialProvider"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:token-vault/default/apikeycredentialprovider/PROVIDER_NAME"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-Memory",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Memory"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:memory/MEMORY_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-AgentCore-Evaluator",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::BedrockAgentCore::Evaluator"] },
+      { "Field": "resources.ARN", "StartsWith": ["arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:evaluator/EVALUATOR_ID"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-S3-AI-WriteOnly",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::S3::Object"] },
+      { "Field": "readOnly", "Equals": ["false"] },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": [
+          "arn:aws:s3:::ai-",
+          "arn:aws:s3:::model-",
+          "arn:aws:s3:::training-"
+        ]
+      }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Lambda-ProdAI",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::Lambda::Function"] },
+      {
+        "Field": "resources.ARN",
+        "StartsWith": ["arn:aws:lambda:REGION:ACCOUNT_ID:function:prod-"]
+      }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Network-BedrockDenied",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["NetworkActivity"] },
+      { "Field": "eventSource", "Equals": ["bedrock.amazonaws.com"] },
+      { "Field": "errorCode", "Equals": ["VpceAccessDenied"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Network-S3Denied",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["NetworkActivity"] },
+      { "Field": "eventSource", "Equals": ["s3.amazonaws.com"] },
+      { "Field": "errorCode", "Equals": ["VpceAccessDenied"] }
+    ]
+  },
+  {
+    "Name": "OrgTrail-Network-LambdaDenied",
+    "FieldSelectors": [
+      { "Field": "eventCategory", "Equals": ["NetworkActivity"] },
+      { "Field": "eventSource", "Equals": ["lambda.amazonaws.com"] },
+      { "Field": "errorCode", "Equals": ["VpceAccessDenied"] }
+    ]
+  }
+]
+```
+
+</details>
+
+## AI ワークロードのセキュリティ分析 {#security-analytics}
+
+前のセクションでは、CloudTrail がキャプチャする内容（イベントセレクター、リソースタイプ、CloudWatch Logs への配信）を設定しました。このセクションでは、有効化から検出へと焦点を移します。以下のクエリは、意図しないアクセス試行やガードレールの変更から、エージェントの認証情報アクセスやゲートウェイの認証失敗まで、これらのイベントに埋もれたセキュリティシグナルを浮き彫りにします。
+
+CloudWatch Logs Insights は [OpenSearch SQL 構文](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html) をサポートしており、ロググループをまたいだ複雑な JOIN、クロスサービス相関のためのサブクエリ、時間ベースおよび集計分析のための豊富な SQL 関数セットを利用できます。以下のすべてのクエリは、AI ワークロードのユースケースに特化してスコープされています。クエリは、管理イベント、データイベント（エージェント呼び出し、ナレッジベース取得、フロー呼び出し、AgentCore ゲートウェイトラフィック、組み込みツール使用、認証情報アクセス、メモリ操作）、ネットワークアクティビティイベント（VPC エンドポイント拒否）、およびエージェントからリソースへのアクセスパターンのクロスサービス相関をカバーしています。
+
+:::note[Replace log group names in all queries]
+すべてのクエリは次を使用します `YOUR_CLOUDTRAIL_LOG_GROUP` プレースホルダーとして使用します。CloudTrail トレイルがイベントを配信する CloudWatch Logs ロググループの名前に置き換えてください(例： `aws-cloudtrail-logs/management-events`)。これはトレイルの **CloudWatch Logs** 設定の CloudTrail コンソールで確認できます。クロスパイプラインクエリも参照します `bedrock-model-invocation-logging` および `aws/spans` — ログ グループに異なる名前を使用している場合は、それらを置き換えてください。
+:::
+
+:::warning[Important]
+CloudWatch Logs Insights で OpenSearch SQL 構文を使用する場合、特殊文字を含むフィールドはバッククォートで囲んでください。例：`` `userIdentity.arn` ``, `` `responseElements.ConsoleLogin` ``. ダッシュボードでこれらのクエリウィジェットを作成する際は、クエリ言語を **SQL** に設定してください。
+:::
+
+<Tabs>
+  <TabItem value="access" label="アクセスと ID" default>
+
+**クエリ 1: 不正な Bedrock アクセスの検出 (管理イベントとデータイベント)**
+
+<details>
+<summary>Bedrock API に対して AccessDenied または UnauthorizedOperation エラーを受け取っているすべての IAM アイデンティティを表示します。</summary>
+
+IAM アイデンティティをすべて表示します `AccessDenied` または `UnauthorizedOperation` Bedrock API に対するエラーを、管理イベント（モデル呼び出し）とデータイベント（エージェント、ナレッジベース、フロー、ガードレール操作）の両方にわたって頻度順にランク付けして表示します。見慣れないアイデンティティからのカウントが多い場合は、意図しないアクセス試行の指標となります。
+
+```sql title="Query 1: Detect Unauthorized Bedrock Access"
+GROUP BY `userIdentity.arn`, eventName, errorCode, errorMessage, sourceIPAddress
+ORDER BY attempt_count DESC
+```
+
+</details>
+
+**クエリ 2: IAM アイデンティティ別に Bedrock Agent の呼び出しを監視する**
+
+<details>
+<summary>どの IAM アイデンティティが Bedrock エージェントおよびインラインエージェントの呼び出しをトリガーしているかを追跡します</summary>
+
+どの IAM アイデンティティが Bedrock エージェントおよびインラインエージェントの呼び出しをトリガーしているかを追跡します。エージェントは呼び出しごとに複数のダウンストリーム API 呼び出しを連鎖させるため、見慣れないアイデンティティやボリュームの急増はアクセス範囲が広くなります。このクエリは、 `AWS::Bedrock::AgentAlias` および `AWS::Bedrock::InlineAgent` 高度なイベントセレクター。
+
+```sql title="Query 2: Bedrock Agent Invocations by IAM Identity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       sourceIPAddress,
+       awsRegion,
+       COUNT(*) AS agent_invocation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND eventName IN ('InvokeAgent', 'InvokeInlineAgent')
+GROUP BY `userIdentity.arn`, eventName, sourceIPAddress, awsRegion
+ORDER BY agent_invocation_count DESC
+```
+
+</details>
+
+**クエリ 3: IAM アイデンティティ別に Knowledge Base 取得アクティビティをモニタリングする**
+
+<details>
+<summary>Bedrock Knowledge Bases に対して Retrieve および RetrieveAndGenerate 呼び出しを行っている IAM アイデンティティをランク付けします。</summary>
+
+どの IAM アイデンティティがリクエストを行っているかをランク付けします `Retrieve` および `RetrieveAndGenerate` Bedrock Knowledge Bases に対する呼び出しです。ナレッジベースには組織の独自データが含まれており、見慣れないアイデンティティや予期しないボリュームの急増は、異常なデータアクセスを示している可能性があります。このクエリは、以下によってキャプチャされたデータイベントを対象としています。 `AWS::Bedrock::KnowledgeBase` 高度なイベントセレクター。
+
+```sql title="Query 3: Knowledge Base Retrieval Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       sourceIPAddress,
+       COUNT(*) AS retrieval_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND eventName IN ('Retrieve', 'RetrieveAndGenerate')
+GROUP BY `userIdentity.arn`, eventName, sourceIPAddress
+ORDER BY retrieval_count DESC
+```
+
+</details>
+
+**クエリ 4: エージェントのクロスサービスアクセス拒否の検出**
+
+<details>
+<summary>S3、Lambda、KMS、Secrets Manager、SageMaker などのダウンストリームサービスへのアクセスが拒否された引き受けロールを表示します。</summary>
+
+Amazon S3、Lambda、KMS、Secrets Manager、または SageMaker へのアクセス試行時にアクセスを拒否されている引き受けられたロール（通常は Bedrock エージェント実行ロール）を表示します。これは、エージェントからリソースへのアクセス制御例外を検出するための主要なクエリです。単一のロールからのカウントが多い場合は、エージェントのアクセス許可境界の設定ミス、またはエージェントが意図したスコープ外のリソースにアクセスしていることを示します。*（[Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) の Identity ディメンション（Confused Deputy Problem の検出）および Scope ディメンション（運用境界の適用）を実装します。また、[Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) の Controls ディメンション（最小権限アクセスの適用）も実装します。）*
+
+```sql title="Query 4: Agent Cross-Service Access Denied"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventSource,
+       eventName,
+       errorCode,
+       errorMessage,
+       sourceIPAddress,
+       COUNT(*) AS denied_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE errorCode IN ('AccessDenied', 'UnauthorizedOperation')
+  AND `userIdentity.type` = 'AssumedRole'
+  AND eventSource IN (
+    's3.amazonaws.com',
+    'lambda.amazonaws.com',
+    'kms.amazonaws.com',
+    'secretsmanager.amazonaws.com',
+    'sagemaker.amazonaws.com'
+  )
+GROUP BY `userIdentity.arn`, eventSource, eventName, errorCode, errorMessage, sourceIPAddress
+ORDER BY denied_count DESC
+```
+
+</details>
+
+**クエリ 6: 予期しないソース IP からの Bedrock 呼び出しを検出する**
+
+<details>
+<summary>Bedrock および AgentCore の呼び出しを行っているすべての一意のソース IP アドレスを一覧表示します</summary>
+
+Bedrock および AgentCore の呼び出し（モデル呼び出し、エージェント呼び出し、ナレッジベースの取得、フロー呼び出し、非同期呼び出し、ガードレールの適用、AgentCore ゲートウェイ呼び出しを含む）を行っているすべての一意のソース IP アドレスを一覧表示します。AI ワークロードが特定の CIDR 範囲（VPC NAT ゲートウェイ、企業ネットワーク）からのみ発信される必要がある場合、見慣れない IP アドレスは承認済みであることを確認するために調査する必要があります。
+
+```sql title="Query 6: Bedrock Calls from Unexpected Source IPs"
+SELECT sourceIPAddress,
+       `userIdentity.arn` AS iam_identity,
+       eventSource,
+       eventName,
+       COUNT(*) AS call_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource IN ('bedrock.amazonaws.com', 'bedrock-agentcore.amazonaws.com')
+  AND eventName IN ('InvokeModel', 'InvokeModelWithResponseStream',
+                    'Converse', 'ConverseStream',
+                    'InvokeAgent', 'InvokeInlineAgent',
+                    'Retrieve', 'RetrieveAndGenerate',
+                    'InvokeFlow', 'ApplyGuardrail',
+                    'InvokeModelWithBidirectionalStream',
+                    'GetAsyncInvoke', 'StartAsyncInvoke',
+                    'RenderPrompt', 'InvokeGateway')
+GROUP BY sourceIPAddress, `userIdentity.arn`, eventSource, eventName
+ORDER BY call_count DESC
+```
+
+</details>
+
+**クエリ 10: ルートアカウントアクティビティの検出**
+
+<details>
+<summary>ルートアカウントによって実行されたすべての非ログインイベントを返します</summary>
+
+ルートアカウントによって実行されたすべての非ログインイベントを返します。緊急アクセスシナリオ以外でのルートの使用は、重要なセキュリティイベントです。
+
+```sql title="Query 10: Root Account Activity Detection"
+SELECT eventTime,
+       eventName,
+       eventSource,
+       sourceIPAddress,
+       awsRegion,
+       errorCode
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE `userIdentity.type` = 'Root'
+  AND eventName != 'ConsoleLogin'
+ORDER BY eventTime DESC
+```
+
+</details>
+
+**クエリ 23: Bedrock セッションアクティビティのモニタリング**
+
+<details>
+<summary>マルチターンの Bedrock 会話におけるセッションレベルの API アクティビティを追跡します</summary>
+
+Bedrock 全体のセッション操作（セッションの作成、更新、取得を含む）をすべて表示します。セッションはマルチターン会話全体にわたって状態を維持します。見慣れないアイデンティティがセッションを作成またはアクセスしている場合、会話型 AI リソースの異常な使用を示している可能性があります。*([ エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のオーケストレーション次元（エージェントとシステム間のインタラクション管理およびセッションフロー制御）を実装しています。)*
+
+```sql title="Query 23: Bedrock Session Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.ARN` AS sessionArn,
+       sourceIPAddress,
+       awsRegion,
+       COUNT(*) AS session_operation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND `resources.0.type` = 'AWS::Bedrock::Session'
+GROUP BY `userIdentity.arn`, eventName, `resources.0.ARN`, sourceIPAddress, awsRegion
+ORDER BY session_operation_count DESC
+```
+
+</details>
+
+**クエリ 24: Bedrock フロー実行アクティビティの監視**
+
+<details>
+<summary>プロンプトフローの実行を監視するためのフロー実行操作を追跡します</summary>
+
+フロー実行は、Bedrock Prompt Flows のアクティブな実行を表します。これは、モデル呼び出し、データ変換、および条件付きロジックを連鎖させるマルチステップ AI パイプラインです。見慣れないアイデンティティからの予期しないフロー実行や、ボリュームの急増は、異常なオーケストレーションアクティビティを示している可能性があります。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のオーケストレーション次元 — 実行フロー制御およびエージェントとシステム間のインタラクション管理を実装しています。)*
+
+```sql title="Query 24: Bedrock Flow Execution Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.ARN` AS flowExecutionArn,
+       sourceIPAddress,
+       awsRegion,
+       errorCode,
+       COUNT(*) AS execution_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND `resources.0.type` = 'AWS::Bedrock::FlowExecution'
+GROUP BY `userIdentity.arn`, eventName, `resources.0.ARN`, sourceIPAddress, awsRegion, errorCode
+ORDER BY execution_count DESC
+```
+
+</details>
+
+**クエリ 25: Bedrock Data Automation アクティビティのモニタリング**
+
+<details>
+<summary>ドキュメントおよびメディア処理のためのデータ自動化プロジェクトと呼び出しアクティビティを追跡します</summary>
+
+Bedrock Data Automation は、AI パイプラインを通じてドキュメント、画像、メディアを処理します。意図しない呼び出しにより、自動化ワークフローを通じてドキュメントが処理されたり、意図した境界の外にデータが移動したりする可能性があります。このクエリは、プロジェクトおよび呼び出し全体のすべてのデータ自動化アクティビティを表示します。*([ Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) のガバナンスとコンプライアンス次元を実装 — データ処理操作とデータ主権の監査証跡。)*
+
+```sql title="Query 25: Bedrock Data Automation Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.type` AS resourceType,
+       `resources.0.ARN` AS resourceArn,
+       sourceIPAddress,
+       errorCode,
+       COUNT(*) AS automation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND `resources.0.type` IN (
+    'AWS::Bedrock::DataAutomationProject',
+    'AWS::Bedrock::DataAutomationInvocation',
+    'AWS::Bedrock::DataAutomationProfile'
+  )
+GROUP BY `userIdentity.arn`, eventName, `resources.0.type`, `resources.0.ARN`, sourceIPAddress, errorCode
+ORDER BY automation_count DESC
+```
+
+</details>
+
+**クエリ 26: Bedrock ツール呼び出しの監視**
+
+<details>
+<summary>ツール使用操作に対する Bedrock ツール API アクティビティを追跡します</summary>
+
+Bedrock Tool イベントは、モデルが会話中にツールを呼び出すタイミングをキャプチャします。これらは、ツール使用を通じてモデルが現実世界で実行するアクションです。予期しないツール呼び出しパターンや見慣れない呼び出し元は、モデルが意図したスコープ外で動作していることを示します。*([ エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のガードレール次元（ツール使用アクションの動作監視）およびスコープ次元（モデルが呼び出せるツールの運用境界の適用）を実装しています。)*
+
+```sql title="Query 26: Bedrock Tool Invocations"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.ARN` AS toolArn,
+       sourceIPAddress,
+       COUNT(*) AS tool_invocation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND `resources.0.type` = 'AWS::Bedrock::Tool'
+GROUP BY `userIdentity.arn`, eventName, `resources.0.ARN`, sourceIPAddress
+ORDER BY tool_invocation_count DESC
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="config" label="設定変更">
+
+**クエリ 5: ログ設定の変更を検出する**
+
+<details>
+<summary>ログの停止、トレイルの削除、または Bedrock 呼び出しログの変更が試みられたすべてのイベントを返します。</summary>
+
+ログの停止、トレイルの削除、または Bedrock 呼び出しログ設定の変更が試みられたすべてのイベントを返します。予期しない ID からの単一のイベントは、セキュリティチームによるレビューが必要です。
+
+```sql title="Query 5: Detect Logging Configuration Changes"
+SELECT eventTime,
+       `userIdentity.arn` AS user,
+       eventName,
+       awsRegion,
+       sourceIPAddress,
+       errorCode
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventName IN (
+  'StopLogging', 'DeleteTrail', 'UpdateTrail',
+  'PutModelInvocationLoggingConfiguration',
+  'DeleteModelInvocationLoggingConfiguration',
+  'PutBucketPolicy', 'DeleteBucketPolicy'
+)
+ORDER BY eventTime DESC
+```
+
+</details>
+
+**クエリ 7: AI インフラストラクチャへのすべてのセキュリティ関連設定変更を追跡する**
+
+<details>
+<summary>AI ワークロードのセキュリティ体制を弱める可能性のあるすべての設定変更を表示します。</summary>
+
+CloudTrail の無効化、Bedrock ガードレールの変更、IAM 権限のエスカレーション、AgentCore ゲートウェイ設定の変更など、AI ワークロードのセキュリティ体制を弱める可能性のあるすべての設定変更を表示します。
+
+```sql title="Query 7: All Security-Relevant AI Config Changes"
+SELECT eventTime,
+       `userIdentity.arn` AS user,
+       eventName,
+       eventSource,
+       awsRegion,
+       sourceIPAddress,
+       errorCode
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventName IN (
+  'StopLogging', 'DeleteTrail', 'UpdateTrail',
+  'PutModelInvocationLoggingConfiguration',
+  'DeleteModelInvocationLoggingConfiguration',
+  'CreateGuardrail', 'UpdateGuardrail', 'DeleteGuardrail',
+  'CreateGuardrailVersion', 'DeleteGuardrailVersion',
+  'PutBucketPolicy', 'DeleteBucketPolicy',
+  'CreateRole', 'DeleteRole', 'AttachRolePolicy',
+  'DetachRolePolicy', 'PutRolePolicy', 'DeleteRolePolicy',
+  'CreateGateway', 'UpdateGateway', 'DeleteGateway',
+  'CreateGatewayTarget', 'UpdateGatewayTarget', 'DeleteGatewayTarget'
+)
+ORDER BY eventTime DESC
+```
+
+</details>
+
+**クエリ 8: Bedrock Guardrail の変更を監視する**
+
+<details>
+<summary>Bedrock Guardrail リソースに対する作成、更新、削除操作を追跡します。</summary>
+
+Bedrock Guardrail リソースに対する作成、更新、削除操作を追跡します。ガードレールへの変更はコンテンツフィルタリングのスコープと安全制御を変更するため、これは重要なセキュリティイベントです。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のガードレール次元と「[生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)」のリスク管理次元を実装しており、ガードレール保護が弱体化または削除された場合を検出します。)*
+
+```sql title="Query 8: Bedrock Guardrail Changes"
+SELECT eventTime,
+       `userIdentity.arn` AS user,
+       eventName,
+       `requestParameters.name` AS guardrail_name,
+       sourceIPAddress,
+       awsRegion
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND eventName IN ('CreateGuardrail', 'UpdateGuardrail', 'DeleteGuardrail',
+                    'CreateGuardrailVersion', 'DeleteGuardrailVersion')
+ORDER BY eventTime DESC
+```
+
+</details>
+
+**クエリ 27: 自動推論ポリシーの変更を監視する**
+
+<details>
+<summary>自動推論ポリシーとそのバージョンに関するアクティビティを追跡します</summary>
+
+自動推論ポリシーは、形式論理を通じて検証可能な AI 出力をサポートします。これは、モデルの応答を数学的正確性の基準に照らして検証するためのガードレールメカニズムです。これらのポリシーまたはそのバージョンへの変更は、検証カバレッジの範囲を縮小させる可能性があり、同じレベルの形式的検証なしにモデル出力が処理されることを許容してしまう恐れがあります。*(ガードレールの整合性監視という[生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)のリスク管理ディメンション、および検証メカニズムが変更またはバイパスされた場合の検出という[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のガードレールディメンションを実装します。)*
+
+```sql title="Query 27: Automated Reasoning Policy Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.type` AS resourceType,
+       `resources.0.ARN` AS policyArn,
+       sourceIPAddress,
+       awsRegion,
+       errorCode,
+       COUNT(*) AS policy_operation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock.amazonaws.com'
+  AND `resources.0.type` IN (
+    'AWS::Bedrock::AutomatedReasoningPolicy',
+    'AWS::Bedrock::AutomatedReasoningPolicyVersion'
+  )
+GROUP BY `userIdentity.arn`, eventName, `resources.0.type`, `resources.0.ARN`, sourceIPAddress, awsRegion, errorCode
+ORDER BY policy_operation_count DESC
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="network" label="ネットワークと VPC">
+
+**クエリ 9: AI サービス全体での VPC エンドポイントアクセス拒否**
+
+<details>
+<summary>Bedrock、Amazon S3、および Lambda API コールに対する VPC エンドポイントのアクセス拒否を表示します。</summary>
+
+Bedrock、Amazon S3、および Lambda API コールに対する VPC エンドポイントアクセス拒否を表示します。これは、エンドポイントポリシーによってブロックされた VPC 内からのトラフィックです。Bedrock の拒否は、未承認のモデルまたはエージェントへのアクセス試行を示します。Amazon S3 の拒否は、ナレッジベースのデータソースまたはトレーニングデータへのアクセスがブロックされたエージェントを示します。Lambda の拒否は、アクショングループハンドラーの呼び出しがブロックされたエージェントを示します。
+
+```sql title="Query 9: VPC Endpoint Access Denied Across AI Services"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventSource,
+       eventName,
+       errorMessage,
+       vpcEndpointId,
+       sourceIPAddress,
+       COUNT(*) AS denied_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventCategory = 'NetworkActivity'
+  AND errorCode = 'VpceAccessDenied'
+  AND eventSource IN (
+    'bedrock.amazonaws.com',
+    's3.amazonaws.com',
+    'lambda.amazonaws.com'
+  )
+GROUP BY `userIdentity.arn`, eventSource, eventName, errorMessage, vpcEndpointId, sourceIPAddress
+ORDER BY denied_count DESC
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="agentcore" label="AgentCore">
+
+AgentCore Gateway のデータイベントは、2 つの重要な点で標準の CloudTrail イベントと異なります。(1) ID は JWT クレームを介してキャプチャされます。 `additionalEventData.jwt.claims` 標準ではなく `userIdentity` フィールドについては、Gateway が SigV4 の代わりに JWT ベースの認証を使用しているためであり、(2) エラー情報は `responseElements` トップレベルではなく `errorCode`/`errorMessage` フィールドです。以下のクエリはこれらの違いを考慮しています。
+
+**Query 11: AgentCore Gateway 認証失敗の検出**
+
+<details>
+<summary>200 以外のステータスコードを返したすべての Gateway 呼び出しを表示します。</summary>
+
+200 以外のステータスコードを返したすべての Gateway 呼び出しを表示します。無効な JWT トークン、期限切れのトークン、意図しないアクセス試行などが含まれます。Gateway エラーは `responseElements` トップレベルではなく `errorCode`、このクエリは HTTP ステータスコードでフィルタリングします。401/403 レスポンスの急増は、トークンの繰り返し試行またはクライアント認証の設定ミスを示しています。
+
+```sql title="Query 11: AgentCore Gateway Authentication Failures"
+SELECT eventTime,
+       sourceIPAddress,
+       `responseElements.statusCode` AS httpStatus,
+       `responseElements.body.error.message` AS errorMessage,
+       `requestParameters.body.method` AS mcpMethod,
+       `additionalEventData.jwt.claims.sub` AS jwtSubject,
+       `additionalEventData.jwt.claims.iss` AS jwtIssuer,
+       `resources.0.ARN` AS gatewayArn
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND eventName = 'InvokeGateway'
+  AND `responseElements.statusCode` >= 400
+ORDER BY eventTime DESC
+```
+
+</details>
+
+**クエリ 12: JWT サブジェクト別に AgentCore Gateway トラフィックを監視する**
+
+<details>
+<summary>どの JWT サブジェクト（外部呼び出し元）が最も多くの Gateway リクエストを行っているかをランク付けします</summary>
+
+どの JWT サブジェクト（外部呼び出し元）が最も多くの Gateway リクエストを行っているかをランク付けします。Gateway は JWT 認証を使用しているため、 `sub` claim はプライマリ ID フィールドです。見慣れないサブジェクトや予期しないボリュームの急増は、エージェントインフラストラクチャへの不正な外部アクセスを示している可能性があります。
+
+```sql title="Query 12: Gateway Traffic by JWT Subject"
+SELECT `additionalEventData.jwt.claims.sub` AS jwtSubject,
+       `additionalEventData.jwt.claims.iss` AS jwtIssuer,
+       `additionalEventData.jwt.claims.scope` AS jwtScope,
+       `resources.0.ARN` AS gatewayArn,
+       sourceIPAddress,
+       COUNT(*) AS request_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND eventName = 'InvokeGateway'
+GROUP BY `additionalEventData.jwt.claims.sub`,
+         `additionalEventData.jwt.claims.iss`,
+         `additionalEventData.jwt.claims.scope`,
+         `resources.0.ARN`,
+         sourceIPAddress
+ORDER BY request_count DESC
+```
+
+</details>
+
+**クエリ 13: AgentCore 組み込みツールの使用状況を監視する (CodeInterpreter および Browser)**
+
+<details>
+<summary>エージェントによるコードの実行と Web ブラウジングアクティビティを追跡します</summary>
+
+エージェントによるコードの実行および Web ブラウジングアクティビティを追跡します。これらはインパクトの大きいエージェントアクション（コードインタープリターはユーザー提供のコードを実行でき、ブラウザーは外部 URL にナビゲートできます）です。予期しないスパイクや見慣れない呼び出し元は、エージェントが意図したスコープ外で動作していることを示します。
+
+```sql title="Query 13: AgentCore Built-in Tool Usage"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.type` AS resourceType,
+       `resources.0.ARN` AS resourceArn,
+       sourceIPAddress,
+       COUNT(*) AS tool_invocation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND `resources.0.type` IN (
+    'AWS::BedrockAgentCore::CodeInterpreter',
+    'AWS::BedrockAgentCore::CodeInterpreterCustom',
+    'AWS::BedrockAgentCore::Browser',
+    'AWS::BedrockAgentCore::BrowserCustom'
+  )
+GROUP BY `userIdentity.arn`, eventName, `resources.0.type`, `resources.0.ARN`, sourceIPAddress
+ORDER BY tool_invocation_count DESC
+```
+
+</details>
+
+**クエリ 14: 不正な認証情報アクセスの検出 (TokenVault、OAuth2、APIKey)**
+
+<details>
+<summary>AgentCore のアイデンティティおよびクレデンシャル管理サービス全体にわたる、すべてのクレデンシャル取得アクティビティを表示します。</summary>
+
+AgentCore のアイデンティティおよびクレデンシャル管理サービス全体にわたるすべてのクレデンシャル取得アクティビティを表示します。予期しないクレデンシャルアクセスパターンは、サードパーティ API トークンの異常な使用を示している可能性があります。IAM アイデンティティおよびクレデンシャル ARN を確認して、アクセスが承認されたものであることを検証してください。
+
+```sql title="Query 14: Detect Unauthorized Credential Access"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.type` AS credentialType,
+       `resources.0.ARN` AS credentialArn,
+       sourceIPAddress,
+       errorCode,
+       COUNT(*) AS access_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND `resources.0.type` IN (
+    'AWS::BedrockAgentCore::TokenVault',
+    'AWS::BedrockAgentCore::OAuth2CredentialProvider',
+    'AWS::BedrockAgentCore::APIKeyCredentialProvider',
+    'AWS::BedrockAgentCore::WorkloadIdentity',
+    'AWS::BedrockAgentCore::WorkloadIdentityDirectory'
+  )
+GROUP BY `userIdentity.arn`, eventName, `resources.0.type`, `resources.0.ARN`, sourceIPAddress, errorCode
+ORDER BY access_count DESC
+```
+
+</details>
+
+**クエリ 15: AgentCore Runtime とエンドポイントアクティビティのモニタリング**
+
+<details>
+<summary>エージェントのランタイムライフサイクル操作とエンドポイント呼び出しを追跡します</summary>
+
+エージェントのランタイムライフサイクル操作とエンドポイント呼び出しを追跡します。業務時間外に起動されるエージェント、予期しないエンドポイントへのアクセス、見慣れない IAM アイデンティティなどの異常なパターンは、エージェントインフラストラクチャへの不正アクセスを示している可能性があります。
+
+```sql title="Query 15: AgentCore Runtime and Endpoint Activity"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.type` AS resourceType,
+       `resources.0.ARN` AS resourceArn,
+       sourceIPAddress,
+       awsRegion,
+       COUNT(*) AS operation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND `resources.0.type` IN (
+    'AWS::BedrockAgentCore::Runtime',
+    'AWS::BedrockAgentCore::RuntimeEndpoint'
+  )
+GROUP BY `userIdentity.arn`, eventName, `resources.0.type`, `resources.0.ARN`, sourceIPAddress, awsRegion
+ORDER BY operation_count DESC
+```
+
+</details>
+
+**クエリ 16: AgentCore メモリ操作の監視**
+
+<details>
+<summary>エージェントの永続メモリに対する読み取りおよび書き込み操作を追跡します</summary>
+
+エージェントの永続メモリに対する読み取りおよび書き込み操作を追跡します。想定されるパターン外のメモリ操作は、会話コンテキストへの意図しないアクセス、または後続のセッションにおけるエージェント状態の意図しない変更を示している可能性があります。操作が承認されたものであることを確認するために、IAM アイデンティティとメモリ ARN を確認してください。
+
+```sql title="Query 16: AgentCore Memory Operations"
+SELECT `userIdentity.arn` AS iam_identity,
+       eventName,
+       `resources.0.ARN` AS memoryArn,
+       sourceIPAddress,
+       readOnly,
+       COUNT(*) AS memory_operation_count
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND `resources.0.type` = 'AWS::BedrockAgentCore::Memory'
+GROUP BY `userIdentity.arn`, eventName, `resources.0.ARN`, sourceIPAddress, readOnly
+ORDER BY memory_operation_count DESC
+```
+
+</details>
+
+**クエリ 17: AgentCore Gateway トラフィックとランタイムセッションの結合**
+
+<details>
+<summary>受信 Gateway リクエストを AgentCore Runtime のアクティビティと関連付け、エージェントへの外部リクエストをトレースします</summary>
+
+インバウンド Gateway リクエスト（JWT 経由の外部呼び出し元）と AgentCore Runtime アクティビティ（内部エージェント実行）を関連付け、外部リクエストをそれを処理したエージェントまでトレースします。これは「どの外部呼び出し元がどのエージェントをトリガーし、エージェントは何を行ったか？」という問いに答えるための主要なクエリです。*（[Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) のオーケストレーション次元 — 実行フロー制御を伴うエージェントとシステムの相互作用管理を実装します。）*
+
+```sql title="Query 17: Gateway Traffic Joined with Runtime Sessions"
+SELECT gw.eventTime AS gatewayTime,
+       gw.sourceIPAddress AS externalIP,
+       gw.`additionalEventData.jwt.claims.sub` AS externalCaller,
+       gw.`requestParameters.body.method` AS mcpMethod,
+       gw.`responseElements.statusCode` AS httpStatus,
+       gw.`resources.0.ARN` AS gatewayArn,
+       rt.eventName AS runtimeAction,
+       rt.`userIdentity.arn` AS runtimeRole,
+       rt.`resources.0.ARN` AS runtimeArn
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP` AS gw
+LEFT OUTER JOIN `YOUR_CLOUDTRAIL_LOG_GROUP` AS rt
+  ON rt.eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND rt.`resources.0.type` IN ('AWS::BedrockAgentCore::Runtime', 'AWS::BedrockAgentCore::RuntimeEndpoint')
+  AND rt.eventTime >= gw.eventTime
+WHERE gw.eventSource = 'bedrock-agentcore.amazonaws.com'
+  AND gw.eventName = 'InvokeGateway'
+ORDER BY gw.eventTime DESC
+LIMIT 50
+```
+
+</details>
+
+  </TabItem>
+</Tabs>
+
+## クロスパイプライン相関クエリ
+
+上記のクエリは CloudTrail のみを対象としています。以下のクエリは、CloudTrail と Bedrock Model Invocation Logging および ADOT スパンを結合し、単一のパイプラインだけでは回答できない質問に答えます。
+
+:::info[Prerequisites]
+これらのクエリには、3 つのパイプラインすべてが有効になっている必要があります。
+
+- CloudTrail の配信先 `YOUR_CLOUDTRAIL_LOG_GROUP` Bedrock および AgentCore の管理イベントとデータイベントを使用
+- [Bedrock モデル呼び出しログ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html)が有効化され、以下に配信されます `bedrock-model-invocation-logging`
+- [エージェントテレメトリ (ADOT SDK)](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html) が次に流れます `aws/spans`
+- これらのウィジェットを作成する際にクエリ言語を **SQL** に設定する（すべての相関クエリは OpenSearch SQL を使用）
+:::
+
+### 相関キー
+
+| 結合 | キーフィールド | 注記 |
+| --- | --- | --- |
+| CloudTrail ↔ Model Invocation Logging | `requestID` (CT) = `requestId` (Invocation Log) | 同じ Bedrock API 呼び出し、異なるビュー |
+| CloudTrail ↔ ADOT spans | `requestID` (CT) = `attributes.aws.request_id` (span) | どちらも同じ Bedrock リクエストを参照します |
+| ADOT spans ↔ Model Invocation Logging | `attributes.aws.request_id` (span) = `requestId` (Invocation Log) | 同じモデル呼び出し。スパンにはレイテンシー、MIL にはコンテンツが含まれます |
+| エージェントセッションをまたぐ | `attributes.session.id` (spans) | エージェントフレームワークがセッションを設定します。CloudTrail にも MIL にも含まれません |
+
+:::tip[Expand each query]
+以下のクエリタイトルをクリックすると展開され、完全な説明、メタデータ、および SQL ステートメントを確認できます。
+:::
+
+**クエリ 18: 誰が何を質問し、モデルは何と答えたか？**
+
+<details>
+<summary>CloudTrail の呼び出し元 ID と Bedrock モデル呼び出しログのプロンプトおよびレスポンスコンテンツを結合します。</summary>
+
+- **目的:** CloudTrail (呼び出し元 ID、送信元 IP) と Bedrock モデル呼び出しログ (プロンプトおよびレスポンスの内容) を結合します。 `requestId`これは「モデルに何を尋ねたのか、そしてモデルは何と答えたのか」という問いに答えるために頻繁に使用されるクエリです。セキュリティ監査、コンプライアンスレビュー、およびハルシネーション調査の基盤となります。例：顧客が不適切なモデルレスポンスを報告した場合、このクエリにより、呼び出し元の IAM ロール、送信元 IP、送信された正確なプロンプト、使用された推論パラメータ、およびレスポンスを 1 行で確認できます。*([ Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) のガバナンス＆コンプライアンス次元（データ主権およびコンプライアンスレビュープロセスをサポートする監査証跡）と、[Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) の監査＆ロギング次元（ID コンテキストを伴うアクションレベルのアクション追跡）を実装しています。)*
+- **ソース:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
+- **表示:** テーブル
+- **クエリ言語:** OpenSearch SQL
+
+```sql title="Query 18: Who Asked What, and What Did the Model Say?"
+SELECT
+  ct.eventTime AS timestamp,
+  ct.`userIdentity.arn` AS caller,
+  ct.sourceIPAddress AS sourceIP,
+  ct.eventName AS api,
+  ct.`userIdentity.inScopeOf.credentialsIssuedTo` AS lambdaFunction,
+  ct.requestID AS requestId,
+  ct.`additionalEventData.inputTokens` AS inputTokens,
+  ct.`additionalEventData.outputTokens` AS outputTokens,
+  inv.`input.inputBodyJson.messages.0.content.0.text` AS prompt,
+  inv.`input.inputBodyJson.inferenceConfig.temperature` AS temperature,
+  inv.`input.inputBodyJson.inferenceConfig.maxTokens` AS maxTokens,
+  inv.`output.outputBodyJson.stopReason` AS stopReason,
+  inv.`output.outputBodyJson.output.message.content.0.text` AS response,
+  inv.`output.outputBodyJson.usage.cacheReadInputTokens` AS cacheReadTokens,
+  inv.`output.outputBodyJson.usage.cacheCreationInputTokens` AS cacheWriteTokens,
+  inv.inferenceRegion
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP` AS ct
+LEFT OUTER JOIN `bedrock-model-invocation-logging` AS inv
+  ON ct.requestID = inv.requestId
+WHERE ct.eventSource = 'bedrock.amazonaws.com'
+  AND ct.eventName IN ('InvokeModel', 'InvokeModelWithResponseStream',
+                        'Converse', 'ConverseStream')
+ORDER BY ct.eventTime DESC
+LIMIT 20
+```
+
+</details>
+
+**クエリ 19: 発信者 ID を使用したエージェントセッションパフォーマンス**
+
+<details>
+<summary>ADOT スパンを CloudTrail と結合し、エージェントセッションのパフォーマンスを呼び出し元のアイデンティティにリンクします。</summary>
+
+- **目的:** ADOT スパン (session.id、レイテンシー、トークン数) を CloudTrail (呼び出し元 IAM ロール、送信元 IP) と結合します。 `requestId`「このエージェントセッションの背後にある IAM アイデンティティは何か、そしてそのパフォーマンスはどうか？」という問いに答えます。例：ADOT ダッシュボードで p95 レイテンシが 12 秒の遅いエージェントセッションが表示されている場合、このクエリによって、特定の Lambda 関数または AgentCore ランタイムが高コストなモデルを呼び出していることが判明します。これにより、呼び出し元のモデル選択を調整できます。
+- **ソース:** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
+- **表示:** テーブル
+- **クエリ言語:** OpenSearch SQL
+
+```sql title="Query 19: Agent Session Performance with Caller Identity"
+SELECT
+  spans.`attributes.session.id` AS sessionId,
+  spans.traceId,
+  spans.`attributes.gen_ai.request.model` AS model,
+  spans.durationNano / 1000000 AS latencyMs,
+  spans.`attributes.gen_ai.usage.input_tokens` AS inputTokens,
+  spans.`attributes.gen_ai.usage.output_tokens` AS outputTokens,
+  ct.`userIdentity.arn` AS caller,
+  ct.sourceIPAddress AS sourceIP,
+  ct.`userIdentity.inScopeOf.issuerType` AS callerType,
+  ct.`userIdentity.inScopeOf.credentialsIssuedTo` AS callerResource
+FROM `aws/spans` AS spans
+LEFT OUTER JOIN `YOUR_CLOUDTRAIL_LOG_GROUP` AS ct
+  ON spans.`attributes.aws.request_id` = ct.requestID
+WHERE spans.`resource.attributes.aws.service.type` = 'gen_ai_agent'
+  AND spans.`attributes.gen_ai.system` = 'aws.bedrock'
+ORDER BY spans.`attributes.session.id`, spans.startTimeUnixNano DESC
+LIMIT 50
+```
+
+</details>
+
+**クエリ 20: 完全な 3 パイプライン結合 — セッション、コンテンツ、パフォーマンス**
+
+<details>
+<summary>単一のモデル呼び出しの統合ビューを得るために、requestId で 3 つのロググループすべてを結合します</summary>
+
+- **目的:** 3 つのすべてのロググループを結合します `requestId` エージェントセッション (ADOT)、モデル呼び出しコンテンツ (Model Invocation Logging)、および呼び出し元のアイデンティティ (CloudTrail) を含む単一の行を提供し、テレメトリスタック全体にわたる単一のモデル呼び出しの統合ビューを実現します。誰が呼び出したか、何を尋ねたか、モデルが何を返したか、どれくらい時間がかかったか、どのエージェントセッションに属していたかなど、すべての情報が必要な詳細なイベント調査に使用します。
+- **ソース:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging` + `aws/spans`
+- **表示:** テーブル
+- **クエリ言語:** OpenSearch SQL
+
+```sql title="Query 20: Full Three-Pipeline Join"
+SELECT
+  ct.eventTime AS timestamp,
+  ct.`userIdentity.arn` AS caller,
+  ct.sourceIPAddress AS sourceIP,
+  spans.`attributes.session.id` AS sessionId,
+  spans.traceId,
+  spans.durationNano / 1000000 AS latencyMs,
+  inv.modelId,
+  inv.`input.inputBodyJson.inferenceConfig.temperature` AS temperature,
+  inv.`input.inputBodyJson.messages.0.content.0.text` AS prompt,
+  inv.`output.outputBodyJson.output.message.content.0.text` AS response,
+  inv.`output.outputBodyJson.stopReason` AS stopReason,
+  inv.`input.inputTokenCount` AS inputTokens,
+  inv.`output.outputTokenCount` AS outputTokens
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP` AS ct
+LEFT OUTER JOIN `bedrock-model-invocation-logging` AS inv
+  ON ct.requestID = inv.requestId
+LEFT OUTER JOIN `aws/spans` AS spans
+  ON ct.requestID = spans.`attributes.aws.request_id`
+WHERE ct.eventSource = 'bedrock.amazonaws.com'
+  AND ct.eventName IN ('InvokeModel', 'Converse', 'ConverseStream')
+ORDER BY ct.eventTime DESC
+LIMIT 20
+```
+
+</details>
+
+**クエリ 21: ダウンストリームモデルコンテンツと相関するガードレールの変更**
+
+<details>
+<summary>CloudTrail でガードレールの変更を検出し、変更後のモデルレスポンスと関連付けます。</summary>
+
+- **目的：** 検索します `UpdateGuardrail` または `DeleteGuardrail` CloudTrail のイベントを追跡し、変更後のウィンドウ内でモデルの応答と関連付けます。ガードレールの変更が、未検証またはポリシー違反のモデル出力に先行したかどうかを検出します。例: セキュリティアラートが以下の場合にトリガーされます。 `UpdateGuardrail`; このクエリは、緩和されたガードレールの下で生成されたモデルの応答をレビュー用に即座に表示します。*([ エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のガードレール次元 — 動的な動作監視 — および[生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)のリスク管理次元 — ガードレールの変更とその下流への影響の検出 — を実装します。)*
+- **ソース:** `YOUR_CLOUDTRAIL_LOG_GROUP` + `bedrock-model-invocation-logging`
+- **表示:** テーブル
+- **クエリ言語:** OpenSearch SQL
+
+```sql title="Query 21: Guardrail Modification Correlated with Model Content"
+SELECT
+  ct.eventTime AS guardrailChangeTime,
+  ct.`userIdentity.arn` AS whoChangedGuardrail,
+  ct.eventName AS changeType,
+  inv.timestamp AS modelCallTime,
+  inv.`identity.arn` AS modelCaller,
+  inv.modelId,
+  inv.`output.outputBodyJson.stopReason` AS stopReason,
+  inv.`output.outputBodyJson.output.message.content.0.text` AS response
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP` AS ct
+LEFT OUTER JOIN `bedrock-model-invocation-logging` AS inv
+  ON inv.timestamp >= ct.eventTime
+WHERE ct.eventSource = 'bedrock.amazonaws.com'
+  AND ct.eventName IN ('UpdateGuardrail', 'DeleteGuardrail', 'DeleteGuardrailVersion')
+ORDER BY ct.eventTime DESC
+LIMIT 50
+```
+
+</details>
+
+**クエリ 22: クロスサービスアクセス拒否を伴うエージェントセッション**
+
+<details>
+<summary>同じ引き受けたロールからの CloudTrail AccessDenied イベントと ADOT エージェントセッションを関連付けます</summary>
+
+- **目的:** 同じ引き受けたロールからの CloudTrail AccessDenied イベントと ADOT エージェントセッションを関連付けます。「どのエージェントセッションがダウンストリームサービスでの権限エラーをトリガーしたか？」という問いに答えます。例: エージェントがツールから 5xx レスポンスを返す場合、このクエリはルート原因がツール自体ではなくダウンストリームサービスでの IAM 拒否にあるかどうかを示します。これは多くの場合、エージェントの権限境界の設定ミスが原因です。
+- **ソース:** `aws/spans` + `YOUR_CLOUDTRAIL_LOG_GROUP`
+- **表示:** テーブル
+- **クエリ言語:** OpenSearch SQL
+
+```sql title="Query 22: Agent Session with Cross-Service Access Denied"
+SELECT
+  spans.`attributes.session.id` AS sessionId,
+  spans.`resource.attributes.service.name` AS agentService,
+  ct.eventTime AS denialTime,
+  ct.`userIdentity.arn` AS agentRole,
+  ct.eventSource AS blockedService,
+  ct.eventName AS blockedAction,
+  ct.errorCode,
+  ct.errorMessage
+FROM `aws/spans` AS spans
+LEFT OUTER JOIN `YOUR_CLOUDTRAIL_LOG_GROUP` AS ct
+  ON ct.`userIdentity.arn` = spans.`attributes.aws.local.service`
+WHERE spans.`resource.attributes.aws.service.type` = 'gen_ai_agent'
+  AND ct.errorCode IN ('AccessDenied', 'UnauthorizedOperation')
+  AND ct.`userIdentity.type` = 'AssumedRole'
+  AND ct.eventSource IN (
+    's3.amazonaws.com', 'lambda.amazonaws.com',
+    'kms.amazonaws.com', 'secretsmanager.amazonaws.com',
+    'sagemaker.amazonaws.com'
+  )
+ORDER BY ct.eventTime DESC
+LIMIT 50
+```
+
+</details>
+
+:::tip[Performance Note]
+CloudWatch Logs Insights SQL でのクロスロググループ JOIN は、大規模なデータセットでは遅くなる場合があります。これらをダッシュボードウィジェットとして長い時間範囲でスケジュールする前に、狭い時間ウィンドウ（直近 15 分、直近 1 時間）でテストしてください。継続的な相関分析には、3 つのロググループすべてを単一の宛先（S3、OpenSearch）にエクスポートし、そこで JOIN を実行することを検討してください。
+:::
+
+## メトリクスフィルター
+
+[メトリクスフィルター](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html)は、CloudTrail ログイベントから値を抽出し、カスタム CloudWatch メトリクスを作成するように設計されており、継続的なクエリなしにほぼリアルタイムのアラートを実現します。[フィルターパターン構文](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html)は、JSON プロパティセレクターを使用して CloudTrail イベントレコード内の特定のフィールドを照合します。以下のフィルターは、AI ワークロードセキュリティイベントに特化してスコープされており、Bedrock リソースへの不正アクセス、エージェントアクティビティの異常、ガードレールの変更、AI インフラストラクチャの設定変更を検出します。
+
+<Tabs>
+  <TabItem value="bedrock-access" label="Bedrock アクセスとアクティビティ" default>
+
+**メトリクスフィルター 1: Bedrock サービスへの不正アクセス**
+
+<details>
+<summary>Bedrock API に対する AccessDenied および UnauthorizedOperation エラーをキャプチャします。</summary>
+
+単一のアイデンティティからの Bedrock の拒否された呼び出しの急激な増加は、繰り返される意図しないアクセス試行、または承認されたスコープ外のモデルやナレッジベースにアクセスしようとするエージェントを示していることが多いです。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && (($.errorCode = "AccessDenied") || ($.errorCode = "UnauthorizedOperation")) }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockUnauthorizedAccess`
+
+</details>
+
+**メトリクスフィルター 2: Bedrock Agent の呼び出し**
+
+<details>
+<summary>Bedrock エージェントおよびインラインエージェントの呼び出し回数をカウントします</summary>
+
+エージェントは単一の呼び出し内でサービス間の複数の API 呼び出しを連鎖させることができるため、影響範囲が大きいサーフェスとなります。このメトリクスを追跡することで、予期しないエージェントのアクティビティや、認識されていない呼び出し元によってエージェントがトリガーされている可能性を示すボリュームスパイクを検出できます。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "InvokeAgent" || $.eventName = "InvokeInlineAgent") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockAgentInvocations`
+
+</details>
+
+**メトリクスフィルター 3: Bedrock Knowledge Base 取得アクティビティ**
+
+<details>
+<summary>Knowledge Bases に対する Retrieve および RetrieveAndGenerate 呼び出しを追跡します</summary>
+
+ナレッジベースには組織の独自データが含まれており、異常な取得アクティビティは不正なデータアクセスを示している可能性があります。予期しない ID や大量のスパイクを監視してください。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "Retrieve" || $.eventName = "RetrieveAndGenerate") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockKnowledgeBaseRetrievals`
+
+</details>
+
+**メトリクスフィルター 6: Bedrock モデル呼び出しボリューム**
+
+<details>
+<summary>ベースラインおよびスパイク検出のためにすべての Bedrock モデル呼び出しをカウントします</summary>
+
+このメトリクスを使用して、通常の AI モデル使用量のベースラインを確立し、意図しない自動化されたアクティビティ、意図しない認証情報の使用、または意図しない再帰サイクルに陥ったエージェントを示す可能性のある使用量の急増を検出します。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "InvokeModel" || $.eventName = "InvokeModelWithResponseStream" || $.eventName = "Converse" || $.eventName = "ConverseStream" || $.eventName = "InvokeModelWithBidirectionalStream" || $.eventName = "GetAsyncInvoke" || $.eventName = "StartAsyncInvoke") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockModelInvocations`
+
+</details>
+
+**メトリクスフィルター 8: Bedrock Flow の呼び出し**
+
+<details>
+<summary>Bedrock Prompt Flow エイリアスに対する InvokeFlow 呼び出しを追跡します。</summary>
+
+フローはマルチステップ AI パイプラインを調整します。見慣れないアイデンティティからの予期しないフロー呼び出しや予期しないボリュームの変化は、認識されていないアイデンティティがオーケストレーションロジックをトリガーしていることを示している可能性があります。これは、 `AWS::Bedrock::FlowAlias` 高度なイベントセレクター。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "InvokeFlow") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockFlowInvocations`
+
+</details>
+
+**メトリクスフィルター 21: Bedrock セッションアクティビティ**
+
+<details>
+<summary>マルチターンの Bedrock 会話におけるセッションレベルの API オペレーションをカウントします</summary>
+
+セッションはマルチターン会話全体にわたって状態を維持します。このメトリクスを追跡することで、会話型 AI リソースの意図しない使用を示す可能性のある、予期しないセッションの作成やアクセスパターンを検出できます。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のオーケストレーション次元（エージェントとシステム間のインタラクション管理およびセッションフロー制御）を実装しています。)*
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.resources[0].type = "AWS::Bedrock::Session") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockSessionOperations`
+
+</details>
+
+**メトリクスフィルター 22: Bedrock フロー実行アクティビティ**
+
+<details>
+<summary>プロンプトフローの実行を監視するためのフロー実行操作をカウントします</summary>
+
+フロー実行は、マルチステップ AI パイプラインのアクティブな実行を表します。予期しないボリュームの変化は、AI パイプラインの意図しないオーケストレーション、またはリトライループに詰まったフローを示している可能性があります。*([ エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)のオーケストレーション次元 — 実行フロー制御とエージェントとシステム間のインタラクション管理を実装します。)*
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.resources[0].type = "AWS::Bedrock::FlowExecution") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockFlowExecutions`
+
+</details>
+
+**メトリクスフィルター 23: Bedrock Data Automation 呼び出し**
+
+<details>
+<summary>ドキュメントおよびメディア処理のデータ自動化呼び出しをカウントします</summary>
+
+データ自動化は、AI パイプラインを通じてドキュメント、画像、メディアを処理します。意図しない呼び出しにより、自動化ワークフローを通じてドキュメントが処理されたり、データが意図した境界の外に移動したりする可能性があります。*([生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)のガバナンスとコンプライアンスディメンションを実装 — データ処理操作の監査証跡。)*
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.resources[0].type = "AWS::Bedrock::DataAutomationInvocation" || $.resources[0].type = "AWS::Bedrock::DataAutomationProject") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockDataAutomationInvocations`
+
+</details>
+
+**メトリクスフィルター 24: Bedrock ツール呼び出し**
+
+<details>
+<summary>ツール使用操作に対する Bedrock ツール API アクティビティをカウントします</summary>
+
+ツールイベントは、会話中にモデルがツールを呼び出すタイミングをキャプチャします。これらはモデルが現実世界で実行するアクションです。予期しないスパイクは、モデルが意図したスコープ外で動作しているか、認識されていない呼び出し元がツール使用をトリガーしていることを示します。*(「[エージェント型 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/)」のガードレール次元を実装しており、ツール使用アクションの動作監視を行います。)*
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.resources[0].type = "AWS::Bedrock::Tool") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockToolInvocations`
+
+</details>
+
+  </TabItem>
+  <TabItem value="guardrails-config" label="ガードレールと設定">
+
+**メトリクスフィルター 4: Bedrock Guardrail の変更**
+
+<details>
+<summary>Bedrock Guardrails に対する作成、更新、削除操作をキャプチャします。</summary>
+
+ガードレールは、AI ワークロードに対してコンテンツフィルタリング、トピック制限、および安全制御を適用します。変更（特に削除）は、AI 安全制御の有効性を低下させるため、即座にレビューをトリガーする必要があります。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "CreateGuardrail" || $.eventName = "UpdateGuardrail" || $.eventName = "DeleteGuardrail" || $.eventName = "DeleteGuardrailVersion") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockGuardrailChanges`
+
+</details>
+
+**メトリクスフィルター 5: Bedrock モデル呼び出しログ設定の変更**
+
+<details>
+<summary>Bedrock のモデル呼び出しログ設定の変更または削除を検出します</summary>
+
+呼び出しログを無効にすると、プロンプトとレスポンスのコンテンツが監査のためにキャプチャされなくなります。ログを再度有効にすると、このテレメトリが復元されます。ゼロ以外の値は、優先的なレビューをトリガーする必要があります。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.eventName = "PutModelInvocationLoggingConfiguration" || $.eventName = "DeleteModelInvocationLoggingConfiguration") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockLoggingConfigChanges`
+
+</details>
+
+**メトリクスフィルター 7: AI サービスロールに対する IAM 権限の変更**
+
+<details>
+<summary>AI サービスロールの権限をエスカレートさせる可能性のある IAM ポリシーの変更をキャプチャします</summary>
+
+AI サービスロールの IAM 権限の変更を監視して、最小権限が維持されていることを確認します。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "iam.amazonaws.com") && ($.eventName = "AttachRolePolicy" || $.eventName = "DetachRolePolicy" || $.eventName = "PutRolePolicy" || $.eventName = "DeleteRolePolicy") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AIRolePermissionChanges`
+
+</details>
+
+**メトリクスフィルター 13: CloudTrail Insights 異常イベント**
+
+<details>
+<summary>異常な API パターンを示す CloudTrail Insights イベントをキャプチャします</summary>
+
+Insights が管理イベントとデータイベントの両方に対して有効になっているため、このフィルターは AI ワークロード全体の異常を検出します。
+
+**フィルターパターン：**
+
+```
+{ ($.eventCategory = "Insight") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `CloudTrailInsightsAnomalies`
+
+</details>
+
+**メトリクスフィルター 14: CloudTrail ログ記録の中断**
+
+<details>
+<summary>ログの停止、トレイルの削除、またはトレイル設定の変更の試みをキャプチャします。</summary>
+
+監査証跡を無効にすると、このアクティビティは AI インフラストラクチャに対するテレメトリに記録されなくなります。ゼロ以外の値が検出された場合は、速やかに調査を行う必要があります。
+
+**フィルターパターン：**
+
+```
+{ ($.eventName = "StopLogging") || ($.eventName = "DeleteTrail") || ($.eventName = "UpdateTrail") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `CloudTrailLoggingDisruption`
+
+</details>
+
+**メトリクスフィルター 25: 自動推論ポリシーの変更**
+
+<details>
+<summary>自動推論ポリシーとそのバージョンに対するアクティビティをキャプチャします</summary>
+
+自動推論ポリシーは、形式論理を通じて検証可能な AI 出力を提供します。これらのポリシーへの変更は、検証カバレッジの範囲を縮小する可能性があるため、いかなる変更も見直しのトリガーとなる必要があります。*([生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/)のリスク管理ディメンション — ガードレール整合性モニタリングを実装します。)*
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock.amazonaws.com") && ($.resources[0].type = "AWS::Bedrock::AutomatedReasoningPolicy" || $.resources[0].type = "AWS::Bedrock::AutomatedReasoningPolicyVersion") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `BedrockAutomatedReasoningChanges`
+
+</details>
+
+  </TabItem>
+  <TabItem value="network-cross" label="ネットワークとクロスサービス">
+
+**メトリクスフィルター 9: AI サービス全体での VPC エンドポイントアクセス拒否**
+
+<details>
+<summary>Bedrock、S3、および Lambda の VpceAccessDenied エラーをキャプチャします。</summary>
+
+これらは、VPC エンドポイントポリシーによって VPC 内からのトラフィックがブロックされたことを示しています。これは、誤って設定されたエージェントが間違ったエンドポイントを通じてサービスにアクセスしようとしているか、プライベートネットワーク内から AI リソースへのアクセスを試みる不正なワークロードが原因である可能性があります。
+
+**フィルターパターン：**
+
+```
+{ ($.errorCode = "VpceAccessDenied") && ($.eventSource = "bedrock.amazonaws.com" || $.eventSource = "s3.amazonaws.com" || $.eventSource = "lambda.amazonaws.com") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AIServicesVpceAccessDenied`
+
+</details>
+
+**メトリクスフィルター 10: エージェントのクロスサービスアクセス拒否**
+
+<details>
+<summary>ダウンストリームサービスのエージェント実行ロールからの AccessDenied エラーをキャプチャします</summary>
+
+キャプチャ `AccessDenied` Bedrock エージェント実行ロールが Amazon S3、Lambda、KMS、または SageMaker リソースへのアクセスを試みる際に発生するエラーです。Bedrock エージェントはアクショングループおよびナレッジベースのデータソースと連携するために IAM ロールを引き受けます。これらのロールがダウンストリームリソースへのアクセスを拒否された場合、エージェントの権限境界の設定ミス、またはエージェントが意図されたスコープ外のリソースにアクセスしていることを示します。これは、エージェントからリソースへのアクセス制御例外を検出するための重要な検知項目です。
+
+**フィルターパターン：**
+
+```
+{ ($.errorCode = "AccessDenied") && ($.userIdentity.type = "AssumedRole") && ($.eventSource = "s3.amazonaws.com" || $.eventSource = "lambda.amazonaws.com" || $.eventSource = "kms.amazonaws.com" || $.eventSource = "sagemaker.amazonaws.com" || $.eventSource = "secretsmanager.amazonaws.com") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCrossServiceAccessDenied`
+
+</details>
+
+:::tip[Tuning guidance]
+このフィルターはすべてをキャプチャします `AssumedRole` AI 関連サービスに対するアクセス拒否。環境内に AI 以外の引き受けロールがノイズを生成している場合は、条件を追加してフィルターを絞り込んでください。 `$.userIdentity.sessionContext.sessionIssuer.userName` Bedrock エージェントの実行ロール名のみに一致するように設定します(例：プレフィックスが付いたロール `AmazonBedrockExecutionRole`).
+:::
+
+**メトリクスフィルター 11: Amazon S3 AI トレーニングデータ書き込みオペレーション**
+
+<details>
+<summary>S3 AI トレーニングデータバケットへの書き込み操作をカウントします</summary>
+
+S3 書き込み専用データイベントセレクターと組み合わせることで、このメトリクスは AI トレーニングデータ、モデルアーティファクト、およびパイプラインアセットへの不正または予期しない変更を追跡します。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "s3.amazonaws.com") && ($.eventName = "PutObject" || $.eventName = "DeleteObject" || $.eventName = "CopyObject") && ($.readOnly IS FALSE) }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `S3AIDataWriteOperations`
+
+</details>
+
+**メトリクスフィルター 12: Lambda AI パイプライン呼び出しボリューム**
+
+<details>
+<summary>AI パイプライン関数の Lambda Invoke イベントをカウントします</summary>
+
+Lambda の本番環境専用データイベントセレクターと組み合わせることで、このメトリクスは Lambda ベースの AI 推論エンドポイントまたはエージェントアクショングループハンドラーへの不正アクセスを示す可能性のある呼び出しスパイクを検出します。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "lambda.amazonaws.com") && ($.eventName = "Invoke" || $.eventName = "Invoke20150331") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `LambdaAIPipelineInvocations`
+
+</details>
+
+  </TabItem>
+  <TabItem value="agentcore-mf" label="AgentCore">
+
+**メトリクスフィルター 15: AgentCore Gateway 呼び出し**
+
+<details>
+<summary>AgentCore Gateways に対するすべての InvokeGateway イベントをカウントします。</summary>
+
+外部の呼び出し元からのすべての受信 MCP リクエストがこのイベントを生成します。このメトリクスを追跡することで、予期しないゲートウェイトラフィック量や不正な外部アクセスを検出できます。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.eventName = "InvokeGateway") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreGatewayInvocations`
+
+</details>
+
+**メトリクスフィルター 16: AgentCore Gateway 認証失敗**
+
+<details>
+<summary>HTTP 401 または 403 ステータスコードを返す Gateway の呼び出しをキャプチャします</summary>
+
+Gateway エラーは次の場所に表示されるため `responseElements` トップレベルではなく `errorCode`、このフィルターはレスポンスのステータスコードフィールドに一致します。スパイクは、トークンの繰り返し試行またはクライアント認証の設定ミスを示しています。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.eventName = "InvokeGateway") && ($.responseElements.statusCode = 401 || $.responseElements.statusCode = 403) }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreGatewayAuthFailures`
+
+</details>
+
+**メトリクスフィルター 17: AgentCore 組み込みツール呼び出し (CodeInterpreter および Browser)**
+
+<details>
+<summary>AgentCore の組み込みツール（コードインタープリターおよびブラウザー）の呼び出し回数をカウントします。</summary>
+
+これらは影響度の高いエージェントアクションです。コードインタープリターはサンドボックス環境でユーザー提供のコードを実行し、ブラウザは外部 Web サイトをナビゲートします。予期しないスパイクは、エージェントが意図したスコープ外で動作していることを示します。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.resources[0].type = "AWS::BedrockAgentCore::CodeInterpreter" || $.resources[0].type = "AWS::BedrockAgentCore::CodeInterpreterCustom" || $.resources[0].type = "AWS::BedrockAgentCore::Browser" || $.resources[0].type = "AWS::BedrockAgentCore::BrowserCustom") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreToolInvocations`
+
+</details>
+
+**メトリクスフィルター 18: AgentCore 認証情報アクセス (TokenVault、OAuth2、APIKey)**
+
+<details>
+<summary>AgentCore の ID サービス全体にわたるすべての認証情報取得アクティビティをキャプチャします</summary>
+
+予期しない認証情報のアクセスパターンは、不適切なエージェントアクティビティや権限昇格を示している可能性があります。これは、エージェントインフラストラクチャを通じたサードパーティサービストークンへの意図しないアクセスです。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.resources[0].type = "AWS::BedrockAgentCore::TokenVault" || $.resources[0].type = "AWS::BedrockAgentCore::OAuth2CredentialProvider" || $.resources[0].type = "AWS::BedrockAgentCore::APIKeyCredentialProvider") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreCredentialAccess`
+
+</details>
+
+**メトリクスフィルター 19: AgentCore メモリ操作**
+
+<details>
+<summary>エージェントの永続メモリに対する読み取りおよび書き込み操作をカウントします。</summary>
+
+不正なメモリアクセスにより、会話履歴への意図しないアクセスや、不正なコンテキストの変更が可能になる場合があります。
+
+**フィルターパターン：**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.resources[0].type = "AWS::BedrockAgentCore::Memory") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreMemoryOperations`
+
+</details>
+
+**メトリクスフィルター 20: AgentCore Gateway 設定変更**
+
+<details>
+<summary>AgentCore Gateway の作成、変更、および削除に関する管理イベントをキャプチャします。</summary>
+
+Gateway の変更は、外部の呼び出し元がエージェントにアクセスする方法に影響します。意図しない Gateway の作成により、エージェントインフラストラクチャへの外部アクセスが許可される可能性があります。
+
+**フィルターパターン:**
+
+```
+{ ($.eventSource = "bedrock-agentcore.amazonaws.com") && ($.eventName = "CreateGateway" || $.eventName = "UpdateGateway" || $.eventName = "DeleteGateway" || $.eventName = "CreateGatewayTarget" || $.eventName = "UpdateGatewayTarget" || $.eventName = "DeleteGatewayTarget") }
+```
+
+- **メトリクス名前空間:** `AIWorkloadMetrics`
+- **メトリクス名:** `AgentCoreGatewayConfigChanges`
+
+</details>
+
+  </TabItem>
+</Tabs>
+
+
+## CloudWatch Alarms
+
+[Section 11](#メトリクスフィルター) で定義された各メトリクスフィルターに対して [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) を作成します。[Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) を通じてアラーム通知を適切な重大度レベルでセキュリティオペレーションチームにルーティングします。以下の表は、各アラームの推奨しきい値と評価期間を示しています。
+
+<Tabs>
+  <TabItem value="security" label="セキュリティチームアラーム" default>
+
+  これらのアラームは、設定変更、不正アクセス、認証失敗をトリガーとして、SNS 経由でセキュリティチームにルーティングされます。
+
+| アラーム名 | メトリクス | しきい値 | 期間 |
+  |---|---|---|---|
+  | Bedrock 不正アクセス | BedrockUnauthorizedAccess | > 5 | 5 分 |
+  | Bedrock ガードレール変更 | BedrockGuardrailChanges | > 0 | 1 分 |
+  | Bedrock ログ設定変更 | BedrockLoggingConfigChanges | > 0 | 1 分 |
+  | AI ロール権限昇格 | AIRolePermissionChanges | > 0 | 1 分 |
+  | AI サービス VPC エンドポイントアクセス拒否 | AIServicesVpceAccessDenied | > 0 | 5 分 |
+  | エージェントクロスサービスアクセス拒否 | AgentCrossServiceAccessDenied | > 10 | 5 分 |
+  | CloudTrail Insights 異常 | CloudTrailInsightsAnomalies | > 0 | 5 分 |
+  | CloudTrail ログ中断 | CloudTrailLoggingDisruption | > 0 | 1 分 |
+  | AgentCore Gateway 認証失敗 | AgentCoreGatewayAuthFailures | > 5 | 5 分 |
+  | AgentCore 認証情報アクセス異常 | AgentCoreCredentialAccess | > 50 | 5 分 |
+  | AgentCore Gateway 設定変更 | AgentCoreGatewayConfigChanges | > 0 | 1 分 |
+  | 自動推論ポリシー変更 | BedrockAutomatedReasoningChanges | > 0 | 1 分 |
+
+  </TabItem>
+  <TabItem value="ops" label="AI Ops チームアラーム">
+
+  これらのアラームは、ボリュームのスパイクや運用上の異常をトリガーとして、SNS 経由で AI オペレーションチームにルーティングします。
+
+| アラーム名 | メトリクス | しきい値 | 期間 |
+  |---|---|---|---|
+  | Bedrock Agent 呼び出しスパイク | BedrockAgentInvocations | > 500 | 5 分 |
+  | Bedrock Knowledge Base 取得スパイク | BedrockKnowledgeBaseRetrievals | > 500 | 5 分 |
+  | Bedrock モデル呼び出しスパイク | BedrockModelInvocations | > 1,000 | 5 分 |
+  | Bedrock フロー呼び出しスパイク | BedrockFlowInvocations | > 200 | 5 分 |
+  | Amazon S3 AI データ書き込みオペレーション | S3AIDataWriteOperations | > 50 | 5 分 |
+  | Lambda AI パイプライン呼び出しスパイク | LambdaAIPipelineInvocations | > 1,000 | 5 分 |
+  | AgentCore Gateway 呼び出しスパイク | AgentCoreGatewayInvocations | > 1,000 | 5 分 |
+  | AgentCore ツール呼び出しスパイク | AgentCoreToolInvocations | > 500 | 5 分 |
+  | AgentCore メモリオペレーションスパイク | AgentCoreMemoryOperations | > 200 | 5 分 |
+  | Bedrock セッションアクティビティスパイク | BedrockSessionOperations | > 500 | 5 分 |
+  | Bedrock フロー実行スパイク | BedrockFlowExecutions | > 200 | 5 分 |
+  | Bedrock データオートメーション呼び出しスパイク | BedrockDataAutomationInvocations | > 100 | 5 分 |
+  | Bedrock ツール呼び出しスパイク | BedrockToolInvocations | > 500 | 5 分 |
+
+  </TabItem>
+</Tabs>
+
+## Contributor Insights ルール
+
+[CloudWatch Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) は、CloudWatch Logs のロググループにおけるアクティビティパターンに影響を与えるトップコントリビューターをほぼリアルタイムで把握するために、時系列データを分析するよう設計されています。CloudTrail ロググループに適用すると、Contributor Insights ルールは、手動でクエリを実行することなく、AI ワークロード全体のアクティビティを推進している上位の IAM アイデンティティ、リソース、および送信元 IP を継続的に特定します。以下のルールは、このガイドが対象とするすべてのイベントカテゴリ（管理イベント、データイベント、ネットワークアクティビティイベント、セキュリティ設定変更）を網羅しています。
+
+:::warning[Important]
+Contributor Insights のルールは、CloudWatch Logs の**スタンダード**ログクラスのロググループにのみ適用できます。CloudTrail の配信ロググループがスタンダードクラスに設定されていることを確認してください。
+:::
+
+<Tabs>
+  <TabItem value="bedrock-activity" label="Bedrock アクティビティ" default>
+
+**ルール 1: Bedrock モデルを呼び出す上位 IAM アイデンティティ**
+
+<details>
+<summary>最も多くの Bedrock モデル呼び出しを行っている IAM プリンシパルをランク付けします</summary>
+
+トップコントリビューターとして突然現れた新しいアイデンティティ、または大幅な増加を示す既存のアイデンティティは、優先的な対応が必要です。
+
+**ルール名：** `AI-TopBedrockModelCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["InvokeModel", "InvokeModelWithResponseStream",
+               "Converse", "ConverseStream",
+               "InvokeModelWithBidirectionalStream",
+               "GetAsyncInvoke", "StartAsyncInvoke",
+               "ListAsyncInvokes"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 2: Bedrock Agents を呼び出す上位 IAM アイデンティティ**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock エージェントの呼び出しをトリガーしているかを明らかにします</summary>
+
+**ルール名：** `AI-TopBedrockAgentCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["InvokeAgent", "InvokeInlineAgent"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 3: Knowledge Bases から取得するトップ IAM アイデンティティ**
+
+<details>
+<summary>Bedrock Knowledge Bases から取得している IAM プリンシパルをランク付けします</summary>
+
+**ルール名：** `AI-TopKnowledgeBaseCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["Retrieve", "RetrieveAndGenerate"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 4: Bedrock Flows を呼び出す上位 IAM アイデンティティ**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock Prompt Flow の呼び出しをトリガーしているかを追跡します</summary>
+
+**ルール名：** `AI-TopBedrockFlowCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      { "Match": "$.eventName", "In": ["InvokeFlow"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 19: Bedrock セッションアクティビティ別トップ IAM アイデンティティ**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock セッションを作成およびアクセスしているかを表示します</summary>
+
+**ルール名：** `AI-TopBedrockSessionCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      { "Match": "$.resources[0].type", "In": ["AWS::Bedrock::Session"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 20: Bedrock フロー実行アクティビティ別上位 IAM アイデンティティ**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock フローの実行を行っているかを表示します</summary>
+
+**ルール名：** `AI-TopBedrockFlowExecutionCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      { "Match": "$.resources[0].type", "In": ["AWS::Bedrock::FlowExecution"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 21: Bedrock Data Automation アクティビティ別上位 IAM アイデンティティ**
+
+<details>
+<summary>ドキュメントおよびメディア処理のために Bedrock データオートメーションを呼び出している IAM プリンシパルを表示します。</summary>
+
+**ルール名：** `AI-TopBedrockDataAutomationCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.resources[0].type",
+        "In": [
+          "AWS::Bedrock::DataAutomationProject",
+          "AWS::Bedrock::DataAutomationInvocation",
+          "AWS::Bedrock::DataAutomationProfile"
+        ]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.resources[0].type", "$.eventName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 22: Bedrock ツール呼び出し数上位の IAM アイデンティティ**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock のツール使用オペレーションをトリガーしているかを明らかにします</summary>
+
+**ルール名：** `AI-TopBedrockToolCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      { "Match": "$.resources[0].type", "In": ["AWS::Bedrock::Tool"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="access-denied" label="アクセス拒否とセキュリティ">
+
+**ルール 5: Bedrock で AccessDenied が発生した上位 IAM アイデンティティ**
+
+<details>
+<summary>Bedrock リソースへのアクセスを繰り返し拒否された IAM プリンシパルを表示します</summary>
+
+**ルール名：** `AI-BedrockAccessDenied-TopIdentities`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      { "Match": "$.errorCode", "In": ["AccessDenied", "UnauthorizedOperation"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 6: トップエージェントのロールはダウンストリームサービスへのアクセスを拒否される**
+
+<details>
+<summary>S3、Lambda、KMS、Secrets Manager、または SageMaker へのアクセスを拒否された引き受けロールを識別します</summary>
+
+**ルール名：** `AI-AgentCrossServiceAccessDenied`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      {
+        "Match": "$.eventSource",
+        "In": ["s3.amazonaws.com", "lambda.amazonaws.com",
+               "kms.amazonaws.com", "secretsmanager.amazonaws.com",
+               "sagemaker.amazonaws.com"]
+      },
+      { "Match": "$.errorCode", "In": ["AccessDenied", "UnauthorizedOperation"] },
+      { "Match": "$.userIdentity.type", "In": ["AssumedRole"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventSource", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 7: AI サービス全体でのトップ VPC エンドポイントアクセス拒否**
+
+<details>
+<summary>VpceAccessDenied エラーを生成している上位の ID と VPC エンドポイントを表示します</summary>
+
+**ルール名：** `AI-VpceAccessDenied-AllAIServices`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      {
+        "Match": "$.eventSource",
+        "In": ["bedrock.amazonaws.com", "s3.amazonaws.com", "lambda.amazonaws.com"]
+      },
+      { "Match": "$.errorCode", "In": ["VpceAccessDenied"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventSource", "$.vpcEndpointId", "$.eventName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 10: アイデンティティ別の上位 Bedrock ガードレール変更**
+
+<details>
+<summary>どの IAM プリンシパルが Bedrock Guardrails を変更しているかを明らかにします</summary>
+
+**ルール名：** `AI-BedrockGuardrailChanges-TopIdentities`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["CreateGuardrail", "UpdateGuardrail", "DeleteGuardrail",
+               "CreateGuardrailVersion", "DeleteGuardrailVersion"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 23: アイデンティティ別の自動推論ポリシー変更トップ**
+
+<details>
+<summary>自動推論ポリシーを変更している IAM プリンシパルを表示します</summary>
+
+**ルール名：** `AI-AutomatedReasoningChanges-TopIdentities`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
+      {
+        "Match": "$.resources[0].type",
+        "In": [
+          "AWS::Bedrock::AutomatedReasoningPolicy",
+          "AWS::Bedrock::AutomatedReasoningPolicyVersion"
+        ]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 11: ログ記録とセキュリティ設定の変更**
+
+<details>
+<summary>ログの無効化、Bedrock 設定の変更、またはバケットポリシーの変更の試みを監視します</summary>
+
+**ルール名：** `AI-SecurityConfigurationChanges`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      {
+        "Match": "$.eventName",
+        "In": ["StopLogging", "DeleteTrail", "UpdateTrail",
+               "PutModelInvocationLoggingConfiguration",
+               "DeleteModelInvocationLoggingConfiguration",
+               "PutBucketPolicy", "DeleteBucketPolicy", "PutBucketAcl"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+:::note
+AgentCore gateway の設定変更 (`CreateGateway`, `UpdateGateway`, `DeleteGateway`, `CreateGatewayTarget`, `UpdateGatewayTarget`, `DeleteGatewayTarget`) は、このルールではなく[ルール 18: AgentCore Gateway 設定変更](#agentcore)の対象となります。Contributor Insights の制限 `In` 配列を 10 要素に制限しているため、これらは専用のルールで追跡されます。
+:::
+
+</details>
+
+**ルール 12: すべての AI サービスにわたるトップ API コール**
+
+<details>
+<summary>Bedrock、AgentCore、S3、Lambda、SageMaker 全体で最も頻繁な API コールのアカウント全体ビュー</summary>
+
+**ルール名：** `AI-TopAPICalls-AllAIServices`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      {
+        "Match": "$.eventSource",
+        "In": ["bedrock.amazonaws.com", "bedrock-agentcore.amazonaws.com",
+               "s3.amazonaws.com", "lambda.amazonaws.com",
+               "sagemaker.amazonaws.com"]
+      },
+      { "Match": "$.eventName", "NotIn": ["AssumeRole"] }
+    ],
+    "Keys": ["$.eventSource", "$.eventName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="s3-lambda" label="S3 と Lambda">
+
+**ルール 8: AI トレーニングデータにアクセスされた上位の Amazon S3 バケット**
+
+<details>
+<summary>どの S3 バケットが最も頻繁にアクセスされているか、およびアクセスしているのは誰かを特定します。</summary>
+
+**ルール名：** `AI-TopS3TrainingDataAccess`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["s3.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["GetObject", "PutObject", "DeleteObject", "CopyObject"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.requestParameters.bucketName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 9: 呼び出しボリューム別上位 Lambda AI パイプライン関数**
+
+<details>
+<summary>AI パイプライン内でどの Lambda 関数が最も頻繁に呼び出されているかを追跡します</summary>
+
+**ルール名：** `AI-TopLambdaAIPipelineInvocations`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["lambda.amazonaws.com"] },
+      { "Match": "$.eventName", "In": ["Invoke", "Invoke20150331"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.requestParameters.functionName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+  </TabItem>
+  <TabItem value="agentcore-ci" label="AgentCore">
+
+**ルール 13: JWT サブジェクト別トップ AgentCore Gateway 呼び出し元**
+
+<details>
+<summary>どの外部呼び出し元 (JWT sub クレーム) が最も多くの Gateway リクエストを行っているかを表示します</summary>
+
+**ルール名：** `AI-TopGatewayCallers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      { "Match": "$.eventName", "In": ["InvokeGateway"] }
+    ],
+    "Keys": ["$.additionalEventData.jwt.claims.sub", "$.sourceIPAddress", "$.resources[0].ARN"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 14: AgentCore Gateway 認証失敗のトップ**
+
+<details>
+<summary>最も多くの認証失敗を発生させているソース IP と JWT サブジェクトをランク付けします</summary>
+
+**ルール名：** `AI-GatewayAuthFailures-TopSources`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      { "Match": "$.eventName", "In": ["InvokeGateway"] },
+      { "Match": "$.responseElements.statusCode", "In": [401, 403] }
+    ],
+    "Keys": ["$.sourceIPAddress", "$.additionalEventData.jwt.claims.sub", "$.resources[0].ARN"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 15: AgentCore 組み込みツールのトップユーザー**
+
+<details>
+<summary>CodeInterpreter および Browser ツールを呼び出している IAM プリンシパルを識別します。</summary>
+
+**ルール名：** `AI-TopAgentCoreToolUsers`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      {
+        "Match": "$.resources[0].type",
+        "In": [
+          "AWS::BedrockAgentCore::CodeInterpreter",
+          "AWS::BedrockAgentCore::CodeInterpreterCustom",
+          "AWS::BedrockAgentCore::Browser",
+          "AWS::BedrockAgentCore::BrowserCustom"
+        ]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.resources[0].type", "$.eventName"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 16: トップ AgentCore クレデンシャルアクセサー**
+
+<details>
+<summary>TokenVault、OAuth2、および APIKey を通じてクレデンシャルにアクセスしている IAM プリンシパルを表示します。</summary>
+
+**ルール名：** `AI-TopAgentCoreCredentialAccessors`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      {
+        "Match": "$.resources[0].type",
+        "In": [
+          "AWS::BedrockAgentCore::TokenVault",
+          "AWS::BedrockAgentCore::OAuth2CredentialProvider",
+          "AWS::BedrockAgentCore::APIKeyCredentialProvider"
+        ]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.resources[0].type", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+**ルール 17: 上位 AgentCore メモリアクセサー**
+
+<details>
+<summary>エージェントの永続メモリへの読み取りおよび書き込みを行っている IAM プリンシパルを追跡します</summary>
+
+**ルール名：** `AI-TopAgentCoreMemoryAccessors`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      { "Match": "$.resources[0].type", "In": ["AWS::BedrockAgentCore::Memory"] }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.resources[0].ARN"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+#### ルール 18: AgentCore Gateway 設定の変更 {#agentcore}
+
+<details>
+<summary>AgentCore Gateway とターゲットの作成、変更、削除を監視します。</summary>
+
+**ルール名：** `AI-AgentCoreGatewayConfigChanges`
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.eventSource", "In": ["bedrock-agentcore.amazonaws.com"] },
+      {
+        "Match": "$.eventName",
+        "In": ["CreateGateway", "UpdateGateway", "DeleteGateway",
+               "CreateGatewayTarget", "UpdateGatewayTarget", "DeleteGatewayTarget"]
+      }
+    ],
+    "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": ["YOUR_CLOUDTRAIL_LOG_GROUP"]
+}
+```
+
+</details>
+
+  </TabItem>
+</Tabs>
+
+## CloudTrail データイベントの集約
+
+[イベント集約](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/aggregating-data-events.html)は、データイベントを 5 分間のサマリーに統合するように設計されており、アクセス頻度、エラー率、最も頻繁に使用される API アクションなどの主要なトレンドへの可視性を提供します。これにより、セキュリティモニタリングとトレンド分析に必要な推奨インサイトを保持しながら、ダウンストリームの分析システムに送信されるデータ量を大幅に削減します。集約されたイベントは、 `eventCategory = Aggregated` および `eventType = AwsAggregatedEvent` [集約されたイベントレコード](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aggregated-events.html)のフィールド。
+
+### 集計の有効化
+
+[CloudTrail コンソール](https://console.aws.amazon.com/cloudtrail/)に移動してトレイルを選択します。**集約イベント**セクションで、**編集**を選択し、以下の集約テンプレートを有効にします。
+
+- **API アクティビティ** — API 呼び出しに基づくデータイベントの 5 分間サマリー（頻度、上位の呼び出し元、送信元 IP の分布を含む）
+- **リソースアクセス** — AWS リソースへのアクティビティパターン（誰がどのリソースに何回アクセスしているかを表示）
+- **ユーザーアクション** — API 呼び出しを行う IAM プリンシパルに基づくアクティビティパターン（行動の異常を特定するのに役立つ）
+
+### CloudTrail 集約イベントのクエリ
+
+集約されたイベントは、CloudWatch Logs のロググループ内の標準イベントと共に配信されます。 `eventCategory = 'Aggregated'`次の OpenSearch SQL クエリを使用して、集計された Bedrock API アクティビティのサマリーを表示します。
+
+```sql title="Query: Aggregated Bedrock API Activity"
+SELECT eventTime,
+       eventSource,
+       `summary.primaryDimension.dimension` AS primary_dimension,
+       `timeWindow.windowStart` AS window_start,
+       `timeWindow.windowEnd` AS window_end
+FROM `YOUR_CLOUDTRAIL_LOG_GROUP`
+WHERE eventCategory = 'Aggregated'
+  AND eventSource = 'bedrock.amazonaws.com'
+ORDER BY eventTime DESC
+```
+
+### ダウンストリームの効率化のためのサブスクリプションフィルター
+
+SIEM や Kinesis Data Firehose などのダウンストリームシステムに送信されるボリュームを削減するには、生のデータイベントの代わりに管理イベントと集計サマリーのみを転送する [CloudWatch Logs サブスクリプションフィルター](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html) を作成します。これにより、5 分間の集計サマリーから推奨されるセキュリティインサイトを維持しながら、ダウンストリームの取り込みボリュームを削減できます。
+
+**サブスクリプションフィルターパターン（管理イベント + 集約イベントのみ）：**
+
+```
+{ ($.eventCategory = "Management") || ($.eventCategory = "Aggregated") }
+```
+
+## 統合監査・モニタリングダッシュボード {#unified-audit--monitoring-dashboard}
+
+セキュリティ/監査サーフェス（CloudTrail）と運用モニタリング（Bedrock モデル呼び出しログおよびエージェントテレメトリ（ADOT SDK））を一元化されたビューに統合した、統合 [CloudWatch ダッシュボード](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html)を構築します。以下のレイアウトでは、ウィジェットをオーディエンス別に整理しています。左側にセキュリティ/監査、中央に運用モニタリング、右側にコスト/FinOps を配置し、高レベルのステータスインジケーターから詳細な調査クエリまで階層化しています。
+
+### ダッシュボード名
+
+ダッシュボードを名前付きで作成します。 `AI-Workload-Security-Dashboard` プライマリモニタリングリージョンで。
+
+![AI-Workload-Security-Dashboard](/img/cloudops/recipes/AWS%20CloudTrail/monitoring-and-auditing-genAI/dashboard.png)
+### 推奨ウィジェットレイアウト
+
+:::tip[Pro Tip]
+Logs Insights ウィジェットの場合、クエリソースに応じてクエリ言語として **SQL** または **CWLI** を選択します。([クロスパイプライン相関クエリ](#クロスパイプライン相関クエリ)からの) クロスロググループ JOIN クエリは SQL を使用する必要があります。単一ロググループクエリはどちらでも使用できます。
+:::
+
+<Tabs>
+  <TabItem value="status" label="ステータス概要" default>
+
+  **行 1** — 高レベルのヘルス状態とキーカウンター。
+
+| ウィジェット | ウィジェット タイプ | データソース |
+  |---|---|---|
+  | アラームステータスグリッド | アラームステータス | [CloudWatch Alarms](#cloudwatch-alarms) からのすべてのメトリクスフィルターアラーム |
+  | Bedrock モデル呼び出し数 | 数値 (メトリクス) | AIWorkloadMetrics/BedrockModelInvocations |
+  | Bedrock 総支出 | 単一値 (ログ) | モデル呼び出しログ — 総コストクエリ（[FinOps ダッシュボード](/observability-best-practices/ja/ai/genai/guides/custom-dashboards-for-genai-telemetry/#finops-persona-dashboard)） |
+  | エージェントクロスサービス拒否数 | 数値 (メトリクス) | AIWorkloadMetrics/AgentCrossServiceAccessDenied |
+
+  </TabItem>
+  <TabItem value="audit-bedrock" label="監査 — Bedrock">
+
+  **行 2** — モデルとエージェントのアクティビティ
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | Bedrock モデル呼び出し元上位 | Contributor Insights | ルール 1: AI-TopBedrockModelCallers |
+  | Bedrock エージェント呼び出し元上位 | Contributor Insights | ルール 2: AI-TopBedrockAgentCallers |
+
+**行 3** — データ & アクセス拒否
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | ナレッジベース呼び出し元上位 | Contributor Insights | ルール 3: AI-TopKnowledgeBaseCallers |
+  | Bedrock AccessDenied アイデンティティ | Contributor Insights | ルール 5: AI-BedrockAccessDenied-TopIdentities |
+  | エージェントクロスサービスアクセス拒否 | Contributor Insights | ルール 6: AI-AgentCrossServiceAccessDenied |
+
+**行 4** — Security Config
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | Guardrail 変更イベント | Contributor Insights | ルール 10: AI-BedrockGuardrailChanges-TopIdentities |
+  | ログ記録とセキュリティ設定の変更 | Contributor Insights | ルール 11: AI-SecurityConfigurationChanges |
+  | VPC エンドポイントの拒否 | Contributor Insights | ルール 7: AI-VpceAccessDenied-AllAIServices |
+
+**行 4.6** — Bedrock Extended
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | セッションアクティビティ | Contributor Insights | ルール 19: AI-TopBedrockSessionCallers |
+  | フロー実行アクティビティ | Contributor Insights | ルール 20: AI-TopBedrockFlowExecutionCallers |
+  | データ自動化アクティビティ | Contributor Insights | ルール 21: AI-TopBedrockDataAutomationCallers |
+  | Bedrock ツール呼び出し | Contributor Insights | ルール 22: AI-TopBedrockToolCallers |
+  | 自動推論の変更 | Contributor Insights | ルール 23: AI-AutomatedReasoningChanges-TopIdentities |
+
+  </TabItem>
+  <TabItem value="audit-agentcore" label="監査 — AgentCore">
+
+  **行 4.5** — AgentCore Activity
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | JWT サブジェクト別ゲートウェイトラフィック | Contributor Insights | ルール 13: AI-TopGatewayCallers |
+  | ゲートウェイ認証失敗 | Contributor Insights | ルール 14: AI-GatewayAuthFailures-TopSources |
+  | AgentCore ツール使用状況 | Contributor Insights | ルール 15: AI-TopAgentCoreToolUsers |
+  | 認証情報アクセスパターン | Contributor Insights | ルール 16: AI-TopAgentCoreCredentialAccessors |
+  | メモリアクセスパターン | Contributor Insights | ルール 17: AI-TopAgentCoreMemoryAccessors |
+  | ゲートウェイ設定変更 | Contributor Insights | ルール 18: AI-AgentCoreGatewayConfigChanges |
+
+  </TabItem>
+  <TabItem value="monitoring" label="モニタリングとコスト">
+
+  **行 5** — モデルパフォーマンス
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | 完了率 (ok vs truncated) | 時系列 (ログ) | モデル呼び出しログ — DevOps クエリ ([DevOps ダッシュボード](/observability-best-practices/ja/ai/genai/guides/custom-dashboards-for-genai-telemetry/#devops-persona-dashboard)) |
+  | モデル別クロスリージョンレイテンシ | テーブル (ログ) | モデル呼び出しログ — レイテンシクエリ |
+
+**行 6** — Agent Workflow
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | エージェントトレース vs エラー | 時系列 (ログ) | ADOT `aws/spans` — エージェントエラークエリ |
+  | コンポーネントパフォーマンス (P95) | テーブル (ログ) | ADOT `aws/spans` — コンポーネントの内訳 |
+
+**行 7** — コスト (FinOps)
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | モデル別コスト分布 | 円グラフ (ログ) | モデル呼び出しログ — モデル別コスト |
+  | ロール別上位 10 件の支出者 | テーブル (ログ) | モデル呼び出しログ — 上位支出者 |
+
+  </TabItem>
+  <TabItem value="investigation" label="調査と相関">
+
+  **行 8** — 調査
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | 設定変更ログテーブル | Logs Insights (SQL) | クエリ 7: すべての AI インフラストラクチャ設定変更 |
+  | ソース IP 別 Bedrock 呼び出し | Logs Insights (SQL) | クエリ 6: 予期しない IP からの Bedrock および AgentCore 呼び出し |
+  | AgentCore 認証情報アクセス | Logs Insights (SQL) | クエリ 14: 不正な認証情報アクセスの検出 |
+  | AgentCore Gateway 認証失敗 | Logs Insights (SQL) | クエリ 11: ゲートウェイ認証失敗 |
+  | Bedrock セッションおよびフロー実行アクティビティ | Logs Insights (SQL) | クエリ 23: Bedrock セッションアクティビティ |
+  | データ自動化およびツールアクティビティ | Logs Insights (SQL) | クエリ 25: Bedrock データ自動化アクティビティ |
+  | 自動推論ポリシーの変更 | Logs Insights (SQL) | クエリ 27: 自動推論ポリシーアクティビティ |
+
+**行 9** — クロスパイプライン相関
+
+| ウィジェット | ウィジェットタイプ | データソース |
+  |---|---|---|
+  | 誰が何を質問したか、モデルの応答 | Logs Insights (SQL) | クエリ 18: CloudTrail + 呼び出しログの結合 |
+  | ID を含むエージェントセッション | Logs Insights (SQL) | クエリ 19: ADOT + CloudTrail の結合 |
+  | 3 つのパイプラインの完全なビュー | Logs Insights (SQL) | クエリ 20: 3 つすべての結合 |
+
+  </TabItem>
+</Tabs>
+
+:::note
+5〜7 行目は、付属の[GenAI テレメトリ用カスタムダッシュボード](/observability-best-practices/ja/ai/genai/guides/custom-dashboards-for-genai-telemetry/)ガイドのクエリを使用しています。ここで重複させるのではなく、それらのクエリを直接使用してください。
+:::
+
+## まとめと次のステップ
+
+このガイドでは、AWS 上の AI ワークロードに対するエンドツーエンドの監視および監査アーキテクチャを説明しました。具体的には、3 つのテレメトリパイプライン、それぞれの有効化方法、Bedrock と AgentCore の両データイベントに対する CloudTrail 固有の検出（メトリクスフィルター、アラーム、Contributor Insights）、CloudTrail と Bedrock Model Invocation Logging および ADOT スパンを結合するクロスパイプライン相関クエリ、そして統合 CloudWatch ダッシュボードについて取り上げました。各セクションは、[実装の概要](#実装の概要)のフェーズ別ロードマップに従って段階的に実装できるよう設計されています。
+
+コアとなる考え方は次のとおりです。CloudTrail 単体では*誰が何をしたか*を示し、Model Invocation Logging では*モデルが何を言ったか*を示し、ADOT では*エージェントがどのように動作したか*を示します。AgentCore データイベントにより、CloudTrail は*エージェントが実際に何をしたか* — どのツールを呼び出したか、どの認証情報にアクセスしたか、どのゲートウェイがトラフィックを受信したか、そして何をメモリに保存したか — も示せるようになりました。その価値は、調査中にこれらのシグナルを結合することから生まれます。単一のパイプラインですべての質問に答えることはできません。
+
+これらの機能を組み合わせることで、[Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) および [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) で定義されたセキュリティの側面に対する具体的な実装が提供されます。
+
+### 次のステップ
+
+1. **フェーズ 1 から始めます。** 3 つのテレメトリパイプラインをすべて有効にします。他の 2 つ（Model Invocation Logging、ADOT）は、相関クエリを可能にします。
+2. **CloudTrail Bedrock データイベントを有効にします。** AI ワークロードの監査における重要なステップです。
+3. **CloudTrail AgentCore データイベントを有効にします。** Gateway と認証情報アクセス（グループ 2 および 3）から始め、ベースラインボリュームを確立した後に組み込みツールとメモリ（グループ 1 および 4）に拡張します。
+4. **ベースラインを検証します。** アラームしきい値を設定する前に通常の使用状況を確立するために、[セキュリティ分析](#security-analytics)のクエリ 2 および 4 と、[セキュリティ分析](#security-analytics)の AgentCore タブのクエリ 12〜14 を実行します。
+4. **レスポンスを自動化します。** 検出と修復のギャップを埋めるために、CloudWatch Alarms を[Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html)トピック、[AWS Lambda](https://docs.aws.amazon.com/lambda/latest/dg/welcome.html)関数、または[Systems Manager ランブック](https://docs.aws.amazon.com/systems-manager/latest/userguide/automation-documents.html)に接続します。
+5. **GuardDuty と統合します。** [Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html)は、ここでのカスタムモニタリングを補完するマネージド型の脅威検出を提供します。GuardDuty は、検出ルールを維持することなく、既知の脅威パターンについて CloudTrail イベントを分析します。
+6. **コストを確認します。** データイベント、Insights 分析、およびネットワークアクティビティイベントはすべて料金が発生します。[CloudTrail 料金ページ](https://aws.amazon.com/cloudtrail/pricing/)と[データイベントコレクションの最適化](#データイベント収集の最適化)のボリューム削減戦略を使用してください。
+
+### コンパニオンガイド
+
+- [生成 AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — 生成 AI ワークロードのセキュリティディメンション（ガバナンスとコンプライアンス、法務とプライバシー、リスク管理、コントロール、レジリエンス）
+- [エージェント AI セキュリティスコーピングマトリックス](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — エージェント AI システムのセキュリティディメンション（アイデンティティ、データ、監査とロギング、ガードレール、スコープ、オーケストレーション）
+- [AWS 上の GenAI オブザーバビリティ](/observability-best-practices/ja/ai/genai/guides/genai-observability-on-aws/) — Bedrock モデル呼び出しロギングおよびエージェントテレメトリ（ADOT SDK）パイプラインの詳細解説
+- [GenAI テレメトリのカスタムダッシュボード](/observability-best-practices/ja/ai/genai/guides/custom-dashboards-for-genai-telemetry/) — すぐに使えるクエリを備えたペルソナベースのダッシュボード（DevOps、FinOps）

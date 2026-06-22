@@ -42,16 +42,40 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const [error, setError] = useState<string>('');
 
   const {i18n} = useDocusaurusContext();
-  const currentLocale = i18n.currentLocale;
-  const apmSrcFolder = currentLocale === 'en' ? 'apm-src' : `apm-src-${currentLocale}`;
+  const {currentLocale, defaultLocale} = i18n;
+  const isLocalized = currentLocale !== defaultLocale;
 
-  const apmSrcBase = useBaseUrl(`/${apmSrcFolder}/`);
+  const apmSrcBase = useBaseUrl('/apm-src/');
   const apmHome = useBaseUrl('/apm/');
   const apmDocBase = useBaseUrl('/apm/');
   const apmFetchPath = apmStaticFetchPath(src);
-  const primaryUrl = useBaseUrl(`/${apmSrcFolder}/${apmFetchPath}`);
-  const fallbackUrl = useBaseUrl(`/${apmSrcFolder}/${apmStaticFileRelativePath(src)}`);
-  const enFallbackUrl = useBaseUrl(`/apm-src/${apmStaticFileRelativePath(src)}`);
+  const fileRelPath = apmStaticFileRelativePath(src);
+  // English (default-locale) source paths.
+  const primaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
+  const fallbackUrl = useBaseUrl(`/apm-src/${fileRelPath}`);
+  // Localized copies live under `static/apm-src/i18n/<locale>/...`. useBaseUrl is
+  // a hook, so these are always computed; they are only *used* for non-default
+  // locales (see the candidate list in the effect).
+  const localizedPrimaryUrl = useBaseUrl(
+    `/apm-src/i18n/${currentLocale}/${apmFetchPath}`,
+  );
+  const localizedFallbackUrl = useBaseUrl(
+    `/apm-src/i18n/${currentLocale}/${fileRelPath}`,
+  );
+
+  // Candidate URLs in priority order. For a localized (non-default) locale, prefer
+  // the translated copy under `/apm-src/i18n/<locale>/`, then fall back to the
+  // English original. For each form we try the directory-style path first, then the
+  // flat `.html` path (static hosts differ: the dev server serves directory paths,
+  // GitHub Pages serves flat files).
+  const candidates = useMemo(
+    () =>
+      (isLocalized
+        ? [localizedPrimaryUrl, localizedFallbackUrl, primaryUrl, fallbackUrl]
+        : [primaryUrl, fallbackUrl]
+      ).filter((u, i, arr) => Boolean(u) && arr.indexOf(u) === i),
+    [isLocalized, localizedPrimaryUrl, localizedFallbackUrl, primaryUrl, fallbackUrl],
+  );
 
   const resolved = useMemo(() => {
     // Avoid SSR crashes: DOMParser/document are browser-only.
@@ -66,23 +90,37 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
       setError('');
       setHtml('');
       try {
-        let res = await fetch(primaryUrl, {cache: 'no-cache'});
-        let loadedFrom = primaryUrl;
-        if (!res.ok && res.status === 404 && fallbackUrl !== primaryUrl) {
-          res = await fetch(fallbackUrl, {cache: 'no-cache'});
-          loadedFrom = fallbackUrl;
-        }
-        if (!res.ok && res.status === 404 && currentLocale !== 'en') {
-          res = await fetch(enFallbackUrl, {cache: 'no-cache'});
-          loadedFrom = enFallbackUrl;
-        }
-        if (!res.ok) {
-          throw new Error(`Failed to load ${loadedFrom} (${res.status})`);
-        }
-        const text = await res.text();
-
         if (typeof window === 'undefined') return;
-        const doc = new DOMParser().parseFromString(text, 'text/html');
+
+        // Fetch a candidate URL and parse it. Returns null on a non-OK response.
+        const tryLoad = async (url: string): Promise<Document | null> => {
+          const r = await fetch(url, {cache: 'no-cache'});
+          if (!r.ok) return null;
+          const t = await r.text();
+          return new DOMParser().parseFromString(t, 'text/html');
+        };
+
+        // Candidate URLs (priority order) are computed at component scope so the
+        // error UI can show what was tried.
+        // Pick the first candidate that actually contains the content selector.
+        // Otherwise keep the first that loaded at all (best effort) — this avoids
+        // rendering an app shell (HTTP 200 SPA fallback) that lacks the selector.
+        let doc: Document | null = null;
+        for (const url of candidates) {
+          if (cancelled) return;
+          const d = await tryLoad(url);
+          if (d && d.querySelector(selector)) {
+            doc = d;
+            break;
+          }
+          if (d && doc === null) {
+            doc = d;
+          }
+        }
+
+        if (doc === null) {
+          throw new Error(`Failed to load ${candidates.join(' or ')}`);
+        }
 
         const rewriteStatic = (u: string) => {
           if (!u) return u;
@@ -152,7 +190,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
     return () => {
       cancelled = true;
     };
-  }, [apmDocBase, apmHome, apmSrcBase, fallbackUrl, primaryUrl, enFallbackUrl, currentLocale, selector]);
+  }, [apmDocBase, apmHome, apmSrcBase, candidates, selector]);
 
   if (typeof window === 'undefined') {
     return (
@@ -169,13 +207,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
           <h2>Unable to load page content</h2>
           <p>{error}</p>
           <p>
-            Tried: <code>{primaryUrl}</code>
-            {fallbackUrl !== primaryUrl && (
-              <>
-                {' '}
-                then <code>{fallbackUrl}</code>
-              </>
-            )}
+            Tried: <code>{candidates.join(', ')}</code>
           </p>
         </div>
       </div>

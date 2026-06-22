@@ -11,7 +11,7 @@
 ADOT コレクターアーキテクチャには、パイプラインという概念があります。単一のコレクターには、複数のパイプラインを含めることができます。各パイプラインは、メトリクス、トレース、ログという 3 種類のテレメトリデータのいずれかの処理専用です。テレメトリデータの種類ごとに複数のパイプラインを設定できます。この汎用性の高いアーキテクチャにより、単一のコレクターで、クラスターにデプロイする必要がある複数のオブザーバビリティエージェントの役割を果たすことができます。これにより、クラスター上のオブザーバビリティエージェントのデプロイメントフットプリントが大幅に削減されます。パイプラインを構成するコレクターの主要コンポーネントは、Receiver、Processor、Exporter の 3 つのカテゴリに分類されます。Extensions と呼ばれる二次的なコンポーネントがあり、コレクターに追加できる機能を提供しますが、パイプラインの一部ではありません。 
 
 :::info
-    Receiver、Processor、Exporter、Extension の詳細な説明については、OpenTelemetry の[ドキュメント](https://opentelemetry.io/docs/collector/configuration/#基本)を参照してください。
+    Receiver、Processor、Exporter、Extension の詳細な説明については、OpenTelemetry の[ドキュメント](https://opentelemetry.io/docs/collector/configuration/#basics)を参照してください。
 :::
 
 ## ECS タスクメトリクス収集のための ADOT Collector のデプロイ

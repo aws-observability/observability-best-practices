@@ -34,6 +34,7 @@ SITE_STRUCTURE.md
 # Local review report
 HINDI_TRANSLATION_REVIEW_REPORT.md
 
-tools/
+tools/translator
 .hypothesis/
 .kiro/
+tmp/

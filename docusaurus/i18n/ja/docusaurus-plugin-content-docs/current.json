@@ -1,0 +1,262 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.guides.category.Guides": {
+    "message": "ガイド",
+    "description": "The label for category 'Guides' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Getting Started on CloudWatch": {
+    "message": "CloudWatch スタートガイド",
+    "description": "The label for category 'Getting Started on CloudWatch' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Cost": {
+    "message": "コスト",
+    "description": "The label for category 'Cost' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Visualizing costs": {
+    "message": "コストの可視化",
+    "description": "The label for category 'Visualizing costs' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Databases": {
+    "message": "データベース",
+    "description": "The label for category 'Databases' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.ECS best practices": {
+    "message": "ECS ベストプラクティス",
+    "description": "The label for category 'ECS best practices' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.ECS AWS Native": {
+    "message": "ECS AWS ネイティブ",
+    "description": "The label for category 'ECS AWS Native' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.ECS Open Source": {
+    "message": "ECS オープンソース",
+    "description": "The label for category 'ECS Open Source' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.EKS best practices": {
+    "message": "EKS ベストプラクティス",
+    "description": "The label for category 'EKS best practices' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.EKS AWS Native": {
+    "message": "EKS AWS ネイティブ",
+    "description": "The label for category 'EKS AWS Native' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.EKS Open Source": {
+    "message": "EKS オープンソース",
+    "description": "The label for category 'EKS Open Source' in sidebar 'guides'"
+  },
+  "sidebar.guides.category..NET": {
+    "message": ".NET",
+    "description": "The label for category '.NET' in sidebar 'guides'"
+  },
+  "sidebar.guides.category..NET AWS Native": {
+    "message": ".NET AWS ネイティブ",
+    "description": "The label for category '.NET AWS Native' in sidebar 'guides'"
+  },
+  "sidebar.guides.category..NET Open Source": {
+    "message": ".NET オープンソース",
+    "description": "The label for category '.NET Open Source' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Serverless best practices": {
+    "message": "サーバーレスのベストプラクティス",
+    "description": "The label for category 'Serverless best practices' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Operational": {
+    "message": "運用",
+    "description": "The label for category 'Operational' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.ADOT Collector": {
+    "message": "ADOT Collector",
+    "description": "The label for category 'ADOT Collector' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Alerting": {
+    "message": "アラート",
+    "description": "The label for category 'Alerting' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.GitOps": {
+    "message": "GitOps",
+    "description": "The label for category 'GitOps' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Dashboards": {
+    "message": "ダッシュボード",
+    "description": "The label for category 'Dashboards' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Signal collection": {
+    "message": "シグナル収集",
+    "description": "The label for category 'Signal collection' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Partners": {
+    "message": "パートナー",
+    "description": "The label for category 'Partners' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.AWS CloudTrail": {
+    "message": "AWS CloudTrail",
+    "description": "The label for category 'AWS CloudTrail' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.CloudTrail Lake": {
+    "message": "CloudTrail Lake",
+    "description": "The label for category 'CloudTrail Lake' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.CloudTrail データイベント": {
+    "message": "CloudTrail データイベント",
+    "description": "The label for category 'CloudTrail データイベント' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.AWS Config": {
+    "message": "AWS Config",
+    "description": "The label for category 'AWS Config' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.AWS Control Tower": {
+    "message": "AWS Control Tower",
+    "description": "The label for category 'AWS Control Tower' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.AWS Organizations & Accounts": {
+    "message": "AWS Organizations とアカウント",
+    "description": "The label for category 'AWS Organizations & Accounts' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.AWS Region Usage": {
+    "message": "AWS リージョンの使用",
+    "description": "The label for category 'AWS Region Usage' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Application Operations": {
+    "message": "アプリケーション運用",
+    "description": "The label for category 'Application Operations' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.Centralized Operations Management": {
+    "message": "一元的なオペレーション管理",
+    "description": "The label for category 'Centralized Operations Management' in sidebar 'guides'"
+  },
+  "sidebar.guides.category.ノード管理": {
+    "message": "ノード管理",
+    "description": "The label for category 'ノード管理' in sidebar 'guides'"
+  },
+  "sidebar.sigals.category.Data types": {
+    "message": "データタイプ",
+    "description": "The label for category 'Data types' in sidebar 'sigals'"
+  },
+  "sidebar.tools.category.Tools": {
+    "message": "ツール",
+    "description": "The label for category 'Tools' in sidebar 'tools'"
+  },
+  "sidebar.tools.category.Logs": {
+    "message": "ログ",
+    "description": "The label for category 'Logs' in sidebar 'tools'"
+  },
+  "sidebar.tools.category.Security": {
+    "message": "セキュリティ",
+    "description": "The label for category 'Security' in sidebar 'tools'"
+  },
+  "sidebar.tools.category.Data Protection": {
+    "message": "データ保護",
+    "description": "The label for category 'Data Protection' in sidebar 'tools'"
+  },
+  "sidebar.tools.category.Application Signals": {
+    "message": "Application Signals",
+    "description": "The label for category 'Application Signals' in sidebar 'tools'"
+  },
+  "sidebar.recipes.category.Curated recipes": {
+    "message": "厳選レシピ",
+    "description": "The label for category 'Curated recipes' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.FAQ": {
+    "message": "FAQ",
+    "description": "The label for category 'FAQ' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.faq-cloudtrail": {
+    "message": "CloudTrail",
+    "description": "The label for category 'CloudTrail' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.Control Tower": {
+    "message": "Control Tower",
+    "description": "The label for category 'Control Tower' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.faq-application-operations": {
+    "message": "アプリケーション運用",
+    "description": "The label for category 'Application Operations' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.faq-centralized-operations": {
+    "message": "一元的なオペレーション",
+    "description": "The label for category 'Centralized Operations' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.By Compute": {
+    "message": "コンピューティング別",
+    "description": "The label for category 'By Compute' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.By Infra & Databases": {
+    "message": "インフラ・データベース別",
+    "description": "The label for category 'By Infra & Databases' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.Databases": {
+    "message": "データベース",
+    "description": "The label for category 'Databases' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.By Language": {
+    "message": "言語別",
+    "description": "The label for category 'By Language' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.By Destination": {
+    "message": "送信先別",
+    "description": "The label for category 'By Destination' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.Tasks": {
+    "message": "タスク",
+    "description": "The label for category 'Tasks' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.recipes-cloudtrail": {
+    "message": "CloudTrail",
+    "description": "The label for category 'CloudTrail' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.セキュリティインシデントレスポンスとフォレンジック分析": {
+    "message": "セキュリティインシデントレスポンスとフォレンジック分析",
+    "description": "The label for category 'セキュリティインシデントレスポンスとフォレンジック分析' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.recipes-centralized-operations": {
+    "message": "一元的なオペレーション",
+    "description": "The label for category 'Centralized Operations' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.ジャストインタイムノードアクセス (JITNA)": {
+    "message": "ジャストインタイムノードアクセス (JITNA)",
+    "description": "The label for category 'ジャストインタイムノードアクセス (JITNA)' in sidebar 'recipes'"
+  },
+  "sidebar.recipes.category.recipes-application-operations": {
+    "message": "アプリケーション運用",
+    "description": "The label for category 'Application Operations' in sidebar 'recipes'"
+  },
+  "sidebar.ai.category.GenAI": {
+    "message": "GenAI",
+    "description": "The label for category 'GenAI' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.guides": {
+    "message": "ガイド",
+    "description": "The label for category 'guides' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.persona": {
+    "message": "ペルソナ",
+    "description": "The label for category 'persona' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.AI Observability デモ": {
+    "message": "AI Observability デモ",
+    "description": "The label for category 'AI Observability デモ' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.mcp-integration": {
+    "message": "MCP 統合",
+    "description": "The label for category 'mcp-integration' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.setup": {
+    "message": "セットアップ",
+    "description": "The label for category 'setup' in sidebar 'ai'"
+  },
+  "sidebar.ai.category.Coding Agents Observability": {
+    "message": "コーディングエージェントのオブザーバビリティ",
+    "description": "The label for category 'Coding Agents Observability' in sidebar 'ai'"
+  },
+  "sidebar.patterns.category.Startup Observability Adoption": {
+    "message": "スタートアップにおけるオブザーバビリティの導入",
+    "description": "The label for category 'Startup Observability Adoption' in sidebar 'patterns'"
+  },
+  "sidebar.patterns.category.Tracing": {
+    "message": "トレーシング",
+    "description": "The label for category 'Tracing' in sidebar 'patterns'"
+  }
+}

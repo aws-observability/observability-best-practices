@@ -10,17 +10,17 @@
 
 **目標:** 支出を監視および管理することで、AWS コストを最適化します。
 
-| Level | Category                | Description                                                        | Tips & Examples                                               | Additional Notes                    |
+| レベル | カテゴリ                | 説明                                                        | ヒントと例                                               | 補足                    |
 |-------|-------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
 | **基本** | [支出の追跡](/observability-best-practices/ja/guides/cost/cost-visualization/cost) | ビジネス活動がコストに与える影響を監視するためのダッシュボードを設定します | **例:** マーケティングキャンペーンがサーバーコストに与える影響を監視します | **プロのヒント:** 基本的な日次コスト追跡から始めます  
 **よくある落とし穴:** アラートの設定を怠ること |
-| **Basic** | [Budget Management](/observability-best-practices/ja/guides/operational/business/key-performance-indicators)         | Establish spenditure limits to measure project costs | **Tip:** Focus on setting budgets for each department or service | **Recommendation:** Establish clear budget placements |
+| **基本** | [予算管理](/observability-best-practices/ja/guides/operational/business/key-performance-indicators)         | プロジェクトコストを測定するための支出限度額を設定します | **ヒント:** 部門やサービスごとの予算設定に焦点を当てます | **推奨:** 明確な予算配分を確立します |
 | **中級** | [リソースタグ付け](/observability-best-practices/ja/recipes/recipes/metrics-explorer-filter-by-tags) | チームやプロジェクトごとにリソース使用状況を追跡するためのリソースタグ付けを実装します | **クイックウィン:** まずこれらの 3 つのタグから始めましょう。  
 1. Project  
 2. Environment  
 3. Owner | **ご存知でしたか？** タグ付けを実装することで 20～30% のコスト削減が可能です |
-| **Intermediate** | [Cost & Usage Visibility](/observability-best-practices/ja/guides/cost/cost-visualization/cost)   | Ensure that you are only incurring the costs you need and that you are not overspending on resources you don't need | **Example:** Set up granular cost dashboards for better tracking | **Pro Tip:** Take into consideration the different [cost optimization tools](https://docs.aws.amazon.com/whitepapers/latest/cost-optimization-laying-the-foundation/reporting-cost-optimization-tools.html) AWS provides                                 |
-| **Advanced** | [Smart Cost Management](https://community.aws/content/2muS34cXUidGfdzpd5EkpCcphLc/aws-serverless-how-to-stop-ec2-using-event-bridge-and-lambda)            | Automate tasks that will limit unnecesary spenditure | **Example:** Power off non-production servers during off hours | **Pro Tip:** Begin with non-production environments |
+| **中級** | [コストと使用状況の可視性](/observability-best-practices/ja/guides/cost/cost-visualization/cost)   | 必要なコストのみが発生し、不要なリソースに過剰に支出していないことを確認します | **例:** より良い追跡のために詳細なコストダッシュボードを設定します | **プロのヒント:** AWS が提供するさまざまな[コスト最適化ツール](https://docs.aws.amazon.com/whitepapers/latest/cost-optimization-laying-the-foundation/reporting-cost-optimization-tools.html)を考慮してください                                 |
+| **上級** | [スマートなコスト管理](https://community.aws/content/2muS34cXUidGfdzpd5EkpCcphLc/aws-serverless-how-to-stop-ec2-using-event-bridge-and-lambda)            | 不要な支出を抑えるタスクを自動化します | **例:** 営業時間外に非本番サーバーの電源を切ります | **プロのヒント:** 非本番環境から始めます |
 | **上級** | [戦略的実装](/observability-best-practices/ja/guides/operational/business/key-performance-indicators) | KPI を確立し、FinOps Foundation の原則を実装する | コスト最適化 KPI を作成し、時間の経過とともに追跡する | **プロのヒント:** 「ユニットエコノミクス」KPI から始めましょう - ビジネス出力あたりのコストを測定します (例: トランザクションあたりのコスト、顧客あたりのコスト、またはサービスあたりのコスト)。
 
 **ご存知でしたか？** 覚えておいてください。最適な KPI は、クラウド支出をビジネス成果に直接結び付けるものであり、ROI を実証し、FinOps イニシアチブへの賛同を得やすくします。|
@@ -35,11 +35,11 @@
 
 **目標:** AWS でホストされているアプリケーションの最適なパフォーマンスと可用性を確保します。
 
-| Level | Component              | Description                                                        | Tips & Examples                                               | Additional Notes                    |
+| レベル | コンポーネント              | 説明                                                        | ヒントと例                                               | 補足                    |
 |-------|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
-| **Basic** | [Watch Your Apps](/observability-best-practices/ja/tools/dashboards)          | Aggregate curated historical data and see it alongside other related data | **Example:** Check if users in different regions experience delays | **Common Pitfall:** Lack of centralization for your monitoring tools |
-| **Intermediate** | [Track Connection Points](/observability-best-practices/ja/signals/traces)  | Monitor how different parts of your application communicate with each other | **Quick Win:** Start by tracking the performance of your most critical service | **Did You Know?** Most outages happen due to service-to-service communication failures |
-| **Advanced** | [Test your performance](/observability-best-practices/ja/tools/synthetics)     | Test & Simulate applications from the perspective of your customer to understand their experience | **Example:** Execute synthetic tests towards your application endpoints |   **Pro Tip:** Collect client side data from user session to granular [performance insights](/observability-best-practices/ja/tools/rum)                                |
+| **基本** | [アプリを監視する](/observability-best-practices/ja/tools/dashboards)          | キュレーションされた履歴データを集約し、他の関連データと並べて確認します | **例:** 異なるリージョンのユーザーが遅延を経験していないか確認します | **よくある落とし穴:** モニタリングツールの一元化の欠如 |
+| **中級** | [接続ポイントを追跡する](/observability-best-practices/ja/signals/traces)  | アプリケーションの異なる部分が互いにどのように通信するかを監視します | **クイックウィン:** 最も重要なサービスのパフォーマンス追跡から始めます | **ご存知でしたか？** ほとんどの障害はサービス間通信の失敗によって発生します |
+| **上級** | [パフォーマンスをテストする](/observability-best-practices/ja/tools/synthetics)     | 顧客の視点からアプリケーションをテストおよびシミュレートして、そのエクスペリエンスを理解します | **例:** アプリケーションのエンドポイントに対して合成テストを実行します |   **プロのヒント:** ユーザーセッションからクライアント側のデータを収集し、詳細な[パフォーマンスインサイト](/observability-best-practices/ja/tools/rum)を取得します                                |
 |**上級** | [可用性の目標について合意を確立し、強制する](/observability-best-practices/ja/tools/slos)     | 許容可能な健全性と可用性を確立するアプリケーションの SLO を評価する | リアルタイムモニタリングと迅速なトラブルシューティングに使用する |   **プロのヒント:** 組織のオブザーバビリティ[成熟度](/observability-best-practices/ja/guides/observability-maturity-model)を定期的に評価してください 
 
 ### 推奨事項
@@ -52,11 +52,11 @@
 
 **目標:** セキュリティの脆弱性とインシデントを監視することで、AWS インフラストラクチャを保護します。
 
-| Level | Component              | Description                                                        | Tips & Examples                                               | Additional Notes                    |
+| レベル | コンポーネント              | 説明                                                        | ヒントと例                                               | 補足                    |
 |-------|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
-| **Basic** | [Central Security Monitoring](/observability-best-practices/ja/patterns/multiaccount) | Consolidate all security logs in one central place for easy access and analysis | **Example:** Track all access to sensitive data and resources | **Pro Tip:** Start by focusing on login attempts and access patterns |
-| **Intermediate** | [Expand telemetry data collection](/observability-best-practices/ja/recipes/telemetry)  | Include additional [attributes](/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection-1) that contributes troubleshooting and auditing sessions | **Implementation:** Implement telemetry data from your applications backend code | **Example:** Send Browser name from which user has logged in from                                    |
-| **Advanced** | [Change Monitoring](/observability-best-practices/ja/recipes/anomaly-detection)          | Track abrupt changes in your workloads both from internal and external sources| **Quick Win:** Set up alerts for unexpected login patterns or user activity | **Common Pitfall:** Solely depending on static alarm threshold |
+| **基本** | [中央セキュリティモニタリング](/observability-best-practices/ja/patterns/multiaccount) | すべてのセキュリティログを一元化された場所に集約し、簡単にアクセスして分析できるようにします | **例:** 機密データとリソースへのすべてのアクセスを追跡します | **プロのヒント:** ログイン試行とアクセスパターンに焦点を当てることから始めます |
+| **中級** | [テレメトリデータ収集を拡張する](/observability-best-practices/ja/recipes/telemetry)  | トラブルシューティングと監査セッションに貢献する追加の[属性](/observability-best-practices/ja/guides/containers/oss/ecs/best-practices-metrics-collection-1)を含めます | **実装:** アプリケーションのバックエンドコードからテレメトリデータを実装します | **例:** ユーザーがログインしたブラウザ名を送信します                                    |
+| **上級** | [変更の監視](/observability-best-practices/ja/recipes/anomaly-detection)          | 内部および外部ソースの両方からワークロードの突然の変化を追跡します| **クイックウィン:** 予期しないログインパターンやユーザーアクティビティのアラートを設定します | **よくある落とし穴:** 静的なアラームしきい値のみに依存すること |
 
 ### 推奨事項
 - **セキュリティを優先する**: セキュリティは後回しにすべきではありません。基本的な監視から始めて、より高度な設定に進めていきます。
@@ -68,12 +68,12 @@
 
 **目標:** アプリケーションの使用状況、速度、動作を監視することで、ユーザーエクスペリエンスを最適化します。
 
-| Level | Component              | Description                                                        | Tips & Examples                                               | Additional Notes                    |
+| レベル | コンポーネント              | 説明                                                        | ヒントと例                                               | 補足                    |
 |-------|------------------------|--------------------------------------------------------------------|---------------------------------------------------------------|-------------------------------------|
-| **Basic** | [Track Page Speed](/observability-best-practices/ja/tools/rum)         | Monitor how fast your pages load for real users | **Example:** Identify if your checkout page slows down during peak traffic hours | **Pro Tip:** Focus on the most important user journeys first |
+| **基本** | [ページ速度を追跡する](/observability-best-practices/ja/tools/rum)         | 実際のユーザーに対してページがどれだけ速く読み込まれるかを監視します | **例:** ピークトラフィック時間帯にチェックアウトページが遅くなるかどうかを特定します | **プロのヒント:** 最も重要なユーザージャーニーに最初に焦点を当てます |
 | **中級** | [外部要因の影響を受けるユーザーパターンを監視する](/observability-best-practices/ja/tools/internet_monitor) | ユーザーがサービスとやり取りする方法に影響を与える可能性のある追加要素を追跡します | **例** インターネットプロバイダーと場所  
 **クイックウィン:** 基本的なページ読み込み時間の監視から始めます | **ご存知ですか？** ページ読み込み時間のわずかな遅延が、ユーザーの定着率に大きな影響を与える可能性があります |
-| **Advanced** | [Deep Networking Usage Analysis](/observability-best-practices/ja/recipes/infra)       | Evaluate and Analyze deep into your network flow activity and statusm | **Example** [Network Synthetics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/what-is-network-monitor.html) and [Network Flow Monitor](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html) | Track deeper network interactions and user behavior |
+| **上級** | [詳細なネットワーク使用状況の分析](/observability-best-practices/ja/recipes/infra)       | ネットワークフローのアクティビティとステータスを深く評価および分析します | **例** [Network Synthetics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/what-is-network-monitor.html) と [Network Flow Monitor](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-NetworkFlowMonitor.html) | より深いネットワークインタラクションとユーザー行動を追跡します |
 
 ### 推奨事項
 - **主要なアクションに焦点を当てる**: 収益またはユーザー満足度に影響を与えるアクションの監視を優先します。
@@ -85,7 +85,7 @@
 
 **目標:** サーバーレスアプリケーションを効果的に監視および最適化し、信頼性とコスト効率を確保します。
 
-| Level | Component | Description | Tips & Examples | Additional Notes |
+| レベル | コンポーネント | 説明 | ヒントと例 | 補足 |
 |-------|-----------|-------------|-----------------|------------------|
 | **基本** | [Lambda 関数のベストプラクティス](/observability-best-practices/ja/guides/serverless/aws-native/lambda-based-observability) | コア Lambda メトリクスと実行統計を監視 | **例:** 呼び出し、期間、エラー率を追跡  
 **クイックウィン:** Lambda インサイト用の CloudWatch ダッシュボードを設定 | **プロのヒント:** コールドスタートとメモリ使用率を監視してコストを最適化 |

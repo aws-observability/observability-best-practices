@@ -1,6 +1,6 @@
-# Amazon CloudWatch Container Insights
+﻿# Amazon CloudWatch Container Insights
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हम Amazon CloudWatch Container Insights से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हम Amazon CloudWatch Container Insights से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
 
 * Amazon CloudWatch Container Insights का परिचय
 * AWS Distro for Open Telemetry के साथ Amazon CloudWatch Container Insights का उपयोग
@@ -12,7 +12,7 @@ Observability सर्वोत्तम प्रथाओं गाइड क
 
 [Amazon CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) ग्राहकों को कंटेनरीकृत एप्लिकेशन और माइक्रोसर्विसेज से मेट्रिक्स और लॉग्स एकत्र, एकीकृत और सारांशित करने में मदद करता है। मेट्रिक्स डेटा [embedded metric format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Embedded_Metric_Format.html) का उपयोग करके परफॉर्मेंस लॉग इवेंट्स के रूप में एकत्र किया जाता है। ये परफॉर्मेंस लॉग इवेंट्स एक संरचित JSON स्कीमा का उपयोग करते हैं जो उच्च-कार्डिनैलिटी डेटा को बड़े पैमाने पर इनजेस्ट और स्टोर करने में सक्षम बनाता है। इस डेटा से, CloudWatch क्लस्टर, नोड, पॉड, टास्क और सर्विस स्तर पर CloudWatch मेट्रिक्स के रूप में एकीकृत मेट्रिक्स बनाता है। Container Insights द्वारा एकत्रित मेट्रिक्स CloudWatch ऑटोमैटिक डैशबोर्ड में उपलब्ध हैं। Container Insights self managed node groups, managed node groups और AWS Fargate profiles वाले Amazon EKS क्लस्टर के लिए उपलब्ध है।
 
-लागत अनुकूलन के दृष्टिकोण से और आपकी Container Insights लागत को प्रबंधित करने में मदद करने के लिए, CloudWatch स्वचालित रूप से लॉग डेटा से सभी संभव मेट्रिक्स नहीं बनाता है। हालाँकि, आप CloudWatch Logs Insights का उपयोग करके कच्चे परफॉर्मेंस लॉग इवेंट्स का विश्लेषण करके अतिरिक्त मेट्रिक्स और ग्रेन्यूलैरिटी के अतिरिक्त स्तर देख सकते हैं। Container Insights द्वारा एकत्रित मेट्रिक्स कस्टम मेट्रिक्स के रूप में शुल्कित हैं। CloudWatch मूल्य निर्धारण के बारे में अधिक जानकारी के लिए, [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/) देखें।
+लागत अनुकूलन के दृष्टिकोण से और आपकी Container Insights लागत को प्रबंधित करने में मदद करने के लिए, CloudWatch स्वचालित रूप से लॉग डेटा से सभी संभव मेट्रिक्स नहीं बनाता है। हालाँकि, आप CloudWatch Logs Insights का उपयोग करके कच्चे परफॉर्मेंस लॉग इवेंट्स का एनालिसिस करके अतिरिक्त मेट्रिक्स और ग्रेन्यूलैरिटी के अतिरिक्त स्तर देख सकते हैं। Container Insights द्वारा एकत्रित मेट्रिक्स कस्टम मेट्रिक्स के रूप में शुल्कित हैं। CloudWatch मूल्य निर्धारण के बारे में अधिक जानकारी के लिए, [Amazon CloudWatch Pricing](https://aws.amazon.com/cloudwatch/pricing/) देखें।
 
 Amazon EKS में, Container Insights [CloudWatch agent](https://gallery.ecr.aws/cloudwatch-agent/cloudwatch-agent) के एक कंटेनरीकृत संस्करण का उपयोग करता है जो Amazon द्वारा Amazon Elastic Container Registry के माध्यम से प्रदान किया जाता है, ताकि क्लस्टर में चल रहे सभी कंटेनरों की खोज की जा सके। फिर यह परफॉर्मेंस स्टैक के हर स्तर पर प्रदर्शन डेटा एकत्र करता है। Container Insights अपने द्वारा एकत्रित लॉग्स और मेट्रिक्स के लिए AWS KMS key के साथ एन्क्रिप्शन का समर्थन करता है। इस एन्क्रिप्शन को सक्षम करने के लिए, आपको Container Insights डेटा प्राप्त करने वाले लॉग ग्रुप के लिए मैन्युअल रूप से AWS KMS एन्क्रिप्शन सक्षम करना होगा। Container Insights केवल Linux इंस्टेंसेज पर समर्थित है। Amazon EKS के लिए Container Insights [इन](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html#:~:text=Container%20Insights%20for%20Amazon%20EKS%20and%20Kubernetes%20is%20supported%20in%20the%20following%20Regions%3A) AWS Regions में समर्थित है।
 
@@ -39,7 +39,7 @@ receivers:
     add_full_pod_name_metric_label: false 
 ```
 
-इसमें Amazon EKS पर उपरोक्त कॉन्फ़िगरेशन का उपयोग करके collector को DaemonSet के रूप में तैनात करना शामिल है। आपको इस receiver द्वारा सीधे Kubelet से एकत्रित मेट्रिक्स के एक पूर्ण सेट तक भी पहुँच होगी। एक से अधिक ADOT Collector इंस्टेंस होने से क्लस्टर में सभी नोड्स से रिसोर्स मेट्रिक्स एकत्र करने के लिए पर्याप्त होगा। ADOT collector का एक एकल इंस्टेंस अधिक लोड के दौरान अभिभूत हो सकता है इसलिए हमेशा एक से अधिक collector तैनात करने की अनुशंसा की जाती है।
+इसमें Amazon EKS पर उपरोक्त कॉन्फ़िगरेशन का उपयोग करके collector को DaemonSet के रूप में तैनात करना शामिल है। आपको इस receiver द्वारा सीधे Kubelet से एकत्रित मेट्रिक्स के एक पूर्ण सेट तक भी पहुँच होगी। एक से अधिक ADOT Collector इंस्टेंस होने से क्लस्टर में सभी नोड्स से रिसोर्स मेट्रिक्स एकत्र करने के लिए पर्याप्त होगा। ADOT collector का एक एक इंस्टेंस अधिक लोड के दौरान अभिभूत हो सकता है इसलिए हमेशा एक से अधिक collector तैनात करने की अनुशंसा की जाती है।
 
 ![CW-ADOT-FARGATE](../../../../images/Containers/aws-native/eks/cw-adot-collector-pipeline.jpg)
 
@@ -137,7 +137,7 @@ receivers:
 
 ### Amazon EKS के लिए CloudWatch Container Insights में Fluent Bit एकीकरण
 
-[Fluent Bit](https://fluentbit.io/) एक ओपन सोर्स और मल्टी-प्लेटफ़ॉर्म लॉग प्रोसेसर और फ़ॉरवर्डर है जो आपको विभिन्न स्रोतों से डेटा और लॉग्स एकत्र करने, उन्हें फ़िल्टर्स के साथ समृद्ध करने, और CloudWatch Logs सहित कई गंतव्यों को भेजने की अनुमति देता है। यह [Docker](https://www.docker.com/) और [Kubernetes](https://kubernetes.io/) वातावरण के साथ पूरी तरह संगत है।
+[Fluent Bit](https://fluentbit.io/) एक ओपन सोर्स और मल्टी-प्लेटफ़ॉर्म लॉग प्रोसेसर और फ़ॉरवर्डर है जो आपको विभिन्न स्रोतों से डेटा और लॉग्स एकत्र करने, उन्हें फ़िल्टर्स के साथ समृद्ध करने, और CloudWatch Logs सहित कई गंतव्यों को भेजने की अनुमति देता है। यह [Docker](https://www.docker.com/) और [Kubernetes](https://kubernetes.io/) एनवायरनमेंट के साथ पूरी तरह संगत है।
 
 अपनी हल्की प्रकृति के कारण, EKS worker nodes पर Container Insights में डिफ़ॉल्ट लॉग फ़ॉरवर्डर के रूप में Fluent Bit का उपयोग आपको कुशलतापूर्वक और विश्वसनीय रूप से CloudWatch logs में एप्लिकेशन लॉग्स स्ट्रीम करने की अनुमति देगा। [AWS for Fluent Bit image](https://github.com/aws/aws-for-fluent-bit), जिसमें Fluent Bit और संबंधित प्लगइन्स शामिल हैं, Fluent Bit को AWS इकोसिस्टम के भीतर एक एकीकृत अनुभव प्रदान करने के लिए तेज़ी से नई AWS सुविधाओं को अपनाने का अतिरिक्त लचीलापन प्रदान करता है।
 
@@ -153,7 +153,7 @@ receivers:
 * Host logs: प्रत्येक EKS worker node के लिए सिस्टम लॉग्स `/aws/containerinsights/Cluster_Name/host` लॉग ग्रुप में स्ट्रीम किए जाते हैं।
 * Data plane logs: EKS data plane कंपोनेंट्स द्वारा जनरेट किए गए लॉग्स `/aws/containerinsights/Cluster_Name/dataplane` लॉग ग्रुप में स्ट्रीम किए जाते हैं।
 
-इसके अतिरिक्त, कृपया Fluent Bit कॉन्फ़िगरेशन, Fluent Bit मॉनिटरिंग और लॉग विश्लेषण जैसे विषयों के बारे में [Amazon EKS के साथ Fluent Bit एकीकरण](https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/) से अधिक जानें।
+इसके अतिरिक्त, कृपया Fluent Bit कॉन्फ़िगरेशन, Fluent Bit मॉनिटरिंग और लॉग एनालिसिस जैसे विषयों के बारे में [Amazon EKS के साथ Fluent Bit एकीकरण](https://aws.amazon.com/blogs/containers/fluent-bit-integration-in-cloudwatch-container-insights-for-eks/) से अधिक जानें।
 
 ### Amazon EKS पर Container Insights के साथ लागत बचत
 
@@ -239,4 +239,5 @@ processors:
 
 ### निष्कर्ष
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हमने CloudWatch Container Insights के बारे में गहन विवरण कवर किए जिसमें Amazon CloudWatch Container Insights का परिचय और यह कैसे Amazon EKS पर आपके कंटेनरीकृत वर्कलोड का अवलोकन करने में मदद कर सकता है। हमने AWS Distro for Open Telemetry के साथ Amazon CloudWatch Container Insights का उपयोग, Fluent Bit एकीकरण, लागत बचत के दृष्टिकोण और EKS Blueprints का उपयोग कवर किया। आप [CloudWatch Container Insights module](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights) के साथ [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) में हाथों-हाथ अनुभव प्राप्त कर सकते हैं।
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हमने CloudWatch Container Insights के बारे में गहन विवरण कवर किए जिसमें Amazon CloudWatch Container Insights का परिचय और यह कैसे Amazon EKS पर आपके कंटेनरीकृत वर्कलोड का अवलोकन करने में मदद कर सकता है। हमने AWS Distro for Open Telemetry के साथ Amazon CloudWatch Container Insights का उपयोग, Fluent Bit एकीकरण, लागत बचत के दृष्टिकोण और EKS Blueprints का उपयोग कवर किया। आप [CloudWatch Container Insights module](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights) के साथ [One ऑब्ज़र्वेबिलिटी Workshop](https://catalog.workshops.aws/observability/en-US) में हाथों-हाथ अनुभव प्राप्त कर सकते हैं।
+

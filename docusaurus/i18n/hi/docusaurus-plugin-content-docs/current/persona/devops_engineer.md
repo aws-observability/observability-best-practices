@@ -1,10 +1,14 @@
-# DevOps
+﻿---
+sidebar_label: DevOps इंजीनियर
+---
 
-एक DevOps इंजीनियर के रूप में, उच्च-प्रदर्शन, विश्वसनीय और सुरक्षित सिस्टम बनाए रखने के लिए अपने वर्कफ्लो में मजबूत Observability प्रथाओं को एकीकृत करना महत्वपूर्ण है। यह गाइड DevOps दृष्टिकोण के अनुरूप Observability सर्वोत्तम प्रथाएं प्रदान करती है, जो continuous delivery लाइफसाइकल और इंफ्रास्ट्रक्चर प्रबंधन प्रक्रियाओं में व्यावहारिक कार्यान्वयन पर केंद्रित है।
+# DevOps इंजीनियर
+
+एक DevOps इंजीनियर के रूप में, उच्च-प्रदर्शन, विश्वसनीय और सुरक्षित सिस्टम बनाए रखने के लिए अपने वर्कफ्लो में मजबूत ऑब्ज़र्वेबिलिटी कार्यप्रणालियों को एकीकृत करना महत्वपूर्ण है। यह गाइड DevOps दृष्टिकोण के अनुरूप ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ प्रदान करती है, जो continuous delivery लाइफसाइकल और इंफ्रास्ट्रक्चर प्रबंधन प्रक्रियाओं में व्यावहारिक कार्यान्वयन पर केंद्रित है।
 
 ## Continuous Integration and Delivery Pipelines (CI/CD)
 
-Observability के साथ अपनी CI/CD पाइपलाइनों को ऑप्टिमाइज करने के लिए:
+ऑब्ज़र्वेबिलिटी के साथ अपनी CI/CD पाइपलाइनों को ऑप्टिमाइज करने के लिए:
  
 - विश्वसनीय, उपलब्ध और उच्च-प्रदर्शन CI/CD बनाए रखने के लिए [pipeline](https://docs.aws.amazon.com/codepipeline/latest/userguide/monitoring.html), [build](https://docs.aws.amazon.com/codebuild/latest/userguide/monitoring-builds.html) और [deploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/monitoring.html) के लिए मॉनिटरिंग लागू करें।
 
@@ -17,17 +21,17 @@ Observability के साथ अपनी CI/CD पाइपलाइनों
 
 - [CodeBuild](https://docs.aws.amazon.com/codebuild/latest/userguide/monitoring-metrics.html), [CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/monitoring-cloudwatch.html) और [Pipelines](https://docs.aws.amazon.com/codepipeline/latest/userguide/metrics-dimensions.html) के प्रमुख मेट्रिक्स को ट्रैक करने के लिए समेकित [CloudWatch dashboards](https://aws-observability.github.io/observability-best-practices/tools/dashboards) बनाएं।
 
-## Infrastructure as Code (IaC) प्रथाएं
+## Infrastructure as Code (IaC) कार्यप्रणालियाँ
 
-अपने IaC वर्कफ्लो में प्रभावी Observability के लिए:
+अपने IaC वर्कफ्लो में प्रभावी ऑब्ज़र्वेबिलिटी के लिए:
 
-- अपने [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CloudWatch.html) टेम्प्लेट में [CloudWatch Alarms](https://aws-observability.github.io/observability-best-practices/tools/alarms) और [Dashboards](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch-dashboard) एम्बेड करें। यह सभी वातावरणों में सुसंगत मॉनिटरिंग सुनिश्चित करता है।
+- अपने [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/AWS_CloudWatch.html) टेम्प्लेट में [CloudWatch Alarms](https://aws-observability.github.io/observability-best-practices/tools/alarms) और [Dashboards](https://aws-observability.github.io/observability-best-practices/tools/cloudwatch-dashboard) एम्बेड करें। यह सभी एनवायरनमेंट्स में सुसंगत मॉनिटरिंग सुनिश्चित करता है।
 
 - केंद्रीकृत लॉगिंग लागू करें: Amazon CloudWatch Logs या [Amazon OpenSearch Service](https://aws-observability.github.io/observability-best-practices/recipes/aes) जैसी सेवाओं का उपयोग करके एक [केंद्रीकृत लॉगिंग सॉल्यूशन](https://aws-observability.github.io/observability-best-practices/patterns/multiaccount) सेट अप करें। अपने IaC टेम्प्लेट के हिस्से के रूप में लॉग रिटेंशन नीतियां और लॉग ग्रुप परिभाषित करें।
 
-- सुरक्षा और प्रदर्शन विश्लेषण के लिए नेटवर्क ट्रैफिक जानकारी कैप्चर करने के लिए IaC का उपयोग करके [VPC flow logs](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs) कॉन्फ़िगर करें।
+- सुरक्षा और प्रदर्शन एनालिसिस के लिए नेटवर्क ट्रैफिक जानकारी कैप्चर करने के लिए IaC का उपयोग करके [VPC flow logs](https://aws-observability.github.io/observability-best-practices/patterns/vpcflowlogs) कॉन्फ़िगर करें।
 
-- बेहतर रिसोर्स संगठन और अधिक विस्तृत मॉनिटरिंग और लागत आवंटन को सक्षम करने के लिए अपने [IaC templates](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/implementing-and-enforcing-tagging.html#cicd-pipeline-managed-resources) में एक सुसंगत टैगिंग रणनीति का उपयोग करें।
+- बेहतर रिसोर्स ऑर्गनाइज़ेशन और अधिक विस्तृत मॉनिटरिंग और लागत आवंटन को सक्षम करने के लिए अपने [IaC templates](https://docs.aws.amazon.com/whitepapers/latest/tagging-best-practices/implementing-and-enforcing-tagging.html#cicd-pipeline-managed-resources) में एक सुसंगत टैगिंग नीति का उपयोग करें।
 
 - डिस्ट्रीब्यूटेड ट्रेसिंग सक्षम करने के लिए [AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/creating-resources-with-cloudformation.html) का उपयोग करें और इसे एप्लिकेशन कोड के साथ इंटीग्रेट करें। अपने IaC टेम्प्लेट में X-Ray सैंपलिंग नियम और ग्रुप परिभाषित करें।
 
@@ -35,7 +39,7 @@ Observability के साथ अपनी CI/CD पाइपलाइनों
 
 ## Kubernetes के साथ कंटेनराइजेशन और ऑर्केस्ट्रेशन
 
-कंटेनराइज्ड एप्लिकेशन और Kubernetes वातावरण के लिए:
+कंटेनराइज्ड एप्लिकेशन और Kubernetes एनवायरनमेंट के लिए:
 
 - व्यापक कंटेनर और क्लस्टर मॉनिटरिंग के लिए [Container Insights के साथ Amazon EKS](https://aws-observability.github.io/observability-best-practices/guides/containers/aws-native/eks/amazon-cloudwatch-container-insights) लागू करें।
 
@@ -43,11 +47,11 @@ Observability के साथ अपनी CI/CD पाइपलाइनों
 
 - उन्नत मेट्रिक संग्रह और विज़ुअलाइज़ेशन के लिए EKS पर [Prometheus और Grafana](https://aws-observability.github.io/observability-best-practices/patterns/eksampamg) लागू करें। आसान सेटअप और प्रबंधन के लिए AWS Managed Grafana सेवा का उपयोग करें।
 
-- Kubernetes डिप्लॉयमेंट के लिए Flux या ArgoCD जैसे टूल्स का उपयोग करके [GitOps](https://aws-observability.github.io/observability-best-practices/guides/operational/gitops-with-amg/#introduction-to-gitops) प्रथाएं लागू करें। अपने GitOps वर्कफ्लो की sync स्थिति और स्वास्थ्य की मॉनिटरिंग के लिए इन टूल्स को CloudWatch के साथ इंटीग्रेट करें।
+- Kubernetes डिप्लॉयमेंट के लिए Flux या ArgoCD जैसे टूल्स का उपयोग करके [GitOps](https://aws-observability.github.io/observability-best-practices/guides/operational/gitops-with-amg/#introduction-to-gitops) कार्यप्रणालियाँ लागू करें। अपने GitOps वर्कफ्लो की sync स्थिति और स्वास्थ्य की मॉनिटरिंग के लिए इन टूल्स को CloudWatch के साथ इंटीग्रेट करें।
 
 ## CI/CD पाइपलाइनों में सुरक्षा और अनुपालन
 
-अपनी पाइपलाइनों में सुरक्षा Observability बढ़ाने के लिए:
+अपनी पाइपलाइनों में सुरक्षा ऑब्ज़र्वेबिलिटी बढ़ाने के लिए:
 
 - स्वचालित भेद्यता मूल्यांकन के लिए अपनी CI/CD प्रक्रिया में [Amazon Inspector](https://aws.amazon.com/inspector/) इंटीग्रेट करें।
 
@@ -57,25 +61,25 @@ Observability के साथ अपनी CI/CD पाइपलाइनों
 
 - बुद्धिमान खतरा पहचान के लिए [Amazon GuardDuty](https://aws.amazon.com/blogs/aws/introducing-amazon-guardduty-extended-threat-detection-aiml-attack-sequence-identification-for-enhanced-cloud-security/) का लाभ उठाएं, और अपने इंसिडेंट रिस्पॉन्स वर्कफ्लो के साथ इसके निष्कर्षों को इंटीग्रेट करें।
 
-- CloudFormation या Terraform का उपयोग करके AWS WAF rules, Security Hub controls, और GuardDuty filters परिभाषित करके security as code लागू करें। यह सुनिश्चित करता है कि सुरक्षा Observability आपके इंफ्रास्ट्रक्चर के साथ-साथ विकसित होती है।
+- CloudFormation या Terraform का उपयोग करके AWS WAF rules, Security Hub controls, और GuardDuty filters परिभाषित करके security as code लागू करें। यह सुनिश्चित करता है कि सुरक्षा ऑब्ज़र्वेबिलिटी आपके इंफ्रास्ट्रक्चर के साथ-साथ विकसित होती है।
 
-## स्वचालित परीक्षण और गुणवत्ता आश्वासन रणनीतियां
+## स्वचालित परीक्षण और गुणवत्ता आश्वासन नीतियां
 
-Observability के साथ अपनी परीक्षण प्रक्रियाओं को बढ़ाने के लिए:
+ऑब्ज़र्वेबिलिटी के साथ अपनी परीक्षण प्रक्रियाओं को बढ़ाने के लिए:
 
 - अपने API और उपयोगकर्ता यात्राओं का लगातार परीक्षण करने वाले canaries बनाने के लिए [CloudWatch Synthetics](https://docs.aws.amazon.com/AmazonSynthetics/latest/APIReference/Welcome.html) लागू करें।
 
-- अपने टेस्ट सूट चलाने और ट्रेंड विश्लेषण के लिए CloudWatch मेट्रिक्स के रूप में टेस्ट परिणाम प्रकाशित करने के लिए AWS CodeBuild का उपयोग करें।
+- अपने टेस्ट सूट चलाने और ट्रेंड एनालिसिस के लिए CloudWatch मेट्रिक्स के रूप में टेस्ट परिणाम प्रकाशित करने के लिए AWS CodeBuild का उपयोग करें।
 
-- परीक्षण चरणों के दौरान प्रदर्शन अंतर्दृष्टि प्राप्त करने के लिए अपने टेस्ट वातावरण में [AWS X-Ray tracing](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-traces.html) लागू करें।
+- परीक्षण चरणों के दौरान प्रदर्शन अंतर्दृष्टि प्राप्त करने के लिए अपने टेस्ट एनवायरनमेंट में [AWS X-Ray tracing](https://docs.aws.amazon.com/xray/latest/devguide/xray-console-traces.html) लागू करें।
 
 - अपने एप्लिकेशन के साथ वास्तविक उपयोगकर्ता इंटरैक्शन से उपयोगकर्ता अनुभव डेटा एकत्र और विश्लेषित करने के लिए Amazon CloudWatch [RUM](https://aws-observability.github.io/observability-best-practices/tools/rum)(Real User Monitoring) का लाभ उठाएं।
 
-- [AWS Fault Injection Simulator](https://aws.amazon.com/blogs/mt/chaos-engineering-leveraging-aws-fault-injection-simulator-in-a-multi-account-aws-environment/) का उपयोग करके chaos engineering प्रथाएं लागू करें। अपने सिस्टम की [रेजिलिएंस बढ़ाने](https://aws.amazon.com/blogs/aws/monitor-and-improve-your-application-resiliency-with-resilience-hub/) के लिए सिमुलेटेड विफलताओं के प्रभाव की मॉनिटरिंग करें।
+- [AWS Fault Injection Simulator](https://aws.amazon.com/blogs/mt/chaos-engineering-leveraging-aws-fault-injection-simulator-in-a-multi-account-aws-environment/) का उपयोग करके chaos engineering कार्यप्रणालियाँ लागू करें। अपने सिस्टम की [रेजिलिएंस बढ़ाने](https://aws.amazon.com/blogs/aws/monitor-and-improve-your-application-resiliency-with-resilience-hub/) के लिए सिमुलेटेड विफलताओं के प्रभाव की मॉनिटरिंग करें।
 
-## रिलीज़ प्रबंधन और डिप्लॉयमेंट सर्वोत्तम प्रथाएं
+## रिलीज़ प्रबंधन और डिप्लॉयमेंट बेस्ट प्रैक्टिसेज़
 
-Observability-ड्रिवन रिलीज़ प्रबंधन के लिए:
+ऑब्ज़र्वेबिलिटी-ड्रिवन रिलीज़ प्रबंधन के लिए:
 
 - मैनेज्ड डिप्लॉयमेंट के लिए [AWS CodeDeploy](https://docs.aws.amazon.com/codedeploy/latest/userguide/welcome.html) का उपयोग करें, डिप्लॉयमेंट मॉनिटरिंग के लिए CloudWatch के साथ इसके इंटीग्रेशन का लाभ उठाते हुए।
 
@@ -94,4 +98,6 @@ Observability-ड्रिवन रिलीज़ प्रबंधन के
 
 ## निष्कर्ष
 
-Observability प्रथाओं को अपनाना केवल अपने सिस्टम को बनाए रखने के बारे में नहीं है - यह ऑपरेशनल उत्कृष्टता प्राप्त करने और अपने संगठन में निरंतर नवाचार चलाने की दिशा में एक रणनीतिक कदम है। याद रखें कि जैसे-जैसे आपके सिस्टम विकसित होते हैं, नई AWS सुविधाओं और सेवाओं का लाभ उठाते हुए अपनी Observability रणनीति को लगातार परिष्कृत करें।
+ऑब्ज़र्वेबिलिटी कार्यप्रणालियों को अपनाना केवल अपने सिस्टम को बनाए रखने के बारे में नहीं है - यह ऑपरेशनल उत्कृष्टता प्राप्त करने और अपने ऑर्गनाइज़ेशन में निरंतर नवाचार चलाने की दिशा में एक नीतिक कदम है। याद रखें कि जैसे-जैसे आपके सिस्टम विकसित होते हैं, नई AWS सुविधाओं और सेवाओं का लाभ उठाते हुए अपनी ऑब्ज़र्वेबिलिटी नीति को लगातार परिष्कृत करें।
+
+

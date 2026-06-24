@@ -31,7 +31,7 @@ collect traces from an instrumented app and ingest them into X-Ray:
 * You need to install the [eksctl](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) command in your environment.
 * You need to install [kubectl](https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html) in your environment. 
 * You have [Docker](https://docs.docker.com/get-docker/) installed into your environment.
-* You have the [aws-observability/aws-o11y-recipes](https://github.com/aws-observability/aws-o11y-recipes/)
+* You have the [aws-ऑब्ज़र्वेबिलिटी/aws-o11y-recipes](https://github.com/aws-observability/aws-o11y-recipes/)
   repo cloned into your local environment.
 
 ### Fargate पर EKS क्लस्टर बनाएं
@@ -204,7 +204,7 @@ you can dive into it and view it in the "Explore" tab like so:
 Amazon Managed Grafana में:
 
 * [User Guide: Dashboards](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [Best practices for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [बेस्ट प्रैक्टिसेज़ for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
 बस इतना ही, बधाई हो आपने सीख लिया कि कैसे उपयोग करें ADOT in EKS on Fargate to 
 ingest traces.

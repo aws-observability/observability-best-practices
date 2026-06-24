@@ -14,8 +14,8 @@
 
 ### पूर्वापेक्षाएँ
 
-* AWS CLI आपके वातावरण में [स्थापित](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) और [कॉन्फ़िगर](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) होनी चाहिए।
-* [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html) आपके वातावरण में स्थापित होना चाहिए।
+* AWS CLI आपके एनवायरनमेंट में [स्थापित](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html) और [कॉन्फ़िगर](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html) होनी चाहिए।
+* [AWS CDK Typescript](https://docs.aws.amazon.com/cdk/latest/guide/work-with-cdk-typescript.html) आपके एनवायरनमेंट में स्थापित होना चाहिए।
 * Node.js।
 * [रिपॉजिटरी](https://github.com/aws-observability/observability-best-practices/) आपकी लोकल मशीन पर क्लोन की जानी चाहिए। इस प्रोजेक्ट का कोड `/sandbox/grafana_subnet_ip_monitoring` के अंतर्गत है।
 

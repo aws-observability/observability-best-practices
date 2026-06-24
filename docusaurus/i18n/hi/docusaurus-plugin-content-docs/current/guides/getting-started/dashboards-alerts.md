@@ -1,4 +1,4 @@
----
+﻿---
 sidebar_position: 4
 ---
 
@@ -12,7 +12,7 @@ sidebar_position: 4
 
 उदाहरण के लिए, आपको Dashboards के अंतर्गत कई सेवाओं (जैसे Lambda, EC2, API Gateway, और कई अन्य) के लिए स्वचालित डैशबोर्ड मिलेंगे।
 
-यदि आप Application Signals का लाभ उठा रहे हैं, तो आपको Application Signals (APM) के अंतर्गत एप्लिकेशन मैप और डैशबोर्ड मिलेंगे। इसके अतिरिक्त, आपको uninstrumented services मिलेंगी जो observability में किसी भी gap को उजागर करेंगी।
+यदि आप Application Signals का लाभ उठा रहे हैं, तो आपको Application Signals (APM) के अंतर्गत एप्लिकेशन मैप और डैशबोर्ड मिलेंगे। इसके अतिरिक्त, आपको uninstrumented services मिलेंगी जो ऑब्ज़र्वेबिलिटी में किसी भी gap को उजागर करेंगी।
 
 ## कस्टम डैशबोर्ड
 
@@ -24,7 +24,7 @@ sidebar_position: 4
 
 ### Alarm अनुशंसाएं
 
-यदि आप अनिश्चित हैं कि कैसे शुरू करें, तो Alarm Recommendations आपकी मदद करेंगी। Alarm recommendations मॉनिटरिंग सर्वोत्तम प्रथाओं पर आधारित हैं। Alarm बनाने से पहले अनुशंसित alarm कॉन्फ़िगरेशन की समीक्षा करें।
+यदि आप अनिश्चित हैं कि कैसे शुरू करें, तो Alarm Recommendations आपकी मदद करेंगी। Alarm recommendations मॉनिटरिंग बेस्ट प्रैक्टिसेज़ पर आधारित हैं। Alarm बनाने से पहले अनुशंसित alarm कॉन्फ़िगरेशन की समीक्षा करें।
 
 अधिक विवरण के लिए, [AWS सेवाओं के लिए Alarm अनुशंसाएं](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html) देखें।
 
@@ -38,14 +38,14 @@ sidebar_position: 4
 
 यह CloudWatch पर शुरुआत करने की गाइड को पूरा करता है। यहां हमने जो चरण कवर किए वे हैं:
 
-1. **मॉनिटरिंग और सोर्स अकाउंट सेटअप** - कई AWS अकाउंट और regions से टेलीमेट्री डेटा को केंद्रीकृत करने के लिए cross-account observability कॉन्फ़िगर किया
-2. **Unified Data Store सेटअप** - एकीकृत क्वेरीइंग और विश्लेषण के लिए एक ही अकाउंट और region में लॉग डेटा केंद्रीकृत किया
-3. **एजेंट/Collectors कॉन्फ़िगर करें** - अपने अनुप्रयोगों और इंफ्रास्ट्रक्चर से टेलीमेट्री भेजने के लिए CloudWatch agents और/या OpenTelemetry collectors डिप्लॉय किए
+1. **मॉनिटरिंग और सोर्स अकाउंट सेटअप** - कई AWS अकाउंट और regions से टेलीमेट्री डेटा को केंद्रीकृत करने के लिए cross-account ऑब्ज़र्वेबिलिटी कॉन्फ़िगर किया
+2. **Unified Data Store सेटअप** - एकीकृत क्वेरीइंग और एनालिसिस के लिए एक ही अकाउंट और region में लॉग डेटा केंद्रीकृत किया
+3. **एजेंट/Collectors कॉन्फ़िगर करें** - अपने एप्लिकेशन्स और इंफ्रास्ट्रक्चर से टेलीमेट्री भेजने के लिए CloudWatch agents और/या OpenTelemetry collectors डिप्लॉय किए
 4. **डैशबोर्ड और अलर्ट** - दृश्यता के लिए डैशबोर्ड और अपनी सेवाओं के स्वास्थ्य की निगरानी के लिए alarms बनाए
 
 ## अगले कदम
 
-विशिष्ट विषयों पर अधिक गहन मार्गदर्शन के लिए, इस सर्वोत्तम प्रथाओं की गाइड के विस्तृत अनुभागों को देखें:
+विशिष्ट विषयों पर अधिक गहन मार्गदर्शन के लिए, इस बेस्ट प्रैक्टिसेज़ की गाइड के विस्तृत अनुभागों को देखें:
 
 - [कंटेनर (ECS/EKS)](../containers/aws-native/eks/amazon-cloudwatch-container-insights.md)
 - [सर्वरलेस](../serverless/aws-native/lambda-based-observability.md)

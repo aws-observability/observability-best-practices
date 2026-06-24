@@ -9,8 +9,8 @@
 
 ## सामान्य
 - [Container Day - Docker Con | डेवलपर्स कैसे आसानी से स्केल पर प्रोडक्शन वेब एप्लिकेशन तक पहुंच सकते हैं](https://www.youtube.com/watch?v=Iyp9Ugk9oRs)
-- [AWS Blog | AWS App Runner सेवाओं के लिए केंद्रीकृत Observability](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
-- [AWS Blog | AWS App Runner VPC नेटवर्किंग के लिए Observability](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
+- [AWS Blog | AWS App Runner सेवाओं के लिए केंद्रीकृत ऑब्ज़र्वेबिलिटी](https://aws.amazon.com/blogs/containers/centralized-observability-for-aws-app-runner-services/)
+- [AWS Blog | AWS App Runner VPC नेटवर्किंग के लिए ऑब्ज़र्वेबिलिटी](https://aws.amazon.com/blogs/containers/observability-for-aws-app-runner-vpc-networking/)
 - [AWS Blog | Amazon EventBridge के साथ AWS App Runner एप्लिकेशन को नियंत्रित और मॉनिटर करना](https://aws.amazon.com/blogs/containers/controlling-and-monitoring-aws-app-runner-applications-with-amazon-eventbridge/)
 
 

@@ -1,4 +1,4 @@
-# EKS पर कॉन्फ़िगर किए गए App Mesh वातावरण की निगरानी के लिए Amazon Managed Service for Prometheus का उपयोग
+# EKS पर कॉन्फ़िगर किए गए App Mesh एनवायरनमेंट की निगरानी के लिए Amazon Managed Service for Prometheus का उपयोग
 
 इस रेसिपी में हम आपको दिखाते हैं कि कैसे ingest [App Mesh](https://docs.aws.amazon.com/app-mesh/) Envoy 
 metrics in an [Amazon Elastic Kubernetes Service](https://aws.amazon.com/eks/) (EKS) cluster 

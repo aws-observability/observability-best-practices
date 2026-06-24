@@ -1,4 +1,4 @@
-# Container Insights के साथ सिस्टम मेट्रिक्स एकत्र करना
+﻿# Container Insights के साथ सिस्टम मेट्रिक्स एकत्र करना
 सिस्टम मेट्रिक्स निम्न-स्तरीय रिसोर्सेज से संबंधित हैं जिनमें सर्वर पर भौतिक कंपोनेंट्स जैसे CPU, मेमोरी, डिस्क और नेटवर्क इंटरफेस शामिल हैं।
 Amazon ECS पर डिप्लॉय किए गए कंटेनराइज़्ड एप्लिकेशन से सिस्टम मेट्रिक्स एकत्र, एग्रीगेट और सारांशित करने के लिए [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) का उपयोग करें। Container Insights डायग्नोस्टिक जानकारी भी प्रदान करता है, जैसे कंटेनर रीस्टार्ट विफलताएँ, जो समस्याओं को अलग करने और उन्हें तुरंत हल करने में मदद करती हैं। यह EC2 और Fargate पर डिप्लॉय किए गए Amazon ECS क्लस्टर्स के लिए उपलब्ध है।
 
@@ -38,8 +38,8 @@ EC2 पर होस्ट किए गए Amazon ECS क्लस्टर प
     इंस्टेंस-स्तर मेट्रिक्स एकत्र करने के लिए Amazon ECS क्लस्टर पर CloudWatch एजेंट डिप्लॉय करने के चरण [Amazon CloudWatch User Guide](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-instancelevel.html) में दस्तावेज़ित हैं। ध्यान दें कि यह विकल्प Fargate पर होस्ट किए गए Amazon ECS क्लस्टर्स के लिए उपलब्ध नहीं है।
 :::
     
-## Logs Insights के साथ परफ़ॉर्मेंस लॉग events का विश्लेषण
-Container Insights embedded metric format के साथ परफ़ॉर्मेंस लॉग events का उपयोग करके मेट्रिक्स एकत्र करता है। प्रत्येक लॉग event में CPU और मेमोरी जैसे सिस्टम रिसोर्सेज या टास्क और सर्विसेज जैसे ECS रिसोर्सेज पर देखा गया परफ़ॉर्मेंस डेटा हो सकता है। परफ़ॉर्मेंस लॉग events के उदाहरण जो Container Insights Amazon ECS से क्लस्टर, सर्विस, टास्क और कंटेनर स्तर पर एकत्र करता है, [यहाँ सूचीबद्ध हैं](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-reference-performance-logs-ECS.html)। CloudWatch इन लॉग events में कुछ परफ़ॉर्मेंस डेटा के आधार पर ही मेट्रिक्स जनरेट करता है। लेकिन आप CloudWatch Logs Insights क्वेरीज का उपयोग करके परफ़ॉर्मेंस डेटा का गहरा विश्लेषण करने के लिए इन लॉग events का उपयोग कर सकते हैं।
+## Logs Insights के साथ परफ़ॉर्मेंस लॉग events का एनालिसिस
+Container Insights embedded metric format के साथ परफ़ॉर्मेंस लॉग events का उपयोग करके मेट्रिक्स एकत्र करता है। प्रत्येक लॉग event में CPU और मेमोरी जैसे सिस्टम रिसोर्सेज या टास्क और सर्विसेज जैसे ECS रिसोर्सेज पर देखा गया परफ़ॉर्मेंस डेटा हो सकता है। परफ़ॉर्मेंस लॉग events के उदाहरण जो Container Insights Amazon ECS से क्लस्टर, सर्विस, टास्क और कंटेनर स्तर पर एकत्र करता है, [यहाँ सूचीबद्ध हैं](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-reference-performance-logs-ECS.html)। CloudWatch इन लॉग events में कुछ परफ़ॉर्मेंस डेटा के आधार पर ही मेट्रिक्स जनरेट करता है। लेकिन आप CloudWatch Logs Insights क्वेरीज का उपयोग करके परफ़ॉर्मेंस डेटा का गहरा एनालिसिस करने के लिए इन लॉग events का उपयोग कर सकते हैं।
 
 Logs Insights क्वेरीज चलाने के लिए यूज़र इंटरफ़ेस CloudWatch कंसोल में नेविगेशन पेज से *Logs Insights* चुनकर उपलब्ध है। जब आप एक लॉग ग्रुप चुनते हैं, तो CloudWatch Logs Insights स्वचालित रूप से लॉग ग्रुप में परफ़ॉर्मेंस लॉग events में फ़ील्ड्स का पता लगाता है और उन्हें दाएँ पैनल में *Discovered* फ़ील्ड्स में प्रदर्शित करता है। क्वेरी निष्पादन के परिणाम समय के साथ इस लॉग ग्रुप में लॉग events का बार ग्राफ़ के रूप में प्रदर्शित होते हैं।
 

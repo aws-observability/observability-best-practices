@@ -1,4 +1,4 @@
-# CloudWatch Embedded Metric Format
+﻿# CloudWatch Embedded Metric Format
 
 ## परिचय
 
@@ -18,11 +18,11 @@ AWS Lambda ग्राहकों को किसी custom code, blocking ne
 
 ## Embedded Metric Format (EMF) logs कब उपयोग करें
 
-परंपरागत रूप से, monitoring को तीन श्रेणियों में संरचित किया गया है। पहली श्रेणी application का classic health check है। दूसरी श्रेणी 'metrics' है, जिसके माध्यम से ग्राहक counters, timers, और gauges जैसे models का उपयोग करके अपने application को instrument करते हैं। तीसरी श्रेणी 'logs' है, जो application की overall observability के लिए अमूल्य हैं। Logs ग्राहकों को उनके application के व्यवहार के बारे में निरंतर जानकारी प्रदान करते हैं। अब, ग्राहकों के पास Embedded Metric Format (EMF) logs के माध्यम से data granularity या richness में बलिदान किए बिना अपने application की instrumentation को unify और simplify करते हुए incredible analytical capabilities प्राप्त करके अपने application को observe करने के तरीके में काफी सुधार करने का एक तरीका है।
+परंपरागत रूप से, monitoring को तीन श्रेणियों में संरचित किया गया है। पहली श्रेणी application का classic health check है। दूसरी श्रेणी 'metrics' है, जिसके माध्यम से ग्राहक counters, timers, और gauges जैसे models का उपयोग करके अपने application को instrument करते हैं। तीसरी श्रेणी 'logs' है, जो application की overall ऑब्ज़र्वेबिलिटी के लिए अमूल्य हैं। Logs ग्राहकों को उनके application के व्यवहार के बारे में निरंतर जानकारी प्रदान करते हैं। अब, ग्राहकों के पास Embedded Metric Format (EMF) logs के माध्यम से data granularity या richness में बलिदान किए बिना अपने application की instrumentation को unify और simplify करते हुए incredible analytical capabilities प्राप्त करके अपने application को observe करने के तरीके में काफी सुधार करने का एक तरीका है।
 
 [Embedded Metric Format (EMF) logs](https://aws.amazon.com/blogs/mt/enhancing-workload-observability-using-amazon-cloudwatch-embedded-metric-format/) उन environments के लिए ideal है जो high cardinality application data generate करते हैं, जो metric dimensions बढ़ाए बिना EMF logs का हिस्सा हो सकते हैं। यह अभी भी ग्राहकों को CloudWatch Logs Insights और CloudWatch Metrics Insights के माध्यम से EMF logs query करके application data को slice और dice करने की अनुमति देता है बिना हर attribute को metric dimension के रूप में रखने की आवश्यकता के।
 
-[लाखों Telco या IoT devices से telemetry data aggregate](https://aws.amazon.com/blogs/mt/how-bt-uses-amazon-cloudwatch-to-monitor-millions-of-devices/) करने वाले ग्राहकों को अपने devices के performance में insights और devices द्वारा report की जाने वाली unique telemetry में quickly deep dive करने की क्षमता चाहिए। उन्हें quality service प्रदान करने के लिए humongous data खोजे बिना समस्याओं का आसान और तेज troubleshoot भी करना होता है। Embedded Metric Format (EMF) logs का उपयोग करके ग्राहक metrics और logs को single entity में combine करके और cost efficiency और बेहतर performance के साथ troubleshooting में सुधार करके large scale observability accomplish कर सकते हैं।
+[लाखों Telco या IoT devices से telemetry data aggregate](https://aws.amazon.com/blogs/mt/how-bt-uses-amazon-cloudwatch-to-monitor-millions-of-devices/) करने वाले ग्राहकों को अपने devices के performance में insights और devices द्वारा report की जाने वाली unique telemetry में quickly deep dive करने की क्षमता चाहिए। उन्हें quality service प्रदान करने के लिए humongous data खोजे बिना समस्याओं का आसान और तेज troubleshoot भी करना होता है। Embedded Metric Format (EMF) logs का उपयोग करके ग्राहक metrics और logs को single entity में combine करके और cost efficiency और बेहतर performance के साथ troubleshooting में सुधार करके large scale ऑब्ज़र्वेबिलिटी accomplish कर सकते हैं।
 
 ## Embedded Metric Format (EMF) logs Generate करना
 
@@ -131,7 +131,7 @@ modern applications को manage करने की बढ़ती complexity
 
 ## अतिरिक्त संदर्भ:
 
-- One Observability Workshop पर [Embedded Metric Format with an AWS Lambda function](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/clientlibrary) NodeJS Library का उपयोग करके सैंपल।
-- Serverless Observability Workshop पर [Async metrics using Embedded Metrics Format](https://serverless-observability.workshop.aws/en/030_cloudwatch/async_metrics_emf.html) (EMF)
+- One ऑब्ज़र्वेबिलिटी Workshop पर [Embedded Metric Format with an AWS Lambda function](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/clientlibrary) NodeJS Library का उपयोग करके सैंपल।
+- Serverless ऑब्ज़र्वेबिलिटी Workshop पर [Async metrics using Embedded Metrics Format](https://serverless-observability.workshop.aws/en/030_cloudwatch/async_metrics_emf.html) (EMF)
 - [PutLogEvents API का उपयोग करके Java code sample](https://catalog.workshops.aws/observability/en-US/aws-native/metrics/emf/putlogevents) CloudWatch Logs को EMF logs भेजने के लिए
 - Blog article: [Lowering costs and focusing on our customers with Amazon CloudWatch embedded custom metrics](https://aws.amazon.com/blogs/mt/lowering-costs-and-focusing-on-our-customers-with-amazon-cloudwatch-embedded-custom-metrics/)

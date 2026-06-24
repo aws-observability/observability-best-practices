@@ -1,4 +1,4 @@
-# AWS Rust SDK के साथ Custom Metrics बनाना
+﻿# AWS Rust SDK के साथ Custom Metrics बनाना
 
 ## परिचय
 
@@ -70,7 +70,7 @@ let mut rng = rand::thread_rng();
 let roll_value = rng.gen_range(1..7);
 ```
 
-अब जब हमारे पास diceroll नंबर है, आइए CloudWatch में value को custom metric के रूप में जोड़ने के 3 अलग-अलग तरीके देखें। एक बार value custom metric बन जाने के बाद हम value पर alarms सेट करने, anomaly detection सेट करने, dashboard पर value plot करने, और बहुत कुछ करने की क्षमता प्राप्त करते हैं।
+अब जब हमारे पास diceroll नंबर है, आइए CloudWatch में value को custom metric के रूप में जोड़ने के 3 अलग-अलग तरीके देखें। एक बार value custom metric बन जाने के बाद हम value पर alarms सेट करने, एनोमली डिटेक्शन सेट करने, dashboard पर value plot करने, और बहुत कुछ करने की क्षमता प्राप्त करते हैं।
 
 ### Put Metric Data
 

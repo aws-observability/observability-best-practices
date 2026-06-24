@@ -14,4 +14,4 @@
 [ddb-main]: https://aws.amazon.com/dynamodb/
 [ddb-opawa]: https://aws.amazon.com/blogs/database/monitoring-amazon-dynamodb-for-operational-awareness/
 [ddb-aes-ws]: https://search-ddb.aesworkshops.com/
-[cwci-oow]: https://observability.workshop.aws/en/contributorinsights/explore
+[cwci-oow]: https://ऑब्ज़र्वेबिलिटी.workshop.aws/en/contributorinsights/explore

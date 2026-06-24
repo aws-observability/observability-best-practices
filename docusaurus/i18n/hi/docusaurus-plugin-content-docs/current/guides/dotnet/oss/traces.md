@@ -1,8 +1,8 @@
-# ट्रेसिंग
+﻿# ट्रेसिंग
 
-.NET, OpenTelemetry ट्रेसिंग के लिए मजबूत समर्थन प्रदान करता है, डेवलपर्स को वितरित प्रणालियों में अनुरोध प्रवाह की निगरानी के लिए शक्तिशाली उपकरण देता है। यह कार्यान्वयन एप्लिकेशन व्यवहार और प्रदर्शन बॉटलनेक में एंड-टू-एंड दृश्यता प्रदान करता है।
+.NET, OpenTelemetry ट्रेसिंग के लिए मजबूत समर्थन प्रदान करता है, डेवलपर्स को वितरित प्रणालियों में अनुरोध प्रवाह की निगरानी के लिए शक्तिशाली टूल देता है। यह कार्यान्वयन एप्लिकेशन व्यवहार और प्रदर्शन बॉटलनेक में एंड-टू-एंड दृश्यता प्रदान करता है।
 
-.NET इकोसिस्टम में, OpenTelemetry ट्रेसिंग [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) class के आसपास बनाया गया है, जो W3C Trace Context विशिष्टता का .NET कार्यान्वयन है। उद्योग मानकों के साथ यह संरेखण अन्य सेवाओं और observability उपकरणों के साथ इंटरऑपरेबिलिटी सुनिश्चित करता है।
+.NET इकोसिस्टम में, OpenTelemetry ट्रेसिंग [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) class के आसपास बनाया गया है, जो W3C Trace Context विशिष्टता का .NET कार्यान्वयन है। उद्योग मानकों के साथ यह संरेखण अन्य सेवाओं और ऑब्ज़र्वेबिलिटी टूल्स के साथ इंटरऑपरेबिलिटी सुनिश्चित करता है।
 
 ## ट्रेसेस कार्यान्वयन
 
@@ -37,7 +37,7 @@ activity?.SetTag("orderId", orderId);
 using var childActivity = MyActivitySource.StartActivity("ValidatePayment");
 ```
 
-.NET अनुप्रयोगों में OpenTelemetry ट्रेसिंग के लिए सर्वोत्तम प्रथा के रूप में अपने ActivitySource को dependency injection में रजिस्टर करना माना जाता है। 
+.NET एप्लिकेशन्स में OpenTelemetry ट्रेसिंग के लिए बेस्ट प्रैक्टिस के रूप में अपने ActivitySource को dependency injection में रजिस्टर करना माना जाता है। 
 
 ```c#
 // During service configuration

@@ -3,8 +3,8 @@
 [Amazon Managed Grafana][amg-main] ओपन सोर्स Grafana पर आधारित एक पूर्ण प्रबंधित सेवा है,
 जो आपको सर्वर प्रोविजन किए बिना, सॉफ्टवेयर कॉन्फ़िगर और अपडेट किए बिना,
 या प्रोडक्शन में Grafana को सुरक्षित और स्केल करने में शामिल भारी काम किए बिना
-अपने मेट्रिक्स, लॉग्स और ट्रेस का विश्लेषण करने में सक्षम बनाती है। आप कई डेटा सोर्स से
-कनेक्ट करते हुए अपनी टीम के साथ Observability डैशबोर्ड बना,
+अपने मेट्रिक्स, लॉग्स और ट्रेस का एनालिसिस करने में सक्षम बनाती है। आप कई डेटा सोर्स से
+कनेक्ट करते हुए अपनी टीम के साथ ऑब्ज़र्वेबिलिटी डैशबोर्ड बना,
 एक्सप्लोर और शेयर कर सकते हैं।
 
 निम्नलिखित रेसिपी देखें:
@@ -30,8 +30,8 @@
 - [Customer managed IAM roles का उपयोग करके cross-account data source सेट अप करना][amg-xacc-ds]
 
 ## अन्य
-- [हाइब्रिड वातावरण की मॉनिटरिंग][amg-hybridenvs]
-- [एक विनियमित मल्टीटेनेंट वातावरण में Grafana और Loki का प्रबंधन][grafana-loki-regenv]
+- [हाइब्रिड एनवायरनमेंट की मॉनिटरिंग][amg-hybridenvs]
+- [एक विनियमित मल्टीटेनेंट एनवायरनमेंट में Grafana और Loki का प्रबंधन][grafana-loki-regenv]
 - [Amazon Managed Service for Prometheus और Amazon Managed Grafana का उपयोग करके Amazon EKS Anywhere की मॉनिटरिंग][amg-anywhere-monitoring]
 - [शुरुआत करने के लिए Workshop][amg-oow]
 - [Subnet में मुफ्त IP की मॉनिटरिंग][amg-subnet-free-ip-monitoring]
@@ -45,7 +45,7 @@
 [amg-hybridenvs]: https://aws.amazon.com/blogs/mt/monitoring-hybrid-environments-using-amazon-managed-service-for-grafana/
 [amg-xacc-ds]: https://aws.amazon.com/blogs/opensource/setting-up-amazon-managed-grafana-cross-account-data-source-using-customer-managed-iam-roles/
 [grafana-loki-regenv]: https://aws.amazon.com/blogs/opensource/how-to-manage-grafana-and-loki-in-a-regulated-multitenant-environment/
-[amg-oow]: https://observability.workshop.aws/en/amg.html
+[amg-oow]: https://ऑब्ज़र्वेबिलिटी.workshop.aws/en/amg.html
 [amg-tf-automation]: recipes/amg-automation-tf.md
 [amg-plugin-athena]: recipes/amg-athena-plugin.md
 [amg-plugin-redshift]: recipes/amg-redshift-plugin.md
@@ -53,4 +53,4 @@
 [amg-anywhere-monitoring]: https://aws.amazon.com/blogs/containers/monitoring-amazon-eks-anywhere-using-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-amp-statsd]: https://aws.amazon.com/blogs/mt/viewing-custom-metrics-from-statsd-with-amazon-managed-service-for-prometheus-and-amazon-managed-grafana/
 [amg-grafana-teams]: https://aws.amazon.com/blogs/mt/fine-grained-access-control-in-amazon-managed-grafana-using-grafana-teams/
-[amg-subnet-free-ip-monitoring]: https://aws-observability.github.io/observability-best-practices/recipes/recipes/amg-subnet-free-ip-monitoring/
+[amg-subnet-free-ip-monitoring]: https://aws-ऑब्ज़र्वेबिलिटी.github.io/ऑब्ज़र्वेबिलिटी-best-practices/recipes/recipes/amg-subnet-free-ip-monitoring/

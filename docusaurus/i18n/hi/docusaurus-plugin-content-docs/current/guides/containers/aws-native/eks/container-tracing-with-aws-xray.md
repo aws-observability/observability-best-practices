@@ -1,6 +1,6 @@
-# AWS X-Ray के साथ कंटेनर ट्रेसिंग
+﻿# AWS X-Ray के साथ कंटेनर ट्रेसिंग
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हम AWS X-Ray के साथ Container Tracing से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हम AWS X-Ray के साथ Container Tracing से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
 
 * AWS X-Ray का परिचय
 * AWS Distro for OpenTelemetry के लिए Amazon EKS add-ons का उपयोग करके ट्रेस संग्रह
@@ -154,4 +154,4 @@ ADOT Collector को `aws-otel-collector` नामक Kubernetes service accou
 
 ## निष्कर्ष
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हमने AWS Distro for OpenTelemetry के लिए Amazon EKS add-ons का उपयोग करके ट्रेस संग्रह द्वारा Amazon EKS पर अपने एप्लिकेशन के कंटेनर ट्रेसिंग के लिए AWS X-Ray के उपयोग के बारे में सीखा। अधिक जानकारी के लिए, कृपया [Metrics and traces collection using Amazon EKS add-ons for AWS Distro for OpenTelemetry to Amazon Managed Service for Prometheus and Amazon CloudWatch](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/) देखें। अंत में हमने संक्षेप में बात की कि कैसे EKS Blueprints का उपयोग Amazon EKS क्लस्टर निर्माण प्रक्रिया के दौरान AWS X-Ray का उपयोग करके Container tracing सेटअप करने के लिए एक वाहन के रूप में किया जाए। गहन अध्ययन के लिए, हम AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) की **AWS native** Observability श्रेणी के तहत X-Ray Traces मॉड्यूल का अभ्यास करने की अत्यधिक अनुशंसा करते हैं।
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हमने AWS Distro for OpenTelemetry के लिए Amazon EKS add-ons का उपयोग करके ट्रेस संग्रह द्वारा Amazon EKS पर अपने एप्लिकेशन के कंटेनर ट्रेसिंग के लिए AWS X-Ray के उपयोग के बारे में सीखा। अधिक जानकारी के लिए, कृपया [Metrics and traces collection using Amazon EKS add-ons for AWS Distro for OpenTelemetry to Amazon Managed Service for Prometheus and Amazon CloudWatch](https://aws.amazon.com/blogs/containers/metrics-and-traces-collection-using-amazon-eks-add-ons-for-aws-distro-for-opentelemetry/) देखें। अंत में हमने संक्षेप में बात की कि कैसे EKS Blueprints का उपयोग Amazon EKS क्लस्टर निर्माण प्रक्रिया के दौरान AWS X-Ray का उपयोग करके Container tracing सेटअप करने के लिए एक वाहन के रूप में किया जाए। गहन अध्ययन के लिए, हम AWS [One ऑब्ज़र्वेबिलिटी Workshop](https://catalog.workshops.aws/observability/en-US) की **AWS native** ऑब्ज़र्वेबिलिटी श्रेणी के तहत X-Ray Traces मॉड्यूल का अभ्यास करने की अत्यधिक अनुशंसा करते हैं।

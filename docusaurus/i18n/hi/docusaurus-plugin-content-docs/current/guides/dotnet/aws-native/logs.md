@@ -1,8 +1,8 @@
-# Logs
+﻿# Logs
 
 Logs आपके application में events के बारे में समृद्ध, contextual जानकारी प्रदान करते हैं। ये debugging और यह समझने के लिए कि कुछ गलत क्यों हुआ, बहुत आवश्यक हैं। 
 
-यह अनुभाग ऐसी recipes प्रदान करता है जिनका उपयोग .NET applications से AWS की native log service - Amazon CloudWatch Logs में logs emit और send करने के लिए सर्वोत्तम प्रथाओं के रूप में किया जा सकता है।
+यह अनुभाग ऐसी recipes प्रदान करता है जिनका उपयोग .NET applications से AWS की native log service - Amazon CloudWatch Logs में logs emit और send करने के लिए बेस्ट प्रैक्टिसेज़ के रूप में किया जा सकता है।
 
 ### Amazon EC2 instances या on-premises servers पर log files से Amazon CloudWatch Logs में logs stream करें
 

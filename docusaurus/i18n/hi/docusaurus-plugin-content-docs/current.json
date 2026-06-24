@@ -1,0 +1,246 @@
+{
+  "sidebar.guides.category.Guides": {
+    "message": "गाइड्स",
+    "description": "The label for category Guides in sidebar guides"
+  },
+  "sidebar.guides.category.Getting Started on CloudWatch": {
+    "message": "CloudWatch पर शुरुआत करें",
+    "description": "The label for category Getting Started on CloudWatch in sidebar guides"
+  },
+  "sidebar.guides.category.Cost": {
+    "message": "कॉस्ट",
+    "description": "The label for category Cost in sidebar guides"
+  },
+  "sidebar.guides.category.Visualizing costs": {
+    "message": "कॉस्ट विज़ुअलाइज़ेशन",
+    "description": "The label for category Visualizing costs in sidebar guides"
+  },
+  "sidebar.guides.category.Databases": {
+    "message": "डेटाबेसेज़",
+    "description": "The label for category Databases in sidebar guides"
+  },
+  "sidebar.guides.category.ECS best practices": {
+    "message": "ECS बेस्ट प्रैक्टिसेज़",
+    "description": "The label for category ECS best practices in sidebar guides"
+  },
+  "sidebar.guides.category.ECS AWS Native": {
+    "message": "ECS AWS नेटिव",
+    "description": "The label for category ECS AWS Native in sidebar guides"
+  },
+  "sidebar.guides.category.ECS Open Source": {
+    "message": "ECS ओपन सोर्स",
+    "description": "The label for category ECS Open Source in sidebar guides"
+  },
+  "sidebar.guides.category.EKS best practices": {
+    "message": "EKS बेस्ट प्रैक्टिसेज़",
+    "description": "The label for category EKS best practices in sidebar guides"
+  },
+  "sidebar.guides.category.EKS AWS Native": {
+    "message": "EKS AWS नेटिव",
+    "description": "The label for category EKS AWS Native in sidebar guides"
+  },
+  "sidebar.guides.category.EKS Open Source": {
+    "message": "EKS ओपन सोर्स",
+    "description": "The label for category EKS Open Source in sidebar guides"
+  },
+  "sidebar.guides.category..NET": {
+    "message": ".NET",
+    "description": "The label for category .NET in sidebar guides"
+  },
+  "sidebar.guides.category..NET AWS Native": {
+    "message": ".NET AWS नेटिव",
+    "description": "The label for category .NET AWS Native in sidebar guides"
+  },
+  "sidebar.guides.category..NET Open Source": {
+    "message": ".NET ओपन सोर्स",
+    "description": "The label for category .NET Open Source in sidebar guides"
+  },
+  "sidebar.guides.category.Serverless best practices": {
+    "message": "सर्वरलेस बेस्ट प्रैक्टिसेज़",
+    "description": "The label for category Serverless best practices in sidebar guides"
+  },
+  "sidebar.guides.category.Operational": {
+    "message": "ऑपरेशनल",
+    "description": "The label for category Operational in sidebar guides"
+  },
+  "sidebar.guides.category.ADOT Collector": {
+    "message": "ADOT कलेक्टर",
+    "description": "The label for category ADOT Collector in sidebar guides"
+  },
+  "sidebar.guides.category.Alerting": {
+    "message": "अलर्टिंग",
+    "description": "The label for category Alerting in sidebar guides"
+  },
+  "sidebar.guides.category.GitOps": {
+    "message": "GitOps",
+    "description": "The label for category GitOps in sidebar guides"
+  },
+  "sidebar.guides.category.Dashboards": {
+    "message": "डैशबोर्ड्स",
+    "description": "The label for category Dashboards in sidebar guides"
+  },
+  "sidebar.guides.category.Signal collection": {
+    "message": "सिग्नल कलेक्शन",
+    "description": "The label for category Signal collection in sidebar guides"
+  },
+  "sidebar.guides.category.Partners": {
+    "message": "पार्टनर्स",
+    "description": "The label for category Partners in sidebar guides"
+  },
+  "sidebar.guides.category.AWS CloudTrail": {
+    "message": "AWS CloudTrail",
+    "description": "The label for category AWS CloudTrail in sidebar guides"
+  },
+  "sidebar.guides.category.AWS Config": {
+    "message": "AWS Config",
+    "description": "The label for category AWS Config in sidebar guides"
+  },
+  "sidebar.guides.category.AWS Control Tower": {
+    "message": "AWS Control Tower",
+    "description": "The label for category AWS Control Tower in sidebar guides"
+  },
+  "sidebar.guides.category.AWS Organizations & Accounts": {
+    "message": "AWS ऑर्गनाइज़ेशन्स और अकाउंट्स",
+    "description": "The label for category AWS Organizations & Accounts in sidebar guides"
+  },
+  "sidebar.guides.category.AWS Region Usage": {
+    "message": "AWS रीजन यूसेज",
+    "description": "The label for category AWS Region Usage in sidebar guides"
+  },
+  "sidebar.guides.category.Application Operations": {
+    "message": "एप्लिकेशन ऑपरेशन्स",
+    "description": "The label for category Application Operations in sidebar guides"
+  },
+  "sidebar.guides.category.Centralized Operations Management": {
+    "message": "सेंट्रलाइज़्ड ऑपरेशन्स मैनेजमेंट",
+    "description": "The label for category Centralized Operations Management in sidebar guides"
+  },
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.guides.category.CloudTrail Lake": {
+    "message": "CloudTrail Lake",
+    "description": "The label for category CloudTrail Lake in sidebar guides"
+  },
+  "sidebar.guides.category.CloudTrail Data Events": {
+    "message": "CloudTrail डेटा इवेंट्स",
+    "description": "The label for category CloudTrail Data Events in sidebar guides"
+  },
+  "sidebar.guides.category.नोड प्रबंधन": {
+    "message": "नोड प्रबंधन",
+    "description": "The label for category नोड प्रबंधन in sidebar guides"
+  },
+  "sidebar.sigals.category.Data types": {
+    "message": "डेटा टाइप्स",
+    "description": "The label for category Data types in sidebar sigals"
+  },
+  "sidebar.tools.category.Tools": {
+    "message": "टूल्स",
+    "description": "The label for category Tools in sidebar tools"
+  },
+  "sidebar.tools.category.Logs": {
+    "message": "लॉग्स",
+    "description": "The label for category Logs in sidebar tools"
+  },
+  "sidebar.tools.category.Security": {
+    "message": "सिक्योरिटी",
+    "description": "The label for category Security in sidebar tools"
+  },
+  "sidebar.tools.category.Data Protection": {
+    "message": "डेटा प्रोटेक्शन",
+    "description": "The label for category Data Protection in sidebar tools"
+  },
+  "sidebar.tools.category.Application Signals": {
+    "message": "एप्लिकेशन सिग्नल्स",
+    "description": "The label for category Application Signals in sidebar tools"
+  },
+  "sidebar.recipes.category.Curated recipes": {
+    "message": "क्यूरेटेड रेसिपीज़",
+    "description": "The label for category Curated recipes in sidebar recipes"
+  },
+  "sidebar.recipes.category.FAQ": {
+    "message": "FAQ",
+    "description": "The label for category FAQ in sidebar recipes"
+  },
+  "sidebar.recipes.category.CloudTrail": {
+    "message": "CloudTrail",
+    "description": "The label for category CloudTrail in sidebar recipes"
+  },
+  "sidebar.recipes.category.Control Tower": {
+    "message": "Control Tower",
+    "description": "The label for category Control Tower in sidebar recipes"
+  },
+  "sidebar.recipes.category.Application Operations": {
+    "message": "एप्लिकेशन ऑपरेशन्स",
+    "description": "The label for category Application Operations in sidebar recipes"
+  },
+  "sidebar.recipes.category.Centralized Operations": {
+    "message": "सेंट्रलाइज़्ड ऑपरेशन्स",
+    "description": "The label for category Centralized Operations in sidebar recipes"
+  },
+  "sidebar.recipes.category.By Compute": {
+    "message": "कम्प्यूट के अनुसार",
+    "description": "The label for category By Compute in sidebar recipes"
+  },
+  "sidebar.recipes.category.By Infra & Databases": {
+    "message": "इंफ्रा और डेटाबेसेज़ के अनुसार",
+    "description": "The label for category By Infra & Databases in sidebar recipes"
+  },
+  "sidebar.recipes.category.Databases": {
+    "message": "डेटाबेसेज़",
+    "description": "The label for category Databases in sidebar recipes"
+  },
+  "sidebar.recipes.category.By Language": {
+    "message": "लैंग्वेज के अनुसार",
+    "description": "The label for category By Language in sidebar recipes"
+  },
+  "sidebar.recipes.category.By Destination": {
+    "message": "डेस्टिनेशन के अनुसार",
+    "description": "The label for category By Destination in sidebar recipes"
+  },
+  "sidebar.recipes.category.Tasks": {
+    "message": "टास्क्स",
+    "description": "The label for category Tasks in sidebar recipes"
+  },
+  "sidebar.recipes.category.सुरक्षा इंसिडेंट रिस्पॉन्स और फोरेंसिक विश्लेषण": {
+    "message": "सुरक्षा इंसिडेंट रिस्पॉन्स और फ़ोरेंसिक एनालिसिस",
+    "description": "The label for category सुरक्षा इंसिडेंट रिस्पॉन्स और फोरेंसिक विश्लेषण in sidebar recipes"
+  },
+  "sidebar.recipes.category.Just-in-time node access (JITNA)": {
+    "message": "जस्ट-इन-टाइम नोड एक्सेस (JITNA)",
+    "description": "The label for category Just-in-time node access (JITNA) in sidebar recipes"
+  },
+  "sidebar.ai.category.GenAI": {
+    "message": "GenAI",
+    "description": "The label for category GenAI in sidebar ai"
+  },
+  "sidebar.ai.category.guides": {
+    "message": "गाइड्स",
+    "description": "The label for category guides in sidebar ai"
+  },
+  "sidebar.ai.category.persona": {
+    "message": "पर्सोना",
+    "description": "The label for category persona in sidebar ai"
+  },
+  "sidebar.ai.category.AI Observability डेमो": {
+    "message": "AI ऑब्ज़र्वेबिलिटी डेमो",
+    "description": "The label for category AI Observability डेमो in sidebar ai"
+  },
+  "sidebar.ai.category.mcp-integration": {
+    "message": "MCP इंटीग्रेशन",
+    "description": "The label for category mcp-integration in sidebar ai"
+  },
+  "sidebar.ai.category.setup": {
+    "message": "सेटअप",
+    "description": "The label for category setup in sidebar ai"
+  },
+  "sidebar.patterns.category.Startup Observability Adoption": {
+    "message": "स्टार्टअप ऑब्ज़र्वेबिलिटी अडॉप्शन",
+    "description": "The label for category Startup Observability Adoption in sidebar patterns"
+  },
+  "sidebar.patterns.category.Tracing": {
+    "message": "ट्रेसिंग",
+    "description": "The label for category Tracing in sidebar patterns"
+  }
+}

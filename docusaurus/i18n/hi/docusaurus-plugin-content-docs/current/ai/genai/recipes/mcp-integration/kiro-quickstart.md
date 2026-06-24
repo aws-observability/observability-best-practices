@@ -154,7 +154,7 @@ Which model is consuming the most tokens?
 ```
 
 3. **Kiro स्वचालित रूप से**:
-   - इसे observability क्वेरी के रूप में पहचानेगा
+   - इसे ऑब्ज़र्वेबिलिटी क्वेरी के रूप में पहचानेगा
    - MCP सर्वर के `get_token_usage` टूल को कॉल करेगा
    - स्ट्रक्चर्ड परिणाम लौटाएगा
 
@@ -262,7 +262,7 @@ What's the latency for anthropic.claude-3-haiku-20240307-v1:0?
 
 ### मल्टी-मेट्रिक क्वेरी
 
-व्यापक विश्लेषण के लिए पूछें:
+व्यापक एनालिसिस के लिए पूछें:
 
 ```
 Give me a complete overview of Claude Haiku performance
@@ -384,7 +384,7 @@ MCP सर्वर 5 टूल प्रदान करता है:
 
 1. `.kiro/settings/mcp.json` को अपनी repo में कमिट करें
 2. टीम के सदस्यों को स्वचालित रूप से MCP एक्सेस मिलेगा
-3. हर कोई अपने IDE से observability डेटा क्वेरी कर सकता है
+3. हर कोई अपने IDE से ऑब्ज़र्वेबिलिटी डेटा क्वेरी कर सकता है
 
 ---
 

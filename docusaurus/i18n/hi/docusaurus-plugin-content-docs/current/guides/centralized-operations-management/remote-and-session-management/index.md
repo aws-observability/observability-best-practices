@@ -1,4 +1,4 @@
----
+﻿---
 sidebar_position: 6
 ---
 # रिमोट और सत्र प्रबंधन
@@ -85,7 +85,7 @@ AWS Session Manager is a fully managed AWS Systems Manager tool. You can use eit
 
 * ***Grant temporary access for business reasons***: With extra features provided by open source and commercial temporary elevated access solutions it is even possible to deny remote access to all operators until and unless they have a valid business reason to access the server. For example, a production application server would have no way of being remotely accessed. However, during an incident an operator could request and be granted temporary access to the server to investigate the incident. This access would be associated with a recorded reason, approved by a second operator and be timed for only as long as needed to do the work.
 
-### Observability & Compliance
+### ऑब्ज़र्वेबिलिटी & Compliance
 
 * **Logging VM and Container Session Activities & Monitoring managed node access and activity:** When a Terminal Session is started from the AWS Console using Session Manager, all the commands and their results of the session are able to be recorded to S3 and CloudWatch Log Groups. This can provide an audit trail of all changes made during an interactive session. You can also use CloudTrail events to monitor (and if necessary alert on) successful and unsuccessful remote sessions to nodes. For instance a remote session conducted outside of a defined change window could be alerted to the person in question and their manager.
 

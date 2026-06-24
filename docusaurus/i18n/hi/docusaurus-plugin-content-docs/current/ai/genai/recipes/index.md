@@ -1,11 +1,11 @@
-# AI Observability डेमो
+# AI ऑब्ज़र्वेबिलिटी डेमो
 
-मल्टी-क्लाउड AI-नेटिव फुल-स्टैक observability प्लेटफ़ॉर्म LLM वर्कलोड की मॉनिटरिंग के लिए।
+मल्टी-क्लाउड AI-नेटिव फुल-स्टैक ऑब्ज़र्वेबिलिटी प्लेटफ़ॉर्म LLM वर्कलोड की मॉनिटरिंग के लिए।
 
 ## त्वरित शुरुआत
 
 ### पूर्वापेक्षाएं
-- Bedrock एक्सेस के साथ AWS अकाउंट। यह डेमो us-east-1 में Claude 3 Haiku/Sonnet का उपयोग करता है, लेकिन आप `gateway/litellm-config.yaml` में मॉडल ID अपडेट करके किसी भी Bedrock-समर्थित मॉडल का उपयोग कर सकते हैं। Observability पाइपलाइन मॉडल-एग्नॉस्टिक है और LiteLLM द्वारा समर्थित किसी भी LLM प्रोवाइडर के साथ काम करती है।
+- Bedrock एक्सेस के साथ AWS अकाउंट। यह डेमो us-east-1 में Claude 3 Haiku/Sonnet का उपयोग करता है, लेकिन आप `gateway/litellm-config.yaml` में मॉडल ID अपडेट करके किसी भी Bedrock-समर्थित मॉडल का उपयोग कर सकते हैं। ऑब्ज़र्वेबिलिटी पाइपलाइन मॉडल-एग्नॉस्टिक है और LiteLLM द्वारा समर्थित किसी भी LLM प्रोवाइडर के साथ काम करती है।
 - AdministratorAccess के साथ कॉन्फ़िगर किया गया AWS CLI
 - Docker Desktop चालू
 - Docker Compose v2
@@ -79,7 +79,7 @@ awscurl --service aps --region us-east-1 \
 
 ### फ़ेज 5: Grafana डैशबोर्ड
 
-1. AWS Console खोलें → Amazon Managed Grafana → ai-observability-demo
+1. AWS Console खोलें → Amazon Managed Grafana → ai-ऑब्ज़र्वेबिलिटी-demo
 2. "Open Grafana" पर क्लिक करें
 3. डेटा सोर्स जोड़ें:
    - Prometheus: SigV4 auth के साथ AMP endpoint का उपयोग करें
@@ -114,7 +114,7 @@ pip3 install -r requirements.txt
 ```
 
 :::tip Region कॉन्फ़िगरेशन
-`AWS_REGION` को उस रीजन पर सेट करें जहां आपके observability रिसोर्स (AMP, CloudWatch, X-Ray) डिप्लॉय हैं। इन सेवाओं का समर्थन करने वाला कोई भी AWS रीजन काम करेगा।
+`AWS_REGION` को उस रीजन पर सेट करें जहां आपके ऑब्ज़र्वेबिलिटी रिसोर्स (AMP, CloudWatch, X-Ray) डिप्लॉय हैं। इन सेवाओं का समर्थन करने वाला कोई भी AWS रीजन काम करेगा।
 :::
 
 ### Kiro में प्राकृतिक भाषा क्वेरी
@@ -148,7 +148,7 @@ rm -rf AI-OBS_DEMO
 - **Amazon Managed Prometheus**: SigV4 auth के साथ स्केलेबल मेट्रिक्स स्टोरेज
 - **AWS X-Ray**: LLM इनवोकेशन के लिए डिस्ट्रीब्यूटेड ट्रेसिंग
 - **Amazon Managed Grafana**: AMP, CloudWatch, X-Ray में एकीकृत विज़ुअलाइज़ेशन
-- **कस्टम MCP Server**: Kiro के माध्यम से प्राकृतिक भाषा observability क्वेरी
+- **कस्टम MCP Server**: Kiro के माध्यम से प्राकृतिक भाषा ऑब्ज़र्वेबिलिटी क्वेरी
 
 ## मल्टी-क्लाउड में विस्तार
 
@@ -163,4 +163,4 @@ rm -rf AI-OBS_DEMO
 - [Amazon Managed Prometheus](https://docs.aws.amazon.com/prometheus/)
 - [Amazon Managed Grafana](https://docs.aws.amazon.com/grafana/)
 - [LiteLLM Proxy](https://docs.litellm.ai/docs/proxy/quick_start)
-- [AWS Bedrock Observability](https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-cloudwatch.html)
+- [AWS Bedrock ऑब्ज़र्वेबिलिटी](https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-cloudwatch.html)

@@ -1,4 +1,4 @@
-# Amazon Managed Service for Grafana का उपयोग करके हाइब्रिड वातावरण की निगरानी
+# Amazon Managed Service for Grafana का उपयोग करके हाइब्रिड एनवायरनमेंट की निगरानी
 
 इस रेसिपी में हम आपको दिखाते हैं कि कैसे visualize metrics from an Azure Cloud environment to [Amazon Managed Service for Grafana](https://aws.amazon.com/grafana/) (AMG) and create alert notifications in AMG to be sent to [Amazon Simple Notification Service](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) and Slack.
 

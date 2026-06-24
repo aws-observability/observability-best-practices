@@ -3,7 +3,7 @@
 
 ### लॉग डेटा ट्रांसफ़ॉर्मेशन
 
-*   [Amazon CloudWatch Log Transformation](https://www.youtube.com/watch?v=QMX9SG2P3q4) जानें कि अपने लॉग डेटा को आसानी से कैसे ट्रांसफ़ॉर्म और विश्लेषण करें।
+*   [Amazon CloudWatch Log Transformation](https://www.youtube.com/watch?v=QMX9SG2P3q4) जानें कि अपने लॉग डेटा को आसानी से कैसे ट्रांसफ़ॉर्म और एनालिसिस करें।
 
 [![](https://utfs.io/f/nGnSqDveMsqxv7baqcxLDUa0zY3NEVd6GghyHqsuMfBlFoeI?height=20&width=40)](https://www.youtube.com/watch?v=QMX9SG2P3q4)
 
@@ -13,9 +13,9 @@
 
 [![](https://img.youtube.com/vi/Yvv056_RVqs/maxresdefault.jpg)](https://www.youtube.com/watch?v=Yvv056_RVqs)
 
-### ECS के साथ उन्नत Observability
+### ECS के साथ उन्नत ऑब्ज़र्वेबिलिटी
 
-*   [Enhanced Observability on ECS with Amazon CloudWatch Container Insights](https://www.youtube.com/watch?v=mH3m4XixjRg) देखें कि अपने ECS कंटेनराइज़्ड एप्लिकेशन में गहरी अंतर्दृष्टि कैसे प्राप्त करें।
+*   [Enhanced ऑब्ज़र्वेबिलिटी on ECS with Amazon CloudWatch Container Insights](https://www.youtube.com/watch?v=mH3m4XixjRg) देखें कि अपने ECS कंटेनराइज़्ड एप्लिकेशन में गहरी अंतर्दृष्टि कैसे प्राप्त करें।
 [![YouTube Video mH3m4XixjRg](https://img.youtube.com/vi/mH3m4XixjRg/maxresdefault.jpg)](https://www.youtube.com/watch?v=mH3m4XixjRg)
 
 ### नेटवर्क फ़्लो मॉनिटरिंग 

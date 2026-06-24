@@ -1,11 +1,11 @@
----
+﻿---
 sidebar_position: 14
 ---
 # Advanced Event Selectors
 
 ### Advanced Event Selectors को समझना
 
-AWS CloudTrail में Advanced event selectors equals, not equals, starts with, और ends with जैसे operators के साथ field-आधारित conditions का उपयोग करके विशिष्ट selection criteria परिभाषित करके कौन से data events रिकॉर्ड किए जाते हैं इस पर बारीक नियंत्रण प्रदान करते हैं। यह बारीक दृष्टिकोण संगठनों को अत्यधिक event logging से जुड़ी लागतों को कम करते हुए केवल उन data events को कैप्चर करने में सक्षम बनाता है जो उनकी सुरक्षा, अनुपालन और परिचालन आवश्यकताओं के लिए महत्वपूर्ण हैं।
+AWS CloudTrail में Advanced event selectors equals, not equals, starts with, और ends with जैसे operators के साथ field-आधारित conditions का उपयोग करके विशिष्ट selection criteria परिभाषित करके कौन से data events रिकॉर्ड किए जाते हैं इस पर बारीक नियंत्रण प्रदान करते हैं। यह बारीक दृष्टिकोण ऑर्गनाइज़ेशन्स को अत्यधिक event logging से जुड़ी लागतों को कम करते हुए केवल उन data events को कैप्चर करने में सक्षम बनाता है जो उनकी सुरक्षा, अनुपालन और परिचालन आवश्यकताओं के लिए महत्वपूर्ण हैं।
 
 Advanced event selectors field selectors, operators, और values से मिलकर बनते हैं। प्रत्येक selector में field selectors का एक array होता है जो selection criteria को परिभाषित करता है, प्रत्येक field selector एक field name (जैसे eventCategory, eventName, या resources.type), एक operator (Equals, NotEquals, StartsWith, EndsWith), और मिलान करने के लिए एक या अधिक values निर्दिष्ट करता है। एक single advanced event selector के भीतर कई field selectors के बीच का संबंध logical AND है, जिसका अर्थ है कि event रिकॉर्ड होने के लिए सभी conditions पूरी होनी चाहिए।
 
@@ -435,3 +435,4 @@ Leverage the StartsWith and EndsWith operators to create sophisticated pattern-b
 ### Multi-Condition Logic Implementation
 
 Advanced event selectors support complex logical conditions that can be used to create sophisticated selection rules. Combine multiple field selectors within a single advanced event selector to create AND conditions, or use multiple advanced event selectors to create OR conditions. For example, you might create a selector that captures all write operations on sensitive resources OR any operations performed by privileged users. Understanding how to effectively combine conditions allows you to create precise selection rules that capture exactly the events you need while excluding everything else.
+

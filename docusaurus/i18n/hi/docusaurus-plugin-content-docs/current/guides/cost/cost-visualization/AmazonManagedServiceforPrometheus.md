@@ -1,6 +1,6 @@
-# रियल-टाइम लागत मॉनिटरिंग
+﻿# रियल-टाइम लागत मॉनिटरिंग
 
-Amazon Managed Service for Prometheus कंटेनर मेट्रिक्स के लिए एक सर्वरलेस, Prometheus-संगत मॉनिटरिंग सेवा है जो बड़े पैमाने पर कंटेनर वातावरण की सुरक्षित निगरानी को आसान बनाती है। Amazon Managed Service for Prometheus का मूल्य निर्धारण मॉडल Metric samples ingested, Query samples processed, और Metrics stored पर आधारित है। नवीनतम मूल्य निर्धारण विवरण [यहां][pricing] देखे जा सकते हैं। 
+Amazon Managed Service for Prometheus कंटेनर मेट्रिक्स के लिए एक सर्वरलेस, Prometheus-संगत मॉनिटरिंग सेवा है जो बड़े पैमाने पर कंटेनर एनवायरनमेंट की सुरक्षित निगरानी को आसान बनाती है। Amazon Managed Service for Prometheus का मूल्य निर्धारण मॉडल Metric samples ingested, Query samples processed, और Metrics stored पर आधारित है। नवीनतम मूल्य निर्धारण विवरण [यहां][pricing] देखे जा सकते हैं। 
 
 एक managed service के रूप में, Amazon Managed Service for Prometheus वर्कलोड के बढ़ने और घटने के साथ operational metrics की ingestion, storage, और querying को स्वचालित रूप से scale करता है। हमारे कुछ ग्राहकों ने हमसे `metric samples ingestion rate` और इसकी रियल-टाइम लागत को ट्रैक करने के बारे में मार्गदर्शन मांगा। आइए देखें कि आप यह कैसे प्राप्त कर सकते हैं।
 

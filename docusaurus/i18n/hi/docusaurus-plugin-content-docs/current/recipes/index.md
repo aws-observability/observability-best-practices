@@ -1,6 +1,6 @@
-# रेसिपी
+﻿# रेसिपी
 
-यहाँ आपको विभिन्न उपयोग मामलों में Observability (o11y) को लागू करने में मदद करने वाले क्यूरेटेड मार्गदर्शन, हाउ-टू, और अन्य संसाधनों के लिंक मिलेंगे। इसमें [Amazon Managed Service for Prometheus][amp] और [Amazon Managed Grafana][amg] जैसी प्रबंधित सेवाओं के साथ-साथ [OpenTelemetry][otel] और [Fluent Bit][fluentbit] जैसे एजेंट शामिल हैं। यहाँ की सामग्री केवल AWS टूल्स तक सीमित नहीं है, और कई ओपन सोर्स प्रोजेक्ट्स का संदर्भ दिया गया है।
+यहाँ आपको विभिन्न उपयोग मामलों में ऑब्ज़र्वेबिलिटी (o11y) को लागू करने में मदद करने वाले क्यूरेटेड मार्गदर्शन, हाउ-टू, और अन्य संसाधनों के लिंक मिलेंगे। इसमें [Amazon Managed Service for Prometheus][amp] और [Amazon Managed Grafana][amg] जैसी प्रबंधित सेवाओं के साथ-साथ [OpenTelemetry][otel] और [Fluent Bit][fluentbit] जैसे एजेंट शामिल हैं। यहाँ की सामग्री केवल AWS टूल्स तक सीमित नहीं है, और कई ओपन सोर्स प्रोजेक्ट्स का संदर्भ दिया गया है।
 
 हम डेवलपर्स और इन्फ्रास्ट्रक्चर लोगों दोनों की ज़रूरतों को समान रूप से संबोधित करना चाहते हैं, इसलिए कई रेसिपी "व्यापक दायरे" को कवर करती हैं। हम आपको उन समाधानों को खोजने और खोजने के लिए प्रोत्साहित करते हैं जो आप जो हासिल करना चाहते हैं उसके लिए सबसे अच्छे हैं।
 
@@ -72,14 +72,14 @@
 
 ## और जानें
 
-इस साइट पर रेसिपी एक अच्छी प्रथाओं का संग्रह है। इसके अलावा,
+इस साइट पर रेसिपी एक अच्छी कार्यप्रणालियों का संग्रह है। इसके अलावा,
 कई स्थान हैं जहाँ आप हमारे द्वारा उपयोग किए जाने वाले ओपन सोर्स
 प्रोजेक्ट्स की स्थिति के साथ-साथ रेसिपी की प्रबंधित सेवाओं के बारे में और जान सकते हैं, इसलिए
 देखें:
 
-- [observability @ aws][o11yataws], AWS लोगों की अपने प्रोजेक्ट्स और सेवाओं के बारे में बात करने वाली प्लेलिस्ट।
-- [AWS observability workshops](https://aws-observability.github.io/observability-best-practices/recipes/workshops/), एक संरचित तरीके से ऑफरिंग्स को आज़माने के लिए।
-- [AWS monitoring and observability][o11yhome] होमपेज जिसमें केस स्टडीज़ और पार्टनर्स के पॉइंटर्स हैं।
+- [ऑब्ज़र्वेबिलिटी @ aws][o11yataws], AWS लोगों की अपने प्रोजेक्ट्स और सेवाओं के बारे में बात करने वाली प्लेलिस्ट।
+- [AWS ऑब्ज़र्वेबिलिटी workshops](https://aws-observability.github.io/observability-best-practices/recipes/workshops/), एक संरचित तरीके से ऑफरिंग्स को आज़माने के लिए।
+- [AWS monitoring and ऑब्ज़र्वेबिलिटी][o11yhome] होमपेज जिसमें केस स्टडीज़ और पार्टनर्स के पॉइंटर्स हैं।
 
 [aes]: aes.md "Amazon Elasticsearch Service"
 [adot]: https://aws-otel.github.io/ "AWS Distro for OpenTelemetry"
@@ -106,6 +106,7 @@
 [rds]: rds.md "Amazon Relational Database Service"
 [msk]: msk.md "Amazon Managed Streaming for Apache Kafka"
 [mit0]: https://github.com/aws/mit-0 "MIT-0"
-[discussion]: https://github.com/aws-observability/observability-best-practices/discussions "Discussions"
-[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "Observability @ AWS YouTube playlist"
-[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-observability/ "AWS Observability home"
+[discussion]: https://github.com/aws-ऑब्ज़र्वेबिलिटी/ऑब्ज़र्वेबिलिटी-best-practices/discussions "Discussions"
+[o11yataws]: https://www.youtube.com/playlist?list=PLaiiCkpc1U7Wy7XwkpfgyOhIf_06IK3U_ "ऑब्ज़र्वेबिलिटी @ AWS YouTube playlist"
+[o11yhome]: https://aws.amazon.com/products/management-and-governance/use-cases/monitoring-and-ऑब्ज़र्वेबिलिटी/ "AWS ऑब्ज़र्वेबिलिटी home"
+

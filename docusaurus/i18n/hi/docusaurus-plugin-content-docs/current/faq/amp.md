@@ -18,7 +18,7 @@
 1. [Service docs](https://docs.aws.amazon.com/prometheus/latest/userguide/AMP-onboard-query.html)
 1. [EC2 पर Grafana सेटअप](https://aws.amazon.com/blogs/opensource/setting-up-grafana-on-ec2-to-query-metrics-from-amazon-managed-service-for-prometheus/)
 
-## Amazon Managed Service for Prometheus को भेजे जाने वाले सैंपल की संख्या कम करने के लिए सर्वोत्तम प्रथाएं क्या हैं?
+## Amazon Managed Service for Prometheus को भेजे जाने वाले सैंपल की संख्या कम करने के लिए बेस्ट प्रैक्टिसेज़ क्या हैं?
 
 Amazon Managed Service for Prometheus में इंजेस्ट किए जाने वाले सैंपल की संख्या कम करने के लिए, ग्राहक अपना scrape interval बढ़ा सकते हैं (उदा., 30s से 1min में बदलें) या वे जितनी series स्क्रैप कर रहे हैं उनकी संख्या कम कर सकते हैं। Scrape interval बदलने का series की संख्या कम करने की तुलना में सैंपल की संख्या पर अधिक नाटकीय प्रभाव होगा, scrape interval को दोगुना करने से इंजेस्ट किए गए सैंपल की मात्रा आधी हो जाएगी।
 

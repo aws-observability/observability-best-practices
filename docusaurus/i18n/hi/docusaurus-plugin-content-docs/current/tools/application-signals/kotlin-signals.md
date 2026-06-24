@@ -2,7 +2,7 @@
 
 ## परिचय
 
-Kotlin वेब एप्लिकेशन के प्रदर्शन और स्वास्थ्य की निगरानी करना विभिन्न घटकों के बीच जटिल इंटरैक्शन के कारण चुनौतीपूर्ण हो सकता है। [Kotlin](https://kotlinlang.org/) वेब सेवाएँ आम तौर पर Java Archive (jar) फ़ाइलों में बनाई जाती हैं, जिन्हें Java चलाने वाले किसी भी प्लेटफ़ॉर्म पर डिप्लॉय किया जा सकता है। ये एप्लिकेशन अक्सर डिस्ट्रीब्यूटेड वातावरण में संचालित होते हैं, जिसमें डेटाबेस, बाहरी API और कैशिंग लेयर जैसे कई इंटरकनेक्टेड घटक शामिल होते हैं। यह जटिलता आपके Mean Time to Resolution (MTTR) को काफी बढ़ा सकती है।
+Kotlin वेब एप्लिकेशन के प्रदर्शन और स्वास्थ्य की निगरानी करना विभिन्न घटकों के बीच जटिल इंटरैक्शन के कारण चुनौतीपूर्ण हो सकता है। [Kotlin](https://kotlinlang.org/) वेब सेवाएँ आम तौर पर Java Archive (jar) फ़ाइलों में बनाई जाती हैं, जिन्हें Java चलाने वाले किसी भी प्लेटफ़ॉर्म पर डिप्लॉय किया जा सकता है। ये एप्लिकेशन अक्सर डिस्ट्रीब्यूटेड एनवायरनमेंट में संचालित होते हैं, जिसमें डेटाबेस, बाहरी API और कैशिंग लेयर जैसे कई इंटरकनेक्टेड घटक शामिल होते हैं। यह जटिलता आपके Mean Time to Resolution (MTTR) को काफी बढ़ा सकती है।
 
 इस गाइड में, हम Linux EC2 सर्वर पर चल रही Kotlin वेब सेवाओं को ऑटो-इंस्ट्रुमेंट करने का तरीका दिखाएँगे। [CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) को सक्षम करने से [AWS Distro for OpenTelemetry](https://aws-otel.github.io/docs/introduction) (ADOT) Java Auto-Instrumentation Agent का उपयोग करके बिना कोई कोड परिवर्तन किए आपके एप्लिकेशन से metrics और traces एकत्र किए जा सकते हैं। आप कॉल वॉल्यूम, उपलब्धता, विलंबता, दोष और त्रुटियों जैसे प्रमुख metrics का लाभ उठाकर अपने एप्लिकेशन सेवाओं की वर्तमान ऑपरेशनल स्थिति को जल्दी से देख और ट्राइएज कर सकते हैं, और सत्यापित कर सकते हैं कि वे दीर्घकालिक प्रदर्शन और व्यावसायिक लक्ष्यों को पूरा कर रही हैं या नहीं।
 
@@ -130,7 +130,7 @@ for i in {1..1800}; do curl http://localhost:8080 && sleep 2; done
 
 ### अगले चरण
 
-यहाँ से आपके अगले चरण [Application Signals अनुभव](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) का और अन्वेषण करना होगा जिसमें आपकी सेवा के लिए [SLOs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html) बनाना शामिल है। एक और अच्छा अगला कदम Ktor में अधिक kotlin microservices बनाना होगा ताकि आप एक अधिक जटिल बैकएंड तैयार कर सकें। डिस्ट्रीब्यूटेड, जटिल वातावरण वे हैं जहाँ Application Signals जैसे टूल में सबसे अधिक लाभ दिखता है।
+यहाँ से आपके अगले चरण [Application Signals अनुभव](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) का और अन्वेषण करना होगा जिसमें आपकी सेवा के लिए [SLOs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html) बनाना शामिल है। एक और अच्छा अगला कदम Ktor में अधिक kotlin microservices बनाना होगा ताकि आप एक अधिक जटिल बैकएंड तैयार कर सकें। डिस्ट्रीब्यूटेड, जटिल एनवायरनमेंट वे हैं जहाँ Application Signals जैसे टूल में सबसे अधिक लाभ दिखता है।
 
 ### सफ़ाई
 

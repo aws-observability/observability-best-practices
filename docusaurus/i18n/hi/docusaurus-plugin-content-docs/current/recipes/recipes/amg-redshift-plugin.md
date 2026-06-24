@@ -48,7 +48,7 @@ Athena डेटा स्रोत सेट करने के लिए, ब
 यहाँ से, आप Amazon Managed Grafana में अपना डैशबोर्ड बनाने के लिए निम्नलिखित गाइड का उपयोग कर सकते हैं:
 
 * [उपयोगकर्ता गाइड: डैशबोर्ड](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [डैशबोर्ड बनाने के लिए सर्वोत्तम प्रथाएं](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [डैशबोर्ड बनाने के लिए बेस्ट प्रैक्टिसेज़](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
 बस इतना ही, बधाई हो आपने Grafana से Redshift का उपयोग करना सीख लिया!
 

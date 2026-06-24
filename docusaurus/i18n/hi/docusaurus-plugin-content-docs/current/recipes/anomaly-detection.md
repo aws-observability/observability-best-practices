@@ -1,7 +1,11 @@
-# Anomaly Detection
+---
+sidebar_label: एनोमली डिटेक्शन
+---
 
-इस अनुभाग में anomaly detection के लिए रेसिपी शामिल हैं।
+# एनोमली डिटेक्शन
 
-- [CloudWatch Metric के लिए Anomaly Detection सक्षम करना][am-oow]
+इस अनुभाग में एनोमली डिटेक्शन के लिए रेसिपी शामिल हैं।
 
-[am-oow]: https://observability.workshop.aws/en/anomalydetection.html
+- [CloudWatch Metric के लिए एनोमली डिटेक्शन सक्षम करना][am-oow]
+
+[am-oow]: https://ऑब्ज़र्वेबिलिटी.workshop.aws/en/anomalydetection.html

@@ -1,0 +1,54 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.apmSidebar.category.Overview": {
+    "message": "Overview",
+    "description": "The label for category Overview in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Implementation guides": {
+    "message": "Implementation guides",
+    "description": "The label for category Implementation guides in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Features & capabilities": {
+    "message": "Features & capabilities",
+    "description": "The label for category Features & capabilities in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Examples & code samples": {
+    "message": "Examples & code samples",
+    "description": "The label for category Examples & code samples in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Examples": {
+    "message": "Examples",
+    "description": "The label for category Examples in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.API reference": {
+    "message": "API reference",
+    "description": "The label for category API reference in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Best practices": {
+    "message": "Best practices",
+    "description": "The label for category Best practices in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Troubleshooting": {
+    "message": "Troubleshooting",
+    "description": "The label for category Troubleshooting in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Security & compliance": {
+    "message": "Security & compliance",
+    "description": "The label for category Security & compliance in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Integrations": {
+    "message": "Integrations",
+    "description": "The label for category Integrations in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.category.Reference": {
+    "message": "Reference",
+    "description": "The label for category Reference in sidebar apmSidebar"
+  },
+  "sidebar.apmSidebar.doc.APM Home": {
+    "message": "APM Home",
+    "description": "The label for the doc item APM Home in sidebar apmSidebar, linking to the doc index"
+  }
+}

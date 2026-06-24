@@ -1,4 +1,4 @@
-# विभिन्न प्रोग्रामिंग भाषाओं के लिए Instrumentation सैंपल
+﻿# विभिन्न प्रोग्रामिंग भाषाओं के लिए Instrumentation सैंपल
 
 यह खंड विभिन्न प्रोग्रामिंग भाषाओं और फ्रेमवर्क में AWS Application Signals के साथ एप्लिकेशन को instrument करने के लिए मार्गदर्शन प्रदान करता है।
 
@@ -206,7 +206,7 @@ defer span.End()
 - [Customers Service (Java)](https://github.com/aws-observability/application-signals-demo/tree/main/spring-petclinic-customers-service)
 - [Pet Search Service (Java)](https://github.com/aws-samples/one-observability-demo/tree/main/src/applications/microservices/petsearch-java)
 
-### प्रमुख Manual Instrumentation सर्वोत्तम प्रथाएं
+### प्रमुख Manual Instrumentation सर्वोत्तम कार्यप्रणालियाँ
 
 - **बिज़नेस संदर्भ:** हमेशा spans में प्रासंगिक बिज़नेस attributes (customer_id, order_value, product_category) जोड़ें
 - **त्रुटि प्रबंधन:** exceptions रिकॉर्ड करें और उचित span status codes सेट करें
@@ -214,3 +214,4 @@ defer span.End()
 - **Span पदानुक्रम:** जटिल ऑपरेशन को विभाजित करने के लिए child spans का उपयोग करें
 - **Attribute नामकरण:** जहां संभव हो OpenTelemetry semantic conventions का पालन करें
 - **प्रदर्शन प्रभाव:** उच्च-थ्रूपुट पथों में instrumentation ओवरहेड के प्रति सचेत रहें
+

@@ -154,7 +154,7 @@ Make sure to add "Amazon Managed Service for Prometheus" as a datasource during 
 
 इस रेसिपी में हम उपयोग करेंगे एक
 [sample application](https://github.com/aws-observability/aws-otel-community/tree/master/sample-apps/prometheus)
-from the AWS Observability repository.
+from the AWS ऑब्ज़र्वेबिलिटी repository.
 
 This Prometheus sample app generates all four Prometheus metric types
 (counter, gauge, histogram, summary) and exposes them at the `/metrics` endpoint.
@@ -294,7 +294,7 @@ Value: 0.000000
 Further, use the following guides to create your own dashboard in Amazon Managed Grafana में:
 
 * [User Guide: Dashboards](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [Best practices for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [बेस्ट प्रैक्टिसेज़ for creating dashboards](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
 बस इतना ही, बधाई हो आपने सीख लिया कि कैसे उपयोग करें ADOT in EKS on EC2 to
 ingest metrics.

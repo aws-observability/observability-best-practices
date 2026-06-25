@@ -5,6 +5,7 @@ site/
 
 yarn.lock
 .docusaurus
+.claude
 
 # Dependencies
 node_modules

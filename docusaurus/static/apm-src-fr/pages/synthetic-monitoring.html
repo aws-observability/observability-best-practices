@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Surveillance synthétique (Canaries) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Surveillance synthétique (Canaries)</h1></header>
+      <article>
+        <section>
+          <h2>Comment Synthetics se connecte à Application Signals</h2>
+          <p>Les canaries CloudWatch Synthetics peuvent apparaître dans Application Signals lorsque vous activez le traçage X-Ray pour le canary. Cela permet aux appels des canaries d'être associés aux services backend et affichés dans les détails du service et sur la carte des applications.</p>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Comment Application Signals permet la surveillance de la santé opérationnelle</a>.</p>
+        </section>
+
+        <section>
+          <h2>Cas d'utilisation courants des canaries</h2>
+          <ul>
+            <li><strong>Vérifications de santé des API</strong> : valider les points de terminaison clés selon un calendrier</li>
+            <li><strong>Flux de navigation</strong> : valider les parcours de connexion/paiement</li>
+            <li><strong>Multi-région</strong> : détecter les problèmes régionaux avant les clients</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Prochaines étapes</h2>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Canaries CloudWatch Synthetics</a></li>
+            <li><a href="application-map.html">Carte des applications</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

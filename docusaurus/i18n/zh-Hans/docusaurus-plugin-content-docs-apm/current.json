@@ -1,0 +1,38 @@
+{
+  "sidebar.apmSidebar.doc.APM Home": {
+    "message": "APM 首页"
+  },
+  "sidebar.apmSidebar.category.Overview": {
+    "message": "概览"
+  },
+  "sidebar.apmSidebar.category.Implementation guides": {
+    "message": "实施指南"
+  },
+  "sidebar.apmSidebar.category.Features & capabilities": {
+    "message": "功能与特性"
+  },
+  "sidebar.apmSidebar.category.Examples & code samples": {
+    "message": "示例与代码"
+  },
+  "sidebar.apmSidebar.category.Examples": {
+    "message": "示例"
+  },
+  "sidebar.apmSidebar.category.API reference": {
+    "message": "API 参考"
+  },
+  "sidebar.apmSidebar.category.Best practices": {
+    "message": "最佳实践"
+  },
+  "sidebar.apmSidebar.category.Troubleshooting": {
+    "message": "故障排除"
+  },
+  "sidebar.apmSidebar.category.Security & compliance": {
+    "message": "安全与合规"
+  },
+  "sidebar.apmSidebar.category.Integrations": {
+    "message": "集成"
+  },
+  "sidebar.apmSidebar.category.Reference": {
+    "message": "参考"
+  }
+}

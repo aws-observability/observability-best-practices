@@ -1,0 +1,577 @@
+---
+sidebar_position: 1
+---
+
+# AWS Organization లో SSM Agent Manage చేయడం
+
+ఈ section AWS Organization లో SSM agent installation manage చేయడం ఎలాగో వివరిస్తుంది మరియు CloudFormation, Terraform, Shell, PowerShell, Ansible, Chef, మరియు Puppet sample code అందిస్తుంది.
+
+దయచేసి గుర్తుంచుకోండి ఇది sample code మరియు production environment లో ఏదైనా ఉపయోగానికి ముందు development environment లో సమగ్రంగా test మరియు validate చేయాలి.
+
+## SSM Agent అర్థం చేసుకోవడం
+
+మునుపటి sections లో చర్చించినట్లు, Systems Manager ఉపయోగించి మీ environment లోని nodes ను manage చేయడం ప్రారంభించడానికి, nodes [managed](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html#supported-machine-types) అయి ఉండాలి, అంటే SSM Agent machine మీద install చేయబడి ఉండాలి మరియు agent అవసరమైన permissions తో Systems Manager service endpoints తో communicate చేయగలగాలి.
+
+AWS Systems Manager Agent (SSM Agent) అనేది Amazon Elastic Compute Cloud (Amazon EC2) instances, edge devices, on-premises servers, మరియు virtual machines (VMs) మీద run అయ్యే Amazon software. SSM Agent కోసం source code [GitHub](https://github.com/aws/amazon-ssm-agent) లో అందుబాటులో ఉంది. SSM Agent Systems Manager ఈ resources ను update, manage, మరియు configure చేయడం సాధ్యం చేస్తుంది. Agent AWS Cloud లోని Systems Manager service నుండి requests ను process చేస్తుంది, తర్వాత request లో specify చేయబడినట్లు వాటిని run చేస్తుంది.
+
+అందువల్ల, nodes మీద SSM Agent install చేయబడిందని నిర్ధారించడం అవసరం మరియు AWS Systems Manager service ఉపయోగించి node management operations ప్రారంభించేటప్పుడు address చేయాల్సిన మొదటి step.
+
+## Operating system support
+
+SSM Agent విస్తృత శ్రేణి operating systems మరియు machine types మీద supported. మీ operating system (OS), OS version, మరియు machine type supported అయ్యాయో verify చేయడానికి User guide లో [Supported operating systems and machine types](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html) చూడండి.
+
+## SSM Agent pre-installed ఉన్న AMIs
+
+Systems Manager తో ప్రారంభించడానికి, AWS Systems Manager Agent (SSM Agent) AWS మరియు trusted third-parties అందించిన కొన్ని Amazon Machine Images (AMIs) మీద preinstall చేయబడి ఉంటుంది. ఇది preinstall చేయబడిన operating systems జాబితా పొందడానికి [Find AMIs with the SSM Agent preinstalled](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) చూడండి.
+
+## SSM Agent installation methods
+
+ఇప్పుడు ఏ operating systems SSM Agent కు support ఇస్తాయో అర్థం చేసుకున్నాము, SSM Agent preinstall చేయబడని instances మీద agent install చేయడానికి వివిధ methods ను explore చేద్దాం. Installation approach రెండు main scenarios గా categorize చేయవచ్చు:
+
+* **కొత్త instance deployment**: కొత్త instances launch చేసేటప్పుడు SSM Agent install చేయడం.
+* **ఇప్పటికే ఉన్న instance management**: ఇప్పటికే running instances మీద SSM Agent install చేయడం.
+
+### కొత్త instances మీద SSM Agent install చేయడం
+
+కొత్త instances launch చేసేటప్పుడు, మీ initial setup process లో SSM Agent installation చేర్చడం ప్రారంభం నుండి consistent management capabilities నిర్ధారిస్తుంది. ఈ approach post-deployment installation అవసరాన్ని eliminate చేస్తుంది. Golden AMIs, user data scripts, లేదా infrastructure as code tools వంటి వివిధ methods ద్వారా మీరు దీనిని సాధించవచ్చు. Method ఎంపిక మీ organization యొక్క deployment practices మరియు scaling requirements మీద ఆధారపడి ఉంటుంది.
+
+#### Golden AMI Approach
+
+Golden AMI అనేది EC2 instances launch చేయడానికి standardized template గా పనిచేసే customized Amazon Machine Image. Systems Manager integration కోసం, organizations SSM Agent pre-installed తో Golden AMIs create చేయవచ్చు, ఈ AMIs నుండి launch చేయబడిన అన్ని instances Systems Manager ద్వారా వెంటనే manageable అయ్యేలా నిర్ధారిస్తుంది. ఈ approach post-launch installation scripts అవసరాన్ని eliminate చేస్తుంది మరియు deployment failures risk ను తగ్గిస్తుంది.
+
+Golden AMI Create చేయడం
+
+1. Manually: Instance launch చేసి, SSM Agent install మరియు configure చేసి, configuration test చేసి, తర్వాత ఆ instance నుండి AMI create చేయడం ద్వారా Golden AMI manually create చేయవచ్చు.
+1. EC2 Image Builder: Golden images create చేయడానికి EC2 Image Builder ఉపయోగిస్తుంటే, [image recipe](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html#start-build-image-step2) configure చేసి output image లో SSM agent ఉంచే option select చేయండి.
+1. Hashicorp Packer: Hashicorp Packer ఉపయోగిస్తుంటే, SSM agent install చేయడానికి shell commands run చేయడానికి shell Packer provisioner ఉపయోగించండి.
+
+```json
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "if [ -f /etc/system-release ]; then",
+        "  # Amazon Linux",
+        "  sudo yum install -y amazon-ssm-agent",
+        "  sudo systemctl enable amazon-ssm-agent",
+        "  sudo systemctl start amazon-ssm-agent",
+        "elif [ -f /etc/lsb-release ]; then",
+        "  # Ubuntu",
+        "  sudo snap install amazon-ssm-agent —classic",
+        "  sudo systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "  sudo systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "fi"
+      ]
+    }
+  ]
+}
+```
+
+ప్రత్యామ్నాయంగా, Agent installation shell commands ఉన్న script కు path అందించండి.
+
+```json
+{
+  "provisioners": [{
+    "type": "shell",
+    "script": "scripts/install_ssm.sh"
+  }]
+}
+```
+
+Packer తో script provisioner ఉపయోగించేటప్పుడు, `install_ssm.sh` మీ Packer configuration file (`.json` లేదా `.pkr` `.hcl`) కు relative గా store చేయాలి.
+
+#### Infrastructure as Code (IaC)
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+SSM agent pre-installed లేని AMIs ఉపయోగించి instances launch చేయడానికి CloudFormation ఉపయోగిస్తుంటే, SSM agent install చేయడానికి `UserData` property ను leverage చేయవచ్చు.
+
+```yaml
+  # EC2 Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - !Ref OperatingSystem
+      InstanceType: !FindInMap
+        - EnvironmentSettings
+        - !Ref EnvironmentType
+        - InstanceType
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      UserData: !If
+        - !Base64
+          'Fn::Sub': |
+            #!/bin/bash
+            # Install SSM Agent based on OS
+            if [ -f /etc/os-release ]; then
+                . /etc/os-release
+                case "$ID" in
+                    amzn|rhel)
+                        yum install -y amazon-ssm-agent
+                        systemctl enable amazon-ssm-agent
+                        systemctl start amazon-ssm-agent
+                        ;;
+                    ubuntu)
+                        snap install amazon-ssm-agent —classic
+                        systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        ;;
+                esac
+            fi
+```
+
+</TabItem>
+
+<TabItem value="terraform">
+
+Terraform ఉపయోగించేటప్పుడు, SSM agent installation shell commands ఉన్న script file create చేయండి. తర్వాత installation script file కు point చేయడానికి instance resource యొక్క `user_data` property ఉపయోగించండి.
+
+```json
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t2.micro"
+
+  subnet_id                   = data.aws_subnet.main.id
+  vpc_security_group_ids      = [aws_security_group.allow_ssm.id]
+  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  associate_public_ip_address = true
+
+  user_data = filebase64("${path.module}/scripts/install_ssm.sh")
+
+  tags = {
+    Name = "SSM-enabled-instance"
+  }
+}
+
+# Output
+output "instance_id" {
+  value = aws_instance.web.id
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 Console/API/SDK
+
+EC2 console లేదా ఏదైనా SDK ఉపయోగించి EC2 instance launch చేసేటప్పుడు, instance launch చేయడానికి ముందు Amazon EC2 instance కు SSM Agent installation commands తో user data add చేయండి.
+
+* Linux కోసం ఈ article లో పేర్కొన్న steps చూడండి: [How do I install SSM Agent on an Amazon EC2 Linux instance at launch?](https://repost.aws/knowledge-center/install-ssm-agent-ec2-linux)
+* Windows కోసం ఈ article లో పేర్కొన్న steps చూడండి: [How do I install AWS Systems Manager Agent (SSM Agent) on an Amazon EC2 Windows instance at launch?](https://repost.aws/knowledge-center/ssm-agent-windows-ec2)
+
+#### Application Migration Service (MGN)
+
+Application Migration Service ఉపయోగించి మీ servers migrate మరియు launch చేయబడితే, SSM Agent install చేయడానికి **post-launch** settings ఉపయోగించండి. [ఇక్కడ](https://docs.aws.amazon.com/mgn/latest/ug/post-launch-settings.html#post-launch-settings-activation) వివరించిన steps చూడండి.
+
+#### Amazon EKS
+
+తాజా Amazon EKS optimized AMIs SSM Agent ను automatically install చేస్తాయి. మీరు customized AMI ఉపయోగిస్తుంటే, SSM Agent install చేయడానికి, [ఇక్కడ](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-the-ssm-agent-and-cloudwatch-agent-on-amazon-eks-worker-nodes-using-prebootstrapcommands.html) వివరించినట్లు `preBootstrapCommands` property ఉపయోగించండి.
+
+### Running instances మీద SSM Agent install చేయడం
+
+మీ environment లో ఇప్పటికే running ఉన్న instances కోసం, వివిధ remote access మరియు automation methods ఉపయోగించి SSM Agent install చేయవచ్చు. Installation process మీ operating system type, available access methods, మరియు network configuration మీద ఆధారపడి మారుతుంది. ఈ section మీ existing instances మీద SSM Agent install చేయడానికి ఉపయోగించగల వివిధ approaches వివరిస్తుంది.
+
+#### Custom solution
+**Unmanaged Amazon EC2 nodes మీద AWS Systems Manager agent automate installing** గురించి [public blog](https://aws.amazon.com/blogs/mt/automate-installing-ssm-agent-on-unmanaged-ec2-instances-in-an-aws-organization/) చూడండి.
+ఈ solution ssm agent install చేయడానికి userdata ఉపయోగిస్తుంది మరియు automation runbooks regions మరియు accounts అంతటా ఈ process ను orchestrate చేస్తాయి.
+
+#### Configuration management tools
+
+మీ organization Puppet, Chef, లేదా Ansible వంటి configuration management tools ఉపయోగిస్తుంటే, మీ instances అంతటా SSM Agent deploy చేయడానికి ఈ existing tools ను leverage చేయవచ్చు.
+
+<Tabs
+    groupId="cmtool"
+    defaultValue="ansible"
+    values={[
+        {label: 'Ansible', value: 'ansible'},
+        {label: 'Chef', value: 'chef'},
+        {label: 'Puppet', value: 'puppet'}
+    ]}>
+<TabItem value="ansible">
+
+```yaml
+- name: Install SSM Agent across fleet
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Detect OS family
+      ansible.builtin.set_fact:
+        os_family: "{{ ansible_facts['os_family'] }}"
+
+    - name: Install SSM Agent on RedHat family
+      block:
+        - name: Download SSM Agent RPM
+          get_url:
+            url: "https://s3.{{ aws_region }}.amazonaws.com/amazon-ssm-{{ aws_region }}/latest/linux_amd64/amazon-ssm-agent.rpm"
+            dest: /tmp/amazon-ssm-agent.rpm
+            mode: '0644'
+
+        - name: Install SSM Agent
+          yum:
+            name: /tmp/amazon-ssm-agent.rpm
+            state: present
+      when: os_family == "RedHat"
+
+    - name: Install SSM Agent on Debian family
+      block:
+        - name: Install SSM Agent via Snap
+          community.general.snap:
+            name: amazon-ssm-agent
+            classic: yes
+      when: os_family == "Debian"
+
+    - name: Enable and start SSM Agent
+      systemd:
+        name: amazon-ssm-agent
+        enabled: yes
+        state: started
+
+    - name: Verify installation
+      command: systemctl status amazon-ssm-agent
+      register: ssm_status
+      ignore_errors: yes
+
+    - name: Report status
+      debug:
+        var: ssm_status.stdout_lines
+```
+
+</TabItem>
+<TabItem value="puppet">
+
+```puppet
+if $facts['os']['family'] == 'RedHat' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm',
+    provider => 'rpm',
+  }
+} elsif $facts['os']['family'] == 'Debian' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb',
+    provider => 'dpkg',
+  }
+}
+
+service { 'amazon-ssm-agent':
+  ensure => running,
+  enable => true,
+  require => Package['amazon-ssm-agent'],
+}
+```
+
+</TabItem>
+<TabItem value="chef">
+
+```ruby
+# cookbooks/ssm_agent/recipes/default.rb
+case node['platform_family']
+when 'rhel'
+  remote_file '/tmp/amazon-ssm-agent.rpm' do
+    source "https://s3.#{node['region']}.amazonaws.com/amazon-ssm-#{node['region']}/latest/linux_amd64/amazon-ssm-agent.rpm"
+    mode '0644'
+    action :create
+  end
+
+  package 'amazon-ssm-agent' do
+    source '/tmp/amazon-ssm-agent.rpm'
+    action :install
+  end
+
+when 'debian'
+  execute 'install_ssm_agent' do
+    command 'snap install amazon-ssm-agent —classic'
+    not_if 'snap list | grep amazon-ssm-agent'
+  end
+end
+
+service 'amazon-ssm-agent' do
+  action [:enable, :start]
+end
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 user data
+
+Default గా, user data command మరియు cloud-init directives EC2 instance launch అయినప్పుడు first boot cycle లో మాత్రమే run అవుతాయి. అయితే, mime multi-part file తో మీ user data command మరియు cloud-init directives configure చేయవచ్చు.
+
+User data update చేయడానికి, Instance ను **stop** చేయండి. **Actions** click చేసి, **Instance settings** select చేసి **Edit User Data** ఎంచుకోండి.
+
+<Tabs
+    groupId="os"
+    defaultValue="linux"
+    values={[
+        {label: 'Linux', value: 'linux'},
+        {label: 'Windows', value: 'windows'},
+    ]}>
+<TabItem value="linux">
+
+```bash
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#!/bin/bash
+# Amazon Linux 2, RHEL
+dnf install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+--//--
+```
+
+</TabItem>
+<TabItem value="windows">
+
+**Note**: క్రింది PowerShell script EC2Launch v2 launch agent తో మాత్రమే పనిచేస్తుంది.
+
+```powershell
+<powershell>
+$dir = $env:TEMP + "\ssm"
+New-Item -ItemType directory -Path $dir -Force
+cd $dir
+(New-Object System.Net.WebClient).DownloadFile("https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe", $dir + "\AmazonSSMAgentSetup.exe")
+Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @("/q", "/log", "install.log") -Wait
+</powershell>
+<persist>true</persist>
+```
+
+</TabItem>
+</Tabs>
+
+`ModifyInstanceAttribute` API ఉపయోగించి programmatically చేసేటప్పుడు, ఈ script base64-encoded text గా convert చేయాలి.
+
+#### Group Policy (Windows కోసం)
+
+Group Policy సాంప్రదాయకంగా .msi packages కు support ఇస్తుంది, కానీ AWS Systems Manager (SSM) Agent .exe file గా వస్తుంది. ఈ limitation ను overcome చేయడానికి, మీ Windows environment అంతటా SSM Agent deploy చేయడానికి Group Policy మరియు Scheduled Tasks కలయికను ఉపయోగిస్తాము.
+
+1. Active Directory లో appropriate hierarchy/OU లో GPO create చేయండి (లేదా existing GPO modify చేయండి). Computer scheduled task script configuration ఉపయోగించేలా policy edit చేయండి.
+
+2. Option Computer Configuration | Preferences | Control Panel Settings | Scheduled Tasks | Right-click చేసి New→Immediate Task select చేయండి అనే path లో ఉంటుంది.
+
+3. Action కోసం **Create** select చేయండి, task కు name ఇవ్వండి, మరియు task run చేయడానికి user account గా `NT AUTHORITY\System` specify చేయండి. **Run whether user is logged on or not** radio button click చేసి **Triggers** tab click చేసి next section కు proceed అవ్వండి.
+
+![Task Manager screenshot for SSMAgent properties](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-ssm-agent.png "Task Manager screenshot for SSMAgent properties")
+
+4. Triggers కోసం, one time ఎంచుకోండి.
+
+5. **Start a program** కు new action create చేసి `powershell.exe` ఎంచుకోండి మరియు **Argument** కోసం కింది వాడండి:
+
+```powershell
+-ExecutionPolicy Bypass -Command "$dir = $env:TEMP + '\ssm'; New-Item -ItemType directory -Path $dir -Force; Set-Location $dir; (New-Object System.Net.WebClient).DownloadFile('https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe', $dir + '\AmazonSSMAgentSetup.exe'); Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @('/q', '/log', 'install.log') -Wait"
+```
+
+![Task Manager screenshot for adding a new action](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-new-action.png "Task Manager screenshot for adding a new action")
+
+6. New Action window మీద **OK** click చేసి Properties window మీద **OK** click చేసి ఆ dialogues close చేయండి.
+
+7. ఇది complete అయిన తర్వాత, GP policy update అయినప్పుడు లేదా command prompt నుండి `gpudate /force` ఉపయోగించి ఆ action force చేసినప్పుడు ఏదైనా linked computers కు installer push చేయబడుతుంది.
+
+మరింత సమాచారం కోసం, [Automate Registering Windows Managed Nodes in AWS Systems Manager](https://github.com/aws-samples/sample-ssm-automate-windows-hybrid-install) చూడండి.
+
+#### SSH (Linux కోసం)
+
+SSH ద్వారా accessible అయిన Linux instances కోసం, కింది sample script ఉపయోగించి SSM Agent installation automate చేయవచ్చు. ఈ script OS type detect చేసి appropriate package install చేస్తుంది.
+
+```bash
+#!/bin/bash
+USERNAME=ec2-user
+HOSTS=("192.168.1.121" "192.168.1.122" "192.168.1.123")
+KEY_PATH="/path/to/your/key.pem"
+
+for HOSTNAME in ${HOSTS}; do
+    # Detect OS type
+    OS_TYPE=$(ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "cat /etc/os-release | grep '^ID=' | cut -d= -f2 | tr -d '\"'")
+
+    case ${OS_TYPE} in
+        "amzn"|"rhel"|"centos")
+            SCRIPT="sudo yum install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl start amazon-ssm-agent"
+            ;;
+        "ubuntu"|"debian")
+            SCRIPT="wget s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb && sudo dpkg -i amazon-ssm-agent.deb && sudo systemctl start amazon-ssm-agent"
+            ;;
+        *)
+            echo "Unsupported OS on ${HOSTNAME}"
+            continue
+            ;;
+    esac
+
+    ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+done
+```
+
+#### Amazon EKS - Existing instances
+
+తాజా Amazon EKS optimized AMIs SSM Agent ను automatically install చేస్తాయి. Customized AMI ఉపయోగిస్తుంటే, running worker nodes మీద SSM Agent install చేయడానికి, [ఇక్కడ](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-ssm-agent-on-amazon-eks-worker-nodes-by-using-kubernetes-daemonset.html) వివరించిన Kubernetes Daemonset ఉపయోగించండి.
+
+#### Amazon Workspaces
+
+[ఇక్కడ](https://github.com/aws-samples/workspaces-ssm-install) documented చేయబడిన customized solution ఉపయోగించండి.
+
+## SSM Agent కోసం IAM permissions manage చేయడం
+
+SSM Agent functionality కోసం సరైన IAM permissions చాలా ముఖ్యం. AWS ఈ permissions manage చేయడానికి manual instance profile attachment నుండి automated organization-wide solutions వరకు బహుళ approaches అందిస్తుంది.
+
+### Default Host Management Configuration (DHMC)
+
+DHMC మీ organization అంతటా SSM Agent permissions manage చేయడానికి AWS recommended approach. ఇది manually AWS Identity and Access Management (IAM) instance profile create చేయకుండానే EC2 instances manage చేయడం సాధ్యం చేస్తుంది. బదులుగా, Default Host Management Configuration ఇది activate చేయబడిన AWS account మరియు AWS Region లోని అన్ని instances manage చేయడానికి Systems Manager కు permissions నిర్ధారించే default IAM role create మరియు apply చేస్తుంది.
+
+#### DHMC enable చేయడానికి methods:
+* **Unified Console Experience ద్వారా**: [Unified console experience కు onboarding](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) చేసేటప్పుడు, DHMC automatically enable అవుతుంది. ఇది onboarding సమయంలో create చేయబడిన State Manager association ఉపయోగించి enable చేయబడుతుంది మరియు ప్రతి target account మరియు region లో DHMC enable చేస్తుంది.
+* **Fleet Manager ఉపయోగించి**: Fleet Manager console నుండి Default Host Management Configuration turn on చేయవచ్చు. మీ Amazon EC2 instances managed చేయాలనుకునే ప్రతి Region లో ఒక్కొక్కటిగా Default Host Management Configuration turn on చేయాలి. [ఇక్కడ](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#default-host-management) steps చూడండి.
+* **CLI/SDK ద్వారా**: Required role create చేసి AWS CLI/SDK ఉపయోగించి service setting update చేయడం ద్వారా ఇది చేయబడుతుంది. మీ Amazon EC2 instances managed చేయాలనుకునే ప్రతి Region లో ఒక్కొక్కటిగా Default Host Management Configuration turn on చేయాలి. [ఇక్కడ](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate) steps చూడండి.
+* **Quick Setup ద్వారా**: Quick Setup తో, AWS Organizations లో add చేయబడిన అన్ని accounts మరియు Regions కోసం Default Host Management Configuration activate చేయవచ్చు. [ఇక్కడ](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate) steps చూడండి.
+* **CloudFormation ఉపయోగించి**: StackSets తో multi accounts మరియు region లో DHMC enable చేయడానికి CloudFormation కూడా ఉపయోగించవచ్చు. ఈ [blog](https://aws.amazon.com/blogs/mt/enable-management-of-your-amazon-ec2-instances-in-aws-systems-manager-using-default-host-management-configuration/) చూడండి.
+
+### Individual instance permissions
+
+DHMC ఉపయోగించకపోతే, SSM agent కోసం permission ప్రతి instance level వద్ద IAM Instance Profiles ఉపయోగించి grant చేయాలి. SSM agent కోసం recommended Amazon Managed Policy, AmazonSSMManagedInstanceCore తో Instance Profile create చేయడం recommend చేస్తాము. Use case ను బట్టి ఈ instance profile కు additional permissions అవసరం అవుతాయి. SSM agent use కోసం IAM instance profile create చేయడం మరియు additional policy considerations గురించి చర్చించే User guide లో [Additional policy considerations for managed instances](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#instance-profile-policies-overview) చూడండి.
+
+#### Launch సమయంలో EC2 instances కు instance profile attach చేయడం
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+Instances launch చేయడానికి CloudFormation ఉపయోగిస్తుంటే, IAM instance profile resource create చేసి మీ instance resource లో refer చేయవచ్చు.
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SSMInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  SSMInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref SSMInstanceRole
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      # Other instance properties
+```
+
+Autoscaling groups deploy చేసేటప్పుడు, Launch template resource property Instance Profile refer చేయడానికి ఉపయోగించవచ్చు.
+
+```yaml
+# ASG with SSM Instance Profile
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Name: !Ref SSMInstanceProfile
+```
+
+</TabItem>
+<TabItem value="terraform">
+
+Instances launch చేయడానికి Terraform ఉపయోగిస్తుంటే, IAM Instance Profile resource create చేసి Instance resource లో refer చేయవచ్చు.
+
+```json
+# IAM Role and Instance Profile
+resource "aws_iam_role" "ssm_role" {
+  name = "SSMManagedInstanceRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "SSMManagedInstanceProfile"
+  role = aws_iam_role.ssm_role.name
+}
+
+# EC2 Instance with Profile
+resource "aws_instance" "example" {
+  # ... other configuration ...
+  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### Systems Manager Automation runbooks ఉపయోగించి instances launch చేయడం
+
+[AWS-CreateManagedLinuxInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedlinuxinstance.html) మరియు [AWS-CreateManagedWindowsInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedwindowsinstance.html) managed instances create మరియు configure చేసే process ను automate చేసే pre-configured Systems Manager Automation runbooks. ఈ runbooks launch చేయబడిన instances కు required SSM Permissions ఉన్న instance profile attach చేయబడిందని నిర్ధారిస్తాయి.
+
+### ఇప్పటికే running EC2 instances కు instance profiles attach చేయడం
+
+* Quick Setup ఉపయోగించి (Recommended): [Amazon EC2 host management using Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-host-management.html) ఉపయోగించి, మీ instances కు attached existing instance profiles కు required IAM policies add చేయడానికి, లేదా మీరు ఎంచుకున్న configuration కోసం అవసరమైన permissions తో IAM policies మరియు instance profiles create చేయడానికి Quick Setup ను allow చేయడానికి configure చేయవచ్చు. ఈ option organization లో multiple accounts లేదా specific OUs లోని instances ను target చేయవచ్చు.
+
+* Systems Manager Automation ఉపయోగించి: Systems Manager access కోసం SSMRoleForManagedInstance managed IAM role తో instance configure చేయడానికి automation runbook [AWS-SetupManagedRoleOnEc2Instance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-setupmanagedroleonec2instance.html) ఉపయోగించవచ్చు. Specified role exist కాకపోతే, automation ద్వారా create చేయబడుతుంది. Multiple account మరియు regions లోని instances target చేయడానికి, [multi-account/multi-Region](https://docs.aws.amazon.com/systems-manager/latest/userguide/running-automations-multiple-accounts-regions.html) mode లో automation run చేయండి.

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>जनरेटिव AI observability — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>जनरेटिव AI observability</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals Amazon Bedrock मॉडल के साथ इंटरैक्ट करने वाले जनरेटिव AI एप्लिकेशन की समस्या निवारण का समर्थन करता है। यह Bedrock API कॉल के लिए आउट-ऑफ़-द-बॉक्स टेलीमेट्री प्रदान करता है ताकि आप इनकी जांच कर सकें:</p>
+          <ul>
+            <li><strong>मॉडल कॉन्फ़िगरेशन समस्याएं</strong></li>
+            <li><strong>उपयोग और लागत कारक</strong> (टोकन उपयोग)</li>
+            <li><strong>मॉडल लेटेंसी</strong></li>
+            <li><strong>रुकने/समाप्त होने के कारण</strong> प्रतिक्रियाओं के लिए</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>विस्तृत मेट्रिक्स और ट्रेसेज़</h2>
+          <p>Bedrock कॉल के लिए, Application Signals रिसोर्स-लेवल विवरण (उदाहरण के लिए: मॉडल ID, गार्डरेल ID, नॉलेज बेस ID, और Bedrock एजेंट ID) के साथ प्रदर्शन मेट्रिक्स और ट्रेस स्पैन जनरेट और सहसंबंधित कर सकता है।</p>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">उदाहरण: Amazon Bedrock के साथ इंटरैक्ट करने वाले जनरेटिव AI ऐप्स की समस्या निवारण</a>।</p>
+        </section>
+
+        <section>
+          <h2>GenAI सिमैंटिक एट्रिब्यूट + Transaction Search</h2>
+          <p>Application Signals OpenTelemetry GenAI सिमैंटिक कन्वेंशन एट्रिब्यूट (उदाहरण के लिए, <code>gen_ai.request.model</code> और टोकन उपयोग फ़ील्ड) उत्सर्जित कर सकता है। आप मॉडल में प्रॉम्प्ट, टोकन उपयोग और लेटेंसी की तुलना करने के लिए CloudWatch Transaction Search के साथ इनका विश्लेषण कर सकते हैं।</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">स्पैन खोजना और विश्लेषण करना</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>अतिरिक्त पठन</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS घोषणा: Application Signals Bedrock का समर्थन करता है</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">ब्लॉग: Amazon Bedrock observability को AppSignals के साथ बेहतर बनाएं</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

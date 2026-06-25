@@ -1,0 +1,38 @@
+{
+  "title": {
+    "message": "AWS 可观测性最佳实践"
+  },
+  "item.label.Home": {
+    "message": "首页"
+  },
+  "item.label.Guides": {
+    "message": "指南"
+  },
+  "item.label.Signals": {
+    "message": "信号"
+  },
+  "item.label.Tools": {
+    "message": "工具"
+  },
+  "item.label.APM": {
+    "message": "APM"
+  },
+  "item.label.Recipes": {
+    "message": "实践方案"
+  },
+  "item.label.AI": {
+    "message": "AI"
+  },
+  "item.label.Patterns": {
+    "message": "模式"
+  },
+  "item.label.Persona": {
+    "message": "角色"
+  },
+  "item.label.Resources": {
+    "message": "资源"
+  },
+  "item.label.Contributors": {
+    "message": "贡献者"
+  }
+}

@@ -1,0 +1,162 @@
+---
+sidebar_position: 1
+title: CloudTrail Event Fields యొక్క Security ప్రాముఖ్యతను అర్థం చేసుకోవడం
+description: Critical AWS CloudTrail event fields, వాటి security significance మరియు forensic analysis మరియు incident response కోసం use cases గురించి గైడ్.
+---
+
+# CloudTrail Event Fields యొక్క Security ప్రాముఖ్యతను అర్థం చేసుకోవడం
+
+AWS CloudTrail event fields API activities, user identities మరియు resource interactions గురించి granular details ను అందిస్తాయి, security investigations సమయంలో precise tracking మరియు analysis ను enable చేస్తాయి. ఈ విభాగం critical CloudTrail event fields, వాటి security significance మరియు forensic analysis మరియు incident response కోసం recommended use cases ను outline చేస్తుంది.
+
+## Security Investigations కోసం Key CloudTrail Event Fields
+
+Security investigations లో అత్యంత critical CloudTrail event fields, వాటి importance మరియు incident response సమయంలో వాటిని ఎలా effectively leverage చేయాలో వివరణాత్మక breakdown క్రింద ఉంది.
+
+:::tip CloudTrail Record Contents ను Discover చేయండి
+`eventName`, `eventSource` మరియు `requestParameters` వంటి key fields తో సహా **AWS CloudTrail record contents** యొక్క full details ను explore చేయడానికి, **[మా సమగ్ర documentation ను చూడండి](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html)**. Complete log insights తో మీ security forensics మరియు incident response ను enhance చేయండి.
+:::
+
+### Critical Event Fields
+
+- **1. userIdentity** 
+  - **Description**: `type` (ఉదా., IAMUser, AssumedRole, Root), `principalId`, `arn`, `accountId`, `userName` మరియు `sessionContext` తో సహా request చేస్తున్న IAM identity గురించి details కలిగి ఉంటుంది.
+  - **Security Importance**: Incident వెనుక ఉన్న actor ను identify చేస్తుంది, compromised user, role, లేదా root account involved అయిందా అని determine చేయడం enable చేస్తుంది. Cross-account access ను tracing చేయడానికి కూడా support చేస్తుంది.
+  - **Use Case**: Bad actor stolen IAM credentials ఉపయోగించాడా లేదా privileges escalate చేయడానికి role assume చేశాడా అని pinpoint చేయడానికి `userIdentity` ఉపయోగించండి. `type` `Root` అయితే, root account compromise యొక్క high risk కారణంగా immediately escalate చేయండి.
+
+- **2. userIdentity.accessKeyId** 
+  - **Description**: Request లో ఉపయోగించిన access key ను identify చేస్తుంది.
+  - **Security Importance**: Bad actors తరచుగా stolen access keys ను reuse చేస్తారు కాబట్టి, multiple events అంతటా compromised credentials ను tracks చేస్తుంది.
+  - **Use Case**: Breach scope determine చేయడానికి `accessKeyId` ఉపయోగించి suspicious activities ను correlate చేయండి.
+
+- **3. userIdentity.userName** 
+  - **Description**: IAM user యొక్క name ను specify చేస్తుంది.
+  - **Security Importance**: Multiple access keys ఉన్నప్పుడు ముఖ్యంగా user-specific activity ను tracks చేస్తుంది.
+  - **Use Case**: Consistent identity tracking కోసం `userName` ను `userIdentity.principalId` తో cross-reference చేయండి.
+
+- **4. userIdentity.principalId** 
+  - **Description**: Request చేస్తున్న entity కోసం unique identifier ను అందిస్తుంది.
+  - **Security Importance**: Temporary credentials కోసం ముఖ్యంగా, sessions అంతటా actions ను correlates చేస్తుంది.
+  - **Use Case**: Assumed roles లేదా sessions అంతటా bad actor movement ను track చేయడానికి `principalId` ఉపయోగించండి.
+
+- **5. userIdentity.sessionContext** 
+  - **Description**: `sessionIssuer` మరియు [`sourceIdentity`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html#STS-API-source-identity) తో సహా assumed roles లేదా federated sessions details.
+  - **Security Importance**: Cross-account access లేదా role-chaining attacks ను understand చేయడానికి critical.
+  - **Use Case**: Role assumption scenarios లో attack origin ను trace చేయడానికి `sessionContext.sourceIdentity` ను analyze చేయండి.
+
+- **6. userIdentity.type** 
+  - **Description**: Identity type ను specify చేస్తుంది (ఉదా., `IAMUser`, `Root`, `AssumedRole`).
+  - **Security Importance**: Immediate escalation అవసరమయ్యే `Root` usage వంటి high-risk actions ను identify చేస్తుంది.
+  - **Use Case**: Privileged identities involve అయిన investigations ను prioritize చేయడానికి `userIdentity.type` ద్వారా filter చేయండి.
+
+- **7. userIdentity.arn** 
+  - **Description**: Principal యొక్క Amazon Resource Name ను అందిస్తుంది.
+  - **Security Importance**: Complex environments లో actors యొక్క precise identification ను ensure చేస్తుంది.
+  - **Use Case**: Specific IAM entities కు actions ను trace చేయడానికి `arn` ఉపయోగించండి.
+
+- **8. userIdentity.accountId** 
+  - **Description**: Entity own చేసే AWS account ను identify చేస్తుంది.
+  - **Security Importance**: Cross-account scenarios లో source account ను isolate చేస్తుంది.
+  - **Use Case**: Unauthorized access detect చేయడానికి `recipientAccountId` తో cross-reference చేయండి.
+
+- **9. userIdentity.sessionIssuer** 
+  - **Description**: Session credentials issue చేసే entity ను identify చేస్తుంది (ఉదా., role).
+  - **Security Importance**: Role-based attacks లో temporary credentials source ను tracks చేస్తుంది.
+  - **Use Case**: Privilege escalation analysis కోసం `AssumedRole` events లో `sessionIssuer` ను analyze చేయండి.
+
+- **10. userIdentity.invokedBy** 
+  - **Description**: AWS service (ఉదా., Lambda) request చేసిందా అని indicate చేస్తుంది.
+  - **Security Importance**: Service-initiated actions ను user activity నుండి distinguish చేస్తుంది, misconfigurations లేదా exploited roles ను identify చేస్తుంది.
+  - **Use Case**: Service behavior లో anomalies కోసం `invokedBy` ను investigate చేయండి.
+
+- **11. eventTime** 
+  - **Description**: Activity యొక్క UTC timestamp ను record చేస్తుంది.
+  - **Security Importance**: Attack timeline ను establish చేస్తుంది, initial point of compromise ను identify చేస్తుంది మరియు systems అంతటా events ను correlate చేస్తుంది.
+  - **Use Case**: Bad actor actions ను sequence చేయండి మరియు unauthorized access duration ను determine చేయండి.
+
+- **12. eventName** 
+  - **Description**: AWS API action ను specify చేస్తుంది (ఉదా., `GetCallerIdentity`, `CreateAccessKey`, `DeleteBucket`).
+  - **Security Importance**: Reconnaissance (`ListUsers`) లేదా privilege escalation (`CreateAccessKey`) వంటి bad actor techniques ను reveal చేస్తుంది.
+  - **Use Case**: IAM policies modify చేయడం లేదా logging disable చేయడం వంటి high-risk actions identify చేయడానికి `eventName` ను analyze చేయండి.
+
+- **13. eventSource** 
+  - **Description**: Target చేయబడిన AWS service ను identify చేస్తుంది (ఉదా., `iam.amazonaws.com`, `s3.amazonaws.com`).
+  - **Security Importance**: Affected services ను determine చేస్తుంది, remediation efforts ను prioritize చేయడానికి help చేస్తుంది.
+  - **Use Case**: Role-chaining attacks detect చేయడానికి `sts.amazonaws.com` తో `eventSource` ను `AssumeRole` `eventName` తో investigate చేయండి.
+
+- **14. sourceIPAddress** 
+  - **Description**: Request originated అయిన IP address ను indicate చేస్తుంది.
+  - **Security Importance**: Attack యొక్క geographic origin మరియు potential threat actors ను identify చేస్తుంది.
+  - **Use Case**: Suspicious origins detect చేయడానికి `sourceIPAddress` ను threat intelligence feeds తో cross-reference చేయండి.
+
+- **15. userAgent** 
+  - **Description**: ఉపయోగించిన application లేదా tool details (ఉదా., `aws-cli`, `aws-sdk-java`).
+  - **Security Importance**: Bad actors ఉపయోగించే suspicious tools లేదా non-standard applications ను identify చేస్తుంది.
+  - **Use Case**: Normal organizational patterns నుండి deviate అయ్యే non-AWS SDKs వంటి anomalies కోసం `userAgent` ను monitor చేయండి.
+
+- **16. errorCode మరియు errorMessage** 
+  - **Description**: API call fail అయిందా మరియు ఎందుకు అయిందో (ఉదా., `AccessDenied`) indicate చేస్తుంది.
+  - **Security Importance**: Failed attack attempts మరియు permission boundaries ను reveal చేస్తుంది.
+  - **Use Case**: `CreateAccessKey` కోసం Multiple `AccessDenied` errors permission testing ను indicate చేయవచ్చు.
+
+- **17. requestParameters** 
+  - **Description**: Resource names లేదా configurations వంటి API call తో పంపిన parameters కలిగి ఉంటుంది.
+  - **Security Importance**: API call యొక్క specific inputs మరియు bad actor actions యొక్క configuration details ను reveal చేస్తుంది.
+  - **Use Case**: Remediation కోసం bucket name identify చేయడానికి `CreateBucket` call లో `requestParameters` ను analyze చేయండి.
+
+- **18. responseElements** 
+  - **Description**: Newly created access keys లేదా resource ARNs వంటి API call output ను include చేస్తుంది.
+  - **Security Importance**: Newly created resources, access keys మరియు ఇతర artifacts వంటి critical information కలిగి ఉంటుంది.
+  - **Use Case**: New keys deactivate చేయడానికి మరియు unauthorized changes reverse చేయడానికి `CreateAccessKey` event లో `responseElements` ఉపయోగించండి.
+
+- **19. resources** 
+  - **Description**: ARNs మరియు resource types తో సహా access చేయబడిన లేదా modify చేయబడిన AWS resources ను list చేస్తుంది.
+  - **Security Importance**: Remediation కోసం S3 buckets లేదా IAM roles వంటి affected assets ను identify చేస్తుంది.
+  - **Use Case**: Affected S3 object ను pinpoint చేయడానికి `DeleteObject` event లో `resources` ఉపయోగించండి.
+
+- **20. eventType** 
+  - **Description**: Event ను categorize చేస్తుంది (ఉదా., `AwsApiCall`, `AwsConsoleSignIn`).
+  - **Security Importance**: API-based attacks, console logins లేదా service-initiated actions ను distinguish చేస్తుంది.
+  - **Use Case**: Unauthorized console access detect చేయడానికి `AwsConsoleSignIn` events ను filter చేయండి.
+
+- **21. recipientAccountId** 
+  - **Description**: Request receive చేసే AWS account ను identify చేస్తుంది.
+  - **Security Importance**: Multi-account organizations లో cross-account activity ను tracks చేస్తుంది.
+  - **Use Case**: Unauthorized cross-account access కోసం `recipientAccountId` `userIdentity.accountId` నుండి differ అవుతుందా అని investigate చేయండి.
+
+- **22. awsRegion** 
+  - **Description**: Request యొక్క AWS region ను specify చేస్తుంది.
+  - **Security Importance**: Geographic patterns మరియు incident scope ను establish చేస్తుంది.
+  - **Use Case**: Unused regions లో anomalies identify చేయడానికి `awsRegion` ద్వారా logs filter చేయండి.
+
+- **23. readOnly** 
+  - **Description**: API call read-only (`true`) లేదా write (`false`) అయిందా indicate చేస్తుంది.
+  - **Security Importance**: Reconnaissance ను modification actions నుండి distinguish చేస్తుంది.
+  - **Use Case**: Potential data tampering లేదా persistence కోసం write operations పై focus చేయండి.
+
+- **24. eventID** 
+  - **Description**: ప్రతి CloudTrail event ను uniquely identify చేస్తుంది.
+  - **Security Importance**: Specific events ను referencing చేయడం మరియు SIEM tools వంటి external systems తో correlating చేయడం enable చేస్తుంది.
+  - **Use Case**: Log aggregation మరియు tracking కోసం `eventID` ను primary key గా ఉపయోగించండి.
+
+- **25. serviceEventDetails** 
+  - **Description**: IAM Identity Center federation events వంటి service-specific context ను provides చేస్తుంది.
+  - **Security Importance**: Specialized service details తో investigations ను enhances చేస్తుంది.
+  - **Use Case**: Federated user actions audit చేయడానికి IAM Identity Center events కోసం `serviceEventDetails` ను analyze చేయండి.
+
+:::tip userIdentity Element ను Explore చేయండి
+AWS CloudTrail logs లో **userIdentity** element ను అర్థం చేసుకోవడానికి సమగ్ర guide కోసం, దాని fields (ఉదా., `type`, `userName`, `arn`) తో సహా, **[మా detailed documentation ను visit చేయండి](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html)**. Effective security forensics మరియు incident response కోసం insights unlock చేయండి.
+:::
+
+:::note CloudTrail కోసం Best Practices
+Security investigations కోసం CloudTrail effectiveness maximize చేయడానికి, మీ AWS Organization లోని అన్ని regions మరియు accounts కోసం CloudTrail enable చేయండి. Logs restricted access ఉన్న S3 bucket లో securely store చేయబడినట్లు ensure చేయండి మరియు tampering detect చేయడానికి log file integrity validation enable చేయండి. Anomalies identify చేయడానికి మరియు incidents కు promptly respond చేయడానికి Amazon Athena లేదా CloudTrail Lake వంటి tools ఉపయోగించి ఈ fields ను regularly analyze చేయండి.
+:::
+
+## Compromised AWS Access Key కోసం ఉదాహరణ Analysis Workflow
+
+1. **Actor ను Identify చేయండి**: Involved identity determine చేయడానికి `userIdentity` fields (`type`, `userName`, `arn`, `accountId`, `principalId`) ఉపయోగించండి. `Root` detect అయితే escalate చేయండి.
+2. **Timeline Establish చేయండి**: Events ను sequence చేయడానికి మరియు attack duration identify చేయడానికి `eventTime` ఉపయోగించండి.
+3. **Actions ను Analyze చేయండి**: Bad actor techniques మరియు affected services అర్థం చేసుకోవడానికి `eventName`, `eventSource` మరియు `readOnly` review చేయండి.
+4. **Resources Track చేయండి**: Remediation కోసం targeted లేదా modified assets identify చేయడానికి `resources`, `requestParameters` మరియు `responseElements` ఉపయోగించండి.
+5. **Access ను Investigate చేయండి**: Unauthorized access లేదా role-chaining detect చేయడానికి `sourceIPAddress`, `userAgent`, `recipientAccountId` మరియు `sessionContext` ను cross-reference చేయండి.
+6. **Errors Review చేయండి**: IAM policies ద్వారా block చేయబడిన attempted actions identify చేయడానికి `errorCode` మరియు `errorMessage` analyze చేయండి.
+7. **Events Correlate చేయండి**: SIEM tools తో integrate చేయడానికి మరియు detailed forensic analysis perform చేయడానికి `eventID` మరియు `serviceEventDetails` ఉపయోగించండి.

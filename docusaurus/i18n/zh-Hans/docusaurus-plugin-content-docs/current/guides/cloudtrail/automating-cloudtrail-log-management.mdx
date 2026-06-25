@@ -1,0 +1,61 @@
+---
+sidebar_position: 1
+title: 使用 Amazon Athena 自动化 CloudTrail 日志管理
+description: 关于使用分区 Athena 表自动化 AWS CloudTrail 日志分析的指南，以优化性能、降低成本和增强安全调查能力。
+---
+
+# 使用 Amazon Athena 自动化 CloudTrail 日志管理
+
+---
+
+AWS CloudTrail 提供了对整个 AWS 基础设施中账户活动的全面监控和日志记录，为审计、合规和安全调查捕获 API 调用和事件。然而，随着 AWS 环境的扩展，特别是在多账户组织中，CloudTrail 日志量可能显著增长，导致在 Amazon Athena 中分析日志时查询时间和成本增加。为解决这个问题，我们建议自动化创建和管理分区 Athena 表以优化查询性能并降低成本。本最佳实践指南概述了如何使用 AWS Lambda 和 Amazon Athena 实施自动化解决方案，按账户、区域和日期对 CloudTrail 日志进行分区，从而实现对安全、合规和运维用例的高效日志分析。
+
+## 为 CloudTrail 日志配置分区 Athena 表
+
+为优化查询性能和降低成本，请使用自动化解决方案为 CloudTrail 日志配置分区 Athena 表。此方法涉及部署两个 AWS Lambda 函数来创建和维护按账户 ID、区域和日期分区的特定账户和整个组织的 Athena 表。分区确保 Athena 在查询期间只扫描相关数据，与扫描非分区数据集相比，显著提高查询速度并降低成本。例如，在调查特定 AWS 账户在指定时间范围内的可疑活动时，Athena 只扫描相关分区，而不是整个日志数据集。
+
+- **[部署此 CloudFormation 模板进行自动化](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**：使用此 CloudFormation 模板部署解决方案，其中包括两个 Lambda 函数、IAM 角色、AWS Glue 数据库和预定义的 Athena 查询。该模板自动化分区表的设置，消除手动配置并确保跨环境的一致性。GitHub 解决方案可在[此处](https://github.com/aws-samples/sample-automation-cloudtrail-athena)找到。
+- **[使用分区投影在 Athena 中查询 CloudTrail 日志](https://docs.aws.amazon.com/athena/latest/ug/create-cloudtrail-table-partition-projection.html)**：此解决方案使用 Athena 投影分区，由于 CloudTrail 日志具有已知结构和预定义的分区方案，允许您使用 Athena 分区投影功能减少查询运行时间并自动化分区管理。分区投影在添加新数据时自动添加新分区。这消除了使用 `ALTER TABLE ADD PARTITION` 手动添加分区的需要。
+- **[指定 CloudTrail S3 存储桶和前缀](https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning-s3bucketprefix.html)**：提供 CloudTrail S3 存储桶名称和适当的前缀作为 CloudFormation 模板的输入。对于组织 trail，前缀格式为 `ORG_ID/AWSLogs/ORG_ID`，其中 `ORG_ID` 是 AWS 组织 ID。对于单账户 trail，使用默认前缀 `AWSLogs/`。使用 AWS CLI 命令验证前缀：`aws cloudtrail describe-trails --trail-name-list TRAIL_NAME`。如果使用自定义前缀，请将其附加到默认前缀（例如 `PREFIX/ORG_ID/AWSLogs/ORG_ID`）。
+- **[设置 Athena 查询结果位置](https://docs.aws.amazon.com/athena/latest/ug/query-results-specify-location.html)**：确保在 Athena 中配置了用于查询结果的 S3 存储桶。在 CloudFormation 模板中指定此存储桶（不带 `s3://` 前缀）以存储查询输出。
+
+:::tip 使用 GitHub 解决方案自动化
+**访问 GitHub 上的 [CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena)** 以部署 CloudFormation 模板并使用分区 Athena 表简化您的 CloudTrail 日志分析。
+:::
+
+## 使用特定账户表和合并表进行灵活分析
+
+该解决方案创建两种类型的 Athena 表以支持不同的用例：
+
+- **特定账户表**：`CloudTrailLogsPartitionedByAccount` Lambda 函数为在 CloudTrail S3 存储桶中发现的每个 AWS 账户创建专用 Athena 表（例如 `trail_123456789012`）。这些表按区域和日期分区，使团队能够分析特定账户的日志而无需扫描无关数据。这对于调查特定账户事件的安全团队或排查区域活动的运维团队特别有用。
+- **合并的组织范围表**：`CloudTrailLogsPartitionedAllAccounts` Lambda 函数维护一个统一表（例如 `all_accounts_trail`），包含 AWS 组织中所有账户的日志，按账户 ID、区域和日期分区。此表支持跨账户调查和组织范围的审计，允许安全管理员高效地查询整个环境的活动。
+
+两个函数都使用分区投影在组织发展时自动包含新账户和分区，消除手动更新的需要。配置这些表将日志传送到具有受限访问的单独安全边界中的集中 S3 存储桶，以强制执行严格的安全控制和职责分离。
+
+## 启用每日表更新以进行同步
+
+为确保 Athena 表与 AWS 组织结构保持同步，请配置 Lambda 函数执行每日更新。这些更新检测新账户并创建相应的分区，确保来自新添加账户或区域的日志包含在 Athena 表中。这种自动化减少了管理开销，并确保全面的日志覆盖，支持 FedRAMP 或 PCI-DSS 等要求持续监控账户活动的合规要求。
+
+## 利用预定义查询处理常见用例
+
+**[在解决方案中包含预定义 Athena 查询以解决常见安全和运维场景](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**。例如，"查找最频繁的控制台用户"查询按用户分析 AWS 控制台登录频率，帮助识别潜在的未授权访问。这些查询作为自定义查询的模板，允许团队根据特定需求定制调查。将预定义查询存储在 Athena 控制台的 Saved Queries 部分以便于访问和执行。
+
+:::note 访问已保存的安全查询
+**探索 GitHub 上的 [AWS CloudTrail Athena Demo Queries](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)** 以使用针对常见安全场景（如检测未授权控制台访问）的预构建 Athena 查询。
+:::
+
+## 通过分区和监控优化成本
+
+对 CloudTrail 日志进行分区可减少 Athena 扫描的数据量，直接降低查询成本。此外，实施以下成本管理实践：
+
+- **监控 Lambda 函数成本**：该解决方案使用两个 Lambda 函数，每个每天调用一次。监控其运行时间以使用 AWS Lambda 定价页面估算成本。如果需要，调整调用频率以平衡成本和更新需求。
+- **跟踪 Athena 查询成本**：Athena 根据每次查询扫描的数据量收费。分区可最大限度减少扫描数据，但应使用 Amazon Athena 定价页面监控查询成本。使用 AWS Budgets 为 CloudTrail 和 Athena 支出设置成本阈值和告警。
+- **使用 AWS Cost Anomaly Detection**：配置 AWS Cost Anomaly Detection 以监控 CloudTrail 和 Athena 支出。此服务使用机器学习检测意外的成本峰值，实现主动的成本管理。
+
+## 清理资源以避免不必要的费用
+
+为防止持续费用，在不再需要解决方案时删除 CloudFormation 堆栈。这将删除 Lambda 函数、IAM 角色、Glue 数据库和 Athena 表，确保不会产生残留费用。定期查看 AWS Budgets 和 Cost Anomaly Detection 报告，以识别和解决与解决方案相关的任何意外费用。
+
+## 总结
+
+为 CloudTrail 日志自动化分区 Athena 表可优化查询性能、降低成本并增强安全和合规调查。通过部署特定账户和组织范围的表、启用每日更新并保护 S3 存储桶，此解决方案为 CloudTrail 日志分析提供了可扩展且高效的方法。与 CloudWatch Logs 集成并利用预定义查询进一步简化调查，而成本管理实践确保经济性。实施此解决方案以实现更快、更经济高效且安全的 CloudTrail 日志分析，支持 AWS 环境中的治理、合规和卓越运营。

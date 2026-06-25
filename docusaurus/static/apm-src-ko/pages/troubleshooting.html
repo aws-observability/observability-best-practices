@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>문제 해결 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>문제 해결</h1></header>
+      <article>
+        <section>
+          <h2>일반적인 문제</h2>
+          <p>이 섹션에서는 CloudWatch Application Signals를 구현할 때 가장 자주 발생하는 문제와 해결 방법을 다룹니다.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch에 트레이스가 나타나지 않음</h3>
+
+          <h4>가능한 원인:</h4>
+          <ul>
+            <li>서비스에 Application Signals가 활성화되지 않음</li>
+            <li>잘못된 IAM 권한</li>
+            <li>에이전트가 올바르게 구성되지 않았거나 실행되지 않음</li>
+            <li>샘플링 비율이 너무 낮게 설정됨</li>
+            <li>CloudWatch에 대한 네트워크 연결 문제</li>
+          </ul>
+
+          <h4>해결 방법:</h4>
+          <ol>
+            <li>AWS 콘솔에서 Application Signals가 활성화되어 있는지 확인</li>
+            <li>IAM 권한에 <code>cloudwatch:PutMetricData</code> 및 <code>xray:PutTraceSegments</code>가 포함되어 있는지 확인</li>
+            <li>에이전트가 실행 중이고 올바르게 구성되어 있는지 확인</li>
+            <li>테스트를 위해 샘플링 비율을 높임 (일시적으로 100%로 설정)</li>
+            <li>VPC 보안 그룹 및 NACL이 CloudWatch로의 아웃바운드 트래픽을 허용하는지 확인</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>누락되거나 불완전한 트레이스</h3>
+
+          <h4>일반적인 문제:</h4>
+          <ul>
+            <li>서비스 간에 컨텍스트가 전파되지 않음</li>
+            <li>일부 서비스가 계측되지 않음</li>
+            <li>샘플링으로 인해 스팬이 삭제됨</li>
+            <li>에이전트 구성 문제</li>
+          </ul>
+
+          <h4>디버깅 단계:</h4>
+          <ol>
+            <li>서비스 맵을 확인하여 계측되지 않은 서비스 식별</li>
+            <li>트레이스 컨텍스트 헤더가 전달되는지 확인 (예: <code>x-amzn-trace-id</code>)</li>
+            <li>구성 오류에 대해 에이전트 로그 검토</li>
+            <li>샘플링 문제를 배제하기 위해 100% 샘플링으로 테스트</li>
+            <li>트레이스 검색을 사용하여 부분 트레이스 찾기</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>높은 계측 오버헤드</h3>
+
+          <h4>증상:</h4>
+          <ul>
+            <li>CPU 사용량 증가</li>
+            <li>메모리 소비 증가</li>
+            <li>지연 시간 증가</li>
+            <li>애플리케이션 성능 저하</li>
+          </ul>
+
+          <h4>최적화 전략:</h4>
+          <ul>
+            <li>샘플링 비율 감소 (프로덕션에서는 10%로 시작)</li>
+            <li>테일 기반 대신 헤드 기반 샘플링 사용</li>
+            <li>적절한 스팬 제한 구성</li>
+            <li>스팬 내보내기 배치 처리</li>
+            <li>계측 메트릭 모니터링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM 데이터가 나타나지 않음</h3>
+
+          <h4>체크리스트:</h4>
+          <ul>
+            <li>RUM 웹 클라이언트가 올바르게 설치되고 로드됨</li>
+            <li>애플리케이션 ID 및 구성이 올바름</li>
+            <li>RUM 도메인에 대한 CORS 헤더 구성됨</li>
+            <li>콘텐츠 보안 정책이 RUM 스크립트를 허용함</li>
+            <li>브라우저 콘솔에 JavaScript 오류 없음</li>
+          </ul>
+
+          <h4>확인:</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>합성 카나리 실패</h3>
+
+          <h4>일반적인 원인:</h4>
+          <ul>
+            <li>카나리 VPC에서의 네트워크 연결 문제</li>
+            <li>인증 또는 권한 부여 실패</li>
+            <li>애플리케이션 변경으로 테스트 스크립트가 깨짐</li>
+            <li>카나리 런타임 또는 종속성이 오래됨</li>
+          </ul>
+
+          <h4>디버깅:</h4>
+          <ol>
+            <li>CloudWatch Logs에서 카나리 로그 검토</li>
+            <li>카나리 스크립트를 로컬에서 테스트</li>
+            <li>VPC 라우팅 및 보안 그룹 확인</li>
+            <li>필요한 경우 카나리 런타임 업데이트</li>
+            <li>애플리케이션 엔드포인트에 접근 가능한지 확인</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>디버깅 가이드</h2>
+          <p>복잡한 문제를 진단하기 위한 단계별 가이드입니다.</p>
+        </section>
+
+        <section>
+          <h3>트레이스 컨텍스트 전파 디버깅</h3>
+
+          <h4>1단계: 계측 확인</h4>
+          <p>호출 체인의 모든 서비스가 올바르게 계측되었는지 확인합니다:</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>2단계: 에이전트 구성 확인</h4>
+          <p>에이전트 구성 파일과 환경 변수를 확인합니다.</p>
+
+          <h4>3단계: 엔드투엔드 테스트</h4>
+          <p>테스트 요청을 만들고 모든 서비스를 통해 추적합니다.</p>
+        </section>
+
+        <section>
+          <h3>성능 문제 진단</h3>
+
+          <h4>병목 현상 식별:</h4>
+          <ol>
+            <li>서비스 맵에서 높은 지연 시간 서비스 확인</li>
+            <li>느린 스팬에 대한 트레이스 타임라인 검사</li>
+            <li>리소스 메트릭 검토 (CPU, 메모리, 디스크 I/O)</li>
+            <li>로그에서 오류 패턴 찾기</li>
+            <li>데이터베이스 쿼리 성능 확인</li>
+          </ol>
+
+          <h4>일반적인 병목 현상:</h4>
+          <ul>
+            <li>데이터베이스 쿼리 최적화 필요</li>
+            <li>외부 API 호출 타임아웃</li>
+            <li>리소스 제약 (CPU/메모리)</li>
+            <li>스레드 풀 고갈</li>
+            <li>서비스 간 네트워크 지연 시간</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>에이전트 문제 해결</h3>
+
+          <h4>에이전트 상태 확인:</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>일반적인 에이전트 문제:</h4>
+          <ul>
+            <li>JVM에 대한 잘못된 Java 에이전트 버전</li>
+            <li>누락된 종속성 또는 라이브러리</li>
+            <li>구성 파일 구문 오류</li>
+            <li>로그 파일 쓰기 권한 문제</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>도구 및 명령어</h2>
+          <p>문제 해결에 유용한 도구 및 명령어입니다.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI 명령어</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>로그 분석</h3>
+          <p>CloudWatch Logs Insights를 사용하여 텔레메트리 데이터를 분석합니다:</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>도움 받기</h2>
+          <p>추가 지원이 필요한 경우:</p>
+
+          <h3>문서 리소스:</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals 사용자 가이드</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics 사용자 가이드</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM 사용자 가이드</a></li>
+          </ul>
+
+          <h3>지원 옵션:</h3>
+          <ul>
+            <li>AWS Support Center</li>
+            <li>AWS re:Post 커뮤니티</li>
+            <li>OpenTelemetry 프로젝트의 GitHub 이슈</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

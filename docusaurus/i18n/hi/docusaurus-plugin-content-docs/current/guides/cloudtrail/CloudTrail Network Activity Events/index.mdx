@@ -1,0 +1,76 @@
+---
+sidebar_position: 5
+---
+# CloudTrail Network Activity Events
+
+VPC endpoints के लिए network activity events के साथ, आप अपने नेटवर्क के भीतर संसाधनों तक कौन पहुँच रहा है इसका विवरण देख सकते हैं, जो आपको अपने data perimeter में दुर्भावनापूर्ण या अनधिकृत कार्यों की पहचान करने और प्रतिक्रिया देने की अधिक क्षमता प्रदान करता है। उदाहरण के लिए, VPC endpoint मालिक के रूप में, आप VPC endpoint policies के कारण अस्वीकृत कार्यों के logs देख सकते हैं या यह निर्धारित कर सकते हैं कि आपके data perimeter के बाहर का कोई actor आपके S3 buckets में डेटा तक पहुँचने का प्रयास कर रहा है।
+
+### Network Activity Events के लिए Advanced Event Selectors
+जब आप network activity events का उपयोग करते हैं, तो advanced event selectors आपके event data stores में कौन से CloudTrail events अंतर्ग्रहित होते हैं इस पर अधिक नियंत्रण प्रदान करते हैं। Advanced event selectors के साथ, आप errorCode, eventName, और vpcEndpointId जैसे fields पर values शामिल या बहिष्कृत कर सकते हैं। Advanced event selectors आंशिक strings पर pattern matching के साथ values शामिल या बहिष्कृत करने का भी समर्थन करते हैं। यह लागत कम करने में मदद करते हुए आपकी सुरक्षा, अनुपालन और परिचालन जाँच की दक्षता और सटीकता बढ़ाता है। उदाहरण के लिए, आप केवल एक विशिष्ट VPC endpoint Id से events शामिल करने के लिए vpcEndpointId attribute के आधार पर CloudTrail events फ़िल्टर कर सकते हैं। यह आपको CloudTrail Lake में अंतर्ग्रहित CloudTrail events की मात्रा को काफी कम करने की अनुमति देता है, प्रासंगिक उपयोगकर्ता और सिस्टम गतिविधियों में दृश्यता बनाए रखते हुए लागत कम करता है।
+
+### [डेमो: CloudTrail Lake के लिए Network Activity Events](https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi)
+
+निम्नलिखित इंटरैक्टिव डेमो में हम CloudTrail Lake में VPC endpoints के लिए network activity events का उपयोग करने का तरीका अन्वेषण करेंगे। 
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/n5vlqcsmygpi?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+### CloudTrail Lake के लिए सैंपल SQL Queries:
+
+#### VPC Access Denied Errors की गिनती
+```
+SELECT count(*) as VPCAccessDenied, userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-21 17:00:00'
+    GROUP BY 
+    userIdentity.arn,
+    userIdentity.accountid,
+    eventName,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+    ORDER BY eventName DESC;
+```
+
+#### VPC Access Denied Errors
+```
+SELECT userIdentity.arn,
+    userIdentity.accountid,
+    eventType,
+    eventCategory,
+    eventName,
+    errorCode,
+    errorMessage,
+    vpcEndpointId,
+    vpcEndpointAccountId,
+    sourceIPAddress
+FROM $EDS_ID
+WHERE eventCategory = 'NetworkActivity'
+    AND eventSource = 's3.amazonaws.com' 
+    AND errorCode = 'VpceAccessDenied' 
+    AND eventtime >= '2025-02-18 17:00:00'
+    AND eventtime <= '2025-02-20 17:00:00'
+    ORDER BY eventTime DESC;
+```
+
+### Cloud Operation Show: Network Activity Events का उपयोग करके अपने VPC Endpoints को सुरक्षित करना | AWS CloudTrail
+
+<div align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pAppy_tkWPY?si=sy7w_Yp8nejmwbLv" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+</div>

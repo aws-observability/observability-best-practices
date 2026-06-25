@@ -1,0 +1,61 @@
+---
+sidebar_position: 1
+title: Amazon Athena ఉపయోగించి CloudTrail Log Management ను Automate చేయడం
+description: Optimized performance, cost reduction మరియు enhanced security investigations కోసం partitioned Athena tables ఉపయోగించి AWS CloudTrail log analysis ను automate చేయడం గైడ్.
+---
+
+# Amazon Athena ఉపయోగించి CloudTrail Log Management ను Automate చేయడం
+
+---
+
+AWS CloudTrail మీ AWS infrastructure అంతటా account activity యొక్క సమగ్ర monitoring మరియు logging ను అందిస్తుంది, auditing, compliance మరియు security investigations కోసం API calls మరియు events ను capture చేస్తుంది. అయితే, AWS environments scale అయినప్పుడు, ముఖ్యంగా multi-account organizations లో, CloudTrail logs volume గణనీయంగా పెరగవచ్చు, Amazon Athena లో logs analyze చేసేటప్పుడు query times మరియు costs పెరగడానికి దారితీస్తుంది. దీన్ని address చేయడానికి, query performance optimize చేయడానికి మరియు costs తగ్గించడానికి partitioned Athena tables యొక్క creation మరియు management ను automate చేయడం మేము recommend చేస్తాము. ఈ best practice guide efficient log analysis enable చేయడానికి AWS Lambda మరియు Amazon Athena ఉపయోగించి CloudTrail logs ను account, region మరియు date ద్వారా partition చేయడానికి automated solution ను ఎలా implement చేయాలో outline చేస్తుంది.
+
+## CloudTrail Logs కోసం Partitioned Athena Tables Configure చేయండి
+
+Query performance optimize చేయడానికి మరియు costs తగ్గించడానికి, automated solution ఉపయోగించి CloudTrail logs కోసం partitioned Athena tables configure చేయండి. ఈ approach account-specific మరియు organization-wide Athena tables సృష్టించడానికి మరియు maintain చేయడానికి రెండు AWS Lambda functions deploy చేయడం involve చేస్తుంది, account ID, region మరియు date ద్వారా partition చేయబడతాయి. Partitioning Athena queries సమయంలో relevant data మాత్రమే scan చేయడం ensure చేస్తుంది, unpartitioned datasets scan చేయడంతో పోలిస్తే query speed గణనీయంగా improve చేస్తుంది మరియు costs తగ్గిస్తుంది.
+
+- **[Automation కోసం ఈ CloudFormation Template Deploy చేయండి](https://github.com/aws-samples/sample-automation-cloudtrail-athena)**: Solution deploy చేయడానికి ఈ CloudFormation template ఉపయోగించండి, ఇది రెండు Lambda functions, IAM roles, AWS Glue database మరియు predefined Athena queries కలిగి ఉంటుంది.
+- **[Partition projection ఉపయోగించి Athena లో CloudTrail logs](https://docs.aws.amazon.com/athena/latest/ug/create-cloudtrail-table-partition-projection.html)**: ఈ solution Athena projection partitioning ఉపయోగిస్తుంది, ఇది query runtime తగ్గించడానికి మరియు partition management automate చేయడానికి allow చేస్తుంది.
+- **[CloudTrail S3 Bucket మరియు Prefix Specify చేయండి](https://docs.aws.amazon.com/firehose/latest/dev/dynamic-partitioning-s3bucketprefix.html)**: CloudFormation template కు inputs గా CloudTrail S3 bucket name మరియు appropriate prefix provide చేయండి.
+- **[Athena Query Result Location Set Up చేయండి](https://docs.aws.amazon.com/athena/latest/ug/query-results-specify-location.html)**: Query results కోసం Athena లో S3 bucket configure చేయబడినట్లు ensure చేయండి.
+
+:::tip GitHub Solution తో Automate చేయండి
+CloudFormation template deploy చేయడానికి మరియు partitioned Athena tables తో మీ CloudTrail log analysis streamline చేయడానికి GitHub లో **[CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena) ను access చేయండి**.
+:::
+
+## Flexible Analysis కోసం Account-Specific మరియు Consolidated Tables ఉపయోగించండి
+
+Solution different use cases support చేయడానికి రెండు రకాల Athena tables సృష్టిస్తుంది:
+
+- **Account-Specific Tables**: `CloudTrailLogsPartitionedByAccount` Lambda function CloudTrail S3 bucket లో discover అయిన ప్రతి AWS account కోసం dedicated Athena tables (ఉదా., `trail_123456789012`) సృష్టిస్తుంది. ఈ tables region మరియు date ద్వారా partition చేయబడతాయి, irrelevant data scan చేయకుండా teams వారి account కు specific logs analyze చేయడం enable చేస్తాయి.
+- **Consolidated Organization-Wide Table**: `CloudTrailLogsPartitionedAllAccounts` Lambda function AWS organization లోని అన్ని accounts నుండి logs కలిగి ఉన్న unified table (ఉదా., `all_accounts_trail`) maintain చేస్తుంది, account ID, region మరియు date ద్వారా partition చేయబడుతుంది.
+
+రెండు functions organization evolve అయినప్పుడు new accounts మరియు partitions ను automatically include చేయడానికి partition projection ఉపయోగిస్తాయి, manual updates అవసరం eliminate చేస్తాయి.
+
+## Synchronization కోసం Daily Table Updates Enable చేయండి
+
+Athena tables AWS organization structure తో synchronized గా ఉండేలా ensure చేయడానికి, Lambda functions daily updates execute చేయడానికి configure చేయండి. ఈ updates new accounts detect చేస్తాయి మరియు corresponding partitions సృష్టిస్తాయి, newly added accounts లేదా regions నుండి logs Athena tables లో include చేయబడినట్లు ensure చేస్తాయి.
+
+## Common Use Cases కోసం Predefined Queries Leverage చేయండి
+
+**[Common security మరియు operational scenarios address చేయడానికి solution లో predefined Athena queries include చేయండి](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**. ఉదాహరణకు, "Find most frequent console users" query user ద్వారా AWS console login frequency ను analyze చేస్తుంది, potential unauthorized access identify చేయడంలో help చేస్తుంది.
+
+:::note Saved Security Queries Access చేయండి
+Unauthorized console access detect చేయడం వంటి common security scenarios కోసం pre-built Athena queries ఉపయోగించడానికి GitHub లో **[AWS CloudTrail Athena Demo Queries](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql) ను explore చేయండి**.
+:::
+
+## Partitioning మరియు Monitoring తో Costs Optimize చేయండి
+
+CloudTrail logs partition చేయడం Athena scan చేసే data amount ను reduce చేస్తుంది, query costs ను directly lower చేస్తుంది. అదనంగా, కింది cost management practices implement చేయండి:
+
+- **Lambda Function Costs Monitor చేయండి**: Solution రెండు Lambda functions ఉపయోగిస్తుంది, ప్రతి ఒక్కటి daily once invoke అవుతుంది.
+- **Athena Query Costs Track చేయండి**: Athena query per scan చేయబడిన data amount ఆధారంగా charge చేస్తుంది. CloudTrail మరియు Athena spending కోసం cost thresholds మరియు alerts set చేయడానికి AWS Budgets ఉపయోగించండి.
+- **AWS Cost Anomaly Detection ఉపయోగించండి**: CloudTrail మరియు Athena spending monitor చేయడానికి AWS Cost Anomaly Detection configure చేయండి.
+
+## అనవసరమైన Costs Avoid చేయడానికి Resources Clean Up చేయండి
+
+Ongoing charges prevent చేయడానికి, solution ఇకపై అవసరం లేనప్పుడు CloudFormation stack delete చేయండి. ఇది Lambda functions, IAM roles, Glue database మరియు Athena tables ను remove చేస్తుంది.
+
+## ముగింపు
+
+CloudTrail logs కోసం partitioned Athena tables automate చేయడం query performance optimize చేస్తుంది, costs reduce చేస్తుంది మరియు security మరియు compliance investigations enhance చేస్తుంది. Account-specific మరియు organization-wide tables deploy చేయడం, daily updates enable చేయడం మరియు S3 bucket secure చేయడం ద్వారా, ఈ solution CloudTrail log analysis కోసం scalable మరియు efficient approach అందిస్తుంది.

@@ -1,0 +1,94 @@
+---
+sidebar_position: 3
+title: AWS CloudTrail संसाधन
+description: CloudTrail सुरक्षा, इंसिडेंट प्रतिक्रिया और निगरानी प्रथाओं को बेहतर बनाने के लिए क्यूरेट किए गए AWS ब्लॉग पोस्ट और CloudTrail कार्यशालाएँ।
+---
+
+# AWS CloudTrail संसाधन
+
+अपनी **AWS CloudTrail** सुरक्षा प्रथाओं को मजबूत करने, इंसिडेंट प्रतिक्रिया में सुधार करने और निगरानी क्षमताओं को बढ़ाने के लिए क्यूरेट किए गए संसाधनों का अन्वेषण करें। यह पृष्ठ दो खंडों में विभाजित है: व्यावहारिक मार्गदर्शन के लिए **AWS ब्लॉग पोस्ट** और सामान्य सुरक्षा परिदृश्यों के हैंड्स-ऑन सिमुलेशन के लिए **AWS CloudTrail कार्यशालाएँ**।
+
+## हालिया CloudTrail संसाधन
+
+### AWS ब्लॉग पोस्ट
+- **[Announcing AWS CloudTrail Event Aggregation and Insights for Data Events](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-event-aggregation-and-insights-for-data-events/)**  
+
+- **[New: AWS CloudTrail Lake Event Enrichment: Add Business Context to AWS Activity Logs](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-lake-now-supports-event-enrichment-add-business-context-to-your-aws-activity-logs/)**  
+
+- **[Announcing AWS CloudTrail network activity events for VPC Endpoints](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-network-activity-events-for-vpc-endpoints/)**  
+
+- **[Securing your VPC Endpoints using Network Activity Events | AWS CloudTrail | EP 02](https://www.youtube.com/live/pAppy_tkWPY?si=PsjwRHN6O_YrB9ZL)**
+
+- **[Tag It & Track It: AWS CloudTrail Event Enrichment and Expansions Explained | EP 09](https://www.youtube.com/live/IELtInifymY?si=XDTc8bsOoFU3K40a)**
+
+- **[Simplify AWS CloudTrail log analysis with natural language query generation in CloudTrail Lake (preview)](https://aws.amazon.com/blogs/aws/simplify-aws-cloudtrail-log-analysis-with-natural-language-query-generation-in-cloudtrail-lake-preview/)**
+### वीडियो
+
+### इंटरैक्टिव डेमो
+- **[AWS CloudTrail Event Aggregation](https://aws-cloudops.storylane.io/share/tvfcqa5wjrfg)**
+
+- **[AWS CloudTrail Insights for Data Events](https://aws-cloudops.storylane.io/share/6nwa1m48zg1e)**
+
+- **[Network Activity Events for CloudTrail Lake](https://aws-cloudops.storylane.io/share/n5vlqcsmygpi)**
+
+### GitHub
+- **[AWS CloudTrail Lake query samples](https://github.com/aws-samples/cloud-trail-lake-query-samples)**
+
+## AWS ब्लॉग पोस्ट
+
+ये ब्लॉग पोस्ट आपके AWS वातावरण को सुरक्षित करने, इंसिडेंट का पता लगाने और प्रतिक्रियाओं को स्वचालित करने के लिए AWS CloudTrail का लाभ उठाने हेतु कार्यान्वयन योग्य अंतर्दृष्टि प्रदान करते हैं। आसान नेविगेशन के लिए संसाधनों को फोकस क्षेत्र के अनुसार समूहीकृत किया गया है।
+
+
+### इंसिडेंट जाँच और फोरेंसिक्स
+- **[Investigate Security Events with CloudTrail Lake](https://aws.amazon.com/blogs/security/investigate-security-events-by-using-aws-cloudtrail-lake-advanced-queries/)**  
+  समझौता किए गए एक्सेस कीज़ जैसी सुरक्षा घटनाओं का विश्लेषण करने के लिए CloudTrail Lake क्वेरी का उपयोग करें।
+- **[CloudTrail Insights: Detect Unusual API Activity](https://aws.amazon.com/blogs/aws/announcing-cloudtrail-insights-identify-and-respond-to-unusual-api-activity/)**  
+  CloudTrail Insights के साथ असामान्य API कॉल की पहचान करना और प्रतिक्रिया देना सीखें।
+- **[Announcing CloudTrail Lake – Managed Audit and Security Lake](https://aws.amazon.com/blogs/mt/announcing-aws-cloudtrail-lake-a-managed-audit-and-security-lake/)**  
+  केंद्रीकृत ऑडिट और सुरक्षा लॉग प्रबंधन के लिए CloudTrail Lake की खोज करें।
+
+### निगरानी और अलर्ट
+- **[Monitor Root User Activity](https://aws.amazon.com/blogs/mt/monitor-and-notify-on-aws-account-root-user-activity/)**  
+  बेहतर सुरक्षा के लिए AWS अकाउंट रूट यूज़र गतिविधि को ट्रैक करने हेतु नोटिफिकेशन सेट अप करें।
+- **[Alerts for IAM Access Key Usage](https://repost.aws/knowledge-center/track-access-key-credential)**  
+  IAM एक्सेस कीज़ का उपयोग होने पर पता लगाने के लिए अलर्ट कॉन्फ़िगर करें।
+- **[Notifications for IAM Configuration Changes](https://aws.amazon.com/blogs/security/how-to-receive-alerts-when-your-iam-configuration-changes/)**  
+  IAM कॉन्फ़िगरेशन में परिवर्तन के लिए अलर्ट लागू करें।
+- **[Monitor IAM User Creation](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/send-a-notification-when-an-iam-user-is-created.html)**  
+  अनधिकृत परिवर्तनों का पता लगाने के लिए नए IAM यूज़र निर्माण हेतु नोटिफिकेशन सेट अप करें।
+- **[Track Account and EC2 Security Group Changes](https://aws.amazon.com/blogs/security/how-to-monitor-aws-account-configuration-changes-and-api-calls-to-amazon-ec2-security-groups/)**  
+  EC2 सुरक्षा समूहों में कॉन्फ़िगरेशन परिवर्तन और API कॉल की निगरानी करें।
+- **[Analyze CloudTrail in CloudWatch](https://aws.amazon.com/blogs/mt/analyzing-cloudtrail-in-cloudwatch/)**  
+  रीयल-टाइम लॉग विश्लेषण के लिए CloudTrail को CloudWatch के साथ एकीकृत करें।
+
+### सुरक्षा सर्वोत्तम प्रथाएँ और स्वचालन
+
+- **[Prevent CloudTrail Modifications](https://catalog.workshops.aws/awscff/en-US/governance)**  
+  CloudTrail को अनधिकृत परिवर्तनों से बचाने की तकनीकें सीखें।
+- **[Automate Responses to Compromised Access Keys](https://github.com/aws/aws-health-tools/tree/master/automated-actions/AWS_RISK_CREDENTIALS_EXPOSED)**  
+  उजागर एक्सेस कीज़ पर प्रतिक्रियाओं को स्वचालित करने के लिए GitHub टूल्स का उपयोग करें।
+
+## AWS CloudTrail कार्यशालाएँ
+
+ये हैंड्स-ऑन कार्यशालाएँ सामान्य सुरक्षा घटनाओं का अनुकरण करती हैं और AWS CloudTrail तथा संबंधित सेवाओं का उपयोग करके पता लगाने और प्रतिक्रिया का प्रदर्शन करती हैं। प्रत्येक कार्यशाला में वास्तविक दुनिया के परिदृश्यों को दोहराने के लिए CloudFormation टेम्पलेट या स्क्रिप्ट शामिल है।
+
+### कार्यशाला सूची
+- **[Unauthorized IAM Credential Use](https://catalog.us-east-1.prod.workshops.aws/workshops/6a8ad836-10a6-4694-9a3b-f53f193041de/en-US/setup/cloudformation)**  
+  **विवरण**: CloudShell स्क्रिप्ट के माध्यम से अनधिकृत IAM क्रेडेंशियल उपयोग का अनुकरण करें, जो रिकॉनेसेंस और प्रिविलेज एस्केलेशन की नकल करता है।  
+  **यह महत्वपूर्ण क्यों है**: AWS वातावरण में एक सामान्य अटैक वेक्टर - अनधिकृत पहुँच का पता लगाना और उसे कम करना सीखें।
+
+- **[Ransomware on S3](https://catalog.workshops.aws/aws-cirt-ransomware-simulation-and-detection/en-US)**  
+  **विवरण**: S3 बकेट बनाने और CloudShell में डेटा एक्सफ़िल्ट्रेशन और डिलीशन के माध्यम से रैंसमवेयर का अनुकरण करने के लिए CloudFormation टेम्पलेट का उपयोग करें।  
+  **यह महत्वपूर्ण क्यों है**: अनधिकृत S3 संशोधनों का पता लगाकर डेटा हानि या एक्सपोज़र से बचाव करें।
+
+- **[Cryptominer Security Events](https://catalog.workshops.aws/aws-cirt-cryptominer-simulation-and-detection/en-US)**  
+  **विवरण**: ज्ञात डोमेन के DNS अनुरोधों के माध्यम से क्रिप्टोमाइनिंग का अनुकरण करने के लिए CloudFormation के माध्यम से EC2 इंस्टेंस डिप्लॉय करें।  
+  **यह महत्वपूर्ण क्यों है**: लागत कम करने और EC2 इंस्टेंस को सुरक्षित करने के लिए संसाधन-गहन क्रिप्टोमाइनिंग की पहचान करें।
+
+- **[SSRF on IMDSv1](https://catalog.us-east-1.prod.workshops.aws/workshops/6a8ad836-10a6-4694-9a3b-f53f193041de/en-US/setup/ssrf)**  
+  **विवरण**: IMDSv1 कमजोरियों के माध्यम से EC2 इंस्टेंस क्रेडेंशियल पर server-side request forgery (SSRF) हमले का अनुकरण करें।  
+  **यह महत्वपूर्ण क्यों है**: SSRF शमन के माध्यम से इंस्टेंस क्रेडेंशियल तक अनधिकृत पहुँच को रोकें।
+
+:::tip CloudTrail के साथ शुरुआत करें
+व्यापक मार्गदर्शन के लिए, सुरक्षा निगरानी, इंसिडेंट प्रतिक्रिया और सर्वोत्तम प्रथाओं में महारत हासिल करने हेतु **[AWS CloudTrail User Guide](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/)** का अन्वेषण करें।
+:::

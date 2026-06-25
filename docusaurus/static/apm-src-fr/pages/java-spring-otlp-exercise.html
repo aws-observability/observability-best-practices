@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Exercice Java Spring + OTLP + CloudWatch — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch (Exercice pratique)</h1></header>
+      <article>
+        <section>
+          <p>Ce guide documente l'exercice complet pour instrumenter un service Java Spring Boot avec OpenTelemetry, exporter la télémétrie vers AWS, déployer sur ECS/Fargate et vérifier le comportement des traces/journaux/Application Signals.</p>
+          <p>Il est rédigé dans le style d'un exemple d'implémentation et peut être utilisé comme runbook ou support d'atelier.</p>
+        </section>
+
+        <section>
+          <h2>1) Ce que cet exercice démontre</h2>
+          <ul>
+            <li>Télémétrie de bout en bout depuis une application Java :
+              <ul>
+                <li><strong>Traces</strong> (X-Ray / Transaction Search)</li>
+                <li><strong>Journaux</strong> (point de terminaison OTLP CloudWatch Logs ou <code>awslogs</code> sur ECS)</li>
+                <li><strong>Métriques/Application Signals</strong> (chemin via le sidecar CloudWatch Agent)</li>
+              </ul>
+            </li>
+            <li>La différence entre :
+              <ul>
+                <li><strong>Le pont de traçage Micrometer</strong> (<code>micrometer-tracing-bridge-otel</code>) pour le pontage de l'API de traçage</li>
+                <li><strong>Les registres Micrometer</strong> (<code>micrometer-registry-cloudwatch2</code>, <code>micrometer-registry-otlp</code>) qui sont des destinations uniquement pour les métriques</li>
+              </ul>
+            </li>
+            <li>Le câblage des points de terminaison OTLP via des variables d'environnement (<code>OTEL_*</code>), et non des constantes Java codées en dur.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) Architecture</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) Topologie de déploiement (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) Correspondance des points de terminaison OTLP</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Signal</th>
+                <th>Modèle de point de terminaison</th>
+                <th>Variables d'environnement typiques</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Traces</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>Métriques</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code> (ou chemin App Signals via sidecar)</td>
+              </tr>
+              <tr>
+                <td>Journaux</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>En mode sidecar ECS, le conteneur d'application pointe les traces/métriques vers <code>http://localhost:4316/...</code> et le CloudWatch Agent gère le transfert.</p>
+        </section>
+
+        <section>
+          <h2>5) Modèle d'instrumentation utilisé dans ce dépôt</h2>
+
+          <h3>5.1 Dépendances</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code> est présent dans <code>pom.xml</code>.</li>
+            <li>Aucune dépendance sur <code>micrometer-registry-cloudwatch2</code> ou <code>micrometer-registry-otlp</code> pour le traçage.</li>
+          </ul>
+
+          <h3>5.2 Traçage automatique + manuel</h3>
+          <ul>
+            <li>L'instrumentation automatique de l'agent Java ADOT capture les spans du framework/client.</li>
+            <li>L'enrichissement manuel est ajouté dans <code>DemoService.greet()</code> :
+              <ul>
+                <li>attributs : <code>demo.operation</code>, <code>demo.request.name</code>, <code>demo.downstream.status</code>, <code>demo.downstream.elapsed_ms</code>, <code>demo.custom.instrumented</code></li>
+                <li>événements : <code>demo.greet.start</code>, <code>demo.httpbin.success</code>, <code>demo.httpbin.failure</code></li>
+                <li>enregistrement d'erreur avec <code>recordException(...)</code> et <code>setStatus(ERROR, ...)</code></li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) Capture d'écran (détails de la trace)</h2>
+          <p>Utilisez la capture d'écran ci-dessous pour la documentation d'atelier/démo :</p>
+          <img src="../assets/images/cw.png" alt="Capture d'écran de trace CloudWatch" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) Où voir la télémétrie dans la console AWS</h2>
+
+          <h3>Traces (principal)</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>Région : <code>us-east-1</code></li>
+            <li>Plage horaire : 15 à 60 dernières minutes</li>
+            <li>Service : <code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>Pour les champs personnalisés :</p>
+          <ul>
+            <li>Ouvrir une trace → segment <code>java-spring-otel-poc</code> → <strong>Métadonnées</strong></li>
+            <li>Chercher les clés :
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>Journaux</h3>
+          <ul>
+            <li>Journaux de l'application ECS : <code>/ecs/java-spring-otel</code></li>
+            <li>Journaux du sidecar CW agent : <code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>Groupe de journaux OTLP local (si exécution locale) : <code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>Chercher <code>java-spring-otel-poc</code> après un trafic soutenu et un transfert réussi des métriques via le chemin du sidecar.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) Point clé à retenir</h2>
+          <p>L'instrumentation automatique OpenTelemetry peut créer des spans, mais des résultats d'observabilité AWS réussis dépendent encore de :</p>
+          <ol>
+            <li>Un câblage correct des points de terminaison OTLP</li>
+            <li>Un chemin d'authentification/transfert correct (souvent via sidecar/collecteur pour les métriques/App Signals)</li>
+            <li>Une distinction correcte entre le pont de traçage et les registres de métriques</li>
+            <li>Un trafic soutenu et la bonne vue dans la console (X-Ray pour les traces)</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

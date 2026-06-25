@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synthetic Monitoring (Canaries) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Synthetic Monitoring (Canaries)</h1></header>
+      <article>
+        <section>
+          <h2>Synthetics Application Signals-உடன் எவ்வாறு இணைகிறது</h2>
+          <p>Canary-க்கு X-Ray tracing-ஐ இயக்கும்போது CloudWatch Synthetics canaries Application Signals-ல் தோன்றலாம். இது canary அழைப்புகளை backend சேவைகளுடன் தொடர்புபடுத்தி சேவை விவரங்கள் மற்றும் Application Map-ல் காட்ட அனுமதிக்கிறது.</p>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals செயல்பாட்டு நிலை கண்காணிப்பை எவ்வாறு இயக்குகிறது</a>.</p>
+        </section>
+
+        <section>
+          <h2>பொதுவான canary பயன்பாட்டு நிலைகள்</h2>
+          <ul>
+            <li><strong>API health checks</strong>: ஒரு அட்டவணையில் முக்கிய endpoints-ஐ validate செய்தல்</li>
+            <li><strong>Browser flows</strong>: login/checkout பயணங்களை validate செய்தல்</li>
+            <li><strong>Multi-region</strong>: வாடிக்கையாளர்களுக்கு முன் regional சிக்கல்களை கண்டறிதல்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>அடுத்த படிகள்</h2>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">CloudWatch Synthetics canaries</a></li>
+            <li><a href="application-map.html">Application Map</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

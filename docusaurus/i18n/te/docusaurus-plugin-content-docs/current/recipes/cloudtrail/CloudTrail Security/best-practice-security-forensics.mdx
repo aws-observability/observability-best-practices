@@ -1,0 +1,125 @@
+---
+sidebar_position: 2
+title: Security Forensics కోసం Best Practices
+---
+
+# Security Forensics కోసం Best Practices
+
+Security forensics మరియు incident response అనేవి IT security incidents ను గుర్తించడం, investigate చేయడం మరియు తగ్గించడం కోసం అవసరమైన cybersecurity practices. Forensics లాగ్‌లు మరియు system artifacts వంటి digital evidence ను క్రమపద్ధతిలో సేకరిస్తుంది మరియు విశ్లేషిస్తుంది, breach యొక్క వివరాలను వెలికితీయడానికి. Incident response incidents ను detect చేయడం, contain చేయడం మరియు remediate చేయడం పై దృష్టి పెడుతుంది, నష్టాన్ని తగ్గించడానికి మరియు పునరావృతమవకుండా నిరోధించడానికి. కలిసి, అవి organizations కు breaches ను అర్థం చేసుకోవడంలో, actions ను attribute చేయడంలో మరియు regulations తో compliance ను నిర్ధారించడంలో సహాయపడతాయి. CloudTrail best practices ను implement చేయడం effective security forensics మరియు incident response కోసం logging, analysis మరియు timely remediation ను మెరుగుపరుస్తుంది.
+
+
+:::tip మీ AWS Security Services ను బలోపేతం చేయండి.
+మీ AWS security services ను బలోపేతం చేయడానికి, మీ implementation strategy ను మెరుగుపరచడానికి మరియు మీ విలువైన cloud resources ను ప్రభావవంతంగా protect చేయడానికి,
+**తాజా [AWS Security Services Best Practices](https://aws.github.io/aws-security-services-best-practices/) ను explore చేయండి**.
+మీ security configurations ను validate చేయడం, proven techniques ను implement చేయడం మరియు robust security posture కోసం community-contributed best practices ను adopt చేయడం ఎలాగో నేర్చుకోండి.
+:::
+
+:::tip మీ CloudTrail Security ను బలోపేతం చేయండి
+మీ AWS CloudTrail setup ను enhance చేయడానికి మరియు incident investigations సమయంలో activity logs ను protect చేయడానికి, **తాజా [AWS CloudTrail Security Best Practices](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html) ను explore చేయండి**. Event data stores ను secure చేయడం, encryption ను enable చేయడం మరియు robust security posture కోసం access ను restrict చేయడం ఎలాగో నేర్చుకోండి.
+:::
+
+## సమగ్ర Logging Configuration
+
+### అన్ని Regions మరియు Accounts అంతటా సమగ్ర Logging ను Enable చేయండి
+
+మీ organization లోని అన్ని AWS Regions మరియు accounts లో management, data మరియు network activity events ను log చేయడానికి CloudTrail ను configure చేయండి. Global service events (ఉదా., IAM, Route 53) తో సహా అన్ని API activities ను capture చేయడానికి multi-Region trails లేదా organizational trails ను ఉపయోగించండి.
+
+**ప్రయోజనాలు**: ఉపయోగించని regions లేదా accounts లో unauthorized actions ను detect చేయడానికి ఏ events కూడా miss కాకుండా నిర్ధారిస్తుంది.
+
+**ఉదాహరణ**: Dormant region లో unexpected activity attacker reconnaissance ను indicate చేయవచ్చు.
+
+### High-Risk Data Events పై Focus చేయడానికి Advanced Event Selectors ను ఉపయోగించండి
+
+S3 DeleteObject లేదా Lambda InvokeFunction calls వంటి high-risk data events ను log చేయడానికి advanced event selectors ను configure చేయండి, costs తగ్గించడానికి high-volume, low-risk events ను exclude చేయండి.
+
+**ప్రయోజనాలు**: Costs ను నియంత్రిస్తూ critical activities పై forensic analysis ను focus చేస్తుంది.
+
+**ఉదాహరణ**: Sensitive data ఉన్న నిర్దిష్ట S3 buckets కోసం DeleteObject events ను మాత్రమే log చేయడానికి selectors ను ఉపయోగించండి, query లో చూపినట్లు:
+```sql
+SELECT * FROM <event-data-store-ID> 
+WHERE eventName = 'DeleteObject' 
+AND resources.ARN LIKE 'arn:aws:s3:::sensitive-bucket%'
+```
+
+## Log Analysis మరియు Querying
+
+### Advanced Querying కోసం CloudTrail Lake ఉపయోగించండి
+
+పెద్ద log volumes యొక్క rapid analysis కోసం event data stores పై SQL-based queries రన్ చేయడానికి CloudTrail Lake ను leverage చేయండి.
+
+**ప్రయోజనాలు**: Malicious activities గుర్తించడానికి eventName, userIdentity.arn, లేదా sourceIPAddress వంటి fields ద్వారా events ను efficient filtering చేయడం enable చేస్తుంది.
+
+**ఉదాహరణ Query**:
+```sql
+SELECT eventTime, userIdentity.arn, eventName 
+FROM <event-data-store-ID> 
+WHERE eventName = 'CreateAccessKey'
+```
+
+**Best Practice**: Extended investigations కు support చేయడానికి default 90 days కంటే ఎక్కువ సమయం CloudTrail Lake లో events ను store చేయండి.
+
+### Efficient Log Analysis కోసం Amazon Athena తో Integrate చేయండి
+
+Query costs తగ్గించడానికి మరియు performance మెరుగుపరచడానికి partitioned tables leverage చేసి S3 లో store చేయబడిన CloudTrail logs ను query చేయడానికి Amazon Athena ను ఉపయోగించండి.
+:::tip CloudTrail Analysis ను Automate చేయండి
+CloudTrail మరియు Athena integration కోసం pre-built queries మరియు automation తో incident investigations ను streamline చేయడానికి GitHub లో **[AWS CloudTrail Athena Automation Scripts](https://github.com/aws-samples/sample-automation-cloudtrail-athena) ను explore చేయండి**.
+:::
+
+**ప్రయోజనాలు**: నిర్దిష్ట accounts, regions, లేదా time periods పై targeted queries enable చేస్తుంది.
+
+**ఉదాహరణ Query**:
+```sql
+SELECT * FROM trail_123456789012 
+WHERE eventName = 'DeleteObject' 
+AND eventTime > '2025-05-01'
+```
+
+**Implementation**: Account, region మరియు date ద్వారా partitioned account-specific మరియు organization-wide tables సృష్టించండి.
+
+:::note Saved Security Queries ను Access చేయండి
+AWS CloudTrail కోసం pre-built Athena queries తో **మీ incident investigations ను enhance చేయండి**. Athena tables లో CloudTrail logs analysis ను streamline చేయడానికి GitHub లో **[saved security incident queries ను explore చేయండి](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)**.
+:::
+
+
+
+## Monitoring మరియు Detection
+
+### Anomaly Detection కోసం CloudTrail Insights ను Enable చేయండి
+
+Compromise ను indicate చేయగల CreateUser లేదా AssumeRole calls లో spikes వంటి unusual API activity ను detect చేయడానికి CloudTrail Insights ను activate చేయండి.
+
+**Configuration**: Insights events ను S3 bucket లేదా CloudTrail Lake event data store కు deliver చేయడానికి configure చేయండి, మరియు automated responses కోసం alerts లేదా Lambda functions trigger చేయడానికి Amazon EventBridge తో integrate చేయండి.
+
+**ఉదాహరణ**: Excessive GetCallerIdentity calls కోసం Insights event security team కు email notification trigger చేయవచ్చు.
+
+### Suspicious Activity ను Real Time లో Monitor చేయండి మరియు Alert చేయండి
+
+:::tip CloudTrail Events ను CloudWatch కు Stream చేయండి
+Security events యొక్క near real-time monitoring కోసం **AWS CloudTrail ను Amazon CloudWatch Logs తో Integrate చేయండి**. **[మా documentation లో event streaming configure చేయడం ఎలాగో నేర్చుకోండి](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)**.
+:::
+
+**Implementation**: Logs ను query చేయడానికి CloudWatch Logs Insights ను ఉపయోగించండి మరియు Root logins లేదా failed authentication attempts వంటి high-risk events కోసం alarms set up చేయండి.
+
+**ఉదాహరణ CloudWatch alarm using metric filters**: Security team కు notify చేయడానికి alarm సృష్టించండి:
+```
+{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }
+```
+
+:::tip IAM Policy Changes ను Monitor చేయండి
+IAM policy changes detect చేయడానికి **AWS CloudTrail కోసం CloudWatch alarms set up చేయండి**. [AWS documentation లో ఎలాగో నేర్చుకోండి](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html#cloudwatch-alarms-for-cloudtrail-iam-policy-changes).
+:::
+
+
+## Log Security మరియు Integrity
+
+### Robust Controls తో CloudTrail Logs ను Secure చేయండి
+
+Forensic analysis కోసం CloudTrail logs యొక్క integrity మరియు availability ను నిర్ధారించడానికి వాటిని protect చేయండి:
+
+1. **Centralized Storage**: Unauthorized modifications ను prevent చేయడానికి restricted access ఉన్న separate AWS account లో centralized S3 bucket లో logs ను store చేయండి.
+
+2. **Deletion Protection**: Logs యొక్క accidental లేదా malicious deletion ను prevent చేయడానికి S3 bucket పై MFA-delete లేదా S3 Object Lock మరియు versioning ను enable చేయండి.
+
+3. **Encryption**: Sensitive data ను protect చేయడానికి AWS KMS-managed keys (SSE-KMS) ఉపయోగించి logs ను rest లో encrypt చేయండి. KMS request costs తగ్గించడానికి Amazon S3 Bucket Keys ను ఉపయోగించండి.
+
+4. **Integrity Validation**: Tampering లేదా deletion ను detect చేయడానికి SHA-256 hashing మరియు RSA signing ఉపయోగించి log file integrity validation ను enable చేయండి, forensic investigations కోసం logs నమ్మదగినవని నిర్ధారించండి.

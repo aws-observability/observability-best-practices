@@ -1,0 +1,125 @@
+---
+sidebar_position: 2
+title: 安全取证最佳实践
+---
+
+# 安全取证最佳实践
+
+安全取证和事件响应是识别、调查和缓解 IT 安全事件的关键网络安全实践。取证系统地收集和分析数字证据（如 logs 和系统工件），以揭示安全违规的详细信息。事件响应侧重于检测、遏制和修复事件，以最大限度地减少损害并防止再次发生。两者共同帮助组织了解安全违规、归因操作并确保遵守法规。实施 CloudTrail 最佳实践可增强日志记录、分析和及时修复能力，以实现有效的安全取证和事件响应。
+
+
+:::tip 加强您的 AWS 安全服务。
+要加强您的 AWS 安全服务、增强实施策略并有效保护您宝贵的云资源，
+**探索最新的 [AWS 安全服务最佳实践](https://aws.github.io/aws-security-services-best-practices/)**。
+了解如何验证安全配置、实施经过验证的技术并采用社区贡献的最佳实践以获得稳健的安全态势。
+:::
+
+:::tip 加强您的 CloudTrail 安全
+要增强您的 AWS CloudTrail 设置并在事件调查期间保护活动 logs，**探索最新的 [AWS CloudTrail 安全最佳实践](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/best-practices-security.html)**。了解如何保护事件数据存储、启用加密并限制访问以获得稳健的安全态势。
+:::
+
+## 全面的日志配置
+
+### 在所有区域和账户中启用全面日志记录
+
+配置 CloudTrail 以在您组织中所有 AWS 区域和账户中记录管理、数据和网络活动事件。使用多区域 trail 或组织 trail 来捕获所有 API 活动，包括全局服务事件（如 IAM、Route 53）。
+
+**好处**：确保不会遗漏任何事件，能够检测未使用区域或账户中的未授权操作。
+
+**示例**：休眠区域中的意外活动可能表明攻击者正在进行侦察。
+
+### 使用高级事件选择器聚焦高风险数据事件
+
+配置高级事件选择器以记录高风险数据事件，如 S3 DeleteObject 或 Lambda InvokeFunction 调用，同时排除高量、低风险事件以降低成本。
+
+**好处**：将取证分析集中在关键活动上同时控制成本。
+
+**示例**：使用选择器仅记录包含敏感数据的特定 S3 存储桶的 DeleteObject 事件，如查询所示：
+```sql
+SELECT * FROM <event-data-store-ID> 
+WHERE eventName = 'DeleteObject' 
+AND resources.ARN LIKE 'arn:aws:s3:::sensitive-bucket%'
+```
+
+## Log 分析和查询
+
+### 使用 CloudTrail Lake 进行高级查询
+
+利用 CloudTrail Lake 对事件数据存储运行基于 SQL 的查询，实现对大量 log 的快速分析。
+
+**好处**：能够按 eventName、userIdentity.arn 或 sourceIPAddress 等字段高效过滤事件以识别恶意活动。
+
+**示例查询**：
+```sql
+SELECT eventTime, userIdentity.arn, eventName 
+FROM <event-data-store-ID> 
+WHERE eventName = 'CreateAccessKey'
+```
+
+**最佳实践**：将事件存储在 CloudTrail Lake 中超过默认的 90 天以支持扩展调查。
+
+### 与 Amazon Athena 集成以实现高效 Log 分析
+
+使用 Amazon Athena 查询存储在 S3 中的 CloudTrail logs，利用分区表降低查询成本并提高性能。
+:::tip 自动化 CloudTrail 分析
+**探索 GitHub 上的 [AWS CloudTrail Athena 自动化脚本](https://github.com/aws-samples/sample-automation-cloudtrail-athena)** 以使用预构建查询和自动化简化事件调查。
+:::
+
+**好处**：能够对特定账户、区域或时间段进行有针对性的查询。
+
+**示例查询**：
+```sql
+SELECT * FROM trail_123456789012 
+WHERE eventName = 'DeleteObject' 
+AND eventTime > '2025-05-01'
+```
+
+**实施**：创建按账户、区域和日期分区的账户特定表和组织范围表。
+
+:::note 访问已保存的安全查询
+**增强您的事件调查**，使用预构建的 AWS CloudTrail Athena 查询。**[探索已保存的安全事件查询](https://github.com/awslabs/aws-security-analytics-bootstrap/blob/main/AWSSecurityAnalyticsBootstrap/sql/dml/analytics/cloudtrail/cloudtrail_demo_queries.sql)** 以简化 Athena 表中 CloudTrail logs 的分析。
+:::
+
+
+
+## 监控和检测
+
+### 启用 CloudTrail Insights 进行异常检测
+
+激活 CloudTrail Insights 以检测异常 API 活动，如 CreateUser 或 AssumeRole 调用的峰值，这可能表明系统被入侵。
+
+**配置**：配置 Insights 将事件传送到 S3 存储桶或 CloudTrail Lake 事件数据存储，并与 Amazon EventBridge 集成以触发告警或 Lambda 函数进行自动响应。
+
+**示例**：过多 GetCallerIdentity 调用的 Insights 事件可能触发向安全团队发送电子邮件通知。
+
+### 实时监控和告警可疑活动
+
+:::tip 将 CloudTrail 事件流式传输到 CloudWatch
+**将 AWS CloudTrail 与 Amazon CloudWatch Logs 集成** 以实现安全事件的近实时监控。**[了解如何在文档中配置事件流式传输](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html)**。
+:::
+
+**实施**：使用 CloudWatch Logs Insights 查询 logs 并设置高风险事件的 alarm，如 Root 登录或失败的身份验证尝试。
+
+**示例 CloudWatch alarm 使用 metric 过滤器**：当以下情况发生时创建 alarm 通知安全团队：
+```
+{ ($.eventName = ConsoleLogin) && ($.errorMessage = "Failed authentication") }
+```
+
+:::tip 监控 IAM 策略变更
+**设置 AWS CloudTrail 的 CloudWatch alarm** 以检测 IAM 策略变更。[在 AWS 文档中了解更多](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudwatch-alarms-for-cloudtrail.html#cloudwatch-alarms-for-cloudtrail-iam-policy-changes)。
+:::
+
+
+## Log 安全和完整性
+
+### 使用稳健控制保护 CloudTrail Logs
+
+保护 CloudTrail logs 以确保其取证分析的完整性和可用性：
+
+1. **集中存储**：将 logs 存储在单独 AWS 账户中限制访问的集中 S3 存储桶中，以防止未授权修改。
+
+2. **删除保护**：在 S3 存储桶上启用 MFA-delete 或 S3 Object Lock 和版本控制，以防止 logs 被意外或恶意删除。
+
+3. **加密**：使用 AWS KMS 管理的密钥 (SSE-KMS) 加密静态 logs 以保护敏感数据。使用 Amazon S3 Bucket Keys 降低 KMS 请求成本。
+
+4. **完整性验证**：使用 SHA-256 哈希和 RSA 签名启用 log 文件完整性验证，以检测篡改或删除，确保 logs 可靠地用于取证调查。

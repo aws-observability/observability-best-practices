@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>합성 모니터링 (카나리) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>합성 모니터링 (카나리)</h1></header>
+      <article>
+        <section>
+          <h2>Synthetics가 Application Signals에 연결되는 방식</h2>
+          <p>CloudWatch Synthetics 카나리는 카나리에 대해 X-Ray 트레이싱을 활성화하면 Application Signals에 표시될 수 있습니다. 이를 통해 카나리 호출이 백엔드 서비스와 연결되어 서비스 세부 정보와 Application Map에 표시됩니다.</p>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals가 운영 상태 모니터링을 가능하게 하는 방법</a>.</p>
+        </section>
+
+        <section>
+          <h2>일반적인 카나리 사용 사례</h2>
+          <ul>
+            <li><strong>API 상태 확인</strong>: 일정에 따라 주요 엔드포인트를 검증합니다</li>
+            <li><strong>브라우저 흐름</strong>: 로그인/결제 여정을 검증합니다</li>
+            <li><strong>다중 리전</strong>: 고객보다 먼저 리전별 문제를 감지합니다</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>다음 단계</h2>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">CloudWatch Synthetics 카나리</a></li>
+            <li><a href="application-map.html">Application Map</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

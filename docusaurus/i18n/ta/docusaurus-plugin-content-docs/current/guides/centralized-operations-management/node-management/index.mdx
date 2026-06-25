@@ -1,0 +1,55 @@
+---
+sidebar_position: 4
+---
+
+# Node Management
+
+வாடிக்கையாளர்கள் AWS, on-premises அல்லது multicloud சூழல்களிலும் கணக்குகள் மற்றும் Regions முழுவதும் இயங்க தேர்வு செய்தாலும், AWS Systems Manager SSM agent-ஐ எளிதாக நிர்வகிக்க, கண்டறிய மற்றும் சரிசெய்ய மையப்படுத்தப்பட்ட இடத்தை வழங்குகிறது. nodes எங்கிருந்தாலும் operational efficiency மற்றும் productivity-ஐ அதிகரிக்கும் அதே வேளையில் விரிவான infrastructure visibility-ஐ வழங்குகிறது.
+
+## Systems Manager unified console
+
+The [unified Systems Manager console](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-unified-console.html) is a consolidated experience that combines various tools to help you complete common node tasks across multiple AWS accounts and AWS Regions in an AWS Organizations organization, or a single account and Region. In the unified console, you're provided with detailed insights to your nodes. You can generate reports for your nodes, diagnose and remediate common issues that prevent nodes from reporting as managed by Systems Manager, like connectivity issues. In addition to summaries about your nodes, you can view specific details about a node like software inventory and patching status.
+
+## Demo: Systems Manager unified console
+
+In the following interactive demo we will explore the Systems Manager unified console. To view the interactive demo in a new window, use [this link](https://aws-cloudops.storylane.io/share/1xr2aepwsitb).
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/1xr2aepwsitb?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+## Prerequisites for registering nodes
+
+There are three prerequisites to registering nodes with AWS Systems Manager.
+
+First, the the SSM agent must be installed. The SSM agent is [preinstalled on some Amazon Machine Images (AMIs)](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) provided by AWS and trusted third-parties.
+
+Second, the [SSM agent](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html) needs the necessary permissions to perform actions on the node on your behalf. You can automate the process of attaching and remediating IAM permissions by [enabling the Systems Manager unified console for an AWS Organization](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html). Alternatively, you can add the necessary IAM role and permissions through IaC when you deploy your resources.
+
+And lastly, the SSM agent must have network connectivity to [Systems Manager service endpoints](https://docs.aws.amazon.com/general/latest/gr/ssm.html) over the internet or by using [VPC endpoints.](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)
+
+![AWS Systems Manager Agent](/img/cloudops/guides/centralized-operations-management/node-management/BP-Node-Mgmt-1.png "AWS Systems Manager Agent")
+
+SSM Agent makes it possible for Systems Manager to update, manage, and configure these resources. The agent processes requests from the Systems Manager service in the AWS Cloud, and then runs them as specified in the request. SSM Agent then sends status and execution information back to the Systems Manager service.
+
+## Managing IAM permissions for nodes at scale
+
+There are a couple of ways to manage IAM permissions for nodes. If you have a Infrastructure as Code (IaC) strategy for deploying AWS resources then you should attach the IAM instance profile when launching EC2 instances.
+
+If you don't have a IaC strategy or going through the IaC route is not an option, then you can [enable the Systems Manager unified console](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) which is powered by Quick Setup.
+
+[Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html) simplifies setting up AWS services, including Systems Manager, by automating common or recommended tasks in your AWS Organization across AWS accounts and Regions. These tasks include, creating required AWS Identity and Access Management (IAM) instance profile roles and setting up operational best practices, such as periodic patch scans and inventory collection.
+
+## Enhance visibility across your entire infrastructure environment
+
+AWS Systems Manager helps you scale operational efficiency by simplifying node management, making it easier to manage nodes. You can now see all managed and unmanaged nodes across your organizations' AWS accounts and Regions from a single place. You can also identify, diagnose, and remediate unmanaged nodes.
+
+Once remediated, meaning they are managed by Systems Manager, you can leverage the full suite of Systems Manager tools to effectively execute critical operational tasks, such as applying security patches, initiating and logging sessions, or running operational commands, and gain comprehensive visibility across your entire fleet.
+
+## Creating an AWS Organizations delegated administrator for Systems Manager
+
+You can configure a delegated administrator account for Systems Manager to centrally manage your nodes across the organization when setting up the unified console. This includes Quick Setup to help you deploy and manage configurations across accounts and Regions using AWS Organizations. A delegated administrator for Quick Setup can create, update, view, and delete configuration manager resources in your organization. Systems Manager registers a delegated administrator for Quick Setup as part of the setup process for the integrated console experience. Giving you a comprehensive, centralized view to see all managed and unmanaged nodes across your organizations’ AWS accounts and Regions from a single place.

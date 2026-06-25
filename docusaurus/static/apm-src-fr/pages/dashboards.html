@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Tableaux de bord — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Tableaux de bord</h1></header>
+      <article>
+        <section>
+          <h2>Vues intégrées d'Application Signals</h2>
+          <p>Application Signals fournit un flux de travail centré sur les applications dans la console CloudWatch :</p>
+          <ul>
+            <li><strong>Services</strong> : lister les services, repérer les pannes/latences élevées, voir l'état des SLI lorsque des SLO existent.</li>
+            <li><strong>Détails du service</strong> : examiner en détail les opérations, les dépendances et les traces corrélées.</li>
+            <li><strong>Carte des applications</strong> : visualiser la topologie et propager l'état de santé à travers les dépendances.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Surveillance de la santé opérationnelle avec Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>Tableaux de bord CloudWatch (personnalisés)</h2>
+          <p>Vous pouvez également créer des tableaux de bord CloudWatch en utilisant les métriques émises par Application Signals (espace de noms <code>ApplicationSignals</code>) et les corréler avec des alarmes/journaux selon vos besoins.</p>
+          <ul>
+            <li><strong>Métriques de service</strong> : latence, pannes, erreurs selon les dimensions Service/Opération/Environnement.</li>
+            <li><strong>Métriques de dépendance</strong> : dimensions de service/opération distants pour les appels en aval.</li>
+            <li><strong>Métriques d'exécution</strong> (lorsque pris en charge) : corréler GC/CPU/mémoire avec les pics de latence.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Métriques collectées par Application Signals</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

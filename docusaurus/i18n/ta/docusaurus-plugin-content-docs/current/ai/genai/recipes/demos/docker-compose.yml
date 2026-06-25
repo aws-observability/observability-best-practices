@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  otel-collector:
+    build:
+      context: ./otel
+      dockerfile: Dockerfile
+    container_name: otel-collector
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+      - "13133:13133" # Health check
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AMP_REMOTE_WRITE_URL=${AMP_REMOTE_WRITE_URL}
+    networks:
+      - ai-obs-network
+    restart: unless-stopped
+
+  litellm-proxy:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: litellm-proxy
+    ports:
+      - "4000:4000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - AZURE_OPENAI_ENDPOINT=${AZURE_OPENAI_ENDPOINT}
+      - AZURE_OPENAI_API_KEY=${AZURE_OPENAI_API_KEY}
+      - LITELLM_API_KEY=${LITELLM_API_KEY}
+    networks:
+      - ai-obs-network
+    restart: unless-stopped
+
+  ai-app:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    container_name: ai-app
+    depends_on:
+      - otel-collector
+      - litellm-proxy
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION}
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector:4317
+      - LITELLM_URL=http://litellm-proxy:4000
+      - LITELLM_API_KEY=${LITELLM_API_KEY}
+    networks:
+      - ai-obs-network
+
+  mcp-server:
+    build:
+      context: ./mcp-server
+      dockerfile: Dockerfile
+    container_name: mcp-server
+    environment:
+      - AMP_ENDPOINT=${AMP_ENDPOINT}
+      - AWS_REGION=${AWS_DEFAULT_REGION}
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
+    networks:
+      - ai-obs-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+networks:
+  ai-obs-network:
+    driver: bridge

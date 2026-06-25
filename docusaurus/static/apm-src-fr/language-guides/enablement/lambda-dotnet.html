@@ -1,0 +1,1381 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for .NET on Lambda</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .step {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .endpoint {
+            background: #e8f4fd;
+            border-left: 4px solid #17a2b8;
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 0.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for .NET on Lambda</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">Lambda</div>
+            <div class="language-badge">.NET</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a .NET Lambda function with AWS Application Signals enabled. The simplest approach using AWS Lambda console with built-in layer support.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a .NET Lambda function with Application Signals</li>
+                        <li>Enable AWS Application Signals auto-instrumentation via Lambda Layer</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 15-20 minutes
+                </div>
+            </div>
+
+        <h2>Prerequisites</h2>
+        <h3>Required Tools</h3>
+        <ul>
+            <li>AWS CLI v2 (latest version)</li>
+            <li>.NET 8 SDK</li>
+            <li>AWS Account with appropriate permissions</li>
+            <li>Text editor</li>
+        </ul>
+
+        <h3>AWS Permissions Required</h3>
+        <ul>
+            <li>Lambda: Create and manage functions</li>
+            <li>IAM: Create roles and policies</li>
+            <li>CloudWatch: Logs and Application Signals access</li>
+            <li>S3: Basic read access (for testing)</li>
+        </ul>
+
+        <h2>Architecture</h2>
+        <p>Your Lambda function will be automatically instrumented using:</p>
+        <ol>
+            <li><strong>AWS Lambda Layer for OpenTelemetry</strong> - Provides auto-instrumentation</li>
+            <li><strong>Application Signals Integration</strong> - Built into the layer</li>
+            <li><strong>Automatic Tracing</strong> - HTTP requests, AWS SDK calls, function execution</li>
+        </ol>
+
+        <h2>Step 1: Enable Application Signals in Your Account</h2>
+        <div class="warning">
+            <p><strong>Important:</strong> Application Signals must be enabled once per AWS account per region.</p>
+        </div>
+
+        <h3>Option 1: Enable via AWS Console (Recommended)</h3>
+        <ol>
+            <li>Go to AWS Console → CloudWatch → Application Signals</li>
+            <li>Select your region (e.g., <code>us-east-1</code>)</li>
+            <li>Click "Get Started" or "Enable Application Signals"</li>
+            <li>Wait 2-3 minutes for activation</li>
+        </ol>
+
+        <h2>Step 2: Prepare Your .NET Lambda Function</h2>
+        <h3>2.1 Create Application Directory</h3>
+        <pre><code>mkdir -p ~/my-lambda-dotnet-appsignals
+cd ~/my-lambda-dotnet-appsignals</code></pre>
+
+        <h3>2.2 Create .NET Project File</h3>
+        <p>Create a <code>lambda-dotnet.csproj</code> file:</p>
+        <pre><code>&lt;Project Sdk="Microsoft.NET.Sdk"&gt;
+
+  &lt;PropertyGroup&gt;
+    &lt;TargetFramework&gt;net8.0&lt;/TargetFramework&gt;
+    &lt;ImplicitUsings&gt;enable&lt;/ImplicitUsings&gt;
+    &lt;Nullable&gt;enable&lt;/Nullable&gt;
+    &lt;GenerateRuntimeConfigurationFiles&gt;true&lt;/GenerateRuntimeConfigurationFiles&gt;
+    &lt;AWSProjectType&gt;Lambda&lt;/AWSProjectType&gt;
+    &lt;!-- This property makes the build directory similar to a publish directory and helps the AWS .NET Lambda Mock Test Tool find dependencies. --&gt;
+    &lt;CopyLocalLockFileAssemblies&gt;true&lt;/CopyLocalLockFileAssemblies&gt;
+    &lt;!-- Generate ready to run images during publishing to improve cold start time. --&gt;
+    &lt;PublishReadyToRun&gt;true&lt;/PublishReadyToRun&gt;
+  &lt;/PropertyGroup&gt;
+
+  &lt;ItemGroup&gt;
+    &lt;PackageReference Include="Amazon.Lambda.Core" Version="2.2.0" /&gt;
+    &lt;PackageReference Include="Amazon.Lambda.APIGatewayEvents" Version="2.7.1" /&gt;
+    &lt;PackageReference Include="Amazon.Lambda.RuntimeSupport" Version="1.8.0" /&gt;
+    &lt;PackageReference Include="Amazon.Lambda.Serialization.SystemTextJson" Version="2.0.0" /&gt;
+  &lt;/ItemGroup&gt;
+
+&lt;/Project&gt;</code></pre>
+
+        <div class="warning">
+            <p><strong>IMPORTANT:</strong> Do NOT add OpenTelemetry dependencies. They're provided by the AWS Lambda Layer.</p>
+        </div>
+
+        <h3>2.3 Create Program.cs</h3>
+        <p>Create the main Lambda function code:</p>
+        <pre><code>using Amazon.Lambda.APIGatewayEvents;
+using Amazon.Lambda.Core;
+using Amazon.Lambda.RuntimeSupport;
+using Amazon.Lambda.Serialization.SystemTextJson;
+
+namespace lambda_dotnet;
+
+/// &lt;summary&gt;
+/// Simple Hello World Lambda function for Application Signals testing
+/// &lt;/summary&gt;
+public class Program
+{
+    private static async Task Main()
+    {
+        using var handlerWrapper = HandlerWrapper.GetHandlerWrapper&lt;APIGatewayProxyRequest, APIGatewayProxyResponse&gt;(FunctionHandlerAsync, new DefaultLambdaJsonSerializer());
+        using var bootstrap = new LambdaBootstrap(handlerWrapper);
+        await bootstrap.RunAsync();
+    }
+
+    /// &lt;summary&gt;
+    /// Simple Lambda function handler
+    /// &lt;/summary&gt;
+    public static async Task&lt;APIGatewayProxyResponse&gt; FunctionHandlerAsync(APIGatewayProxyRequest request, ILambdaContext context)
+    {
+        context.Logger.LogInformation($"Received event: {System.Text.Json.JsonSerializer.Serialize(request)}");
+
+        try
+        {
+            var path = request.Path ?? "/";
+            var httpMethod = request.HttpMethod ?? "GET";
+
+            object response;
+
+            if (path == "/" || path == "")
+            {
+                response = new
+                {
+                    message = "Hello World from .NET Lambda!",
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    function_name = context.FunctionName,
+                    request_id = context.AwsRequestId,
+                    service = "lambda-dotnet",
+                    runtime = "dotnet8"
+                };
+            }
+            else if (path == "/health")
+            {
+                response = new
+                {
+                    status = "healthy",
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    function_name = context.FunctionName,
+                    runtime = "dotnet8"
+                };
+            }
+            else if (path.StartsWith("/api/hello/"))
+            {
+                var name = path.Substring("/api/hello/".Length);
+                response = new
+                {
+                    message = $"Hello, {name}!",
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    function_name = context.FunctionName,
+                    runtime = "dotnet8"
+                };
+            }
+            else
+            {
+                response = new
+                {
+                    error = "Not Found",
+                    path = path,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+                };
+            }
+
+            return new APIGatewayProxyResponse
+            {
+                StatusCode = 200,
+                Headers = new Dictionary&lt;string, string&gt;
+                {
+                    { "Content-Type", "application/json" },
+                    { "Access-Control-Allow-Origin", "*" }
+                },
+                Body = System.Text.Json.JsonSerializer.Serialize(response)
+            };
+        }
+        catch (Exception ex)
+        {
+            context.Logger.LogError($"Error processing request: {ex}");
+
+            return new APIGatewayProxyResponse
+            {
+                StatusCode = 500,
+                Headers = new Dictionary&lt;string, string&gt;
+                {
+                    { "Content-Type", "application/json" }
+                },
+                Body = System.Text.Json.JsonSerializer.Serialize(new
+                {
+                    error = "Internal Server Error",
+                    message = ex.Message,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    function_name = context.FunctionName
+                })
+            };
+        }
+    }
+}</code></pre>
+
+        <h3>2.4 Create Controllers/DemoController.cs</h3>
+        <p>Create the controller with various endpoints:</p>
+        <pre><code>using Amazon.Lambda.Core;
+using Amazon.S3;
+using Amazon.S3.Model;
+
+namespace lambda_dotnet.Controllers;
+
+/// &lt;summary&gt;
+/// Demo controller with various endpoints for testing Application Signals
+/// 
+/// All endpoints are automatically instrumented by the AWS Lambda Layer for OpenTelemetry.
+/// No manual tracing code is required.
+/// &lt;/summary&gt;
+public class DemoController
+{
+    private readonly Random _random = new();
+    private readonly HttpClient _httpClient;
+    private readonly IAmazonS3 _s3Client;
+
+    public DemoController()
+    {
+        _httpClient = new HttpClient
+        {
+            Timeout = TimeSpan.FromSeconds(10)
+        };
+        _s3Client = new AmazonS3Client();
+    }
+
+    /// &lt;summary&gt;
+    /// Root endpoint
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; RootAsync(ILambdaContext context)
+    {
+        return new
+        {
+            message = "AWS Application Signals Lambda .NET Demo",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            request_id = context.AwsRequestId,
+            service = "lambda-dotnet",
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Health check endpoint
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; HealthAsync(ILambdaContext context)
+    {
+        return new
+        {
+            status = "healthy",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            memory_limit = context.MemoryLimitInMB,
+            remaining_time = context.RemainingTime,
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Personalized greeting with simulated processing time
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; HelloAsync(string name, ILambdaContext context)
+    {
+        // Simulate some processing time
+        await Task.Delay(_random.Next(10, 110)); // 10-110ms
+
+        return new
+        {
+            message = $"Hello, {name}!",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            greeting_id = _random.Next(10000),
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Intentionally slow endpoint for latency testing
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; SlowAsync(ILambdaContext context)
+    {
+        // Simulate slow operation (500-1500ms)
+        var delay = _random.Next(500, 1500);
+        await Task.Delay(delay);
+
+        return new
+        {
+            message = "Slow operation completed",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            duration_ms = delay,
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Endpoint that randomly raises errors for fault testing
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; ErrorAsync(ILambdaContext context)
+    {
+        if (_random.NextDouble() &gt; 0.5)
+        {
+            throw new Exception("Simulated error for Application Signals testing");
+        }
+
+        return new
+        {
+            message = "No error occurred",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Makes external HTTP call for distributed tracing
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; ExternalAsync(ILambdaContext context)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync("https://httpbin.org/delay/1");
+
+            return new
+            {
+                message = "External call completed",
+                external_status_code = (int)response.StatusCode,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                function_name = context.FunctionName,
+                runtime = "dotnet8"
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"External call failed: {ex.Message}");
+        }
+    }
+
+    /// &lt;summary&gt;
+    /// AWS S3 call for testing AWS SDK instrumentation
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; S3Async(ILambdaContext context)
+    {
+        try
+        {
+            // List buckets (this is a safe operation that doesn't require specific permissions)
+            var response = await _s3Client.ListBucketsAsync();
+
+            var result = new
+            {
+                message = "S3 call completed successfully",
+                bucket_count = response.Buckets.Count,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                function_name = context.FunctionName,
+                runtime = "dotnet8"
+            };
+
+            // Add first bucket name if available
+            if (response.Buckets.Count &gt; 0)
+            {
+                result = new
+                {
+                    message = "S3 call completed successfully",
+                    bucket_count = response.Buckets.Count,
+                    first_bucket = response.Buckets[0].BucketName,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    function_name = context.FunctionName,
+                    runtime = "dotnet8"
+                };
+            }
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            return new
+            {
+                error = "S3 call failed",
+                message = ex.Message,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                function_name = context.FunctionName,
+                runtime = "dotnet8"
+            };
+        }
+    }
+
+    /// &lt;summary&gt;
+    /// Database simulation endpoint
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; DatabaseAsync(ILambdaContext context)
+    {
+        // Simulate database query time
+        await Task.Delay(_random.Next(50, 250)); // 50-250ms
+
+        return new
+        {
+            message = "Database query completed",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            records_returned = _random.Next(1, 101),
+            runtime = "dotnet8"
+        };
+    }
+
+    /// &lt;summary&gt;
+    /// Complex operation with multiple steps
+    /// &lt;/summary&gt;
+    public async Task&lt;object&gt; ComplexAsync(ILambdaContext context)
+    {
+        // Step 1: Simulate authentication
+        await Task.Delay(_random.Next(10, 60));
+
+        // Step 2: Simulate business logic
+        await Task.Delay(_random.Next(20, 120));
+
+        // Step 3: Simulate database operations
+        await Task.Delay(_random.Next(30, 180));
+
+        return new
+        {
+            message = "Complex operation completed successfully",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            function_name = context.FunctionName,
+            steps_completed = 3,
+            total_processing_time_ms = _random.Next(60, 360),
+            runtime = "dotnet8"
+        };
+    }
+}</code></pre>
+
+        <h2>Step 3: Build Lambda Deployment Package</h2>
+        <h3>3.1 Install AWS Lambda Tools</h3>
+        <pre><code>dotnet tool install -g Amazon.Lambda.Tools</code></pre>
+        
+        <div class="warning">
+            <p><strong>IMPORTANT:</strong> After installation, you need to add the tools to your PATH:</p>
+        </div>
+        
+        <pre><code># Add .NET tools to PATH
+export PATH="$PATH:/Users/gurusiva/.dotnet/tools"
+
+# Verify installation
+dotnet-lambda --version</code></pre>
+        
+        <div class="info">
+            <p><strong>Alternative:</strong> If PATH export doesn't work, use the full path:</p>
+        </div>
+        
+        <pre><code>/Users/gurusiva/.dotnet/tools/dotnet-lambda package</code></pre>
+
+        <h3>3.2 Set Variables</h3>
+        <pre><code>export AWS_REGION="us-east-1"
+export FUNCTION_NAME="lambda-dotnet"</code></pre>
+
+        <h3>3.3 Build the Project</h3>
+        <pre><code>dotnet build</code></pre>
+
+        <h3>3.4 Package for Lambda</h3>
+        <pre><code># Using dotnet-lambda command
+dotnet-lambda package
+
+# Or using full path if PATH export didn't work
+/Users/gurusiva/.dotnet/tools/dotnet-lambda package</code></pre>
+
+        <h2>Step 4: Create IAM Role for Lambda</h2>
+        <p>Create an IAM role with the following policies:</p>
+        <ul>
+            <li><code>AWSLambdaBasicExecutionRole</code></li>
+            <li><code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> (CRITICAL!)</li>
+        </ul>
+
+        <h3>4.1 Create IAM Role</h3>
+        <pre><code>aws --profile eksworkstream --region us-east-1 iam create-role \
+  --role-name lambda-dotnet-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'</code></pre>
+
+        <h3>4.2 Attach Required Policies</h3>
+        <pre><code>aws --profile eksworkstream --region us-east-1 iam attach-role-policy \
+  --role-name lambda-dotnet-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws --profile eksworkstream --region us-east-1 iam attach-role-policy \
+  --role-name lambda-dotnet-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code></pre>
+
+        <h3>4.3 Get Role ARN</h3>
+        <pre><code>ROLE_ARN=$(aws --profile eksworkstream --region us-east-1 iam get-role \
+  --role-name lambda-dotnet-execution-role \
+  --query 'Role.Arn' \
+  --output text)
+
+echo "Role ARN: $ROLE_ARN"</code></pre>
+
+        <h2>Step 5: Deploy Lambda Function</h2>
+        <h3>5.1 Create Lambda Function</h3>
+        <pre><code>aws --profile eksworkstream --region us-east-1 lambda create-function \
+  --function-name lambda-dotnet \
+  --runtime dotnet8 \
+  --role "$ROLE_ARN" \
+  --handler lambda_dotnet::lambda_dotnet.Program::FunctionHandlerAsync \
+  --zip-file fileb://bin/Release/net8.0/lambda-dotnet.zip \
+  --timeout 30 \
+  --memory-size 512</code></pre>
+
+        <div class="highlight">
+            <p><strong>Note:</strong> If you plan to enable Application Signals via the Lambda Console (recommended), you can skip the manual layer and environment variable configuration steps below. The console will automatically handle these for you.</p>
+        </div>
+
+        <h3>5.2 Alternative: Manual Layer and Environment Configuration</h3>
+        <p><strong>Only needed if NOT using the Lambda Console method:</strong></p>
+        
+        <h4>Add AWS Lambda Layer for OpenTelemetry</h4>
+        <p>For <code>us-east-1</code>:</p>
+        <pre><code>LAYER_ARN="arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroDotNet:8"</code></pre>
+
+        <h4>Configure Environment Variables</h4>
+        <pre><code>aws lambda update-function-configuration \
+  --function-name lambda-dotnet \
+  --environment Variables='{
+    "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",
+    "OTEL_SERVICE_NAME": "lambda-dotnet",
+    "OTEL_RESOURCE_ATTRIBUTES": "service.name=lambda-dotnet,deployment.environment=lambda:us-east-1"
+  }'</code></pre>
+
+        <h2>Step 6: Test Lambda Function</h2>
+        <h3>6.1 Test Basic Functionality</h3>
+        <pre><code>aws lambda invoke \
+  --function-name lambda-dotnet \
+  --payload fileb://&lt;(echo '{"path": "/", "httpMethod": "GET"}') \
+  --region us-east-1 \
+  response.json</code></pre>
+
+        <h3>6.2 Generate Traffic for Application Signals</h3>
+        <pre><code>for i in {1..50}; do
+  aws lambda invoke \
+    --function-name lambda-dotnet \
+    --payload fileb://&lt;(echo "{\"path\": \"/api/hello/User${i}\", \"httpMethod\": \"GET\"}") \
+    --region us-east-1 \
+    /dev/null
+done</code></pre>
+
+        <h2>Step 7: Generate Traffic for Testing</h2>
+        <p>To test Application Signals, you need to generate traffic to your Lambda function. We provide both Python and shell script traffic generators:</p>
+
+        <h3>7.1 Python Traffic Generator</h3>
+        <p>Create a <code>traffic-generator.py</code> file:</p>
+        <pre><code>#!/usr/bin/env python3
+
+"""
+.NET Lambda Traffic Generator for Application Signals Testing
+Generates various types of requests to test Application Signals metrics and traces
+"""
+
+import boto3
+import json
+import time
+import random
+import sys
+from datetime import datetime
+
+def generate_traffic(function_name, region='us-east-1', profile='eksworkstream', num_requests=50):
+    """
+    Generate traffic to the Lambda function for Application Signals testing
+    """
+    print(f"Starting traffic generation for {function_name}")
+    print(f"   Region: {region}")
+    print(f"   Profile: {profile}")
+    print(f"   Requests: {num_requests}")
+    print("-" * 50)
+
+    # Initialize Lambda client
+    try:
+        session = boto3.Session(profile_name=profile)
+        lambda_client = session.client('lambda', region_name=region)
+        print("AWS Lambda client initialized")
+    except Exception as e:
+        print(f"Error initializing AWS client: {e}")
+        return False
+
+    # Test endpoints with different characteristics
+    endpoints = [
+        {"path": "/", "method": "GET", "name": "Root", "weight": 20},
+        {"path": "/health", "method": "GET", "name": "Health", "weight": 15},
+        {"path": "/api/hello/User", "method": "GET", "name": "Hello", "weight": 30},
+        {"path": "/api/slow", "method": "GET", "name": "Slow", "weight": 10},
+        {"path": "/api/error", "method": "GET", "name": "Error", "weight": 10},
+        {"path": "/api/external", "method": "GET", "name": "External", "weight": 8},
+        {"path": "/api/s3", "method": "GET", "name": "S3", "weight": 5},
+        {"path": "/api/database", "method": "GET", "name": "Database", "weight": 2},
+    ]
+
+    # Create weighted list for random selection
+    weighted_endpoints = []
+    for endpoint in endpoints:
+        weighted_endpoints.extend([endpoint] * endpoint["weight"])
+
+    success_count = 0
+    error_count = 0
+
+    print(f"Generating {num_requests} requests...")
+    print()
+
+    for i in range(1, num_requests + 1):
+        # Select random endpoint
+        endpoint = random.choice(weighted_endpoints)
+
+        if endpoint["name"] == "Hello":
+            user_name = f"User{random.randint(1, 1000)}"
+            path = f"/api/hello/{user_name}"
+        else:
+            path = endpoint["path"]
+
+        payload = {"path": path, "httpMethod": endpoint["method"]}
+
+        start_time = time.time()
+        try:
+            response = lambda_client.invoke(
+                FunctionName=function_name,
+                InvocationType='RequestResponse',
+                Payload=json.dumps(payload)
+            )
+            end_time = time.time()
+
+            # Parse response
+            response_payload = json.loads(response['Payload'].read())
+            status_code = response_payload.get('statusCode', 200)
+            duration = round((end_time - start_time) * 1000, 2)
+
+            if status_code == 200:
+                success_count += 1
+                status_icon = "SUCCESS"
+            else:
+                error_count += 1
+                status_icon = "WARNING"
+
+            # Print progress
+            print(f"{status_icon} Request {i:2d}: {endpoint['name']:8s} | "
+                  f"Status: {status_code} | Duration: {duration:6.2f}ms | "
+                  f"Path: {path}")
+
+            # Add small delay between requests
+            time.sleep(random.uniform(0.1, 0.5))
+
+        except Exception as e:
+            error_count += 1
+            print(f"ERROR Request {i:2d}: {endpoint['name']:8s} | Error: {str(e)[:50]}...")
+            time.sleep(0.5)
+
+    # Print summary
+    print()
+    print("=" * 50)
+    print("TRAFFIC GENERATION SUMMARY")
+    print("=" * 50)
+    print(f"Total Requests: {num_requests}")
+    print(f"Successful:     {success_count} ({success_count/num_requests*100:.1f}%)")
+    print(f"Errors:         {error_count} ({error_count/num_requests*100:.1f}%)")
+    print(f"Timestamp:      {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print()
+    print("Next Steps:")
+    print("1. Wait 5-10 minutes for Application Signals to process data")
+    print("2. Check Application Signals console:")
+    print("   https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#application-signals:services")
+    print("3. Look for 'lambda-dotnet' in the services list")
+    print()
+
+    return success_count > 0
+
+def main():
+    """Main function"""
+    if len(sys.argv) < 2:
+        print("Usage: python3 traffic-generator.py <function_name> [num_requests] [region] [profile]")
+        sys.exit(1)
+
+    function_name = sys.argv[1]
+    num_requests = int(sys.argv[2]) if len(sys.argv) > 2 else 50
+    region = sys.argv[3] if len(sys.argv) > 3 else 'us-east-1'
+    profile = sys.argv[4] if len(sys.argv) > 4 else 'eksworkstream'
+
+    success = generate_traffic(function_name, region, profile, num_requests)
+
+    if success:
+        print("Traffic generation completed successfully!")
+        sys.exit(0)
+    else:
+        print("Traffic generation failed!")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()</code></pre>
+
+        <h3>7.2 Shell Script Traffic Generator</h3>
+        <p>Alternative shell script for traffic generation:</p>
+        <pre><code>#!/bin/bash
+
+# .NET Lambda Traffic Generator for Application Signals Testing
+# Generates various types of requests to test Application Signals metrics and traces
+
+FUNCTION_NAME="lambda-dotnet"
+NUM_REQUESTS=50
+REGION="us-east-1"
+PROFILE="eksworkstream"
+
+# Parse arguments
+if [ $# -ge 1 ]; then
+    FUNCTION_NAME="$1"
+fi
+if [ $# -ge 2 ]; then
+    NUM_REQUESTS="$2"
+fi
+if [ $# -ge 3 ]; then
+    REGION="$3"
+fi
+if [ $# -ge 4 ]; then
+    PROFILE="$4"
+fi
+
+echo "Starting traffic generation for ${FUNCTION_NAME}"
+echo "   Region: ${REGION}"
+echo "   Profile: ${PROFILE}"
+echo "   Requests: ${NUM_REQUESTS}"
+echo "--------------------------------------------------"
+
+# Test endpoints with different characteristics
+declare -a ENDPOINTS=(
+    "root:/:GET:20"
+    "health:/health:GET:15"
+    "hello:/api/hello:GET:30"
+    "slow:/api/slow:GET:10"
+    "error:/api/error:GET:10"
+    "external:/api/external:GET:8"
+    "s3:/api/s3:GET:5"
+    "database:/api/database:GET:2"
+)
+
+success_count=0
+error_count=0
+
+echo "Generating ${NUM_REQUESTS} requests..."
+echo
+
+for i in $(seq 1 $NUM_REQUESTS); do
+    # Select random endpoint
+    endpoint_info=${ENDPOINTS[$((RANDOM % ${#ENDPOINTS[@]}))]}
+    IFS=':' read -r name path method weight <<< "$endpoint_info"
+
+    if [ "$name" = "hello" ]; then
+        user_name="User$((RANDOM % 1000 + 1))"
+        full_path="/api/hello/$user_name"
+    else
+        full_path="$path"
+    fi
+
+    payload="{\"path\": \"$full_path\", \"httpMethod\": \"$method\"}"
+
+    # Invoke Lambda function
+    response=$(aws --profile "$PROFILE" --region "$REGION" lambda invoke \
+        --function-name "$FUNCTION_NAME" \
+        --payload fileb://&lt;(echo "$payload") \
+        /tmp/lambda-response.json 2>&1)
+
+    if [ $? -eq 0 ]; then
+        # Parse response
+        if [ -f /tmp/lambda-response.json ]; then
+            status_code=$(cat /tmp/lambda-response.json | jq -r '.statusCode // 200' 2>/dev/null || echo "200")
+
+            if [ "$status_code" = "200" ]; then
+                success_count=$((success_count + 1))
+                status_icon="SUCCESS"
+            else
+                error_count=$((error_count + 1))
+                status_icon="WARNING"
+            fi
+        else
+            error_count=$((error_count + 1))
+            status_icon="ERROR"
+            status_code="ERROR"
+        fi
+
+        # Print progress
+        printf "%s Request %2d: %-8s | Status: %s | Path: %s\n" \
+            "$status_icon" "$i" "$name" "$status_code" "$full_path"
+
+        # Clean up
+        rm -f /tmp/lambda-response.json
+
+    else
+        error_count=$((error_count + 1))
+        printf "ERROR Request %2d: %-8s | Error: %s\n" "$i" "$name" "$response"
+    fi
+
+    # Add small delay between requests
+    sleep $(echo "scale=2; $RANDOM/32767 * 0.4 + 0.1" | bc -l)
+done
+
+# Print summary
+echo
+echo "=================================================="
+echo "TRAFFIC GENERATION SUMMARY"
+echo "=================================================="
+echo "Total Requests: $NUM_REQUESTS"
+echo "Successful:     $success_count ($(echo "scale=1; $success_count * 100 / $NUM_REQUESTS" | bc -l)%)"
+echo "Errors:         $error_count ($(echo "scale=1; $error_count * 100 / $NUM_REQUESTS" | bc -l)%)"
+echo "Timestamp:      $(date '+%Y-%m-%d %H:%M:%S')"
+echo
+echo "Next Steps:"
+echo "1. Wait 5-10 minutes for Application Signals to process data"
+echo "2. Check Application Signals console:"
+echo "   https://us-east-1.console.aws.amazon.com/cloudwatch/home?region=us-east-1#application-signals:services"
+echo "3. Look for 'lambda-dotnet' in the services list"
+echo
+
+if [ $success_count -gt 0 ]; then
+    echo "Traffic generation completed successfully!"
+    exit 0
+else
+    echo "Traffic generation failed!"
+    exit 1
+fi</code></pre>
+
+        <h3>7.3 Usage Instructions</h3>
+        <p><strong>Python Traffic Generator:</strong></p>
+        <pre><code># Run with default settings (50 requests)
+python3 traffic-generator.py lambda-dotnet
+
+# Run with custom number of requests
+python3 traffic-generator.py lambda-dotnet 100</code></pre>
+
+        <p><strong>Shell Script Traffic Generator:</strong></p>
+        <pre><code># Run with default settings (50 requests)
+./generate-traffic.sh lambda-dotnet
+
+# Run with custom number of requests
+./generate-traffic.sh lambda-dotnet 100
+
+# Run with custom region and profile
+./generate-traffic.sh lambda-dotnet 50 us-east-1 eksworkstream</code></pre>
+
+        <h3>7.4 Traffic Generator Features</h3>
+        <ul>
+            <li><strong>Weighted Random Selection:</strong> More realistic traffic patterns</li>
+            <li><strong>Simple Endpoints:</strong> Tests basic Lambda functionality</li>
+            <li><strong>Health Monitoring:</strong> Includes health check endpoints</li>
+            <li><strong>Personalized Responses:</strong> Tests dynamic content generation</li>
+            <li><strong>Progress Tracking:</strong> Real-time progress with success/error counts</li>
+            <li><strong>Configurable:</strong> Adjustable number of requests and parameters</li>
+        </ul>
+
+        <h2>Step 8: Verify Application Signals</h2>
+        <h3>8.1 Check Application Signals Service Discovery</h3>
+        <pre><code>aws application-signals list-services \
+  --region us-east-1 \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --query 'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</code></pre>
+
+        <div class="success">
+            <p><strong>Expected:</strong> Your service should appear with:</p>
+            <ul>
+                <li>Name: <code>lambda-dotnet</code></li>
+                <li>Environment: <code>lambda:us-east-1</code></li>
+            </ul>
+        </div>
+
+        <h2>Step 9: View in AWS Console</h2>
+        <h3>9.1 Console Access</h3>
+        <ol>
+            <li><strong>Navigate to:</strong> AWS Console → CloudWatch → Application Signals → Services</li>
+            <li><strong>Look for your service:</strong> Service Name: <code>lambda-dotnet</code></li>
+            <li><strong>Explore:</strong> Service Map, Service Dashboard, Operations, Dependencies</li>
+        </ol>
+
+        <h2>Step 5.3: Enable Application Signals via Lambda Console (Recommended)</h2>
+        <div class="success">
+            <p><strong>RECOMMENDED METHOD!</strong> This is the simplest and most reliable approach. The console automatically handles all the complex configuration.</p>
+        </div>
+        
+        <p>After creating your Lambda function via CLI (Step 5.1), enable Application Signals via the console:</p>
+        <ol>
+            <li>Go to AWS Lambda Console: <a href="https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/lambda-dotnet">https://us-east-1.console.aws.amazon.com/lambda/home?region=us-east-1#/functions/lambda-dotnet</a></li>
+            <li>Navigate to your <code>lambda-dotnet</code> function</li>
+            <li>Go to <strong>Configuration</strong> → <strong>Monitoring and operations tools</strong></li>
+            <li>Click <strong>"Edit"</strong></li>
+            <li>Enable both checkboxes:
+                <ul>
+                    <li>✅ <strong>"Automatically collect application traces and standard application metrics with Application Signals"</strong></li>
+                    <li>✅ <strong>"Automatically collect Lambda service traces for end to end visibility with X-Ray"</strong></li>
+                </ul>
+            </li>
+            <li>Click <strong>"Save"</strong></li>
+        </ol>
+
+        <div class="success">
+            <p><strong>That's it!</strong> The console automatically:</p>
+            <ul>
+                <li>Adds the AWS Lambda Layer for OpenTelemetry</li>
+                <li>Sets the <code>AWS_LAMBDA_EXEC_WRAPPER</code> environment variable</li>
+                <li>Attaches the required IAM policy</li>
+            </ul>
+        </div>
+
+        <h2>Troubleshooting</h2>
+        
+        <h3>Issue: Shell Environment Problems</h3>
+        <div class="warning">
+            <p><strong>Problem:</strong> Commands fail with errors like <code>parse error near 'cursor_snap_ENV_VARS...'</code> or <code>command not found: dump_zsh_state</code></p>
+            <p><strong>Cause:</strong> Cursor IDE environment variable injection is corrupting the shell environment</p>
+        </div>
+        
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li><strong>Use a fresh terminal window</strong> outside of Cursor IDE</li>
+            <li><strong>Restart Cursor IDE</strong> completely and try again</li>
+            <li><strong>Use VS Code</strong> instead of Cursor IDE</li>
+            <li><strong>Use the Lambda Console method</strong> (recommended for shell issues)</li>
+        </ol>
+
+        <h3>Issue: Role ARN is Empty</h3>
+        <div class="warning">
+            <p><strong>Problem:</strong> <code>aws: error: argument --role: expected one argument</code></p>
+            <p><strong>Cause:</strong> The <code>ROLE_ARN</code> variable is empty, indicating IAM role creation failed</p>
+        </div>
+        
+        <p><strong>Debug Steps:</strong></p>
+        <ol>
+            <li><strong>Check if role exists:</strong>
+                <pre><code>aws iam get-role --role-name lambda-dotnet-execution-role</code></pre>
+            </li>
+            <li><strong>Create role if missing:</strong>
+                <pre><code>aws iam create-role \
+  --role-name lambda-dotnet-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'</code></pre>
+            </li>
+            <li><strong>Get role ARN manually:</strong>
+                <pre><code>aws iam get-role \
+  --role-name lambda-dotnet-execution-role \
+  --query 'Role.Arn' \
+  --output text</code></pre>
+            </li>
+            <li><strong>Use ARN directly in create-function command</strong></li>
+        </ol>
+
+        <h3>Issue: Command Syntax Errors</h3>
+        <div class="warning">
+            <p><strong>Common mistakes:</strong></p>
+            <ul>
+                <li>Running multiple commands on the same line with periods</li>
+                <li>Using duplicate parameters (e.g., <code>--role</code> twice)</li>
+                <li>Missing quotes around variables</li>
+            </ul>
+        </div>
+        
+        <p><strong>❌ WRONG - Don't do this:</strong></p>
+        <pre><code># WRONG: Commands on same line with period
+aws iam create-role \ ... }. aws lambda create-function \ ...
+
+# WRONG: Duplicate --role parameter
+aws lambda create-function \
+  --role ${ROLE_ARN} \
+  --role lambda-dotnet-execution-role
+
+# WRONG: Missing quotes around variable
+--role $ROLE_ARN</code></pre>
+
+        <p><strong>✅ CORRECT - Do this instead:</strong></p>
+        <pre><code># Step 1: Create IAM role (separate command)
+aws iam create-role \
+  --role-name lambda-dotnet-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'
+
+# Step 2: Attach policies (separate commands)
+aws iam attach-role-policy \
+  --role-name lambda-dotnet-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws iam attach-role-policy \
+  --role-name lambda-dotnet-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy
+
+# Step 3: Get role ARN
+ROLE_ARN=$(aws iam get-role \
+  --role-name lambda-dotnet-execution-role \
+  --query 'Role.Arn' \
+  --output text)
+
+# Step 4: Create Lambda function (with quotes around variable)
+aws lambda create-function \
+  --function-name lambda-dotnet \
+  --runtime dotnet9 \
+  --role "$ROLE_ARN" \
+  --handler lambda_dotnet::lambda_dotnet.Program::FunctionHandlerAsync \
+  --zip-file fileb://bin/Release/net8.0/lambda-dotnet.zip \
+  --timeout 30 \
+  --memory-size 512</code></pre>
+
+        <h3>Issue: Service Not Appearing in Application Signals</h3>
+        <p><strong>Check:</strong></p>
+        <ul>
+            <li>Verify Application Signals is enabled in your account</li>
+            <li>Check if the OpenTelemetry layer is attached</li>
+            <li>Verify environment variables are set correctly</li>
+            <li>Wait 5-10 minutes after generating traffic</li>
+            <li>Ensure the IAM policy <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
+        </ul>
+
+        <h3>Issue: Lambda Function Errors</h3>
+        <p><strong>Common issues:</strong></p>
+        <ul>
+            <li>Missing IAM policy - Ensure <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
+            <li>Wrong layer ARN - Verify the layer ARN for your region</li>
+            <li>Missing environment variable - Ensure <code>AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument</code></li>
+            <li>Handler mismatch - Ensure handler is <code>lambda_dotnet::lambda_dotnet.Program::FunctionHandlerAsync</code></li>
+            <li>Zip file not found - Ensure dotnet package completed successfully</li>
+        </ul>
+
+        <h3>Issue: Permission Denied Errors</h3>
+        <p><strong>Check your AWS credentials:</strong></p>
+        <ul>
+            <li>Verify AWS profile: <code>aws configure list</code></li>
+            <li>Check caller identity: <code>aws sts get-caller-identity</code></li>
+            <li>Ensure you have the required IAM permissions</li>
+        </ul>
+
+        <h2>Key Configuration Details</h2>
+        <h3>Critical Environment Variables</h3>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Value</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>AWS_LAMBDA_EXEC_WRAPPER</code></td>
+                <td><code>/opt/otel-instrument</code></td>
+                <td>Enables OpenTelemetry instrumentation</td>
+            </tr>
+            <tr>
+                <td><code>OTEL_SERVICE_NAME</code></td>
+                <td><code>lambda-dotnet</code></td>
+                <td>Service name in Application Signals</td>
+            </tr>
+            <tr>
+                <td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
+                <td><code>service.name=lambda-dotnet,deployment.environment=lambda:us-east-1</code></td>
+                <td>Service identification</td>
+            </tr>
+        </table>
+
+      
+        <h2>Additional Resources</h2>
+        <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">AWS Application Signals Documentation</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html">AWS Lambda Layer for OpenTelemetry</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html#CloudWatch-Application-Signals-Enable-LambdaMain-layer-arns">Lambda Layer ARNs by Region</a></li>
+        </ul>
+
+        </div>
+       
+       
+    </div>
+</body>
+</html>

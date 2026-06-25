@@ -1,0 +1,58 @@
+{
+  "title": {
+    "message": "AWS ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़",
+    "description": "The title in the navbar"
+  },
+  "item.label.Home": {
+    "message": "Home",
+    "description": "Navbar item with label Home"
+  },
+  "item.label.Guides": {
+    "message": "Guides",
+    "description": "Navbar item with label Guides"
+  },
+  "item.label.Signals": {
+    "message": "Signals",
+    "description": "Navbar item with label Signals"
+  },
+  "item.label.Tools": {
+    "message": "Tools",
+    "description": "Navbar item with label Tools"
+  },
+  "item.label.APM": {
+    "message": "APM",
+    "description": "Navbar item with label APM"
+  },
+  "item.label.Recipes": {
+    "message": "Recipes",
+    "description": "Navbar item with label Recipes"
+  },
+  "item.label.AI": {
+    "message": "AI",
+    "description": "Navbar item with label AI"
+  },
+  "item.label.Patterns": {
+    "message": "Patterns",
+    "description": "Navbar item with label Patterns"
+  },
+  "item.label.Persona": {
+    "message": "Persona",
+    "description": "Navbar item with label Persona"
+  },
+  "item.label.Resources": {
+    "message": "Resources",
+    "description": "Navbar item with label Resources"
+  },
+  "item.label.Contributors": {
+    "message": "Contributors",
+    "description": "Navbar item with label Contributors"
+  },
+  "logo.alt": {
+    "message": "AWS Logo",
+    "description": "The alt text of navbar logo"
+  },
+  "item.label.GitHub": {
+    "message": "GitHub",
+    "description": "Navbar item with label GitHub"
+  }
+}

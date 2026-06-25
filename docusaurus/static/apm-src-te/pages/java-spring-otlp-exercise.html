@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Java Spring + OTLP + CloudWatch అభ్యాసం — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch (ప్రాయోగిక అభ్యాసం)</h1></header>
+      <article>
+        <section>
+          <p>ఈ గైడ్ Java Spring Boot సేవను OpenTelemetry తో ఇన్‌స్ట్రుమెంట్ చేయడం, టెలిమెట్రీని AWS కి ఎగుమతి చేయడం, ECS/Fargate కి డిప్లాయ్ చేయడం మరియు traces/logs/Application Signals ప్రవర్తనను ధృవీకరించడం వంటి పూర్తి అభ్యాసాన్ని డాక్యుమెంట్ చేస్తుంది.</p>
+          <p>ఇది అమలు ఉదాహరణ శైలిలో వ్రాయబడింది మరియు రన్‌బుక్ లేదా వర్క్‌షాప్ హ్యాండ్‌ఔట్‌గా ఉపయోగించవచ్చు.</p>
+        </section>
+
+        <section>
+          <h2>1) ఈ అభ్యాసం ఏమి ప్రదర్శిస్తుంది</h2>
+          <ul>
+            <li>Java యాప్ నుండి ఎండ్-టు-ఎండ్ టెలిమెట్రీ:
+              <ul>
+                <li><strong>ట్రేసెస్</strong> (X-Ray / Transaction Search)</li>
+                <li><strong>లాగ్‌లు</strong> (CloudWatch Logs OTLP ఎండ్‌పాయింట్ లేదా ECS పై <code>awslogs</code>)</li>
+                <li><strong>మెట్రిక్స్/Application Signals</strong> (CloudWatch Agent సైడ్‌కార్ మార్గం)</li>
+              </ul>
+            </li>
+            <li>వీటి మధ్య వ్యత్యాసం:
+              <ul>
+                <li><strong>Micrometer tracing bridge</strong> (<code>micrometer-tracing-bridge-otel</code>) ట్రేసింగ్ API బ్రిడ్జింగ్ కోసం</li>
+                <li><strong>Micrometer registries</strong> (<code>micrometer-registry-cloudwatch2</code>, <code>micrometer-registry-otlp</code>) ఇవి మెట్రిక్స్-మాత్రమే సింక్‌లు</li>
+              </ul>
+            </li>
+            <li>env vars (<code>OTEL_*</code>) ద్వారా OTLP ఎండ్‌పాయింట్ వైరింగ్, హార్డ్‌కోడ్ చేసిన Java స్థిరాంకాలు కాదు.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) ఆర్కిటెక్చర్</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) డిప్లాయ్‌మెంట్ టోపాలజీ (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) OTLP ఎండ్‌పాయింట్ మ్యాపింగ్</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>సిగ్నల్</th>
+                <th>ఎండ్‌పాయింట్ ప్యాటర్న్</th>
+                <th>సాధారణ env vars</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>ట్రేసెస్</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>మెట్రిక్స్</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code> (లేదా సైడ్‌కార్ ద్వారా App Signals మార్గం)</td>
+              </tr>
+              <tr>
+                <td>లాగ్‌లు</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>ECS సైడ్‌కార్ మోడ్‌లో, యాప్ కంటైనర్ traces/metrics ను <code>http://localhost:4316/...</code> కి పాయింట్ చేస్తుంది మరియు CloudWatch Agent ఫార్వర్డింగ్‌ను నిర్వహిస్తుంది.</p>
+        </section>
+
+        <section>
+          <h2>5) ఈ రిపోలో ఉపయోగించిన ఇన్‌స్ట్రుమెంటేషన్ మోడల్</h2>
+
+          <h3>5.1 డిపెండెన్సీలు</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code> <code>pom.xml</code> లో ఉంది.</li>
+            <li>ట్రేసింగ్ కోసం <code>micrometer-registry-cloudwatch2</code> లేదా <code>micrometer-registry-otlp</code> పై డిపెండెన్సీ లేదు.</li>
+          </ul>
+
+          <h3>5.2 ఆటో + మాన్యువల్ ట్రేసింగ్</h3>
+          <ul>
+            <li>ADOT Java agent నుండి ఆటో ఇన్‌స్ట్రుమెంటేషన్ framework/client spans ను క్యాప్చర్ చేస్తుంది.</li>
+            <li><code>DemoService.greet()</code> లో మాన్యువల్ ఎన్‌రిచ్‌మెంట్ జోడించబడింది:
+              <ul>
+                <li>అట్రిబ్యూట్‌లు: <code>demo.operation</code>, <code>demo.request.name</code>, <code>demo.downstream.status</code>, <code>demo.downstream.elapsed_ms</code>, <code>demo.custom.instrumented</code></li>
+                <li>ఈవెంట్‌లు: <code>demo.greet.start</code>, <code>demo.httpbin.success</code>, <code>demo.httpbin.failure</code></li>
+                <li><code>recordException(...)</code> మరియు <code>setStatus(ERROR, ...)</code> తో ఎర్రర్ రికార్డింగ్</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) స్క్రీన్‌షాట్ (ట్రేస్ వివరాలు)</h2>
+          <p>వర్క్‌షాప్/డెమో డాక్స్ కోసం క్రింద అందించిన స్క్రీన్‌షాట్‌ను ఉపయోగించండి:</p>
+          <img src="../assets/images/cw.png" alt="CloudWatch ట్రేస్ స్క్రీన్‌షాట్" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) AWS కన్సోల్‌లో టెలిమెట్రీని ఎక్కడ చూడాలి</h2>
+
+          <h3>ట్రేసెస్ (ప్రాథమిక)</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>రీజియన్: <code>us-east-1</code></li>
+            <li>సమయ పరిధి: చివరి 15–60 నిమిషాలు</li>
+            <li>సేవ: <code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>కస్టమ్ ఫీల్డ్‌ల కోసం:</p>
+          <ul>
+            <li>ట్రేస్ తెరవండి → సెగ్మెంట్ <code>java-spring-otel-poc</code> → <strong>Metadata</strong></li>
+            <li>ఈ కీలను చూడండి:
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>లాగ్‌లు</h3>
+          <ul>
+            <li>ECS యాప్ లాగ్‌లు: <code>/ecs/java-spring-otel</code></li>
+            <li>CW agent సైడ్‌కార్ లాగ్‌లు: <code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>లోకల్ OTLP లాగ్ గ్రూప్ (లోకల్‌గా రన్ అవుతుంటే): <code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>సైడ్‌కార్ మార్గం ద్వారా నిరంతర ట్రాఫిక్ మరియు విజయవంతమైన మెట్రిక్స్ ఫార్వర్డింగ్ తర్వాత <code>java-spring-otel-poc</code> కోసం చూడండి.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) ముఖ్య విషయం</h2>
+          <p>OpenTelemetry ఆటో ఇన్‌స్ట్రుమెంటేషన్ spans ను సృష్టించగలదు, కానీ విజయవంతమైన AWS అబ్జర్వబిలిటీ ఫలితాలు ఇప్పటికీ దీనిపై ఆధారపడి ఉంటాయి:</p>
+          <ol>
+            <li>సరైన OTLP ఎండ్‌పాయింట్ వైరింగ్</li>
+            <li>సరైన auth/ఫార్వర్డింగ్ మార్గం (తరచుగా మెట్రిక్స్/App Signals కోసం సైడ్‌కార్/కలెక్టర్ ద్వారా)</li>
+            <li>ట్రేసింగ్ bridge vs మెట్రిక్స్ registries మధ్య సరైన వ్యత్యాసం</li>
+            <li>నిరంతర ట్రాఫిక్ మరియు సరైన కన్సోల్ వ్యూ (ట్రేసెస్ కోసం X-Ray)</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

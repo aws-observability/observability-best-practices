@@ -1,0 +1,29 @@
+{
+  "featureList.guides.description": {
+    "message": "चरण-दर-चरण गाइड का पालन करें और क्लाउड मॉनिटरिंग को तेज़ी से सेटअप करें।"
+  },
+  "featureList.signals.description": {
+    "message": "मेट्रिक्स, लॉग्स और प्रदर्शन संकेतकों का उपयोग करके अपने AWS वातावरण की स्थिति एक नज़र में देखें।"
+  },
+  "featureList.tools.description": {
+    "message": "डेटा संग्रहण से विश्लेषण और विज़ुअलाइज़ेशन तक — AWS मॉनिटरिंग के लिए अनुकूलित टूल्स का परिचय।"
+  },
+  "featureList.recipes.description": {
+    "message": "फ़ील्ड में सिद्ध Observability पैटर्न से मॉनिटरिंग और इंसिडेंट रिस्पॉन्स की समस्याओं को तेज़ी से हल करें।"
+  },
+  "featureList.faqs.description": {
+    "message": "AWS Observability के बारे में अक्सर पूछे जाने वाले प्रश्न और उत्तर।"
+  },
+  "featureList.patterns.description": {
+    "message": "AWS Observability को चरण-दर-चरण लागू करने के लिए हैंड्स-ऑन लर्निंग सामग्री।"
+  },
+  "featureList.persona.description": {
+    "message": "अपनी भूमिका के अनुसार Observability सर्वोत्तम प्रथाओं और अनुशंसित कॉन्फ़िगरेशन की जाँच करें।"
+  },
+  "featureList.resources.description": {
+    "message": "AWS Observability से संबंधित संदर्भ सामग्री का संग्रह।"
+  },
+  "featureList.cloudOps.description": {
+    "message": "AWS क्लाउड ऑपरेशंस के बारे में सर्वोत्तम प्रथाएँ देखें।"
+  }
+}

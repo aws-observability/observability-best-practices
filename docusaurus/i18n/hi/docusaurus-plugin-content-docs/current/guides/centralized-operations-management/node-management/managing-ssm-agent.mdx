@@ -1,0 +1,577 @@
+---
+sidebar_position: 1
+---
+
+# AWS Organization के भीतर SSM Agent का प्रबंधन
+
+यह अनुभाग AWS Organization के भीतर SSM agent इंस्टॉलेशन को प्रबंधित करने का तरीका बताता है और CloudFormation, Terraform, Shell, PowerShell, Ansible, Chef, और Puppet के लिए सैंपल कोड प्रदान करता है।
+
+कृपया ध्यान रखें कि यह सैंपल कोड है और प्रोडक्शन वातावरण में किसी भी उपयोग से पहले विकास वातावरण में पूरी तरह से परीक्षण और मान्य किया जाना चाहिए।
+
+## SSM Agent को समझना
+
+जैसा कि पिछले अनुभागों में चर्चा की गई है, Systems Manager का उपयोग करके अपने वातावरण में अपने नोड्स को प्रबंधित करना शुरू करने के लिए, नोड्स को [managed](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html#supported-machine-types) होना चाहिए, जिसका अर्थ है कि SSM Agent मशीन पर इंस्टॉल है और agent आवश्यक अनुमतियों के साथ Systems Manager सर्विस endpoints के साथ संवाद कर सकता है।
+
+AWS Systems Manager Agent (SSM Agent) Amazon सॉफ़्टवेयर है जो Amazon Elastic Compute Cloud (Amazon EC2) इंस्टेंस, एज डिवाइस, ऑन-प्रिमाइसेस सर्वर, और वर्चुअल मशीन (VMs) पर चलता है। SSM Agent का सोर्स कोड [GitHub](https://github.com/aws/amazon-ssm-agent) पर उपलब्ध है। SSM Agent Systems Manager के लिए इन संसाधनों को अपडेट, प्रबंधित और कॉन्फ़िगर करना संभव बनाता है। Agent AWS Cloud में Systems Manager सेवा से अनुरोधों को संसाधित करता है, और फिर अनुरोध में निर्दिष्ट अनुसार उन्हें चलाता है।
+
+इसलिए, SSM Agent का नोड्स पर इंस्टॉल होना सुनिश्चित करना आवश्यक है और AWS Systems Manager सेवा का उपयोग करके नोड प्रबंधन संचालन की यात्रा शुरू करते समय यह सबसे पहला कदम है।
+
+## ऑपरेटिंग सिस्टम समर्थन
+
+SSM Agent ऑपरेटिंग सिस्टम और मशीन प्रकारों की एक विस्तृत श्रृंखला पर समर्थित है। यह सत्यापित करने के लिए कि आपका ऑपरेटिंग सिस्टम (OS), OS संस्करण, और मशीन प्रकार समर्थित है, उपयोगकर्ता गाइड में [Supported operating systems and machine types](https://docs.aws.amazon.com/systems-manager/latest/userguide/operating-systems-and-machine-types.html) देखें।
+
+## SSM Agent पूर्व-इंस्टॉल AMIs
+
+Systems Manager के साथ शुरू करने के लिए, AWS Systems Manager Agent (SSM Agent) AWS और विश्वसनीय तृतीय-पक्षों द्वारा प्रदान किए गए कुछ Amazon Machine Images (AMIs) पर पूर्व-इंस्टॉल होता है। जिन ऑपरेटिंग सिस्टम पर यह पूर्व-इंस्टॉल है उनकी सूची प्राप्त करने के लिए [Find AMIs with the SSM Agent preinstalled](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html) देखें।
+
+## SSM Agent इंस्टॉलेशन विधियाँ
+
+अब जब हम समझ गए हैं कि कौन से ऑपरेटिंग सिस्टम SSM Agent का समर्थन करते हैं, तो आइए उन इंस्टेंस पर agent इंस्टॉल करने की विभिन्न विधियों का अन्वेषण करें जिन पर SSM Agent पूर्व-इंस्टॉल नहीं है। इंस्टॉलेशन दृष्टिकोण को दो मुख्य परिदृश्यों में वर्गीकृत किया जा सकता है:
+
+* **नए इंस्टेंस तैनाती**: नए इंस्टेंस लॉन्च करते समय SSM Agent इंस्टॉल करना।
+* **मौजूदा इंस्टेंस प्रबंधन**: पहले से चल रहे इंस्टेंस पर SSM Agent इंस्टॉल करना।
+
+### नए इंस्टेंस पर SSM Agent इंस्टॉल करना
+
+नए इंस्टेंस लॉन्च करते समय, अपनी प्रारंभिक सेटअप प्रक्रिया में SSM Agent इंस्टॉलेशन को शामिल करना शुरू से ही सुसंगत प्रबंधन क्षमताओं को सुनिश्चित करता है। यह दृष्टिकोण तैनाती-पश्चात इंस्टॉलेशन की आवश्यकता को समाप्त करता है। आप Golden AMIs, user data scripts, या infrastructure as code टूल आदि जैसी विभिन्न विधियों के माध्यम से इसे प्राप्त कर सकते हैं। विधि का चयन अक्सर आपके संगठन की तैनाती प्रथाओं और स्केलिंग आवश्यकताओं पर निर्भर करता है।
+
+#### Golden AMI दृष्टिकोण
+
+Golden AMI एक अनुकूलित Amazon Machine Image है जो EC2 इंस्टेंस लॉन्च करने के लिए एक मानकीकृत टेम्पलेट के रूप में कार्य करती है। Systems Manager एकीकरण के लिए, संगठन SSM Agent पूर्व-इंस्टॉल के साथ Golden AMIs बना सकते हैं, यह सुनिश्चित करते हुए कि इन AMIs से लॉन्च किए गए सभी इंस्टेंस Systems Manager के माध्यम से तुरंत प्रबंधनीय हों। यह दृष्टिकोण लॉन्च-पश्चात इंस्टॉलेशन स्क्रिप्ट की आवश्यकता को समाप्त करता है और तैनाती विफलताओं के जोखिम को कम करता है।
+
+Golden AMI बनाना
+
+1. मैन्युअल रूप से: Golden AMI को मैन्युअल रूप से बनाना एक इंस्टेंस लॉन्च करके, SSM Agent इंस्टॉल और कॉन्फ़िगर करके, कॉन्फ़िगरेशन का परीक्षण करके, और फिर उस इंस्टेंस से AMI बनाकर किया जा सकता है।
+1. EC2 Image builder: यदि आप गोल्डन इमेज बनाने के लिए EC2 Image Builder का उपयोग कर रहे हैं, तो [image recipe](https://docs.aws.amazon.com/imagebuilder/latest/userguide/start-build-image-pipeline.html#start-build-image-step2) कॉन्फ़िगर करें और आउटपुट इमेज में SSM agent रखने के विकल्प का चयन करें।
+1. Hashicorp Packer: यदि आप Hashicorp Packer का उपयोग कर रहे हैं, तो SSM agent इंस्टॉल करने के लिए shell कमांड चलाने के लिए shell Packer provisioner का उपयोग करें।
+
+```json
+{
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "if [ -f /etc/system-release ]; then",
+        "  # Amazon Linux",
+        "  sudo yum install -y amazon-ssm-agent",
+        "  sudo systemctl enable amazon-ssm-agent",
+        "  sudo systemctl start amazon-ssm-agent",
+        "elif [ -f /etc/lsb-release ]; then",
+        "  # Ubuntu",
+        "  sudo snap install amazon-ssm-agent —classic",
+        "  sudo systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "  sudo systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service",
+        "fi"
+      ]
+    }
+  ]
+}
+```
+
+वैकल्पिक रूप से, Agent इंस्टॉलेशन shell कमांड वाली स्क्रिप्ट का पथ प्रदान करें।
+
+```json
+{
+  "provisioners": [{
+    "type": "shell",
+    "script": "scripts/install_ssm.sh"
+  }]
+}
+```
+
+script provisioner के साथ Packer का उपयोग करते समय, `install_ssm.sh` को आपकी Packer कॉन्फ़िगरेशन फ़ाइल (`.json` या `.pkr` `.hcl`) के सापेक्ष संग्रहीत किया जाना चाहिए।
+
+#### Infrastructure as Code (IaC)
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+यदि आप उन AMIs का उपयोग करके इंस्टेंस लॉन्च करने के लिए CloudFormation का उपयोग करते हैं जिनमें SSM agent पूर्व-इंस्टॉल नहीं है, तो आप SSM agent इंस्टॉल करने के लिए `UserData` प्रॉपर्टी का लाभ उठा सकते हैं।
+
+```yaml
+  # EC2 Instance
+  EC2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref AWS::Region
+        - !Ref OperatingSystem
+      InstanceType: !FindInMap
+        - EnvironmentSettings
+        - !Ref EnvironmentType
+        - InstanceType
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      UserData: !If
+        - !Base64
+          'Fn::Sub': |
+            #!/bin/bash
+            # Install SSM Agent based on OS
+            if [ -f /etc/os-release ]; then
+                . /etc/os-release
+                case "$ID" in
+                    amzn|rhel)
+                        yum install -y amazon-ssm-agent
+                        systemctl enable amazon-ssm-agent
+                        systemctl start amazon-ssm-agent
+                        ;;
+                    ubuntu)
+                        snap install amazon-ssm-agent —classic
+                        systemctl enable snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        systemctl start snap.amazon-ssm-agent.amazon-ssm-agent.service
+                        ;;
+                esac
+            fi
+```
+
+</TabItem>
+
+<TabItem value="terraform">
+
+Terraform का उपयोग करते समय, एक स्क्रिप्ट फ़ाइल बनाएँ जिसमें SSM agent इंस्टॉलेशन shell कमांड हों। फिर इंस्टॉलेशन स्क्रिप्ट फ़ाइल को इंगित करने के लिए instance resource की `user_data` प्रॉपर्टी का उपयोग करें।
+
+```json
+# EC2 Instance
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.amazon_linux_2.id
+  instance_type = "t2.micro"
+
+  subnet_id                   = data.aws_subnet.main.id
+  vpc_security_group_ids      = [aws_security_group.allow_ssm.id]
+  iam_instance_profile        = aws_iam_instance_profile.ssm_profile.name
+  associate_public_ip_address = true
+
+  user_data = filebase64("${path.module}/scripts/install_ssm.sh")
+
+  tags = {
+    Name = "SSM-enabled-instance"
+  }
+}
+
+# Output
+output "instance_id" {
+  value = aws_instance.web.id
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 Console/API/SDK
+
+EC2 कंसोल या किसी SDK का उपयोग करके EC2 इंस्टेंस लॉन्च करते समय, इंस्टेंस लॉन्च करने से पहले Amazon EC2 इंस्टेंस में SSM Agent इंस्टॉलेशन कमांड के साथ user data जोड़ें।
+
+* Linux के लिए इस आर्टिकल में बताए गए कदमों को देखें: [How do I install SSM Agent on an Amazon EC2 Linux instance at launch?](https://repost.aws/knowledge-center/install-ssm-agent-ec2-linux)
+* Windows के लिए इस आर्टिकल में बताए गए कदमों को देखें: [How do I install AWS Systems Manager Agent (SSM Agent) on an Amazon EC2 Windows instance at launch?](https://repost.aws/knowledge-center/ssm-agent-windows-ec2)
+
+#### Application Migration Service (MGN)
+
+यदि आपके सर्वर Application Migration Service का उपयोग करके माइग्रेट और लॉन्च किए गए हैं, तो SSM Agent इंस्टॉल करने के लिए **post-launch** सेटिंग्स का उपयोग करें। [यहाँ](https://docs.aws.amazon.com/mgn/latest/ug/post-launch-settings.html#post-launch-settings-activation) बताए गए कदमों को देखें।
+
+#### Amazon EKS
+
+नवीनतम Amazon EKS optimized AMIs स्वचालित रूप से SSM Agent इंस्टॉल करती हैं। यदि आप अनुकूलित AMI का उपयोग कर रहे हैं, तो SSM Agent इंस्टॉल करने के लिए [यहाँ](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-the-ssm-agent-and-cloudwatch-agent-on-amazon-eks-worker-nodes-using-prebootstrapcommands.html) बताए अनुसार `preBootstrapCommands` प्रॉपर्टी का उपयोग करें।
+
+### चल रहे इंस्टेंस पर SSM Agent इंस्टॉल करना
+
+उन इंस्टेंस के लिए जो पहले से आपके वातावरण में चल रहे हैं, आप विभिन्न रिमोट एक्सेस और ऑटोमेशन विधियों का उपयोग करके SSM Agent इंस्टॉल कर सकते हैं। इंस्टॉलेशन प्रक्रिया आपके ऑपरेटिंग सिस्टम प्रकार, उपलब्ध एक्सेस विधियों, और नेटवर्क कॉन्फ़िगरेशन के आधार पर भिन्न होती है। यह अनुभाग विभिन्न दृष्टिकोणों का वर्णन करता है जिनका उपयोग आप अपने मौजूदा इंस्टेंस पर SSM Agent इंस्टॉल करने के लिए कर सकते हैं।
+
+#### कस्टम समाधान
+**Unmanaged Amazon EC2 nodes पर AWS Systems Manager agent की स्वचालित इंस्टॉलेशन** पर [सार्वजनिक ब्लॉग](https://aws.amazon.com/blogs/mt/automate-installing-ssm-agent-on-unmanaged-ec2-instances-in-an-aws-organization/) देखें।
+यह समाधान ssm agent इंस्टॉल करने के लिए userdata का उपयोग करता है और automation runbooks इस प्रक्रिया को क्षेत्रों और खातों में ऑर्केस्ट्रेट करते हैं।
+
+#### कॉन्फ़िगरेशन प्रबंधन टूल
+
+ यदि आपका संगठन Puppet, Chef, या Ansible जैसे कॉन्फ़िगरेशन प्रबंधन टूल का उपयोग करता है, तो आप अपने इंस्टेंस में SSM Agent तैनात करने के लिए इन मौजूदा टूल का लाभ उठा सकते हैं।
+
+<Tabs
+    groupId="cmtool"
+    defaultValue="ansible"
+    values={[
+        {label: 'Ansible', value: 'ansible'},
+        {label: 'Chef', value: 'chef'},
+        {label: 'Puppet', value: 'puppet'}
+    ]}>
+<TabItem value="ansible">
+
+```yaml
+- name: Install SSM Agent across fleet
+  hosts: all
+  become: yes
+
+  tasks:
+    - name: Detect OS family
+      ansible.builtin.set_fact:
+        os_family: "{{ ansible_facts['os_family'] }}"
+
+    - name: Install SSM Agent on RedHat family
+      block:
+        - name: Download SSM Agent RPM
+          get_url:
+            url: "https://s3.{{ aws_region }}.amazonaws.com/amazon-ssm-{{ aws_region }}/latest/linux_amd64/amazon-ssm-agent.rpm"
+            dest: /tmp/amazon-ssm-agent.rpm
+            mode: '0644'
+
+        - name: Install SSM Agent
+          yum:
+            name: /tmp/amazon-ssm-agent.rpm
+            state: present
+      when: os_family == "RedHat"
+
+    - name: Install SSM Agent on Debian family
+      block:
+        - name: Install SSM Agent via Snap
+          community.general.snap:
+            name: amazon-ssm-agent
+            classic: yes
+      when: os_family == "Debian"
+
+    - name: Enable and start SSM Agent
+      systemd:
+        name: amazon-ssm-agent
+        enabled: yes
+        state: started
+
+    - name: Verify installation
+      command: systemctl status amazon-ssm-agent
+      register: ssm_status
+      ignore_errors: yes
+
+    - name: Report status
+      debug:
+        var: ssm_status.stdout_lines
+```
+
+</TabItem>
+<TabItem value="puppet">
+
+```puppet
+if $facts['os']['family'] == 'RedHat' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm',
+    provider => 'rpm',
+  }
+} elsif $facts['os']['family'] == 'Debian' {
+  package { 'amazon-ssm-agent':
+    ensure => installed,
+    source => 's3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb',
+    provider => 'dpkg',
+  }
+}
+
+service { 'amazon-ssm-agent':
+  ensure => running,
+  enable => true,
+  require => Package['amazon-ssm-agent'],
+}
+```
+
+</TabItem>
+<TabItem value="chef">
+
+```ruby
+# cookbooks/ssm_agent/recipes/default.rb
+case node['platform_family']
+when 'rhel'
+  remote_file '/tmp/amazon-ssm-agent.rpm' do
+    source "https://s3.#{node['region']}.amazonaws.com/amazon-ssm-#{node['region']}/latest/linux_amd64/amazon-ssm-agent.rpm"
+    mode '0644'
+    action :create
+  end
+
+  package 'amazon-ssm-agent' do
+    source '/tmp/amazon-ssm-agent.rpm'
+    action :install
+  end
+
+when 'debian'
+  execute 'install_ssm_agent' do
+    command 'snap install amazon-ssm-agent —classic'
+    not_if 'snap list | grep amazon-ssm-agent'
+  end
+end
+
+service 'amazon-ssm-agent' do
+  action [:enable, :start]
+end
+```
+
+</TabItem>
+</Tabs>
+
+#### EC2 user data
+
+डिफ़ॉल्ट रूप से, user data कमांड और cloud-init निर्देश केवल पहले बूट चक्र के दौरान चलते हैं जब EC2 इंस्टेंस लॉन्च किया जाता है। हालांकि, आप mime multi-part फ़ाइल के साथ अपने user data कमांड और cloud-init निर्देशों को कॉन्फ़िगर कर सकते हैं।
+
+User data अपडेट करने के लिए, इंस्टेंस को **स्टॉप** करें। **Actions** पर क्लिक करें, **Instance settings** चुनें और **Edit User Data** चुनें।
+
+<Tabs
+    groupId="os"
+    defaultValue="linux"
+    values={[
+        {label: 'Linux', value: 'linux'},
+        {label: 'Windows', value: 'windows'},
+    ]}>
+<TabItem value="linux">
+
+```bash
+Content-Type: multipart/mixed; boundary="//"
+MIME-Version: 1.0
+
+--//
+Content-Type: text/cloud-config; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+ filename="cloud-config.txt"
+
+#cloud-config
+cloud_final_modules:
+- [scripts-user, always]
+--//
+Content-Type: text/x-shellscript; charset="us-ascii"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment; filename="userdata.txt"
+
+#!/bin/bash
+# Amazon Linux 2, RHEL
+dnf install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+--//--
+```
+
+</TabItem>
+<TabItem value="windows">
+
+**नोट**: नीचे दी गई PowerShell स्क्रिप्ट केवल EC2Launch v2 लॉन्च एजेंट के साथ काम करती है।
+
+```powershell
+<powershell>
+$dir = $env:TEMP + "\ssm"
+New-Item -ItemType directory -Path $dir -Force
+cd $dir
+(New-Object System.Net.WebClient).DownloadFile("https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe", $dir + "\AmazonSSMAgentSetup.exe")
+Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @("/q", "/log", "install.log") -Wait
+</powershell>
+<persist>true</persist>
+```
+
+</TabItem>
+</Tabs>
+
+`ModifyInstanceAttribute` API का प्रोग्रामेटिक रूप से उपयोग करते समय, इस स्क्रिप्ट को base64-encoded टेक्स्ट में कन्वर्ट करना होगा।
+
+#### Group Policy (Windows के लिए)
+
+जबकि Group Policy पारंपरिक रूप से .msi पैकेज का समर्थन करती है, AWS Systems Manager (SSM) Agent .exe फ़ाइल के रूप में आती है। इस सीमा को दूर करने के लिए, हम आपके Windows वातावरण में SSM Agent तैनात करने के लिए Group Policy और Scheduled Tasks के संयोजन का उपयोग करेंगे।
+
+1. Active Directory में उपयुक्त hierarchy/OU में GPO बनाएँ (या मौजूदा को संशोधित करें)। कंप्यूटर scheduled task script कॉन्फ़िगरेशन का उपयोग करने के लिए पॉलिसी संपादित करें।
+
+2. विकल्प Computer Configuration | Preferences | Control Panel Settings | Scheduled Tasks | Right-click and select New→Immediate Task के अंतर्गत स्थित है
+
+3. Action के लिए **Create** चुनें, कार्य को एक नाम दें, और कार्य चलाने के लिए उपयोगकर्ता खाते के रूप में `NT AUTHORITY\System` निर्दिष्ट करें। **Run whether user is logged on or not** के लिए रेडियो बटन पर क्लिक करें और अगले अनुभाग पर जाने के लिए **Triggers** टैब पर क्लिक करें।
+
+![SSMAgent प्रॉपर्टीज के लिए Task Manager स्क्रीनशॉट](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-ssm-agent.png "SSMAgent प्रॉपर्टीज के लिए Task Manager स्क्रीनशॉट")
+
+4. Triggers के लिए, one time चुनें।
+
+5. **Start a program** के लिए एक नई action बनाएँ और `powershell.exe` चुनें और **Argument** के लिए निम्नलिखित का उपयोग करें:
+
+```powershell
+-ExecutionPolicy Bypass -Command "$dir = $env:TEMP + '\ssm'; New-Item -ItemType directory -Path $dir -Force; Set-Location $dir; (New-Object System.Net.WebClient).DownloadFile('https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/windows_amd64/AmazonSSMAgentSetup.exe', $dir + '\AmazonSSMAgentSetup.exe'); Start-Process .\AmazonSSMAgentSetup.exe -ArgumentList @('/q', '/log', 'install.log') -Wait"
+```
+
+![नई action जोड़ने के लिए Task Manager स्क्रीनशॉट](/img/cloudops/guides/centralized-operations-management/node-management/task-manager-new-action.png "नई action जोड़ने के लिए Task Manager स्क्रीनशॉट")
+
+6. New Action विंडो पर **OK** क्लिक करें और Properties विंडो पर **OK** क्लिक करें।
+
+7. एक बार यह पूरा हो जाने के बाद, किसी भी लिंक किए गए कंप्यूटर को GP पॉलिसी अपडेट होने पर या कमांड प्रॉम्प्ट से `gpudate /force` का उपयोग करके इंस्टॉलर पुश किया जाना चाहिए।
+
+अधिक जानकारी के लिए, [Automate Registering Windows Managed Nodes in AWS Systems Manager](https://github.com/aws-samples/sample-ssm-automate-windows-hybrid-install) देखें।
+
+#### SSH (Linux के लिए)
+
+SSH के माध्यम से सुलभ Linux इंस्टेंस के लिए, आप निम्नलिखित सैंपल स्क्रिप्ट का उपयोग करके SSM Agent इंस्टॉलेशन को ऑटोमेट कर सकते हैं। यह स्क्रिप्ट OS प्रकार का पता लगाती है और उपयुक्त पैकेज इंस्टॉल करती है।
+
+```bash
+#!/bin/bash
+USERNAME=ec2-user
+HOSTS=("192.168.1.121" "192.168.1.122" "192.168.1.123")
+KEY_PATH="/path/to/your/key.pem"
+
+for HOSTNAME in ${HOSTS}; do
+    # Detect OS type
+    OS_TYPE=$(ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "cat /etc/os-release | grep '^ID=' | cut -d= -f2 | tr -d '\"'")
+
+    case ${OS_TYPE} in
+        "amzn"|"rhel"|"centos")
+            SCRIPT="sudo yum install -y s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl start amazon-ssm-agent"
+            ;;
+        "ubuntu"|"debian")
+            SCRIPT="wget s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/debian_amd64/amazon-ssm-agent.deb && sudo dpkg -i amazon-ssm-agent.deb && sudo systemctl start amazon-ssm-agent"
+            ;;
+        *)
+            echo "Unsupported OS on ${HOSTNAME}"
+            continue
+            ;;
+    esac
+
+    ssh -i "${KEY_PATH}" -l ${USERNAME} ${HOSTNAME} "${SCRIPT}"
+done
+```
+
+#### Amazon EKS - मौजूदा इंस्टेंस
+
+नवीनतम Amazon EKS optimized AMIs स्वचालित रूप से SSM Agent इंस्टॉल करती हैं। यदि आप अनुकूलित AMI का उपयोग कर रहे हैं, तो चल रहे worker nodes पर SSM Agent इंस्टॉल करने के लिए [यहाँ](https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/install-ssm-agent-on-amazon-eks-worker-nodes-by-using-kubernetes-daemonset.html) बताए अनुसार Kubernetes Daemonset का उपयोग करें।
+
+#### Amazon Workspaces
+
+[यहाँ](https://github.com/aws-samples/workspaces-ssm-install) प्रलेखित अनुकूलित समाधान का उपयोग करें।
+
+## SSM Agent के लिए IAM अनुमतियों का प्रबंधन
+
+SSM Agent कार्यक्षमता के लिए उचित IAM अनुमतियाँ महत्वपूर्ण हैं। AWS इन अनुमतियों को प्रबंधित करने के लिए मैनुअल instance profile अटैचमेंट से लेकर स्वचालित संगठन-व्यापी समाधानों तक कई दृष्टिकोण प्रदान करता है।
+
+### Default Host Management Configuration (DHMC)
+
+DHMC आपके संगठन में SSM Agent अनुमतियों के प्रबंधन के लिए AWS का अनुशंसित दृष्टिकोण है। यह EC2 इंस्टेंस को प्रबंधित करना संभव बनाता है बिना आपको मैन्युअल रूप से AWS Identity and Access Management (IAM) instance profile बनाने की आवश्यकता के। इसके बजाय, Default Host Management Configuration एक डिफ़ॉल्ट IAM role बनाता और लागू करता है ताकि यह सुनिश्चित किया जा सके कि Systems Manager के पास उस AWS account और AWS Region में सभी इंस्टेंस को प्रबंधित करने की अनुमतियाँ हों जहाँ इसे सक्रिय किया गया है।
+
+#### DHMC सक्षम करने की विधियाँ:
+* **Unified Console Experience के माध्यम से**: [unified console experience में ऑनबोर्डिंग](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html) करते समय, DHMC स्वचालित रूप से सक्षम हो जाता है। यह ऑनबोर्डिंग के दौरान बनाए गए State Manager association का उपयोग करके सक्षम किया जाता है और प्रत्येक लक्ष्य खाते और क्षेत्र में DHMC सक्षम करेगा।
+* **Fleet Manager का उपयोग**: आप Fleet Manager कंसोल से Default Host Management Configuration चालू कर सकते हैं। आपको प्रत्येक उस Region में Default Host Management Configuration को एक-एक करके चालू करना होगा जहाँ आप चाहते हैं कि आपके Amazon EC2 इंस्टेंस managed हों। [यहाँ](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#default-host-management) के कदम देखें।
+* **CLI/SDK के माध्यम से**: यह आवश्यक role बनाकर और AWS CLI/SDK का उपयोग करके service setting अपडेट करके किया जाता है। आपको प्रत्येक उस Region में Default Host Management Configuration को एक-एक करके चालू करना होगा जहाँ आप चाहते हैं कि आपके Amazon EC2 इंस्टेंस managed हों। [यहाँ](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate) के कदम देखें।
+* **Quick Setup के माध्यम से**: Quick Setup के साथ, आप AWS Organizations में अपने संगठन में जोड़े गए सभी खातों और Regions के लिए Default Host Management Configuration सक्रिय कर सकते हैं। [यहाँ](https://docs.aws.amazon.com/systems-manager/latest/userguide/fleet-manager-default-host-management-configuration.html#dhmc-activate) के कदम देखें।
+* **CloudFormation का उपयोग**: आप StackSets का उपयोग करके मल्टी अकाउंट और रीजन में DHMC सक्षम करने के लिए CloudFormation का भी उपयोग कर सकते हैं। इस [ब्लॉग](https://aws.amazon.com/blogs/mt/enable-management-of-your-amazon-ec2-instances-in-aws-systems-manager-using-default-host-management-configuration/) को देखें।
+
+### Individual instance permissions
+
+यदि आप DHMC का उपयोग नहीं कर रहे हैं, तो SSM agent के लिए अनुमति IAM Instance Profiles का उपयोग करके प्रत्येक instance स्तर पर दी जानी चाहिए। हम SSM agent के लिए अनुशंसित Amazon Managed Policy, AmazonSSMManagedInstanceCore के साथ Instance Profile बनाने की अनुशंसा करते हैं। उपयोग मामले के आधार पर इस instance profile में अतिरिक्त अनुमतियों की आवश्यकता होगी। User guide में [Additional policy considerations for managed instances](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-instance-permissions.html#instance-profile-policies-overview) देखें जो SSM agent उपयोग के लिए IAM instance profile बनाने और अतिरिक्त पॉलिसी विचारों पर चर्चा करता है।
+
+#### लॉन्च के समय EC2 इंस्टेंस में instance profile अटैच करना
+
+<Tabs
+    groupId="iacprovider"
+    defaultValue="cloudformation"
+    values={[
+        {label: 'CloudFormation', value: 'cloudformation'},
+        {label: 'Terraform', value: 'terraform'},
+    ]}>
+<TabItem value="cloudformation">
+
+यदि आप Instances लॉन्च करने के लिए CloudFormation का उपयोग कर रहे हैं, तो आप IAM instance profile resource बना सकते हैं और अपने instance resource में इसका संदर्भ दे सकते हैं।
+
+```yaml
+AWSTemplateFormatVersion: '2010-09-09'
+Resources:
+  SSMInstanceRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+
+  SSMInstanceProfile:
+    Type: 'AWS::IAM::InstanceProfile'
+    Properties:
+      Path: /
+      Roles:
+        - !Ref SSMInstanceRole
+
+  EC2Instance:
+    Type: 'AWS::EC2::Instance'
+    Properties:
+      IamInstanceProfile: !Ref SSMInstanceProfile
+      # Other instance properties
+```
+
+Autoscaling groups तैनात करते समय, Launch template resource property Instance Profile का उपयोग कर सकती है।
+
+```yaml
+# ASG with SSM Instance Profile
+Resources:
+  AutoScalingGroup:
+    Type: AWS::AutoScaling::AutoScalingGroup
+    Properties:
+      LaunchTemplate:
+        LaunchTemplateId: !Ref LaunchTemplate
+        Version: !GetAtt LaunchTemplate.LatestVersionNumber
+
+  LaunchTemplate:
+    Type: AWS::EC2::LaunchTemplate
+    Properties:
+      LaunchTemplateData:
+        IamInstanceProfile:
+          Name: !Ref SSMInstanceProfile
+```
+
+</TabItem>
+<TabItem value="terraform">
+
+यदि आप instances लॉन्च करने के लिए Terraform का उपयोग कर रहे हैं, तो आप IAM Instance Profile resource बना सकते हैं और अपने Instance resource में इसका संदर्भ दे सकते हैं।
+
+```json
+# IAM Role and Instance Profile
+resource "aws_iam_role" "ssm_role" {
+  name = "SSMManagedInstanceRole"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "ec2.amazonaws.com"
+        }
+      }
+    ]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "ssm_policy" {
+  role       = aws_iam_role.ssm_role.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
+}
+
+resource "aws_iam_instance_profile" "ssm_profile" {
+  name = "SSMManagedInstanceProfile"
+  role = aws_iam_role.ssm_role.name
+}
+
+# EC2 Instance with Profile
+resource "aws_instance" "example" {
+  # ... other configuration ...
+  iam_instance_profile = aws_iam_instance_profile.ssm_profile.name
+}
+```
+
+</TabItem>
+</Tabs>
+
+#### Systems Manager Automation runbooks का उपयोग करके इंस्टेंस लॉन्च करना
+
+[AWS-CreateManagedLinuxInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedlinuxinstance.html) और [AWS-CreateManagedWindowsInstance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-createmanagedwindowsinstance.html) पूर्व-कॉन्फ़िगर किए गए Systems Manager Automation runbooks हैं जो managed instances बनाने और कॉन्फ़िगर करने की प्रक्रिया को ऑटोमेट करते हैं। ये runbooks सुनिश्चित करते हैं कि instance profile में आवश्यक SSM Permissions लॉन्च किए गए instances से अटैच हों।
+
+### पहले से चल रहे EC2 इंस्टेंस में instance profiles अटैच करना
+
+* Quick Setup का उपयोग (अनुशंसित): [Amazon EC2 host management using Quick Setup](https://docs.aws.amazon.com/systems-manager/latest/userguide/quick-setup-host-management.html) का उपयोग करके, आप अपने instances से अटैच मौजूदा instance profiles में आवश्यक IAM policies जोड़ने के लिए, या Quick Setup को आपके द्वारा चुने गए कॉन्फ़िगरेशन के लिए आवश्यक अनुमतियों के साथ IAM policies और instance profiles बनाने की अनुमति देने के लिए कॉन्फ़िगर कर सकते हैं। यह विकल्प organization या विशिष्ट OUs में कई खातों में instances को लक्षित कर सकता है।
+
+* Systems Manager Automation का उपयोग: आप Systems Manager एक्सेस के लिए SSMRoleForManagedInstance managed IAM role के साथ एक instance कॉन्फ़िगर करने के लिए automation runbook [AWS-SetupManagedRoleOnEc2Instance](https://docs.aws.amazon.com/systems-manager-automation-runbooks/latest/userguide/automation-aws-setupmanagedroleonec2instance.html) का उपयोग कर सकते हैं। यदि निर्दिष्ट role मौजूद नहीं है, तो इसे automation द्वारा बनाया जाएगा। कई खातों और क्षेत्रों में instances को लक्षित करने के लिए, [multi-account/multi-Region](https://docs.aws.amazon.com/systems-manager/latest/userguide/running-automations-multiple-accounts-regions.html) मोड में automation चलाएँ।

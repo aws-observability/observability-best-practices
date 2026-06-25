@@ -1,0 +1,37 @@
+export AMP_EKS_CLUSTER=AMP-EKS-CLUSTER
+export AMP_ACCOUNT_ID=<Your Account id>
+export AWS_REGION=<Your Region>
+
+
+cat << EOF > eks-cluster-config.yaml
+---
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: $AMP_EKS_CLUSTER
+  region: $AWS_REGION
+  version: '1.18'
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: appmesh-controller
+      namespace: appmesh-system
+      labels: {aws-usage: "application"}
+    attachPolicyARNs:
+    - "arn:aws:iam::aws:policy/AWSAppMeshFullAccess"
+managedNodeGroups:
+- name: default-ng
+  minSize: 1
+  maxSize: 3
+  desiredCapacity: 2
+  labels: {role: mngworker}
+  iam:
+    withAddonPolicies:
+      certManager: true
+      cloudWatch: true
+      appMesh: true
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]
+EOF

@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concepts et fondamentaux — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Concepts et fondamentaux</h1></header>
+      <article>
+        <section>
+          <h2>Concepts fondamentaux</h2>
+          <p>Comprendre les concepts fondamentaux de l'Application Performance Monitoring (APM) est essentiel pour utiliser efficacement CloudWatch Application Signals. Cette section couvre les elements de base qui constituent le fondement de l'observabilite moderne.</p>
+        </section>
+
+        <section>
+          <h3>Tracage distribue</h3>
+          <p>Le tracage distribue est la pratique du suivi des requetes a travers les systemes distribues. Dans les architectures de microservices, une seule requete utilisateur peut traverser plusieurs services, bases de donnees et API externes. Le tracage distribue offre une visibilite sur l'ensemble de ce parcours.</p>
+
+          <h4>Composants cles :</h4>
+          <ul>
+            <li><strong>Trace :</strong> Un parcours complet de bout en bout d'une requete a travers votre systeme</li>
+            <li><strong>Span :</strong> Une operation unique au sein d'une trace (par ex., une requete de base de donnees ou un appel API)</li>
+            <li><strong>Contexte de trace :</strong> Les metadonnees qui connectent les spans a travers les frontieres de services</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Traces, spans et segments</h3>
+          <p>Ce sont les structures de donnees fondamentales utilisees dans le tracage distribue :</p>
+
+          <h4>Traces</h4>
+          <p>Une trace represente le chemin complet d'une requete a travers votre application. Elle contient des informations de chronometrage, des metadonnees et tous les spans qui composent le parcours de la requete.</p>
+
+          <h4>Spans</h4>
+          <p>Un span represente une unite de travail unique au sein d'une trace. Chaque span possede :</p>
+          <ul>
+            <li>Un nom et un type d'operation</li>
+            <li>Des horodatages de debut et de fin</li>
+            <li>Des tags et attributs pour un contexte supplementaire</li>
+            <li>Des references aux spans parents</li>
+          </ul>
+
+          <h4>Segments</h4>
+          <p>Dans la terminologie AWS X-Ray, les segments sont les unites de base des donnees de trace. Chaque segment correspond a un span et contient des informations sur le travail effectue pour cette partie de la trace.</p>
+        </section>
+
+        <section>
+          <h3>Cartes de services</h3>
+          <p>Les cartes de services fournissent une representation visuelle de l'architecture et des dependances de votre application. Elles montrent :</p>
+          <ul>
+            <li>Comment les services se connectent entre eux</li>
+            <li>Le flux de trafic entre les services</li>
+            <li>Les metriques de performance pour chaque service</li>
+            <li>Les taux d'erreur et les schemas de latence</li>
+          </ul>
+          <p>Les cartes de services sont generees automatiquement a partir des donnees de trace et vous aident a comprendre la topologie de votre systeme en un coup d'oeil.</p>
+        </section>
+
+        <section>
+          <h3>Instrumentation</h3>
+          <p>L'instrumentation est le processus d'ajout de code d'observabilite a vos applications. Il existe plusieurs approches :</p>
+
+          <h4>Auto-instrumentation</h4>
+          <p>L'instrumentation automatique ne necessite aucune modification du code. Les bibliotheques et agents instrumentent automatiquement les frameworks et bibliotheques courants.</p>
+
+          <h4>Instrumentation manuelle</h4>
+          <p>L'instrumentation manuelle implique l'ajout de code de tracage a votre application. Cela offre un controle precis mais necessite plus d'effort de developpement.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>OpenTelemetry est un framework d'observabilite open source qui fournit des API neutres vis-a-vis des fournisseurs pour l'instrumentation. Il prend en charge plusieurs langages de programmation et peut exporter des donnees vers differents backends.</p>
+        </section>
+
+        <section>
+          <h3>Modele de donnees</h3>
+          <p>Application Signals utilise un modele de donnees structure pour organiser les donnees de telemetrie :</p>
+
+          <h4>Metriques</h4>
+          <ul>
+            <li><strong>Latence :</strong> Mesures du temps de reponse (P50, P90, P99)</li>
+            <li><strong>Debit :</strong> Taux de requetes (requetes par seconde)</li>
+            <li><strong>Taux d'erreur :</strong> Pourcentage de requetes echouees</li>
+            <li><strong>Saturation :</strong> Utilisation des ressources (CPU, memoire, etc.)</li>
+          </ul>
+
+          <h4>Traces</h4>
+          <p>Donnees de trace structurees avec des spans, des tags et des informations de chronometrage.</p>
+
+          <h4>Logs</h4>
+          <p>Logs applicatifs correles avec les traces et les metriques pour un contexte complet.</p>
+        </section>
+
+        <section>
+          <h3>Strategies d'echantillonnage</h3>
+          <p>L'echantillonnage controle quelles requetes sont tracees pour equilibrer l'observabilite avec le cout et la performance :</p>
+
+          <h4>Echantillonnage en tete</h4>
+          <p>Decide s'il faut tracer une requete au debut de son cycle de vie.</p>
+
+          <h4>Echantillonnage en queue</h4>
+          <p>Prend des decisions d'echantillonnage apres la collecte des donnees de trace, permettant un echantillonnage plus intelligent base sur les caracteristiques de la requete.</p>
+
+          <h4>Echantillonnage base sur le taux</h4>
+          <p>Trace un pourcentage fixe des requetes (par ex., 10% de toutes les requetes).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

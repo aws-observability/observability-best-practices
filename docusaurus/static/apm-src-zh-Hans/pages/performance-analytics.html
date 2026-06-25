@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>性能分析 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>性能分析</h1></header>
+      <article>
+        <section>
+          <h2>标准应用程序指标</h2>
+          <p>Application Signals 将标准应用程序指标发布到 CloudWatch（命名空间 <code>ApplicationSignals</code>）。这些指标旨在跨服务、操作和依赖项进行快速分诊。</p>
+          <ul>
+            <li><strong>延迟</strong>（毫秒）</li>
+            <li><strong>故障</strong>（HTTP 5xx 和 span 状态错误）</li>
+            <li><strong>错误</strong>（HTTP 4xx）</li>
+            <li><strong>可用性</strong>在控制台中计算为 \( (1 - \text{Faults}/\text{Total}) \times 100 \)，其中 Total 由 <code>SampleCount(Latency)</code> 得出。4xx 响应在此可用性计算中被视为成功。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals 收集的指标</a>。</p>
+        </section>
+
+        <section>
+          <h2>维度（服务与依赖项）</h2>
+          <p>指标以维度形式发出，让您可以按以下方式分解性能：</p>
+          <ul>
+            <li><strong>服务指标</strong>：Environment、Service、Operation</li>
+            <li><strong>依赖项指标</strong>：Environment、Service、Operation 加上 RemoteService / RemoteOperation（以及其他远程维度，具体取决于平台）</li>
+          </ul>
+          <p>这使得更容易回答"哪个操作出现了退化？"和"延迟是否由依赖项调用引起？"等问题。</p>
+        </section>
+
+        <section>
+          <h2>运行时指标（在支持的情况下）</h2>
+          <p>Application Signals 还可以为支持的运行时收集运行时指标（例如，JVM GC、内存、CPU；Python 进程指标；.NET 运行时指标）。Node.js 不收集运行时指标。</p>
+          <p>您可以通过 <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> 禁用运行时指标收集（特定平台的步骤请参阅文档）。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+{
+  "sidebar.guides.category.Guides": {
+    "message": "指南"
+  },
+  "sidebar.guides.category.Getting Started on CloudWatch": {
+    "message": "CloudWatch 入门"
+  },
+  "sidebar.guides.category.Cost": {
+    "message": "成本"
+  },
+  "sidebar.guides.category.Visualizing costs": {
+    "message": "成本可视化"
+  },
+  "sidebar.guides.category.Databases": {
+    "message": "数据库"
+  },
+  "sidebar.guides.category.ECS best practices": {
+    "message": "ECS 最佳实践"
+  },
+  "sidebar.guides.category.ECS AWS Native": {
+    "message": "ECS AWS 原生"
+  },
+  "sidebar.guides.category.ECS Open Source": {
+    "message": "ECS 开源"
+  },
+  "sidebar.guides.category.EKS best practices": {
+    "message": "EKS 最佳实践"
+  },
+  "sidebar.guides.category.EKS AWS Native": {
+    "message": "EKS AWS 原生"
+  },
+  "sidebar.guides.category.EKS Open Source": {
+    "message": "EKS 开源"
+  },
+  "sidebar.guides.category..NET": {
+    "message": ".NET"
+  },
+  "sidebar.guides.category..NET AWS Native": {
+    "message": ".NET AWS 原生"
+  },
+  "sidebar.guides.category..NET Open Source": {
+    "message": ".NET 开源"
+  },
+  "sidebar.guides.category.Serverless best practices": {
+    "message": "Serverless 最佳实践"
+  },
+  "sidebar.guides.category.Operational": {
+    "message": "运维"
+  },
+  "sidebar.guides.category.ADOT Collector": {
+    "message": "ADOT Collector"
+  },
+  "sidebar.guides.category.Alerting": {
+    "message": "告警"
+  },
+  "sidebar.guides.category.GitOps": {
+    "message": "GitOps"
+  },
+  "sidebar.guides.category.Dashboards": {
+    "message": "Dashboard"
+  },
+  "sidebar.guides.category.Signal collection": {
+    "message": "信号采集"
+  },
+  "sidebar.guides.category.Partners": {
+    "message": "合作伙伴"
+  },
+  "sidebar.guides.category.AWS CloudTrail": {
+    "message": "AWS CloudTrail"
+  },
+  "sidebar.guides.category.AWS Config": {
+    "message": "AWS Config"
+  },
+  "sidebar.guides.category.AWS Control Tower": {
+    "message": "AWS Control Tower"
+  },
+  "sidebar.guides.category.AWS Organizations & Accounts": {
+    "message": "AWS Organizations 与账户"
+  },
+  "sidebar.guides.category.AWS Region Usage": {
+    "message": "AWS 区域使用"
+  },
+  "sidebar.guides.category.Application Operations": {
+    "message": "应用运维"
+  },
+  "sidebar.guides.category.Centralized Operations Management": {
+    "message": "集中运维管理"
+  },
+  "sidebar.sigals.category.Data types": {
+    "message": "数据类型"
+  },
+  "sidebar.tools.category.Tools": {
+    "message": "工具"
+  },
+  "sidebar.tools.category.Logs": {
+    "message": "日志"
+  },
+  "sidebar.tools.category.Security": {
+    "message": "安全"
+  },
+  "sidebar.tools.category.Data Protection": {
+    "message": "数据保护"
+  },
+  "sidebar.tools.category.Application Signals": {
+    "message": "Application Signals"
+  },
+  "sidebar.recipes.category.Curated recipes": {
+    "message": "精选方案"
+  },
+  "sidebar.recipes.category.FAQ": {
+    "message": "常见问题"
+  },
+  "sidebar.recipes.category.CloudTrail": {
+    "message": "CloudTrail"
+  },
+  "sidebar.recipes.category.Control Tower": {
+    "message": "Control Tower"
+  },
+  "sidebar.recipes.category.By Compute": {
+    "message": "按计算资源"
+  },
+  "sidebar.recipes.category.By Infra & Databases": {
+    "message": "按基础设施与数据库"
+  },
+  "sidebar.recipes.category.By Language": {
+    "message": "按编程语言"
+  },
+  "sidebar.recipes.category.By Destination": {
+    "message": "按目标服务"
+  },
+  "sidebar.recipes.category.Tasks": {
+    "message": "按任务"
+  },
+  "sidebar.recipes.category.Centralized Operations": {
+    "message": "集中运维"
+  },
+  "sidebar.recipes.category.Application Operations": {
+    "message": "应用运维"
+  }
+}

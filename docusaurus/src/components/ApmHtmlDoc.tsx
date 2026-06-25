@@ -44,37 +44,26 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const {i18n} = useDocusaurusContext();
   const {currentLocale, defaultLocale} = i18n;
   const isLocalized = currentLocale !== defaultLocale;
+  const apmSrcFolder = isLocalized ? `apm-src-${currentLocale}` : 'apm-src';
 
-  const apmSrcBase = useBaseUrl('/apm-src/');
+  const apmSrcBase = useBaseUrl(`/${apmSrcFolder}/`);
   const apmHome = useBaseUrl('/apm/');
   const apmDocBase = useBaseUrl('/apm/');
   const apmFetchPath = apmStaticFetchPath(src);
   const fileRelPath = apmStaticFileRelativePath(src);
-  // English (default-locale) source paths.
-  const primaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
-  const fallbackUrl = useBaseUrl(`/apm-src/${fileRelPath}`);
-  // Localized copies live under `static/apm-src/i18n/<locale>/...`. useBaseUrl is
-  // a hook, so these are always computed; they are only *used* for non-default
-  // locales (see the candidate list in the effect).
-  const localizedPrimaryUrl = useBaseUrl(
-    `/apm-src/i18n/${currentLocale}/${apmFetchPath}`,
-  );
-  const localizedFallbackUrl = useBaseUrl(
-    `/apm-src/i18n/${currentLocale}/${fileRelPath}`,
-  );
 
-  // Candidate URLs in priority order. For a localized (non-default) locale, prefer
-  // the translated copy under `/apm-src/i18n/<locale>/`, then fall back to the
-  // English original. For each form we try the directory-style path first, then the
-  // flat `.html` path (static hosts differ: the dev server serves directory paths,
-  // GitHub Pages serves flat files).
+  const localizedPrimaryUrl = useBaseUrl(`/${apmSrcFolder}/${apmFetchPath}`);
+  const localizedFallbackUrl = useBaseUrl(`/${apmSrcFolder}/${fileRelPath}`);
+  const enPrimaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
+  const enFallbackUrl = useBaseUrl(`/apm-src/${fileRelPath}`);
+
   const candidates = useMemo(
     () =>
       (isLocalized
-        ? [localizedPrimaryUrl, localizedFallbackUrl, primaryUrl, fallbackUrl]
-        : [primaryUrl, fallbackUrl]
+        ? [localizedPrimaryUrl, localizedFallbackUrl, enPrimaryUrl, enFallbackUrl]
+        : [enPrimaryUrl, enFallbackUrl]
       ).filter((u, i, arr) => Boolean(u) && arr.indexOf(u) === i),
-    [isLocalized, localizedPrimaryUrl, localizedFallbackUrl, primaryUrl, fallbackUrl],
+    [isLocalized, localizedPrimaryUrl, localizedFallbackUrl, enPrimaryUrl, enFallbackUrl],
   );
 
   const resolved = useMemo(() => {
@@ -92,7 +81,6 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
       try {
         if (typeof window === 'undefined') return;
 
-        // Fetch a candidate URL and parse it. Returns null on a non-OK response.
         const tryLoad = async (url: string): Promise<Document | null> => {
           const r = await fetch(url, {cache: 'no-cache'});
           if (!r.ok) return null;
@@ -100,11 +88,6 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
           return new DOMParser().parseFromString(t, 'text/html');
         };
 
-        // Candidate URLs (priority order) are computed at component scope so the
-        // error UI can show what was tried.
-        // Pick the first candidate that actually contains the content selector.
-        // Otherwise keep the first that loaded at all (best effort) — this avoids
-        // rendering an app shell (HTTP 200 SPA fallback) that lacks the selector.
         let doc: Document | null = null;
         for (const url of candidates) {
           if (cancelled) return;
@@ -195,7 +178,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   if (typeof window === 'undefined') {
     return (
       <div className="apm-doc">
-        <p>Loading…</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -216,4 +199,3 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
 
   return <div className="apm-doc" dangerouslySetInnerHTML={resolved} />;
 }
-

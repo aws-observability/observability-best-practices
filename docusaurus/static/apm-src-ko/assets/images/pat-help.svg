@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300" width="800" height="300">
+  <style>
+    .bg{fill:#f8fafc}
+    .card{fill:#ffffff;stroke:#e6e9ef;stroke-width:1;rx:8;}
+    .step{font:600 14px/1.2 'Segoe UI',Arial,Helvetica,sans-serif;fill:#0b1726}
+    .hint{font:400 13px/1.2 'Segoe UI',Arial,Helvetica,sans-serif;fill:#374151}
+    .kbd{fill:#eef2f7;stroke:#d9e2f0;stroke-width:1;rx:4}
+    .pulse{animation:pulse 2s infinite}
+    @keyframes pulse{0%{opacity:1}50%{opacity:0.5}100%{opacity:1}}
+  </style>
+  <rect class="bg" width="100%" height="100%"/>
+
+  <g transform="translate(24,24)">
+    <rect class="card" x="0" y="0" width="360" height="120" rx="8"/>
+    <text class="step" x="18" y="28">1. Open GitHub Settings</text>
+    <text class="hint" x="18" y="52">Click your avatar → Settings → Developer settings</text>
+    <rect x="18" y="62" width="130" height="24" class="kbd" rx="4"/>
+    <text class="hint" x="26" y="78">Personal access tokens</text>
+  </g>
+
+  <g transform="translate(420,24)">
+    <rect class="card" x="0" y="0" width="360" height="120" rx="8"/>
+    <text class="step" x="18" y="28">2. Generate new token</text>
+    <text class="hint" x="18" y="52">Click Generate new token → select expiry</text>
+    <rect x="18" y="62" width="220" height="24" class="kbd pulse" rx="4"/>
+    <text class="hint" x="26" y="78">Select <tspan font-weight="700">repo</tspan> scope</text>
+  </g>
+
+  <g transform="translate(24,160)">
+    <rect class="card" x="0" y="0" width="360" height="120" rx="8"/>
+    <text class="step" x="18" y="28">3. Copy token</text>
+    <text class="hint" x="18" y="52">Copy the token now — you won't see it again</text>
+    <rect x="18" y="62" width="220" height="24" class="kbd" rx="4"/>
+    <text class="hint" x="26" y="78">Paste token into the site prompt</text>
+  </g>
+
+  <g transform="translate(420,160)">
+    <rect class="card" x="0" y="0" width="360" height="120" rx="8"/>
+    <text class="step" x="18" y="28">Security</text>
+    <text class="hint" x="18" y="52">Token is used only for this commit and not stored</text>
+    <text class="hint" x="18" y="76">Revoke token anytime: GitHub → Tokens → Revoke</text>
+  </g>
+</svg>

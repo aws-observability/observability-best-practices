@@ -1,8 +1,0 @@
-{
-  "label": "GenAI",
-  "position": 1,
-  "link": {
-    "type": "doc",
-    "id": "ai/genai/index"
-  }
-}

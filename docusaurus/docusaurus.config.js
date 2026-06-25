@@ -32,7 +32,7 @@ const config = {
   // may want to replace "en" with "zh-Hans".
   i18n: {
     defaultLocale: 'en',
-    locales: ['en','ja','ko','hi','fr','ta','te','zh-Hans'],
+    locales: ['en','ja','ko','zh-Hans'],
     localeConfigs: {
       en: {
         label: 'English',
@@ -42,18 +42,6 @@ const config = {
       },
       ko: {
         label: '한국어',
-      },
-      hi: {
-        label: 'हिन्दी',
-      },
-      fr: {
-        label: 'Français',
-      },
-      ta: {
-        label: 'தமிழ்',
-      },
-      te: {
-        label: 'తెలుగు',
       },
       'zh-Hans': {
         label: '简体中文',
@@ -94,7 +82,7 @@ const config = {
          //docsDir: "docs",
          hashed: true,
          indexPages: true,
-         language: ["en", "ja", "ko", "fr"],
+         language: ["en", "ja", "ko"],
          indexBlog: false,
        }),
      ],

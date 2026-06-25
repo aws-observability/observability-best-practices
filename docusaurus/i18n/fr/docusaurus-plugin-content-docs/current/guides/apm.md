@@ -1,1 +1,0 @@
-# Surveillance des performances applicatives

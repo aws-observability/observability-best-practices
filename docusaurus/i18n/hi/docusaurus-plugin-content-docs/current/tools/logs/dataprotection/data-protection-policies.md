@@ -1,6 +1,6 @@
-# SLG/EDU के लिए CloudWatch Logs डेटा सुरक्षा नीतियां
+﻿# SLG/EDU के लिए CloudWatch Logs डेटा सुरक्षा नीतियां
 
-हालांकि लॉगिंग डेटा सामान्य रूप से लाभदायक है, लेकिन Health Insurance Portability and Accountability Act (HIPAA), General Data Privacy Regulation (GDPR), Payment Card Industry Data Security Standard (PCI-DSS), और Federal Risk and Authorization Management Program (FedRAMP) जैसे सख्त नियमों वाले संगठनों के लिए इन्हें मास्क करना उपयोगी है।
+हालांकि लॉगिंग डेटा सामान्य रूप से लाभदायक है, लेकिन Health Insurance Portability and Accountability Act (HIPAA), General Data Privacy Regulation (GDPR), Payment Card Industry Data Security Standard (PCI-DSS), और Federal Risk and Authorization Management Program (FedRAMP) जैसे सख्त नियमों वाले ऑर्गनाइज़ेशन्स के लिए इन्हें मास्क करना उपयोगी है।
 
 CloudWatch Logs में [डेटा सुरक्षा नीतियां](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html) ग्राहकों को डेटा सुरक्षा नीतियां परिभाषित और लागू करने में सक्षम बनाती हैं जो ट्रांज़िट में लॉग डेटा को संवेदनशील डेटा के लिए स्कैन करती हैं और पाए गए संवेदनशील डेटा को मास्क करती हैं।
 
@@ -36,13 +36,13 @@ CloudWatch Logs डेटा सुरक्षा नीतियों का 
 
 
 :::tip
-    डेटा वर्गीकरण सर्वोत्तम अभ्यास स्पष्ट रूप से परिभाषित डेटा वर्गीकरण स्तरों और आवश्यकताओं से शुरू होते हैं, जो आपके संगठनात्मक, कानूनी और अनुपालन मानकों को पूरा करते हैं।
+    डेटा वर्गीकरण बेस्ट प्रैक्टिसेज़ स्पष्ट रूप से परिभाषित डेटा वर्गीकरण स्तरों और आवश्यकताओं से शुरू होते हैं, जो आपके ऑर्गनाइज़ेशनात्मक, कानूनी और अनुपालन मानकों को पूरा करते हैं।
 
-    सर्वोत्तम अभ्यास के रूप में, अपने संगठन की डेटा गवर्नेंस नीतियों के अनुसार अनुपालन लागू करने के लिए डेटा वर्गीकरण फ्रेमवर्क के आधार पर AWS रिसोर्स पर टैग का उपयोग करें।
+    बेस्ट प्रैक्टिस के रूप में, अपने ऑर्गनाइज़ेशन की डेटा गवर्नेंस नीतियों के अनुसार अनुपालन लागू करने के लिए डेटा वर्गीकरण फ्रेमवर्क के आधार पर AWS रिसोर्स पर टैग का उपयोग करें।
 :::
 
 :::tip
-    अपने लॉग इवेंट्स में संवेदनशील डेटा से बचने के लिए, सर्वोत्तम अभ्यास यह है कि उन्हें अपने कोड में पहले ही बाहर कर दें और केवल आवश्यक जानकारी लॉग करें।
+    अपने लॉग इवेंट्स में संवेदनशील डेटा से बचने के लिए, बेस्ट प्रैक्टिस यह है कि उन्हें अपने कोड में पहले ही बाहर कर दें और केवल आवश्यक जानकारी लॉग करें।
 :::
 
 
@@ -108,7 +108,7 @@ fields @timestamp, @message
 :::
 
 :::tip
-    आपके क्लाउड वातावरण की नियमित निगरानी और ऑडिटिंग संवेदनशील डेटा की सुरक्षा में समान रूप से महत्वपूर्ण है। यह एक महत्वपूर्ण पहलू बन जाता है जब एप्लिकेशन बड़ी मात्रा में डेटा उत्पन्न करते हैं और मैन्युअल रूप से, इसलिए यह अनुशंसा की जाती है कि अत्यधिक मात्रा में डेटा लॉग न करें। [लॉगिंग सर्वोत्तम अभ्यास](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html) के लिए यह AWS Prescriptive Guidance पढ़ें
+    आपके क्लाउड एनवायरनमेंट की नियमित निगरानी और ऑडिटिंग संवेदनशील डेटा की सुरक्षा में समान रूप से महत्वपूर्ण है। यह एक महत्वपूर्ण पहलू बन जाता है जब एप्लिकेशन बड़ी मात्रा में डेटा उत्पन्न करते हैं और मैन्युअल रूप से, इसलिए यह अनुशंसा की जाती है कि अत्यधिक मात्रा में डेटा लॉग न करें। [लॉगिंग बेस्ट प्रैक्टिसेज़](https://docs.aws.amazon.com/prescriptive-guidance/latest/logging-monitoring-for-application-owners/logging-best-practices.html) के लिए यह AWS Prescriptive Guidance पढ़ें
 :::
 
 :::tip
@@ -121,3 +121,4 @@ fields @timestamp, @message
 
 
 [^1]: आरंभ करने के लिए हमारा AWS ब्लॉग [Protect Sensitive Data with Amazon CloudWatch Logs](https://aws.amazon.com/blogs/aws/protect-sensitive-data-with-amazon-cloudwatch-logs/) देखें।
+

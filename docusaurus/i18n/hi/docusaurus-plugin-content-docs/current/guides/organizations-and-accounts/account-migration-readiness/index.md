@@ -1,17 +1,17 @@
----
+﻿---
 sidebar_position: 1
 ---
 
 # AWS Organizations अकाउंट माइग्रेशन तत्परता गाइड
 
-> **अस्वीकरण:** यह गाइड AWS Organizations के बीच AWS अकाउंट transfer करते समय सामान्य रूप से सामने आने वाली dependencies और विचारणीय बिंदुओं के आधार पर best-effort मार्गदर्शन प्रदान करती है। किसी भी माइग्रेशन की सफल पूर्णता प्रत्येक ग्राहक के अद्वितीय परिदृश्य, वर्कलोड और dependencies पर निर्भर करती है। ग्राहक अपने विशिष्ट वातावरण का पूरी तरह से आकलन करने, सभी dependencies को validate करने और निष्पादन से पहले अपनी माइग्रेशन योजना का परीक्षण करने के लिए जिम्मेदार हैं। यह गाइड हर संभावित dependency या edge case को कवर नहीं करती।
+> **अस्वीकरण:** यह गाइड AWS Organizations के बीच AWS अकाउंट transfer करते समय सामान्य रूप से सामने आने वाली dependencies और विचारणीय बिंदुओं के आधार पर best-effort मार्गदर्शन प्रदान करती है। किसी भी माइग्रेशन की सफल पूर्णता प्रत्येक ग्राहक के अद्वितीय परिदृश्य, वर्कलोड और dependencies पर निर्भर करती है। ग्राहक अपने विशिष्ट एनवायरनमेंट का पूरी तरह से आकलन करने, सभी dependencies को validate करने और निष्पादन से पहले अपनी माइग्रेशन योजना का परीक्षण करने के लिए जिम्मेदार हैं। यह गाइड हर संभावित dependency या edge case को कवर नहीं करती।
 
 ## दायरा
 
 यह गाइड **AWS Organizations के बीच अकाउंट माइग्रेशन** को कवर करती है। यहां वर्णित दृष्टिकोण समीक्षा और आकलन प्रक्रिया को तेज करने के लिए [Account Assessment for AWS Organizations](https://docs.aws.amazon.com/solutions/account-assessment-for-aws-organizations/) और [CFAT](https://github.com/cloud-foundations-on-aws/cloud-foundations-templates/blob/main/cfat/README.md) का उपयोग करता है। आप जिन tools या दृष्टिकोण का उपयोग करने का निर्णय लेते हैं उसके आधार पर, steps भिन्न हो सकते हैं, लेकिन यह इसे करने का एक validated तरीका प्रदान करता है।
 
 :::tip
-अकाउंट को AWS Control Tower वातावरण में ले जाते समय, इस गाइड का उपयोग pre-migration dependency check के रूप में करें, फिर अकाउंट target organization में transfer होने के बाद पूरक के रूप में [Enroll an existing AWS account](https://docs.aws.amazon.com/controltower/latest/userguide/enroll-account.html) गाइड का पालन करें।
+अकाउंट को AWS Control Tower एनवायरनमेंट में ले जाते समय, इस गाइड का उपयोग pre-migration dependency check के रूप में करें, फिर अकाउंट target organization में transfer होने के बाद पूरक के रूप में [Enroll an existing AWS account](https://docs.aws.amazon.com/controltower/latest/userguide/enroll-account.html) गाइड का पालन करें।
 :::
 
 ## प्रमुख सेवाएं और dependencies एक नज़र में
@@ -31,7 +31,7 @@ sidebar_position: 1
 | **Policy conditions** | `aws:PrincipalOrgID` / `aws:PrincipalOrgPaths` | Policies referencing source organization ID will deny access |
 | **Billing** | Reserved Instances / Savings Plans | Organization-wide sharing benefits lost |
 | **Billing** | Cost allocation tags | Must re-activate in target organization |
-| **Observability** | Amazon EventBridge cross-account | Event bus policies referencing organization ID will break |
+| **ऑब्ज़र्वेबिलिटी** | Amazon EventBridge cross-account | Event bus policies referencing organization ID will break |
 | **Account access** | Root user / `OrganizationAccountAccessRole` | May lose all access if not verified before transfer |
 
 ## अवलोकन

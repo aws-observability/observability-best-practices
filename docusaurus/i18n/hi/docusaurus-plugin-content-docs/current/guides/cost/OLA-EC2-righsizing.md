@@ -1,8 +1,8 @@
-# मौजूदा EC2 वर्कलोड के लिए OLA
+﻿# मौजूदा EC2 वर्कलोड के लिए OLA
 
 ## AWS OLA प्रोग्राम
 
-[AWS Optimization and Licensing Assessment (AWS OLA)](https://aws.amazon.com/optimization-and-licensing-assessment/) ग्राहकों को वर्कलोड को cloud में migrate करने और resources को cost optimize करने का सबसे अच्छा दृष्टिकोण प्रदान करता है। यह एक मानार्थ प्रोग्राम है जो ग्राहकों को उनके नए और मौजूदा वर्कलोड का विश्लेषण करने, resource allocation, third-party licensing, और application dependencies को optimize करने के लिए उनके on-premises और cloud environments का आकलन करने और इस प्रकार resource efficiency बढ़ाने और संभावित रूप से compute spending पर बचत करने में मदद करने के लिए है।
+[AWS Optimization and Licensing Assessment (AWS OLA)](https://aws.amazon.com/optimization-and-licensing-assessment/) ग्राहकों को वर्कलोड को cloud में migrate करने और resources को cost optimize करने का सबसे अच्छा दृष्टिकोण प्रदान करता है। यह एक मानार्थ प्रोग्राम है जो ग्राहकों को उनके नए और मौजूदा वर्कलोड का एनालिसिस करने, resource allocation, third-party licensing, और application dependencies को optimize करने के लिए उनके on-premises और cloud environments का आकलन करने और इस प्रकार resource efficiency बढ़ाने और संभावित रूप से compute spending पर बचत करने में मदद करने के लिए है।
 
 इस प्रक्रिया में एकत्र किए गए डेटा के माध्यम से, AWS OLA प्रोग्राम एक व्यापक रिपोर्ट प्रदान करता है जिसका उपयोग ग्राहक अपनी cloud यात्रा और migration के लिए सूचित निर्णय लेने के लिए कर सकते हैं। रिपोर्ट वास्तविक resource उपयोग, मौजूदा licensing entitlements के आधार पर deployment विकल्पों को model करती है और ग्राहकों को हमारे लचीले licensing विकल्पों के माध्यम से संभावित cost savings उजागर करने में मदद करती है।
 

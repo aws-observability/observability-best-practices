@@ -2,7 +2,7 @@
 
 ## कस्टम डैशबोर्ड क्यों?
 
-जब आप Bedrock Model Invocation Logging सक्षम करते हैं और ADOT auto-instrumentation एजेंट डिप्लॉय करते हैं, तो AWS आपको out-of-the-box डैशबोर्ड के साथ शुरुआत प्रदान करता है। Bedrock स्वचालित रूप से invocation count, latency, token counts, और throttle मेट्रिक्स प्रदान करता है। Application Signals स्वचालित रूप से service maps और SLO views जनरेट करता है। यह एक मजबूत आधार है -- लेकिन यह पूरी तस्वीर नहीं है।
+जब आप Bedrock Model Invocation Logging सक्षम करते हैं और ADOT ऑटो-इंस्ट्रुमेंटेशन एजेंट डिप्लॉय करते हैं, तो AWS आपको out-of-the-box डैशबोर्ड के साथ शुरुआत प्रदान करता है। Bedrock स्वचालित रूप से invocation count, latency, token counts, और throttle मेट्रिक्स प्रदान करता है। Application Signals स्वचालित रूप से service maps और SLO views जनरेट करता है। यह एक मजबूत आधार है -- लेकिन यह पूरी तस्वीर नहीं है।
 
 Out-of-the-box डैशबोर्ड "क्या मेरा AI अभी ठीक है?" का जवाब देते हैं। वे उन सवालों का जवाब नहीं देते जो आपकी DevOps, FinOps, और सुरक्षा टीमें वास्तव में पूछती हैं:
 
@@ -24,7 +24,7 @@ Out-of-the-box डैशबोर्ड "क्या मेरा AI अभी 
 
 यह गाइड आपको दोनों बनाने के लिए queries प्रदान करता है। अपने दर्शकों के अनुसार relevant sections चुनें। प्रत्येक query अपना source log group, view type, query language, और किस प्रश्न का उत्तर देती है यह दर्शाती है।
 
-अंतर्निहित data pipelines के अवलोकन और प्रत्येक को कब सक्षम करना है, इसके लिए [AWS पर GenAI Observability](../genai-observability-on-aws) देखें।
+अंतर्निहित data pipelines के अवलोकन और प्रत्येक को कब सक्षम करना है, इसके लिए [AWS पर GenAI ऑब्ज़र्वेबिलिटी](../genai-observability-on-aws) देखें।
 
 ---
 
@@ -293,7 +293,7 @@ fields coalesce(output.outputBodyJson.usage.inputTokens,
 
 - **अलार्म:** दैनिक खर्च 7-दिन के औसत का 150% से अधिक।
 
-### Cost विश्लेषण
+### Cost एनालिसिस
 
 #### 10. Model-wise Cost वितरण
 
@@ -366,7 +366,7 @@ fields replace(`identity.arn`, "arn:aws:sts::ACCOUNT_ID:assumed-role/", "") as u
 | sort hour asc
 ```
 
-- **अलार्म:** कोई नहीं (विश्लेषण widget)।
+- **अलार्म:** कोई नहीं (एनालिसिस widget)।
 
 ### Token उपभोग
 
@@ -566,14 +566,14 @@ filter !isPresent(errorCode)
 
 ## अतिरिक्त संसाधन
 
-- [AWS पर GenAI Observability](../genai-observability-on-aws) -- साथी गाइड: रणनीति, pipelines, enablement, dashboards
+- [AWS पर GenAI ऑब्ज़र्वेबिलिटी](../genai-observability-on-aws) -- साथी गाइड: नीति, pipelines, enablement, dashboards
 - [Model Invocations — CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/model-invocations.html)
-- [Getting Started with AgentCore Observability](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html)
+- [Getting Started with AgentCore ऑब्ज़र्वेबिलिटी](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AgentCore-GettingStarted.html)
 - [CloudWatch Logs Insights Query Syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_QuerySyntax.html)
 - [OpenSearch SQL in CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html)
 - [AWS Bedrock Pricing](https://aws.amazon.com/bedrock/pricing/)
 
 ---
 
-**योगदानकर्ता:** AWS Observability Team
+**योगदानकर्ता:** AWS ऑब्ज़र्वेबिलिटी Team
 **अंतिम अपडेट:** 2026-04-21

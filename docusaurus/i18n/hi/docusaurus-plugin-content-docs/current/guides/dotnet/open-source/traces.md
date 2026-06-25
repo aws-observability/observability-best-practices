@@ -1,8 +1,8 @@
-# ट्रेसिंग
+﻿# ट्रेसिंग
 
-.NET, OpenTelemetry ट्रेसिंग के लिए मजबूत समर्थन प्रदान करता है, डेवलपर्स को वितरित प्रणालियों में अनुरोध प्रवाह की निगरानी के लिए शक्तिशाली उपकरण देता है। यह कार्यान्वयन एप्लिकेशन व्यवहार और प्रदर्शन बॉटलनेक में एंड-टू-एंड दृश्यता प्रदान करता है।
+.NET, OpenTelemetry ट्रेसिंग के लिए मजबूत समर्थन प्रदान करता है, डेवलपर्स को वितरित प्रणालियों में अनुरोध प्रवाह की निगरानी के लिए शक्तिशाली टूल देता है। यह कार्यान्वयन एप्लिकेशन व्यवहार और प्रदर्शन बॉटलनेक में एंड-टू-एंड दृश्यता प्रदान करता है।
 
-.NET इकोसिस्टम में, OpenTelemetry ट्रेसिंग [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) class के आसपास बनाया गया है, जो W3C Trace Context विशिष्टता का .NET कार्यान्वयन है। उद्योग मानकों के साथ यह संरेखण अन्य सेवाओं और observability उपकरणों के साथ इंटरऑपरेबिलिटी सुनिश्चित करता है।
+.NET इकोसिस्टम में, OpenTelemetry ट्रेसिंग [System.Diagnostics.Activity](https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.activity?view=net-9.0) class के आसपास बनाया गया है, जो W3C Trace Context विशिष्टता का .NET कार्यान्वयन है। उद्योग मानकों के साथ यह संरेखण अन्य सेवाओं और ऑब्ज़र्वेबिलिटी टूल्स के साथ इंटरऑपरेबिलिटी सुनिश्चित करता है।
 
 ## ट्रेसेस कार्यान्वयन
 
@@ -37,7 +37,7 @@ activity?.SetTag("orderId", orderId);
 using var childActivity = MyActivitySource.StartActivity("ValidatePayment");
 ```
 
-.NET अनुप्रयोगों में OpenTelemetry ट्रेसिंग के लिए सर्वोत्तम प्रथा के रूप में अपने ActivitySource को dependency injection में रजिस्टर करना माना जाता है।
+.NET एप्लिकेशन्स में OpenTelemetry ट्रेसिंग के लिए बेस्ट प्रैक्टिस के रूप में अपने ActivitySource को dependency injection में रजिस्टर करना माना जाता है।
 
 ```c#
 // During service configuration
@@ -68,14 +68,14 @@ public class OrderProcessor
 
 ## अगले कदम
 
-अब जब आपका एप्लिकेशन इंस्ट्रूमेंट हो गया है, तो एक collector agent का उपयोग करें—जैसे OpenTelemetry Collector, CloudWatch Agent, या Fluent Bit—अपनी पसंद के observability backend पर ट्रेसेस रूट करने के लिए। विवरण और कार्यान्वयन मार्गदर्शन के लिए नीचे दिए गए लिंक देखें।
+अब जब आपका एप्लिकेशन इंस्ट्रूमेंट हो गया है, तो एक collector agent का उपयोग करें—जैसे OpenTelemetry Collector, CloudWatch Agent, या Fluent Bit—अपनी पसंद के ऑब्ज़र्वेबिलिटी backend पर ट्रेसेस रूट करने के लिए। विवरण और कार्यान्वयन मार्गदर्शन के लिए नीचे दिए गए लिंक देखें।
 
-- [OpenTelemetry के साथ Observability](https://aws-observability.github.io/observability-best-practices/patterns/otel) - अपने अनुप्रयोगों में OpenTelemetry लागू करने के लिए व्यापक गाइड, AWS सेवाओं के साथ टेलीमेट्री डेटा एकत्र करने, प्रसंस्करण करने और विज़ुअलाइज़ करने के पैटर्न प्रदान करता है ताकि फुल-स्टैक observability प्राप्त हो सके।
+- [OpenTelemetry के साथ ऑब्ज़र्वेबिलिटी](https://aws-observability.github.io/observability-best-practices/patterns/otel) - अपने एप्लिकेशन्स में OpenTelemetry लागू करने के लिए व्यापक गाइड, AWS सेवाओं के साथ टेलीमेट्री डेटा एकत्र करने, प्रसंस्करण करने और विज़ुअलाइज़ करने के पैटर्न प्रदान करता है ताकि फुल-स्टैक ऑब्ज़र्वेबिलिटी प्राप्त हो सके।
 
-- [AWS Distro for OpenTelemetry (ADOT) Collector का संचालन](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) - प्रोडक्शन वातावरण में ADOT Collector को डिप्लॉय, स्केल और प्रबंधित करने के लिए व्यावहारिक मार्गदर्शन, जिसमें कॉन्फ़िगरेशन सर्वोत्तम प्रथाएं और AWS observability सेवाओं के साथ एकीकरण शामिल है।
+- [AWS Distro for OpenTelemetry (ADOT) Collector का संचालन](https://aws-observability.github.io/observability-best-practices/guides/operational/adot-at-scale/operating-adot-collector) - प्रोडक्शन एनवायरनमेंट में ADOT Collector को डिप्लॉय, स्केल और प्रबंधित करने के लिए व्यावहारिक मार्गदर्शन, जिसमें कॉन्फ़िगरेशन बेस्ट प्रैक्टिसेज़ और AWS ऑब्ज़र्वेबिलिटी सेवाओं के साथ एकीकरण शामिल है।
 
-- [CloudWatch agent के साथ मेट्रिक्स, लॉग्स और ट्रेसेस एकत्र करें](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - आपके अनुप्रयोगों और इंफ्रास्ट्रक्चर से टेलीमेट्री डेटा एकत्र करने के लिए CloudWatch agent को इंस्टॉल और कॉन्फ़िगर करने के चरण-दर-चरण निर्देश, AWS CloudWatch में सहज एकीकरण के साथ।
+- [CloudWatch agent के साथ मेट्रिक्स, लॉग्स और ट्रेसेस एकत्र करें](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html) - आपके एप्लिकेशन्स और इंफ्रास्ट्रक्चर से टेलीमेट्री डेटा एकत्र करने के लिए CloudWatch agent को इंस्टॉल और कॉन्फ़िगर करने के चरण-दर-चरण निर्देश, AWS CloudWatch में सहज एकीकरण के साथ।
 
-- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file) - कई AWS सेवाओं को लॉग्स, मेट्रिक्स और ट्रेसेस एकत्र करने और अग्रेषित करने के लिए हल्का और कुशल समाधान, कंटेनरीकृत वातावरण और Kubernetes डिप्लॉयमेंट के लिए अनुकूलित।
+- [AWS for Fluent Bit](https://github.com/aws/aws-for-fluent-bit?tab=readme-ov-file) - कई AWS सेवाओं को लॉग्स, मेट्रिक्स और ट्रेसेस एकत्र करने और अग्रेषित करने के लिए हल्का और कुशल समाधान, कंटेनरीकृत एनवायरनमेंट और Kubernetes डिप्लॉयमेंट के लिए अनुकूलित।
 
-- [AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html) - वितरित ट्रेसिंग के लिए AWS X-Ray को OpenTelemetry के साथ एकीकृत करने पर विस्तृत डॉक्यूमेंटेशन, जो आपको ट्रेस विज़ुअलाइज़ेशन और विश्लेषण उपकरणों के साथ बड़े पैमाने पर प्रोडक्शन अनुप्रयोगों का विश्लेषण और डिबग करने की अनुमति देता है।
+- [AWS X-Ray](https://docs.aws.amazon.com/xray/latest/devguide/xray-services-adot.html) - वितरित ट्रेसिंग के लिए AWS X-Ray को OpenTelemetry के साथ एकीकृत करने पर विस्तृत डॉक्यूमेंटेशन, जो आपको ट्रेस विज़ुअलाइज़ेशन और एनालिसिस टूल्स के साथ बड़े पैमाने पर प्रोडक्शन एप्लिकेशन्स का एनालिसिस और डिबग करने की अनुमति देता है।

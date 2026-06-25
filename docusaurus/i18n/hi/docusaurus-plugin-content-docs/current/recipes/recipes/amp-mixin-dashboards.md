@@ -1,6 +1,6 @@
 # Managed Grafana में [**kubernetes-mixin**](https://github.com/kubernetes-monitoring/kubernetes-mixin) डैशबोर्ड जोड़ना
 
-एक प्रबंधित सेवा होने के बावजूद, EKS अभी भी Kubernetes कंट्रोल प्लेन से कई मेट्रिक्स एक्सपोज़ करता है। Prometheus समुदाय ने इन मेट्रिक्स की समीक्षा और जांच करने के लिए डैशबोर्ड की एक शृंखला तैयार की है। यह दस्तावेज़ आपको दिखाएगा कि Amazon Managed Service for Prometheus द्वारा होस्ट किए गए वातावरण में इन्हें कैसे इंस्टॉल करें।
+एक प्रबंधित सेवा होने के बावजूद, EKS अभी भी Kubernetes कंट्रोल प्लेन से कई मेट्रिक्स एक्सपोज़ करता है। Prometheus समुदाय ने इन मेट्रिक्स की समीक्षा और जांच करने के लिए डैशबोर्ड की एक शृंखला तैयार की है। यह दस्तावेज़ आपको दिखाएगा कि Amazon Managed Service for Prometheus द्वारा होस्ट किए गए एनवायरनमेंट में इन्हें कैसे इंस्टॉल करें।
 
 Prometheus mixin प्रोजेक्ट उम्मीद करता है कि Prometheus Operator के माध्यम से Prometheus इंस्टॉल किया गया है, लेकिन Terraform blueprints डिफ़ॉल्ट helm charts के माध्यम से Prometheus agent इंस्टॉल करते हैं। स्क्रेपिंग जॉब्स और डैशबोर्ड को संरेखित करने के लिए, हमें Prometheus नियमों और mixin डैशबोर्ड कॉन्फ़िगरेशन को अपडेट करना होगा, फिर डैशबोर्ड को हमारे Grafana इंस्टेंस में अपलोड करना होगा।
 
@@ -8,7 +8,7 @@ Prometheus mixin प्रोजेक्ट उम्मीद करता ह
 ## पूर्वापेक्षाएँ
 
 * एक EKS क्लस्टर - यहाँ से शुरू करें: [https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/examples/complete-kubernetes-addons](https://github.com/aws-ia/terraform-aws-eks-blueprints/tree/main/)
-* एक Cloud9 वातावरण
+* एक Cloud9 एनवायरनमेंट
 * Cloud9 में kubectl EKS क्लस्टर को प्रबंधित करने के लिए कॉन्फ़िगर
 * EKS के लिए IAM क्रेडेंशियल
 * AMP का एक इंस्टेंस
@@ -96,4 +96,4 @@ aws amp create-rule-groups-namespace --data file://prometheus_rules.b64 --name k
 
 
 
-Cloud9 वातावरण से 'dashboard_out' फ़ोल्डर की सामग्री डाउनलोड करें और Grafana वेब UI का उपयोग करके उन्हें अपलोड करें।
+Cloud9 एनवायरनमेंट से 'dashboard_out' फ़ोल्डर की सामग्री डाउनलोड करें और Grafana वेब UI का उपयोग करके उन्हें अपलोड करें।

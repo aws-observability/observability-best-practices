@@ -5,12 +5,12 @@
 - [अपने Application Load Balancers की मॉनिटरिंग करें][alb-docs]
 - [अपने Network Load Balancers की मॉनिटरिंग करें][nlb-docs]
 - [VPC Flow Logs][vpcfl]
-- [Amazon Elasticsearch Service का उपयोग करके VPC Flow logs विश्लेषण][vpcf-ws]
+- [Amazon Elasticsearch Service का उपयोग करके VPC Flow logs एनालिसिस][vpcf-ws]
 
 ## कंप्यूट
 
 - [Amazon EKS कंट्रोल प्लेन लॉगिंग][eks-cp]
-- [AWS Lambda मॉनिटरिंग और Observability][lambda-docs]
+- [AWS Lambda मॉनिटरिंग और ऑब्ज़र्वेबिलिटी][lambda-docs]
 
 ## डेटाबेस, स्टोरेज और क्यूज
 
@@ -29,7 +29,7 @@
 [nlb-docs]: https://docs.aws.amazon.com/elasticloadbalancing/latest/network/load-balancer-monitoring.html
 [vpcfl]: https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html
 [eks-cp]: https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html
-[lambda-docs]: https://docs.aws.amazon.com/lambda/latest/operatorguide/monitoring-observability.html
+[lambda-docs]: https://docs.aws.amazon.com/lambda/latest/operatorguide/monitoring-ऑब्ज़र्वेबिलिटी.html
 [rds]: rds.md
 [ddb]: dynamodb.md
 [msk]: msk.md

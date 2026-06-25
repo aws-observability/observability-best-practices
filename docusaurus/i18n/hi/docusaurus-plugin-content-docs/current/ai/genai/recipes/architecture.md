@@ -1,8 +1,8 @@
-# Cloud-Agnostic AI Observability Platform - आर्किटेक्चर
+# Cloud-Agnostic AI ऑब्ज़र्वेबिलिटी Platform - आर्किटेक्चर
 
 ## अवलोकन
 
-यह दस्तावेज़ AWS managed services पर निर्मित एक cloud-agnostic AI Observability platform की आर्किटेक्चर का वर्णन करता है। यह platform कई cloud providers में Large Language Model (LLM) वर्कलोड के लिए एकीकृत monitoring, cost optimization, और operational insights प्रदान करता है।
+यह दस्तावेज़ AWS managed services पर निर्मित एक cloud-agnostic AI ऑब्ज़र्वेबिलिटी platform की आर्किटेक्चर का वर्णन करता है। यह platform कई cloud providers में Large Language Model (LLM) वर्कलोड के लिए एकीकृत monitoring, cost optimization, और operational insights प्रदान करता है।
 
 ## आर्किटेक्चर डायग्राम
 
@@ -15,7 +15,7 @@
 यह platform कई providers में LLM invocations की monitoring support करता है:
 
 :::info Model लचीलापन
-नीचे सूचीबद्ध models इस demo में उपयोग किए गए हैं। चूंकि platform AI gateway के रूप में [LiteLLM](https://docs.litellm.ai/) का उपयोग करता है, आप LiteLLM द्वारा supported किसी भी LLM से replace कर सकते हैं -- बस `gateway/litellm-config.yaml` को अपने पसंदीदा models से update करें। Observability pipeline आपके model चयन की परवाह किए बिना समान रूप से काम करती है।
+नीचे सूचीबद्ध models इस demo में उपयोग किए गए हैं। चूंकि platform AI gateway के रूप में [LiteLLM](https://docs.litellm.ai/) का उपयोग करता है, आप LiteLLM द्वारा supported किसी भी LLM से replace कर सकते हैं -- बस `gateway/litellm-config.yaml` को अपने पसंदीदा models से update करें। ऑब्ज़र्वेबिलिटी pipeline आपके model चयन की परवाह किए बिना समान रूप से काम करती है।
 :::
 
 #### AWS Bedrock
@@ -60,7 +60,7 @@
   - Data transform और enrich करना
   - AWS services को export करना
 
-### 3. AWS Observability Stack
+### 3. AWS ऑब्ज़र्वेबिलिटी Stack
 
 #### Amazon CloudWatch
 - **Service Type**: Managed metrics और monitoring
@@ -188,7 +188,7 @@
   - "पिछले एक घंटे के LLM costs estimate करें"
 
 #### Kiro IDE Integration
-- **उद्देश्य**: Developer-centric Observability
+- **उद्देश्य**: Developer-centric ऑब्ज़र्वेबिलिटी
 - **Features**:
   - IDE में natural language queries
   - Dashboards पर context switch करने की आवश्यकता नहीं
@@ -356,7 +356,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 ### Cost Optimization
 
-**रणनीतियां**:
+**नीतियां**:
 1. **Metric Aggregation**: CloudWatch को भेजने से पहले metrics pre-aggregate करें
 2. **Sampling**: High-volume workloads के लिए traces sample करें (जैसे requests का 10%)
 3. **Retention Policies**: Non-critical logs का retention कम करें
@@ -383,7 +383,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 - Distribution के लिए Application Load Balancer उपयोग करें
 - Exponential backoff के साथ retry logic implement करें
 
-## Security Best Practices
+## Security बेस्ट प्रैक्टिसेज़
 
 ### 1. Least Privilege Access
 
@@ -458,7 +458,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 ### अल्पकालिक (1-3 महीने)
 
-1. **Anomaly Detection**: असामान्य patterns के लिए ML-powered alerts
+1. **एनोमली डिटेक्शन**: असामान्य patterns के लिए ML-powered alerts
 2. **Cost Forecasting**: Trends पर आधारित monthly costs predict करना
 3. **SLO Tracking**: Service Level Objective monitoring
 4. **Multi-Region**: AWS regions में metrics aggregate करना
@@ -467,12 +467,12 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 1. **Advanced Analytics**: BigQuery/Athena integration
 2. **Custom Dashboards**: Team-specific views
-3. **Integration Testing**: Automated Observability tests
+3. **Integration Testing**: Automated ऑब्ज़र्वेबिलिटी tests
 4. **API Gateway**: External integrations के लिए RESTful API
 
 ### दीर्घकालिक (6-12 महीने)
 
-1. **AI-Powered Insights**: Automated root cause analysis
+1. **AI-Powered Insights**: Automated रूट कॉज़ एनालिसिस
 2. **Predictive Scaling**: Forecasts पर आधारित quotas auto-adjust
 3. **Cost Optimization Engine**: Automated model selection
 4. **Compliance Automation**: Automated audit reports
@@ -493,7 +493,7 @@ CloudWatch Metrics → Alarm Threshold → SNS → Operations Team
 
 ### Related Patterns
 - [AWS Well-Architected Framework](https://aws.amazon.com/architecture/well-architected/)
-- [Observability Best Practices](https://aws.amazon.com/blogs/mt/observability-best-practices/)
+- [ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़](https://aws.amazon.com/blogs/mt/observability-best-practices/)
 - [Multi-Cloud Architecture Patterns](https://aws.amazon.com/blogs/architecture/)
 
 ---

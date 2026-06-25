@@ -5,7 +5,7 @@ sidebar_position: 2
 
 [AI वर्कलोड की मॉनिटरिंग और ऑडिटिंग](/ai/genai/recipes/monitoring_and_auditing_ai_workloads)
 
-[सुरक्षा इंसिडेंट रिस्पॉन्स और फोरेंसिक विश्लेषण](/recipes/cloudtrail/CloudTrail%20Security/)
+[सुरक्षा इंसिडेंट रिस्पॉन्स और फोरेंसिक एनालिसिस](/recipes/cloudtrail/CloudTrail%20Security/)
 
 [लागत अनुमान: CloudTrail Trails से CloudWatch Logs इंजेशन में परिवर्तन](/recipes/cloudtrail/cloudwatch-logs-ingestion-cost/)
 

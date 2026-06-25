@@ -1,5 +1,5 @@
-# Kubecost का उपयोग
-Kubecost ग्राहकों को Kubernetes वातावरण में खर्च और resource efficiency में visibility प्रदान करता है। उच्च स्तर पर, Amazon EKS cost monitoring Kubecost के साथ डिप्लॉय किया जाता है, जिसमें Prometheus शामिल है, एक ओपन-सोर्स मॉनिटरिंग सिस्टम और time series database। Kubecost Prometheus से metrics पढ़ता है फिर cost allocation calculations करता है और metrics को वापस Prometheus में लिखता है। अंत में, Kubecost front end Prometheus से metrics पढ़ता है और उन्हें Kubecost user interface (UI) पर दिखाता है। आर्किटेक्चर निम्नलिखित डायग्राम द्वारा दर्शाया गया है:
+﻿# Kubecost का उपयोग
+Kubecost ग्राहकों को Kubernetes एनवायरनमेंट में खर्च और resource efficiency में visibility प्रदान करता है। उच्च स्तर पर, Amazon EKS cost monitoring Kubecost के साथ डिप्लॉय किया जाता है, जिसमें Prometheus शामिल है, एक ओपन-सोर्स मॉनिटरिंग सिस्टम और time series database। Kubecost Prometheus से metrics पढ़ता है फिर cost allocation calculations करता है और metrics को वापस Prometheus में लिखता है। अंत में, Kubecost front end Prometheus से metrics पढ़ता है और उन्हें Kubecost user interface (UI) पर दिखाता है। आर्किटेक्चर निम्नलिखित डायग्राम द्वारा दर्शाया गया है:
 
 ![Architecture](../../images/kubecost-architecture.png)
 
@@ -116,7 +116,7 @@ oci://public.ecr.aws/kubecost/cost-analyzer --version <$VERSION> \
 
 Kubecost एक web dashboard प्रदान करता है जिसे आप kubectl port-forward, एक ingress, या एक load balancer के माध्यम से access कर सकते हैं। Kubecost का enterprise version [SSO/SAML](https://www.ibm.com/docs/en/kubecost/self-hosted/3.x?topic=configuration-user-management-oidc) का उपयोग करके dashboard तक access को restrict करने और varying level of access प्रदान करने का भी समर्थन करता है। उदाहरण के लिए, team का view केवल उन products तक restrict करना जिनके लिए वे जिम्मेदार हैं।
 
-AWS वातावरण में, Kubecost को expose करने के लिए [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) और authentication, authorization, और user management के लिए [Amazon Cognito](https://aws.amazon.com/cognito/) का उपयोग करने पर विचार करें। आप इस पर अधिक जान सकते हैं [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/)
+AWS एनवायरनमेंट में, Kubecost को expose करने के लिए [AWS Load Balancer Controller](https://docs.aws.amazon.com/eks/latest/userguide/aws-load-balancer-controller.html) और authentication, authorization, और user management के लिए [Amazon Cognito](https://aws.amazon.com/cognito/) का उपयोग करने पर विचार करें। आप इस पर अधिक जान सकते हैं [How to use Application Load Balancer and Amazon Cognito to authenticate users for your Kubernetes web apps](https://aws.amazon.com/blogs/containers/how-to-use-application-load-balancer-and-amazon-cognito-to-authenticate-users-for-your-kubernetes-web-apps/)
 
 
 ### Multi-cluster view
@@ -125,5 +125,5 @@ AWS वातावरण में, Kubecost को expose करने के 
 यह ध्यान रखना महत्वपूर्ण है कि metrics retention केवल enterprise mode का उपयोग करते समय unlimited है।
 
 ### संदर्भ
-* [One Observability Workshop पर Hands-On Kubecost अनुभव](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics)
+* [One ऑब्ज़र्वेबिलिटी Workshop पर Hands-On Kubecost अनुभव](https://catalog.workshops.aws/observability/en-US/aws-managed-oss/amp/ingest-kubecost-metrics)
 * [Blog - Kubecost को Amazon Managed Service for Prometheus के साथ Integrate करना](https://aws.amazon.com/blogs/mt/integrating-kubecost-with-amazon-managed-service-for-prometheus/)

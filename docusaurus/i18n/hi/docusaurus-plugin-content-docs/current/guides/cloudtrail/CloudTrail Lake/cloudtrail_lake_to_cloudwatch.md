@@ -1,4 +1,4 @@
----
+﻿---
 sidebar_position: 3
 ---
 
@@ -6,7 +6,7 @@ sidebar_position: 3
 
 ## अवलोकन
 
-यह गाइड AWS CloudTrail Lake से Amazon CloudWatch में CloudTrail event विश्लेषण के लिए आपके प्राथमिक गंतव्य के रूप में माइग्रेट करने का चरण-दर-चरण दृष्टिकोण प्रदान करता है। यह एक संरचित तीन-चरण माइग्रेशन के माध्यम से चलता है - ऐतिहासिक डेटा निर्यात करना, telemetry enablement rules के माध्यम से नया CloudTrail ingestion सक्षम करना, और cross-account/cross-region centralization सेट करना - ताकि आप CloudWatch Unified Data Store में अपने अन्य परिचालन और सुरक्षा telemetry के साथ CloudTrail गतिविधि को एकीकृत कर सकें। यह गाइड लागत अनुमान, CloudTrail Lake SQL से CloudWatch Logs Insights में query अनुवाद, centralization मूल्य निर्धारण अनुकूलन, आपके log groups के लिए सुरक्षा सर्वोत्तम प्रथाएँ, और लगभग रीयल-टाइम सुरक्षा दृश्यता के लिए dashboards बनाने को भी कवर करता है।
+यह गाइड AWS CloudTrail Lake से Amazon CloudWatch में CloudTrail event एनालिसिस के लिए आपके प्राथमिक गंतव्य के रूप में माइग्रेट करने का चरण-दर-चरण दृष्टिकोण प्रदान करता है। यह एक संरचित तीन-चरण माइग्रेशन के माध्यम से चलता है - ऐतिहासिक डेटा निर्यात करना, telemetry enablement rules के माध्यम से नया CloudTrail ingestion सक्षम करना, और cross-account/cross-region centralization सेट करना - ताकि आप CloudWatch Unified Data Store में अपने अन्य परिचालन और सुरक्षा telemetry के साथ CloudTrail गतिविधि को एकीकृत कर सकें। यह गाइड लागत अनुमान, CloudTrail Lake SQL से CloudWatch Logs Insights में query अनुवाद, centralization मूल्य निर्धारण अनुकूलन, आपके log groups के लिए सुरक्षा बेस्ट प्रैक्टिसएँ, और लगभग रीयल-टाइम सुरक्षा दृश्यता के लिए dashboards बनाने को भी कवर करता है।
 
 ### माइग्रेट क्यों करें?
 

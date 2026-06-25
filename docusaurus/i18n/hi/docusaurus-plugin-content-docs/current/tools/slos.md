@@ -1,4 +1,8 @@
-# Service Level Objectives (SLOs)
+﻿---
+sidebar_label: सर्विस लेवल ऑब्जेक्टिव्स (SLOs)
+---
+
+# सर्विस लेवल ऑब्जेक्टिव्स (SLOs)
 
 क्या उच्च उपलब्धता और लचीले एप्लिकेशन आपकी कंपनी के लिए एक सक्रिय व्यावसायिक चालक हैं**?**
 यदि उत्तर '**हां**' है, तो पढ़ना जारी रखें।
@@ -33,4 +37,5 @@ Application Signals एप्लिकेशन प्रदर्शन के 
 
 किसी सेवा की विश्वसनीयता की निगरानी के लिए CloudWatch Application Signals में SLO कैसे सेट करें, यह जानने के लिए यह [ब्लॉग](https://aws.amazon.com/blogs/mt/how-to-monitor-application-health-using-slos-with-amazon-cloudwatch-application-signals/) देखें।
 
-Observability एक विश्वसनीय सेवा स्थापित करने के लिए एक मूलभूत तत्व है, जिससे आपके संगठन को स्केल पर प्रभावी ढंग से संचालित करने का मार्ग प्रशस्त होता है। हम मानते हैं, [Amazon CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) उस लक्ष्य को प्राप्त करने में आपकी मदद करने के लिए एक शानदार टूल होगा।
+ऑब्ज़र्वेबिलिटी एक विश्वसनीय सेवा स्थापित करने के लिए एक मूलभूत तत्व है, जिससे आपके ऑर्गनाइज़ेशन को स्केल पर प्रभावी ढंग से संचालित करने का मार्ग प्रशस्त होता है। हम मानते हैं, [Amazon CloudWatch Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html) उस लक्ष्य को प्राप्त करने में आपकी मदद करने के लिए एक शानदार टूल होगा।
+

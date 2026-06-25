@@ -1,6 +1,6 @@
-# लॉग एकीकरण
+﻿# लॉग एकीकरण
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हम AWS Native सेवाओं के साथ Amazon EKS Logging से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हम AWS Native सेवाओं के साथ Amazon EKS Logging से संबंधित निम्नलिखित विषयों पर गहराई से चर्चा करेंगे:
 
 * AWS EKS logging का परिचय
 * Amazon EKS control plane logging
@@ -27,7 +27,7 @@ Kubernetes में केंद्रीकृत लॉग एकीकरण
 
 ### Amazon EKS control plane logging
 
-एक Amazon EKS क्लस्टर आपके Kubernetes क्लस्टर के लिए एक उच्च-उपलब्धता, एकल-किरायेदार control plane और आपके कंटेनरों को चलाने वाले Amazon EKS nodes से मिलकर बनता है। [Amazon EKS control plane logging](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) में निम्नलिखित क्लस्टर control plane लॉग प्रकार शामिल हैं:
+एक Amazon EKS क्लस्टर आपके Kubernetes क्लस्टर के लिए एक उच्च-उपलब्धता, एक-किरायेदार control plane और आपके कंटेनरों को चलाने वाले Amazon EKS nodes से मिलकर बनता है। [Amazon EKS control plane logging](https://docs.aws.amazon.com/eks/latest/userguide/control-plane-logs.html) में निम्नलिखित क्लस्टर control plane लॉग प्रकार शामिल हैं:
 
 * **API server (`api`)** - आपके क्लस्टर का API server control plane कंपोनेंट है जो Kubernetes API एक्सपोज करता है।
 * **Audit (`audit`)** - Kubernetes audit logs व्यक्तिगत उपयोगकर्ताओं, प्रशासकों, या सिस्टम कंपोनेंट्स का रिकॉर्ड प्रदान करते हैं जिन्होंने आपके क्लस्टर को प्रभावित किया है।
@@ -128,7 +128,7 @@ fields @logStream, @timestamp, responseStatus.code, @message| filter @logStream 
 
 ### Amazon EKS application logging
 
-Kubernetes वातावरण में बड़े पैमाने पर एप्लिकेशन चलाते समय Amazon EKS application logging अपरिहार्य हो जाती है। एप्लिकेशन लॉग्स एकत्र करने के लिए आपको अपने Amazon EKS क्लस्टर में [Fluent Bit](https://fluentbit.io/), [Fluentd](https://www.fluentd.org/), या [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) जैसा लॉग aggregator इंस्टॉल करना होगा।
+Kubernetes एनवायरनमेंट में बड़े पैमाने पर एप्लिकेशन चलाते समय Amazon EKS application logging अपरिहार्य हो जाती है। एप्लिकेशन लॉग्स एकत्र करने के लिए आपको अपने Amazon EKS क्लस्टर में [Fluent Bit](https://fluentbit.io/), [Fluentd](https://www.fluentd.org/), या [CloudWatch Container Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html) जैसा लॉग aggregator इंस्टॉल करना होगा।
 
 हम CloudWatch को एप्लिकेशन और क्लस्टर लॉग्स भेजने के लिए लॉग collector और forwarder के रूप में Fluent Bit का उपयोग करने की अनुशंसा करते हैं। फिर आप CloudWatch में subscription filter का उपयोग करके लॉग्स को Amazon OpenSearch Service में स्ट्रीम कर सकते हैं।
 
@@ -152,7 +152,7 @@ Amazon EKS on Fargate के साथ, आप अपने Kubernetes nodes आ
 
 एकीकृत एकीकृत लॉग सिस्टम निम्नलिखित लाभ प्रदान करता है:
 
-* विभिन्न कंप्यूटिंग प्लेटफ़ॉर्म में सभी लॉग्स तक पहुँच का एकल बिंदु
+* विभिन्न कंप्यूटिंग प्लेटफ़ॉर्म में सभी लॉग्स तक पहुँच का एक बिंदु
 * लॉग्स के ट्रांसफॉर्मेशन को परिभाषित और मानकीकृत करने में सहायता
 * Amazon OpenSearch Service का उपयोग करके लॉग्स को तेज़ी से इंडेक्स और खोजने और विज़ुअलाइज़ करने की क्षमता
 
@@ -166,4 +166,5 @@ Amazon EKS on Fargate के साथ, आप अपने Kubernetes nodes आ
 
 ## निष्कर्ष
 
-Observability सर्वोत्तम प्रथाओं गाइड के इस सेक्शन में, हमने Kubernetes logging के तीन प्रकारों जैसे control plane logging, node logging, और application logging में गहराई से जाना। इसके अलावा हमने AWS Native सेवाओं जैसे Kinesis Data Firehose और Amazon OpenSearch Service का उपयोग करके Amazon EKS और अन्य कंप्यूट प्लेटफ़ॉर्म से एकीकृत लॉग एकीकरण के बारे में सीखा। अधिक गहन अध्ययन के लिए, हम AWS [One Observability Workshop](https://catalog.workshops.aws/observability/en-US) की AWS native Observability श्रेणी के तहत Logs और Insights मॉड्यूल का अभ्यास करने की अत्यधिक अनुशंसा करते हैं।
+ऑब्ज़र्वेबिलिटी बेस्ट प्रैक्टिसेज़ गाइड के इस सेक्शन में, हमने Kubernetes logging के तीन प्रकारों जैसे control plane logging, node logging, और application logging में गहराई से जाना। इसके अलावा हमने AWS Native सेवाओं जैसे Kinesis Data Firehose और Amazon OpenSearch Service का उपयोग करके Amazon EKS और अन्य कंप्यूट प्लेटफ़ॉर्म से एकीकृत लॉग एकीकरण के बारे में सीखा। अधिक गहन अध्ययन के लिए, हम AWS [One ऑब्ज़र्वेबिलिटी Workshop](https://catalog.workshops.aws/observability/en-US) की AWS native ऑब्ज़र्वेबिलिटी श्रेणी के तहत Logs और Insights मॉड्यूल का अभ्यास करने की अत्यधिक अनुशंसा करते हैं।
+

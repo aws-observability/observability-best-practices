@@ -1,14 +1,14 @@
-# CloudWatch Logs Transformation के साथ CloudTrail संवर्धन
+﻿# CloudWatch Logs Transformation के साथ CloudTrail संवर्धन
 
 ## परिचय
 
-[AWS CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) AWS API गतिविधि का व्यापक ऑडिट कवरेज प्रदान करता है, जो संगठनों के लिए एक पूर्ण सुरक्षा और अनुपालन आधार बनाता है। इन लॉग्स को [Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) को डिलीवर करते समय, [CloudWatch Logs Transformation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch-Logs-Transformation.html) संगठनों को कस्टम Lambda functions, बाहरी ETL पाइपलाइन, या पोस्ट-प्रोसेसिंग स्क्रिप्ट्स के बिना CloudTrail डेटा को संवर्धित और अनुकूलित करने में सक्षम बनाता है।
+[AWS CloudTrail](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html) AWS API गतिविधि का व्यापक ऑडिट कवरेज प्रदान करता है, जो ऑर्गनाइज़ेशन्स के लिए एक पूर्ण सुरक्षा और अनुपालन आधार बनाता है। इन लॉग्स को [Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) को डिलीवर करते समय, [CloudWatch Logs Transformation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatch-Logs-Transformation.html) ऑर्गनाइज़ेशन्स को कस्टम Lambda functions, बाहरी ETL पाइपलाइन, या पोस्ट-प्रोसेसिंग स्क्रिप्ट्स के बिना CloudTrail डेटा को संवर्धित और अनुकूलित करने में सक्षम बनाता है।
 
 declarative JSON processor कॉन्फ़िगरेशन का उपयोग करके, आप nested fields को parse कर सकते हैं, सुरक्षा संदर्भ जोड़ सकते हैं, रिसोर्सेज को वर्गीकृत कर सकते हैं, और CloudTrail इवेंट्स CloudWatch Logs में प्रवाहित होते समय downstream delivery के लिए डेटा को अनुकूलित कर सकते हैं। यह गाइड सुरक्षा मॉनिटरिंग, अनुपालन रिपोर्टिंग और संचालन दक्षता के लिए व्यावहारिक transformation पैटर्न प्रदर्शित करता है।
 
 ## यह क्यों महत्वपूर्ण है
 
-[CloudTrail लॉग्स को CloudWatch Logs में डिलीवर करने वाले](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) संगठनों को अक्सर विशिष्ट संचालन workflows और tooling आवश्यकताओं के साथ संरेखित करने के लिए इस डेटा को बढ़ाने की आवश्यकता होती है:
+[CloudTrail लॉग्स को CloudWatch Logs में डिलीवर करने वाले](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html) ऑर्गनाइज़ेशन्स को अक्सर विशिष्ट संचालन workflows और tooling आवश्यकताओं के साथ संरेखित करने के लिए इस डेटा को बढ़ाने की आवश्यकता होती है:
 
 - **सुरक्षा टीमें** threat detection workflows को तेज़ करने के लिए कस्टम जोखिम संकेतक और वर्गीकरण टैग जोड़ना चाहती हैं
 - **अनुपालन टीमों** को audit प्रतिक्रियाओं को सुव्यवस्थित करने के लिए इवेंट्स को regulatory framework (PCI-DSS, HIPAA, SOC2) द्वारा पूर्व-वर्गीकृत करने की आवश्यकता होती है
@@ -21,7 +21,7 @@ native transformation क्षमताओं के बिना, टीमे
 
 ### CloudWatch Logs
 
-[Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) CloudTrail के लिए audit log destination के रूप में कार्य करता है। जब CloudTrail CloudWatch Logs को लॉग्स डिलीवर करता है, तो प्रत्येक API event [log groups और streams](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html) के भीतर एक log event बन जाता है, जो संगठनों को सक्षम बनाता है:
+[Amazon CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html) CloudTrail के लिए audit log destination के रूप में कार्य करता है। जब CloudTrail CloudWatch Logs को लॉग्स डिलीवर करता है, तो प्रत्येक API event [log groups और streams](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html) के भीतर एक log event बन जाता है, जो ऑर्गनाइज़ेशन्स को सक्षम बनाता है:
 
 - [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html) का उपयोग करके हाल की API गतिविधि क्वेरी करना
 - [metric filters और alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) के साथ सुरक्षा alerts बनाना
@@ -172,7 +172,7 @@ fields @timestamp, eventName, user_type, source_ip, region
 
 ### 3. Optimized Downstream Delivery Through Field Reduction
 
-**चुनौती**: CloudTrail data events भारी मात्रा में जनरेट करते हैं। संगठन downstream systems को forward करते समय security-relevant fields पर ध्यान केंद्रित कर सकते हैं।
+**चुनौती**: CloudTrail data events भारी मात्रा में जनरेट करते हैं। ऑर्गनाइज़ेशन downstream systems को forward करते समय security-relevant fields पर ध्यान केंद्रित कर सकते हैं।
 
 **समाधान**: subscription filters के माध्यम से forward करने से पहले fields हटाना।
 
@@ -247,7 +247,7 @@ fields @timestamp, eventName, user_type, source_ip, region
 
 ### 5. Multi-Account Environment Tagging
 
-**चुनौती**: कई AWS accounts वाले संगठनों को यह तुरंत पहचानने की आवश्यकता है कि कौन सा environment (prod/staging/dev) प्रत्येक CloudTrail event जनरेट करता है।
+**चुनौती**: कई AWS accounts वाले ऑर्गनाइज़ेशन्स को यह तुरंत पहचानने की आवश्यकता है कि कौन सा environment (prod/staging/dev) प्रत्येक CloudTrail event जनरेट करता है।
 
 **समाधान**: Account IDs को environment labels से मैप करना।
 
@@ -373,7 +373,7 @@ fields @timestamp, eventName, user_type, source_ip, region
 
 **लाभ**: audits के दौरान अलग event catalogs बनाए रखे बिना compliance-relevant events की तत्काल फ़िल्टरिंग सक्षम करता है।
 
-## सर्वोत्तम प्रथाएं
+## बेस्ट प्रैक्टिसेज़
 
 ### डिज़ाइन सिद्धांत
 
@@ -435,4 +435,5 @@ fields @timestamp, @message
 
 ## निष्कर्ष
 
-CloudWatch Logs Transformation संगठनों को ingestion time पर events को सुरक्षा संदर्भ के साथ संवर्धित करके, जटिल JSON structures को flatten करके, और downstream delivery को अनुकूलित करके CloudWatch Logs में डिलीवर किए गए CloudTrail डेटा का मूल्य अधिकतम करने में सक्षम बनाता है - यह सब native AWS क्षमताओं के माध्यम से। यह गाइड सरलीकृत अनुपालन रिपोर्टिंग और कम downstream costs को सक्षम करने के लिए आवश्यक patterns, सर्वोत्तम प्रथाएं और कार्यान्वयन रणनीतियाँ प्रदान करता है।
+CloudWatch Logs Transformation ऑर्गनाइज़ेशन्स को ingestion time पर events को सुरक्षा संदर्भ के साथ संवर्धित करके, जटिल JSON structures को flatten करके, और downstream delivery को अनुकूलित करके CloudWatch Logs में डिलीवर किए गए CloudTrail डेटा का मूल्य अधिकतम करने में सक्षम बनाता है - यह सब native AWS क्षमताओं के माध्यम से। यह गाइड सरलीकृत अनुपालन रिपोर्टिंग और कम downstream costs को सक्षम करने के लिए आवश्यक patterns, बेस्ट प्रैक्टिसेज़ और कार्यान्वयन नीतियाँ प्रदान करता है।
+

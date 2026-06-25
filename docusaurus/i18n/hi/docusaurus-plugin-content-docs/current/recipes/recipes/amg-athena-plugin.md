@@ -1,6 +1,6 @@
 # Amazon Managed Grafana में Athena का उपयोग
 
-इस रेसिपी में हम आपको दिखाते हैं कि [Amazon Athena][athena]--एक सर्वरलेस, इंटरैक्टिव क्वेरी सेवा जो आपको मानक SQL का उपयोग करके Amazon S3 में डेटा का विश्लेषण करने की अनुमति देती है--को [Amazon Managed Grafana][amg] में कैसे उपयोग करें। यह एकीकरण [Athena data source for Grafana][athena-ds] द्वारा सक्षम है, जो एक ओपन सोर्स प्लगइन है जो किसी भी DIY Grafana इंस्टेंस में उपयोग के लिए उपलब्ध है और Amazon Managed Grafana में पूर्व-स्थापित भी है।
+इस रेसिपी में हम आपको दिखाते हैं कि [Amazon Athena][athena]--एक सर्वरलेस, इंटरैक्टिव क्वेरी सेवा जो आपको मानक SQL का उपयोग करके Amazon S3 में डेटा का एनालिसिस करने की अनुमति देती है--को [Amazon Managed Grafana][amg] में कैसे उपयोग करें। यह एकीकरण [Athena data source for Grafana][athena-ds] द्वारा सक्षम है, जो एक ओपन सोर्स प्लगइन है जो किसी भी DIY Grafana इंस्टेंस में उपयोग के लिए उपलब्ध है और Amazon Managed Grafana में पूर्व-स्थापित भी है।
 
 :::note
     इस गाइड को पूरा करने में लगभग 20 मिनट लगेंगे।
@@ -8,7 +8,7 @@
 
 ## पूर्वापेक्षाएँ
 
-* [AWS CLI][aws-cli] आपके वातावरण में स्थापित और [कॉन्फ़िगर][aws-cli-conf] होनी चाहिए।
+* [AWS CLI][aws-cli] आपके एनवायरनमेंट में स्थापित और [कॉन्फ़िगर][aws-cli-conf] होनी चाहिए।
 * आपके खाते से Amazon Athena तक पहुँच होनी चाहिए।
 
 ## इंफ्रास्ट्रक्चर
@@ -98,7 +98,7 @@ LOCATION 's3://osm-pds/changesets/';
 
 #### VPC फ्लो लॉग्स डेटा लोड करें
 
-दूसरा उपयोग का मामला सुरक्षा-प्रेरित है: [VPC Flow Logs][vpcflowlogs] का उपयोग करके नेटवर्क ट्रैफ़िक का विश्लेषण।
+दूसरा उपयोग का मामला सुरक्षा-प्रेरित है: [VPC Flow Logs][vpcflowlogs] का उपयोग करके नेटवर्क ट्रैफ़िक का एनालिसिस।
 
 सबसे पहले, हमें EC2 को हमारे लिए VPC Flow Logs जनरेट करने के लिए कहना होगा। यदि आपने यह पहले से नहीं किया है, तो अभी नेटवर्क इंटरफ़ेस स्तर, सबनेट स्तर, या VPC स्तर पर [VPC flow logs बनाएं][createvpcfl]।
 
@@ -229,7 +229,7 @@ LIMIT 500;
 :::
 ### VPC फ्लो लॉग्स डेटा का उपयोग
 
-VPC फ्लो लॉग डेटा का विश्लेषण करने, SSH और RDP ट्रैफ़िक का पता लगाने के लिए, निम्नलिखित SQL क्वेरीज का उपयोग करें।
+VPC फ्लो लॉग डेटा का एनालिसिस करने, SSH और RDP ट्रैफ़िक का पता लगाने के लिए, निम्नलिखित SQL क्वेरीज का उपयोग करें।
 
 SSH/RDP ट्रैफ़िक पर सारणीबद्ध अवलोकन प्राप्त करना:
 
@@ -269,7 +269,7 @@ VPC फ्लो लॉग डेटा को विज़ुअलाइज़
 यहाँ से, आप Amazon Managed Grafana में अपना डैशबोर्ड बनाने के लिए निम्नलिखित गाइड का उपयोग कर सकते हैं:
 
 * [उपयोगकर्ता गाइड: डैशबोर्ड](https://docs.aws.amazon.com/grafana/latest/userguide/dashboard-overview.html)
-* [डैशबोर्ड बनाने के लिए सर्वोत्तम प्रथाएं](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
+* [डैशबोर्ड बनाने के लिए बेस्ट प्रैक्टिसेज़](https://grafana.com/docs/grafana/latest/best-practices/best-practices-for-creating-dashboards/)
 
 बस इतना ही, बधाई हो आपने Grafana से Athena का उपयोग करना सीख लिया!
 

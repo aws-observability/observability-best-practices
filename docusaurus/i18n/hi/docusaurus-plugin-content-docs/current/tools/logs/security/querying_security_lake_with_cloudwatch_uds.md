@@ -1,4 +1,4 @@
----
+﻿---
 sidebar_position: 1
 ---
 
@@ -8,7 +8,7 @@ sidebar_position: 1
 
 जब आप अपने सुरक्षा लॉग प्रबंधन को [Amazon CloudWatch Unified Data Store (unified data store)](https://aws.amazon.com/blogs/aws/amazon-cloudwatch-introduces-unified-data-management-and-analytics-for-operations-security-and-compliance/) में माइग्रेट करते हैं, तो आप आगे बढ़ते हुए ऑपरेशनल और सुरक्षा टेलीमेट्री के लिए एक आधुनिक, एकीकृत डेस्टिनेशन प्राप्त करते हैं। लेकिन आपका ऐतिहासिक सुरक्षा डेटा - AWS CloudTrail इवेंट, Amazon Virtual Private Cloud (Amazon VPC) Flow Logs, AWS Security Hub findings, और माइग्रेशन से पहले [Amazon Security Lake](https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html) में संचित अन्य रिकॉर्ड - गायब नहीं होता। यह ठीक वहीं रहता है जहां है, Security Lake की Amazon S3 समर्थित संरचना में पहले से संग्रहीत और विभाजित।
 
-यह गाइड दिखाती है कि कैसे **Amazon Athena** का उपयोग आपके ऐतिहासिक Security Lake डेटा और आपके नए CloudWatch unified data store लॉग दोनों के लिए एक एकल क्वेरी कंसोल के रूप में किया जाए - बिना किसी डेटा को एक्सपोर्ट, कॉपी, या डुप्लीकेट किए। आप प्रत्येक डेटा स्टोर को स्वतंत्र रूप से क्वेरी कर सकते हैं, या क्रॉस-प्लेटफॉर्म दृश्यता के लिए `UNION ALL` का उपयोग करके दोनों के परिणामों को संयोजित कर सकते हैं।
+यह गाइड दिखाती है कि कैसे **Amazon Athena** का उपयोग आपके ऐतिहासिक Security Lake डेटा और आपके नए CloudWatch unified data store लॉग दोनों के लिए एक एक क्वेरी कंसोल के रूप में किया जाए - बिना किसी डेटा को एक्सपोर्ट, कॉपी, या डुप्लीकेट किए। आप प्रत्येक डेटा स्टोर को स्वतंत्र रूप से क्वेरी कर सकते हैं, या क्रॉस-प्लेटफॉर्म दृश्यता के लिए `UNION ALL` का उपयोग करके दोनों के परिणामों को संयोजित कर सकते हैं।
 
 > **नए** लॉग इवेंट आपके प्राथमिक प्लेटफॉर्म के रूप में CloudWatch unified data store में प्रवाहित होते हैं।
 > **ऐतिहासिक** इवेंट Security Lake में रहते हैं।
@@ -101,7 +101,7 @@ SHOW TABLES IN "s3tablescatalog/aws-cloudwatch"."logs"
 
 ## Athena से दोनों डेटा स्टोर क्वेरी करना
 
-CloudWatch unified data store में माइग्रेट करने के बाद, Athena ऐतिहासिक और वर्तमान दोनों सुरक्षा डेटा के लिए आपका एकल क्वेरी कंसोल बन जाता है। Security Lake टेबल AWS Glue Data Catalog में रजिस्टर हैं, और CloudWatch unified data store टेबल S3 Tables कैटलॉग में रजिस्टर हैं। Athena दोनों तक पहुंच सकता है - कोई डेटा मूवमेंट, कोई एक्सपोर्ट पाइपलाइन, कोई डुप्लीकेशन नहीं।
+CloudWatch unified data store में माइग्रेट करने के बाद, Athena ऐतिहासिक और वर्तमान दोनों सुरक्षा डेटा के लिए आपका एक क्वेरी कंसोल बन जाता है। Security Lake टेबल AWS Glue Data Catalog में रजिस्टर हैं, और CloudWatch unified data store टेबल S3 Tables कैटलॉग में रजिस्टर हैं। Athena दोनों तक पहुंच सकता है - कोई डेटा मूवमेंट, कोई एक्सपोर्ट पाइपलाइन, कोई डुप्लीकेशन नहीं।
 
 नीचे के अनुभाग तीन स्तरों की क्वेरीइंग के माध्यम से चलते हैं:
 
@@ -527,3 +527,4 @@ LIMIT 50;
 | Vulnerability findings क्वेरी करें | CW UDS टेबल को `aws_security_hub__vulnerability_finding` से बदलें |
 
 ---
+

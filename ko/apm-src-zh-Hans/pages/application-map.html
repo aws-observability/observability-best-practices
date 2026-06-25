@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>应用程序地图 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>应用程序地图</h1></header>
+      <article>
+        <section>
+          <h2>概述</h2>
+          <p>CloudWatch <strong>应用程序地图</strong>可视化您的应用程序拓扑和运行状况。它取代了 Application Signals 中旧的"服务地图"术语。</p>
+          <p>它显示客户端、金丝雀、服务和依赖项之间的连接，帮助团队了解执行流程并快速定位故障和延迟的来源。</p>
+        </section>
+
+        <section>
+          <h2>关键功能</h2>
+          <ul>
+            <li><strong>SLO/SLI 健康状态：</strong>查看哪些服务达到或违反了目标，以及影响如何传播到下游。</li>
+            <li><strong>深入分析：</strong>选择节点/边以查看指标并导航到服务详情。</li>
+            <li><strong>分组和过滤：</strong>使用默认分组（相关服务、环境）或使用标签或 OTEL 资源属性定义自定义分组。</li>
+            <li><strong>未检测的服务：</strong>Application Signals 可以显示尚未进行检测的服务，以帮助确定部署优先级。</li>
+            <li><strong>跨账户可见性：</strong>在配置跨账户 Observability 后，可视化多个账户中的服务。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>官方文档</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceMap.html">使用 CloudWatch 应用程序地图查看应用程序拓扑并监控运行状况</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

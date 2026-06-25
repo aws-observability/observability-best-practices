@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>보안 및 규정 준수 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>보안 및 규정 준수</h1></header>
+      <article>
+        <section>
+          <h2>보안</h2>
+          <p>CloudWatch Application Signals는 관찰성 데이터를 보호하고 산업 표준을 준수하기 위해 여러 계층의 보안을 구현합니다.</p>
+        </section>
+
+        <section>
+          <h3>데이터 암호화</h3>
+
+          <h4>저장 시 암호화:</h4>
+          <ul>
+            <li>모든 트레이스 데이터는 AES-256 암호화를 사용하여 암호화됩니다</li>
+            <li>RUM 데이터는 AWS Key Management Service(KMS)로 암호화됩니다</li>
+            <li>합성 모니터링 데이터는 암호화된 상태로 저장됩니다</li>
+            <li>추가 제어를 위해 고객 관리 키를 사용할 수 있습니다</li>
+          </ul>
+
+          <h4>전송 중 암호화:</h4>
+          <ul>
+            <li>모든 데이터 전송은 TLS 1.2 이상을 사용합니다</li>
+            <li>CloudWatch 서비스에 대한 API 호출은 암호화됩니다</li>
+            <li>RUM 데이터 수집은 HTTPS를 사용합니다</li>
+            <li>에이전트와 콜렉터 간 통신은 보안 처리됩니다</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>자격 증명 및 접근 관리</h3>
+
+          <h4>IAM 권한:</h4>
+          <p>Application Signals에 대한 접근 권한을 부여할 때 최소 권한 원칙을 사용합니다:</p>
+
+          <h5>읽기 전용 접근:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+          <h5>전체 접근:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>데이터 개인정보 보호 및 PII 보호</h3>
+
+          <h4>데이터 정제:</h4>
+          <ul>
+            <li>민감한 정보에 대한 데이터 마스킹 구현</li>
+            <li>트레이스 속성의 PII에 대해 토큰화 사용</li>
+            <li>데이터 보존 정책 구성</li>
+            <li>수집된 데이터의 정기 감사</li>
+          </ul>
+
+          <h4>모범 사례:</h4>
+          <ul>
+            <li>트레이스에 비밀번호, API 키 또는 토큰을 절대 포함하지 마세요</li>
+            <li>이메일 주소와 전화번호를 해싱하거나 마스킹하세요</li>
+            <li>민감한 데이터가 포함된 URL에서 쿼리 파라미터를 제거하세요</li>
+            <li>개인 정보 대신 일반 식별자를 사용하세요</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>네트워크 보안</h3>
+
+          <h4>VPC 구성:</h4>
+          <ul>
+            <li>향상된 보안을 위해 VPC 내에 에이전트를 배포하세요</li>
+            <li>CloudWatch API 호출에 VPC 엔드포인트를 사용하세요</li>
+            <li>트래픽을 제한하도록 보안 그룹을 구성하세요</li>
+            <li>추가 제어를 위해 네트워크 ACL을 구현하세요</li>
+          </ul>
+
+          <h4>에이전트 보안:</h4>
+          <ul>
+            <li>최소한의 필요 권한으로 에이전트를 실행하세요</li>
+            <li>보안 패치로 에이전트를 최신 상태로 유지하세요</li>
+            <li>보안 이벤트에 대해 에이전트 로그를 모니터링하세요</li>
+            <li>가능한 경우 읽기 전용 접근을 사용하세요</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>데이터 개인정보 보호</h2>
+          <p>Application Signals가 데이터 개인정보 보호 요구 사항을 처리하는 방법을 이해합니다.</p>
+        </section>
+
+        <section>
+          <h3>데이터 수집 및 사용</h3>
+
+          <h4>수집하는 데이터:</h4>
+          <ul>
+            <li>애플리케이션 성능 메트릭 및 트레이스</li>
+            <li>서비스 종속성 정보</li>
+            <li>오류 정보 및 스택 트레이스</li>
+            <li>시스템 및 인프라 메타데이터</li>
+          </ul>
+
+          <h4>수집하지 않는 데이터:</h4>
+          <ul>
+            <li>애플리케이션 비즈니스 데이터 또는 사용자 콘텐츠</li>
+            <li>데이터베이스 내용 또는 파일 시스템 데이터</li>
+            <li>사용자 자격 증명 또는 인증 토큰</li>
+            <li>개인 식별 정보(명시적으로 포함하지 않는 한)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>데이터 보존</h3>
+
+          <h4>기본 보존 기간:</h4>
+          <ul>
+            <li><strong>트레이스 데이터:</strong> 30일 (최대 1년까지 구성 가능)</li>
+            <li><strong>메트릭:</strong> 15개월 (표준 CloudWatch 보존)</li>
+            <li><strong>RUM 데이터:</strong> 30일 (최대 1년까지 구성 가능)</li>
+            <li><strong>Synthetics 결과:</strong> 90일 (구성 가능)</li>
+          </ul>
+
+          <h4>데이터 삭제:</h4>
+          <ul>
+            <li>CloudWatch 데이터 보존 정책 사용</li>
+            <li>자동화된 데이터 라이프사이클 관리 구현</li>
+            <li>필요한 경우 AWS Support를 통해 데이터 삭제 요청</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>규정 준수 프레임워크</h3>
+
+          <h4>지원되는 표준:</h4>
+          <ul>
+            <li><strong>SOC 2:</strong> 보안, 가용성 및 기밀성 통제</li>
+            <li><strong>PCI DSS:</strong> 결제 카드 산업 데이터 보안 표준</li>
+            <li><strong>HIPAA:</strong> 건강 보험 이식성 및 책임에 관한 법률</li>
+            <li><strong>GDPR:</strong> 일반 데이터 보호 규정</li>
+            <li><strong>FedRAMP:</strong> 연방 위험 및 인증 관리 프로그램</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>규정 준수 지침</h2>
+          <p>일반적인 규정 준수 시나리오에 대한 구체적인 지침입니다.</p>
+        </section>
+
+        <section>
+          <h3>HIPAA 규정 준수</h3>
+
+          <h4>요구 사항:</h4>
+          <ul>
+            <li>트레이스에서 보호 건강 정보(PHI)를 암호화</li>
+            <li>접근 제어 및 감사 로깅 구현</li>
+            <li>AWS와 비즈니스 협력 계약(BAA) 사용</li>
+            <li>적절한 데이터 보존 정책 구성</li>
+          </ul>
+
+          <h4>구현:</h4>
+          <ul>
+            <li>트레이스 속성 및 스팬 이름에서 PHI 마스킹</li>
+            <li>고객 관리 KMS 키 사용</li>
+            <li>감사 로깅을 위해 CloudTrail 활성화</li>
+            <li>데이터 격리를 위해 VPC 엔드포인트 구성</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PCI DSS 규정 준수</h3>
+
+          <h4>주요 고려 사항:</h4>
+          <ul>
+            <li>트레이스 또는 로그에 카드 소유자 데이터를 절대 포함하지 마세요</li>
+            <li>네트워크 분리 구현</li>
+            <li>전송 중 및 저장 시 데이터에 암호화 사용</li>
+            <li>정기적인 보안 평가 및 침투 테스트</li>
+          </ul>
+
+          <h4>모범 사례:</h4>
+          <ul>
+            <li>계측 전에 민감한 데이터 토큰화</li>
+            <li>Application Signals 에이전트에 프라이빗 서브넷 사용</li>
+            <li>최소 권한 IAM 정책 구현</li>
+            <li>수집된 데이터의 정기 검토</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GDPR 규정 준수</h3>
+
+          <h4>데이터 주체 권리:</h4>
+          <ul>
+            <li>개인 데이터에 대한 접근권</li>
+            <li>정정권</li>
+            <li>삭제권 ("잊힐 권리")</li>
+            <li>데이터 이식권</li>
+          </ul>
+
+          <h4>구현:</h4>
+          <ul>
+            <li>텔레메트리 데이터에서 PII 수집 최소화</li>
+            <li>데이터 익명화 기술 구현</li>
+            <li>비즈니스 요구에 따라 데이터 보존 구성</li>
+            <li>데이터 처리 활동 문서화</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>보안 모니터링</h2>
+          <p>보안 이벤트에 대해 Application Signals 배포를 모니터링합니다.</p>
+        </section>
+
+        <section>
+          <h3>보안 모범 사례</h3>
+          <ul>
+            <li>API 활동 로깅을 위해 CloudTrail 활성화</li>
+            <li>IAM 정책 변경 및 접근 패턴 모니터링</li>
+            <li>비정상적인 데이터 접근 패턴에 대한 알림 설정</li>
+            <li>정기적인 보안 평가 및 취약점 스캔</li>
+            <li>다중 인증(MFA) 구현</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>인시던트 대응</h3>
+          <ul>
+            <li>보안 이벤트에 대한 인시던트 대응 계획 수립</li>
+            <li>침해 시 Application Signals를 비활성화하는 방법 숙지</li>
+            <li>에스컬레이션 절차 문서화</li>
+            <li>정기적인 인시던트 대응 테스트</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

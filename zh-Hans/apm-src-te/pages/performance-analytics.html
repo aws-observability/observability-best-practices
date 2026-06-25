@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>పనితీరు విశ్లేషణలు — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>పనితీరు విశ్లేషణలు</h1></header>
+      <article>
+        <section>
+          <h2>ప్రామాణిక అప్లికేషన్ మెట్రిక్స్</h2>
+          <p>Application Signals ప్రామాణిక అప్లికేషన్ మెట్రిక్స్‌ను CloudWatch కు ప్రచురిస్తుంది (నేమ్‌స్పేస్ <code>ApplicationSignals</code>). ఈ మెట్రిక్స్ సేవలు, ఆపరేషన్‌లు మరియు డిపెండెన్సీల అంతటా వేగవంతమైన ట్రయేజ్ కోసం రూపొందించబడ్డాయి.</p>
+          <ul>
+            <li><strong>లేటెన్సీ</strong> (ms)</li>
+            <li><strong>ఫాల్ట్</strong> (HTTP 5xx మరియు span status ఎర్రర్‌లు)</li>
+            <li><strong>ఎర్రర్</strong> (HTTP 4xx)</li>
+            <li><strong>అందుబాటు</strong> కన్సోల్‌లో \( (1 - \text{Faults}/\text{Total}) \times 100 \) గా లెక్కించబడుతుంది, ఇక్కడ Total <code>SampleCount(Latency)</code> నుండి తీసుకోబడుతుంది. 4xx ప్రతిస్పందనలు ఈ అందుబాటు లెక్కింపు కోసం విజయవంతంగా పరిగణించబడతాయి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals ద్వారా సేకరించబడిన మెట్రిక్స్</a>.</p>
+        </section>
+
+        <section>
+          <h2>డైమెన్షన్‌లు (సేవ vs డిపెండెన్సీ)</h2>
+          <p>మెట్రిక్స్ డైమెన్షన్‌లతో ఎమిట్ చేయబడతాయి, ఇవి మీకు పనితీరును విభజించడానికి అనుమతిస్తాయి:</p>
+          <ul>
+            <li><strong>సేవ మెట్రిక్స్</strong>: Environment, Service, Operation</li>
+            <li><strong>డిపెండెన్సీ మెట్రిక్స్</strong>: Environment, Service, Operation అలాగే RemoteService / RemoteOperation (మరియు ప్లాట్‌ఫారమ్‌ను బట్టి ఇతర రిమోట్ డైమెన్షన్‌లు)</li>
+          </ul>
+          <p>ఇది "ఏ ఆపరేషన్ రిగ్రెస్ అయింది?" మరియు "లేటెన్సీ డిపెండెన్సీ కాల్ వల్ల కలుగుతుందా?" వంటి ప్రశ్నలకు సమాధానమివ్వడం సులభం చేస్తుంది.</p>
+        </section>
+
+        <section>
+          <h2>రన్‌టైమ్ మెట్రిక్స్ (మద్దతు ఉన్న చోట)</h2>
+          <p>మద్దతు ఉన్న రన్‌టైమ్‌ల కోసం Application Signals రన్‌టైమ్ మెట్రిక్స్‌ను కూడా సేకరించగలదు (ఉదాహరణకు, JVM GC, మెమరీ, CPU; Python ప్రాసెస్ మెట్రిక్స్; .NET రన్‌టైమ్ మెట్రిక్స్). Node.js కోసం రన్‌టైమ్ మెట్రిక్స్ సేకరించబడవు.</p>
+          <p>మీరు <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> తో రన్‌టైమ్ మెట్రిక్స్ సేకరణను నిలిపివేయవచ్చు (ప్లాట్‌ఫారమ్-నిర్దిష్ట దశలు డాక్స్‌లో ఉన్నాయి).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

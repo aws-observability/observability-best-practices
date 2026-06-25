@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API संदर्भ — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>API संदर्भ</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals APIs</h2>
+          <p>Application Signals डेटा और कार्यक्षमता तक प्रोग्रामेटिक एक्सेस।</p>
+        </section>
+
+        <section>
+          <h3>सर्विस ऑपरेशन्स</h3>
+
+          <h4>ListServices</h4>
+          <p>Application Signals द्वारा डिस्कवर की गई सर्विसेज़ की सूची लौटाता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>GET /services?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>पैरामीटर्स:</h5>
+          <ul>
+            <li><code>nextToken</code> - पेजिनेशन के लिए टोकन</li>
+            <li><code>maxResults</code> - परिणामों की अधिकतम संख्या (1-100)</li>
+            <li><code>startTime</code> - Unix टाइमस्टैम्प में प्रारंभ समय</li>
+            <li><code>endTime</code> - Unix टाइमस्टैम्प में समाप्ति समय</li>
+          </ul>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "namespace": "string",
+      "logGroupName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetService</h3>
+          <p>किसी विशिष्ट सर्विस के बारे में विस्तृत जानकारी लौटाता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>GET /services/{serviceName}?startTime=long&endTime=long</code></pre>
+
+          <h5>पाथ पैरामीटर्स:</h5>
+          <ul>
+            <li><code>serviceName</code> - सर्विस का नाम</li>
+          </ul>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "service": {
+    "name": "string",
+    "namespace": "string",
+    "logGroupName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "rum": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "synthetics": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>ListOperations</h3>
+          <p>किसी सर्विस के लिए ऑपरेशन्स की सूची लौटाता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>GET /services/{serviceName}/operations?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "operations": [
+    {
+      "name": "string",
+      "metricName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetOperation</h3>
+          <p>किसी विशिष्ट ऑपरेशन के बारे में विस्तृत जानकारी लौटाता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>GET /services/{serviceName}/operations/{operationName}?startTime=long&endTime=long</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "operation": {
+    "name": "string",
+    "metricName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Traces API</h2>
+          <p>डिस्ट्रिब्यूटेड ट्रेस डेटा एक्सेस और विश्लेषण करें।</p>
+        </section>
+
+        <section>
+          <h3>GetTraceSummaries</h3>
+          <p>ट्रेस सारांशों की सूची प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /TraceSummaries</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "sampling": true|false,
+  "filterExpression": "string"
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "startTime": "timestamp",
+      "endTime": "timestamp",
+      "hasError": true|false,
+      "hasFault": true|false,
+      "hasThrottle": true|false
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>BatchGetTraces</h3>
+          <p>निर्दिष्ट ट्रेस IDs के लिए पूर्ण ट्रेस डेटा प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /Traces</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "traceIds": ["string"],
+  "nextToken": "string"
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "segments": [
+        {
+          "id": "string",
+          "name": "string",
+          "startTime": number,
+          "endTime": number,
+          "annotations": {},
+          "metadata": {},
+          "subsegments": [...]
+        }
+      ]
+    }
+  ],
+  "nextToken": "string",
+  "unprocessedTraceIds": ["string"]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetServiceGraph</h3>
+          <p>सर्विस डिपेंडेंसीज़ दिखाने वाला सर्विस ग्राफ़ प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /ServiceGraph</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp"
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "names": ["string"],
+      "type": "string",
+      "state": "string",
+      "startTime": "timestamp",
+      "endTime": "timestamp"
+    }
+  ],
+  "edges": [
+    {
+      "source": "string",
+      "target": "string",
+      "references": [...]
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Metrics APIs</h2>
+          <p>CloudWatch मेट्रिक्स डेटा एक्सेस करें।</p>
+        </section>
+
+        <section>
+          <h3>GetMetricData</h3>
+          <p>मेट्रिक डेटा पॉइंट्स प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "metricDataQueries": [
+    {
+      "id": "string",
+      "metricStat": {
+        "metric": {
+          "namespace": "string",
+          "metricName": "string",
+          "dimensions": [
+            {
+              "name": "string",
+              "value": "string"
+            }
+          ]
+        },
+        "period": integer,
+        "stat": "string"
+      },
+      "expression": "string",
+      "label": "string",
+      "returnData": true|false
+    }
+  ],
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "nextToken": "string",
+  "scanBy": "TimestampDescending|TimestampAscending"
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "metricDataResults": [
+    {
+      "id": "string",
+      "label": "string",
+      "timestamps": ["timestamp"],
+      "values": [number],
+      "statusCode": "Complete|PartialData|InternalError"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>PutMetricData</h3>
+          <p>CloudWatch में मेट्रिक डेटा पॉइंट्स प्रकाशित करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "namespace": "string",
+  "metricData": [
+    {
+      "metricName": "string",
+      "dimensions": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "timestamp": "timestamp",
+      "value": number,
+      "statisticValues": {
+        "sampleCount": number,
+        "sum": number,
+        "minimum": number,
+        "maximum": number
+      },
+      "unit": "string"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>RUM APIs</h2>
+          <p>Real User Monitoring डेटा एक्सेस करें।</p>
+        </section>
+
+        <section>
+          <h3>PutRumEvents</h3>
+          <p>CloudWatch को RUM इवेंट्स भेजता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /appmonitors/{appMonitorName}/rum-events</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "events": [
+    {
+      "details": "string",
+      "timestamp": number,
+      "type": "string",
+      "metadata": {}
+    }
+  ],
+  "userDetails": {
+    "userId": "string",
+    "sessionId": "string"
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetAppMonitor</h3>
+          <p>RUM ऐप मॉनिटर के बारे में जानकारी प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>GET /appmonitors/{appMonitorName}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "appMonitor": {
+    "name": "string",
+    "domain": "string",
+    "id": "string",
+    "state": "CREATED|ACTIVE",
+    "tags": {}
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Synthetics APIs</h2>
+          <p>सिंथेटिक मॉनिटरिंग कैनरीज़ प्रबंधित करें।</p>
+        </section>
+
+        <section>
+          <h3>DescribeCanaries</h3>
+          <p>कैनरीज़ के बारे में जानकारी प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /canaries</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "names": ["string"],
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "canaries": [
+    {
+      "id": "string",
+      "name": "string",
+      "code": {...},
+      "executionRoleArn": "string",
+      "schedule": {...},
+      "runConfig": {...},
+      "successRetentionPeriodInDays": integer,
+      "failureRetentionPeriodInDays": integer,
+      "status": {...},
+      "tags": {...},
+      "timeline": {...}
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetCanaryRuns</h3>
+          <p>कैनरी रन्स के बारे में जानकारी प्राप्त करता है।</p>
+
+          <h5>रिक्वेस्ट सिंटैक्स:</h5>
+          <pre><code>POST /canaries/{name}/runs</code></pre>
+
+          <h5>रिक्वेस्ट बॉडी:</h5>
+          <pre><code>{
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>रिस्पॉन्स:</h5>
+          <pre><code>{
+  "canaryRuns": [
+    {
+      "id": "string",
+      "name": "string",
+      "status": {...},
+      "timeline": {...},
+      "artifactS3Location": "string",
+      "metricData": [...]
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>SDK संदर्भ</h2>
+          <p>भाषा-विशिष्ट SDK दस्तावेज़ीकरण।</p>
+        </section>
+
+        <section>
+          <h3>JavaScript SDK</h3>
+
+          <h4>इंस्टॉलेशन:</h4>
+          <pre><code>npm install @aws-sdk/client-application-signals</code></pre>
+
+          <h4>उपयोग:</h4>
+          <pre><code>import { ApplicationSignalsClient, ListServicesCommand } from "@aws-sdk/client-application-signals";
+
+const client = new ApplicationSignalsClient({ region: "us-east-1" });
+
+const command = new ListServicesCommand({
+  startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  endTime: new Date()
+});
+
+const response = await client.send(command);</code></pre>
+        </section>
+
+        <section>
+          <h3>Python SDK (Boto3)</h3>
+
+          <h4>इंस्टॉलेशन:</h4>
+          <pre><code>pip install boto3</code></pre>
+
+          <h4>उपयोग:</h4>
+          <pre><code>import boto3
+from datetime import datetime, timedelta
+
+client = boto3.client('application-signals', region_name='us-east-1')
+
+response = client.list_services(
+    startTime=datetime.utcnow() - timedelta(days=1),
+    endTime=datetime.utcnow()
+)</code></pre>
+        </section>
+
+        <section>
+          <h3>Java SDK</h3>
+
+          <h4>Maven डिपेंडेंसी:</h4>
+          <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+  &lt;artifactId&gt;application-signals&lt;/artifactId&gt;
+  &lt;version&gt;2.20.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+          <h4>उपयोग:</h4>
+          <pre><code>ApplicationSignalsClient client = ApplicationSignalsClient.builder()
+    .region(Region.US_EAST_1)
+    .build();
+
+ListServicesRequest request = ListServicesRequest.builder()
+    .startTime(Instant.now().minus(1, ChronoUnit.DAYS))
+    .endTime(Instant.now())
+    .build();
+
+ListServicesResponse response = client.listServices(request);</code></pre>
+        </section>
+
+        <section>
+          <h3>.NET SDK</h3>
+
+          <h4>NuGet पैकेज:</h4>
+          <pre><code>dotnet add package AWSSDK.ApplicationSignals</code></pre>
+
+          <h4>उपयोग:</h4>
+          <pre><code>using Amazon.ApplicationSignals;
+using Amazon.ApplicationSignals.Model;
+
+var client = new AmazonApplicationSignalsClient(RegionEndpoint.USEast1);
+
+var request = new ListServicesRequest
+{
+    StartTime = DateTime.UtcNow.AddDays(-1),
+    EndTime = DateTime.UtcNow
+};
+
+var response = await client.ListServicesAsync(request);</code></pre>
+        </section>
+
+        <section>
+          <h2>एरर कोड</h2>
+          <p>सामान्य एरर कोड और उनके अर्थ।</p>
+        </section>
+
+        <section>
+          <h3>Application Signals एरर</h3>
+          <ul>
+            <li><code>ValidationException</code> - अमान्य इनपुट पैरामीटर्स</li>
+            <li><code>ResourceNotFoundException</code> - अनुरोधित रिसोर्स मौजूद नहीं है</li>
+            <li><code>ThrottlingException</code> - रिक्वेस्ट दर सीमा पार हो गई</li>
+            <li><code>InternalServerException</code> - इंटरनल सर्विस एरर</li>
+            <li><code>AccessDeniedException</code> - अपर्याप्त अनुमतियां</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>X-Ray एरर</h3>
+          <ul>
+            <li><code>InvalidRequestException</code> - दोषपूर्ण रिक्वेस्ट</li>
+            <li><code>ThrottledException</code> - रेट सीमा पार हो गई</li>
+            <li><code>ResourceNotFoundException</code> - ट्रेस नहीं मिला</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch एरर</h3>
+          <ul>
+            <li><code>InvalidParameterValueException</code> - अमान्य पैरामीटर मान</li>
+            <li><code>MissingRequiredParameterException</code> - आवश्यक पैरामीटर गायब है</li>
+            <li><code>LimitExceededException</code> - कोटा सीमा पार हो गई</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

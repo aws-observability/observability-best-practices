@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>மொழி-குறிப்பிட்ட வழிகாட்டிகள் — CloudWatch APM</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="../../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+    </header>
+    <div class="site">
+      <aside class="left-nav" id="left-nav"></aside>
+      <main class="content">
+        <header><h1>மொழி-குறிப்பிட்ட வழிகாட்டிகள்</h1></header>
+        <article>
+          <section>
+            <p>CloudWatch Application Signals-க்கு நீங்கள் இயக்கும் platform மற்றும் runtime-ஐ தேர்ந்தெடுங்கள். ஒவ்வொரு வழிகாட்டியும் <code>apm-center</code>-ல் பராமரிக்கப்படும் enablement content-ஐ அடிப்படையாகக் கொண்டது மற்றும் அதே docs UI-ல் இங்கே வழங்கப்படுகிறது.</p>
+          </section>
+          <section>
+            <h2>Enablement வழிகாட்டிகள் (16 combinations)</h2>
+            <div id="guide-grid">வழிகாட்டிகளை ஏற்றுகிறது…</div>
+          </section>
+          <section>
+            <h2>தனிப்பயன் metrics (apm-center samples-லிருந்து)</h2>
+            <p><code>apm-center</code>-ல் உள்ள சில sample சேவைகள் testing-ன் போது "custom metrics" நடத்தையை பயிற்சி செய்ய பயன்படுத்தப்படும் endpoint-ஐ உள்ளடக்குகின்றன. எடுத்துக்காட்டாக, EKS Python sample <code>GET /api/metrics</code>-ஐ வழங்குகிறது:</p>
+            <p><a href="../language-guide/?combo=eks-python">EKS Python enablement வழிகாட்டியைத் திறக்கவும்</a></p>
+            <pre><code>@app.get("/api/metrics")
+async def metrics():
+    """Custom metrics endpoint"""
+    # Simulate some business logic
+    processing_time = random.uniform(0.1, 0.5)
+    time.sleep(processing_time)
+
+    # Simulate different response times based on some logic
+    if processing_time &gt; 0.3:
+        status = "slow"
+    else:
+        status = "fast"
+
+    return {
+        "message": "Metrics endpoint",
+        "processing_time": processing_time,
+        "status": status,
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }</code></pre>
+          </section>
+        </article>
+      </main>
+    </div>
+    <script>
+      (() => {
+        const grid = document.getElementById('guide-grid');
+
+        const combos = [
+          { platform: 'Lambda', id: 'lambda-java', label: 'Java' },
+          { platform: 'Lambda', id: 'lambda-python', label: 'Python' },
+          { platform: 'Lambda', id: 'lambda-nodejs', label: 'Node.js' },
+          { platform: 'Lambda', id: 'lambda-dotnet', label: '.NET' },
+          { platform: 'ECS', id: 'ecs-java', label: 'Java' },
+          { platform: 'ECS', id: 'ecs-python', label: 'Python' },
+          { platform: 'ECS', id: 'ecs-nodejs', label: 'Node.js' },
+          { platform: 'ECS', id: 'ecs-dotnet', label: '.NET' },
+          { platform: 'EKS', id: 'eks-java', label: 'Java' },
+          { platform: 'EKS', id: 'eks-python', label: 'Python' },
+          { platform: 'EKS', id: 'eks-nodejs', label: 'Node.js' },
+          { platform: 'EKS', id: 'eks-dotnet', label: '.NET' },
+          { platform: 'EC2', id: 'ec2-java', label: 'Java' },
+          { platform: 'EC2', id: 'ec2-python', label: 'Python' },
+          { platform: 'EC2', id: 'ec2-nodejs', label: 'Node.js' },
+          { platform: 'EC2', id: 'ec2-dotnet', label: '.NET' },
+        ];
+
+        const byPlatform = combos.reduce((acc, c) => {
+          (acc[c.platform] ||= []).push(c);
+          return acc;
+        }, {});
+
+        let html = '<div class="guide-grid">';
+        Object.keys(byPlatform).forEach((platform) => {
+          html += `<div class="guide-card"><h3>${platform}</h3><ul>`;
+          byPlatform[platform].forEach((c) => {
+            html += `<li><a href="../language-guide/?combo=${encodeURIComponent(c.id)}">${c.label}</a></li>`;
+          });
+          html += '</ul></div>';
+        });
+        html += '</div>';
+
+        grid.innerHTML = html;
+      })();
+    </script>
+    <script src="../../assets/js/site.js"></script>
+  </body>
+</html>

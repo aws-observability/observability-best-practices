@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>集成 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>集成</h1></header>
+      <article>
+        <section>
+          <h2>AWS 服务集成</h2>
+          <p>CloudWatch Application Signals 与 AWS 服务无缝集成，在您的整个云基础设施中提供全面的 Observability。</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>监控 API 性能并跟踪从 API Gateway 到后端服务的请求。</p>
+
+          <h4>集成功能：</h4>
+          <ul>
+            <li>API 调用自动追踪</li>
+            <li>API 端点延迟监控</li>
+            <li>错误率跟踪</li>
+            <li>请求/响应关联</li>
+          </ul>
+
+          <h4>设置：</h4>
+          <p>在 API Gateway 阶段配置中启用 X-Ray 追踪。</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>跟踪通过负载均衡器的流量并与应用程序性能相关联。</p>
+
+          <h4>集成优势：</h4>
+          <ul>
+            <li>请求路由可见性</li>
+            <li>目标组性能指标</li>
+            <li>健康检查监控</li>
+            <li>负载分配分析</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>监控数据库操作并识别数据访问模式中的性能瓶颈。</p>
+
+          <h4>追踪功能：</h4>
+          <ul>
+            <li>查询操作计时</li>
+            <li>限流和错误跟踪</li>
+            <li>表和索引性能</li>
+            <li>跨区域复制监控</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>获取数据库性能和连接池的洞察。</p>
+
+          <h4>数据库监控：</h4>
+          <ul>
+            <li>查询执行时间</li>
+            <li>连接池利用率</li>
+            <li>数据库实例指标</li>
+            <li>慢查询识别</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>跟踪对象存储操作和数据传输性能。</p>
+
+          <h4>存储操作：</h4>
+          <ul>
+            <li>Put/Get 对象追踪</li>
+            <li>传输延迟监控</li>
+            <li>错误率分析</li>
+            <li>跨区域传输跟踪</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>在事件驱动架构中监控消息处理和队列性能。</p>
+
+          <h4>消息洞察：</h4>
+          <ul>
+            <li>消息发布/订阅追踪</li>
+            <li>队列深度监控</li>
+            <li>消息处理延迟</li>
+            <li>死信队列分析</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>可视化工作流执行并识别状态机处理中的瓶颈。</p>
+
+          <h4>工作流监控：</h4>
+          <ul>
+            <li>状态转换追踪</li>
+            <li>执行时间分析</li>
+            <li>错误状态识别</li>
+            <li>并行执行监控</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>跟踪事件驱动系统中的事件路由和处理。</p>
+
+          <h4>事件处理：</h4>
+          <ul>
+            <li>事件路由可见性</li>
+            <li>规则评估计时</li>
+            <li>目标调用追踪</li>
+            <li>事件转换监控</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>监控无服务器函数性能和冷启动影响。</p>
+
+          <h4>无服务器洞察：</h4>
+          <ul>
+            <li>函数调用追踪</li>
+            <li>冷启动持续时间</li>
+            <li>内存和 CPU 利用率</li>
+            <li>错误和超时跟踪</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>容器编排平台集成，用于微服务监控。</p>
+
+          <h4>容器监控：</h4>
+          <ul>
+            <li>服务网格追踪</li>
+            <li>Pod 间通信</li>
+            <li>资源利用率</li>
+            <li>部署跟踪</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>第三方集成</h2>
+          <p>使用第三方工具和平台扩展 Application Signals。</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>利用 OpenTelemetry 生态系统实现与供应商无关的 Observability。</p>
+
+          <h4>集成选项：</h4>
+          <ul>
+            <li>自定义检测库</li>
+            <li>第三方代理支持</li>
+            <li>多后端数据导出</li>
+            <li>社区收集器贡献</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>APM 供应商</h3>
+          <p>从其他 APM 解决方案迁移或与之集成。</p>
+
+          <h4>支持的集成：</h4>
+          <ul>
+            <li>向第三方 APM 工具导出数据</li>
+            <li>混合云 Observability</li>
+            <li>多供应商关联</li>
+            <li>数据迁移工具</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>监控和告警</h3>
+          <p>将 Application Signals 与您现有的监控堆栈连接。</p>
+
+          <h4>集成合作伙伴：</h4>
+          <ul>
+            <li><strong>PagerDuty：</strong>事件响应和告警</li>
+            <li><strong>Slack：</strong>团队通知</li>
+            <li><strong>Datadog：</strong>统一监控平台</li>
+            <li><strong>New Relic：</strong>应用程序性能监控</li>
+            <li><strong>Splunk：</strong>日志分析和关联</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CI/CD 集成</h3>
+          <p>将 Observability 纳入您的开发流水线。</p>
+
+          <h4>DevOps 工具：</h4>
+          <ul>
+            <li><strong>GitHub Actions：</strong>自动化测试和部署</li>
+            <li><strong>Jenkins：</strong>构建流水线集成</li>
+            <li><strong>GitLab CI：</strong>DevSecOps 工作流</li>
+            <li><strong>Terraform：</strong>基础设施即代码</li>
+            <li><strong>AWS CDK：</strong>云基础设施配置</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>自定义集成</h2>
+          <p>使用 API 和 SDK 构建您自己的集成。</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch API</h3>
+          <p>使用 CloudWatch API 围绕 Application Signals 发布到 CloudWatch 的遥测数据构建自定义仪表板、告警和基于指标的工作流。</p>
+
+          <h4>可用 API：</h4>
+          <ul>
+            <li><code>PutMetricData</code> - 发送自定义指标</li>
+            <li><code>GetMetricData</code> - 检索指标数据</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - 管理仪表板</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - 管理告警</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS X-Ray API</h3>
+          <p>Application Signals 使用 AWS X-Ray 作为追踪存储。如果您需要直接的追踪摄取/查询集成，请使用 X-Ray API。</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - 摄取追踪段</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - 查询追踪</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Webhook 和回调</h3>
+          <p>接收实时通知并与自定义工作流集成。</p>
+
+          <h4>集成模式：</h4>
+          <ul>
+            <li>用于自定义通知系统的告警 Webhook</li>
+            <li>使用 Lambda 的事件驱动处理</li>
+            <li>自定义仪表板更新</li>
+            <li>自动化修复工作流</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDK 和库</h3>
+          <p>检测通常通过 OpenTelemetry 和/或 AWS Distro for OpenTelemetry（ADOT）完成。对于 AWS API 调用，请使用带有支持的 OpenTelemetry 检测的 AWS SDK。</p>
+
+          <h4>支持的语言：</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js：</strong>AWS SDK for JavaScript</li>
+            <li><strong>Python：</strong>Boto3 AWS SDK</li>
+            <li><strong>Java：</strong>AWS SDK for Java</li>
+            <li><strong>.NET：</strong>AWS SDK for .NET</li>
+            <li><strong>Go：</strong>AWS SDK for Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>参考 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>参考</h1></header>
+      <article>
+        <section>
+          <h2>服务限制和配额</h2>
+          <p>了解 CloudWatch Application Signals 的限制和配额。</p>
+        </section>
+
+        <section>
+          <h3>限制和配额</h3>
+          <p>Application Signals 依赖于 CloudWatch 和 AWS X-Ray。限制（摄取、查询速率和配额）由这些服务管理，并可能随时间变化。请使用官方文档获取当前值。</p>
+          <ul>
+            <li><strong>Application Signals：</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals 文档</a></li>
+            <li><strong>CloudWatch 配额：</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch 服务配额</a></li>
+            <li><strong>AWS X-Ray 配额：</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API 限流和限制</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch 指标保留（常用参考）</h3>
+          <p>CloudWatch 以不同分辨率保留指标数据。有关完整的保留模型，请参阅 CloudWatch 文档。</p>
+          <ul>
+            <li><strong>1 分钟分辨率：</strong>15 天</li>
+            <li><strong>5 分钟分辨率：</strong>63 天</li>
+            <li><strong>1 小时分辨率：</strong>15 个月</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>服务配额</h3>
+
+          <h4>Application Signals：</h4>
+          <ul>
+            <li><strong>每个账户的服务数：</strong>1,000</li>
+            <li><strong>每个服务的操作数：</strong>100</li>
+            <li><strong>自定义指标：</strong>每个服务 30 个</li>
+          </ul>
+
+          <h4>RUM：</h4>
+          <ul>
+            <li><strong>每个账户的应用监控器：</strong>20</li>
+            <li><strong>每秒事件数：</strong>10,000</li>
+            <li><strong>事件大小：</strong>64 KB</li>
+          </ul>
+
+          <h4>Synthetics：</h4>
+          <ul>
+            <li><strong>每个账户的金丝雀：</strong>100</li>
+            <li><strong>金丝雀执行时间：</strong>最长 15 分钟</li>
+            <li><strong>金丝雀大小：</strong>1 GB（解压后）</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>术语表</h2>
+          <p>CloudWatch Application Signals 中的关键术语和概念。</p>
+        </section>
+
+        <section>
+          <h3>核心概念</h3>
+
+          <h4>应用程序性能监控（APM）</h4>
+          <p>监控和管理软件应用程序性能和可用性的实践。</p>
+
+          <h4>分布式追踪</h4>
+          <p>一种跟踪请求在分布式系统中流转的方法，使您能够了解请求在多个服务中的路径和性能。</p>
+
+          <h4>服务地图</h4>
+          <p>应用程序架构的可视化表示，展示服务如何连接和交互。</p>
+
+          <h4>Span</h4>
+          <p>追踪中的单个操作，表示一个工作单元，如数据库查询或 API 调用。</p>
+
+          <h4>追踪</h4>
+          <p>请求在您的应用程序中完整的端到端旅程，由多个 span 组成。</p>
+        </section>
+
+        <section>
+          <h3>检测术语</h3>
+
+          <h4>自动检测</h4>
+          <p>无需代码更改即可自动向应用程序添加 Observability 代码。</p>
+
+          <h4>手动检测</h4>
+          <p>向应用程序源代码显式添加追踪和指标代码。</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>一个开源 Observability 框架，提供与供应商无关的 API 用于检测。</p>
+
+          <h4>采样</h4>
+          <p>选择要追踪哪些请求的过程，以平衡 Observability 与成本和性能。</p>
+
+          <h4>上下文传播</h4>
+          <p>在服务之间传递追踪上下文以维护追踪连续性的机制。</p>
+        </section>
+
+        <section>
+          <h3>指标和监控</h3>
+
+          <h4>黄金信号</h4>
+          <p>监控应用程序健康状况的四个关键指标：延迟、吞吐量、错误率和饱和度。</p>
+
+          <h4>延迟</h4>
+          <p>处理请求所需的时间，通常以百分位数（P50、P90、P99）衡量。</p>
+
+          <h4>吞吐量</h4>
+          <p>处理请求的速率，通常以每秒请求数衡量。</p>
+
+          <h4>错误率</h4>
+          <p>导致错误的请求百分比。</p>
+
+          <h4>饱和度</h4>
+          <p>系统资源被利用的程度。</p>
+
+          <h4>服务级别目标（SLO）</h4>
+          <p>服务提供者和消费者之间商定的服务质量目标水平。</p>
+
+          <h4>服务级别指标（SLI）</h4>
+          <p>所提供服务级别的可衡量方面，如延迟或可用性。</p>
+        </section>
+
+        <section>
+          <h3>RUM 和 Synthetics</h3>
+
+          <h4>真实用户监控（RUM）</h4>
+          <p>监控生产环境中用户与 Web 应用程序的实际交互。</p>
+
+          <h4>合成监控</h4>
+          <p>使用模拟用户交互对应用程序进行自动化测试。</p>
+
+          <h4>金丝雀</h4>
+          <p>对您的应用程序运行自动化测试的合成监控脚本。</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>Google 用于衡量 Web 用户体验的指标：LCP、FID 和 CLS。</p>
+
+          <h4>最大内容绘制（LCP）</h4>
+          <p>最大内容元素渲染到屏幕上所需的时间。</p>
+
+          <h4>首次输入延迟（FID）</h4>
+          <p>从用户首次与页面交互到浏览器响应的时间。</p>
+
+          <h4>累积布局偏移（CLS）</h4>
+          <p>视觉稳定性的度量，量化意外的布局偏移。</p>
+        </section>
+
+        <section>
+          <h3>AWS 特定术语</h3>
+
+          <h4>Application Signals</h4>
+          <p>AWS 的统一 Observability 解决方案，结合了 APM、RUM 和 Synthetics。</p>
+
+          <h4>X-Ray</h4>
+          <p>AWS 的分布式追踪服务，现已与 Application Signals 集成。</p>
+
+          <h4>CloudWatch</h4>
+          <p>AWS 的监控和 Observability 服务，收集指标、日志和追踪。</p>
+
+          <h4>ADOT（AWS Distro for OpenTelemetry）</h4>
+          <p>AWS 的 OpenTelemetry 发行版，针对 AWS 服务进行了优化。</p>
+        </section>
+
+        <section>
+          <h2>支持的运行时和框架</h2>
+          <p>Application Signals 支持的编程语言和框架。</p>
+        </section>
+
+        <section>
+          <h3>自动检测支持</h3>
+
+          <p>有关权威的兼容性和运行时/版本矩阵，请参阅 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">支持的系统</a>。要点：</p>
+
+          <ul>
+            <li><strong>Java：</strong>JVM 8/11/17/21/23（框架支持遵循 ADOT/OpenTelemetry Java 检测）。</li>
+            <li><strong>Python：</strong>Python 3.9+（框架支持遵循 ADOT/OpenTelemetry Python 检测）。</li>
+            <li><strong>Node.js：</strong>Node 14/16/18/20/22（框架支持遵循 ADOT/OpenTelemetry JS 检测）。</li>
+            <li><strong>.NET：</strong>支持 x86-64 或 ARM64；Linux x64/ARM64 和 Windows Server 2022 x64（库支持遵循 ADOT/OpenTelemetry .NET 检测）。</li>
+            <li><strong>PHP/Ruby/Go：</strong>通过 OpenTelemetry 零代码/自动检测路径支持（这些语言没有 ADOT SDK）。</li>
+          </ul>
+
+          <h4>注意事项和已知考量</h4>
+          <ul>
+            <li><strong>Node.js ESM：</strong>ESM 支持有限；除非您按照文档中 ESM 特定设置操作，否则建议使用 CommonJS。</li>
+            <li><strong>Python：</strong>容器化应用可能需要设置 <code>PYTHONPATH</code>（已知的 OTel 自动检测问题）。</li>
+            <li><strong>.NET：</strong>ADOT .NET 在 AWS SDK for .NET V4 方面存在限制；建议使用 AWS SDK V3 以获得完整支持。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>手动检测</h3>
+          <p>通过 OpenTelemetry SDK 支持所有主要编程语言：</p>
+          <ul>
+            <li>Java、Scala、Kotlin</li>
+            <li>Python、Ruby</li>
+            <li>JavaScript/TypeScript、Go</li>
+            <li>.NET（C#、F#、VB.NET）</li>
+            <li>PHP、Rust、C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>配置参考</h2>
+          <p>常用配置选项和环境变量。</p>
+        </section>
+
+        <section>
+          <h3>环境变量</h3>
+
+          <h4>OpenTelemetry 配置：</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - 您的服务名称</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - 追踪导出器（otlp、jaeger、zipkin）</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLP 端点 URL</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - 采样策略</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - 采样参数</li>
+          </ul>
+
+          <h4>AWS 特定配置：</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - AWS 区域</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Ray 守护进程地址</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - 服务属性（也用于应用程序地图中的自定义分组）</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>采样配置</h3>
+
+          <h4>采样策略：</h4>
+          <ul>
+            <li><code>always_on</code> - 采样所有追踪</li>
+            <li><code>always_off</code> - 不采样追踪</li>
+            <li><code>traceidratio</code> - 基于比率采样（例如，0.1 表示 10%）</li>
+            <li><code>parentbased_always_on</code> - 遵循父级采样决策</li>
+            <li><code>parentbased_traceidratio</code> - 基于父级的比率采样</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>成本优化</h2>
+          <p>控制 Observability 成本的策略。</p>
+        </section>
+
+        <section>
+          <h3>采样策略</h3>
+          <ul>
+            <li><strong>生产环境：</strong>5-10% 采样率</li>
+            <li><strong>开发环境：</strong>50-100% 采样率</li>
+            <li><strong>错误追踪：</strong>始终采样包含错误的追踪</li>
+            <li><strong>高价值操作：</strong>关键路径 100% 采样</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>数据保留策略</h3>
+          <p>保留由底层遥测存储（例如，CloudWatch 指标/日志和 AWS X-Ray 追踪）控制。在这些服务中配置保留期，并使其与您的故障排除和合规需求保持一致。</p>
+        </section>
+
+        <section>
+          <h3>资源优化</h3>
+          <ul>
+            <li><strong>批量导出：</strong>减少网络开销</li>
+            <li><strong>压缩：</strong>启用数据压缩</li>
+            <li><strong>过滤：</strong>移除不必要的 span 和属性</li>
+            <li><strong>缓冲：</strong>使用适当的缓冲区大小</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

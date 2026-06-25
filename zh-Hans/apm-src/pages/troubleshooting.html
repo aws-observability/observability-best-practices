@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Troubleshooting — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Troubleshooting</h1></header>
+      <article>
+        <section>
+          <h2>Common Issues</h2>
+          <p>This section covers the most frequently encountered problems when implementing CloudWatch Application Signals and how to resolve them.</p>
+        </section>
+
+        <section>
+          <h3>No Traces Appearing in CloudWatch</h3>
+          
+          <h4>Possible Causes:</h4>
+          <ul>
+            <li>Application Signals not enabled for the service</li>
+            <li>Incorrect IAM permissions</li>
+            <li>Agent not properly configured or running</li>
+            <li>Sampling rate set too low</li>
+            <li>Network connectivity issues to CloudWatch</li>
+          </ul>
+          
+          <h4>Solutions:</h4>
+          <ol>
+            <li>Verify Application Signals is enabled in the AWS console</li>
+            <li>Check IAM permissions include <code>cloudwatch:PutMetricData</code> and <code>xray:PutTraceSegments</code></li>
+            <li>Confirm the agent is running and configured correctly</li>
+            <li>Increase sampling rate for testing (set to 100% temporarily)</li>
+            <li>Check VPC security groups and NACLs allow outbound traffic to CloudWatch</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>Missing or Incomplete Traces</h3>
+          
+          <h4>Common Issues:</h4>
+          <ul>
+            <li>Context not propagated between services</li>
+            <li>Some services not instrumented</li>
+            <li>Sampling dropping spans</li>
+            <li>Agent configuration issues</li>
+          </ul>
+          
+          <h4>Debugging Steps:</h4>
+          <ol>
+            <li>Check service map to identify uninstrumented services</li>
+            <li>Verify trace context headers are being passed (e.g., <code>x-amzn-trace-id</code>)</li>
+            <li>Review agent logs for configuration errors</li>
+            <li>Test with 100% sampling to rule out sampling issues</li>
+            <li>Use trace search to find partial traces</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>High Instrumentation Overhead</h3>
+          
+          <h4>Symptoms:</h4>
+          <ul>
+            <li>Increased CPU usage</li>
+            <li>Higher memory consumption</li>
+            <li>Increased latency</li>
+            <li>Application performance degradation</li>
+          </ul>
+          
+          <h4>Optimization Strategies:</h4>
+          <ul>
+            <li>Reduce sampling rate (start with 10% for production)</li>
+            <li>Use head-based sampling instead of tail-based</li>
+            <li>Configure appropriate span limits</li>
+            <li>Batch span exports</li>
+            <li>Monitor instrumentation metrics</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM Data Not Appearing</h3>
+          
+          <h4>Checklist:</h4>
+          <ul>
+            <li>RUM web client properly installed and loaded</li>
+            <li>Application ID and configuration correct</li>
+            <li>CORS headers configured for RUM domains</li>
+            <li>Content Security Policy allows RUM scripts</li>
+            <li>Browser console shows no JavaScript errors</li>
+          </ul>
+          
+          <h4>Verification:</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>Synthetic Canaries Failing</h3>
+          
+          <h4>Common Causes:</h4>
+          <ul>
+            <li>Network connectivity issues from canary VPC</li>
+            <li>Authentication or authorization failures</li>
+            <li>Application changes breaking test scripts</li>
+            <li>Canary runtime or dependencies outdated</li>
+          </ul>
+          
+          <h4>Debugging:</h4>
+          <ol>
+            <li>Review canary logs in CloudWatch Logs</li>
+            <li>Test canary scripts locally</li>
+            <li>Check VPC routing and security groups</li>
+            <li>Update canary runtime if needed</li>
+            <li>Verify application endpoints are accessible</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Debugging Guides</h2>
+          <p>Step-by-step guides for diagnosing complex issues.</p>
+        </section>
+
+        <section>
+          <h3>Debugging Trace Context Propagation</h3>
+          
+          <h4>Step 1: Verify Instrumentation</h4>
+          <p>Check that all services in your call chain are properly instrumented:</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+          
+          <h4>Step 2: Check Agent Configuration</h4>
+          <p>Verify agent configuration files and environment variables.</p>
+          
+          <h4>Step 3: Test End-to-End</h4>
+          <p>Make a test request and trace it through all services.</p>
+        </section>
+
+        <section>
+          <h3>Performance Issue Diagnosis</h3>
+          
+          <h4>Identify the Bottleneck:</h4>
+          <ol>
+            <li>Check service map for high-latency services</li>
+            <li>Examine trace timelines for slow spans</li>
+            <li>Review resource metrics (CPU, memory, disk I/O)</li>
+            <li>Look for error patterns in logs</li>
+            <li>Check database query performance</li>
+          </ol>
+          
+          <h4>Common Bottlenecks:</h4>
+          <ul>
+            <li>Database query optimization needed</li>
+            <li>External API calls timing out</li>
+            <li>Resource constraints (CPU/memory)</li>
+            <li>Thread pool exhaustion</li>
+            <li>Network latency between services</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Agent Troubleshooting</h3>
+          
+          <h4>Check Agent Status:</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+          
+          <h4>Common Agent Issues:</h4>
+          <ul>
+            <li>Wrong Java agent version for JVM</li>
+            <li>Missing dependencies or libraries</li>
+            <li>Configuration file syntax errors</li>
+            <li>Permission issues writing to log files</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Tools and Commands</h2>
+          <p>Useful tools and commands for troubleshooting.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI Commands</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>Log Analysis</h3>
+          <p>Use CloudWatch Logs Insights to analyze telemetry data:</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>Getting Help</h2>
+          <p>When you need additional assistance:</p>
+          
+          <h3>Documentation Resources:</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals User Guide</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics User Guide</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM User Guide</a></li>
+          </ul>
+          
+          <h3>Support Options:</h3>
+          <ul>
+            <li>AWS Support Center</li>
+            <li>AWS re:Post community</li>
+            <li>GitHub issues for OpenTelemetry projects</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

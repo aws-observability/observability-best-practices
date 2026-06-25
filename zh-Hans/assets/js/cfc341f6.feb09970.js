@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkobservability_best_practices=self.webpackChunkobservability_best_practices||[]).push([[9243],{78692:e=>{e.exports=JSON.parse('{"metadata":{"permalink":"/observability-best-practices/zh-Hans/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":1,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>대시보드 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>대시보드</h1></header>
+      <article>
+        <section>
+          <h2>내장 Application Signals 뷰</h2>
+          <p>Application Signals는 CloudWatch 콘솔에서 애플리케이션 중심의 워크플로를 제공합니다:</p>
+          <ul>
+            <li><strong>서비스</strong>: 서비스 목록을 보고, 높은 장애율/지연 시간을 발견하며, SLO가 존재할 때 SLI 상태를 확인합니다.</li>
+            <li><strong>서비스 세부 정보</strong>: 오퍼레이션, 종속성 및 상관 트레이스를 자세히 살펴봅니다.</li>
+            <li><strong>Application Map</strong>: 토폴로지를 시각화하고 종속성 전체에 걸쳐 상태를 전파합니다.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals를 사용한 운영 상태 모니터링</a>.</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch 대시보드 (사용자 정의)</h2>
+          <p>Application Signals에서 생성된 메트릭(네임스페이스 <code>ApplicationSignals</code>)을 사용하여 CloudWatch 대시보드를 구축하고, 필요에 따라 알람/로그와 상관 분석할 수 있습니다.</p>
+          <ul>
+            <li><strong>서비스 메트릭</strong>: Service/Operation/Environment 차원별 지연 시간, 장애, 오류.</li>
+            <li><strong>종속성 메트릭</strong>: 다운스트림 호출에 대한 원격 서비스/오퍼레이션 차원.</li>
+            <li><strong>런타임 메트릭</strong> (지원되는 경우): GC/CPU/메모리와 지연 시간 급증의 상관 관계.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals에서 수집하는 메트릭</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ऑटो इंस्ट्रूमेंटेशन — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ऑटो इंस्ट्रूमेंटेशन</h1></header>
+      <article>
+        <section>
+          <h2>"ऑटो इंस्ट्रूमेंटेशन" का क्या अर्थ है</h2>
+          <p>ऑटो इंस्ट्रूमेंटेशन रनटाइम पर OpenTelemetry इंस्ट्रूमेंटेशन जोड़ता है (आपके एप्लिकेशन कोड को बदले बिना) ताकि सर्विस वह टेलीमेट्री उत्सर्जित करे जिसका उपयोग Application Signals डिस्कवरी और हेल्थ मॉनिटरिंग के लिए करता है।</p>
+        </section>
+
+        <section>
+          <h2>सामान्य AWS सेटअप कंपोनेंट्स</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK और/या कलेक्टर</li>
+            <li><strong>CloudWatch Agent</strong> समर्थित सेटअप में टेलीमेट्री एकत्र/निर्यात करने के लिए</li>
+            <li><strong>प्लेटफ़ॉर्म इनेबलमेंट</strong> (EKS ऐड-ऑन / ECS साइडकार / EC2 एजेंट सेटअप / Lambda लेयर्स)</li>
+          </ul>
+          <p>यहां से शुरू करें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals अवलोकन</a>।</p>
+        </section>
+
+        <section>
+          <h2>समर्थित भाषाएं और सिस्टम</h2>
+          <p>Application Signals Java, Python, Node.js, और .NET एप्लिकेशन को सपोर्ट करता है और Amazon EKS, Kubernetes, Amazon ECS, और Amazon EC2 पर समर्थित/परीक्षित है।</p>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">समर्थित सिस्टम</a>।</p>
+        </section>
+
+        <section>
+          <h2>नोट्स और सावधानियां</h2>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM सपोर्ट सीमित है; CommonJS अनुशंसित पथ है जब तक कि आप डॉक्स में ESM-विशिष्ट मार्गदर्शन का पालन नहीं करते।</li>
+            <li><strong>कंटेनरों में Python:</strong> OTel ऑटोइंस्ट्रूमेंटेशन के लिए आपको <code>PYTHONPATH</code> कॉन्फ़िगर करने की आवश्यकता हो सकती है।</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

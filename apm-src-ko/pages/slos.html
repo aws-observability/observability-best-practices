@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>서비스 수준 목표 (SLO) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>서비스 수준 목표 (SLO)</h1></header>
+      <article>
+        <section>
+          <h2>SLO가 중요한 이유</h2>
+          <p>SLO를 사용하면 안정성 및 성능 목표(예: "99.9% 가용성" 또는 "p99 지연 시간 500ms 미만")를 표현하고 시간에 따라 추적할 수 있습니다. Application Signals에서 SLO/SLI 상태는 서비스 페이지와 Application Map에 표시되어 분류를 가속화합니다.</p>
+        </section>
+
+        <section>
+          <h2>SLO를 생성할 수 있는 대상</h2>
+          <p>CloudWatch SLO는 메트릭을 기반으로 구축됩니다. Application Signals의 표준 메트릭(지연 시간, 장애, 오류, 가용성)이 일반적인 SLI 입력입니다.</p>
+          <p>공식 문서: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html">서비스 수준 목표 (SLO)</a>.</p>
+        </section>
+
+        <section>
+          <h2>일반적인 워크플로</h2>
+          <ul>
+            <li><strong>서비스를 선택</strong>하고 사용자 영향을 가장 잘 반영하는 지표(가용성 vs 지연 시간)를 결정합니다.</li>
+            <li><strong>목표를 정의</strong>합니다(대상, 시간 창 및 평가).</li>
+            <li><strong>알림</strong>: SLO/SLI 상태 또는 소진율에 대한 알람을 사용합니다.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

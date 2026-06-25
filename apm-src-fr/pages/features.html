@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Fonctionnalites et capacites — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Fonctionnalites et capacites</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals : ce que cela fournit</h2>
+          <p>CloudWatch Application Signals est l'experience de surveillance des performances applicatives (APM) d'AWS dans CloudWatch. Apres activation, il collecte automatiquement la telemetrie applicative et l'organise par <strong>service</strong>, <strong>operation</strong> et <strong>dependance</strong> afin que vous puissiez rapidement evaluer la sante operationnelle et suivre les objectifs de performance a long terme.</p>
+          <ul>
+            <li><strong>Metriques applicatives standard :</strong> volume d'appels, disponibilite, latence, pannes et erreurs.</li>
+            <li><strong>Topologie des services et dependances :</strong> une Carte d'application generee a partir des services et relations decouverts.</li>
+            <li><strong>Depannage approfondi :</strong> explorez en detail la sante du service vers les traces correlees et la telemetrie associee.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Carte d'application (topologie + sante)</h2>
+          <p>La Carte d'application visualise la topologie de votre application et met en evidence la sante operationnelle. Elle affiche les connexions entre les clients, les canaris, les services et les dependances afin que les operateurs puissent comprendre le flux d'execution et identifier ou les problemes se propagent.</p>
+
+          <h3>Ce que vous pouvez faire</h3>
+          <ul>
+            <li><strong>Voir la sante SLO/SLI :</strong> reperer rapidement les services (et l'impact en amont/aval) qui ne respectent pas les objectifs.</li>
+            <li><strong>Explorer en detail :</strong> selectionnez des noeuds/aretes pour ouvrir les metriques detaillees et naviguer vers les details du service.</li>
+            <li><strong>Regrouper et filtrer :</strong> utilisez les regroupements par defaut (Services associes, Environnement) et creez des regroupements personnalises a l'aide de balises AWS ou d'attributs de ressources OpenTelemetry.</li>
+            <li><strong>Visibilite inter-comptes :</strong> visualisez les services sur plusieurs comptes AWS (lorsque configure via l'observabilite inter-comptes).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Services, operations et dependances</h2>
+          <p>Application Signals structure la telemetrie en un modele qui correspond a la facon dont les equipes deboguent les systemes en production :</p>
+          <ul>
+            <li><strong>Service :</strong> votre unite deployable (par exemple, un service ECS, une charge de travail EKS, une fonction Lambda).</li>
+            <li><strong>Operation :</strong> un gestionnaire de requetes au sein d'un service (par exemple, une route HTTP ou une methode RPC).</li>
+            <li><strong>Dependance :</strong> les appels en aval effectues par un service (par exemple, un autre service ou une dependance AWS).</li>
+          </ul>
+          <p>Cette structure facilite la reponse a des questions comme "quelle operation a regresse ?", "est-ce un probleme en amont ou en aval ?" et "quelles dependances contribuent a la latence ou aux pannes ?"</p>
+        </section>
+
+        <section>
+          <h2>Objectifs de niveau de service (SLO)</h2>
+          <p>Creez et surveillez des SLO directement a partir de la telemetrie collectee par Application Signals. Les SLO vous aident a suivre les performances et la fiabilite par rapport aux objectifs et a signaler les services "a risque" de maniere precoce.</p>
+          <ul>
+            <li><strong>Definissez des SLO sur des SLI cles :</strong> disponibilite, latence ou autres metriques CloudWatch pertinentes pour les objectifs metier.</li>
+            <li><strong>Suivez la sante :</strong> consultez l'etat de sante SLI dans les listes de services et la Carte d'application.</li>
+            <li><strong>Alertez :</strong> creez des alarmes liees au statut/consommation SLO pour que les equipes puissent reagir avant une panne.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instrumentation (compatible OpenTelemetry)</h2>
+          <p>Application Signals est compatible avec OpenTelemetry et prend en charge plusieurs methodes d'instrumentation des applications selon la plateforme et le langage.</p>
+          <ul>
+            <li><strong>Langages pris en charge :</strong> Java, Python, Node.js et .NET (plus des environnements d'execution supplementaires via les chemins d'instrumentation sans code OpenTelemetry).</li>
+            <li><strong>Systemes pris en charge :</strong> Amazon EKS, Kubernetes, Amazon ECS, Amazon EC2 (et des modeles d'activation qui s'appuient sur l'agent CloudWatch + AWS Distro for OpenTelemetry).</li>
+            <li><strong>Modeles de configuration courants :</strong> SDK/collecteur AWS Distro for OpenTelemetry (ADOT) ou SDK + collecteur OpenTelemetry, selon l'environnement.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Fonctionne avec RUM et Synthetics</h2>
+          <p>Application Signals s'integre a CloudWatch RUM et CloudWatch Synthetics. Lorsque vous activez le tracage pour ces clients/canaris, ils peuvent apparaitre dans la Carte d'application et aider a connecter l'experience utilisateur et les tests proactifs aux services backend qu'ils appellent.</p>
+          <ul>
+            <li><strong>Clients RUM :</strong> connectez les performances frontend et les erreurs JS aux appels de services backend.</li>
+            <li><strong>Canaris Synthetics :</strong> validez les flux critiques et aidez a detecter les problemes avant les utilisateurs.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

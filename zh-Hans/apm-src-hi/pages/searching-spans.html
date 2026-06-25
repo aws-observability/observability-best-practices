@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>स्पैन खोजना और विश्लेषण करना — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>स्पैन खोजना और विश्लेषण करना</h1></header>
+      <article>
+        <section>
+          <h2>Transaction Search</h2>
+          <p>CloudWatch <strong>Transaction Search</strong> स्पैन एट्रिब्यूट का उपयोग करके इनजेस्ट किए गए स्पैन को खोजने और विश्लेषण करने के लिए एक इंटरैक्टिव एनालिटिक्स अनुभव है। यह समर्थन करता है:</p>
+          <ul>
+            <li><strong>लिस्ट</strong>: व्यक्तिगत ट्रांज़ैक्शन की समस्या निवारण, धीमे स्पैन खोजें, एरर खोजें</li>
+            <li><strong>टाइम सीरीज़</strong>: लेटेंसी और फ़्रीक्वेंसी ट्रेंड (P50/P90/P99) विज़ुअलाइज़ करें</li>
+            <li><strong>ग्रुप एनालिसिस</strong>: एट्रिब्यूट द्वारा एग्रीगेट करें (उदाहरण के लिए, शीर्ष प्रभावित ग्राहक)</li>
+          </ul>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">स्पैन खोजना और विश्लेषण करना</a>।</p>
+        </section>
+
+        <section>
+          <h2>स्पैन पर Logs Insights</h2>
+          <p>आप CloudWatch Logs Insights का उपयोग करके भी स्पैन क्वेरी कर सकते हैं (उदाहरण के लिए, DB स्टेटमेंट द्वारा p99 ड्यूरेशन, या HTTP 5xx वाले स्पैन की गिनती)।</p>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>।</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

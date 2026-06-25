@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Analytique de performance — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Analytique de performance</h1></header>
+      <article>
+        <section>
+          <h2>Metriques applicatives standard</h2>
+          <p>Application Signals publie des metriques applicatives standard vers CloudWatch (espace de noms <code>ApplicationSignals</code>). Ces metriques sont concues pour un triage rapide a travers les services, les operations et les dependances.</p>
+          <ul>
+            <li><strong>Latence</strong> (ms)</li>
+            <li><strong>Fautes</strong> (HTTP 5xx et erreurs de statut de span)</li>
+            <li><strong>Erreurs</strong> (HTTP 4xx)</li>
+            <li><strong>Disponibilite</strong> est calculee dans la console comme \( (1 - \text{Fautes}/\text{Total}) \times 100 \) ou Total est derive de <code>SampleCount(Latency)</code>. Les reponses 4xx sont traitees comme reussies pour ce calcul de disponibilite.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Metriques collectees par Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>Dimensions (service vs dependance)</h2>
+          <p>Les metriques sont emises avec des dimensions qui vous permettent de decomposer la performance par :</p>
+          <ul>
+            <li><strong>Metriques de service :</strong> Environment, Service, Operation</li>
+            <li><strong>Metriques de dependance :</strong> Environment, Service, Operation plus RemoteService / RemoteOperation (et d'autres dimensions distantes selon la plateforme)</li>
+          </ul>
+          <p>Cela facilite la reponse a des questions comme « quelle operation a regresse ? » et « la latence est-elle causee par un appel de dependance ? »</p>
+        </section>
+
+        <section>
+          <h2>Metriques d'execution (lorsque prises en charge)</h2>
+          <p>Application Signals peut egalement collecter des metriques d'execution pour les environnements pris en charge (par exemple, GC JVM, memoire, CPU ; metriques de processus Python ; metriques d'execution .NET). Les metriques d'execution ne sont pas collectees pour Node.js.</p>
+          <p>Vous pouvez desactiver la collecte des metriques d'execution avec <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> (les etapes specifiques a la plateforme sont dans la documentation).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

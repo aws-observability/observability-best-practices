@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ऑटो डिस्कवरी — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ऑटो डिस्कवरी</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals क्या डिस्कवर करता है</h2>
+          <p>Application Signals सक्षम करने और आपकी सर्विसेज़ द्वारा टेलीमेट्री उत्सर्जित करने के बाद, CloudWatch स्वचालित रूप से डिस्कवर और प्रदर्शित करता है:</p>
+          <ul>
+            <li><strong>सर्विसेज़</strong> और उनकी <strong>ऑपरेशन्स</strong></li>
+            <li><strong>डिपेंडेंसीज़</strong> (डाउनस्ट्रीम कॉल्स)</li>
+            <li><strong>टोपोलॉजी</strong> (एप्लिकेशन मैप)</li>
+          </ul>
+          <p>डिस्कवरी चयनित समय सीमा (उदाहरण के लिए, डिफ़ॉल्ट "पिछले तीन घंटे") के भीतर उत्सर्जित मेट्रिक्स और ट्रेस द्वारा संचालित होती है। यदि किसी सर्विस में समय सीमा में कोई गतिविधि नहीं है, तो वह दिखाई नहीं देगी।</p>
+        </section>
+
+        <section>
+          <h2>एक बार का अकाउंट सेटअप (सर्विस डिस्कवरी)</h2>
+          <p>जब आप पहली बार किसी अकाउंट में सर्विस डिस्कवरी शुरू करते हैं, तो CloudWatch सर्विस-लिंक्ड रोल <code>AWSServiceRoleForCloudWatchApplicationSignals</code> बनाता है। यह रोल CloudWatch को सर्विसेज़ को डिस्कवर और सहसंबंधित करने की अनुमति देता है।</p>
+          <p>आधिकारिक चरण: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">अपने अकाउंट में Application Signals सक्षम करें</a>।</p>
+        </section>
+
+        <section>
+          <h2>ऑपरेशनल अपेक्षाएं</h2>
+          <ul>
+            <li><strong>डिस्कवरी लेटेंसी:</strong> टोपोलॉजी और सर्विस डिस्कवरी में ~10 मिनट तक की देरी हो सकती है।</li>
+            <li><strong>SLO/SLI मूल्यांकन:</strong> SLI हेल्थ मूल्यांकन में देरी हो सकती है (उदाहरण के लिए, ~15 मिनट तक)।</li>
+            <li><strong>स्केल सीमाएं:</strong> कंसोल में 1,000 सर्विसेज़ तक प्रदर्शित की जा सकती हैं।</li>
+          </ul>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals के साथ अपने एप्लिकेशन की ऑपरेशनल हेल्थ की निगरानी करें</a>।</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

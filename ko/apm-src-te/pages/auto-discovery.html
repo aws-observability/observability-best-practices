@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ఆటో డిస్కవరీ — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ఆటో డిస్కవరీ</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals ఏమి కనుగొంటుంది</h2>
+          <p>మీరు Application Signals ను ప్రారంభించిన తర్వాత మరియు మీ సేవలు టెలిమెట్రీని ఎమిట్ చేసిన తర్వాత, CloudWatch స్వయంచాలకంగా కనుగొని ప్రదర్శిస్తుంది:</p>
+          <ul>
+            <li><strong>సేవలు</strong> మరియు వాటి <strong>ఆపరేషన్‌లు</strong></li>
+            <li><strong>డిపెండెన్సీలు</strong> (డౌన్‌స్ట్రీమ్ కాల్‌లు)</li>
+            <li><strong>టోపాలజీ</strong> (అప్లికేషన్ మ్యాప్)</li>
+          </ul>
+          <p>ఎంచుకున్న సమయ పరిధిలో (ఉదాహరణకు, డిఫాల్ట్ "గత మూడు గంటలు") ఎమిట్ చేయబడిన మెట్రిక్స్ మరియు ట్రేస్‌ల ద్వారా డిస్కవరీ నడపబడుతుంది. సమయ పరిధిలో ఒక సేవకు కార్యాచరణ లేకపోతే, అది చూపబడదు.</p>
+        </section>
+
+        <section>
+          <h2>ఒక-సారి ఖాతా సెటప్ (సేవ కనుగొలు)</h2>
+          <p>మీరు ఒక ఖాతాలో మొదటిసారి సేవ కనుగొలును ప్రారంభించినప్పుడు, CloudWatch సేవ-లింక్డ్ రోల్ <code>AWSServiceRoleForCloudWatchApplicationSignals</code> ను సృష్టిస్తుంది. ఈ రోల్ CloudWatch సేవలను కనుగొని సహసంబంధం చేయడానికి అనుమతిస్తుంది.</p>
+          <p>అధికారిక దశలు: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">మీ ఖాతాలో Application Signals ను ప్రారంభించండి</a>.</p>
+        </section>
+
+        <section>
+          <h2>కార్యాచరణ అంచనాలు</h2>
+          <ul>
+            <li><strong>కనుగొలు ఆలస్యం:</strong> టోపాలజీ మరియు సేవ కనుగొలు ~10 నిమిషాల వరకు ఆలస్యం కావచ్చు.</li>
+            <li><strong>SLO/SLI మూల్యాంకనం:</strong> SLI ఆరోగ్య మూల్యాంకనం ఆలస్యం కావచ్చు (ఉదాహరణకు, ~15 నిమిషాల వరకు).</li>
+            <li><strong>స్కేల్ పరిమితులు:</strong> కన్సోల్‌లో 1,000 సేవల వరకు ప్రదర్శించబడతాయి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals తో మీ అప్లికేషన్‌ల కార్యాచరణ ఆరోగ్యాన్ని పర్యవేక్షించండి</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

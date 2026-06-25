@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>भाषा-विशिष्ट गाइड — CloudWatch APM</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="../../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+    </header>
+    <div class="site">
+      <aside class="left-nav" id="left-nav"></aside>
+      <main class="content">
+        <header><h1>भाषा-विशिष्ट गाइड</h1></header>
+        <article>
+          <section>
+            <p>वह प्लेटफ़ॉर्म और रनटाइम चुनें जिसे आप CloudWatch Application Signals के लिए सक्षम कर रहे हैं। प्रत्येक गाइड <code>apm-center</code> में बनाए रखी गई सक्रियण सामग्री पर आधारित है और यहां उसी डॉक्स UI में प्रस्तुत की गई है।</p>
+          </section>
+          <section>
+            <h2>सक्रियण गाइड (16 संयोजन)</h2>
+            <div id="guide-grid">गाइड लोड हो रहे हैं…</div>
+          </section>
+          <section>
+            <h2>कस्टम मेट्रिक्स (apm-center सैंपल से)</h2>
+            <p><code>apm-center</code> में कुछ सैंपल सर्विसेज़ में एक एंडपॉइंट शामिल है जिसका उपयोग परीक्षण के दौरान "कस्टम मेट्रिक्स" व्यवहार का अभ्यास करने के लिए किया जाता है। उदाहरण के लिए, EKS Python सैंपल <code>GET /api/metrics</code> प्रदान करता है:</p>
+            <p><a href="../language-guide/?combo=eks-python">EKS Python सक्रियण गाइड खोलें</a></p>
+            <pre><code>@app.get("/api/metrics")
+async def metrics():
+    """Custom metrics endpoint"""
+    # Simulate some business logic
+    processing_time = random.uniform(0.1, 0.5)
+    time.sleep(processing_time)
+
+    # Simulate different response times based on some logic
+    if processing_time &gt; 0.3:
+        status = "slow"
+    else:
+        status = "fast"
+
+    return {
+        "message": "Metrics endpoint",
+        "processing_time": processing_time,
+        "status": status,
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }</code></pre>
+          </section>
+        </article>
+      </main>
+    </div>
+    <script>
+      (() => {
+        const grid = document.getElementById('guide-grid');
+
+        const combos = [
+          { platform: 'Lambda', id: 'lambda-java', label: 'Java' },
+          { platform: 'Lambda', id: 'lambda-python', label: 'Python' },
+          { platform: 'Lambda', id: 'lambda-nodejs', label: 'Node.js' },
+          { platform: 'Lambda', id: 'lambda-dotnet', label: '.NET' },
+          { platform: 'ECS', id: 'ecs-java', label: 'Java' },
+          { platform: 'ECS', id: 'ecs-python', label: 'Python' },
+          { platform: 'ECS', id: 'ecs-nodejs', label: 'Node.js' },
+          { platform: 'ECS', id: 'ecs-dotnet', label: '.NET' },
+          { platform: 'EKS', id: 'eks-java', label: 'Java' },
+          { platform: 'EKS', id: 'eks-python', label: 'Python' },
+          { platform: 'EKS', id: 'eks-nodejs', label: 'Node.js' },
+          { platform: 'EKS', id: 'eks-dotnet', label: '.NET' },
+          { platform: 'EC2', id: 'ec2-java', label: 'Java' },
+          { platform: 'EC2', id: 'ec2-python', label: 'Python' },
+          { platform: 'EC2', id: 'ec2-nodejs', label: 'Node.js' },
+          { platform: 'EC2', id: 'ec2-dotnet', label: '.NET' },
+        ];
+
+        const byPlatform = combos.reduce((acc, c) => {
+          (acc[c.platform] ||= []).push(c);
+          return acc;
+        }, {});
+
+        let html = '<div class="guide-grid">';
+        Object.keys(byPlatform).forEach((platform) => {
+          html += `<div class="guide-card"><h3>${platform}</h3><ul>`;
+          byPlatform[platform].forEach((c) => {
+            html += `<li><a href="../language-guide/?combo=${encodeURIComponent(c.id)}">${c.label}</a></li>`;
+          });
+          html += '</ul></div>';
+        });
+        html += '</div>';
+
+        grid.innerHTML = html;
+      })();
+    </script>
+    <script src="../../assets/js/site.js"></script>
+  </body>
+</html>

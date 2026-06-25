@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>செயல்திறன் பகுப்பாய்வு — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>செயல்திறன் பகுப்பாய்வு</h1></header>
+      <article>
+        <section>
+          <h2>நிலையான பயன்பாட்டு மெட்ரிக்ஸ்</h2>
+          <p>Application Signals நிலையான பயன்பாட்டு மெட்ரிக்ஸை CloudWatch-க்கு publish செய்கிறது (<code>ApplicationSignals</code> namespace). இந்த மெட்ரிக்ஸ் சேவைகள், செயல்பாடுகள் மற்றும் சார்புகள் முழுவதும் விரைவான பகுப்பாய்வுக்கு வடிவமைக்கப்பட்டுள்ளன.</p>
+          <ul>
+            <li><strong>தாமதம்</strong> (ms)</li>
+            <li><strong>தவறு</strong> (HTTP 5xx மற்றும் span status errors)</li>
+            <li><strong>பிழை</strong> (HTTP 4xx)</li>
+            <li><strong>கிடைக்கும் தன்மை</strong> console-ல் \( (1 - \text{Faults}/\text{Total}) \times 100 \) என கணக்கிடப்படுகிறது, இங்கு Total <code>SampleCount(Latency)</code>-லிருந்து பெறப்படுகிறது. 4xx responses இந்த கிடைக்கும் தன்மை கணக்கீட்டில் வெற்றிகரமாக கருதப்படுகின்றன.</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals மூலம் சேகரிக்கப்படும் மெட்ரிக்ஸ்</a>.</p>
+        </section>
+
+        <section>
+          <h2>பரிமாணங்கள் (service vs dependency)</h2>
+          <p>மெட்ரிக்ஸ் செயல்திறனை பிரிக்க உதவும் பரிமாணங்களுடன் வெளியிடப்படுகின்றன:</p>
+          <ul>
+            <li><strong>சேவை மெட்ரிக்ஸ்</strong>: Environment, Service, Operation</li>
+            <li><strong>சார்பு மெட்ரிக்ஸ்</strong>: Environment, Service, Operation மற்றும் RemoteService / RemoteOperation (மற்றும் platform-ஐ பொறுத்து பிற remote dimensions)</li>
+          </ul>
+          <p>இது "எந்த செயல்பாடு பின்னடைந்தது?" மற்றும் "தாமதம் ஒரு dependency call-ஆல் இயக்கப்படுகிறதா?" போன்ற கேள்விகளுக்கு பதிலளிப்பதை எளிதாக்குகிறது.</p>
+        </section>
+
+        <section>
+          <h2>Runtime மெட்ரிக்ஸ் (ஆதரிக்கப்படும் இடங்களில்)</h2>
+          <p>Application Signals ஆதரிக்கப்படும் runtimes-க்கு runtime மெட்ரிக்ஸையும் சேகரிக்க முடியும் (எடுத்துக்காட்டாக, JVM GC, memory, CPU; Python process metrics; .NET runtime metrics). Node.js-க்கு Runtime metrics சேகரிக்கப்படுவதில்லை.</p>
+          <p><code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> மூலம் runtime metrics collection-ஐ முடக்கலாம் (platform-குறிப்பிட்ட படிகள் docs-ல் உள்ளன).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

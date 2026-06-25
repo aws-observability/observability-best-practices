@@ -42,16 +42,29 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
   const [error, setError] = useState<string>('');
 
   const {i18n} = useDocusaurusContext();
-  const currentLocale = i18n.currentLocale;
-  const apmSrcFolder = currentLocale === 'en' ? 'apm-src' : `apm-src-${currentLocale}`;
+  const {currentLocale, defaultLocale} = i18n;
+  const isLocalized = currentLocale !== defaultLocale;
+  const apmSrcFolder = isLocalized ? `apm-src-${currentLocale}` : 'apm-src';
 
   const apmSrcBase = useBaseUrl(`/${apmSrcFolder}/`);
   const apmHome = useBaseUrl('/apm/');
   const apmDocBase = useBaseUrl('/apm/');
   const apmFetchPath = apmStaticFetchPath(src);
-  const primaryUrl = useBaseUrl(`/${apmSrcFolder}/${apmFetchPath}`);
-  const fallbackUrl = useBaseUrl(`/${apmSrcFolder}/${apmStaticFileRelativePath(src)}`);
-  const enFallbackUrl = useBaseUrl(`/apm-src/${apmStaticFileRelativePath(src)}`);
+  const fileRelPath = apmStaticFileRelativePath(src);
+
+  const localizedPrimaryUrl = useBaseUrl(`/${apmSrcFolder}/${apmFetchPath}`);
+  const localizedFallbackUrl = useBaseUrl(`/${apmSrcFolder}/${fileRelPath}`);
+  const enPrimaryUrl = useBaseUrl(`/apm-src/${apmFetchPath}`);
+  const enFallbackUrl = useBaseUrl(`/apm-src/${fileRelPath}`);
+
+  const candidates = useMemo(
+    () =>
+      (isLocalized
+        ? [localizedPrimaryUrl, localizedFallbackUrl, enPrimaryUrl, enFallbackUrl]
+        : [enPrimaryUrl, enFallbackUrl]
+      ).filter((u, i, arr) => Boolean(u) && arr.indexOf(u) === i),
+    [isLocalized, localizedPrimaryUrl, localizedFallbackUrl, enPrimaryUrl, enFallbackUrl],
+  );
 
   const resolved = useMemo(() => {
     // Avoid SSR crashes: DOMParser/document are browser-only.
@@ -66,23 +79,31 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
       setError('');
       setHtml('');
       try {
-        let res = await fetch(primaryUrl, {cache: 'no-cache'});
-        let loadedFrom = primaryUrl;
-        if (!res.ok && res.status === 404 && fallbackUrl !== primaryUrl) {
-          res = await fetch(fallbackUrl, {cache: 'no-cache'});
-          loadedFrom = fallbackUrl;
-        }
-        if (!res.ok && res.status === 404 && currentLocale !== 'en') {
-          res = await fetch(enFallbackUrl, {cache: 'no-cache'});
-          loadedFrom = enFallbackUrl;
-        }
-        if (!res.ok) {
-          throw new Error(`Failed to load ${loadedFrom} (${res.status})`);
-        }
-        const text = await res.text();
-
         if (typeof window === 'undefined') return;
-        const doc = new DOMParser().parseFromString(text, 'text/html');
+
+        const tryLoad = async (url: string): Promise<Document | null> => {
+          const r = await fetch(url, {cache: 'no-cache'});
+          if (!r.ok) return null;
+          const t = await r.text();
+          return new DOMParser().parseFromString(t, 'text/html');
+        };
+
+        let doc: Document | null = null;
+        for (const url of candidates) {
+          if (cancelled) return;
+          const d = await tryLoad(url);
+          if (d && d.querySelector(selector)) {
+            doc = d;
+            break;
+          }
+          if (d && doc === null) {
+            doc = d;
+          }
+        }
+
+        if (doc === null) {
+          throw new Error(`Failed to load ${candidates.join(' or ')}`);
+        }
 
         const rewriteStatic = (u: string) => {
           if (!u) return u;
@@ -152,12 +173,12 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
     return () => {
       cancelled = true;
     };
-  }, [apmDocBase, apmHome, apmSrcBase, fallbackUrl, primaryUrl, enFallbackUrl, currentLocale, selector]);
+  }, [apmDocBase, apmHome, apmSrcBase, candidates, selector]);
 
   if (typeof window === 'undefined') {
     return (
       <div className="apm-doc">
-        <p>Loading…</p>
+        <p>Loading...</p>
       </div>
     );
   }
@@ -169,13 +190,7 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
           <h2>Unable to load page content</h2>
           <p>{error}</p>
           <p>
-            Tried: <code>{primaryUrl}</code>
-            {fallbackUrl !== primaryUrl && (
-              <>
-                {' '}
-                then <code>{fallbackUrl}</code>
-              </>
-            )}
+            Tried: <code>{candidates.join(', ')}</code>
           </p>
         </div>
       </div>
@@ -184,4 +199,3 @@ export default function ApmHtmlDoc({src, selector = 'article'}: Props) {
 
   return <div className="apm-doc" dangerouslySetInnerHTML={resolved} />;
 }
-

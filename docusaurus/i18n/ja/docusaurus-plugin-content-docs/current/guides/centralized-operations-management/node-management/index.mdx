@@ -1,0 +1,54 @@
+---
+sidebar_position: 4
+---
+# ノード管理
+
+お客様が AWS 上、オンプレミス、またはマルチクラウド環境でアカウントやリージョンをまたいで運用することを選択した場合でも、AWS Systems Manager は SSM エージェントを簡単に管理、診断、修復するための一元化された場所を提供します。ノードがどこに存在するかに関わらず、包括的なインフラストラクチャの可視性を提供しながら、運用効率と生産性を向上させます。
+
+## Systems Manager 統合コンソール
+
+[統合 Systems Manager コンソール](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-unified-console.html)は、AWS Organizations の組織内、または単一のアカウントとリージョンにおいて、複数の AWS アカウントおよび AWS リージョンにわたる一般的なノードタスクを完了するためのさまざまなツールを統合した、一元的なエクスペリエンスです。統合コンソールでは、ノードに関する詳細なインサイトが提供されます。ノードのレポートを生成したり、接続の問題など、Systems Manager によって管理対象として報告されることを妨げる一般的な問題を診断および修復したりすることができます。ノードに関するサマリーに加えて、ソフトウェアインベントリやパッチ適用状況など、ノードに関する具体的な詳細を確認することもできます。
+
+## デモ: Systems Manager 統合コンソール
+
+次のインタラクティブデモでは、Systems Manager の統合コンソールを探索します。インタラクティブデモを新しいウィンドウで表示するには、[こちらのリンク](https://aws-cloudops.storylane.io/share/1xr2aepwsitb)をご利用ください。
+
+<div>
+<script async src="https://js.storylane.io/js/v2/storylane.js"></script>
+  <div class="sl-embed"  style={{position: "relative",paddingBottom: "56.25%",width: "100%",height: "0",transform: "scale(1)"}}>
+   <iframe loading="lazy" class="sl-demo" src="https://aws-cloudops.storylane.io/demo/1xr2aepwsitb?embed=inline" name="sl-embed" allow="fullscreen" allowfullscreen style={{position: "absolute",top: "0",left: "0",width: "100%",height: "100%",border: "1px solid rgba(63,95,172,0.35)",boxShadow: "0px 0px 18px rgba(26, 19, 72, 0.15)",borderRadius: "10px;box-sizing:border-box"}}>
+    </iframe>
+    </div>
+</div>
+
+## ノードを登録するための前提条件
+
+AWS Systems Manager にノードを登録するには、3 つの前提条件があります。
+
+まず、SSM エージェントをインストールする必要があります。SSM エージェントは、AWS および信頼できるサードパーティが提供する一部の[Amazon Machine Images (AMIs) にプリインストールされています](https://docs.aws.amazon.com/systems-manager/latest/userguide/ami-preinstalled-agent.html)。
+
+次に、[SSM エージェント](https://docs.aws.amazon.com/systems-manager/latest/userguide/ssm-agent.html)がノード上でお客様に代わってアクションを実行するために必要な権限が必要です。[AWS Organization に対して Systems Manager 統合コンソールを有効化する](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)ことで、IAM 権限のアタッチと修復のプロセスを自動化できます。あるいは、リソースをデプロイする際に IaC を通じて必要な IAM ロールと権限を追加することもできます。
+
+最後に、SSM エージェントはインターネット経由または [VPC エンドポイント](https://docs.aws.amazon.com/systems-manager/latest/userguide/setup-create-vpc.html)を使用して、[Systems Manager サービスエンドポイント](https://docs.aws.amazon.com/general/latest/gr/ssm.html)へのネットワーク接続が必要です。
+
+![AWS Systems Manager Agent](/img/cloudops/guides/centralized-operations-management/node-management/BP-Node-Mgmt-1.png "AWS Systems Manager Agent")
+
+SSM Agent により、Systems Manager はこれらのリソースを更新、管理、および設定することができます。エージェントは AWS Cloud 上の Systems Manager サービスからのリクエストを処理し、リクエストで指定された内容を実行します。その後、SSM Agent はステータスと実行情報を Systems Manager サービスに送り返します。
+
+## ノードの IAM 権限をスケールで管理する
+
+ノードの IAM 権限を管理する方法はいくつかあります。AWS リソースをデプロイするための Infrastructure as Code (IaC) 戦略がある場合は、EC2 インスタンスの起動時に IAM インスタンスプロファイルをアタッチする必要があります。
+
+IaC 戦略がない場合、または IaC ルートを使用することが選択肢にない場合は、Quick Setup を利用した [Systems Manager 統合コンソールを有効にする](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-setting-up-organizations.html)ことができます。
+
+[クイックセットアップ](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-quick-setup.html)は、AWS Organizations 内の AWS アカウントおよびリージョン全体で、一般的なタスクや推奨タスクを自動化することにより、Systems Manager を含む AWS サービスのセットアップを簡素化します。これらのタスクには、必要な AWS Identity and Access Management (IAM) インスタンスプロファイルロールの作成や、定期的なパッチスキャンやインベントリ収集などの運用ベストプラクティスの設定が含まれます。
+
+## インフラストラクチャ環境全体の可視性を向上させる
+
+AWS Systems Manager は、ノード管理を簡素化することで運用効率のスケールアップを支援し、ノードの管理をより簡単にします。組織の AWS アカウントおよびリージョン全体にわたるすべての管理対象ノードと非管理対象ノードを、1 か所から確認できるようになりました。また、非管理対象ノードの特定、診断、および修復も行えます。
+
+修復が完了し、Systems Manager によって管理されるようになると、Systems Manager ツールの完全なスイートを活用して、セキュリティパッチの適用、セッションの開始とログ記録、運用コマンドの実行などの重要な運用タスクを効果的に実行し、フリート全体にわたる包括的な可視性を確保できます。
+
+## Systems Manager の AWS Organizations 委任管理者の作成
+
+統合コンソールのセットアップ時に、Systems Manager の委任管理者アカウントを設定することで、組織全体のノードを一元管理できます。これには、AWS Organizations を使用してアカウントおよびリージョン全体に設定をデプロイおよび管理するための Quick Setup が含まれます。Quick Setup の委任管理者は、組織内の設定マネージャーリソースを作成、更新、表示、および削除できます。Systems Manager は、統合コンソールエクスペリエンスのセットアッププロセスの一環として、Quick Setup の委任管理者を登録します。これにより、組織の AWS アカウントおよびリージョン全体にわたる管理対象ノードと非管理対象ノードのすべてを、単一の場所から包括的かつ一元的に確認できます。

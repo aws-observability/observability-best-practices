@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Performance Analytics — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>パフォーマンス分析</h1></header>
+<article>
+<section>
+<h2>標準アプリケーションメトリクス</h2>
+<p>Application Signals は標準アプリケーションメトリクスを CloudWatch（名前空間 <code>ApplicationSignals</code>）に発行します。これらのメトリクスは、サービス、オペレーション、依存関係をまたいだ迅速なトリアージを目的として設計されています。</p>
+<ul>
+<li><strong>レイテンシー</strong> （ミリ秒）</li>
+<li><strong>フォルト</strong> （HTTP 5xx およびスパンステータスエラー）</li>
+<li><strong>エラー</strong> （HTTP 4xx）</li>
+<li><strong>可用性</strong> はコンソールで \( (1 - \text{Faults}/\text{Total}) \times 100 \) として計算されます。Total は <code>SampleCount(Latency)</code>から導出されます。この可用性計算では、4xx レスポンスは成功として扱われます。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals が収集するメトリクス</a>.</p>
+</section>
+<section>
+<h2>ディメンション（サービス対依存関係）</h2>
+<p>メトリクスは、以下の項目別にパフォーマンスを分析できるディメンションとともに出力されます：</p>
+<ul>
+<li><strong>サービスメトリクス</strong>：Environment、Service、Operation</li>
+<li><strong>依存関係メトリクス</strong>：Environment、Service、Operation に加え、RemoteService / RemoteOperation（およびプラットフォームに応じたその他のリモートディメンション）</li>
+</ul>
+<p>これにより、「どのオペレーションがパフォーマンス低下したか？」や「レイテンシーは依存関係の呼び出しに起因しているか？」といった質問に答えやすくなります。</p>
+</section>
+<section>
+<h2>ランタイムメトリクス（サポートされている場合）</h2>
+<p>Application Signals は、サポートされているランタイム（例：JVM GC、メモリ、CPU；Python プロセスメトリクス；.NET ランタイムメトリクス）のランタイムメトリクスも収集できます。Node.js のランタイムメトリクスは収集されません。</p>
+<p>ランタイムメトリクスの収集は <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> で無効化できます（プラットフォーム固有の手順はドキュメントに記載されています）。</p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

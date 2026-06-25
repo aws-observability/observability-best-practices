@@ -1,41 +1,40 @@
-# EKS cluster wide GPU Cost Attribution
+# EKS クラスター全体の GPU コスト配分
 
-This post walks through an end-to-end proof of concept (PoC) for **GPU slice cost allocation** on **Amazon EKS**.
-
----
-
-## Problem statement
-
-When multiple tenants share GPU capacity (e.g., **MIG slices**), you need to answer:
-
-- **Who requested what share** of GPU (by pod / namespace / BU)?
-- **Who actually used the GPU** (and how much)?
-- Given a “public” price like **$12 per GPU-hour**, how do we compute:
-  - **Allocated cost** (based on requested share)
-  - **Effective cost** (based on observed utilization)
-  - **Waste** (allocated minus effective)
-
+この投稿では、**Amazon EKS** 上での **GPU スライスコスト割り当て**のエンドツーエンドの概念実証 (PoC) について説明します。
 
 ---
 
-## Architecture (high level)
+## 問題の説明
+
+複数のテナントが GPU 容量を共有する場合（例：**MIG スライス**）、次の点を明確にする必要があります。
+
+- **誰が GPU のどのシェアをリクエストしたか**（Pod / Namespace / BU 別）？
+- **誰が実際に GPU を使用したか**（そしてどれだけ使用したか）？
+- **GPU 時間あたり $12** のような「公開」価格が与えられた場合、以下をどのように計算するか：
+  - **割り当てコスト**（リクエストされたシェアに基づく）
+  - **実効コスト**（観測された使用率に基づく）
+  - **無駄**（割り当て済みから実効を引いたもの）
+
+---
+
+## アーキテクチャ（高レベル）
 
 	![architecture](eks-cost-gpu.png)
 
 ---
 
-## Prerequisites
+## 前提条件
 
-### AWS + EKS prerequisites
-- AWS account with permission to create:
-  - EKS clusters + nodegroups
-  - IAM roles for service accounts (IRSA)
-  - AMP workspace
-- **Quota and AZ capacity for running GPU instances** in your region
+### AWS + EKS の前提条件
+- 以下を作成する権限を持つ AWS アカウント:
+  - EKS クラスター + ノードグループ
+  - サービスアカウント用の IAM ロール (IRSA)
+  - AMP ワークスペース
+- リージョン内で **GPU インスタンスを実行するためのクォータと AZ キャパシティ**
 
 ---
 
-## Variables used
+## 使用される変数
 
 ```bash
 export AWS_REGION="us-west-2"
@@ -60,18 +59,18 @@ export KSM_RESOURCE_REGEX='nvidia.*(gpu|mig).*'
 
 ---
 
-## Step-by-step instructions 
+## ステップバイステップの手順 
 ---
 
-### Step 1 — Create EKS cluster
+### ステップ 1 — EKS クラスターを作成する
 
-List versions your `eksctl` supports:
+バージョンを一覧表示します `eksctl` サポート対象：
 
 ```bash
 eksctl utils describe cluster-versions
 ```
 
-Create the cluster (omit `--version` to let `eksctl` pick a supported default):
+クラスターを作成します（省略 `--version` を可能にするために `eksctl` サポートされているデフォルトを選択します）。
 
 ```bash
 eksctl create cluster \
@@ -82,9 +81,9 @@ eksctl create cluster \
 
 ---
 
-### Step 2 — Add a “system” nodegroup (recommended)
+### ステップ 2 — "system" ノードグループを追加する（推奨）
 
-This keeps CoreDNS and operators off expensive GPU nodes.
+これにより、CoreDNS とオペレーターはコストの高い GPU ノードから切り離されます。
 
 ```bash
 eksctl create nodegroup \
@@ -98,7 +97,7 @@ eksctl create nodegroup \
 
 ---
 
-### Step 3 — Add a GPU nodegroup 
+### ステップ 3 — GPU ノードグループを追加する 
 
 
 
@@ -114,7 +113,7 @@ eksctl create nodegroup \
   --node-labels "workload=gpu"
 ```
 
-Apply a taint so only GPU workloads schedule there:
+GPU ワークロードのみがスケジュールされるようにテイントを適用します。
 
 ```bash
 kubectl taint nodes -l workload=gpu nvidia.com/gpu=present:NoSchedule --overwrite
@@ -122,7 +121,7 @@ kubectl taint nodes -l workload=gpu nvidia.com/gpu=present:NoSchedule --overwrit
 
 ---
 
-### Step 4 — Install NVIDIA GPU Operator (MIG enabled)
+### ステップ 4 — NVIDIA GPU Operator のインストール（MIG 有効）
 
 ```bash
 helm repo add nvidia https://helm.ngc.nvidia.com/nvidia
@@ -135,21 +134,21 @@ helm upgrade --install gpu-operator nvidia/gpu-operator \
 
 ---
 
-### Step 5 — Enable MIG profile on GPU node(s)
+### ステップ 5 — GPU ノードで MIG プロファイルを有効にする
 
-Check current MIG labels:
+現在の MIG ラベルを確認します。
 
 ```bash
 kubectl get nodes -l workload=gpu -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.metadata.labels.nvidia\.com/mig\.capable}{"\t"}{.metadata.labels.nvidia\.com/mig\.config}{"\t"}{.metadata.labels.nvidia\.com/mig\.config\.state}{"\n"}{end}'
 ```
 
-Apply MIG geometry:
+MIG ジオメトリを適用します。
 
 ```bash
 kubectl label nodes -l workload=gpu nvidia.com/mig.config="$MIG_PROFILE_LABEL" --overwrite
 ```
 
-Wait for success:
+成功を待ちます。
 
 ```bash
 kubectl get nodes -l workload=gpu -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.metadata.labels.nvidia\.com/mig\.config}{"\t"}{.metadata.labels.nvidia\.com/mig\.config\.state}{"\n"}{end}'
@@ -157,7 +156,7 @@ kubectl get nodes -l workload=gpu -o jsonpath='{range .items[*]}{.metadata.name}
 
 ---
 
-### Step 6 — Create AMP workspace
+### ステップ 6 — AMP ワークスペースを作成する
 
 ```bash
 aws amp create-workspace --alias "$AMP_ALIAS" --region "$AWS_REGION"
@@ -171,7 +170,7 @@ echo "$AMP_ENDPOINT"
 
 ---
 
-### Step 7 — IRSA for ingest + query
+### ステップ 7 — 取り込みとクエリのための IRSA
 
 ```bash
 eksctl utils associate-iam-oidc-provider \
@@ -195,7 +194,7 @@ eksctl create iamserviceaccount \
 
 ---
 
-### Step 8 — Install kube-state-metrics
+### ステップ 8 — kube-state-metrics をインストールする
 
 ```bash
 helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
@@ -207,7 +206,7 @@ helm upgrade --install kube-state-metrics prometheus-community/kube-state-metric
 
 ---
 
-### Step 9 — Deploy OTel collector (Prometheus scrape → AMP remote_write)
+### ステップ 9 — OTel コレクターをデプロイする（Prometheus スクレイプ → AMP remote_write）
 
 
 ```bash
@@ -228,16 +227,16 @@ kubectl -n observability rollout status deploy/amp-scraper-otel
 
 ---
 
-### Step 10 — Deploy three BU workloads (3/2/2 slices)
+### ステップ 10 — 3 つの BU ワークロードをデプロイする（3/2/2 スライス）
 
-Apply the BU namespaces + deployments. 
-**Critical detail:** request `nvidia.com/gpu: 1` per pod (because MIG slices are exposed as `nvidia.com/gpu` here).
+BU の名前空間とデプロイメントを適用します。
+**重要な詳細:** リクエスト `nvidia.com/gpu: 1` ポッドごと（MIG スライスは次のように公開されているため `nvidia.com/gpu` ここ）。
 
 ---
 
-## Queries: allocation, utilization, effective cost, waste
+## クエリ: allocation、utilization、effective cost、waste
 
-### 1) Requested slices per namespace (BU)
+### 1) 名前空間ごとのリクエストされたスライス数 (BU)
 
 ```bash
 Q='sum by (namespace) (kube_pod_container_resource_requests{resource=~"nvidia.*(gpu|mig).*",unit="integer"})'
@@ -249,7 +248,7 @@ awscurl --service aps --region "$AWS_REGION" \
   -d "query=${ENCODED}"
 ```
 
-Observed output:
+観測された出力：
 
 ```json
 {"namespace":"bu-a","value":[...,"3"]}
@@ -257,9 +256,9 @@ Observed output:
 {"namespace":"bu-c","value":[...,"2"]}
 ```
 
-### 2) Find a GPU utilization metric
+### 2) GPU 使用率メトリクスを見つける
 
-List metric names:
+メトリクス名を一覧表示します。
 
 ```bash
 awscurl --service aps --region "$AWS_REGION" \
@@ -269,13 +268,13 @@ awscurl --service aps --region "$AWS_REGION" \
 | head -n 30
 ```
 
-We found:
+見つかった内容：
 
 ```text
 DCGM_FI_PROF_GR_ENGINE_ACTIVE
 ```
 
-### 3) Utilization fraction (scalar)
+### 3) 使用率の割合 (スカラー)
 
 ```bash
 Q='scalar(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100)'
@@ -287,15 +286,15 @@ awscurl --service aps --region "$AWS_REGION" \
   -d "query=${ENCODED}"
 ```
 
-Example observed (low load case):
+観測された例（低負荷の場合）：
 
 ```json
 {"resultType":"scalar","result":[...,"0.0004539326785714286"]}
 ```
 
-### 4) Allocation math (per hour)
+### 4) 割り当て計算（1 時間あたり）
 
-Allocated $/hr per BU:
+BU あたりの割り当て $/時間：
 
 ```promql
 allocated_usd_per_hr =
@@ -303,7 +302,7 @@ sum by (namespace) (kube_pod_container_resource_requests{resource=~"nvidia.*(gpu
 * (GPU_HOURLY_RATE / SLICES_PER_GPU)
 ```
 
-With constants \(12/7\):
+定数 \(12/7\) を使用：
 
 ```bash
 Q='sum by (namespace) (kube_pod_container_resource_requests{resource=~"nvidia.*(gpu|mig).*",unit="integer"}) * (12/7)'
@@ -315,16 +314,16 @@ awscurl --service aps --region "$AWS_REGION" \
   -d "query=${ENCODED}"
 ```
 
-This matches the story:
+これはストーリーと一致します。
 - BU-A: \(3/7 × 12 = 5.142857\) $/hr
 - BU-B: \(2/7 × 12 = 3.428571\) $/hr
 - BU-C: \(2/7 × 12 = 3.428571\) $/hr
 
-### 5) Effective $/hr and Waste $/hr
+### 5) 実効 $/hr と無駄 $/hr
 
-Key point: utilization is a **scalar** while allocation is a **namespace-labeled vector**. Use `scalar(...)` so Prometheus “broadcasts” it.
+重要なポイント：使用率は**スカラー**であり、割り当ては**名前空間ラベル付きベクター**です。使用 `scalar(...)` そのため、Prometheus はそれを「ブロードキャスト」します。
 
-Effective $/hr:
+実効 $/hr：
 
 ```bash
 Q='(sum by (namespace) (kube_pod_container_resource_requests{resource=~"nvidia.*(gpu|mig).*",unit="integer"}) * (12/7))
@@ -337,7 +336,7 @@ awscurl --service aps --region "$AWS_REGION" \
   -d "query=${ENCODED}"
 ```
 
-Example output we saw:
+確認された出力例：
 
 ```json
 {"namespace":"bu-a","value":[...,"0.002325599081632653"]}
@@ -345,7 +344,7 @@ Example output we saw:
 {"namespace":"bu-c","value":[...,"0.0015503993877551022"]}
 ```
 
-Waste $/hr:
+無駄なコスト ($/時間):
 
 ```bash
 Q='(sum by (namespace) (kube_pod_container_resource_requests{resource=~"nvidia.*(gpu|mig).*",unit="integer"}) * (12/7))
@@ -361,7 +360,7 @@ awscurl --service aps --region "$AWS_REGION" \
   -d "query=${ENCODED}"
 ```
 
-Example output we saw:
+出力例を以下に示します。
 
 ```json
 {"namespace":"bu-a","value":[...,"5.14053154377551"]}
@@ -371,11 +370,11 @@ Example output we saw:
 
 ---
 
-## Amazon Managed Grafana (AMG): dashboards on top of AMP
+## Amazon Managed Grafana (AMG): AMP 上のダッシュボード
 
-To make this PoC easy to share, the quickest visualization layer is **Amazon Managed Grafana (AMG)**.
+この PoC を簡単に共有できるようにするため、最も手軽なビジュアライゼーションレイヤーは **Amazon Managed Grafana (AMG)** です。
 
-### 1) Create an AMG workspace (CLI)
+### 1) AMG ワークスペースを作成する (CLI)
 
 ```bash
 aws grafana create-workspace \
@@ -386,7 +385,7 @@ aws grafana create-workspace \
   --workspace-data-sources PROMETHEUS
 ```
 
-Get the workspace URL:
+ワークスペース URL を取得します。
 
 ```bash
 export AMG_WORKSPACE_ID="$(aws grafana list-workspaces --region "${AWS_REGION}" --query "workspaces[?name=='${CLUSTER_NAME}-gpu-cost'].id | [0]" --output text)"
@@ -395,7 +394,7 @@ aws grafana describe-workspace --region "${AWS_REGION}" --workspace-id "${AMG_WO
 ```
 
 
-### 2) Allow AMG to query AMP
+### 2) AMG が AMP をクエリできるようにする
 
 ```bash
 export AMG_ROLE_ARN="$(aws grafana describe-workspace --region "${AWS_REGION}" --workspace-id "${AMG_WORKSPACE_ID}" --query "workspace.iamRoleArn" --output text)"
@@ -403,19 +402,19 @@ ROLE_NAME="$(basename "$AMG_ROLE_ARN")"
 aws iam attach-role-policy --role-name "$ROLE_NAME" --policy-arn arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess
 ```
 
-### 3) Add AMP as a Prometheus data source (Grafana UI)
+### 3) AMP を Prometheus データソースとして追加する (Grafana UI)
 
-In the AMG UI:
+AMG UI で次の操作を行います。
 - **Connections → Data sources → Add data source → Prometheus**
 - **URL**: `https://aps-workspaces.${AWS_REGION}.amazonaws.com/workspaces/${AMP_WORKSPACE_ID}`
 - **SigV4**: enabled
   - **Region**: `${AWS_REGION}`
-  - **Service**: `aps`
-- **Save & test**
+  - **サービス**: `aps`
+- **保存してテスト**
 
-### 4) Starter panels (PromQL)
+### 4) スターターパネル (PromQL)
 
-**Requested slices by BU/namespace**
+**BU/namespace 別のリクエスト済みスライス**
 
 ```promql
 sum by (namespace) (
@@ -423,7 +422,7 @@ sum by (namespace) (
 )
 ```
 
-**Allocated $/hr by BU/namespace (12/7 constants)**
+**BU/ネームスペース別の割り当て $/時間 (12/7 定数)**
 
 ```promql
 sum by (namespace) (
@@ -431,13 +430,13 @@ sum by (namespace) (
 ) * (12/7)
 ```
 
-**Utilization fraction scalar (cluster-level proxy)**
+**使用率フラクションスカラー (クラスターレベルプロキシ)**
 
 ```promql
 scalar(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100)
 ```
 
-**Effective $/hr (proxy)**
+**実効 $/時間 (プロキシ)**
 
 ```promql
 (sum by (namespace) (
@@ -446,7 +445,7 @@ scalar(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100)
 * scalar(clamp_min(clamp_max(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100, 1), 0))
 ```
 
-**Waste $/hr (proxy)**
+**無駄なコスト ($/時間) (プロキシ)**
 
 ```promql
 (sum by (namespace) (
@@ -461,25 +460,117 @@ scalar(avg(DCGM_FI_PROF_GR_ENGINE_ACTIVE)/100)
 
 ---
 
-## Learnings and next improvements
+## 学習内容と今後の改善点
 
-### What this PoC proves
-- **Allocation is straightforward** when requests are declared (slices per BU) and priced with a simple constant.
-- With MIG, **requested slices map cleanly** to cost shares.
-- You can compute **waste** as “allocated minus effective” to show poor ROI for idle slices.
+### この PoC が証明すること
+- **リクエストが宣言されている場合、割り当ては簡単です**（BU ごとのスライス）。シンプルな定数で価格設定されます。
+- MIG を使用すると、**リクエストされたスライスがコストシェアに明確にマッピングされます**。
+- アイドル状態のスライスの ROI が低いことを示すために、「割り当て済みから有効分を引いた値」として**無駄**を計算できます。
 
-### What’s “approximate” in this PoC
-- With MIG, **per-pod GPU utilization labels may not be present** in DCGM metrics, depending on versions/config.
-- This PoC used a **cluster-level utilization scalar** as a proxy for “actual usage” per BU.
+### この PoC における「近似」とは
+- MIG を使用する場合、バージョンや設定によっては、**ポッドごとの GPU 使用率ラベルが DCGM メトリクスに存在しない場合があります**。
+- この PoC では、BU ごとの「実際の使用量」の代理として、**クラスターレベルの使用率スカラー**を使用しました。
 
-### Next steps to make it production-grade
-- **True per-pod attribution**:
-  - add a per-pod GPU usage exporter (reads assigned MIG device and reports utilization with pod labels), or
-  - integrate scheduler/device mapping from the NVIDIA device plugin / runtime
-- **Real pricing**:
-  - replace the constant $/GPU-hour with AWS CUR or on-demand price APIs
-- **Dashboards**:
-  - plug AMP into Grafana and chart `allocated`, `effective`, and `waste` over time per BU
+### 本番環境対応にするための次のステップ
+- **真のポッド単位の帰属**:
+  - ポッド単位の GPU 使用量エクスポーターを追加する（割り当てられた MIG デバイスを読み取り、ポッドラベルとともに使用率を報告する）、または
+  - NVIDIA デバイスプラグイン / ランタイムからスケジューラー / デバイスマッピングを統合する
+- **実際の料金**:
+  - 定数の $/GPU 時間を AWS CUR またはオンデマンド価格 API に置き換える
+- **ダッシュボード**:
+  - AMP を Grafana に接続してグラフを作成する `allocated`, `effective`、および `waste` BU ごとの経時変化
+
+---
+
+## クリーンアップ
+
+PoC が完了したら、孤立したインフラストラクチャや継続的な料金が発生しないよう、依存関係の逆順ですべてのリソースを削除してください。
+
+### 1) BU ワークロードの削除
+
+```bash
+kubectl delete namespace bu-a bu-b bu-c
+```
+
+### 2) OTel コレクターを削除する
+
+```bash
+kubectl delete namespace observability
+```
+
+### 3) kube-state-metrics のアンインストール
+
+```bash
+helm uninstall kube-state-metrics -n kube-system
+```
+
+### 4) NVIDIA GPU Operator のアンインストール
+
+```bash
+helm uninstall gpu-operator -n gpu-operator
+kubectl delete namespace gpu-operator
+```
+
+### 5) Amazon Managed Grafana ワークスペースの削除
+
+```bash
+aws grafana delete-workspace \
+  --workspace-id "$AMG_WORKSPACE_ID" \
+  --region "$AWS_REGION"
+```
+
+### 6) AMG IAM ポリシーのデタッチ
+
+```bash
+ROLE_NAME="$(basename "$AMG_ROLE_ARN")"
+aws iam detach-role-policy \
+  --role-name "$ROLE_NAME" \
+  --policy-arn arn:aws:iam::aws:policy/AmazonPrometheusQueryAccess
+```
+
+### 7) AMP ワークスペースの削除
+
+```bash
+aws amp delete-workspace \
+  --workspace-id "$AMP_WORKSPACE_ID" \
+  --region "$AWS_REGION"
+```
+
+### 8) IRSA サービスアカウントの削除
+
+```bash
+eksctl delete iamserviceaccount \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name amp-ingest --namespace observability
+
+eksctl delete iamserviceaccount \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name amp-query --namespace observability
+```
+
+### 9) ノードグループの削除
+
+```bash
+eksctl delete nodegroup \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name gpu-ng-ubuntu
+
+eksctl delete nodegroup \
+  --cluster "$CLUSTER_NAME" --region "$AWS_REGION" \
+  --name system-ng
+```
+
+### 10) EKS クラスターを削除する
+
+```bash
+eksctl delete cluster \
+  --name "$CLUSTER_NAME" \
+  --region "$AWS_REGION"
+```
+
+:::tip
+`eksctl delete cluster` また、OIDC プロバイダーと、個別に削除されていない残りのノードグループも削除されます。ただし、最初にノードグループを削除することで、CloudFormation スタックの削除時の再試行が少なくなり、よりクリーンなティアダウンが確保されます。
+:::
 
 ---
 ###### @author: Siva Guruvareddiar

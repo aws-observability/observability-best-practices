@@ -270,7 +270,8 @@ module.exports = {
               label: 'Security',
               items: [
                 'tools/logs/security/cloudwatch-logs-security-best-practices',
-                'tools/logs/security/querying_security_lake_with_cloudwatch_uds',
+		'tools/logs/security/querying_security_lake_with_cloudwatch_uds',
+                'tools/logs/security/s3-server-access-logs-security-compliance',
               ],
             },
             {

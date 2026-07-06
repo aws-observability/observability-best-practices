@@ -1,0 +1,1013 @@
+---
+sidebar_position: 1
+title: Amazon S3 server access logs for Security, Compliance & Auditing
+description: Best practices for using Amazon S3 server access logs alongside CloudTrail data events for security monitoring, compliance evidence, and operational auditing.
+keywords: [S3, server access logs, CloudTrail, security, compliance, auditing, hybrid logging]
+toc_max_heading_level: 3
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Using Amazon S3 server access logs for Security, Compliance & Auditing
+
+
+
+## Overview
+
+Organizations running workloads on AWS often store their most critical data in [Amazon S3](https://aws.amazon.com/s3/), from application data and analytics datasets to backups, logs, and regulated content. With that responsibility comes a fundamental question: **how do I know who is accessing my data, what they're doing with it, and whether those actions comply with my security policies?**
+
+[Amazon S3 server access logs](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html) answer that question by recording requests made to your buckets, successful or failed, authenticated or anonymous, with HTTP-level detail not available in other common log sources. With Amazon S3 server access logs now available as a native data source for [CloudWatch unified data store](https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/), those logs are automatically delivered to CloudWatch without the need to build custom ETL pipelines or transformation workflows. CloudWatch unified data store transforms the raw Amazon S3 server access log data into a structured, queryable format, enabling immediate use of [CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html), metric filters, [Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) rules, and [Amazon S3 Tables](https://aws.amazon.com/s3/features/tables/) integration. Combined with [AWS CloudTrail](https://aws.amazon.com/cloudtrail/) management events, server access logs become a powerful, cost-effective pillar of your Amazon S3 security and compliance posture.
+
+### The Customer Challenge
+
+:::info[The Challenge]
+Many teams face a common set of questions when monitoring Amazon S3 data-plane activity:
+
+- **Visibility gaps:** CloudTrail management events (included at no additional cost) cover bucket-level configuration changes but don't show who is reading, writing, or deleting individual objects.
+- **Cost at scale:** High-volume buckets (millions of requests per day) need visibility without unbounded cost growth.
+- **Pipeline complexity:** Traditional server access log setups required bucket policies, lifecycle management, and custom transformation workflows to make the logs queryable in tools like CloudWatch. CloudWatch unified data store now eliminates the need to build custom ETL pipelines to deliver and structure those logs for analysis.
+- **Compliance evidence:** Frameworks like PCI-DSS, HIPAA, SOC 2, and FedRAMP require proof of encryption-in-transit (TLS version), access controls, and data retention. These fields are uniquely available in server access logs.
+- **Operational depth:** Request latency, bytes transferred, HTTP status codes, and Amazon S3 lifecycle operations (expirations, transitions) are only captured in server access logs.
+:::
+
+:::tip[The Solution]
+This guide shows how Amazon S3 server access logs, delivered natively into CloudWatch unified data store, address these challenges and how to use them alongside CloudTrail for **defense in depth**.
+
+With Amazon S3 server access logs as a native CloudWatch unified data store data source, you get broad, low-cost visibility with built-in transformation and immediate queryability, combined with guaranteed delivery from scoped CloudTrail data events on your most sensitive buckets. No custom ETL pipelines, no additional transformation workflows. Just enable the native integration and start querying, filtering, and alerting on your Amazon S3 access data.
+:::
+
+---
+
+## CloudTrail Amazon S3 data events and server access logs: complementary strengths {#cloudtrail-vs-sal}
+
+Both CloudTrail Amazon S3 data events and Amazon S3 server access logs record object-level activity, and there is meaningful overlap in the operations they capture. Understanding what each source brings to the table helps you design a logging strategy that maximizes coverage while managing costs.
+
+### Where They Overlap
+
+The core data-plane operations (`GetObject`, `PutObject`, `DeleteObject`, `CopyObject`, `HeadObject`, multipart uploads, and `ListObjects`) appear in **both** log sources when both are enabled. For these operations, you get two independent records of the same request.
+
+### What Each Source Uniquely Provides
+
+Rather than choosing one over the other, consider what each source adds that the other cannot:
+
+<Tabs>
+<TabItem value="cloudtrail" label="☁️ CloudTrail Data Events" default>
+
+| Capability | Detail |
+|---|---|
+| **Delivery guarantee** | ✅ Every API call is recorded and delivered |
+| **Delivery latency** | Typically 5–15 minutes |
+| **IAM identity detail** | ✅ Full `userIdentity` block: ARN, session context, assumed role chain, MFA status |
+| **Request/response parameters** | ✅ Full JSON: encryption settings, ACL grants, condition keys |
+| **Streaming destinations** | ✅ Amazon S3, CloudWatch Logs, or CloudTrail Lake |
+| **Selective logging** | ✅ Advanced event selectors filter by bucket ARN, event name, read/write |
+| **Per-event cost** | Per-event charge ([see pricing](https://aws.amazon.com/cloudtrail/pricing/)) |
+
+</TabItem>
+<TabItem value="sal" label="📋 Server Access Logs">
+
+| Capability | Detail |
+|---|---|
+| **HTTP-level detail** | ✅ `http_status`, `bytes_sent_size`, `object_size`, `total_duration`, `turn_around_duration`, `referer` |
+| **Signature version** | ✅ Explicit `signature_version` field (SigV2 vs SigV4) |
+| **Authentication type** | ✅ Explicit field (`AuthHeader`, `QueryString`, or `null` for anonymous) |
+| **ACL required** | ✅ `acl_required` field for ownership controls migration |
+| **S3 lifecycle operations** | ✅ `S3.EXPIRE.OBJECT`, `S3.TRANSITION_SIA.OBJECT`, etc. |
+| **Source region** | ✅ `source_region` (originating region, useful for cross-region detection) |
+| **Native CloudWatch unified data store integration** | ✅ Logs flow directly into CloudWatch unified data store with immediate access to Logs Insights, metric filters, Contributor Insights, and Amazon S3 Tables |
+| **Built-in transformation** | ✅ CloudWatch unified data store automatically transforms raw Amazon S3 server access logs into a structured, queryable format with no custom ETL pipelines required |
+| **Per-event cost** | ✅ CloudWatch Logs ingestion + storage ([see pricing](https://aws.amazon.com/cloudwatch/pricing/)). Amazon S3 server access log events are significantly smaller than CloudTrail data events, resulting in lower per-event ingestion cost |
+
+</TabItem>
+<TabItem value="shared" label="🤝 Shared Fields">
+
+Both sources provide these fields, and either source works:
+
+| Field | Description |
+|---|---|
+| **TLS version and cipher suite** | Transport-layer security details for the connection |
+| **Source IP address** | IP address of the requester |
+| **User agent** | Client tool or SDK that made the request |
+| **Error codes** | Amazon S3 error responses (e.g., `AccessDenied`, `NoSuchKey`) |
+| **Object key** | The object name that was accessed |
+| **Bucket name** | The target bucket for the request |
+
+</TabItem>
+</Tabs>
+
+### When to Lean on Each Source
+
+<Tabs>
+<TabItem value="ct-stronger" label="CloudTrail Strengths" default>
+
+- 🔒 **Compliance audits requiring complete accounting** of every object access. Guaranteed delivery means no gaps in the audit trail.
+- 🔍 **Forensic investigations** where you need the full IAM identity chain: who assumed which role, whether MFA was used, what session context was active.
+- 📋 **Understanding request parameters**: what encryption algorithm was applied to a PutObject, what ACL grants were set, what condition keys were evaluated.
+- ⚡ **Real-time streaming** to CloudWatch Logs or CloudTrail Lake for immediate analysis, alerting, and dashboarding.
+- 🎯 **Selective, cost-controlled logging**. Advanced event selectors let you log only write operations on specific buckets, so you pay only for what matters most.
+
+</TabItem>
+<TabItem value="sal-stronger" label="Server Access Log Strengths">
+
+- 🔑 **Detecting deprecated SigV2 usage**. The `signature_version` field is only available in server access logs.
+- ♻️ **Tracking Amazon S3 lifecycle operations**. Expirations, transitions, and delete marker creation are internal Amazon S3 actions that CloudTrail does not log.
+- ⏱️ **Performance analysis**. Request latency (`total_duration`, `turn_around_duration`), bytes transferred, and object size are only in server access logs.
+- 💰 **High-volume buckets with cost efficiency.** For buckets handling millions of requests per day, server access logs delivered through CloudWatch unified data store provide comprehensive visibility at CloudWatch Logs ingestion and storage cost. Because Amazon S3 server access log events are significantly smaller than CloudTrail data events, the per-event ingestion cost is substantially lower, and CloudWatch's volume-tiered pricing further reduces cost at scale (see [CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/)).
+- 🔄 **Zero pipeline management**. CloudWatch unified data store automatically transforms raw Amazon S3 server access log data into a structured, queryable format upon ingestion. This eliminates the need to provision a destination Amazon S3 bucket, manage bucket policies, configure log object lifecycle rules, or build custom ETL pipelines to parse and normalize the data.
+- 📊 **Immediate observability**. Because Amazon S3 server access logs land directly in CloudWatch unified data store, you get instant access to Logs Insights queries, metric filters, Contributor Insights rules, and Amazon S3 Tables integration without any additional configuration or pipeline setup.
+- 🏷️ **Identifying ACL-dependent requests**. The `acl_required` field helps you plan a migration to bucket-owner-enforced Object Ownership.
+
+</TabItem>
+</Tabs>
+
+---
+
+## The hybrid approach: defense in depth {#hybrid-approach}
+
+:::tip[Recommended Strategy]
+A hybrid strategy combines the strengths of both sources to deliver broad coverage at a manageable cost. The [Amazon S3 security best practices](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html) documentation recommends enabling server access logging and using AWS CloudTrail as separate monitoring and auditing best practices. Using both together gives you defense in depth.
+:::
+
+### Three-Layer Architecture
+
+| Layer | What to Enable | Purpose | Cost |
+|---|---|---|---|
+| **1. CloudTrail management events** | Trail (first copy at no additional cost) | Bucket-level config changes, PutBucketPolicy, DeleteBucketEncryption, etc. Guaranteed delivery. | **No additional cost** (first copy) |
+| **2. Amazon S3 server access logs (via CloudWatch unified data store)** | Enable on all buckets with CloudWatch unified data store as the destination | Broad data-plane visibility with HTTP-level detail, lifecycle tracking, SigV2 detection, and performance metrics. Logs are automatically transformed into a structured, queryable format by CloudWatch unified data store with no ETL required. Immediate access to Logs Insights, metric filters, Contributor Insights, and Amazon S3 Tables. | **CloudWatch Logs ingestion + storage** (Amazon S3 server access log events are smaller than CloudTrail data events, resulting in lower per-event cost; volume-tiered pricing reduces cost further at scale) |
+| **3. CloudTrail data events (scoped)** | Write-only on sensitive buckets via advanced event selectors | Guaranteed delivery for the most critical mutations, PutObject, DeleteObject, CopyObject on buckets holding PII, financial data, or regulated content. | Per-event charge ([see pricing](https://aws.amazon.com/cloudtrail/pricing/)), scoped to reduce volume |
+
+
+### Scoping CloudTrail Data Events to Control Cost
+
+The key to making the hybrid approach cost-effective is using [advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html) to log only what matters most. For example, logging only write operations on three sensitive buckets:
+
+```json title="advanced-event-selector.json"
+[
+  {
+    "Name": "S3WriteOnlySensitiveBuckets",
+    "FieldSelectors": [
+      { "Field": "eventCategory",  "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::S3::Object"] },
+      // highlight-next-line
+      { "Field": "readOnly",       "Equals": ["false"] },
+      { "Field": "resources.ARN",  "StartsWith": [
+          "arn:aws:s3:::my-pii-bucket/",
+          "arn:aws:s3:::my-financial-data/",
+          "arn:aws:s3:::my-compliance-archive/"
+        ]
+      }
+    ]
+  }
+]
+```
+
+> This selector logs only **write operations** (PutObject, DeleteObject, CopyObject, etc.) on three specific buckets. This dramatically reduces cost compared to logging all data events on all buckets, while guaranteeing delivery for the most security-critical mutations. Apply it to your trail or event data store using the CloudTrail console, CLI (`put-event-selectors`), or CloudFormation.
+
+
+## Cost at Scale
+
+The cost advantage of the hybrid approach becomes clear when you compare CloudWatch Logs ingestion pricing for the two data sources side by side.
+
+**Amazon S3 server access logs** are classified as [CloudWatch vended logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AWS-logs-and-resource-policy.html), which benefit from **volume-tiered ingestion pricing**. The per-GB rate decreases as your monthly ingestion volume grows (for example, $0.50/GB for the first 10 TB, dropping to $0.05/GB above 50 TB in US East). This makes server access logs progressively more cost-effective at scale. Additionally, Amazon S3 server access log events are significantly smaller in size compared to CloudTrail data events, meaning you ingest fewer GB for the same number of requests.
+
+**CloudTrail events** (management and data events) delivered to a CloudWatch Logs log group are charged for delivery plus CloudWatch custom logs ingestion pricing. CloudTrail data events provide additional context (see [What each source uniquely provides](#what-each-source-uniquely-provides)), making them the right choice for your most sensitive buckets where you need complete audit trails with no gaps.
+
+The combination of volume-tiered pricing and smaller event size means that, at high request volumes, Amazon S3 server access logs can cost significantly less per request to ingest into CloudWatch than CloudTrail data events. By scoping CloudTrail data events to write-only operations on your most sensitive buckets (using advanced event selectors), you limit that higher-cost ingestion to only the fraction of traffic that requires guaranteed delivery. Server access logs cover the remaining breadth at a lower per-GB rate.
+
+CloudWatch unified data store also eliminates the operational cost and complexity of building custom ETL pipelines. The logs are natively delivered and automatically transformed into structured JSON upon ingestion, removing the need for destination bucket provisioning, log object lifecycle management, or custom transformation workflows.
+
+:::tip[Review Current Pricing]
+Pricing changes over time. Before finalizing your logging strategy, review the latest rates on the [Amazon CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/) page. Compare the **Vended Logs** tier (for Amazon S3 server access logs) against the **Custom Logs** ingestion rate (for CloudTrail events delivered to CloudWatch Logs). Use the [AWS Pricing Calculator](https://calculator.aws/) to help calculate the cost.
+:::
+
+### Decision Guide
+
+Use this quick reference to decide your logging strategy per bucket:
+
+<Tabs>
+<TabItem value="q1" label="Q1: Sensitive Data?" default>
+
+**Does this bucket hold regulated, sensitive, or business-critical data?**
+
+✅ **Yes** → Enable CloudTrail data events (write-only at minimum) for guaranteed delivery and full identity chain. Also enable server access logs via CloudWatch unified data store for HTTP-level detail, lifecycle tracking, and built-in transformation with no ETL required.
+
+➡️ **No** → See **Q2**.
+
+</TabItem>
+<TabItem value="q2" label="Q2: Unique Fields?">
+
+**Do you need to detect SigV2 usage, track lifecycle operations, or analyze request latency?**
+
+✅ **Yes** → Enable server access logs via CloudWatch unified data store. These fields are only available in Amazon S3 server access log, and CloudWatch unified data store automatically transforms the logs into a structured, queryable format for immediate analysis.
+
+➡️ **No** → See **Q3**.
+
+</TabItem>
+<TabItem value="q3" label="Q3: High Volume?">
+
+**Is the bucket high-volume (millions of requests/day) with cost sensitivity?**
+
+✅ **Yes** → Enable server access logs via CloudWatch unified data store. Amazon S3 server access log events are significantly smaller than CloudTrail data events, keeping CloudWatch ingestion costs low even at high request volumes. CloudWatch's volume-tiered pricing further reduces cost at scale. CloudWatch unified data store automatically transforms the logs for immediate querying with no ETL pipeline required. Use CloudTrail management events (included at no additional cost) for bucket-level config change alerting.
+
+❌ **No** → Enable CloudTrail data events for guaranteed, queryable object-level logging. Server access logs via CloudWatch unified data store are optional but add HTTP-level detail, lifecycle tracking, and performance metrics at a lower per-event cost than CloudTrail data events.
+
+</TabItem>
+</Tabs>
+
+
+---
+
+## What Amazon S3 server access logs capture {#log-fields}
+
+Every request to an Amazon S3 bucket with server access logging enabled generates a log record with over 25 fields. The fields most relevant to security, compliance, and auditing are grouped below by use case.
+
+<Tabs>
+<TabItem value="identity" label="👤 Identity & Access" default>
+
+| Field | Value | Example |
+|---|---|---|
+| `requester` | IAM principal (canonical user ID or assumed-role ARN) | `arn:aws:sts::123456789012:assumed-role/MyRole/session` |
+| `remote_ip` | Source IP of the requester | `203.0.113.42` |
+| `authentication_type` | How the request was authenticated | `AuthHeader`, `QueryString`, or `null` (anonymous) |
+| `signature_version` | Signing protocol used | `SigV4` or `SigV2` (deprecated) |
+| `acl_required` | Whether ACL authorization was needed (boolean) | `true`, `false`, or `null` |
+| `access_point_arn` | S3 Access Point ARN (if used) | `arn:aws:s3:us-east-1:123456789012:accesspoint/my-ap` |
+
+:::info[Why This Matters]
+These fields answer **who** accessed your data and **how** they authenticated. Use them to detect anonymous access (`authentication_type IS NULL`), deprecated SigV2 clients, and requests routed through Access Points.
+:::
+
+</TabItem>
+<TabItem value="request" label="📦 Request Details">
+
+| Field | Value | Example |
+|---|---|---|
+| `operation` | The Amazon S3 operation performed | `REST.GET.OBJECT`, `REST.DELETE.OBJECT`, `S3.EXPIRE.OBJECT` |
+| `key_name` | Object key accessed | `/data/customers/export-2025.csv` |
+| `bucket_name` | Target bucket | `my-production-bucket` |
+| `source_region` | AWS Region the request originated from | `us-east-1` or `null` |
+| `user_agent` | Client tool or SDK | `aws-cli/2.15.0`, `curl/7.88.1`, `Boto3/1.34.0` |
+
+:::info[Why This Matters]
+These fields answer **what** was accessed and **from where**. Use them to detect unexpected operations on sensitive objects, cross-region access patterns, and unauthorized tooling (curl, wget on production buckets).
+:::
+
+</TabItem>
+<TabItem value="response" label="📊 Response & Performance">
+
+| Field | Value | Example |
+|---|---|---|
+| `http_status` | HTTP response code | `200`, `403`, `404`, `503` |
+| `error_code` | Amazon S3 error string | `AccessDenied`, `NoSuchKey`, `SlowDown` |
+| `bytes_sent_size` | Response bytes transferred | `2662992` |
+| `object_size` | Total size of the object | `3462992` |
+| `total_duration` | End-to-end request duration (ms) | `70` |
+| `turn_around_duration` | Amazon S3 processing time (ms) | `10` |
+
+:::info[Why This Matters]
+These fields answer **what happened** and **how fast**. Use them to detect 403/404 spikes (brute-force), large data exfiltration (bytes_sent_size), 5xx throttling (SlowDown), and performance degradation.
+:::
+
+</TabItem>
+<TabItem value="encryption" label="🔐 Encryption & Compliance">
+
+| Field | Value | Example |
+|---|---|---|
+| `tls_version` | TLS version negotiated | `TLSv1.2`, `TLSv1.3` |
+| `cipher_suite` | TLS cipher suite used | `ECDHE-RSA-AES128-GCM-SHA256` |
+| `signature_version` | Signing protocol | `SigV4` or `SigV2` |
+
+:::info[Why This Matters]
+These fields provide **compliance evidence** for encryption-in-transit requirements. PCI-DSS, FedRAMP, and NIST 800-53 mandate TLS 1.2+. The `signature_version` field is the only way to find clients still using deprecated SigV2.
+:::
+
+</TabItem>
+<TabItem value="lifecycle" label="♻️ Lifecycle & Internal">
+
+S3 lifecycle operations are **only** recorded in server access logs. CloudTrail does not log these internal actions.
+
+| Operation | Meaning |
+|---|---|
+| `S3.EXPIRE.OBJECT` | Object expired by a lifecycle rule |
+| `S3.CREATE.DELETEMARKER` | Delete marker created by lifecycle on a versioned bucket |
+| `S3.TRANSITION_SIA.OBJECT` | Object transitioned to Amazon S3 Standard-IA |
+| `S3.TRANSITION_ZIA.OBJECT` | Object transitioned to Amazon S3 One Zone-IA |
+| `S3.TRANSITION_INT.OBJECT` | Object transitioned to Amazon S3 Intelligent-Tiering |
+| `S3.TRANSITION_GIR.OBJECT` | Object transitioned to Amazon S3 Glacier Instant Retrieval |
+| `S3.TRANSITION.OBJECT` | Object transitioned to Amazon S3 Glacier Flexible Retrieval |
+| `S3.TRANSITION_GDA.OBJECT` | Object transitioned to Amazon S3 Glacier Deep Archive |
+
+:::caution[Exclusive to server access logs]
+These lifecycle operations are **not available** in CloudTrail data events. If you need to prove that your data retention policies are being enforced (expirations, transitions, delete markers), server access logs are the only source.
+:::
+
+</TabItem>
+</Tabs>
+
+---
+
+## Enabling Amazon S3 Server Access Logging for CloudWatch {#enabling}
+
+Setting up delivery takes a few steps in the Amazon S3 console, or a few API calls with the AWS CLI. You can also standardize delivery across your AWS Organization with CloudWatch Telemetry Enablement Rules.
+
+### Option 1: Telemetry Enablement Rules
+
+[CloudWatch Telemetry Enablement Rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-rules.html) let you automatically enable Amazon S3 server access log delivery to CloudWatch Logs for buckets, both new and existing, without per-bucket setup. Rules can be scoped at the individual account level or across an AWS Organization. For organization-wide rules, you must configure them from the management account or a delegated administrator account.
+
+1. Open the **CloudWatch console**.
+2. In the navigation pane, choose **Ingestion**.
+3. Choose the **Enablement rules** tab, then choose **Add rule**.
+4. Select **Configure telemetry for Amazon S3**.
+5. Enter a descriptive **Rule name** (e.g., `S3-Access-Logs-Enablement`).
+6. Optionally add **Tag Key/Value** under *Select data source scope* to scope the rule to specific resources.
+7. For **Target regions**, leave the default for the current region or select specific regions. Choose **Next**.
+8. Configure the **Log group name pattern** and **Retention setting**. Choose **Next**.
+9. Review and choose **Configure Amazon S3 Logs**.
+
+Once active, CloudWatch begins ingesting Amazon S3 logs from resources within scope. Logs are automatically transformed into structured JSON with no additional Lambda functions or Glue jobs required.
+
+### Option 2: Amazon S3 Console (Per Bucket)
+
+1. Open the **Amazon S3 console**, navigate to your bucket, and choose the **Properties** tab.
+2. In the **Log delivery to CloudWatch** section, choose **Add → To Amazon CloudWatch Logs**.
+3. Select a **Destination log group**. To also query with SQL, select **Enable Amazon S3 Tables integration**.
+4. Under **Service access**, leave *Auto-create a new role with default permissions* selected.
+5. Choose **Add**.
+
+### Option 3: AWS CLI (Automation)
+
+For scripted or automated deployments across multiple buckets, the AWS CLI gives you full control over each step.
+
+**Step 1: Create a delivery source** (per source bucket)
+
+```bash
+aws logs put-delivery-source \
+    --name my-sal-source \
+    --resource-arn arn:aws:s3:::my-bucket \
+    --log-type S3_SERVER_ACCESS_LOGS \
+    --region us-east-1
+```
+
+**Step 2: Create a delivery destination** (once per log group)
+
+```bash
+aws logs put-delivery-destination \
+    --name my-sal-destination \
+    --delivery-destination-configuration \
+        '{"destinationResourceArn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/vendedlogs/s3/my-bucket"}' \
+    --region us-east-1
+```
+
+**Step 3: Create a delivery** (per source bucket)
+
+```bash
+aws logs create-delivery \
+    --delivery-source-name my-sal-source \
+    --delivery-destination-arn arn:aws:logs:us-east-1:123456789012:delivery-destination:my-sal-destination \
+    --region us-east-1
+```
+
+**Step 4: Enable the Amazon S3 Tables integration** (once per account per Region, optional)
+
+```bash
+aws observabilityadmin create-s3-table-integration \
+    --role-arn arn:aws:iam::123456789012:role/CWLogsS3TableIntegrationRole \
+    --encryption '{"SseAlgorithm":"AES256"}' \
+    --region us-east-1
+```
+
+Then associate the Amazon S3 server access log data source:
+
+```bash
+aws logs associate-source-to-s3-table-integration \
+    --integration-arn arn:aws:observabilityadmin:us-east-1:123456789012:s3tableintegration/s3tableintegration \
+    --data-source '{"name":"amazon_s3","type":"server_access"}' \
+    --region us-east-1
+```
+
+---
+
+## Security & Compliance Queries {#queries}
+
+The following [OpenSearch SQL](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html) queries run in CloudWatch Logs Insights against your Amazon S3 server access log group. Select **"OpenSearch SQL"** from the language dropdown before running. Replace `YOUR_S3_ACCESS_LOG_GROUP` with your actual log group name.
+
+<Tabs>
+<TabItem value="security" label="🚨 Security" default>
+
+### Detecting Unauthorized Access Attempts
+
+HTTP 403 and 404 spikes from a single IP address can indicate credential stuffing, object key enumeration, or brute-force access attempts.
+
+```sql title="query-403-404-errors.sql"
+SELECT
+    remote_ip,
+    error_code,
+    operation,
+    COUNT(*)                   AS error_count,
+    COUNT(DISTINCT key_name)   AS unique_keys_targeted,
+    COUNT(DISTINCT bucket_name) AS buckets_targeted
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE http_status IN (403, 404)
+GROUP BY remote_ip, error_code, operation
+ORDER BY error_count DESC
+LIMIT 50
+```
+
+### Detecting Unusual Data Transfer Patterns
+
+Aggregating bytes downloaded per requester and IP reveals unusual download patterns that could indicate potentially exposed credentials or internal unauthorized activity.
+
+```sql title="query-data-exfiltration.sql"
+SELECT
+    remote_ip,
+    requester,
+    SUM(bytes_sent_size) / 1048576  AS total_MB_downloaded,
+    COUNT(*)                        AS request_count,
+    COUNT(DISTINCT key_name)        AS unique_objects,
+    COUNT(DISTINCT bucket_name)     AS buckets_accessed
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE 'REST.GET.OBJECT'
+  AND http_status = 200
+GROUP BY remote_ip, requester
+ORDER BY total_MB_downloaded DESC
+LIMIT 25
+```
+
+### Detecting Anonymous (Unauthenticated) Access
+
+Any request with `authentication_type IS NULL` means no credentials were presented. This typically indicates a bucket policy or ACL is granting public access.
+
+```sql title="query-anonymous-access.sql"
+SELECT
+    `@timestamp`,
+    bucket_name,
+    operation,
+    key_name,
+    remote_ip,
+    http_status,
+    bytes_sent_size,
+    user_agent
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE authentication_type IS NULL
+  AND operation NOT LIKE '%OPTIONS%'
+ORDER BY `@timestamp` DESC
+LIMIT 100
+```
+
+### Detecting Bulk Delete Operations
+
+Mass deletions from a single requester may indicate unauthorized bulk deletion patterns, insider threat, or a runaway automation pipeline.
+
+```sql title="query-bulk-deletes.sql"
+SELECT
+    requester,
+    remote_ip,
+    operation,
+    COUNT(*)                   AS delete_count,
+    COUNT(DISTINCT key_name)   AS unique_objects,
+    COUNT(DISTINCT bucket_name) AS buckets_affected
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE '%DELETE%'
+   OR operation = 'REST.POST.MULTI_OBJECT_DELETE'
+   OR operation = 'BATCH.DELETE.OBJECT'
+GROUP BY requester, remote_ip, operation
+ORDER BY delete_count DESC
+LIMIT 50
+```
+
+</TabItem>
+<TabItem value="compliance" label="✅ Compliance">
+
+### TLS Version Compliance (PCI-DSS, FedRAMP, NIST 800-53)
+
+Compliance frameworks require TLS 1.2 or higher for data in transit. Server access logs record the exact TLS version and cipher suite for every request.
+
+```sql title="query-outdated-tls.sql"
+SELECT
+    tls_version,
+    cipher_suite,
+    remote_ip,
+    requester,
+    user_agent,
+    bucket_name,
+    COUNT(*) AS outdated_tls_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE tls_version IN ('TLSv1', 'TLSv1.1')
+GROUP BY tls_version, cipher_suite, remote_ip,
+         requester, user_agent, bucket_name
+ORDER BY outdated_tls_count DESC
+LIMIT 50
+```
+
+### Deprecated Signature Version Detection
+
+AWS deprecated SigV2 in favor of SigV4. The `signature_version` field in server access logs is the **only** way to identify clients still using SigV2.
+
+```sql title="query-sigv2-requests.sql"
+SELECT
+    requester,
+    remote_ip,
+    user_agent,
+    bucket_name,
+    operation,
+    COUNT(*) AS sigv2_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE signature_version = 'SigV2'
+GROUP BY requester, remote_ip, user_agent, bucket_name, operation
+ORDER BY sigv2_count DESC
+LIMIT 50
+```
+
+### Data Retention Policy Verification
+
+S3 Lifecycle operations (expirations, transitions, delete marker creation) are **only** recorded in server access logs. They are essential for proving data retention policy enforcement.
+
+```sql title="query-lifecycle-operations.sql"
+SELECT
+    operation,
+    bucket_name,
+    COUNT(*) AS event_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE 'S3.%'
+GROUP BY operation, bucket_name
+ORDER BY event_count DESC
+```
+
+### Cross-Account Access Audit
+
+Identifying requests from IAM principals in other AWS accounts helps verify that cross-account access is explicitly authorized.
+
+```sql title="query-cross-account-access.sql"
+-- Replace YOUR_ACCOUNT_ID with your 12-digit AWS account ID
+SELECT
+    requester,
+    bucket_name,
+    operation,
+    COUNT(*)                       AS request_count,
+    COUNT(DISTINCT key_name)       AS objects_accessed,
+    SUM(bytes_sent_size) / 1048576 AS MB_transferred
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE requester NOT LIKE '%YOUR_ACCOUNT_ID%'
+  AND requester IS NOT NULL
+  AND authentication_type IS NOT NULL
+GROUP BY requester, bucket_name, operation
+ORDER BY request_count DESC
+LIMIT 50
+```
+
+</TabItem>
+<TabItem value="audit" label="📋 Audit">
+
+### Top Requesters by Volume
+
+Rank IAM principals by total request count and data transferred for access reviews and cost attribution.
+
+```sql title="query-top-requesters.sql"
+SELECT
+    requester,
+    COUNT(*)                          AS total_requests,
+    SUM(bytes_sent_size) / 1073741824 AS total_GB_sent,
+    COUNT(DISTINCT bucket_name)       AS buckets_accessed,
+    COUNT(DISTINCT operation)         AS unique_operations
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+GROUP BY requester
+ORDER BY total_requests DESC
+LIMIT 25
+```
+
+### Unique User Agents per Bucket
+
+Unexpected user agents (curl, wget, unknown SDKs) on production buckets may indicate unauthorized tooling or unauthorized access.
+
+```sql title="query-user-agents.sql"
+SELECT
+    bucket_name,
+    user_agent,
+    COUNT(*)                   AS request_count,
+    COUNT(DISTINCT requester)  AS unique_requesters
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+GROUP BY bucket_name, user_agent
+ORDER BY request_count DESC
+LIMIT 50
+```
+
+### Cipher Suite Distribution
+
+Verify that only strong, approved cipher suites are in use. This is a common requirement for SOC 2, HIPAA, and PCI-DSS.
+
+```sql title="query-cipher-suites.sql"
+SELECT
+    tls_version,
+    cipher_suite,
+    COUNT(*) AS request_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE cipher_suite IS NOT NULL
+GROUP BY tls_version, cipher_suite
+ORDER BY request_count DESC
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+## Real-Time Monitoring with Metric Filters & Contributor Insights {#real-time-monitoring}
+
+The queries above are powerful for ad-hoc investigation. For **continuous, real-time monitoring**, create CloudWatch [metric filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) and Contributor Insights rules on the same log data.
+
+<Tabs>
+<TabItem value="metric-filters" label="📊 Metric Filters (7)" default>
+
+Metric filters emit custom CloudWatch metrics from log patterns. Each metric can drive a CloudWatch Alarm for real-time alerting.
+
+:::info[Metric Filters Require Standard Log Class]
+Metric filters are only supported on CloudWatch Logs log groups using the **Standard** class. If you chose the Infrequent Access class for lower ingestion costs, use Logs Insights queries and Contributor Insights rules instead.
+:::
+
+---
+
+**Metric Filter 1: Access Denied (403) Errors**
+
+<details>
+<summary>Counts HTTP 403 responses. A spike may indicate credential probing or misconfigured policies</summary>
+
+A sudden increase in 403 errors from a single IP or requester can indicate credential stuffing, brute-force attempts, or a misconfigured IAM policy affecting legitimate workloads.
+
+**Filter Pattern:**
+
+```
+{ $.http_status = 403 }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `AccessDeniedErrors`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 100 in 5 minutes → SNS notification to security team
+
+</details>
+
+---
+
+**Metric Filter 2: Not Found (404) Errors**
+
+<details>
+<summary>Counts HTTP 404 responses. High volume may indicate object key enumeration</summary>
+
+An attacker attempting to discover object keys will generate many 404 responses. Separating 404s from 403s lets you set different thresholds for each attack pattern.
+
+**Filter Pattern:**
+
+```
+{ $.http_status = 404 }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `NotFoundErrors`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 500 in 5 minutes → SNS notification to security team
+
+</details>
+
+---
+
+**Metric Filter 3: Server Errors (5xx)**
+
+<details>
+<summary>Counts HTTP 5xx responses. A spike in 503 SlowDown errors may indicate request throttling</summary>
+
+Abnormally high request rates can trigger Amazon S3 throttling (503 SlowDown). This may be caused by a runaway automation pipeline, a DDoS event, or a misconfigured application retrying in a tight loop.
+
+**Filter Pattern:**
+
+```
+{ $.http_status = 5* }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `ServerErrors5xx`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 50 in 5 minutes → SNS notification to operations team
+
+</details>
+
+---
+
+**Metric Filter 4: Anonymous / Unauthenticated Requests**
+
+<details>
+<summary>Detects requests with no credentials. Any non-zero value warrants investigation</summary>
+
+An anonymous request means no AWS credentials were presented. This typically indicates a bucket policy or ACL is granting public access, which may be intentional (static website) or a misconfiguration.
+
+**Filter Pattern:**
+
+```
+{ $.authentication_type NOT EXISTS }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `AnonymousRequests`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 0 in 5 minutes (for buckets that should never be public)
+
+</details>
+
+---
+
+**Metric Filter 5: Requests Using Deprecated SigV2**
+
+<details>
+<summary>Counts requests signed with SigV2. Track progress toward full SigV4 migration</summary>
+
+AWS deprecated Signature Version 2. The `signature_version` field in server access logs is the only way to find clients still using SigV2. Alarm on any occurrence to identify clients that need upgrading.
+
+**Filter Pattern:**
+
+```
+{ $.signature_version = "SigV2" }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `SigV2Requests`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 0 in 15 minutes → notify application owners for SDK upgrade
+
+</details>
+
+---
+
+**Metric Filter 6: Outdated TLS (1.0/1.1)**
+
+<details>
+<summary>Counts requests using TLS 1.0 or 1.1. Compliance frameworks require TLS 1.2+</summary>
+
+PCI-DSS, FedRAMP, and NIST 800-53 mandate TLS 1.2 or higher. This filter tracks clients that haven't upgraded, providing evidence for compliance reporting and a target list for remediation.
+
+**Filter Pattern:**
+
+```
+{ $.tls_version = "TLSv1" || $.tls_version = "TLSv1.1" }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `OutdatedTLSRequests`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 0 in 15 minutes → notify compliance team
+
+</details>
+
+---
+
+**Metric Filter 7: Large Data Downloads (Potential Exfiltration)**
+
+<details>
+<summary>Counts successful GET responses over 100 MB. Sustained high volume may indicate data exfiltration</summary>
+
+While large downloads are normal for many workloads, a sudden increase in high-volume GET responses from unexpected requesters or IPs warrants investigation.
+
+**Filter Pattern:**
+
+```
+{ $.http_status = 200 && $.bytes_sent_size > 104857600 && $.operation = "REST.GET.OBJECT" }
+```
+
+- **Metric Namespace:** `S3ServerAccessLogs`
+- **Metric Name:** `LargeDownloads`
+- **Metric Value:** `1`
+- **Suggested Alarm:** > 50 in 15 minutes → notify security team for investigation
+
+</details>
+
+</TabItem>
+<TabItem value="contributor-insights" label="🔎 Contributor Insights (6)">
+
+Contributor Insights rules continuously analyze log data and surface the top-N contributors for a given key. Create them via the console under *CloudWatch → Contributor Insights → Create rule*, or use the `put-insight-rule` CLI with the JSON rule bodies below.
+
+---
+
+**Contributor Insights Rule 1: Top IPs Generating 403/404 Errors**
+
+<details>
+<summary>Ranks source IPs by error count. Detects enumeration attacks and brute-force attempts</summary>
+
+Continuously identifies which IP addresses are generating the most 403 and 404 errors against your Amazon S3 buckets, providing real-time visibility into potential unauthorized access or misconfigured clients.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.http_status", "In": [ 403, 404 ] }
+    ],
+    "Keys": [ "$.remote_ip" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Count
+- **Keys:** `remote_ip`
+
+</details>
+
+---
+
+**Contributor Insights Rule 2: Top Requesters by Download Volume**
+
+<details>
+<summary>Aggregates by bytes_sent_size to detect potential data exfiltration in real time</summary>
+
+Surfaces the IAM principals and IPs downloading the most data from your Amazon S3 buckets. Unusual spikes may indicate potentially exposed credentials or internal unauthorized activity.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Sum",
+  "ValueKey": "$.bytes_sent_size",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.operation", "StartsWith": "REST.GET.OBJECT" },
+      { "Match": "$.http_status", "EqualTo": 200 }
+    ],
+    "Keys": [ "$.requester", "$.remote_ip" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Sum (`bytes_sent_size`)
+- **Keys:** `requester`, `remote_ip`
+
+</details>
+
+---
+
+**Contributor Insights Rule 3: Top Requesters Performing Deletes**
+
+<details>
+<summary>Surfaces IAM principals performing the most delete operations. Mass deletions may indicate unauthorized bulk deletion patterns</summary>
+
+Ranks requesters by delete volume across your buckets. A single requester with an unusually high delete count warrants immediate investigation.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.operation", "In": [
+          "REST.DELETE.OBJECT",
+          "REST.POST.MULTI_OBJECT_DELETE",
+          "BATCH.DELETE.OBJECT"
+        ]
+      }
+    ],
+    "Keys": [ "$.requester", "$.bucket_name" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Count
+- **Keys:** `requester`, `bucket_name`
+
+</details>
+
+---
+
+**Contributor Insights Rule 4: Top User Agents per Bucket**
+
+<details>
+<summary>Ranks user agents by request volume. Unexpected agents may indicate unauthorized tooling</summary>
+
+Unexpected user agents (curl, wget, unknown SDKs) on production buckets may indicate unintended tooling, or unauthorized access.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [],
+    "Keys": [ "$.user_agent", "$.bucket_name" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Count
+- **Keys:** `user_agent`, `bucket_name`
+
+</details>
+
+---
+
+**Contributor Insights Rule 5: Top Requesters by Total Request Volume**
+
+<details>
+<summary>Ranks requesters by total request count. Identifies your heaviest API consumers for cost attribution and access review</summary>
+
+Understanding who makes the most requests helps with cost attribution, capacity planning, and identifying runaway automation or unexpected access patterns.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [],
+    "Keys": [ "$.requester", "$.operation" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Count
+- **Keys:** `requester`, `operation`
+
+</details>
+
+---
+
+**Contributor Insights Rule 6: Top Buckets by Error Rate**
+
+<details>
+<summary>Ranks buckets by error volume. Quickly identifies buckets with policy or configuration issues</summary>
+
+If one bucket is generating significantly more errors than others, it likely has a policy misconfiguration, a missing object issue, or is being targeted by unauthorized access attempts.
+
+**Rule Body:**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.http_status", "GreaterThan": 399 }
+    ],
+    "Keys": [ "$.bucket_name", "$.error_code" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **Aggregation:** Count
+- **Keys:** `bucket_name`, `error_code`
+
+</details>
+
+</TabItem>
+</Tabs>
+
+:::tip[Defense in depth: use all three together]
+| Tool | Role | Best For |
+|---|---|---|
+| **Metric Filters** | Emit CloudWatch metrics → trigger alarms | Threshold-based alerting ("more than 50 errors in 5 minutes") |
+| **Contributor Insights** | Continuously rank top-N contributors | Live dashboards ("which IP is generating the most errors right now?") |
+| **Logs Insights Queries** | Ad-hoc SQL analysis on raw log data | Incident investigation and forensic deep-dives |
+:::
+
+---
+
+
+## Summary
+
+Amazon S3 server access logs, delivered natively into CloudWatch unified data store, provide a cost-effective, HTTP-level view of every request to your buckets, including fields and operations that no other log source captures. CloudWatch unified data store automatically transforms the raw Amazon S3 server access log data into a structured, queryable format, removing the need for destination bucket provisioning, log object lifecycle management, and custom ETL pipelines. CloudTrail Amazon S3 data events provide guaranteed delivery, rich IAM identity context, and flexible streaming destinations. Together, they form a **defense-in-depth strategy** that balances cost with assurance.
+
+:::note[Key Takeaway]
+The hybrid approach gives you the broadest coverage at the most manageable cost:
+
+- **Amazon S3 server access logs on all buckets** delivered through CloudWatch unified data store for broad visibility, lifecycle tracking, SigV2 detection, and performance metrics with volume-tiered pricing.
+- **Scoped CloudTrail data events on sensitive buckets** for guaranteed delivery and full identity context on your most critical data.
+- **CloudTrail management events (at no additional cost)** for configuration change alerting.
+
+CloudWatch unified data store handles the transformation automatically, so you can start querying, filtering, and alerting on your Amazon S3 access data immediately with no additional pipeline setup. CloudTrail's reliable delivery helps ensure you do not miss critical write events on your most important data.
+:::
+
+---
+
+## Additional Resources
+
+- [Amazon S3 server access logs now deliver to Amazon CloudWatch Logs and Amazon S3 Tables](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-s3-cloudwatch-logs-tables/)
+- [Using Amazon S3 Server Access Logs with Amazon CloudWatch Logs](https://aws.amazon.com/blogs/mt/using-amazon-s3-server-access-logs-with-amazon-cloudwatch-logs/)
+- [Query Amazon S3 access logs instantly with CloudWatch and S3 Tables](https://aws.amazon.com/blogs/storage/query-amazon-s3-access-logs-instantly-with-cloudwatch-and-s3-tables/)
+- [Logging requests with server access logging](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html) (Amazon S3 User Guide)
+- [Amazon S3 server access log format](https://docs.aws.amazon.com/AmazonS3/latest/userguide/LogFormat.html) (full field reference)
+- [Security best practices for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html) (monitoring and auditing recommendations)

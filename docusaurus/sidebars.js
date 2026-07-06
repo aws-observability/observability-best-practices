@@ -223,7 +223,10 @@ module.exports = {
             {
               type: 'category',
               label: 'Security',
-              items: ['tools/logs/security/cloudwatch-logs-security-best-practices'],
+              items: [
+                'tools/logs/security/cloudwatch-logs-security-best-practices',
+                'tools/logs/security/s3-server-access-logs-security-compliance',
+              ],
             },
             {
               type: 'category',

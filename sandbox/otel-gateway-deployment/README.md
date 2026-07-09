@@ -16,6 +16,7 @@ infrastructure Container Insights.
 | `agent.yaml` | Self-managed OTel Collector **agent** (DaemonSet): OTLP receiver → `memory_limiter` + `k8sattributes` + `batch` → forwards to the gateway. Includes ServiceAccount, k8sattributes RBAC, and Service. |
 | `gateway.yaml` | OTel Collector **gateway** (Deployment ×2 + Service): OTLP + Prometheus self-scrape receivers → `memory_limiter` + `batch` → `otlphttp` (`metrics_endpoint` + `sigv4auth`) to CloudWatch; `health_check` on :13133; self-telemetry on :8888. Contains an `<ACCOUNT_ID>` placeholder. |
 | `dashboard.json` | CloudWatch dashboard body (`OTel-Gateway-Pipeline-Health`) — throughput, export success vs failure, queue utilization, refused metrics. Uses PromQL `chart` widgets. |
+| `networkpolicy.yaml` | Two Kubernetes **NetworkPolicies** restricting OTLP ingress: the gateway accepts 4317/4318 only from the `otel-agent` namespace, and the agent only from your application namespaces; health/metrics ports (13133/8888) stay open for probes and scraping. Enforcement requires the VPC CNI network policy controller. |
 
 ## Prerequisites
 
@@ -41,6 +42,11 @@ curl -sSL https://raw.githubusercontent.com/aws-observability/observability-best
 
 # 2) Agent tier (no placeholders)
 kubectl apply -f https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/sandbox/otel-gateway-deployment/agent.yaml
+
+# 2b) (Optional) Restrict OTLP ingress with NetworkPolicies. Edit the application
+#     namespace selector in the file to match your workload namespaces first.
+#     Enforcement requires the VPC CNI network policy controller (on by default in EKS Auto Mode).
+kubectl apply -f https://raw.githubusercontent.com/aws-observability/observability-best-practices/main/sandbox/otel-gateway-deployment/networkpolicy.yaml
 
 # 3) Point your workloads at the node-local agent (SDK env vars)
 #    OTEL_EXPORTER_OTLP_ENDPOINT = http://$(NODE_IP):4317   (NODE_IP from downward API status.hostIP)

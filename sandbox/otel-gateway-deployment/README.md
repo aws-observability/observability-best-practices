@@ -17,6 +17,7 @@ infrastructure Container Insights.
 | `gateway.yaml` | OTel Collector **gateway** (Deployment ×2 + Service): OTLP + Prometheus self-scrape receivers → `memory_limiter` + `batch` → `otlphttp` (`metrics_endpoint` + `sigv4auth`) to CloudWatch; `health_check` on :13133; self-telemetry on :8888. Contains an `<ACCOUNT_ID>` placeholder. |
 | `dashboard.json` | CloudWatch dashboard body (`OTel-Gateway-Pipeline-Health`) — throughput, export success vs failure, queue utilization, refused metrics. Uses PromQL `chart` widgets. |
 | `networkpolicy.yaml` | Two Kubernetes **NetworkPolicies** restricting OTLP ingress: the gateway accepts 4317/4318 only from the `otel-agent` namespace, and the agent only from your application namespaces; health/metrics ports (13133/8888) stay open for probes and scraping. Enforcement requires the VPC CNI network policy controller. |
+| `multicluster-samevpc/` | Reference sample for the "Scaling to multiple clusters" section: a hub-cluster internal-NLB Service (`gateway-nlb-service.yaml`) and a spoke-cluster agent (`agent-remote.yaml`) that forwards across the VPC to a shared gateway. See its own README. |
 
 ## Prerequisites
 

@@ -129,9 +129,13 @@ spec:
           image: otel/opentelemetry-collector-contrib:0.104.0
           args: ["--config=/etc/otel/config.yaml"]
           ports:
+            # hostPort exposes the agent on the node so apps can target their
+            # node-local agent via the downward-API status.hostIP (see Step 4).
             - containerPort: 4317
+              hostPort: 4317
               name: otlp-grpc
             - containerPort: 4318
+              hostPort: 4318
               name: otlp-http
             - containerPort: 8888
               name: metrics

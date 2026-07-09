@@ -21,7 +21,7 @@ infrastructure Container Insights.
 
 ## Prerequisites
 
-- Amazon EKS cluster running Kubernetes 1.28 or later.
+- Amazon EKS cluster running Kubernetes 1.31 or later.
 - OIDC provider configured for IAM Roles for Service Accounts (IRSA).
 - An IAM role `OTelGatewayRole` for the gateway ServiceAccount with `CloudWatchAgentServerPolicy`
   attached (trust policy scoped to `system:serviceaccount:otel-gateway:otel-gateway`).

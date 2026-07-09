@@ -1,0 +1,161 @@
+# =============================================================================
+# OTel Gateway - deployable manifest (corrected)
+# Tailored for the sample-devops-agent-eks-workshop cluster used as the test bed.
+# -----------------------------------------------------------------------------
+# Fixes applied vs. the blog/test-plan source:
+#   * Receiver endpoints restored (were corrupted as [IP_ADDRESS]) -> 0.0.0.0:4317 / :4318
+#   * Prometheus self-scrape target restored -> 0.0.0.0:8888
+#   * Added health_check extension on :13133 so the liveness/readiness probes work
+#     (otherwise pods CrashLoop -> TC-03 never passes)
+#   * Region pinned to us-east-1 to match the workshop + CloudWatch OTLP + DevOps Agent preview
+#
+# Before applying:
+#   * Create the gateway IRSA role first (see irsa-role.tf) and substitute <ACCOUNT_ID>.
+#   * CloudWatch native OTLP metrics endpoint is HTTP-only and needs the sigv4auth
+#     extension + CloudWatchAgentServerPolicy on the role. (Confirmed in AWS docs.)
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-gateway
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-gateway
+  namespace: otel-gateway
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::<ACCOUNT_ID>:role/OTelGatewayRole
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-gateway-config
+  namespace: otel-gateway
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+      prometheus:
+        config:
+          scrape_configs:
+            - job_name: 'otel-gateway-self'
+              scrape_interval: 10s
+              static_configs:
+                - targets: ['0.0.0.0:8888']
+
+    processors:
+      batch:
+        send_batch_size: 1000
+        send_batch_max_size: 1000   # cap at CloudWatch OTLP per-request datapoint limit
+        timeout: 10s
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 1500
+        spike_limit_mib: 512
+
+    exporters:
+      otlphttp:
+        # CloudWatch native OTLP metrics endpoint is HTTP-only (no gRPC).
+        # Use metrics_endpoint (exact URL, no path appended). Using `endpoint`
+        # here would append /v1/metrics again -> .../v1/metrics/v1/metrics -> 404.
+        metrics_endpoint: https://monitoring.us-east-1.amazonaws.com/v1/metrics
+        auth:
+          authenticator: sigv4auth
+
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+      sigv4auth:
+        region: us-east-1
+        service: monitoring
+
+    service:
+      extensions: [health_check, sigv4auth]
+      telemetry:
+        metrics:
+          level: normal
+          address: 0.0.0.0:8888
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, batch]
+          exporters: [otlphttp]
+        metrics/internal:
+          receivers: [prometheus]
+          processors: [batch]
+          exporters: [otlphttp]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: otel-gateway
+  namespace: otel-gateway
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: otel-gateway
+  template:
+    metadata:
+      labels:
+        app: otel-gateway
+    spec:
+      serviceAccountName: otel-gateway
+      containers:
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:0.104.0
+          args: ["--config=/etc/otel/config.yaml"]
+          ports:
+            - containerPort: 4317
+              name: otlp-grpc
+            - containerPort: 4318
+              name: otlp-http
+            - containerPort: 8888
+              name: metrics
+            - containerPort: 13133
+              name: health
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: "2"
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+      volumes:
+        - name: config
+          configMap:
+            name: otel-gateway-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-gateway
+  namespace: otel-gateway
+spec:
+  selector:
+    app: otel-gateway
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+  type: ClusterIP

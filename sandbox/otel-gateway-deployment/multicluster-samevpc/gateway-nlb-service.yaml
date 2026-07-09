@@ -1,0 +1,38 @@
+# =============================================================================
+# Multi-cluster, same account, same VPC — HUB cluster.
+# Replaces the gateway's in-cluster ClusterIP Service with an INTERNAL Network
+# Load Balancer (L4) so agents in other clusters that share this VPC can reach
+# the gateway's OTLP ports directly. Apply this on the cluster that runs the
+# gateway (the "hub"); deploy gateway.yaml there as usual first.
+#
+# Requires the AWS Load Balancer Controller in the cluster.
+# The NLB is internal (never internet-facing). Restrict who can reach it with
+# the load-balancer security group (see aws-load-balancer-security-groups).
+#
+# NOTE: this is a reference sample for the scaling pattern. The tested baseline
+# in this repo is the single-cluster (ClusterIP) path. Cross-cluster hops leave
+# the pod network, so enable TLS on the gateway's OTLP receiver and have remote
+# agents connect over TLS/mTLS (see agent-remote.yaml and the blog).
+# =============================================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-gateway
+  namespace: otel-gateway
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-type: "external"
+    service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: "ip"
+    service.beta.kubernetes.io/aws-load-balancer-scheme: "internal"
+    # Restrict ingress to the security groups of your sending clusters:
+    # service.beta.kubernetes.io/aws-load-balancer-security-groups: "sg-xxxxxxxx"
+spec:
+  type: LoadBalancer
+  selector:
+    app: otel-gateway
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318

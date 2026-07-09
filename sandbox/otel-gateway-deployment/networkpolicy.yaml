@@ -1,0 +1,52 @@
+# NetworkPolicies — restrict who can send OTLP to the agent and gateway.
+# Data ports (4317/4318) are limited to intended senders; health/metrics ports
+# (13133/8888) stay open for kubelet probes and Prometheus scraping.
+# Enforcement requires the VPC CNI network policy controller (enabled on EKS Auto Mode).
+# Adjust the application namespace selector (sample-app) to your workload namespaces.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: otel-gateway-allow-otlp
+  namespace: otel-gateway
+spec:
+  podSelector:
+    matchLabels:
+      app: otel-gateway
+  policyTypes: [Ingress]
+  ingress:
+    # OTLP only from the agent tier
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: otel-agent
+      ports:
+        - { port: 4317, protocol: TCP }
+        - { port: 4318, protocol: TCP }
+    # health probes (kubelet) + self-metrics scrape
+    - ports:
+        - { port: 13133, protocol: TCP }
+        - { port: 8888, protocol: TCP }
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: otel-agent-allow-otlp
+  namespace: otel-agent
+spec:
+  podSelector:
+    matchLabels:
+      app: otel-agent
+  policyTypes: [Ingress]
+  ingress:
+    # OTLP only from application namespaces (adjust to your workloads)
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: sample-app
+      ports:
+        - { port: 4317, protocol: TCP }
+        - { port: 4318, protocol: TCP }
+    # health probes (kubelet) + self-metrics scrape
+    - ports:
+        - { port: 13133, protocol: TCP }
+        - { port: 8888, protocol: TCP }

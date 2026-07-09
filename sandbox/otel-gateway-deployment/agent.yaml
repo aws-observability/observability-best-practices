@@ -1,0 +1,182 @@
+# =============================================================================
+# Self-managed OTel Collector AGENT tier (DaemonSet) — agent-to-gateway pattern.
+# Apps send OTLP to the node-local agent; the agent enriches with k8s metadata,
+# buffers/retries, and forwards to the gateway. The CloudWatch Observability
+# add-on stays in place for infrastructure Container Insights (separate concern).
+#
+# Resilience: the agent's sending_queue + retry_on_failure decouple apps from the
+# gateway — a transient gateway outage is absorbed here instead of dropping app data.
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: otel-agent
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: otel-agent
+  namespace: otel-agent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: otel-agent-k8sattributes
+rules:
+  - apiGroups: [""]
+    resources: ["pods", "namespaces", "nodes"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["apps"]
+    resources: ["replicasets"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: otel-agent-k8sattributes
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: otel-agent-k8sattributes
+subjects:
+  - kind: ServiceAccount
+    name: otel-agent
+    namespace: otel-agent
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-agent-config
+  namespace: otel-agent
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      memory_limiter:
+        check_interval: 1s
+        limit_mib: 400
+        spike_limit_mib: 100
+      k8sattributes:
+        auth_type: serviceAccount
+        passthrough: false
+        extract:
+          metadata:
+            - k8s.namespace.name
+            - k8s.pod.name
+            - k8s.node.name
+            - k8s.deployment.name
+        pod_association:
+          - sources:
+              - from: connection
+      batch:
+        timeout: 10s
+
+    exporters:
+      # In-cluster hop to the gateway can use OTLP gRPC (only the CloudWatch
+      # endpoint requires HTTP). Queue + retry provide the resilience buffer.
+      otlp/gateway:
+        endpoint: otel-gateway.otel-gateway.svc.cluster.local:4317
+        tls:
+          insecure: true
+        retry_on_failure:
+          enabled: true
+          initial_interval: 1s
+          max_interval: 30s
+        sending_queue:
+          enabled: true
+          queue_size: 1000
+
+    extensions:
+      health_check:
+        endpoint: 0.0.0.0:13133
+
+    service:
+      extensions: [health_check]
+      telemetry:
+        metrics:
+          level: normal
+          address: 0.0.0.0:8888
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [memory_limiter, k8sattributes, batch]
+          exporters: [otlp/gateway]
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: otel-agent
+  namespace: otel-agent
+spec:
+  selector:
+    matchLabels:
+      app: otel-agent
+  template:
+    metadata:
+      labels:
+        app: otel-agent
+    spec:
+      serviceAccountName: otel-agent
+      containers:
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:0.104.0
+          args: ["--config=/etc/otel/config.yaml"]
+          ports:
+            # hostPort exposes the agent on the node so apps can target their
+            # node-local agent via the downward-API status.hostIP (see Step 4).
+            - containerPort: 4317
+              hostPort: 4317
+              name: otlp-grpc
+            - containerPort: 4318
+              hostPort: 4318
+              name: otlp-http
+            - containerPort: 8888
+              name: metrics
+            - containerPort: 13133
+              name: health
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 13133
+          volumeMounts:
+            - name: config
+              mountPath: /etc/otel
+      volumes:
+        - name: config
+          configMap:
+            name: otel-agent-config
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: otel-agent
+  namespace: otel-agent
+spec:
+  selector:
+    app: otel-agent
+  ports:
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+  type: ClusterIP

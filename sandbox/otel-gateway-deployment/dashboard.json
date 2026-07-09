@@ -1,0 +1,90 @@
+{
+  "start": "-PT3H",
+  "periodOverride": "inherit",
+  "widgets": [
+    {
+      "type": "text",
+      "x": 0, "y": 0, "width": 24, "height": 2,
+      "properties": {
+        "markdown": "# OTel Gateway — Pipeline Health\nIs telemetry flowing, is it reaching CloudWatch, and are we about to lose any? Four signals: throughput in, export success vs failure, queue headroom, and dropped data."
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0, "y": 2, "width": 12, "height": 8,
+      "properties": {
+        "view": "line",
+        "title": "Throughput — metrics received per second",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            { "id": "throughput", "type": "cloudwatch-metrics", "language": "PromQL", "query": "sum(rate(otelcol_receiver_accepted_metric_points[5m]))", "label": "Received/sec", "step": 60 }
+          ]
+        },
+        "plotOptions": {
+          "legend": { "position": "bottom", "show": true },
+          "xAxis": { "type": "datetime" },
+          "yAxis": [ { "type": "linear" } ],
+          "style": { "lineOptions": { "filled": false, "pattern": "solid", "spline": false, "stacked": false, "width": 2 } }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12, "y": 2, "width": 12, "height": 8,
+      "properties": {
+        "view": "line",
+        "title": "Export success vs failure — sent vs failed per second",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            { "id": "sent", "type": "cloudwatch-metrics", "language": "PromQL", "query": "sum(rate(otelcol_exporter_sent_metric_points[5m]))", "label": "Sent", "step": 60 },
+            { "id": "failed", "type": "cloudwatch-metrics", "language": "PromQL", "query": "sum(rate(otelcol_exporter_send_failed_metric_points[5m]))", "label": "Failed", "step": 60 }
+          ]
+        },
+        "plotOptions": {
+          "legend": { "position": "bottom", "show": true },
+          "xAxis": { "type": "datetime" },
+          "yAxis": [ { "type": "linear" } ],
+          "style": { "lineOptions": { "filled": true, "pattern": "solid", "spline": false, "stacked": true, "width": 2 } }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 0, "y": 10, "width": 12, "height": 8,
+      "properties": {
+        "view": "solidgauge",
+        "title": "Queue utilization (%) — headroom before data loss",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            { "id": "queue", "type": "cloudwatch-metrics", "language": "PromQL", "query": "max(otelcol_exporter_queue_size / otelcol_exporter_queue_capacity) * 100", "label": "Queue %", "step": 60 }
+          ]
+        },
+        "plotOptions": {
+          "legend": { "position": "bottom", "show": true },
+          "style": { "gaugeOptions": { "min": 0, "max": 100 } }
+        }
+      }
+    },
+    {
+      "type": "chart",
+      "x": 12, "y": 10, "width": 12, "height": 8,
+      "properties": {
+        "view": "number",
+        "title": "Memory limiter — refused metrics (target: 0)",
+        "region": "us-east-1",
+        "data": {
+          "queries": [
+            { "id": "refused", "type": "cloudwatch-metrics", "language": "PromQL", "query": "sum(rate(otelcol_receiver_refused_metric_points[5m]))", "label": "Refused/sec", "step": 60 }
+          ]
+        },
+        "plotOptions": {
+          "legend": { "position": "bottom", "show": true },
+          "style": { "numberOptions": { "sparkline": true, "truncate": true } }
+        }
+      }
+    }
+  ]
+}

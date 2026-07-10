@@ -12,7 +12,7 @@
 # NOTE: this is a reference sample for the scaling pattern. The tested baseline
 # in this repo is the single-cluster (ClusterIP) path. Cross-cluster hops leave
 # the pod network, so enable TLS on the gateway's OTLP receiver and have remote
-# agents connect over TLS/mTLS (see agent-remote.yaml and the blog).
+# agents connect over TLS/mTLS (see agent-remote.yaml).
 # =============================================================================
 apiVersion: v1
 kind: Service

@@ -1,6 +1,6 @@
 # Multi-cluster (same account, same VPC) — shared gateway sample
 
-Reference manifests for the "Scaling to multiple clusters" section of the blog.
+Reference manifests for scaling to a shared gateway across multiple clusters in one VPC.
 When several EKS clusters share one VPC, you don't need a gateway in every cluster.
 Run the gateway on one cluster (the **hub**) and point the other clusters' agents
 (the **spokes**) at it through an internal Network Load Balancer.
@@ -49,6 +49,6 @@ shared gateway handles batching, authentication, and export for all of them.
 - **AWS Load Balancer Controller** on the hub cluster.
 - **TLS certificates**: the gateway's OTLP receiver serves a cert the agents trust
   (`ca_file`); add `cert_file`/`key_file` for mTLS so the gateway authenticates senders.
-  Cert provisioning (e.g. cert-manager) is out of scope for this Part 1 sample.
+  Cert provisioning (e.g. cert-manager) is out of scope for this config sample.
 - Restrict the NLB with a security group scoped to the sending clusters
   (`aws-load-balancer-security-groups`).

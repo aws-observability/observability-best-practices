@@ -1,18 +1,14 @@
 # =============================================================================
-# OTel Gateway - deployable manifest (corrected)
-# Tailored for the sample-devops-agent-eks-workshop cluster used as the test bed.
-# -----------------------------------------------------------------------------
-# Fixes applied vs. the blog/test-plan source:
-#   * Receiver endpoints restored (were corrupted as [IP_ADDRESS]) -> 0.0.0.0:4317 / :4318
-#   * Prometheus self-scrape target restored -> 0.0.0.0:8888
-#   * Added health_check extension on :13133 so the liveness/readiness probes work
-#     (otherwise pods CrashLoop -> TC-03 never passes)
-#   * Region pinned to us-east-1 to match the workshop + CloudWatch OTLP + DevOps Agent preview
+# OpenTelemetry Gateway — deployable manifest for Amazon EKS.
+# Receives OTLP from the agent tier, batches, and exports to the Amazon
+# CloudWatch native OTLP endpoint using SigV4. Self-scrapes its own telemetry
+# on :8888 and exposes a health_check on :13133.
 #
 # Before applying:
-#   * Create the gateway IRSA role first (see irsa-role.tf) and substitute <ACCOUNT_ID>.
-#   * CloudWatch native OTLP metrics endpoint is HTTP-only and needs the sigv4auth
-#     extension + CloudWatchAgentServerPolicy on the role. (Confirmed in AWS docs.)
+#   * Create the gateway IRSA role and substitute <ACCOUNT_ID> in the
+#     ServiceAccount annotation below.
+#   * The CloudWatch native OTLP metrics endpoint is HTTP-only and requires the
+#     sigv4auth extension plus CloudWatchAgentServerPolicy on the role.
 # =============================================================================
 apiVersion: v1
 kind: Namespace

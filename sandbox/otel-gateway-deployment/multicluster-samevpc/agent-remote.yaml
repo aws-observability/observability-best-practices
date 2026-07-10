@@ -12,7 +12,7 @@
 # (insecure: false). The gateway's OTLP receiver must present a server cert and
 # the agent must trust it (ca_file); add cert_file/key_file for mTLS so the
 # gateway can authenticate senders. Provisioning those certs (e.g. cert-manager)
-# is a prerequisite and is out of scope for this Part 1 sample.
+# is a prerequisite and is out of scope for this configuration below.
 # =============================================================================
 apiVersion: v1
 kind: Namespace

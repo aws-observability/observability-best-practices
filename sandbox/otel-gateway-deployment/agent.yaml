@@ -1,8 +1,9 @@
 # =============================================================================
 # Self-managed OTel Collector AGENT tier (DaemonSet) — agent-to-gateway pattern.
-# Apps send OTLP to the node-local agent; the agent enriches with k8s metadata,
-# buffers/retries, and forwards to the gateway. The CloudWatch Observability
-# add-on stays in place for infrastructure Container Insights (separate concern).
+# EKS workloads emit telemetry over OTLP to a node-local OTel agent.
+# The CloudWatch Observability EKS add-on sends infrastructure metrics and container
+# logs to CloudWatch in parallel via Container Insights. The agent enriches
+# telemetry with k8s metadata, buffers/retries, and forwards to the gateway.
 #
 # Resilience: the agent's sending_queue + retry_on_failure decouple apps from the
 # gateway — a transient gateway outage is absorbed here instead of dropping app data.

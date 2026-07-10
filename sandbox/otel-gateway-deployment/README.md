@@ -1,9 +1,8 @@
 # OpenTelemetry Gateway on Amazon EKS — Monitoring Your Observability Pipeline
 
-Companion manifests for the AWS blog **"Deploy OpenTelemetry Gateway on AWS: Monitoring
-Your Observability Pipeline."** They deploy an agent-to-gateway OpenTelemetry pipeline on
-Amazon EKS that exports metrics to Amazon CloudWatch via the native OTLP endpoint (SigV4)
-and self-monitors the gateway ("monitor the monitoring").
+Manifests to deploy an agent-to-gateway OpenTelemetry pipeline on Amazon EKS that exports
+metrics to Amazon CloudWatch via the native OTLP endpoint (SigV4) and self-monitors the
+gateway ("monitor the monitoring").
 
 Pattern: **application → node-local OTel agent (DaemonSet) → OTel gateway (Deployment) →
 CloudWatch native OTLP**. The CloudWatch Observability EKS add-on runs alongside for

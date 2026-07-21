@@ -168,6 +168,13 @@ const config = {
           },
           {
             type: 'doc',
+            docId: 'events/index',
+            position: 'left',
+            label: 'Events',
+            sidebarId: false,
+          },
+          {
+            type: 'doc',
             docId: 'resources/index',
             position: 'left',
             label: 'Resources',

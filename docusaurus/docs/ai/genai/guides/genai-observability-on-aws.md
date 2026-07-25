@@ -55,6 +55,8 @@ Operational telemetry that answers "how is my AI performing?"
 - **Request volume** — requests per second/minute/hour, success vs error rates, concurrent requests
 - **Cost** — cost per request, cost by model/user/team, daily/monthly trends, cost efficiency (output tokens per dollar)
 
+Ideally, track these metrics, especially latency and error rates, across agents, tools, and execution phases to identify bottlenecks. Measure P50, P90, and P99 latency for each execution phase and for end-to-end request execution over a rolling window aligned with your service level objectives (SLOs). Prioritize optimizing phases that both contribute significantly to overall latency and have meaningful optimization potential. For more information, see [AWS Well-Architected Framework Agentic AI Lens AGENTPERF01-BP03](https://docs.aws.amazon.com/wellarchitected/latest/agentic-ai-lens/agentperf01-bp03.html).
+
 ### Logs
 
 Content and context that answers "what did my AI say, and to whom?"

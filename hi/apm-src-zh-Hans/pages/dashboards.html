@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>控制面板 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>控制面板</h1></header>
+      <article>
+        <section>
+          <h2>内置 Application Signals 视图</h2>
+          <p>Application Signals 在 CloudWatch 控制台中提供以应用程序为中心的工作流：</p>
+          <ul>
+            <li><strong>服务</strong>：列出服务，识别高故障率/高延迟，在存在 SLO 时查看 SLI 健康状况。</li>
+            <li><strong>服务详情</strong>：深入了解操作、依赖关系和关联的链路追踪。</li>
+            <li><strong>应用程序拓扑图</strong>：可视化拓扑结构，并在依赖关系之间传播健康状态。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">使用 Application Signals 进行运营健康监控</a>。</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch 控制面板（自定义）</h2>
+          <p>您还可以使用 Application Signals 发出的指标（命名空间 <code>ApplicationSignals</code>）构建 CloudWatch 控制面板，并根据需要与告警/日志进行关联。</p>
+          <ul>
+            <li><strong>服务指标</strong>：跨 Service/Operation/Environment 维度的延迟、故障和错误。</li>
+            <li><strong>依赖指标</strong>：下游调用的远程服务/操作维度。</li>
+            <li><strong>运行时指标</strong>（在支持的情况下）：将 GC/CPU/内存与延迟峰值关联。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals 收集的指标</a>。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

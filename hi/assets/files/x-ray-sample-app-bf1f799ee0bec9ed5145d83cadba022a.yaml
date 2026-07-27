@@ -1,0 +1,139 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+spec:
+  selector:
+    matchLabels:
+      app: frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: ho11y
+        image: "ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest"
+        ports:
+        - containerPort: 8765
+        env:
+        - name: DISABLE_OM
+          value: "on"
+        - name: HO11Y_LOG_DEST
+          value: "stdout"
+        - name: OTEL_RESOURCE_ATTRIB
+          value: "frontend"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "adot-collector.adot-col:4317"
+        - name: HO11Y_INJECT_FAILURE
+          value: "enabled"
+        - name: DOWNSTREAM0
+          value: "http://downstream0"
+        - name: DOWNSTREAM1
+          value: "http://downstream1"
+        imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downstream0
+spec:
+  selector:
+    matchLabels:
+      app: downstream0
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: downstream0
+    spec:
+      containers:
+      - name: ho11y
+        image: "ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest"
+        ports:
+        - containerPort: 8765
+        env:
+        - name: DISABLE_OM
+          value: "on"
+        - name: HO11Y_LOG_DEST
+          value: "stdout"
+        - name: OTEL_RESOURCE_ATTRIB
+          value: "downstream0"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "adot-collector.adot-col:4317"
+        - name: DOWNSTREAM0
+          value: "https://otel.help/"
+        imagePullPolicy: Always
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: downstream1
+spec:
+  selector:
+    matchLabels:
+      app: downstream1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: downstream1
+    spec:
+      containers:
+      - name: ho11y
+        image: "ACCOUNTID.dkr.ecr.REGION.amazonaws.com/ho11y:latest"
+        ports:
+        - containerPort: 8765
+        env:
+        - name: DISABLE_OM
+          value: "on"
+        - name: HO11Y_LOG_DEST
+          value: "stdout"
+        - name: OTEL_RESOURCE_ATTRIB
+          value: "downstream1"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "adot-collector.adot-col:4317"
+        - name: DOWNSTREAM0
+          value: "https://o11y.news/"
+        - name: DOWNSTREAM1
+          value: "DUMMY:187kB:42ms"
+        - name: DOWNSTREAM2
+          value: "DUMMY:13kB:2ms"
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+spec:
+  ports:
+  - port: 80
+    targetPort: 8765
+  selector:
+    app: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: downstream0
+spec:
+  ports:
+  - port: 80
+    targetPort: 8765
+  selector:
+    app: downstream0
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: downstream1
+spec:
+  ports:
+  - port: 80
+    targetPort: 8765
+  selector:
+    app: downstream1
+---
+

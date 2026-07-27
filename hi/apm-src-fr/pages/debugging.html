@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Guides de debogage — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Guides de debogage</h1></header>
+      <article>
+        <section>
+          <h2>Flux de triage rapide (recommande)</h2>
+          <ol>
+            <li><strong>Commencez par les SLO (si definis) :</strong> identifiez les services/operations/dependances en mauvaise sante.</li>
+            <li><strong>Utilisez les Services :</strong> triez par latence elevee ou taux de fautes pour trouver les principaux responsables.</li>
+            <li><strong>Ouvrez le detail du service :</strong> inspectez les operations et les aretes de dependance ; selectionnez un point de donnees de latence/faute.</li>
+            <li><strong>Passez aux traces/spans correles :</strong> inspectez la chronologie de la trace pour trouver l'appel en aval lent/defaillant.</li>
+            <li><strong>Confirmez avec les logs/metriques d'execution :</strong> correlez les logs d'erreur et JVM/CPU/GC le cas echeant.</li>
+          </ol>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Surveiller la sante operationnelle avec Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>Utiliser Transaction Search pour les « pics rares »</h2>
+          <p>Pour les pics intermittents, Transaction Search vous aide a analyser les spans par attribut et a explorer les utilisateurs/requetes impactes. Schemas courants :</p>
+          <ul>
+            <li><strong>Analyse de groupe</strong> par un attribut metier (par exemple, identifiant client) pour trouver qui est impacte.</li>
+            <li><strong>Filtrer</strong> par service/operation et duree (p99) pour isoler les valeurs aberrantes.</li>
+            <li><strong>Ouvrir une trace</strong> a partir d'un span aberrant et suivre le chemin d'appel de dependance.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">Depannage des problemes applicatifs (Transaction Search)</a>.</p>
+        </section>
+
+        <section>
+          <h2>Verifications courantes « pourquoi ne vois-je pas de donnees ? »</h2>
+          <ul>
+            <li><strong>Activation du compte :</strong> Application Signals doit etre active une fois par compte/region (role lie au service cree).</li>
+            <li><strong>Plage de temps :</strong> les services/operations ne s'affichent que s'ils ont une activite dans la fenetre de temps selectionnee.</li>
+            <li><strong>Nommage du service :</strong> assurez-vous que <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code> est defini correctement (hors EKS, des noms explicites de service/environnement sont souvent necessaires).</li>
+            <li><strong>Sante du pipeline :</strong> CloudWatch Agent/collecteur en fonctionnement et recevant les donnees OTLP ; verifiez les endpoints locaux et les permissions IAM.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">Depannage de votre installation Application Signals</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

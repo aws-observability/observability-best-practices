@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Instrumentation automatique — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Instrumentation automatique</h1></header>
+      <article>
+        <section>
+          <h2>Ce que signifie "instrumentation automatique"</h2>
+          <p>L'instrumentation automatique ajoute l'instrumentation OpenTelemetry au moment de l'execution (sans modifier le code de votre application) afin que le service emette la telemetrie qu'Application Signals utilise pour la decouverte et la surveillance de la sante.</p>
+        </section>
+
+        <section>
+          <h2>Composants de configuration AWS courants</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK et/ou collecteur</li>
+            <li><strong>Agent CloudWatch</strong> pour collecter/exporter la telemetrie dans les configurations prises en charge</li>
+            <li><strong>Activation de la plateforme</strong> (module complementaire EKS / sidecar ECS / configuration de l'agent EC2 / couches Lambda)</li>
+          </ul>
+          <p>Commencez ici : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Presentation d'Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>Langages et systemes pris en charge</h2>
+          <p>Application Signals prend en charge les applications Java, Python, Node.js et .NET et est pris en charge/teste sur Amazon EKS, Kubernetes, Amazon ECS et Amazon EC2.</p>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">Systemes pris en charge</a>.</p>
+        </section>
+
+        <section>
+          <h2>Notes et pieges</h2>
+          <ul>
+            <li><strong>Node.js ESM :</strong> la prise en charge ESM est limitee ; CommonJS est le chemin recommande a moins de suivre les instructions specifiques ESM dans la documentation.</li>
+            <li><strong>Python dans les conteneurs :</strong> vous devrez peut-etre configurer <code>PYTHONPATH</code> pour l'auto-instrumentation OTel.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

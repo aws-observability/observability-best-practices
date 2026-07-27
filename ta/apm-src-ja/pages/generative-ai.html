@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Generative AI オブザーバビリティ — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Generative AI オブザーバビリティ</h1></header>
+<article>
+<section>
+<h2>Application Signals + Amazon Bedrock</h2>
+<p>CloudWatch Application Signals は、Amazon Bedrock モデルと連携する生成 AI アプリケーションのトラブルシューティングをサポートします。Bedrock API コールに対してすぐに使えるテレメトリを提供し、以下を調査できます：</p>
+<ul>
+<li><strong>モデル設定の問題</strong></li>
+<li><strong>使用状況とコストの要因</strong> （トークン使用量）</li>
+<li><strong>モデルのレイテンシー</strong></li>
+<li><strong>停止/終了理由</strong> レスポンスに対して</li>
+</ul>
+</section>
+<section>
+<h2>きめ細かいメトリクスとトレース</h2>
+<p>Bedrock コールに対して、Application Signals はパフォーマンスメトリクスとトレーススパンをリソースレベルの詳細（例：モデル ID、ガードレール ID、ナレッジベース ID、Bedrock エージェント ID）と関連付けて生成できます。</p>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">例：Amazon Bedrock と連携する生成 AI アプリのトラブルシューティング</a>.</p>
+</section>
+<section>
+<h2>GenAI セマンティック属性 + Transaction Search</h2>
+<p>Application Signals は OpenTelemetry GenAI セマンティック規約の属性（例： <code>gen_ai.request.model</code> およびトークン使用量フィールド）を出力できます。これらを CloudWatch Transaction Search と組み合わせて、モデル間のプロンプト、トークン使用量、レイテンシーを比較分析できます。</p>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+<li><a href="searching-spans.html">スパンの検索と分析</a></li>
+</ul>
+</section>
+<section>
+<h2>参考資料</h2>
+<ul>
+<li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS アナウンス：Application Signals が Bedrock をサポート</a></li>
+<li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">ブログ：AppSignals で Amazon Bedrock のオブザーバビリティを向上させる</a></li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

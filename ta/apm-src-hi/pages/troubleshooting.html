@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>समस्या निवारण — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>समस्या निवारण</h1></header>
+      <article>
+        <section>
+          <h2>सामान्य समस्याएं</h2>
+          <p>यह अनुभाग CloudWatch Application Signals को लागू करते समय सबसे अधिक सामना की जाने वाली समस्याओं और उन्हें कैसे हल करें को कवर करता है।</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch में ट्रेसेज़ दिखाई नहीं दे रहे</h3>
+
+          <h4>संभावित कारण:</h4>
+          <ul>
+            <li>सर्विस के लिए Application Signals सक्षम नहीं है</li>
+            <li>गलत IAM अनुमतियां</li>
+            <li>एजेंट ठीक से कॉन्फ़िगर या चल नहीं रहा</li>
+            <li>सैंपलिंग रेट बहुत कम सेट है</li>
+            <li>CloudWatch से नेटवर्क कनेक्टिविटी समस्याएं</li>
+          </ul>
+
+          <h4>समाधान:</h4>
+          <ol>
+            <li>सत्यापित करें कि AWS कंसोल में Application Signals सक्षम है</li>
+            <li>जांचें कि IAM अनुमतियों में <code>cloudwatch:PutMetricData</code> और <code>xray:PutTraceSegments</code> शामिल हैं</li>
+            <li>पुष्टि करें कि एजेंट चल रहा है और सही ढंग से कॉन्फ़िगर है</li>
+            <li>परीक्षण के लिए सैंपलिंग रेट बढ़ाएं (अस्थायी रूप से 100% सेट करें)</li>
+            <li>जांचें कि VPC सिक्योरिटी ग्रुप और NACL CloudWatch को आउटबाउंड ट्रैफ़िक की अनुमति देते हैं</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>अनुपलब्ध या अपूर्ण ट्रेसेज़</h3>
+
+          <h4>सामान्य समस्याएं:</h4>
+          <ul>
+            <li>सर्विसेज़ के बीच कॉन्टेक्स्ट प्रोपेगेट नहीं हो रहा</li>
+            <li>कुछ सर्विसेज़ इंस्ट्रूमेंट नहीं हैं</li>
+            <li>सैंपलिंग स्पैन ड्रॉप कर रही है</li>
+            <li>एजेंट कॉन्फ़िगरेशन समस्याएं</li>
+          </ul>
+
+          <h4>डिबगिंग चरण:</h4>
+          <ol>
+            <li>अनइंस्ट्रूमेंटेड सर्विसेज़ की पहचान के लिए सर्विस मैप जांचें</li>
+            <li>सत्यापित करें कि ट्रेस कॉन्टेक्स्ट हेडर पास हो रहे हैं (जैसे, <code>x-amzn-trace-id</code>)</li>
+            <li>कॉन्फ़िगरेशन एरर के लिए एजेंट लॉग की समीक्षा करें</li>
+            <li>सैंपलिंग समस्याओं को खारिज करने के लिए 100% सैंपलिंग के साथ टेस्ट करें</li>
+            <li>आंशिक ट्रेसेज़ खोजने के लिए ट्रेस सर्च का उपयोग करें</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>उच्च इंस्ट्रूमेंटेशन ओवरहेड</h3>
+
+          <h4>लक्षण:</h4>
+          <ul>
+            <li>बढ़ा हुआ CPU उपयोग</li>
+            <li>अधिक मेमोरी खपत</li>
+            <li>बढ़ी हुई लेटेंसी</li>
+            <li>एप्लिकेशन प्रदर्शन गिरावट</li>
+          </ul>
+
+          <h4>अनुकूलन रणनीतियां:</h4>
+          <ul>
+            <li>सैंपलिंग रेट कम करें (प्रोडक्शन के लिए 10% से शुरू करें)</li>
+            <li>टेल-बेस्ड के बजाय हेड-बेस्ड सैंपलिंग का उपयोग करें</li>
+            <li>उचित स्पैन सीमाएं कॉन्फ़िगर करें</li>
+            <li>बैच स्पैन एक्सपोर्ट</li>
+            <li>इंस्ट्रूमेंटेशन मेट्रिक्स की निगरानी करें</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM डेटा दिखाई नहीं दे रहा</h3>
+
+          <h4>चेकलिस्ट:</h4>
+          <ul>
+            <li>RUM वेब क्लाइंट ठीक से इंस्टॉल और लोड है</li>
+            <li>एप्लिकेशन ID और कॉन्फ़िगरेशन सही है</li>
+            <li>RUM डोमेन के लिए CORS हेडर कॉन्फ़िगर हैं</li>
+            <li>Content Security Policy RUM स्क्रिप्ट की अनुमति देती है</li>
+            <li>ब्राउज़र कंसोल में कोई JavaScript एरर नहीं दिखता</li>
+          </ul>
+
+          <h4>सत्यापन:</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>सिंथेटिक कैनरी विफल हो रहे हैं</h3>
+
+          <h4>सामान्य कारण:</h4>
+          <ul>
+            <li>कैनरी VPC से नेटवर्क कनेक्टिविटी समस्याएं</li>
+            <li>ऑथेंटिकेशन या ऑथराइज़ेशन विफलताएं</li>
+            <li>एप्लिकेशन परिवर्तन टेस्ट स्क्रिप्ट तोड़ रहे हैं</li>
+            <li>कैनरी रनटाइम या डिपेंडेंसीज़ पुरानी हैं</li>
+          </ul>
+
+          <h4>डिबगिंग:</h4>
+          <ol>
+            <li>CloudWatch Logs में कैनरी लॉग की समीक्षा करें</li>
+            <li>कैनरी स्क्रिप्ट को स्थानीय रूप से टेस्ट करें</li>
+            <li>VPC रूटिंग और सिक्योरिटी ग्रुप जांचें</li>
+            <li>यदि आवश्यक हो तो कैनरी रनटाइम अपडेट करें</li>
+            <li>सत्यापित करें कि एप्लिकेशन एंडपॉइंट एक्सेसिबल हैं</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>डिबगिंग गाइड</h2>
+          <p>जटिल समस्याओं के निदान के लिए चरण-दर-चरण गाइड।</p>
+        </section>
+
+        <section>
+          <h3>ट्रेस कॉन्टेक्स्ट प्रोपेगेशन डिबगिंग</h3>
+
+          <h4>चरण 1: इंस्ट्रूमेंटेशन सत्यापित करें</h4>
+          <p>जांचें कि आपकी कॉल चेन में सभी सर्विसेज़ ठीक से इंस्ट्रूमेंट हैं:</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>चरण 2: एजेंट कॉन्फ़िगरेशन जांचें</h4>
+          <p>एजेंट कॉन्फ़िगरेशन फ़ाइलों और एनवायरनमेंट वेरिएबल को सत्यापित करें।</p>
+
+          <h4>चरण 3: एंड-टू-एंड टेस्ट करें</h4>
+          <p>एक टेस्ट रिक्वेस्ट बनाएं और सभी सर्विसेज़ के माध्यम से इसे ट्रेस करें।</p>
+        </section>
+
+        <section>
+          <h3>प्रदर्शन समस्या निदान</h3>
+
+          <h4>बाधा की पहचान करें:</h4>
+          <ol>
+            <li>उच्च-लेटेंसी सर्विसेज़ के लिए सर्विस मैप जांचें</li>
+            <li>धीमे स्पैन के लिए ट्रेस टाइमलाइन की जांच करें</li>
+            <li>रिसोर्स मेट्रिक्स (CPU, मेमोरी, डिस्क I/O) की समीक्षा करें</li>
+            <li>लॉग्स में एरर पैटर्न देखें</li>
+            <li>डेटाबेस क्वेरी प्रदर्शन जांचें</li>
+          </ol>
+
+          <h4>सामान्य बाधाएं:</h4>
+          <ul>
+            <li>डेटाबेस क्वेरी अनुकूलन की आवश्यकता</li>
+            <li>बाहरी API कॉल टाइमआउट हो रहे हैं</li>
+            <li>रिसोर्स बाधाएं (CPU/मेमोरी)</li>
+            <li>थ्रेड पूल एग्ज़ॉशन</li>
+            <li>सर्विसेज़ के बीच नेटवर्क लेटेंसी</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>एजेंट समस्या निवारण</h3>
+
+          <h4>एजेंट स्थिति जांचें:</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>सामान्य एजेंट समस्याएं:</h4>
+          <ul>
+            <li>JVM के लिए गलत Java एजेंट वर्ज़न</li>
+            <li>अनुपलब्ध डिपेंडेंसीज़ या लाइब्रेरी</li>
+            <li>कॉन्फ़िगरेशन फ़ाइल सिंटैक्स एरर</li>
+            <li>लॉग फ़ाइलों में लिखने की अनुमति समस्याएं</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>टूल और कमांड</h2>
+          <p>समस्या निवारण के लिए उपयोगी टूल और कमांड।</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI कमांड</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>लॉग विश्लेषण</h3>
+          <p>टेलीमेट्री डेटा का विश्लेषण करने के लिए CloudWatch Logs Insights का उपयोग करें:</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>सहायता प्राप्त करना</h2>
+          <p>जब आपको अतिरिक्त सहायता की आवश्यकता हो:</p>
+
+          <h3>दस्तावेज़ीकरण संसाधन:</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals उपयोगकर्ता गाइड</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics उपयोगकर्ता गाइड</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM उपयोगकर्ता गाइड</a></li>
+          </ul>
+
+          <h3>सपोर्ट विकल्प:</h3>
+          <ul>
+            <li>AWS सपोर्ट सेंटर</li>
+            <li>AWS re:Post कम्युनिटी</li>
+            <li>OpenTelemetry प्रोजेक्ट के लिए GitHub issues</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

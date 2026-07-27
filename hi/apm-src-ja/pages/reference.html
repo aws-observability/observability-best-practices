@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Reference — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>リファレンス</h1></header>
+<article>
+<section>
+<h2>サービスの制限とクォータ</h2>
+<p>CloudWatch Application Signals の制限とクォータについて。</p>
+</section>
+<section>
+<h3>制限とクォータ</h3>
+<p>Application Signals は CloudWatch および AWS X-Ray に依存しています。制限（取り込み、クエリレート、クォータ）はそれらのサービスによって管理され、時間の経過とともに変更される場合があります。現在の値については公式ドキュメントをご参照ください。</p>
+<ul>
+<li><strong>Application Signals:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals ドキュメント</a></li>
+<li><strong>CloudWatch クォータ:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch サービスクォータ</a></li>
+<li><strong>AWS X-Ray クォータ:</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API スロットリングと制限</a></li>
+</ul>
+</section>
+<section>
+<h3>CloudWatch メトリクスの保持期間（共通リファレンス）</h3>
+<p>CloudWatch はメトリクスデータをさまざまな解像度で保持します。完全な保持モデルについては CloudWatch ドキュメントをご参照ください。</p>
+<ul>
+<li><strong>1 分解像度:</strong> 15 日</li>
+<li><strong>5 分解像度:</strong> 63 日</li>
+<li><strong>1 時間解像度:</strong> 15 か月</li>
+</ul>
+</section>
+<section>
+<h3>サービスクォータ</h3>
+<h4>Application Signals:</h4>
+<ul>
+<li><strong>アカウントあたりのサービス数:</strong> 1,000</li>
+<li><strong>サービスあたりのオペレーション数:</strong> 100</li>
+<li><strong>カスタムメトリクス:</strong> サービスあたり 30</li>
+</ul>
+<h4>RUM:</h4>
+<ul>
+<li><strong>アカウントあたりのアプリモニター数:</strong> 20</li>
+<li><strong>1 秒あたりのイベント数:</strong> 10,000</li>
+<li><strong>イベントサイズ:</strong> 64 KB</li>
+</ul>
+<h4>Synthetics:</h4>
+<ul>
+<li><strong>アカウントあたりの Canary 数:</strong> 100</li>
+<li><strong>Canary の実行時間:</strong> 最大 15 分</li>
+<li><strong>Canary のサイズ:</strong> 1 GB（解凍後）</li>
+</ul>
+</section>
+<section>
+<h2>用語集</h2>
+<p>CloudWatch Application Signals の主要な用語と概念。</p>
+</section>
+<section>
+<h3>コアコンセプト</h3>
+<h4>アプリケーションパフォーマンスモニタリング (APM)</h4>
+<p>ソフトウェアアプリケーションのパフォーマンスと可用性を監視・管理する手法。</p>
+<h4>分散トレーシング</h4>
+<p>分散システムを流れるリクエストを追跡する手法で、複数のサービスにわたるリクエストのパスとパフォーマンスを把握できます。</p>
+<h4>サービスマップ</h4>
+<p>サービスがどのように接続・連携しているかを示す、アプリケーションアーキテクチャの視覚的な表現。</p>
+<h4>スパン</h4>
+<p>トレース内の単一の操作で、データベースクエリや API 呼び出しなどの作業単位を表します。</p>
+<h4>トレース</h4>
+<p>複数のスパンで構成される、アプリケーション内のリクエストの完全なエンドツーエンドの経路。</p>
+</section>
+<section>
+<h3>インストゥルメンテーション用語</h3>
+<h4>自動インストゥルメンテーション</h4>
+<p>コードの変更を必要とせず、アプリケーションにオブザーバビリティコードを自動的に追加すること。</p>
+<h4>手動インストゥルメンテーション</h4>
+<p>アプリケーションのソースコードにトレースおよびメトリクスコードを明示的に追加すること。</p>
+<h4>OpenTelemetry</h4>
+<p>インストゥルメンテーション向けにベンダー中立な API を提供するオープンソースのオブザーバビリティフレームワーク。</p>
+<h4>サンプリング</h4>
+<p>オブザーバビリティとコストおよびパフォーマンスのバランスを取るために、トレースするリクエストを選択するプロセス。</p>
+<h4>コンテキスト伝播</h4>
+<p>トレースの継続性を維持するために、サービス間でトレースコンテキストを受け渡すメカニズム。</p>
+</section>
+<section>
+<h3>メトリクスとモニタリング</h3>
+<h4>ゴールデンシグナル</h4>
+<p>アプリケーションの健全性を監視するための4つの主要メトリクス: レイテンシー、スループット、エラーレート、サチュレーション。</p>
+<h4>レイテンシー</h4>
+<p>リクエストが処理されるまでにかかる時間で、通常はパーセンタイル (P50、P90、P99) で測定されます。</p>
+<h4>スループット</h4>
+<p>リクエストが処理される速度で、通常は1秒あたりのリクエスト数として測定されます。</p>
+<h4>エラーレート</h4>
+<p>エラーとなるリクエストの割合。</p>
+<h4>サチュレーション</h4>
+<p>システムリソースが使用されている度合い。</p>
+<h4>サービスレベル目標 (SLO)</h4>
+<p>サービスプロバイダーとコンシューマーの間で合意されたサービス品質の目標水準。</p>
+<h4>サービスレベル指標 (SLI)</h4>
+<p>レイテンシーや可用性など、提供されるサービスレベルの測定可能な側面。</p>
+</section>
+<section>
+<h3>RUM とシンセティクス</h3>
+<h4>Real User Monitoring (RUM)</h4>
+<p>本番環境におけるWebアプリケーションへの実際のユーザーインタラクションの監視。</p>
+<h4>Synthetic Monitoring</h4>
+<p>シミュレートされたユーザーインタラクションを使用したアプリケーションの自動テスト。</p>
+<h4>Canary</h4>
+<p>アプリケーションに対して自動テストを実行するSynthetic Monitoringスクリプト。</p>
+<h4>Core Web Vitals</h4>
+<p>Web上のユーザーエクスペリエンスを測定するGoogleの指標：LCP、FID、CLS。</p>
+<h4>Largest Contentful Paint (LCP)</h4>
+<p>最大のコンテンツ要素が画面にレンダリングされるまでにかかる時間。</p>
+<h4>First Input Delay (FID)</h4>
+<p>ユーザーがページに初めてインタラクションを行ってからブラウザが応答するまでの時間。</p>
+<h4>Cumulative Layout Shift (CLS)</h4>
+<p>予期しないレイアウトシフトを定量化する、視覚的安定性の指標。</p>
+</section>
+<section>
+<h3>AWS固有の用語</h3>
+<h4>Application Signals</h4>
+<p>APM、RUM、およびSyntheticsを組み合わせたAWSの統合オブザーバビリティソリューション。</p>
+<h4>X-Ray</h4>
+<p>Application Signalsと統合されたAWSの分散トレーシングサービス。</p>
+<h4>CloudWatch</h4>
+<p>メトリクス、ログ、およびトレースを収集するAWSの監視・オブザーバビリティサービス。</p>
+<h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+<p>AWSサービス向けに最適化されたAWSのOpenTelemetryディストリビューション。</p>
+</section>
+<section>
+<h2>サポートされているランタイムとフレームワーク</h2>
+<p>Application Signalsがサポートするプログラミング言語とフレームワーク。</p>
+</section>
+<section>
+<h3>自動インストルメンテーションのサポート</h3>
+<p>互換性およびランタイム／バージョンの対応表については、以下を参照してください。 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">サポートされているシステム</a>。主な内容：</p>
+<ul>
+<li><strong>Java：</strong> JVM 8/11/17/21/23（フレームワークのサポートはADOT/OpenTelemetry Javaインストルメンテーションに準拠）。</li>
+<li><strong>Python：</strong> Python 3.9以降（フレームワークのサポートはADOT/OpenTelemetry Pythonインストルメンテーションに準拠）。</li>
+<li><strong>Node.js：</strong> Node 14/16/18/20/22（フレームワークのサポートはADOT/OpenTelemetry JSインストルメンテーションに準拠）。</li>
+<li><strong>.NET：</strong> x86-64またはARM64でサポート；Linux x64/ARM64およびWindows Server 2022 x64（ライブラリのサポートはADOT/OpenTelemetry .NETインストルメンテーションに準拠）。</li>
+<li><strong>PHP/Ruby/Go：</strong> OpenTelemetryのゼロコード／自動インストルメンテーションパス経由でサポート（これらの言語向けのADOT SDKは提供されていません）。</li>
+</ul>
+<h4>注意事項および既知の考慮点</h4>
+<ul>
+<li><strong>Node.js ESM:</strong> ESMサポートは限定的です。ドキュメントのESM固有のセットアップに従わない限り、CommonJSを推奨します。</li>
+<li><strong>Python:</strong> コンテナ化されたアプリでは必要になる場合があります <code>PYTHONPATH</code> 設定（既知のOTel自動計装の問題）。</li>
+<li><strong>.NET:</strong> ADOT .NETはAWS SDK for .NET V4に制限があります。完全なサポートにはAWS SDK V3を推奨します。</li>
+</ul>
+</section>
+<section>
+<h3>手動計装</h3>
+<p>主要なプログラミング言語はすべてOpenTelemetry SDKを通じてサポートされています：</p>
+<ul>
+<li>Java、Scala、Kotlin</li>
+<li>Python、Ruby</li>
+<li>JavaScript/TypeScript、Go</li>
+<li>.NET（C#、F#、VB.NET）</li>
+<li>PHP、Rust、C++</li>
+</ul>
+</section>
+<section>
+<h2>設定リファレンス</h2>
+<p>一般的な設定オプションと環境変数。</p>
+</section>
+<section>
+<h3>環境変数</h3>
+<h4>OpenTelemetry設定：</h4>
+<ul>
+<li><code>OTEL_SERVICE_NAME</code> - サービスの名前</li>
+<li><code>OTEL_TRACES_EXPORTER</code> - トレースエクスポーター（otlp、jaeger、zipkin）</li>
+<li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLPエンドポイントURL</li>
+<li><code>OTEL_TRACES_SAMPLER</code> - サンプリング戦略</li>
+<li><code>OTEL_TRACES_SAMPLER_ARG</code> - サンプリングパラメーター</li>
+</ul>
+<h4>AWS固有の設定：</h4>
+<ul>
+<li><code>AWS_REGION</code> - AWSリージョン</li>
+<li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Rayデーモンアドレス</li>
+<li><code>OTEL_RESOURCE_ATTRIBUTES</code> - サービス属性（アプリケーションマップのカスタムグループ化にも使用）</li>
+</ul>
+</section>
+<section>
+<h3>サンプリング設定</h3>
+<h4>サンプリング戦略：</h4>
+<ul>
+<li><code>always_on</code> - すべてのトレースをサンプリングする</li>
+<li><code>always_off</code> - トレースをサンプリングしない</li>
+<li><code>traceidratio</code> - 比率に基づいてサンプリングする（例：10%の場合は0.1）</li>
+<li><code>parentbased_always_on</code> - 親のサンプリング決定を尊重する</li>
+<li><code>parentbased_traceidratio</code> - 親ベースの比率サンプリング</li>
+</ul>
+</section>
+<section>
+<h2>コスト最適化</h2>
+<p>オブザーバビリティコストを管理するための戦略。</p>
+</section>
+<section>
+<h3>サンプリング戦略</h3>
+<ul>
+<li><strong>本番環境：</strong> サンプリングレート5〜10%</li>
+<li><strong>開発環境：</strong> 50-100% サンプリングレート</li>
+<li><strong>エラートレース:</strong> エラーのあるトレースを常にサンプリングする</li>
+<li><strong>高価値オペレーション:</strong> クリティカルパスに対して 100% サンプリング</li>
+</ul>
+</section>
+<section>
+<h3>データ保持ポリシー</h3>
+<p>保持は基盤となるテレメトリストア（例：CloudWatch メトリクス/ログおよび AWS X-Ray トレース）によって制御されます。これらのサービスで保持を設定し、トラブルシューティングおよびコンプライアンス要件に合わせて調整してください。</p>
+</section>
+<section>
+<h3>リソースの最適化</h3>
+<ul>
+<li><strong>バッチエクスポート:</strong> ネットワークオーバーヘッドの削減</li>
+<li><strong>圧縮:</strong> データ圧縮の有効化</li>
+<li><strong>フィルタリング:</strong> 不要なスパンと属性の削除</li>
+<li><strong>バッファリング:</strong> 適切なバッファサイズの使用</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

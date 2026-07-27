@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>प्रदर्शन एनालिटिक्स — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>प्रदर्शन एनालिटिक्स</h1></header>
+      <article>
+        <section>
+          <h2>मानक एप्लिकेशन मेट्रिक्स</h2>
+          <p>Application Signals मानक एप्लिकेशन मेट्रिक्स CloudWatch (नेमस्पेस <code>ApplicationSignals</code>) में प्रकाशित करता है। ये मेट्रिक्स सर्विसेज़, ऑपरेशन और डिपेंडेंसीज़ में त्वरित ट्राइएज के लिए डिज़ाइन किए गए हैं।</p>
+          <ul>
+            <li><strong>लेटेंसी</strong> (ms)</li>
+            <li><strong>फॉल्ट</strong> (HTTP 5xx और स्पैन स्टेटस एरर)</li>
+            <li><strong>एरर</strong> (HTTP 4xx)</li>
+            <li><strong>उपलब्धता</strong> कंसोल में \( (1 - \text{Faults}/\text{Total}) \times 100 \) के रूप में गणना की जाती है जहां Total <code>SampleCount(Latency)</code> से प्राप्त होता है। 4xx रिस्पॉन्स को इस उपलब्धता गणना के लिए सफल माना जाता है।</li>
+          </ul>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals द्वारा एकत्रित मेट्रिक्स</a>।</p>
+        </section>
+
+        <section>
+          <h2>डाइमेंशन (सर्विस बनाम डिपेंडेंसी)</h2>
+          <p>मेट्रिक्स ऐसे डाइमेंशन के साथ उत्सर्जित होते हैं जो आपको इनके अनुसार प्रदर्शन का विश्लेषण करने देते हैं:</p>
+          <ul>
+            <li><strong>सर्विस मेट्रिक्स</strong>: Environment, Service, Operation</li>
+            <li><strong>डिपेंडेंसी मेट्रिक्स</strong>: Environment, Service, Operation साथ ही RemoteService / RemoteOperation (और प्लेटफ़ॉर्म के आधार पर अन्य रिमोट डाइमेंशन)</li>
+          </ul>
+          <p>इससे "कौन सा ऑपरेशन रिग्रेस हुआ?" और "क्या लेटेंसी किसी डिपेंडेंसी कॉल से प्रेरित है?" जैसे प्रश्नों का उत्तर देना आसान हो जाता है।</p>
+        </section>
+
+        <section>
+          <h2>रनटाइम मेट्रिक्स (जहां समर्थित)</h2>
+          <p>Application Signals समर्थित रनटाइम के लिए रनटाइम मेट्रिक्स भी एकत्र कर सकता है (उदाहरण के लिए, JVM GC, मेमोरी, CPU; Python प्रोसेस मेट्रिक्स; .NET रनटाइम मेट्रिक्स)। Node.js के लिए रनटाइम मेट्रिक्स एकत्र नहीं किए जाते।</p>
+          <p>आप <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> के साथ रनटाइम मेट्रिक्स संग्रह अक्षम कर सकते हैं (प्लेटफ़ॉर्म-विशिष्ट चरण डॉक्स में हैं)।</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API 参考 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>API 参考</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals API</h2>
+          <p>以编程方式访问 Application Signals 数据和功能。</p>
+        </section>
+
+        <section>
+          <h3>服务操作</h3>
+
+          <h4>ListServices</h4>
+          <p>返回 Application Signals 发现的服务列表。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>GET /services?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>参数：</h5>
+          <ul>
+            <li><code>nextToken</code> - 分页令牌</li>
+            <li><code>maxResults</code> - 最大结果数（1-100）</li>
+            <li><code>startTime</code> - 开始时间（Unix 时间戳）</li>
+            <li><code>endTime</code> - 结束时间（Unix 时间戳）</li>
+          </ul>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "namespace": "string",
+      "logGroupName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetService</h3>
+          <p>返回特定服务的详细信息。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>GET /services/{serviceName}?startTime=long&endTime=long</code></pre>
+
+          <h5>路径参数：</h5>
+          <ul>
+            <li><code>serviceName</code> - 服务名称</li>
+          </ul>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "service": {
+    "name": "string",
+    "namespace": "string",
+    "logGroupName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "rum": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "synthetics": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>ListOperations</h3>
+          <p>返回服务的操作列表。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>GET /services/{serviceName}/operations?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "operations": [
+    {
+      "name": "string",
+      "metricName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetOperation</h3>
+          <p>返回特定操作的详细信息。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>GET /services/{serviceName}/operations/{operationName}?startTime=long&endTime=long</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "operation": {
+    "name": "string",
+    "metricName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Traces API</h2>
+          <p>访问和分析分布式追踪数据。</p>
+        </section>
+
+        <section>
+          <h3>GetTraceSummaries</h3>
+          <p>检索追踪摘要列表。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /TraceSummaries</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "sampling": true|false,
+  "filterExpression": "string"
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "startTime": "timestamp",
+      "endTime": "timestamp",
+      "hasError": true|false,
+      "hasFault": true|false,
+      "hasThrottle": true|false
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>BatchGetTraces</h3>
+          <p>检索指定追踪 ID 的完整追踪数据。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /Traces</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "traceIds": ["string"],
+  "nextToken": "string"
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "segments": [
+        {
+          "id": "string",
+          "name": "string",
+          "startTime": number,
+          "endTime": number,
+          "annotations": {},
+          "metadata": {},
+          "subsegments": [...]
+        }
+      ]
+    }
+  ],
+  "nextToken": "string",
+  "unprocessedTraceIds": ["string"]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetServiceGraph</h3>
+          <p>检索显示服务依赖关系的服务图。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /ServiceGraph</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp"
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "names": ["string"],
+      "type": "string",
+      "state": "string",
+      "startTime": "timestamp",
+      "endTime": "timestamp"
+    }
+  ],
+  "edges": [
+    {
+      "source": "string",
+      "target": "string",
+      "references": [...]
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Metrics API</h2>
+          <p>访问 CloudWatch 指标数据。</p>
+        </section>
+
+        <section>
+          <h3>GetMetricData</h3>
+          <p>检索指标数据点。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "metricDataQueries": [
+    {
+      "id": "string",
+      "metricStat": {
+        "metric": {
+          "namespace": "string",
+          "metricName": "string",
+          "dimensions": [
+            {
+              "name": "string",
+              "value": "string"
+            }
+          ]
+        },
+        "period": integer,
+        "stat": "string"
+      },
+      "expression": "string",
+      "label": "string",
+      "returnData": true|false
+    }
+  ],
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "nextToken": "string",
+  "scanBy": "TimestampDescending|TimestampAscending"
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "metricDataResults": [
+    {
+      "id": "string",
+      "label": "string",
+      "timestamps": ["timestamp"],
+      "values": [number],
+      "statusCode": "Complete|PartialData|InternalError"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>PutMetricData</h3>
+          <p>将指标数据点发布到 CloudWatch。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "namespace": "string",
+  "metricData": [
+    {
+      "metricName": "string",
+      "dimensions": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "timestamp": "timestamp",
+      "value": number,
+      "statisticValues": {
+        "sampleCount": number,
+        "sum": number,
+        "minimum": number,
+        "maximum": number
+      },
+      "unit": "string"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>RUM API</h2>
+          <p>访问真实用户监控数据。</p>
+        </section>
+
+        <section>
+          <h3>PutRumEvents</h3>
+          <p>将 RUM 事件发送到 CloudWatch。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /appmonitors/{appMonitorName}/rum-events</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "events": [
+    {
+      "details": "string",
+      "timestamp": number,
+      "type": "string",
+      "metadata": {}
+    }
+  ],
+  "userDetails": {
+    "userId": "string",
+    "sessionId": "string"
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetAppMonitor</h3>
+          <p>检索 RUM 应用监控器的信息。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>GET /appmonitors/{appMonitorName}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "appMonitor": {
+    "name": "string",
+    "domain": "string",
+    "id": "string",
+    "state": "CREATED|ACTIVE",
+    "tags": {}
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Synthetics API</h2>
+          <p>管理合成监控金丝雀。</p>
+        </section>
+
+        <section>
+          <h3>DescribeCanaries</h3>
+          <p>检索金丝雀的信息。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /canaries</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "names": ["string"],
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "canaries": [
+    {
+      "id": "string",
+      "name": "string",
+      "code": {...},
+      "executionRoleArn": "string",
+      "schedule": {...},
+      "runConfig": {...},
+      "successRetentionPeriodInDays": integer,
+      "failureRetentionPeriodInDays": integer,
+      "status": {...},
+      "tags": {...},
+      "timeline": {...}
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetCanaryRuns</h3>
+          <p>检索金丝雀运行的信息。</p>
+
+          <h5>请求语法：</h5>
+          <pre><code>POST /canaries/{name}/runs</code></pre>
+
+          <h5>请求正文：</h5>
+          <pre><code>{
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>响应：</h5>
+          <pre><code>{
+  "canaryRuns": [
+    {
+      "id": "string",
+      "name": "string",
+      "status": {...},
+      "timeline": {...},
+      "artifactS3Location": "string",
+      "metricData": [...]
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>SDK 参考</h2>
+          <p>各语言 SDK 文档。</p>
+        </section>
+
+        <section>
+          <h3>JavaScript SDK</h3>
+
+          <h4>安装：</h4>
+          <pre><code>npm install @aws-sdk/client-application-signals</code></pre>
+
+          <h4>使用方法：</h4>
+          <pre><code>import { ApplicationSignalsClient, ListServicesCommand } from "@aws-sdk/client-application-signals";
+
+const client = new ApplicationSignalsClient({ region: "us-east-1" });
+
+const command = new ListServicesCommand({
+  startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  endTime: new Date()
+});
+
+const response = await client.send(command);</code></pre>
+        </section>
+
+        <section>
+          <h3>Python SDK (Boto3)</h3>
+
+          <h4>安装：</h4>
+          <pre><code>pip install boto3</code></pre>
+
+          <h4>使用方法：</h4>
+          <pre><code>import boto3
+from datetime import datetime, timedelta
+
+client = boto3.client('application-signals', region_name='us-east-1')
+
+response = client.list_services(
+    startTime=datetime.utcnow() - timedelta(days=1),
+    endTime=datetime.utcnow()
+)</code></pre>
+        </section>
+
+        <section>
+          <h3>Java SDK</h3>
+
+          <h4>Maven 依赖：</h4>
+          <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+  &lt;artifactId&gt;application-signals&lt;/artifactId&gt;
+  &lt;version&gt;2.20.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+          <h4>使用方法：</h4>
+          <pre><code>ApplicationSignalsClient client = ApplicationSignalsClient.builder()
+    .region(Region.US_EAST_1)
+    .build();
+
+ListServicesRequest request = ListServicesRequest.builder()
+    .startTime(Instant.now().minus(1, ChronoUnit.DAYS))
+    .endTime(Instant.now())
+    .build();
+
+ListServicesResponse response = client.listServices(request);</code></pre>
+        </section>
+
+        <section>
+          <h3>.NET SDK</h3>
+
+          <h4>NuGet 包：</h4>
+          <pre><code>dotnet add package AWSSDK.ApplicationSignals</code></pre>
+
+          <h4>使用方法：</h4>
+          <pre><code>using Amazon.ApplicationSignals;
+using Amazon.ApplicationSignals.Model;
+
+var client = new AmazonApplicationSignalsClient(RegionEndpoint.USEast1);
+
+var request = new ListServicesRequest
+{
+    StartTime = DateTime.UtcNow.AddDays(-1),
+    EndTime = DateTime.UtcNow
+};
+
+var response = await client.ListServicesAsync(request);</code></pre>
+        </section>
+
+        <section>
+          <h2>错误代码</h2>
+          <p>常见错误代码及其含义。</p>
+        </section>
+
+        <section>
+          <h3>Application Signals 错误</h3>
+          <ul>
+            <li><code>ValidationException</code> - 输入参数无效</li>
+            <li><code>ResourceNotFoundException</code> - 请求的资源不存在</li>
+            <li><code>ThrottlingException</code> - 请求速率超限</li>
+            <li><code>InternalServerException</code> - 内部服务错误</li>
+            <li><code>AccessDeniedException</code> - 权限不足</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>X-Ray 错误</h3>
+          <ul>
+            <li><code>InvalidRequestException</code> - 请求格式错误</li>
+            <li><code>ThrottledException</code> - 速率限制超限</li>
+            <li><code>ResourceNotFoundException</code> - 追踪未找到</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch 错误</h3>
+          <ul>
+            <li><code>InvalidParameterValueException</code> - 参数值无效</li>
+            <li><code>MissingRequiredParameterException</code> - 缺少必需参数</li>
+            <li><code>LimitExceededException</code> - 配额超限</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

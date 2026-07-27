@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Auto Instrumentation — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Auto Instrumentation</h1></header>
+<article>
+<section>
+<h2>「auto instrumentation」の意味</h2>
+<p>Auto instrumentation は、OpenTelemetry のインストルメンテーションをランタイム時に追加します（アプリケーションコードを変更することなく）。これにより、サービスは Application Signals がディスカバリーおよびヘルスモニタリングに使用するテレメトリを出力します。</p>
+</section>
+<section>
+<h2>AWS セットアップの共通コンポーネント</h2>
+<ul>
+<li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK および/またはコレクター</li>
+<li><strong>CloudWatch Agent</strong> サポートされているセットアップでテレメトリを収集・エクスポートするため</li>
+<li><strong>プラットフォームの有効化</strong> （EKS アドオン / ECS サイドカー / EC2 エージェントセットアップ / Lambda レイヤー）</li>
+</ul>
+<p>まずはこちら： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals の概要</a>.</p>
+</section>
+<section>
+<h2>サポートされている言語とシステム</h2>
+<p>Application Signals は Java、Python、Node.js、および .NET アプリケーションをサポートしており、Amazon EKS、Kubernetes、Amazon ECS、および Amazon EC2 でサポート・テストされています。</p>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">サポートされているシステム</a>.</p>
+</section>
+<section>
+<h2>注意事項と注意点</h2>
+<ul>
+<li><strong>Node.js ESM：</strong> ESM のサポートは限定的です。ドキュメントの ESM 固有のガイダンスに従わない限り、CommonJS が推奨される方法です。</li>
+<li><strong>コンテナ内の Python：</strong> 設定が必要な場合があります <code>PYTHONPATH</code> OTel の auto instrumentation 用に設定されています。</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

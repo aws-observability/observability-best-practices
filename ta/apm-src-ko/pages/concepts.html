@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>개념 및 기초 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>개념 및 기초</h1></header>
+      <article>
+        <section>
+          <h2>핵심 개념</h2>
+          <p>애플리케이션 성능 모니터링(APM)의 기본 개념을 이해하는 것은 CloudWatch Application Signals를 효과적으로 사용하는 데 필수적입니다. 이 섹션에서는 최신 Observability의 기초를 구성하는 핵심 구성 요소를 다룹니다.</p>
+        </section>
+
+        <section>
+          <h3>분산 트레이싱</h3>
+          <p>분산 트레이싱은 분산 시스템을 통과하는 요청을 추적하는 방식입니다. 마이크로서비스 아키텍처에서 단일 사용자 요청은 여러 서비스, 데이터베이스 및 외부 API를 거칠 수 있습니다. 분산 트레이싱은 이 전체 여정에 대한 가시성을 제공합니다.</p>
+
+          <h4>주요 구성 요소:</h4>
+          <ul>
+            <li><strong>트레이스:</strong> 시스템을 통과하는 요청의 완전한 엔드투엔드 여정</li>
+            <li><strong>스팬:</strong> 트레이스 내의 단일 오퍼레이션 (예: 데이터베이스 쿼리 또는 API 호출)</li>
+            <li><strong>트레이스 컨텍스트:</strong> 서비스 경계를 넘어 스팬을 연결하는 메타데이터</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>트레이스, 스팬 및 세그먼트</h3>
+          <p>분산 트레이싱에서 사용되는 기본 데이터 구조입니다:</p>
+
+          <h4>트레이스</h4>
+          <p>트레이스는 애플리케이션을 통과하는 요청의 전체 경로를 나타냅니다. 타이밍 정보, 메타데이터 및 요청 여정을 구성하는 모든 스팬을 포함합니다.</p>
+
+          <h4>스팬</h4>
+          <p>스팬은 트레이스 내의 단일 작업 단위를 나타냅니다. 각 스팬에는 다음이 포함됩니다:</p>
+          <ul>
+            <li>이름 및 오퍼레이션 유형</li>
+            <li>시작 및 종료 타임스탬프</li>
+            <li>추가 컨텍스트를 위한 태그 및 속성</li>
+            <li>상위 스팬에 대한 참조</li>
+          </ul>
+
+          <h4>세그먼트</h4>
+          <p>AWS X-Ray 용어에서 세그먼트는 트레이스 데이터의 기본 단위입니다. 각 세그먼트는 스팬에 해당하며 해당 트레이스 부분에 대해 수행된 작업에 대한 정보를 포함합니다.</p>
+        </section>
+
+        <section>
+          <h3>서비스 맵</h3>
+          <p>서비스 맵은 애플리케이션의 아키텍처와 종속성에 대한 시각적 표현을 제공합니다. 다음을 보여줍니다:</p>
+          <ul>
+            <li>서비스 간 연결 방식</li>
+            <li>서비스 간 트래픽 흐름</li>
+            <li>각 서비스의 성능 메트릭</li>
+            <li>오류율 및 지연 시간 패턴</li>
+          </ul>
+          <p>서비스 맵은 트레이스 데이터에서 자동으로 생성되며 시스템 토폴로지를 한눈에 이해하는 데 도움을 줍니다.</p>
+        </section>
+
+        <section>
+          <h3>계측</h3>
+          <p>계측은 애플리케이션에 Observability 코드를 추가하는 프로세스입니다. 여러 접근 방식이 있습니다:</p>
+
+          <h4>자동 계측</h4>
+          <p>자동 계측은 코드 변경이 필요 없습니다. 라이브러리와 에이전트가 일반적인 프레임워크와 라이브러리를 자동으로 계측합니다.</p>
+
+          <h4>수동 계측</h4>
+          <p>수동 계측은 애플리케이션에 트레이싱 코드를 추가하는 것을 포함합니다. 세밀한 제어가 가능하지만 더 많은 개발 노력이 필요합니다.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>OpenTelemetry는 계측을 위한 벤더 중립적 API를 제공하는 오픈소스 Observability 프레임워크입니다. 여러 프로그래밍 언어를 지원하며 다양한 백엔드로 데이터를 내보낼 수 있습니다.</p>
+        </section>
+
+        <section>
+          <h3>데이터 모델</h3>
+          <p>Application Signals는 텔레메트리 데이터를 구성하기 위해 구조화된 데이터 모델을 사용합니다:</p>
+
+          <h4>메트릭</h4>
+          <ul>
+            <li><strong>지연 시간:</strong> 응답 시간 측정 (P50, P90, P99)</li>
+            <li><strong>처리량:</strong> 요청 속도 (초당 요청 수)</li>
+            <li><strong>오류율:</strong> 실패한 요청의 비율</li>
+            <li><strong>포화도:</strong> 리소스 사용률 (CPU, 메모리 등)</li>
+          </ul>
+
+          <h4>트레이스</h4>
+          <p>스팬, 태그 및 타이밍 정보가 포함된 구조화된 트레이스 데이터.</p>
+
+          <h4>로그</h4>
+          <p>완전한 컨텍스트를 위해 트레이스 및 메트릭과 상관된 애플리케이션 로그.</p>
+        </section>
+
+        <section>
+          <h3>샘플링 전략</h3>
+          <p>샘플링은 Observability와 비용 및 성능 간의 균형을 맞추기 위해 어떤 요청을 트레이싱할지 제어합니다:</p>
+
+          <h4>헤드 샘플링</h4>
+          <p>요청의 라이프사이클 시작 시 트레이싱 여부를 결정합니다.</p>
+
+          <h4>테일 샘플링</h4>
+          <p>트레이스 데이터를 수집한 후 샘플링 결정을 내려 요청 특성에 기반한 더 지능적인 샘플링을 가능하게 합니다.</p>
+
+          <h4>비율 기반 샘플링</h4>
+          <p>고정 비율의 요청을 트레이싱합니다 (예: 전체 요청의 10%).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

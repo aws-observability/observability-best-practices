@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>சிறந்த நடைமுறைகள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>சிறந்த நடைமுறைகள்</h1></header>
+      <article>
+        <section>
+          <h2>Instrumentation சிறந்த நடைமுறைகள்</h2>
+          <p>உங்கள் observability தரவிலிருந்து மதிப்புள்ள நுண்ணறிவுகளைப் பெற திறம்பட instrumentation அவசியமாகும். குறைந்தபட்ச overhead-ல் அதிகபட்ச மதிப்பை உங்கள் instrumentation வழங்குவதை உறுதிசெய்ய இந்த சிறந்த நடைமுறைகளைப் பின்பற்றவும்.</p>
+        </section>
+
+        <section>
+          <h3>என்ன Instrument செய்ய வேண்டும்</h3>
+          <p>உங்கள் பயன்பாட்டின் மிக முக்கியமான பகுதிகளை instrument செய்வதில் கவனம் செலுத்தவும்:</p>
+
+          <h4>உயர் முன்னுரிமை:</h4>
+          <ul>
+            <li>பொது API endpoints மற்றும் பயனர்-எதிர்நோக்கு செயல்பாடுகள்</li>
+            <li>தரவுத்தள வினவல்கள் மற்றும் வெளிப்புற சேவை அழைப்புகள்</li>
+            <li>வணிக-முக்கிய பணிப்பாய்வுகள் மற்றும் பரிவர்த்தனைகள்</li>
+            <li>பிழை பாதைகள் மற்றும் விதிவிலக்கு கையாளுதல்</li>
+          </ul>
+
+          <h4>நடுத்தர முன்னுரிமை:</h4>
+          <ul>
+            <li>உள் சேவை-க்கு-சேவை தொடர்பு</li>
+            <li>பின்னணி பணிகள் மற்றும் திட்டமிடப்பட்ட tasks</li>
+            <li>Cache செயல்பாடுகள்</li>
+          </ul>
+
+          <h4>குறைந்த முன்னுரிமை:</h4>
+          <ul>
+            <li>எளிய utility functions</li>
+            <li>நிலையான உள்ளடக்க வழங்கல்</li>
+            <li>Health check endpoints</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>பெயரிடும் மரபுகள்</h3>
+          <p>நிலையான பெயரிடுதல் உங்கள் traces-ஐ தேடவும் வடிகட்டவும் எளிதாக்குகிறது:</p>
+
+          <h4>Span பெயர்கள்:</h4>
+          <ul>
+            <li>கீழ் எழுத்துக்களை கோடுகளுடன் பயன்படுத்தவும்: <code>http-get-user-profile</code></li>
+            <li>செயல்பாட்டு வகையை சேர்க்கவும்: <code>db-query-users</code>, <code>redis-get-session</code></li>
+            <li>விளக்கமாக ஆனால் சுருக்கமாக இருக்கவும்: "process" அல்லது "handle" போன்ற பொதுவான பெயர்களைத் தவிர்க்கவும்</li>
+          </ul>
+
+          <h4>சேவை பெயர்கள்:</h4>
+          <ul>
+            <li>சூழல்கள் முழுவதும் நிலையான சேவை பெயரிடுதலைப் பயன்படுத்தவும்</li>
+            <li>பல-சூழல் அமைப்புகளுக்கு சேவை பெயரில் சூழலை சேர்க்கவும்</li>
+            <li>உங்கள் நிறுவனத்தின் பெயரிடும் மரபுகளைப் பின்பற்றவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Attributes மற்றும் Tags</h3>
+          <p>உங்கள் spans மற்றும் traces-க்கு சூழலை சேர்க்க attributes-ஐ பயன்படுத்தவும்:</p>
+
+          <h4>நிலையான Attributes:</h4>
+          <ul>
+            <li><code>http.method</code> - HTTP method (GET, POST, போன்றவை)</li>
+            <li><code>http.url</code> - கோரிக்கை URL (PII பற்றி கவனமாக இருக்கவும்)</li>
+            <li><code>http.status_code</code> - HTTP பதில் நிலை</li>
+            <li><code>db.system</code> - தரவுத்தள வகை (mysql, postgres, போன்றவை)</li>
+            <li><code>db.name</code> - தரவுத்தள பெயர்</li>
+            <li><code>db.operation</code> - தரவுத்தள செயல்பாடு (SELECT, INSERT, போன்றவை)</li>
+          </ul>
+
+          <h4>தனிப்பயன் Attributes:</h4>
+          <ul>
+            <li><code>user.id</code> - பயனர் அடையாளங்காட்டி (PII எனில் hash செய்யப்பட்டது)</li>
+            <li><code>business.operation</code> - வணிக செயல்பாட்டு வகை</li>
+            <li><code>version</code> - பயன்பாட்டு பதிப்பு</li>
+            <li><code>environment</code> - deployment சூழல்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PII மற்றும் பாதுகாப்பு கருத்தில் கொள்ள வேண்டியவை</h3>
+          <p>உங்கள் telemetry-ல் உணர்திறன் தரவைப் பாதுகாக்கவும்:</p>
+
+          <h4>ஒருபோதும் சேர்க்க வேண்டாம்:</h4>
+          <ul>
+            <li>கடவுச்சொற்கள், API keys, அல்லது அங்கீகார tokens</li>
+            <li>தனிநபர் அடையாளத் தகவல் (PII) - மின்னஞ்சல்கள், தொலைபேசி எண்கள் போன்றவை</li>
+            <li>உணர்திறன் தரவு கொண்ட query parameters-உடன் கூடிய முழு URLs</li>
+            <li>கிரெடிட் கார்ட் எண்கள் அல்லது நிதித் தகவல்</li>
+          </ul>
+
+          <h4>பாதுகாப்பான மாற்று வழிகள்:</h4>
+          <ul>
+            <li>Hash செய்யப்பட்ட அல்லது tokenized அடையாளங்காட்டிகளைப் பயன்படுத்தவும்</li>
+            <li>URLs-ன் path பகுதியை மட்டும் சேர்க்கவும்</li>
+            <li>குறிப்பிட்ட மதிப்புகளுக்கு பதிலாக பொதுவான நிலை குறிகாட்டிகளைப் பயன்படுத்தவும்</li>
+            <li>Instrumentation நிலையில் data masking-ஐ செயல்படுத்தவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Sampling உத்திகள்</h2>
+          <p>Observability கவரேஜை பராமரிக்கும் அதே நேரத்தில் செலவுகளைக் கட்டுப்படுத்த Sampling உதவுகிறது.</p>
+        </section>
+
+        <section>
+          <h3>Sampling உத்தியைத் தேர்ந்தெடுத்தல்</h3>
+
+          <h4>விகிதம் அடிப்படையிலான Sampling:</h4>
+          <ul>
+            <li>கோரிக்கைகளின் நிலையான சதவீதத்தை sample செய்யவும் (எ.கா., 10%)</li>
+            <li>செயல்படுத்தவும் புரிந்துகொள்ளவும் எளிமையானது</li>
+            <li>முக்கியமான ஆனால் அரிதான நிகழ்வுகளை தவறவிடலாம்</li>
+          </ul>
+
+          <h4>Tail Sampling:</h4>
+          <ul>
+            <li>Trace தரவை சேகரித்த பிறகு sampling முடிவுகளை எடுக்கவும்</li>
+            <li>பிழைகள் அல்லது அதிக தாமதம் கொண்ட traces-க்கு முன்னுரிமை அளிக்க முடியும்</li>
+            <li>மிகவும் சிக்கலானது ஆனால் மிகவும் புத்திசாலித்தனமானது</li>
+          </ul>
+
+          <h4>விதி அடிப்படையிலான Sampling:</h4>
+          <ul>
+            <li>குறிப்பிட்ட நிபந்தனைகளின் அடிப்படையில் sample செய்யவும் (பயனர், endpoint, போன்றவை)</li>
+            <li>முக்கிய பாதைகள் எப்போதும் trace செய்யப்படுவதை உறுதிசெய்யவும்</li>
+            <li>கவனமான விதி வரையறை தேவை</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>பரிந்துரைக்கப்படும் Sampling விகிதங்கள்</h3>
+          <ul>
+            <li><strong>Development:</strong> முழு தெரிவுநிலைக்கு 100% sampling</li>
+            <li><strong>Staging:</strong> சோதனைக்கு 50-100% sampling</li>
+            <li><strong>Production:</strong> செலவு-திறன் கவரேஜுக்கு 10-20%</li>
+            <li><strong>அதிக-போக்குவரத்து சேவைகள்:</strong> அளவைக் கட்டுப்படுத்த 1-5%</li>
+            <li><strong>முக்கிய பாதைகள்:</strong> மற்ற விதிகளைப் பொருட்படுத்தாமல் 100% sampling</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>செயல்திறன் மேம்படுத்துதல்</h2>
+          <p>Instrumentation-ன் செயல்திறன் தாக்கத்தை குறைக்கவும்.</p>
+        </section>
+
+        <section>
+          <h3>Overhead-ஐ குறைக்கவும்</h3>
+          <ul>
+            <li>முடிந்தவரை asynchronous span processing-ஐ பயன்படுத்தவும்</li>
+            <li>Network அழைப்புகளைக் குறைக்க batch span exports-ஐ பயன்படுத்தவும்</li>
+            <li>பொருத்தமான buffer sizes-ஐ கட்டமைக்கவும்</li>
+            <li>Instrumentation செயல்திறன் metrics-ஐ கண்காணிக்கவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>வள மேலாண்மை</h3>
+          <ul>
+            <li>Span exports-க்கு நியாயமான timeouts-ஐ அமைக்கவும்</li>
+            <li>Backend தோல்விகளுக்கு circuit breakers-ஐ செயல்படுத்தவும்</li>
+            <li>Collectors-க்கு connection pooling-ஐ பயன்படுத்தவும்</li>
+            <li>பொருத்தமான retry policies-ஐ கட்டமைக்கவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>எச்சரிக்கை மற்றும் கண்காணிப்பு</h2>
+          <p>பயன்பாட்டு ஆரோக்கியத்தின் மேல் நிற்க திறம்பட alerts-ஐ அமைக்கவும்.</p>
+        </section>
+
+        <section>
+          <h3>கண்காணிக்க வேண்டிய முக்கிய Metrics</h3>
+          <ul>
+            <li><strong>தாமதம்:</strong> P95/P99 பதில் நேரங்கள்</li>
+            <li><strong>பிழை விகிதம்:</strong> தோல்வியடைந்த கோரிக்கைகளின் சதவீதம்</li>
+            <li><strong>செயல்திறன்:</strong> வினாடிக்கு கோரிக்கைகள்</li>
+            <li><strong>நிறைவு:</strong> வள பயன்பாடு</li>
+            <li><strong>Trace அளவு:</strong> சேகரிக்கப்பட்ட traces எண்ணிக்கை</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SLO அடிப்படையிலான எச்சரிக்கை</h3>
+          <p>Service Level Objectives-ஐ வரையறுத்து அவை ஆபத்தில் இருக்கும்போது alert செய்யவும்:</p>
+          <ul>
+            <li>தாமத SLO: 95% கோரிக்கைகள் < 500ms</li>
+            <li>பிழை SLO: 99.9% வெற்றி விகிதம்</li>
+            <li>கிடைக்கும் தன்மை SLO: 99.95% uptime</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>செலவு மேலாண்மை</h2>
+          <p>மதிப்பை பராமரிக்கும் அதே நேரத்தில் observability செலவுகளைக் கட்டுப்படுத்தவும்.</p>
+        </section>
+
+        <section>
+          <h3>செலவு மேம்படுத்துதல் உத்திகள்</h3>
+          <ul>
+            <li>பொருத்தமான sampling விகிதங்களை செயல்படுத்தவும்</li>
+            <li>தரவு தக்கவைப்பு கொள்கைகளைப் பயன்படுத்தவும்</li>
+            <li>தேவையற்ற spans மற்றும் attributes-ஐ வடிகட்டவும்</li>
+            <li>பழைய தரவை மலிவான சேமிப்பகத்திற்கு archive செய்யவும்</li>
+            <li>தரவு அளவை கண்காணித்து மேம்படுத்தவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>தரவு தக்கவைப்பு கொள்கைகள்</h3>
+          <ul>
+            <li><strong>Hot Storage:</strong> சமீபத்திய தரவு (7-30 நாட்கள்) செயலில் உள்ள சிக்கல் தீர்வுக்கு</li>
+            <li><strong>Warm Storage:</strong> வரலாற்று தரவு (30-90 நாட்கள்) போக்கு பகுப்பாய்வுக்கு</li>
+            <li><strong>Cold Storage:</strong> Archive தரவு (90+ நாட்கள்) இணக்கம் மற்றும் அரிய வினவல்களுக்கு</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

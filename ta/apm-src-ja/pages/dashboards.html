@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Dashboards — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>ダッシュボード</h1></header>
+<article>
+<section>
+<h2>組み込みの Application Signals ビュー</h2>
+<p>Application Signals は、CloudWatch コンソールでアプリケーション中心のワークフローを提供します：</p>
+<ul>
+<li><strong>サービス</strong>：サービスの一覧表示、高いフォルト率／レイテンシーの特定、SLO が存在する場合の SLI ヘルスの確認。</li>
+<li><strong>サービス詳細</strong>：オペレーション、依存関係、および相関トレースの詳細確認。</li>
+<li><strong>アプリケーションマップ</strong>：トポロジーの可視化と依存関係全体へのヘルス伝播。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals を使用した運用ヘルスモニタリング</a>.</p>
+</section>
+<section>
+<h2>CloudWatch ダッシュボード（カスタム）</h2>
+<p>Application Signals が出力するメトリクス（名前空間 <code>ApplicationSignals</code>）を使用して CloudWatch ダッシュボードを構築し、必要に応じてアラーム／ログと関連付けることもできます。</p>
+<ul>
+<li><strong>サービスメトリクス</strong>：サービス／オペレーション／環境ディメンション全体のレイテンシー、フォルト、エラー。</li>
+<li><strong>依存関係メトリクス</strong>：ダウンストリーム呼び出しのリモートサービス／オペレーションディメンション。</li>
+<li><strong>ランタイムメトリクス</strong> （サポートされている場合）：GC／CPU／メモリとレイテンシースパイクの相関分析。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals が収集するメトリクス</a>.</p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

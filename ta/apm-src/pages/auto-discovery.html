@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Auto Discovery — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Auto Discovery</h1></header>
+      <article>
+        <section>
+          <h2>What Application Signals discovers</h2>
+          <p>After you enable Application Signals and your services emit telemetry, CloudWatch automatically discovers and displays:</p>
+          <ul>
+            <li><strong>Services</strong> and their <strong>operations</strong></li>
+            <li><strong>Dependencies</strong> (downstream calls)</li>
+            <li><strong>Topology</strong> (Application Map)</li>
+          </ul>
+          <p>Discovery is driven by metrics and traces emitted within the selected time range (for example, the default “past three hours”). If a service has no activity in the time range, it won’t be shown.</p>
+        </section>
+
+        <section>
+          <h2>One-time account setup (service discovery)</h2>
+          <p>The first time you start service discovery in an account, CloudWatch creates the service-linked role <code>AWSServiceRoleForCloudWatchApplicationSignals</code>. This role allows CloudWatch to discover and correlate services.</p>
+          <p>Official steps: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">Enable Application Signals in your account</a>.</p>
+        </section>
+
+        <section>
+          <h2>Operational expectations</h2>
+          <ul>
+            <li><strong>Discovery latency:</strong> topology and service discovery can be delayed by up to ~10 minutes.</li>
+            <li><strong>SLO/SLI evaluation:</strong> SLI health evaluation can be delayed (for example, up to ~15 minutes).</li>
+            <li><strong>Scale limits:</strong> up to 1,000 services can be displayed in the console.</li>
+          </ul>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Monitor the operational health of your applications with Application Signals</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

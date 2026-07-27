@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Observabilité de l'IA générative — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Observabilité de l'IA générative</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals prend en charge le dépannage des applications d'IA générative qui interagissent avec les modèles Amazon Bedrock. Il fournit une télémétrie prête à l'emploi pour les appels API Bedrock afin que vous puissiez investiguer :</p>
+          <ul>
+            <li><strong>Problèmes de configuration des modèles</strong></li>
+            <li><strong>Facteurs d'utilisation et de coût</strong> (utilisation des jetons)</li>
+            <li><strong>Latence des modèles</strong></li>
+            <li><strong>Raisons d'arrêt/de fin</strong> des réponses</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Métriques et traces détaillées</h2>
+          <p>Pour les appels Bedrock, Application Signals peut générer et corréler des métriques de performance et des spans de traces avec un niveau de détail au niveau des ressources (par exemple : ID du modèle, ID des garde-fous, ID de la base de connaissances et ID de l'agent Bedrock).</p>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">Exemple : dépanner les applications d'IA générative interagissant avec Amazon Bedrock</a>.</p>
+        </section>
+
+        <section>
+          <h2>Attributs sémantiques GenAI + Transaction Search</h2>
+          <p>Application Signals peut émettre des attributs de convention sémantique OpenTelemetry GenAI (par exemple, <code>gen_ai.request.model</code> et les champs d'utilisation des jetons). Vous pouvez les analyser avec CloudWatch Transaction Search pour comparer les prompts, l'utilisation des jetons et la latence entre les modèles.</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">Recherche et analyse des spans</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Lectures complémentaires</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">Annonce AWS : Application Signals prend en charge Bedrock</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">Blog : Améliorer l'observabilité d'Amazon Bedrock avec AppSignals</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

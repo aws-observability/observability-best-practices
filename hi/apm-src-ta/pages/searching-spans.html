@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Spans-ஐ தேடுதல் மற்றும் பகுப்பாய்வு — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Spans-ஐ தேடுதல் மற்றும் பகுப்பாய்வு</h1></header>
+      <article>
+        <section>
+          <h2>Transaction Search</h2>
+          <p>CloudWatch <strong>Transaction Search</strong> என்பது span attributes பயன்படுத்தி ingested spans-ஐ தேடவும் பகுப்பாய்வு செய்யவும் ஒரு interactive analytics அனுபவமாகும். இது ஆதரிக்கிறது:</p>
+          <ul>
+            <li><strong>பட்டியல்</strong>: தனிப்பட்ட transactions-ஐ பிழைத்திருத்துதல், மெதுவான spans-ஐ கண்டறிதல், errors-ஐ கண்டறிதல்</li>
+            <li><strong>நேரத் தொடர்</strong>: தாமதம் மற்றும் frequency trends-ஐ (P50/P90/P99) காட்சிப்படுத்துதல்</li>
+            <li><strong>குழு பகுப்பாய்வு</strong>: attributes அடிப்படையில் aggregate செய்தல் (எடுத்துக்காட்டாக, பாதிக்கப்பட்ட முதன்மை வாடிக்கையாளர்கள்)</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">Spans-ஐ தேடுதல் மற்றும் பகுப்பாய்வு</a>.</p>
+        </section>
+
+        <section>
+          <h2>Spans மீது Logs Insights</h2>
+          <p>CloudWatch Logs Insights பயன்படுத்தியும் spans-ஐ query செய்யலாம் (எடுத்துக்காட்டாக, DB statement அடிப்படையில் p99 duration, அல்லது HTTP 5xx-உடன் spans-ன் counts).</p>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

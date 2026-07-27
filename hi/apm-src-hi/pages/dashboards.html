@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>डैशबोर्ड — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>डैशबोर्ड</h1></header>
+      <article>
+        <section>
+          <h2>अंतर्निहित Application Signals व्यू</h2>
+          <p>Application Signals CloudWatch कंसोल में एक एप्लिकेशन-केंद्रित वर्कफ़्लो प्रदान करता है:</p>
+          <ul>
+            <li><strong>सर्विसेज़</strong>: सर्विसेज़ की सूची देखें, उच्च फॉल्ट/लेटेंसी को पहचानें, SLO मौजूद होने पर SLI स्वास्थ्य देखें।</li>
+            <li><strong>सर्विस विवरण</strong>: ऑपरेशन, डिपेंडेंसीज़ और संबंधित ट्रेसेज़ में गहराई से जाएं।</li>
+            <li><strong>Application Map</strong>: टोपोलॉजी को विज़ुअलाइज़ करें और डिपेंडेंसीज़ में स्वास्थ्य का प्रसार देखें।</li>
+          </ul>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals के साथ ऑपरेशनल स्वास्थ्य मॉनिटरिंग</a>।</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch डैशबोर्ड (कस्टम)</h2>
+          <p>आप Application Signals द्वारा उत्सर्जित मेट्रिक्स (नेमस्पेस <code>ApplicationSignals</code>) का उपयोग करके CloudWatch डैशबोर्ड भी बना सकते हैं और आवश्यकतानुसार अलार्म/लॉग्स के साथ सहसंबंध स्थापित कर सकते हैं।</p>
+          <ul>
+            <li><strong>सर्विस मेट्रिक्स</strong>: Service/Operation/Environment डाइमेंशन में लेटेंसी, फॉल्ट, एरर।</li>
+            <li><strong>डिपेंडेंसी मेट्रिक्स</strong>: डाउनस्ट्रीम कॉल के लिए रिमोट सर्विस/ऑपरेशन डाइमेंशन।</li>
+            <li><strong>रनटाइम मेट्रिक्स</strong> (जहां समर्थित): GC/CPU/मेमोरी को लेटेंसी स्पाइक्स के साथ सहसंबंधित करें।</li>
+          </ul>
+          <p>देखें: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals द्वारा एकत्रित मेट्रिक्स</a>।</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

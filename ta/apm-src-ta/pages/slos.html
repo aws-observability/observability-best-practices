@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Service Level Objectives (SLOs) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Service Level Objectives (SLOs)</h1></header>
+      <article>
+        <section>
+          <h2>SLO-கள் ஏன் முக்கியம்</h2>
+          <p>SLO-கள் நம்பகத்தன்மை மற்றும் செயல்திறன் இலக்குகளை வெளிப்படுத்தவும் (எடுத்துக்காட்டாக, "99.9% கிடைக்கும் தன்மை" அல்லது "p99 தாமதம் 500ms-க்கு கீழ்") காலப்போக்கில் கண்காணிக்கவும் உங்களை அனுமதிக்கின்றன. Application Signals-ல், SLO/SLI நிலை பகுப்பாய்வை விரைவுபடுத்த Services பக்கம் மற்றும் Application Map-ல் காட்டப்படுகிறது.</p>
+        </section>
+
+        <section>
+          <h2>எதன் மீது SLO-களை உருவாக்கலாம்</h2>
+          <p>CloudWatch SLO-கள் metrics மீது கட்டப்பட்டுள்ளன. Application Signals-ன் நிலையான மெட்ரிக்ஸ் (தாமதம், தவறு, பிழை, கிடைக்கும் தன்மை) பொதுவான SLI inputs ஆகும்.</p>
+          <p>அதிகாரப்பூர்வ docs: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html">Service level objectives (SLOs)</a>.</p>
+        </section>
+
+        <section>
+          <h2>வழக்கமான பணிப்பாய்வு</h2>
+          <ul>
+            <li><strong>ஒரு சேவையைத் தேர்ந்தெடுங்கள்</strong> மற்றும் பயனர் தாக்கத்தை சிறப்பாக பிரதிபலிக்கும் indicator-ஐ முடிவு செய்யுங்கள் (கிடைக்கும் தன்மை vs தாமதம்).</li>
+            <li><strong>இலக்கை வரையறுக்கவும்</strong> (target, time window, மற்றும் evaluation).</li>
+            <li><strong>எச்சரிக்கை</strong> SLO/SLI நிலை அல்லது burn rate மீது alarms பயன்படுத்துதல்.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

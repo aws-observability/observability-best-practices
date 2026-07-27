@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Auto Instrumentation — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Auto Instrumentation</h1></header>
+      <article>
+        <section>
+          <h2>What “auto instrumentation” means</h2>
+          <p>Auto instrumentation adds OpenTelemetry instrumentation at runtime (without changing your application code) so the service emits the telemetry Application Signals uses for discovery and health monitoring.</p>
+        </section>
+
+        <section>
+          <h2>Common AWS setup components</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK and/or collector</li>
+            <li><strong>CloudWatch Agent</strong> to collect/export telemetry in supported setups</li>
+            <li><strong>Platform enablement</strong> (EKS add-on / ECS sidecar / EC2 agent setup / Lambda layers)</li>
+          </ul>
+          <p>Start here: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals overview</a>.</p>
+        </section>
+
+        <section>
+          <h2>Supported languages and systems</h2>
+          <p>Application Signals supports Java, Python, Node.js, and .NET applications and is supported/tested on Amazon EKS, Kubernetes, Amazon ECS, and Amazon EC2.</p>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">Supported systems</a>.</p>
+        </section>
+
+        <section>
+          <h2>Notes and gotchas</h2>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM support is limited; CommonJS is the recommended path unless you follow the ESM-specific guidance in the docs.</li>
+            <li><strong>Python in containers:</strong> you may need <code>PYTHONPATH</code> configured for OTel autoinstrumentation.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

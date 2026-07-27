@@ -1,0 +1,15 @@
+{
+  "name": "cw-apm-sample-node",
+  "version": "1.0.0",
+  "description": "Minimal Node.js sample app that emits traces via OpenTelemetry (OTLP)",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "@opentelemetry/sdk-node": "^0.38.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.38.0",
+    "@opentelemetry/exporter-trace-otlp-grpc": "^0.38.0"
+  }
+}

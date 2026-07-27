@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Java Spring + OTLP + CloudWatch 实践练习 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch（动手练习）</h1></header>
+      <article>
+        <section>
+          <p>本指南记录了完整的练习，内容包括使用 OpenTelemetry 为 Java Spring Boot 服务进行插桩、将遥测数据导出到 AWS、部署到 ECS/Fargate，以及验证链路追踪/日志/Application Signals 行为。</p>
+          <p>本文以实施示例的风格编写，可用作运维手册或研讨会讲义。</p>
+        </section>
+
+        <section>
+          <h2>1) 本练习演示的内容</h2>
+          <ul>
+            <li>Java 应用程序的端到端遥测：
+              <ul>
+                <li><strong>链路追踪</strong>（X-Ray / Transaction Search）</li>
+                <li><strong>日志</strong>（CloudWatch Logs OTLP 端点或 ECS 上的 <code>awslogs</code>）</li>
+                <li><strong>指标/Application Signals</strong>（CloudWatch Agent sidecar 路径）</li>
+              </ul>
+            </li>
+            <li>以下两者的区别：
+              <ul>
+                <li><strong>Micrometer tracing bridge</strong>（<code>micrometer-tracing-bridge-otel</code>）用于链路追踪 API 桥接</li>
+                <li><strong>Micrometer registries</strong>（<code>micrometer-registry-cloudwatch2</code>、<code>micrometer-registry-otlp</code>）仅用于指标输出</li>
+              </ul>
+            </li>
+            <li>通过环境变量（<code>OTEL_*</code>）进行 OTLP 端点配置，而非硬编码 Java 常量。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) 架构</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) 部署拓扑 (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) OTLP 端点映射</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>信号</th>
+                <th>端点模式</th>
+                <th>典型环境变量</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>链路追踪</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>、<code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>指标</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code>（或通过 sidecar 的 App Signals 路径）</td>
+              </tr>
+              <tr>
+                <td>日志</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>、<code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>在 ECS sidecar 模式下，应用容器将链路追踪/指标指向 <code>http://localhost:4316/...</code>，由 CloudWatch Agent 负责转发。</p>
+        </section>
+
+        <section>
+          <h2>5) 本仓库使用的插桩模型</h2>
+
+          <h3>5.1 依赖项</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code> 存在于 <code>pom.xml</code> 中。</li>
+            <li>链路追踪不依赖 <code>micrometer-registry-cloudwatch2</code> 或 <code>micrometer-registry-otlp</code>。</li>
+          </ul>
+
+          <h3>5.2 自动 + 手动追踪</h3>
+          <ul>
+            <li>ADOT Java agent 的自动插桩捕获框架/客户端 span。</li>
+            <li>在 <code>DemoService.greet()</code> 中添加了手动增强：
+              <ul>
+                <li>属性：<code>demo.operation</code>、<code>demo.request.name</code>、<code>demo.downstream.status</code>、<code>demo.downstream.elapsed_ms</code>、<code>demo.custom.instrumented</code></li>
+                <li>事件：<code>demo.greet.start</code>、<code>demo.httpbin.success</code>、<code>demo.httpbin.failure</code></li>
+                <li>使用 <code>recordException(...)</code> 和 <code>setStatus(ERROR, ...)</code> 记录错误</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) 截图（链路追踪详情）</h2>
+          <p>使用以下截图作为研讨会/演示文档：</p>
+          <img src="../assets/images/cw.png" alt="CloudWatch 链路追踪截图" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) 在 AWS 控制台中查看遥测数据</h2>
+
+          <h3>链路追踪（主要）</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>区域：<code>us-east-1</code></li>
+            <li>时间范围：最近 15-60 分钟</li>
+            <li>服务：<code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>对于自定义字段：</p>
+          <ul>
+            <li>打开链路追踪 → 段 <code>java-spring-otel-poc</code> → <strong>Metadata</strong></li>
+            <li>查找以下键：
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>日志</h3>
+          <ul>
+            <li>ECS 应用日志：<code>/ecs/java-spring-otel</code></li>
+            <li>CW agent sidecar 日志：<code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>本地 OTLP 日志组（如果本地运行）：<code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>在持续流量和通过 sidecar 路径成功转发指标后，查找 <code>java-spring-otel-poc</code>。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) 关键要点</h2>
+          <p>OpenTelemetry 自动插桩可以创建 span，但成功的 AWS Observability 结果仍然取决于：</p>
+          <ol>
+            <li>正确的 OTLP 端点配置</li>
+            <li>正确的认证/转发路径（通常通过 sidecar/collector 处理指标/App Signals）</li>
+            <li>正确区分 tracing bridge 与 metrics registries</li>
+            <li>持续的流量和正确的控制台视图（X-Ray 用于链路追踪）</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

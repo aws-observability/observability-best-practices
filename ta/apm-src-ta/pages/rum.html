@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RUM — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Real User Monitoring (RUM)</h1></header>
+      <article>
+        <section>
+          <h2>RUM Application Signals-உடன் எவ்வாறு இணைகிறது</h2>
+          <p>RUM client-க்கு X-Ray tracing-ஐ இயக்கும்போது CloudWatch RUM web clients Application Signals-ல் தோன்றலாம். Client-லிருந்து backend சேவைகளுக்கான கோரிக்கைகள் பின்னர் தொடர்புபடுத்தப்பட்டு சேவை விவரங்கள் மற்றும் Application Map-ல் காட்டப்படும்.</p>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals செயல்பாட்டு நிலை கண்காணிப்பை எவ்வாறு இயக்குகிறது</a>.</p>
+        </section>
+
+        <section>
+          <h2>RUM எந்தக் கேள்விகளுக்கு பதிலளிக்க உதவுகிறது</h2>
+          <ul>
+            <li><strong>இந்த சிக்கல் பயனர்களை பாதிக்கிறதா?</strong> backend health-ஐ page load மற்றும் JS error signals-உடன் correlate செய்யுங்கள்</li>
+            <li><strong>பயனர்கள் எங்கே பாதிக்கப்படுகிறார்கள்?</strong> புவியியல், device மற்றும் browser அடிப்படையில் செயல்திறனை ஒப்பிடுங்கள்</li>
+            <li><strong>என்ன மாறியது?</strong> regressions-ஐ ஆராயும்போது deployments/change events-உடன் correlate செய்யுங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>அடுத்த படிகள்</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

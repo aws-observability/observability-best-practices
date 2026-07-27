@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>డాష్‌బోర్డ్‌లు — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>డాష్‌బోర్డ్‌లు</h1></header>
+      <article>
+        <section>
+          <h2>అంతర్నిర్మిత Application Signals వ్యూలు</h2>
+          <p>Application Signals CloudWatch కన్సోల్‌లో అప్లికేషన్-కేంద్రిత వర్క్‌ఫ్లోను అందిస్తుంది:</p>
+          <ul>
+            <li><strong>సేవలు</strong>: సేవలను జాబితా చేయండి, అధిక ఫాల్ట్/లేటెన్సీని గుర్తించండి, SLO లు ఉన్నప్పుడు SLI ఆరోగ్యాన్ని చూడండి.</li>
+            <li><strong>సేవ వివరాలు</strong>: ఆపరేషన్‌లు, డిపెండెన్సీలు మరియు సంబంధిత ట్రేస్‌లలోకి డ్రిల్ చేయండి.</li>
+            <li><strong>Application Map</strong>: టోపాలజీని విజువలైజ్ చేయండి మరియు డిపెండెన్సీల మధ్య ఆరోగ్యాన్ని ప్రచారం చేయండి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals తో ఆపరేషనల్ హెల్త్ మానిటరింగ్</a>.</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch డాష్‌బోర్డ్‌లు (కస్టమ్)</h2>
+          <p>Application Signals ద్వారా విడుదలైన మెట్రిక్స్ (నేమ్‌స్పేస్ <code>ApplicationSignals</code>) ఉపయోగించి మీరు CloudWatch డాష్‌బోర్డ్‌లను కూడా నిర్మించవచ్చు మరియు అవసరమైన విధంగా అలారమ్‌లు/లాగ్‌లతో సంబంధం కలుపవచ్చు.</p>
+          <ul>
+            <li><strong>సేవా మెట్రిక్స్</strong>: Service/Operation/Environment డైమెన్షన్‌ల మధ్య లేటెన్సీ, ఫాల్ట్‌లు, ఎర్రర్‌లు.</li>
+            <li><strong>డిపెండెన్సీ మెట్రిక్స్</strong>: డౌన్‌స్ట్రీమ్ కాల్‌ల కోసం రిమోట్ సర్వీస్/ఆపరేషన్ డైమెన్షన్‌లు.</li>
+            <li><strong>రన్‌టైమ్ మెట్రిక్స్</strong> (మద్దతు ఉన్నచోట): లేటెన్సీ స్పైక్‌లతో GC/CPU/మెమరీని సంబంధం కలపండి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals ద్వారా సేకరించిన మెట్రిక్స్</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

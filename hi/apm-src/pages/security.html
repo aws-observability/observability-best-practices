@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Security & Compliance — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Security & Compliance</h1></header>
+      <article>
+        <section>
+          <h2>Security</h2>
+          <p>CloudWatch Application Signals implements multiple layers of security to protect your observability data and ensure compliance with industry standards.</p>
+        </section>
+
+        <section>
+          <h3>Data Encryption</h3>
+          
+          <h4>Encryption at Rest:</h4>
+          <ul>
+            <li>All trace data is encrypted using AES-256 encryption</li>
+            <li>RUM data is encrypted with AWS Key Management Service (KMS)</li>
+            <li>Synthetic monitoring data is stored encrypted</li>
+            <li>You can use customer-managed keys for additional control</li>
+          </ul>
+          
+          <h4>Encryption in Transit:</h4>
+          <ul>
+            <li>All data transmission uses TLS 1.2 or higher</li>
+            <li>API calls to CloudWatch services are encrypted</li>
+            <li>RUM data collection uses HTTPS</li>
+            <li>Agent-to-collector communication is secured</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Identity and Access Management</h3>
+          
+          <h4>IAM Permissions:</h4>
+          <p>Use the principle of least privilege when granting access to Application Signals:</p>
+          
+          <h5>Read-Only Access:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+          
+          <h5>Full Access:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>Data Privacy and PII Protection</h3>
+          
+          <h4>Data Sanitization:</h4>
+          <ul>
+            <li>Implement data masking for sensitive information</li>
+            <li>Use tokenization for PII in trace attributes</li>
+            <li>Configure data retention policies</li>
+            <li>Regular audit of collected data</li>
+          </ul>
+          
+          <h4>Best Practices:</h4>
+          <ul>
+            <li>Never include passwords, API keys, or tokens in traces</li>
+            <li>Hash or mask email addresses and phone numbers</li>
+            <li>Remove query parameters from URLs that contain sensitive data</li>
+            <li>Use generic identifiers instead of personal information</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Network Security</h3>
+          
+          <h4>VPC Configuration:</h4>
+          <ul>
+            <li>Deploy agents within your VPC for enhanced security</li>
+            <li>Use VPC endpoints for CloudWatch API calls</li>
+            <li>Configure security groups to restrict traffic</li>
+            <li>Implement network ACLs for additional control</li>
+          </ul>
+          
+          <h4>Agent Security:</h4>
+          <ul>
+            <li>Run agents with minimal required permissions</li>
+            <li>Keep agents updated with security patches</li>
+            <li>Monitor agent logs for security events</li>
+            <li>Use read-only access where possible</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Data Privacy</h2>
+          <p>Understanding how Application Signals handles your data privacy requirements.</p>
+        </section>
+
+        <section>
+          <h3>Data Collection and Usage</h3>
+          
+          <h4>What We Collect:</h4>
+          <ul>
+            <li>Application performance metrics and traces</li>
+            <li>Service dependency information</li>
+            <li>Error information and stack traces</li>
+            <li>System and infrastructure metadata</li>
+          </ul>
+          
+          <h4>What We Don't Collect:</h4>
+          <ul>
+            <li>Application business data or user content</li>
+            <li>Database contents or file system data</li>
+            <li>User credentials or authentication tokens</li>
+            <li>Personally identifiable information (unless explicitly included)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Data Retention</h3>
+          
+          <h4>Default Retention Periods:</h4>
+          <ul>
+            <li><strong>Trace data:</strong> 30 days (configurable up to 1 year)</li>
+            <li><strong>Metrics:</strong> 15 months (standard CloudWatch retention)</li>
+            <li><strong>RUM data:</strong> 30 days (configurable up to 1 year)</li>
+            <li><strong>Synthetics results:</strong> 90 days (configurable)</li>
+          </ul>
+          
+          <h4>Data Deletion:</h4>
+          <ul>
+            <li>Use CloudWatch data retention policies</li>
+            <li>Implement automated data lifecycle management</li>
+            <li>Request data deletion through AWS Support if needed</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Compliance Frameworks</h3>
+          
+          <h4>Supported Standards:</h4>
+          <ul>
+            <li><strong>SOC 2:</strong> Security, availability, and confidentiality controls</li>
+            <li><strong>PCI DSS:</strong> Payment card industry data security standards</li>
+            <li><strong>HIPAA:</strong> Health Insurance Portability and Accountability Act</li>
+            <li><strong>GDPR:</strong> General Data Protection Regulation</li>
+            <li><strong>FedRAMP:</strong> Federal Risk and Authorization Management Program</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Compliance Guidance</h2>
+          <p>Specific guidance for common compliance scenarios.</p>
+        </section>
+
+        <section>
+          <h3>HIPAA Compliance</h3>
+          
+          <h4>Requirements:</h4>
+          <ul>
+            <li>Encrypt protected health information (PHI) in traces</li>
+            <li>Implement access controls and audit logging</li>
+            <li>Use Business Associate Agreements (BAA) with AWS</li>
+            <li>Configure appropriate data retention policies</li>
+          </ul>
+          
+          <h4>Implementation:</h4>
+          <ul>
+            <li>Mask PHI in trace attributes and span names</li>
+            <li>Use customer-managed KMS keys</li>
+            <li>Enable CloudTrail for audit logging</li>
+            <li>Configure VPC endpoints for data isolation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PCI DSS Compliance</h3>
+          
+          <h4>Key Considerations:</h4>
+          <ul>
+            <li>Never include cardholder data in traces or logs</li>
+            <li>Implement network segmentation</li>
+            <li>Use encryption for data in transit and at rest</li>
+            <li>Regular security assessments and penetration testing</li>
+          </ul>
+          
+          <h4>Best Practices:</h4>
+          <ul>
+            <li>Tokenize sensitive data before instrumentation</li>
+            <li>Use private subnets for Application Signals agents</li>
+            <li>Implement least-privilege IAM policies</li>
+            <li>Regular review of collected data</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GDPR Compliance</h3>
+          
+          <h4>Data Subject Rights:</h4>
+          <ul>
+            <li>Right to access personal data</li>
+            <li>Right to rectification</li>
+            <li>Right to erasure ("right to be forgotten")</li>
+            <li>Right to data portability</li>
+          </ul>
+          
+          <h4>Implementation:</h4>
+          <ul>
+            <li>Minimize PII collection in telemetry data</li>
+            <li>Implement data anonymization techniques</li>
+            <li>Configure data retention based on business needs</li>
+            <li>Document data processing activities</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Security Monitoring</h2>
+          <p>Monitor your Application Signals deployment for security events.</p>
+        </section>
+
+        <section>
+          <h3>Security Best Practices</h3>
+          <ul>
+            <li>Enable CloudTrail for API activity logging</li>
+            <li>Monitor IAM policy changes and access patterns</li>
+            <li>Set up alerts for unusual data access patterns</li>
+            <li>Regular security assessments and vulnerability scans</li>
+            <li>Implement multi-factor authentication (MFA)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Incident Response</h3>
+          <ul>
+            <li>Have an incident response plan for security events</li>
+            <li>Know how to disable Application Signals if compromised</li>
+            <li>Document escalation procedures</li>
+            <li>Regular incident response testing</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

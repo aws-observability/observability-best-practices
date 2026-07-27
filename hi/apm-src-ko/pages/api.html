@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>API 레퍼런스 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>API 레퍼런스</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals API</h2>
+          <p>Application Signals 데이터 및 기능에 대한 프로그래밍 방식 액세스.</p>
+        </section>
+
+        <section>
+          <h3>서비스 오퍼레이션</h3>
+
+          <h4>ListServices</h4>
+          <p>Application Signals에 의해 검색된 서비스 목록을 반환합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>GET /services?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>파라미터:</h5>
+          <ul>
+            <li><code>nextToken</code> - 페이지네이션 토큰</li>
+            <li><code>maxResults</code> - 최대 결과 수 (1-100)</li>
+            <li><code>startTime</code> - Unix 타임스탬프 시작 시간</li>
+            <li><code>endTime</code> - Unix 타임스탬프 종료 시간</li>
+          </ul>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "namespace": "string",
+      "logGroupName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetService</h3>
+          <p>특정 서비스에 대한 상세 정보를 반환합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>GET /services/{serviceName}?startTime=long&endTime=long</code></pre>
+
+          <h5>경로 파라미터:</h5>
+          <ul>
+            <li><code>serviceName</code> - 서비스 이름</li>
+          </ul>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "service": {
+    "name": "string",
+    "namespace": "string",
+    "logGroupName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "rum": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "synthetics": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>ListOperations</h3>
+          <p>서비스의 오퍼레이션 목록을 반환합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>GET /services/{serviceName}/operations?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "operations": [
+    {
+      "name": "string",
+      "metricName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetOperation</h3>
+          <p>특정 오퍼레이션에 대한 상세 정보를 반환합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>GET /services/{serviceName}/operations/{operationName}?startTime=long&endTime=long</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "operation": {
+    "name": "string",
+    "metricName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>트레이스 API</h2>
+          <p>분산 트레이스 데이터 액세스 및 분석.</p>
+        </section>
+
+        <section>
+          <h3>GetTraceSummaries</h3>
+          <p>트레이스 요약 목록을 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /TraceSummaries</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "sampling": true|false,
+  "filterExpression": "string"
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "startTime": "timestamp",
+      "endTime": "timestamp",
+      "hasError": true|false,
+      "hasFault": true|false,
+      "hasThrottle": true|false
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>BatchGetTraces</h3>
+          <p>지정된 트레이스 ID에 대한 전체 트레이스 데이터를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /Traces</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "traceIds": ["string"],
+  "nextToken": "string"
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "segments": [
+        {
+          "id": "string",
+          "name": "string",
+          "startTime": number,
+          "endTime": number,
+          "annotations": {},
+          "metadata": {},
+          "subsegments": [...]
+        }
+      ]
+    }
+  ],
+  "nextToken": "string",
+  "unprocessedTraceIds": ["string"]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetServiceGraph</h3>
+          <p>서비스 종속성을 보여주는 서비스 그래프를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /ServiceGraph</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp"
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "names": ["string"],
+      "type": "string",
+      "state": "string",
+      "startTime": "timestamp",
+      "endTime": "timestamp"
+    }
+  ],
+  "edges": [
+    {
+      "source": "string",
+      "target": "string",
+      "references": [...]
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>메트릭 API</h2>
+          <p>CloudWatch 메트릭 데이터 액세스.</p>
+        </section>
+
+        <section>
+          <h3>GetMetricData</h3>
+          <p>메트릭 데이터 포인트를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "metricDataQueries": [
+    {
+      "id": "string",
+      "metricStat": {
+        "metric": {
+          "namespace": "string",
+          "metricName": "string",
+          "dimensions": [
+            {
+              "name": "string",
+              "value": "string"
+            }
+          ]
+        },
+        "period": integer,
+        "stat": "string"
+      },
+      "expression": "string",
+      "label": "string",
+      "returnData": true|false
+    }
+  ],
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "nextToken": "string",
+  "scanBy": "TimestampDescending|TimestampAscending"
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "metricDataResults": [
+    {
+      "id": "string",
+      "label": "string",
+      "timestamps": ["timestamp"],
+      "values": [number],
+      "statusCode": "Complete|PartialData|InternalError"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>PutMetricData</h3>
+          <p>메트릭 데이터 포인트를 CloudWatch에 게시합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "namespace": "string",
+  "metricData": [
+    {
+      "metricName": "string",
+      "dimensions": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "timestamp": "timestamp",
+      "value": number,
+      "statisticValues": {
+        "sampleCount": number,
+        "sum": number,
+        "minimum": number,
+        "maximum": number
+      },
+      "unit": "string"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>RUM API</h2>
+          <p>실제 사용자 모니터링 데이터 액세스.</p>
+        </section>
+
+        <section>
+          <h3>PutRumEvents</h3>
+          <p>RUM 이벤트를 CloudWatch에 전송합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /appmonitors/{appMonitorName}/rum-events</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "events": [
+    {
+      "details": "string",
+      "timestamp": number,
+      "type": "string",
+      "metadata": {}
+    }
+  ],
+  "userDetails": {
+    "userId": "string",
+    "sessionId": "string"
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetAppMonitor</h3>
+          <p>RUM 앱 모니터에 대한 정보를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>GET /appmonitors/{appMonitorName}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "appMonitor": {
+    "name": "string",
+    "domain": "string",
+    "id": "string",
+    "state": "CREATED|ACTIVE",
+    "tags": {}
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Synthetics API</h2>
+          <p>합성 모니터링 카나리 관리.</p>
+        </section>
+
+        <section>
+          <h3>DescribeCanaries</h3>
+          <p>카나리에 대한 정보를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /canaries</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "names": ["string"],
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "canaries": [
+    {
+      "id": "string",
+      "name": "string",
+      "code": {...},
+      "executionRoleArn": "string",
+      "schedule": {...},
+      "runConfig": {...},
+      "successRetentionPeriodInDays": integer,
+      "failureRetentionPeriodInDays": integer,
+      "status": {...},
+      "tags": {...},
+      "timeline": {...}
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetCanaryRuns</h3>
+          <p>카나리 실행에 대한 정보를 검색합니다.</p>
+
+          <h5>요청 구문:</h5>
+          <pre><code>POST /canaries/{name}/runs</code></pre>
+
+          <h5>요청 본문:</h5>
+          <pre><code>{
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>응답:</h5>
+          <pre><code>{
+  "canaryRuns": [
+    {
+      "id": "string",
+      "name": "string",
+      "status": {...},
+      "timeline": {...},
+      "artifactS3Location": "string",
+      "metricData": [...]
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>SDK 레퍼런스</h2>
+          <p>언어별 SDK 문서.</p>
+        </section>
+
+        <section>
+          <h3>JavaScript SDK</h3>
+
+          <h4>설치:</h4>
+          <pre><code>npm install @aws-sdk/client-application-signals</code></pre>
+
+          <h4>사용법:</h4>
+          <pre><code>import { ApplicationSignalsClient, ListServicesCommand } from "@aws-sdk/client-application-signals";
+
+const client = new ApplicationSignalsClient({ region: "us-east-1" });
+
+const command = new ListServicesCommand({
+  startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  endTime: new Date()
+});
+
+const response = await client.send(command);</code></pre>
+        </section>
+
+        <section>
+          <h3>Python SDK (Boto3)</h3>
+
+          <h4>설치:</h4>
+          <pre><code>pip install boto3</code></pre>
+
+          <h4>사용법:</h4>
+          <pre><code>import boto3
+from datetime import datetime, timedelta
+
+client = boto3.client('application-signals', region_name='us-east-1')
+
+response = client.list_services(
+    startTime=datetime.utcnow() - timedelta(days=1),
+    endTime=datetime.utcnow()
+)</code></pre>
+        </section>
+
+        <section>
+          <h3>Java SDK</h3>
+
+          <h4>Maven 종속성:</h4>
+          <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+  &lt;artifactId&gt;application-signals&lt;/artifactId&gt;
+  &lt;version&gt;2.20.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+          <h4>사용법:</h4>
+          <pre><code>ApplicationSignalsClient client = ApplicationSignalsClient.builder()
+    .region(Region.US_EAST_1)
+    .build();
+
+ListServicesRequest request = ListServicesRequest.builder()
+    .startTime(Instant.now().minus(1, ChronoUnit.DAYS))
+    .endTime(Instant.now())
+    .build();
+
+ListServicesResponse response = client.listServices(request);</code></pre>
+        </section>
+
+        <section>
+          <h3>.NET SDK</h3>
+
+          <h4>NuGet 패키지:</h4>
+          <pre><code>dotnet add package AWSSDK.ApplicationSignals</code></pre>
+
+          <h4>사용법:</h4>
+          <pre><code>using Amazon.ApplicationSignals;
+using Amazon.ApplicationSignals.Model;
+
+var client = new AmazonApplicationSignalsClient(RegionEndpoint.USEast1);
+
+var request = new ListServicesRequest
+{
+    StartTime = DateTime.UtcNow.AddDays(-1),
+    EndTime = DateTime.UtcNow
+};
+
+var response = await client.ListServicesAsync(request);</code></pre>
+        </section>
+
+        <section>
+          <h2>오류 코드</h2>
+          <p>일반적인 오류 코드와 의미.</p>
+        </section>
+
+        <section>
+          <h3>Application Signals 오류</h3>
+          <ul>
+            <li><code>ValidationException</code> - 유효하지 않은 입력 파라미터</li>
+            <li><code>ResourceNotFoundException</code> - 요청한 리소스가 존재하지 않음</li>
+            <li><code>ThrottlingException</code> - 요청 속도 초과</li>
+            <li><code>InternalServerException</code> - 내부 서비스 오류</li>
+            <li><code>AccessDeniedException</code> - 권한 부족</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>X-Ray 오류</h3>
+          <ul>
+            <li><code>InvalidRequestException</code> - 잘못된 형식의 요청</li>
+            <li><code>ThrottledException</code> - 속도 제한 초과</li>
+            <li><code>ResourceNotFoundException</code> - 트레이스를 찾을 수 없음</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch 오류</h3>
+          <ul>
+            <li><code>InvalidParameterValueException</code> - 유효하지 않은 파라미터 값</li>
+            <li><code>MissingRequiredParameterException</code> - 필수 파라미터 누락</li>
+            <li><code>LimitExceededException</code> - 할당량 초과</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

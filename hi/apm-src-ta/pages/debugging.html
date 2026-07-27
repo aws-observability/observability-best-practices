@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>பிழைத்திருத்த வழிகாட்டிகள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>பிழைத்திருத்த வழிகாட்டிகள்</h1></header>
+      <article>
+        <section>
+          <h2>விரைவான பகுப்பாய்வு பணிப்பாய்வு (பரிந்துரைக்கப்படுகிறது)</h2>
+          <ol>
+            <li><strong>SLO-களில் தொடங்குங்கள் (வரையறுக்கப்பட்டிருந்தால்):</strong> ஆரோக்கியமற்ற சேவைகள்/செயல்பாடுகள்/சார்புகளை அடையாளம் காணுங்கள்.</li>
+            <li><strong>சேவைகளைப் பயன்படுத்துங்கள்:</strong> முக்கிய குற்றவாளிகளைக் கண்டறிய அதிக தாமதம் அல்லது தவறு விகிதத்தின்படி வரிசைப்படுத்துங்கள்.</li>
+            <li><strong>சேவை விவரத்தைத் திறங்கள்:</strong> செயல்பாடுகள் மற்றும் சார்பு விளிம்புகளை ஆராயுங்கள்; தாமதம்/தவறு தரவுப்புள்ளியைத் தேர்ந்தெடுங்கள்.</li>
+            <li><strong>தொடர்புடைய traces/spans-க்கு செல்லுங்கள்:</strong> மெதுவான/தோல்வியடைந்த கீழ்நிலை அழைப்பைக் கண்டறிய trace timeline-ஐ ஆராயுங்கள்.</li>
+            <li><strong>லாக்கள்/runtime மெட்ரிக்ஸுடன் உறுதிப்படுத்துங்கள்:</strong> பொருத்தமான போது பிழை லாக்கள் மற்றும் JVM/CPU/GC-ஐ தொடர்புபடுத்துங்கள்.</li>
+          </ol>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals மூலம் செயல்பாட்டு நிலையை கண்காணிக்கவும்</a>.</p>
+        </section>
+
+        <section>
+          <h2>"அரிய உச்சங்களுக்கு" Transaction Search பயன்படுத்துதல்</h2>
+          <p>இடையிடையே ஏற்படும் உச்சங்களுக்கு, Transaction Search பண்புக்கூறு அடிப்படையில் spans-ஐ பகுப்பாய்வு செய்ய உதவுகிறது மற்றும் பாதிக்கப்பட்ட பயனர்கள்/கோரிக்கைகளை ஆராய உதவுகிறது. பொதுவான வடிவங்கள்:</p>
+          <ul>
+            <li><strong>குழு பகுப்பாய்வு</strong> வணிக பண்புக்கூறின்படி (எடுத்துக்காட்டாக, வாடிக்கையாளர் ID) யார் பாதிக்கப்பட்டுள்ளனர் என்பதைக் கண்டறியவும்.</li>
+            <li><strong>வடிகட்டுதல்</strong> service/operation மற்றும் duration (p99) அடிப்படையில் விலகல்களை தனிமைப்படுத்தவும்.</li>
+            <li><strong>ஒரு trace-ஐ திறங்கள்</strong> விலகல் span-இலிருந்து மற்றும் சார்பு அழைப்பு பாதையைப் பின்தொடரவும்.</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">பயன்பாட்டு சிக்கல்களை பிழைத்திருத்துதல் (Transaction Search)</a>.</p>
+        </section>
+
+        <section>
+          <h2>பொதுவான "ஏன் தரவு தெரியவில்லை?" சோதனைகள்</h2>
+          <ul>
+            <li><strong>கணக்கு இயக்கம்:</strong> Application Signals ஒவ்வொரு கணக்கு/பகுதிக்கும் ஒரு முறை இயக்கப்பட வேண்டும் (service-linked role உருவாக்கப்படும்).</li>
+            <li><strong>நேர வரம்பு:</strong> தேர்ந்தெடுக்கப்பட்ட நேர சாளரத்தில் செயல்பாடு இருந்தால் மட்டுமே சேவைகள்/செயல்பாடுகள் காண்பிக்கப்படும்.</li>
+            <li><strong>சேவை பெயரிடுதல்:</strong> <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code> சரியாக அமைக்கப்பட்டுள்ளதை உறுதிப்படுத்துங்கள் (EKS அல்லாதவற்றுக்கு பெரும்பாலும் வெளிப்படையான service/environment பெயர்கள் தேவை).</li>
+            <li><strong>Pipeline நிலை:</strong> CloudWatch Agent/collector இயங்குகிறது மற்றும் OTLP பெறுகிறது; உள்ளூர் endpoints மற்றும் IAM அனுமதிகளை சரிபாருங்கள்.</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">உங்கள் Application Signals நிறுவலை பிழைத்திருத்துதல்</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

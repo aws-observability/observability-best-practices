@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Integrations — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Integrations</h1></header>
+      <article>
+        <section>
+          <h2>AWS Service Integrations</h2>
+          <p>CloudWatch Application Signals integrates seamlessly with AWS services to provide comprehensive observability across your entire cloud infrastructure.</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>Monitor API performance and track requests from API Gateway to your backend services.</p>
+          
+          <h4>Integration Features:</h4>
+          <ul>
+            <li>Automatic tracing of API calls</li>
+            <li>Latency monitoring for API endpoints</li>
+            <li>Error rate tracking</li>
+            <li>Request/response correlation</li>
+          </ul>
+          
+          <h4>Setup:</h4>
+          <p>Enable X-Ray tracing in your API Gateway stage configuration.</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>Track traffic flow through load balancers and correlate with application performance.</p>
+          
+          <h4>Integration Benefits:</h4>
+          <ul>
+            <li>Request routing visibility</li>
+            <li>Target group performance metrics</li>
+            <li>Health check monitoring</li>
+            <li>Load distribution analysis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>Monitor database operations and identify performance bottlenecks in data access patterns.</p>
+          
+          <h4>Tracing Capabilities:</h4>
+          <ul>
+            <li>Query operation timing</li>
+            <li>Throttle and error tracking</li>
+            <li>Table and index performance</li>
+            <li>Cross-region replication monitoring</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>Get insights into database performance and connection pooling.</p>
+          
+          <h4>Database Monitoring:</h4>
+          <ul>
+            <li>Query execution times</li>
+            <li>Connection pool utilization</li>
+            <li>Database instance metrics</li>
+            <li>Slow query identification</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>Track object storage operations and data transfer performance.</p>
+          
+          <h4>Storage Operations:</h4>
+          <ul>
+            <li>Put/Get object tracing</li>
+            <li>Transfer latency monitoring</li>
+            <li>Error rate analysis</li>
+            <li>Cross-region transfer tracking</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>Monitor message processing and queue performance in event-driven architectures.</p>
+          
+          <h4>Messaging Insights:</h4>
+          <ul>
+            <li>Message publish/subscribe tracing</li>
+            <li>Queue depth monitoring</li>
+            <li>Message processing latency</li>
+            <li>Dead letter queue analysis</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>Visualize workflow execution and identify bottlenecks in state machine processing.</p>
+          
+          <h4>Workflow Monitoring:</h4>
+          <ul>
+            <li>State transition tracing</li>
+            <li>Execution time analysis</li>
+            <li>Error state identification</li>
+            <li>Parallel execution monitoring</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>Track event routing and processing through event-driven systems.</p>
+          
+          <h4>Event Processing:</h4>
+          <ul>
+            <li>Event routing visibility</li>
+            <li>Rule evaluation timing</li>
+            <li>Target invocation tracing</li>
+            <li>Event transformation monitoring</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>Monitor serverless function performance and cold start impacts.</p>
+          
+          <h4>Serverless Insights:</h4>
+          <ul>
+            <li>Function invocation tracing</li>
+            <li>Cold start duration</li>
+            <li>Memory and CPU utilization</li>
+            <li>Error and timeout tracking</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>Container orchestration platform integration for microservices monitoring.</p>
+          
+          <h4>Container Monitoring:</h4>
+          <ul>
+            <li>Service mesh tracing</li>
+            <li>Pod-to-pod communication</li>
+            <li>Resource utilization</li>
+            <li>Deployment tracking</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Third-Party Integrations</h2>
+          <p>Extend Application Signals with third-party tools and platforms.</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>Leverage the OpenTelemetry ecosystem for vendor-neutral observability.</p>
+          
+          <h4>Integration Options:</h4>
+          <ul>
+            <li>Custom instrumentation libraries</li>
+            <li>Third-party agent support</li>
+            <li>Multi-backend data export</li>
+            <li>Community collector contributions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>APM Vendors</h3>
+          <p>Migrate from or integrate with other APM solutions.</p>
+          
+          <h4>Supported Integrations:</h4>
+          <ul>
+            <li>Data export to third-party APM tools</li>
+            <li>Hybrid cloud observability</li>
+            <li>Multi-vendor correlation</li>
+            <li>Data migration utilities</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Monitoring and Alerting</h3>
+          <p>Connect Application Signals with your existing monitoring stack.</p>
+          
+          <h4>Integration Partners:</h4>
+          <ul>
+            <li><strong>PagerDuty:</strong> Incident response and alerting</li>
+            <li><strong>Slack:</strong> Team notifications</li>
+            <li><strong>Datadog:</strong> Unified monitoring platform</li>
+            <li><strong>New Relic:</strong> Application performance monitoring</li>
+            <li><strong>Splunk:</strong> Log analysis and correlation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CI/CD Integration</h3>
+          <p>Incorporate observability into your development pipeline.</p>
+          
+          <h4>DevOps Tools:</h4>
+          <ul>
+            <li><strong>GitHub Actions:</strong> Automated testing and deployment</li>
+            <li><strong>Jenkins:</strong> Build pipeline integration</li>
+            <li><strong>GitLab CI:</strong> DevSecOps workflows</li>
+            <li><strong>Terraform:</strong> Infrastructure as code</li>
+            <li><strong>AWS CDK:</strong> Cloud infrastructure provisioning</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Custom Integrations</h2>
+          <p>Build your own integrations using APIs and SDKs.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch APIs</h3>
+          <p>Use CloudWatch APIs to build custom dashboards, alarms, and metric-driven workflows around the telemetry that Application Signals publishes to CloudWatch.</p>
+          
+          <h4>Available APIs:</h4>
+          <ul>
+            <li><code>PutMetricData</code> - Send custom metrics</li>
+            <li><code>GetMetricData</code> - Retrieve metric data</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - Manage dashboards</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - Manage alarms</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS X-Ray APIs</h3>
+          <p>Application Signals uses AWS X-Ray as the trace store. If you need direct trace ingestion/query integration, use X-Ray APIs.</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - Ingest trace segments</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - Query traces</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Webhooks and Callbacks</h3>
+          <p>Receive real-time notifications and integrate with custom workflows.</p>
+          
+          <h4>Integration Patterns:</h4>
+          <ul>
+            <li>Alert webhooks for custom notification systems</li>
+            <li>Event-driven processing with Lambda</li>
+            <li>Custom dashboard updates</li>
+            <li>Automated remediation workflows</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDKs and Libraries</h3>
+          <p>Instrumentation is typically done through OpenTelemetry and/or AWS Distro for OpenTelemetry (ADOT). For AWS API calls, use the AWS SDKs with the supported OpenTelemetry instrumentations.</p>
+          
+          <h4>Supported Languages:</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js:</strong> AWS SDK for JavaScript</li>
+            <li><strong>Python:</strong> Boto3 AWS SDK</li>
+            <li><strong>Java:</strong> AWS SDK for Java</li>
+            <li><strong>.NET:</strong> AWS SDK for .NET</li>
+            <li><strong>Go:</strong> AWS SDK for Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

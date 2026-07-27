@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>搜索和分析 span — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>搜索和分析 span</h1></header>
+      <article>
+        <section>
+          <h2>Transaction Search</h2>
+          <p>CloudWatch <strong>Transaction Search</strong> 是一种交互式分析体验，用于使用 span 属性搜索和分析已摄取的 span。它支持：</p>
+          <ul>
+            <li><strong>列表</strong>：排查单个事务、查找慢速 span、查找错误</li>
+            <li><strong>时间序列</strong>：可视化延迟和频率趋势（P50/P90/P99）</li>
+            <li><strong>分组分析</strong>：按属性聚合（例如，受影响的主要客户）</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">搜索和分析 span</a>。</p>
+        </section>
+
+        <section>
+          <h2>使用 Logs Insights 查询 span</h2>
+          <p>您还可以使用 CloudWatch Logs Insights 查询 span（例如，按 DB 语句的 p99 持续时间，或 HTTP 5xx span 的计数）。</p>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

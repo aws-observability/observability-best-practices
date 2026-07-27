@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Synthetic Monitoring (Canaries) — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Synthetic Monitoring (Canaries)</h1></header>
+<article>
+<section>
+<h2>Synthetics が Application Signals に接続する仕組み</h2>
+<p>CloudWatch Synthetics カナリアは、カナリアの X-Ray トレースを有効にすると Application Signals に表示されます。これにより、カナリアの呼び出しをバックエンドサービスに関連付け、サービスの詳細および Application Map に表示することができます。</p>
+<p>参照: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals が運用上の健全性監視を有効にする仕組み</a>.</p>
+</section>
+<section>
+<h2>カナリアの一般的なユースケース</h2>
+<ul>
+<li><strong>API ヘルスチェック</strong>: スケジュールに従って主要なエンドポイントを検証する</li>
+<li><strong>ブラウザフロー</strong>: ログイン／チェックアウトのジャーニーを検証する</li>
+<li><strong>マルチリージョン</strong>: 顧客より先にリージョンの問題を検出する</li>
+</ul>
+</section>
+<section>
+<h2>次のステップ</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">CloudWatch Synthetics カナリア</a></li>
+<li><a href="application-map.html">Application Map</a></li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

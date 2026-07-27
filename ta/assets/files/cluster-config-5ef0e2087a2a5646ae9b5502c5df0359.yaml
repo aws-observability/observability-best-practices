@@ -1,0 +1,39 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: xray-eks-fargate
+  region: eu-west-1
+  version: "1.21"
+iam:
+  withOIDC: true
+  serviceAccounts:
+  - metadata:
+      name: adot-collector
+      namespace: adot-col
+      labels: {aws-usage: "application"}
+    attachPolicy:
+      Version: "2012-10-17"
+      Statement:
+      - Effect: Allow
+        Action:
+        - "logs:PutLogEvents"
+        - "logs:CreateLogGroup"
+        - "logs:CreateLogStream"
+        - "logs:DescribeLogStreams"
+        - "logs:DescribeLogGroups"
+        - "xray:PutTraceSegments"
+        - "xray:PutTelemetryRecord"
+        - "xray:GetSamplingRules"
+        - "xray:GetSamplingTargets"
+        - "xray:GetSamplingStatisticSummaries"
+        - "ssm:GetParameters"
+        Resource: "*"
+fargateProfiles:
+  - name: defaultfp
+    selectors:
+      - namespace: example-app
+      - namespace: kube-system
+      - namespace: adot-col
+cloudWatch:
+  clusterLogging:
+    enableTypes: ["*"]

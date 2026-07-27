@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Java Spring + OTLP + CloudWatch Exercise — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch (Hands-on Exercise)</h1></header>
+      <article>
+        <section>
+          <p>This guide documents the full exercise to instrument a Java Spring Boot service with OpenTelemetry, export telemetry to AWS, deploy to ECS/Fargate, and verify traces/logs/Application Signals behavior.</p>
+          <p>It is written in the style of an implementation example and can be used as a runbook or workshop handout.</p>
+        </section>
+
+        <section>
+          <h2>1) What this exercise demonstrates</h2>
+          <ul>
+            <li>End-to-end telemetry from a Java app:
+              <ul>
+                <li><strong>Traces</strong> (X-Ray / Transaction Search)</li>
+                <li><strong>Logs</strong> (CloudWatch Logs OTLP endpoint or <code>awslogs</code> on ECS)</li>
+                <li><strong>Metrics/Application Signals</strong> (CloudWatch Agent sidecar path)</li>
+              </ul>
+            </li>
+            <li>The difference between:
+              <ul>
+                <li><strong>Micrometer tracing bridge</strong> (<code>micrometer-tracing-bridge-otel</code>) for tracing API bridging</li>
+                <li><strong>Micrometer registries</strong> (<code>micrometer-registry-cloudwatch2</code>, <code>micrometer-registry-otlp</code>) which are metrics-only sinks</li>
+              </ul>
+            </li>
+            <li>OTLP endpoint wiring via env vars (<code>OTEL_*</code>), not hardcoded Java constants.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) Architecture</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) Deployment topology (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) OTLP endpoint mapping</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Signal</th>
+                <th>Endpoint pattern</th>
+                <th>Typical env vars</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Traces</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>Metrics</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code> (or App Signals path via sidecar)</td>
+              </tr>
+              <tr>
+                <td>Logs</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>In ECS sidecar mode, app container points traces/metrics to <code>http://localhost:4316/...</code> and the CloudWatch Agent handles forwarding.</p>
+        </section>
+
+        <section>
+          <h2>5) Instrumentation model used in this repo</h2>
+
+          <h3>5.1 Dependencies</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code> is present in <code>pom.xml</code>.</li>
+            <li>No dependency on <code>micrometer-registry-cloudwatch2</code> or <code>micrometer-registry-otlp</code> for tracing.</li>
+          </ul>
+
+          <h3>5.2 Auto + manual tracing</h3>
+          <ul>
+            <li>Auto instrumentation from ADOT Java agent captures framework/client spans.</li>
+            <li>Manual enrichment is added inside <code>DemoService.greet()</code>:
+              <ul>
+                <li>attributes: <code>demo.operation</code>, <code>demo.request.name</code>, <code>demo.downstream.status</code>, <code>demo.downstream.elapsed_ms</code>, <code>demo.custom.instrumented</code></li>
+                <li>events: <code>demo.greet.start</code>, <code>demo.httpbin.success</code>, <code>demo.httpbin.failure</code></li>
+                <li>error recording with <code>recordException(...)</code> and <code>setStatus(ERROR, ...)</code></li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) Screenshot (trace details)</h2>
+          <p>Use the provided screenshot below for workshop/demo docs:</p>
+          <img src="../assets/images/cw.png" alt="CloudWatch trace screenshot" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) Where to view telemetry in AWS Console</h2>
+
+          <h3>Traces (primary)</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>Region: <code>us-east-1</code></li>
+            <li>Time range: Last 15–60 min</li>
+            <li>Service: <code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>For custom fields:</p>
+          <ul>
+            <li>Open a trace → segment <code>java-spring-otel-poc</code> → <strong>Metadata</strong></li>
+            <li>Look for keys:
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>Logs</h3>
+          <ul>
+            <li>ECS app logs: <code>/ecs/java-spring-otel</code></li>
+            <li>CW agent sidecar logs: <code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>Local OTLP log group (if running local): <code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>Look for <code>java-spring-otel-poc</code> after sustained traffic and successful metrics forwarding through sidecar path.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) Key takeaway</h2>
+          <p>OpenTelemetry auto instrumentation can create spans, but successful AWS observability outcomes still depend on:</p>
+          <ol>
+            <li>Correct OTLP endpoint wiring</li>
+            <li>Correct auth/forwarding path (often via sidecar/collector for metrics/App Signals)</li>
+            <li>Correct distinction between tracing bridge vs metrics registries</li>
+            <li>Sustained traffic and correct console view (X-Ray for traces)</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

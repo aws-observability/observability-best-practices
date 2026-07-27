@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals - Python FastAPI 在 EKS 上的实施</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Python FastAPI on EKS</h1>
+            <p class="subtitle">完整实施指南</p>
+            <div class="platform-badge">EKS</div>
+            <div class="language-badge">Python</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← 返回所有实施方案</a>
+            
+            <div class="section">
+                <h2>概述</h2>
+                <p>本指南提供<strong>分步说明</strong>，指导您在 Amazon EKS 上部署带有 AWS Application Signals 自动插桩的 Python FastAPI 应用。这是 Lambda Python 函数的 EKS 等效实现，复用了相同的业务逻辑和端点。</p>
+                
+                <div class="highlight">
+                    <strong>完成目标：</strong>
+                    <ul>
+                        <li>在 EKS 上部署 Python FastAPI 应用</li>
+                        <li>启用 AWS Application Signals 自动插桩</li>
+                        <li>在 CloudWatch Application Signals 控制台中查看您的服务</li>
+                        <li>监控服务 metrics、traces 和操作</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>完成时间：</strong> 30-45 分钟
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>前置条件</h2>
+                <h3>必备工具</h3>
+                <ul>
+                    <li>AWS CLI v2（最新版本）</li>
+                    <li>Docker Desktop</li>
+                    <li>kubectl（最新版本）</li>
+                    <li>Python 3.11+ (for local development)</li>
+                    <li>pip（用于本地开发）</li>
+                    <li>具有适当权限的 AWS 账户</li>
+                    <li>文本编辑器</li>
+                </ul>
+
+                <h3>所需 AWS 权限</h3>
+                <ul>
+                    <li>EKS：完全访问（创建集群、节点组、插件）</li>
+                    <li>IAM：创建角色和策略</li>
+                    <li>CloudWatch：Logs 和 Application Signals 访问</li>
+                    <li>ECR：推送/拉取容器镜像</li>
+                    <li>VPC：创建和管理 VPC 资源</li>
+                    <li>S3：用于测试的读取权限</li>
+                </ul>
+
+                <h3>前置知识</h3>
+                <ul>
+                    <li>AWS CLI 基础使用</li>
+                    <li>Docker 基础命令</li>
+                    <li>kubectl 基础命令</li>
+                    <li>EKS 基本概念理解</li>
+                    <li>Basic Python/FastAPI knowledge</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>架构</h2>
+                <div class="highlight">
+                    <strong>EKS 可观测性插件（标准方式）：</strong> This guide uses the official EKS observability add-on, which is the recommended and standard way to enable Application Signals on EKS clusters. The add-on automatically handles telemetry collection 不使用 requiring manual CloudWatch Agent configuration.
+                </div>
+                
+                <p>您的 EKS 集群将运行：</p>
+                <ol>
+                    <li><strong>Python FastAPI Application</strong>：带有自动插桩注解的 Web API</li>
+                    <li><strong>EKS 可观测性插件</strong>：用于自动追踪和 metrics 收集的官方 AWS 插件</li>
+                    <li><strong>CloudWatch Agent（由插件管理）</strong>：由插件自动部署和配置</li>
+                </ol>
+                
+                <p><strong>流程：</strong></p>
+                <pre><code>EKS Cluster
+  → Python FastAPI App (auto-instrumented via annotation)
+  → EKS Observability Add-on
+  → CloudWatch Agent (managed)
+  → CloudWatch Application Signals</code></pre>
+                
+                <div class="success">
+                    <strong>EKS 可观测性插件的主要优势：</strong>
+                    <ul>
+                        <li>无需手动配置 CloudWatch Agent</li>
+                        <li>支持语言的自动插桩</li>
+                        <li>内置 Application Signals 支持</li>
+                        <li>简化部署和管理</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>步骤 1： 创建应用</h2>
+                <h3>1.1 创建项目结构</h3>
+                <pre><code class="lang-bash">mkdir eks-python
+cd eks-python</code></pre>
+
+                <h3>1.2 Create the Python Application</h3>
+                <p>Create <code>app.py</code> with the same endpoints as the Lambda function:</p>
+                <pre><code class="lang-python">"""
+AWS Application Signals EKS Python Service
+FastAPI application with Application Signals auto-instrumentation
+"""
+import time
+import random
+import boto3
+import requests
+from fastapi import FastAPI, HTTPException
+from fastapi.responses import JSONResponse
+from typing import Dict, Any
+import uvicorn
+
+# Initialize FastAPI app
+app = FastAPI(
+    title="AWS Application Signals EKS Python Demo",
+    description="Python service running on EKS with Application Signals",
+    version="1.0.0"
+)
+
+# Initialize AWS clients
+s3_client = boto3.client('s3')
+
+
+@app.get("/")
+async def root():
+    """Root endpoint"""
+    return {
+        "message": "AWS Application Signals EKS Python Demo",
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+
+
+@app.get("/health")
+async def health():
+    """Health check endpoint"""
+    return {
+        "status": "healthy",
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+
+
+@app.get("/api/hello/{name}")
+async def hello(name: str):
+    """Personalized greeting with simulated processing"""
+    # Simulate some processing time
+    time.sleep(random.uniform(0.01, 0.1))
+    
+    return {
+        "message": f"Hello, {name}!",
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+
+
+@app.get("/api/slow")
+async def slow():
+    """Intentionally slow endpoint for latency testing"""
+    time.sleep(random.uniform(0.5, 1.5))
+    
+    return {
+        "message": "Slow operation completed",
+        "timestamp": time.time(),
+        "duration": "1-1.5 seconds",
+        "service": "python-eks-service"
+    }
+
+
+@app.get("/api/error")
+async def error():
+    """Endpoint that randomly raises errors for testing error rates"""
+    if random.random() > 0.5:
+        raise HTTPException(
+            status_code=500, 
+            detail="Simulated error for testing Application Signals error tracking"
+        )
+    
+    return {
+        "message": "No error occurred",
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+
+
+@app.get("/api/external")
+async def external():
+    """Makes external HTTP call for distributed tracing"""
+    try:
+        # This will be automatically traced by OpenTelemetry
+        response = requests.get("https://httpbin.org/delay/1", timeout=5)
+        
+        return {
+            "message": "External call completed",
+            "external_status_code": response.status_code,
+            "timestamp": time.time(),
+            "service": "python-eks-service"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"External call failed: {str(e)}"
+        )
+
+
+@app.get("/api/s3")
+async def s3():
+    """Makes AWS S3 call for testing AWS SDK instrumentation"""
+    try:
+        # This will be automatically traced by OpenTelemetry
+        response = s3_client.list_buckets()
+        bucket_names = [bucket['Name'] for bucket in response['Buckets']]
+        
+        return {
+            "message": "S3 call completed successfully",
+            "bucket_count": len(bucket_names),
+            "buckets": bucket_names[:5],  # Show first 5 buckets
+            "timestamp": time.time(),
+            "service": "python-eks-service"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"S3 call failed: {str(e)}"
+        )
+
+
+@app.get("/api/metrics")
+async def metrics():
+    """Custom metrics endpoint"""
+    # Simulate some business logic
+    processing_time = random.uniform(0.1, 0.5)
+    time.sleep(processing_time)
+    
+    # Simulate different response times based on some logic
+    if processing_time > 0.3:
+        status = "slow"
+    else:
+        status = "fast"
+    
+    return {
+        "message": "Metrics endpoint",
+        "processing_time": processing_time,
+        "status": status,
+        "timestamp": time.time(),
+        "service": "python-eks-service"
+    }
+
+
+if __name__ == "__main__":
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True,
+        log_level="info"
+    )</code></pre>
+
+                <h3>1.3 创建依赖文件</h3>
+                <p>Create <code>requirements.txt</code>:</p>
+                <pre><code class="lang-text"># Core dependencies for EKS Python service
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+boto3==1.35.0
+requests==2.32.3
+
+# OpenTelemetry dependencies for Application Signals
+opentelemetry-api==1.21.0
+opentelemetry-sdk==1.21.0
+opentelemetry-instrumentation==0.42b0
+opentelemetry-instrumentation-fastapi==0.42b0
+opentelemetry-instrumentation-requests==0.42b0
+opentelemetry-exporter-otlp==1.21.0
+opentelemetry-exporter-otlp-proto-grpc==1.21.0
+opentelemetry-semantic-conventions==0.42b0</code></pre>
+
+                <h3>1.4 创建 Dockerfile</h3>
+                <p>Create <code>Dockerfile</code>:</p>
+                <pre><code class="lang-dockerfile"># Use Python 3.11 slim image
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY app.py .
+
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash app && chown -R app:app /app
+USER app
+
+# Expose port
+EXPOSE 8000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# Run the application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>步骤 2： 本地构建和测试</h2>
+                <h3>2.1 安装依赖</h3>
+                <pre><code class="lang-bash">pip install -r requirements.txt</code></pre>
+
+                <h3>2.2 本地测试</h3>
+                <pre><code class="lang-bash">python app.py</code></pre>
+                <p>应用将启动在 <code>http://localhost:8000</code>. 测试端点：</p>
+                <pre><code class="lang-bash"># Root endpoint
+curl http://localhost:8000/
+
+# Health check
+curl http://localhost:8000/health
+
+# Hello endpoint
+curl http://localhost:8000/api/hello/World
+
+# Slow endpoint
+curl http://localhost:8000/api/slow
+
+# Error endpoint (may return error)
+curl http://localhost:8000/api/error
+
+# External call
+curl http://localhost:8000/api/external
+
+# S3 call (requires AWS credentials)
+curl http://localhost:8000/api/s3
+
+# Metrics endpoint
+curl http://localhost:8000/api/metrics</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>步骤 3： 部署到 EKS</h2>
+                <h3>3.1 创建 EKS 集群</h3>
+                <pre><code class="lang-bash"># Create EKS cluster
+eksctl create cluster --name appsignals-cluster --region us-east-1 --nodegroup-name workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3
+
+# Create namespace
+kubectl create namespace appsignals-demo</code></pre>
+
+                <h3>3.2 安装 EKS 可观测性插件（必需）</h3>
+                <div class="highlight">
+                    <strong>重要：</strong> EKS 可观测性插件是在 EKS 上启用 Application Signals 的标准和推荐方式。该插件自动处理遥测数据收集并提供自动插桩功能。
+                </div>
+                
+                <pre><code class="lang-bash"># Install the EKS observability add-on (REQUIRED for Application Signals)
+aws eks create-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1
+
+# Verify the add-on is installed
+aws eks describe-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1</code></pre>
+                
+                <div class="success">
+                    <strong>EKS 可观测性插件提供：</strong>
+                    <ul>
+                        <li>自动部署 CloudWatch Agent</li>
+                        <li>内置 Application Signals 支持</li>
+                        <li>支持 Java、Python、Node.js 和 .NET 的自动插桩</li>
+                        <li>无需手动配置</li>
+                    </ul>
+                </div>
+
+                <h3>3.3 构建并推送 Docker 镜像</h3>
+                <pre><code class="lang-bash"># Create ECR repository
+aws ecr create-repository --repository-name my-appsignals-python-app --region us-east-1
+
+# Get login token
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 188524202814.dkr.ecr.us-east-1.amazonaws.com
+
+# Build and tag image
+docker build -t my-appsignals-python-app .
+docker tag my-appsignals-python-app:latest 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-python-app:latest
+
+# Push image
+docker push 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-python-app:latest</code></pre>
+
+                <h3>3.4 部署应用</h3>
+                <p>Create <code>deployment.yaml</code>:</p>
+                <pre><code class="lang-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: python-eks-service
+    service: python
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: python-eks-service
+  template:
+    metadata:
+      labels:
+        app: python-eks-service
+        service: python
+      annotations:
+        # Enable Application Signals auto-instrumentation
+        instrumentation.opentelemetry.io/inject-python: "true"
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8000"
+        prometheus.io/path: "/metrics"
+    spec:
+      containers:
+      - name: python-app
+        image: 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-python-app:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: OTEL_SERVICE_NAME
+          value: "python-eks-service"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=python-eks-service,service.namespace=appsignals-demo,service.version=1.0.0"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        - name: AWS_REGION
+          value: "us-east-1"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: python-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: python-eks-service
+    service: python
+spec:
+  selector:
+    app: python-eks-service
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+  type: ClusterIP</code></pre>
+
+                <p>部署应用：</p>
+                <pre><code class="lang-bash">kubectl apply -f deployment.yaml</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>步骤 4： 生成流量并监控</h2>
+                <h3>4.1 生成流量</h3>
+                <p>Create <code>generate-traffic.sh</code>:</p>
+                <pre><code class="lang-bash">#!/bin/bash
+
+# Port forward the service
+kubectl port-forward service/python-eks-service 8000:80 -n appsignals-demo &
+PORT_FORWARD_PID=$!
+
+# Wait for port forward to be ready
+sleep 10
+
+BASE_URL="http://localhost:8000"
+
+echo "Generating traffic for Python EKS Application Signals demo..."
+
+# Generate traffic for 5 minutes
+for i in {1..300}; do
+    echo "Request $i"
+
+    # Root endpoint
+    curl -s "$BASE_URL/" > /dev/null
+
+    # Health check
+    curl -s "$BASE_URL/health" > /dev/null
+
+    # Hello endpoint
+    curl -s "$BASE_URL/api/hello/User$i" > /dev/null
+
+    # Slow endpoint
+    curl -s "$BASE_URL/api/slow" > /dev/null
+
+    # Error endpoint
+    curl -s "$BASE_URL/api/error" > /dev/null
+
+    # External call
+    curl -s "$BASE_URL/api/external" > /dev/null
+
+    # S3 call
+    curl -s "$BASE_URL/api/s3" > /dev/null
+
+    # Metrics endpoint
+    curl -s "$BASE_URL/api/metrics" > /dev/null
+
+    sleep 1
+done
+
+echo "Traffic generation complete!"
+
+# Clean up port forward
+kill $PORT_FORWARD_PID</code></pre>
+                <p>赋予执行权限并运行：</p>
+                <pre><code class="lang-bash">chmod +x generate-traffic.sh
+./generate-traffic.sh</code></pre>
+
+                <h3>4.2 Monitor in CloudWatch</h3>
+                <ol>
+                    <li><p><strong>打开 CloudWatch 控制台</strong></p>
+                        <ul>
+                            <li>前往 AWS 控制台 → CloudWatch</li>
+                            <li>导航到 "Application Signals"</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>查看 Service Map</strong></p>
+                        <ul>
+                            <li>查找 "python-eks-service" 服务</li>
+                            <li>查看服务依赖关系和健康状况</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>查看 Metrics</strong></p>
+                        <ul>
+                            <li>查看延迟、错误率和吞吐量</li>
+                            <li>与 Lambda metrics 进行比较</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>分析 Traces</strong></p>
+                        <ul>
+                            <li>点击服务查看详细 traces</li>
+                            <li>查看操作级别 metrics</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Step 5: 清理资源</h2>
+                <h3>5.1 删除应用</h3>
+                <pre><code class="lang-bash">kubectl delete -f deployment.yaml</code></pre>
+
+                <h3>5.2 删除 EKS 集群</h3>
+                <pre><code class="lang-bash">eksctl delete cluster --name appsignals-cluster --region us-east-1</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>故障排除</h2>
+                <h3>常见问题</h3>
+                <ol>
+                    <li><p><strong>应用无法启动</strong></p>
+                        <ul>
+                            <li>检查 Pod 状态： <code>kubectl get pods -n appsignals-demo</code></li>
+                            <li>检查 Pod 日志： <code>kubectl logs -n appsignals-demo -l app=python-eks-service</code></li>
+                            <li>验证 EKS 可观测性插件已安装</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>Application Signals 中无数据</strong></p>
+                        <ul>
+                            <li>验证自动插桩注解是否存在</li>
+                            <li>Check 环境变量s are set correctly</li>
+                            <li>确保 EKS 可观测性插件正在运行</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>端口转发问题</strong></p>
+                        <ul>
+                            <li>检查服务是否运行： <code>kubectl get svc -n appsignals-demo</code></li>
+                            <li>验证 Pod 是否就绪： <code>kubectl get pods -n appsignals-demo</code></li>
+                        </ul>
+                    </li>
+                </ol>
+
+               
+</body>
+</html>

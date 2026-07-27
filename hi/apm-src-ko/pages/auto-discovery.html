@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>자동 검색 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>자동 검색</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals가 검색하는 항목</h2>
+          <p>Application Signals를 활성화하고 서비스가 텔레메트리를 전송하면 CloudWatch가 자동으로 다음을 검색하고 표시합니다:</p>
+          <ul>
+            <li><strong>서비스</strong> 및 해당 <strong>오퍼레이션</strong></li>
+            <li><strong>종속성</strong> (다운스트림 호출)</li>
+            <li><strong>토폴로지</strong> (애플리케이션 맵)</li>
+          </ul>
+          <p>검색은 선택된 시간 범위(예: 기본값 "지난 3시간") 내에서 전송된 메트릭과 트레이스에 의해 구동됩니다. 해당 시간 범위에 활동이 없는 서비스는 표시되지 않습니다.</p>
+        </section>
+
+        <section>
+          <h2>일회성 계정 설정 (서비스 검색)</h2>
+          <p>계정에서 처음으로 서비스 검색을 시작할 때 CloudWatch는 서비스 연결 역할 <code>AWSServiceRoleForCloudWatchApplicationSignals</code>를 생성합니다. 이 역할을 통해 CloudWatch가 서비스를 검색하고 상관시킬 수 있습니다.</p>
+          <p>공식 단계: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">계정에서 Application Signals 활성화</a>.</p>
+        </section>
+
+        <section>
+          <h2>운영 관련 예상 사항</h2>
+          <ul>
+            <li><strong>검색 지연 시간:</strong> 토폴로지 및 서비스 검색이 최대 약 10분까지 지연될 수 있습니다.</li>
+            <li><strong>SLO/SLI 평가:</strong> SLI 상태 평가가 지연될 수 있습니다(예: 최대 약 15분).</li>
+            <li><strong>규모 제한:</strong> 콘솔에 최대 1,000개의 서비스를 표시할 수 있습니다.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals로 애플리케이션 운영 상태 모니터링</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

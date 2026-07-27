@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>デバッグガイド — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>デバッグガイド</h1></header>
+<article>
+<section>
+<h2>高速トリアージワークフロー（推奨）</h2>
+<ol>
+<li><strong>SLO から開始します（定義されている場合）。</strong> 異常なサービス/オペレーション/依存関係を特定します。</li>
+<li><strong>サービスを使用します。</strong> 高レイテンシーまたはフォルトレートでソートして、上位の問題箇所を見つけます。</li>
+<li><strong>サービスの詳細を開きます。</strong> レイテンシ/障害のデータポイントを選択するために、オペレーションと依存関係のエッジを検査します。</li>
+<li><strong>相関トレース/スパンにジャンプします。</strong> トレースタイムラインを調べて、遅延または失敗しているダウンストリームコールを特定します。</li>
+<li><strong>ログ/ランタイムメトリクスで確認します。</strong> 関連する場合は、エラーログと JVM/CPU/GC を相関させます。</li>
+</ol>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals でオペレーションの健全性をモニタリングする</a>.</p>
+</section>
+<section>
+<h2>「レアスパイク」に対するトランザクション検索の使用</h2>
+<p>断続的なスパイクの場合、Transaction Search を使用すると、属性ごとにスパンを分析し、影響を受けたユーザー/リクエストを詳しく調べることができます。一般的なパターン：</p>
+<ul>
+<li><strong>グループ分析</strong> ビジネス属性（例：顧客 ID）によって、影響を受けているユーザーを特定します。</li>
+<li><strong>フィルター</strong> サービス/オペレーションおよびレイテンシー (p99) 別に外れ値を特定します。</li>
+<li><strong>トレースを開く</strong> 外れ値スパンからの依存関係呼び出しパスをたどります。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">アプリケーション問題のトラブルシューティング（トランザクション検索）</a>.</p>
+</section>
+<section>
+<h2>「データが表示されないのはなぜ？」という一般的な確認事項</h2>
+<ul>
+<li><strong>アカウントの有効化：</strong> Application Signals はアカウント/リージョンごとに 1 回有効化する必要があります（サービスにリンクされたロールが作成されます）。</li>
+<li><strong>時間範囲：</strong> サービス/オペレーションは、選択した時間枠内にアクティビティがある場合にのみ表示されます。</li>
+<li><strong>サービスの命名：</strong> 確認する <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code> は適切に設定されています（非 EKS では、多くの場合、明示的なサービス/環境名が必要です）。</li>
+<li><strong>パイプラインの健全性：</strong> CloudWatch Agent/コレクターが実行中で OTLP を受信していること。ローカルエンドポイントと IAM 権限を確認してください。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">Application Signals のインストールに関するトラブルシューティング</a>.</p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Searching and analyzing spans — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Searching and analyzing spans</h1></header>
+      <article>
+        <section>
+          <h2>Transaction Search</h2>
+          <p>CloudWatch <strong>Transaction Search</strong> is an interactive analytics experience for searching and analyzing ingested spans using span attributes. It supports:</p>
+          <ul>
+            <li><strong>List</strong>: troubleshoot individual transactions, find slow spans, find errors</li>
+            <li><strong>Time series</strong>: visualize latency and frequency trends (P50/P90/P99)</li>
+            <li><strong>Group analysis</strong>: aggregate by attributes (for example, top customers impacted)</li>
+          </ul>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-search-analyze-spans.html">Searching and analyzing spans</a>.</p>
+        </section>
+
+        <section>
+          <h2>Logs Insights on spans</h2>
+          <p>You can also query spans using CloudWatch Logs Insights (for example, p99 duration by a DB statement, or counts of spans with HTTP 5xx).</p>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

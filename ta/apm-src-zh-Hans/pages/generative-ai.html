@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>生成式 AI Observability — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>生成式 AI Observability</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals 支持对与 Amazon Bedrock 模型交互的生成式 AI 应用程序进行故障排查。它为 Bedrock API 调用提供开箱即用的遥测数据，以便您调查：</p>
+          <ul>
+            <li><strong>模型配置问题</strong></li>
+            <li><strong>使用量和成本驱动因素</strong>（令牌使用量）</li>
+            <li><strong>模型延迟</strong></li>
+            <li><strong>响应的停止/完成原因</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>细粒度指标和链路追踪</h2>
+          <p>对于 Bedrock 调用，Application Signals 可以生成并关联具有资源级别详情的性能指标和链路追踪 span（例如：模型 ID、护栏 ID、知识库 ID 和 Bedrock 代理 ID）。</p>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">示例：对与 Amazon Bedrock 交互的生成式 AI 应用进行故障排查</a>。</p>
+        </section>
+
+        <section>
+          <h2>GenAI 语义属性 + Transaction Search</h2>
+          <p>Application Signals 可以发出 OpenTelemetry GenAI 语义约定属性（例如 <code>gen_ai.request.model</code> 和令牌使用量字段）。您可以使用 CloudWatch Transaction Search 来分析这些属性，比较不同模型之间的提示词、令牌使用量和延迟。</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">搜索和分析 span</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>延伸阅读</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS 公告：Application Signals 支持 Bedrock</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">博客：使用 AppSignals 改善 Amazon Bedrock Observability</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

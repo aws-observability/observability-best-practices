@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AWS Application Signals for .NET Core on EKS</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>AWS Application Signals for .NET Core on EKS</h1>
+<p class="subtitle">完全実装ガイド</p>
+<div class="platform-badge">EKS</div>
+<div class="language-badge">.NET</div>
+</div>
+<div class="content">
+<a class="back-link" href="index.html">← すべての実装に戻る</a>
+<div class="section">
+<h2>概要</h2>
+<p>このガイドでは、 <strong>ステップバイステップの手順</strong> を提供します。AWS Application Signals の自動計装を使用して、Amazon EKS 上に .NET Core アプリケーションをデプロイします。これは Lambda .NET 関数の EKS 版であり、同じビジネスロジックとエンドポイントを再利用しています。</p>
+<div class="highlight">
+<strong>達成できること：</strong>
+<ul>
+<li>EKS 上に .NET Core アプリをデプロイする</li>
+<li>AWS Application Signals の自動計装を有効にする</li>
+<li>CloudWatch Application Signals コンソールでサービスを確認する</li>
+<li>サービスのメトリクス、トレース、オペレーションを監視する</li>
+</ul>
+</div>
+<div class="success">
+<strong>完了までの時間：</strong> 30〜45 分
+                </div>
+</div>
+<div class="section">
+<h2>前提条件</h2>
+<h3>必要なツール</h3>
+<ul>
+<li>AWS CLI v2（最新バージョン）</li>
+<li>Docker Desktop</li>
+<li>kubectl（最新バージョン）</li>
+<li>.NET 8.0 SDK（ローカル開発用）</li>
+<li>適切な権限を持つ AWS アカウント</li>
+<li>テキストエディタ</li>
+</ul>
+<h3>重要な互換性要件</h3>
+<ul>
+<li><strong>AWS SDK .NET V3</strong>：AWS Distro for OpenTelemetry (ADOT) SDK for .NET は AWS SDK for .NET V4 をサポートしていません。Application Signals の完全なサポートには AWS SDK .NET V3 を使用してください。</li>
+<li><strong>OpenTelemetry パッケージ</strong>：Application Signals 統合のために、AWS.DistributedOpenTelemetry と互換性のある OpenTelemetry パッケージを使用してください。</li>
+</ul>
+<h3>必要な AWS 権限</h3>
+<ul>
+<li>EKS：フルアクセス（クラスター、ノードグループ、アドオンの作成）</li>
+<li>IAM：ロールおよびポリシーの作成</li>
+<li>CloudWatch：ログおよび Application Signals へのアクセス</li>
+<li>ECR：コンテナイメージのプッシュ／プル</li>
+<li>VPC：VPC リソースの作成と管理</li>
+</ul>
+<h3>前提とする知識</h3>
+<ul>
+<li>AWS CLI の基本的な使い方</li>
+<li>Docker の基本的なコマンド</li>
+<li>kubectl の基本的なコマンド</li>
+<li>EKSの概念に関する基本的な理解</li>
+<li>基本的な.NET Coreの知識</li>
+</ul>
+</div>
+<div class="section">
+<h2>アーキテクチャ</h2>
+<div class="highlight">
+<strong>EKS Observabilityアドオン（標準的なアプローチ）:</strong> このガイドでは、公式のEKS Observabilityアドオンを使用します。これは、EKSクラスターでApplication Signalsを有効にするための推奨される標準的な方法です。このアドオンは、CloudWatch Agentを手動で設定することなく、テレメトリの収集を自動的に処理します。
+                </div>
+<p>EKSクラスターで実行されるもの:</p>
+<ol>
+<li><strong>.NET Coreアプリケーション</strong>：自動インストルメンテーションアノテーションを含むWeb API</li>
+<li><strong>EKS Observabilityアドオン</strong>：自動トレースおよびメトリクス収集のための公式AWSアドオン</li>
+<li><strong>CloudWatch Agent（アドオンによって管理）</strong>：アドオンによって自動的にデプロイおよび設定される</li>
+</ol>
+<p><strong>フロー:</strong></p>
+<pre><code>EKS Cluster
+  → .NET Core App (auto-instrumented via annotation)
+  → EKS Observability Add-on
+  → CloudWatch Agent (managed)
+  → CloudWatch Application Signals</code></pre>
+<div class="success">
+<strong>EKS Observabilityアドオンの主なメリット:</strong>
+<ul>
+<li>CloudWatch Agentの手動設定が不要</li>
+<li>サポートされている言語への自動インストルメンテーション</li>
+<li>Application Signalsの組み込みサポート</li>
+<li>デプロイと管理の簡素化</li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h2>ステップ1：アプリケーションの作成</h2>
+<h3>1.1 プロジェクト構造の作成</h3>
+<pre><code class="lang-bash">mkdir eks-dotnet
+cd eks-dotnet</code></pre>
+<h3>1.2 .NETプロジェクトの作成</h3>
+<p>作成 <code>Program.cs</code> Lambda関数と同じエンドポイントを持つ:</p>
+<pre><code class="lang-csharp">using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseRouting();
+
+// Simple endpoints
+app.MapGet("/", () =&gt; new
+{
+    message = "AWS Application Signals EKS .NET Demo",
+    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+    service = "dotnet-eks-service",
+    runtime = "dotnet8"
+});
+
+app.MapGet("/health", () =&gt; new
+{
+    status = "healthy",
+    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+    service = "dotnet-eks-service"
+});
+
+app.MapGet("/api/hello/{name}", (string name) =&gt; new
+{
+    message = $"Hello, {name}!",
+    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+    service = "dotnet-eks-service"
+});
+
+app.MapGet("/api/slow", async () =&gt;
+{
+    await Task.Delay(Random.Shared.Next(500, 1500));
+    return new
+    {
+        message = "Slow operation completed",
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        service = "dotnet-eks-service"
+    };
+});
+
+app.MapGet("/api/error", () =&gt;
+{
+    if (Random.Shared.NextDouble() &gt; 0.5)
+    {
+        throw new Exception("Simulated error for testing Application Signals error tracking");
+    }
+    return new
+    {
+        message = "No error occurred",
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        service = "dotnet-eks-service"
+    };
+});
+
+app.MapGet("/api/external", async () =&gt;
+{
+    using var httpClient = new HttpClient();
+    try
+    {
+        var response = await httpClient.GetAsync("https://httpbin.org/delay/1");
+        return new
+        {
+            message = "External call completed",
+            external_status_code = (int)response.StatusCode,
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            service = "dotnet-eks-service"
+        };
+    }
+    catch (Exception ex)
+    {
+        throw new Exception($"External call failed: {ex.Message}");
+    }
+});
+
+app.Run();</code></pre>
+<h3>1.3 Dockerfileの作成</h3>
+<p>作成 <code>Dockerfile</code>:</p>
+<pre><code class="lang-dockerfile">FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 8080
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["Program.cs", "."]
+RUN dotnet new webapi --force
+RUN dotnet build -c Release -o /app/build
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/build .
+ENTRYPOINT ["dotnet", "Program.dll"]</code></pre>
+</div>
+<div class="section">
+<h2>ステップ2：ローカルでのビルドとテスト</h2>
+<h3>2.1 アプリケーションのビルド</h3>
+<pre><code class="lang-bash">dotnet new webapi --force
+cp Program.cs Program.cs
+dotnet build</code></pre>
+<h3>2.2 ローカルでのテスト</h3>
+<pre><code class="lang-bash">dotnet run</code></pre>
+<p>アプリケーションは <code>http://localhost:5000</code>で起動します。エンドポイントをテストしてください:</p>
+<pre><code class="lang-bash"># Root endpoint
+curl http://localhost:5000/
+
+# Health check
+curl http://localhost:5000/health
+
+# Hello endpoint
+curl http://localhost:5000/api/hello/World
+
+# Slow endpoint
+curl http://localhost:5000/api/slow
+
+# Error endpoint (may return error)
+curl http://localhost:5000/api/error
+
+# External call
+curl http://localhost:5000/api/external</code></pre>
+</div>
+<div class="section">
+<h2>ステップ3：EKSへのデプロイ</h2>
+<h3>3.1 EKSクラスターの作成</h3>
+<pre><code class="lang-bash"># Create EKS cluster
+eksctl create cluster --name appsignals-cluster --region us-east-1 --nodegroup-name workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3
+
+# Create namespace
+kubectl create namespace appsignals-demo</code></pre>
+<h3>3.2 EKS Observabilityアドオンのインストール（必須）</h3>
+<div class="highlight">
+<strong>重要:</strong> EKS ObservabilityアドオンはEKSでApplication Signalsを有効にするための標準的かつ推奨される方法です。このアドオンはテレメトリの収集を自動的に処理し、自動インストルメンテーション機能を提供します。
+                </div>
+<pre><code class="lang-bash"># Install the EKS observability add-on (REQUIRED for Application Signals)
+aws eks create-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1
+
+# Verify the add-on is installed
+aws eks describe-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1</code></pre>
+<div class="success">
+<strong>EKS Observabilityアドオンが提供するもの:</strong>
+<ul>
+<li>CloudWatch Agentの自動デプロイ</li>
+<li>Application Signalsの組み込みサポート</li>
+<li>Java、Python、Node.js、および.NETへの自動インストルメンテーション</li>
+<li>手動設定が不要</li>
+</ul>
+</div>
+<h3>3.3 アプリケーションのデプロイ</h3>
+<p>作成 <code>deployment.yaml</code>:</p>
+<pre><code class="lang-yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dotnet-app-code
+  namespace: appsignals-demo
+data:
+  Program.cs: |
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+    using Microsoft.Extensions.Logging;
+
+    var builder = WebApplication.CreateBuilder(args);
+
+    // Add services to the container
+    builder.Services.AddControllers();
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    var app = builder.Build();
+
+    // Configure the HTTP request pipeline
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseRouting();
+
+    // Simple endpoints
+    app.MapGet("/", () =&gt; new
+    {
+        message = "AWS Application Signals EKS .NET Demo",
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        service = "dotnet-eks-service",
+        runtime = "dotnet8"
+    });
+
+    app.MapGet("/health", () =&gt; new
+    {
+        status = "healthy",
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        service = "dotnet-eks-service"
+    });
+
+    app.MapGet("/api/hello/{name}", (string name) =&gt; new
+    {
+        message = $"Hello, {name}!",
+        timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+        service = "dotnet-eks-service"
+    });
+
+    app.MapGet("/api/slow", async () =&gt;
+    {
+        await Task.Delay(Random.Shared.Next(500, 1500));
+        return new
+        {
+            message = "Slow operation completed",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            service = "dotnet-eks-service"
+        };
+    });
+
+    app.MapGet("/api/error", () =&gt;
+    {
+        if (Random.Shared.NextDouble() &gt; 0.5)
+        {
+            throw new Exception("Simulated error for testing Application Signals error tracking");
+        }
+        return new
+        {
+            message = "No error occurred",
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            service = "dotnet-eks-service"
+        };
+    });
+
+    app.MapGet("/api/external", async () =&gt;
+    {
+        using var httpClient = new HttpClient();
+        try
+        {
+            var response = await httpClient.GetAsync("https://httpbin.org/delay/1");
+            return new
+            {
+                message = "External call completed",
+                external_status_code = (int)response.StatusCode,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = "dotnet-eks-service"
+            };
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"External call failed: {ex.Message}");
+        }
+    });
+
+    app.Run();
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dotnet-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: dotnet-eks-service
+    service: dotnet
+  annotations:
+    instrumentation.opentelemetry.io/inject-dotnet: "true"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dotnet-eks-service
+  template:
+    metadata:
+      labels:
+        app: dotnet-eks-service
+        service: dotnet
+      annotations:
+        instrumentation.opentelemetry.io/inject-dotnet: "true"
+    spec:
+      containers:
+      - name: dotnet-app
+        image: mcr.microsoft.com/dotnet/aspnet:8.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: OTEL_SERVICE_NAME
+          value: "dotnet-eks-service"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=dotnet-eks-service,service.namespace=appsignals-demo,service.version=1.0.0,deployment.environment=eks"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        volumeMounts:
+        - name: app-code
+          mountPath: /app/Program.cs
+          subPath: Program.cs
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        command: ["/bin/bash", "-c"]
+        args:
+          - |
+            apt-get update &amp;&amp; apt-get install -y wget
+            wget https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+            dpkg -i packages-microsoft-prod.deb
+            apt-get update &amp;&amp; apt-get install -y dotnet-sdk-8.0
+            dotnet new webapi --force
+            cp /app/Program.cs Program.cs
+            dotnet build -c Release
+            dotnet run --urls=http://0.0.0.0:8080
+      volumes:
+      - name: app-code
+        configMap:
+          name: dotnet-app-code
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dotnet-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: dotnet-eks-service
+    service: dotnet
+spec:
+  selector:
+    app: dotnet-eks-service
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP</code></pre>
+<p>アプリケーションをデプロイする：</p>
+<pre><code class="lang-bash">kubectl apply -f deployment.yaml</code></pre>
+</div>
+<div class="section">
+<h2>ステップ 4: トラフィックの生成とモニタリング</h2>
+<h3>4.1 トラフィックの生成</h3>
+<p>作成 <code>generate-traffic.sh</code>:</p>
+<pre><code class="lang-bash">#!/bin/bash
+
+# Port forward the service
+kubectl port-forward service/dotnet-eks-service 8080:80 -n appsignals-demo &amp;
+PORT_FORWARD_PID=$!
+
+# Wait for port forward to be ready
+sleep 10
+
+BASE_URL="http://localhost:8080"
+
+echo "Generating traffic for .NET EKS Application Signals demo..."
+
+# Generate traffic for 5 minutes
+for i in {1..300}; do
+    echo "Request $i"
+
+    # Root endpoint
+    curl -s "$BASE_URL/" &gt; /dev/null
+
+    # Health check
+    curl -s "$BASE_URL/health" &gt; /dev/null
+
+    # Hello endpoint
+    curl -s "$BASE_URL/api/hello/User$i" &gt; /dev/null
+
+    # Slow endpoint
+    curl -s "$BASE_URL/api/slow" &gt; /dev/null
+
+    # Error endpoint
+    curl -s "$BASE_URL/api/error" &gt; /dev/null
+
+    # External call
+    curl -s "$BASE_URL/api/external" &gt; /dev/null
+
+    sleep 1
+done
+
+echo "Traffic generation complete!"
+
+# Clean up port forward
+kill $PORT_FORWARD_PID</code></pre>
+<p>実行可能にして実行する：</p>
+<pre><code class="lang-bash">chmod +x generate-traffic.sh
+./generate-traffic.sh</code></pre>
+<h3>4.2 CloudWatch でのモニタリング</h3>
+<ol>
+<li><p><strong>CloudWatch コンソールを開く</strong></p>
+<ul>
+<li>AWS コンソール → CloudWatch に移動する</li>
+<li>「Application Signals」に移動する</li>
+</ul>
+</li>
+<li><p><strong>サービスマップを表示する</strong></p>
+<ul>
+<li>「dotnet-eks-service」サービスを探す</li>
+<li>サービスの依存関係と正常性を確認する</li>
+</ul>
+</li>
+<li><p><strong>メトリクスを確認する</strong></p>
+<ul>
+<li>レイテンシー、エラーレート、スループットを表示する</li>
+<li>Lambda メトリクスと比較する</li>
+</ul>
+</li>
+<li><p><strong>トレースを分析する</strong></p>
+<ul>
+<li>サービスをクリックして詳細なトレースを表示する</li>
+<li>オペレーションレベルのメトリクスを表示する</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section">
+<h2>ステップ 5: クリーンアップ</h2>
+<h3>5.1 アプリケーションの削除</h3>
+<pre><code class="lang-bash">kubectl delete -f deployment.yaml</code></pre>
+<h3>5.2 EKS クラスターの削除</h3>
+<pre><code class="lang-bash">eksctl delete cluster --name appsignals-cluster --region us-east-1</code></pre>
+</div>
+<div class="section">
+<h2>トラブルシューティング</h2>
+<h3>よくある問題</h3>
+<ol>
+<li><p><strong>アプリケーションが起動しない</strong></p>
+<ul>
+<li>Pod のステータスを確認する： <code>kubectl get pods -n appsignals-demo</code></li>
+<li>Pod のログを確認する： <code>kubectl logs -n appsignals-demo -l app=dotnet-eks-service</code></li>
+<li>EKS オブザーバビリティアドオンがインストールされていることを確認する</li>
+</ul>
+</li>
+<li><p><strong>Application Signals にデータが表示されない</strong></p>
+<ul>
+<li>自動インストルメンテーションのアノテーションが存在することを確認する</li>
+<li>環境変数が正しく設定されていることを確認する</li>
+<li>EKS オブザーバビリティアドオンが実行中であることを確認する</li>
+</ul>
+</li>
+<li><p><strong>ポートフォワードの問題</strong></p>
+<ul>
+<li>サービスが実行中であることを確認する： <code>kubectl get svc -n appsignals-demo</code></li>
+<li>Pod の準備が完了していることを確認する： <code>kubectl get pods -n appsignals-demo</code></li>
+</ul>
+</li>
+</ol>
+</div></div></div></body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>디버깅 가이드 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>디버깅 가이드</h1></header>
+      <article>
+        <section>
+          <h2>빠른 분류 워크플로 (권장)</h2>
+          <ol>
+            <li><strong>SLO에서 시작 (정의된 경우):</strong> 비정상적인 서비스/오퍼레이션/종속성을 식별합니다.</li>
+            <li><strong>서비스 사용:</strong> 높은 지연 시간 또는 장애율로 정렬하여 주요 문제 항목을 찾습니다.</li>
+            <li><strong>서비스 세부 정보 열기:</strong> 오퍼레이션과 종속성 엣지를 검사하고, 지연 시간/장애 데이터 포인트를 선택합니다.</li>
+            <li><strong>상관 트레이스/스팬으로 이동:</strong> 트레이스 타임라인을 검사하여 느린/실패하는 다운스트림 호출을 찾습니다.</li>
+            <li><strong>로그/런타임 메트릭으로 확인:</strong> 관련 시 오류 로그 및 JVM/CPU/GC와 상관 분석합니다.</li>
+          </ol>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals로 운영 상태 모니터링</a>.</p>
+        </section>
+
+        <section>
+          <h2>"드문 급증"에 대한 Transaction Search 사용</h2>
+          <p>간헐적인 급증의 경우, Transaction Search를 통해 속성별로 스팬을 분석하고 영향을 받는 사용자/요청을 드릴다운할 수 있습니다. 일반적인 패턴:</p>
+          <ul>
+            <li><strong>그룹 분석</strong>: 비즈니스 속성(예: 고객 ID)별로 그룹화하여 영향을 받는 대상을 찾습니다.</li>
+            <li><strong>필터링</strong>: 서비스/오퍼레이션 및 지속 시간(p99)으로 필터링하여 이상값을 분리합니다.</li>
+            <li><strong>트레이스 열기</strong>: 이상값 스팬에서 트레이스를 열고 종속성 호출 경로를 따라갑니다.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">애플리케이션 문제 해결 (Transaction Search)</a>.</p>
+        </section>
+
+        <section>
+          <h2>일반적인 "데이터가 보이지 않는 이유" 확인 사항</h2>
+          <ul>
+            <li><strong>계정 활성화:</strong> Application Signals는 계정/리전당 한 번 활성화해야 합니다(서비스 연결 역할 생성).</li>
+            <li><strong>시간 범위:</strong> 서비스/오퍼레이션은 선택한 시간 창 내에 활동이 있는 경우에만 표시됩니다.</li>
+            <li><strong>서비스 이름 지정:</strong> <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code>가 적절하게 설정되어 있는지 확인합니다(비 EKS 환경에서는 명시적인 서비스/환경 이름이 필요한 경우가 많습니다).</li>
+            <li><strong>파이프라인 상태:</strong> CloudWatch Agent/콜렉터가 실행 중이고 OTLP를 수신하는지 확인합니다. 로컬 엔드포인트와 IAM 권한을 확인하세요.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">Application Signals 설치 문제 해결</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

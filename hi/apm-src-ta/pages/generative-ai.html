@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Generative AI observability — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Generative AI observability</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals Amazon Bedrock மாடல்களுடன் தொடர்பு கொள்ளும் generative AI பயன்பாடுகளை பிழைத்திருத்துவதை ஆதரிக்கிறது. Bedrock API அழைப்புகளுக்கு out-of-the-box telemetry வழங்குகிறது, இதன்மூலம் நீங்கள் ஆராயலாம்:</p>
+          <ul>
+            <li><strong>மாடல் கட்டமைப்பு சிக்கல்கள்</strong></li>
+            <li><strong>பயன்பாடு மற்றும் செலவு காரணிகள்</strong> (token பயன்பாடு)</li>
+            <li><strong>மாடல் தாமதம்</strong></li>
+            <li><strong>பதில்களுக்கான நிறுத்தம்/முடிவு காரணங்கள்</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>நுண்ணிய மெட்ரிக்ஸ் மற்றும் traces</h2>
+          <p>Bedrock அழைப்புகளுக்கு, Application Signals resource-level விவரத்துடன் (எடுத்துக்காட்டாக: model ID, guardrails ID, knowledge base ID, மற்றும் Bedrock agent ID) செயல்திறன் மெட்ரிக்ஸ் மற்றும் trace spans-ஐ உருவாக்கி தொடர்புபடுத்த முடியும்.</p>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">எடுத்துக்காட்டு: Amazon Bedrock-உடன் தொடர்பு கொள்ளும் generative AI apps-ஐ பிழைத்திருத்துதல்</a>.</p>
+        </section>
+
+        <section>
+          <h2>GenAI semantic attributes + Transaction Search</h2>
+          <p>Application Signals OpenTelemetry GenAI semantic convention attributes-ஐ (எடுத்துக்காட்டாக, <code>gen_ai.request.model</code> மற்றும் token usage fields) வெளியிட முடியும். CloudWatch Transaction Search-உடன் இவற்றை பகுப்பாய்வு செய்து prompts, token பயன்பாடு மற்றும் மாடல்கள் முழுவதும் தாமதத்தை ஒப்பிடலாம்.</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">Spans-ஐ தேடுதல் மற்றும் பகுப்பாய்வு செய்தல்</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>மேலும் படிக்க</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS அறிவிப்பு: Application Signals Bedrock-ஐ ஆதரிக்கிறது</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">வலைப்பதிவு: AppSignals மூலம் Amazon Bedrock observability-ஐ மேம்படுத்துங்கள்</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>குறிப்பு — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>குறிப்பு</h1></header>
+      <article>
+        <section>
+          <h2>சேவை வரம்புகள் & Quotas</h2>
+          <p>CloudWatch Application Signals-க்கான வரம்புகள் மற்றும் quotas-ஐ புரிந்துகொள்ளுதல்.</p>
+        </section>
+
+        <section>
+          <h3>வரம்புகள் மற்றும் quotas</h3>
+          <p>Application Signals CloudWatch மற்றும் AWS X-Ray-ஐ சார்ந்துள்ளது. வரம்புகள் (ingestion, query rates மற்றும் quotas) அந்த சேவைகளால் நிர்வகிக்கப்படுகின்றன மற்றும் காலப்போக்கில் மாறலாம். தற்போதைய values-க்கு அதிகாரப்பூர்வ documentation-ஐ பயன்படுத்துங்கள்.</p>
+          <ul>
+            <li><strong>Application Signals:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals docs</a></li>
+            <li><strong>CloudWatch quotas:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch service quotas</a></li>
+            <li><strong>AWS X-Ray quotas:</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API throttling and limits</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch metric retention (பொதுவான குறிப்பு)</h3>
+          <p>CloudWatch வெவ்வேறு resolutions-ல் metric data-ஐ retain செய்கிறது. முழு retention model-க்கு CloudWatch docs-ஐ பாருங்கள்.</p>
+          <ul>
+            <li><strong>1-நிமிட resolution:</strong> 15 நாட்கள்</li>
+            <li><strong>5-நிமிட resolution:</strong> 63 நாட்கள்</li>
+            <li><strong>1-மணி resolution:</strong> 15 மாதங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Service Quotas</h3>
+
+          <h4>Application Signals:</h4>
+          <ul>
+            <li><strong>கணக்கிற்கு சேவைகள்:</strong> 1,000</li>
+            <li><strong>சேவைக்கு செயல்பாடுகள்:</strong> 100</li>
+            <li><strong>தனிப்பயன் metrics:</strong> சேவைக்கு 30</li>
+          </ul>
+
+          <h4>RUM:</h4>
+          <ul>
+            <li><strong>கணக்கிற்கு App monitors:</strong> 20</li>
+            <li><strong>வினாடிக்கு Events:</strong> 10,000</li>
+            <li><strong>Event size:</strong> 64 KB</li>
+          </ul>
+
+          <h4>Synthetics:</h4>
+          <ul>
+            <li><strong>கணக்கிற்கு Canaries:</strong> 100</li>
+            <li><strong>Canary execution நேரம்:</strong> அதிகபட்சம் 15 நிமிடங்கள்</li>
+            <li><strong>Canary size:</strong> 1 GB (unzipped)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>சொற்களஞ்சியம்</h2>
+          <p>CloudWatch Application Signals-ல் முக்கிய சொற்கள் மற்றும் கருத்துக்கள்.</p>
+        </section>
+
+        <section>
+          <h3>அடிப்படை கருத்துக்கள்</h3>
+
+          <h4>Application Performance Monitoring (APM)</h4>
+          <p>மென்பொருள் பயன்பாடுகளின் செயல்திறன் மற்றும் கிடைக்கும் தன்மையை கண்காணித்து நிர்வகிக்கும் நடைமுறை.</p>
+
+          <h4>Distributed Tracing</h4>
+          <p>Distributed systems வழியாக கோரிக்கைகள் பயணிக்கும் வழியை கண்காணிக்கும் முறை, பல சேவைகளில் கோரிக்கைகளின் பாதை மற்றும் செயல்திறனைப் புரிந்துகொள்ள உதவுகிறது.</p>
+
+          <h4>Service Map</h4>
+          <p>சேவைகள் எவ்வாறு இணைகின்றன மற்றும் தொடர்பு கொள்கின்றன என்பதைக் காட்டும் உங்கள் பயன்பாட்டின் architecture-ன் visual representation.</p>
+
+          <h4>Span</h4>
+          <p>ஒரு trace-க்குள் ஒரு தனி செயல்பாடு, database query அல்லது API call போன்ற ஒரு வேலை அலகை குறிக்கிறது.</p>
+
+          <h4>Trace</h4>
+          <p>உங்கள் பயன்பாடு வழியாக ஒரு கோரிக்கையின் முழுமையான end-to-end பயணம், பல spans-ஐ உள்ளடக்கியது.</p>
+        </section>
+
+        <section>
+          <h3>Instrumentation சொற்கள்</h3>
+
+          <h4>Auto-Instrumentation</h4>
+          <p>Code மாற்றங்கள் தேவையில்லாமல் பயன்பாடுகளுக்கு observability code-ஐ தானாக சேர்ப்பது.</p>
+
+          <h4>Manual Instrumentation</h4>
+          <p>Application source code-க்கு tracing மற்றும் metrics code-ஐ வெளிப்படையாக சேர்ப்பது.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>Instrumentation-க்கு vendor-neutral APIs வழங்கும் open-source observability framework.</p>
+
+          <h4>Sampling</h4>
+          <p>Observability-ஐ செலவு மற்றும் செயல்திறனுடன் சமநிலைப்படுத்த எந்த கோரிக்கைகளை trace செய்ய வேண்டும் என்பதைத் தேர்ந்தெடுக்கும் செயல்முறை.</p>
+
+          <h4>Context Propagation</h4>
+          <p>Trace continuity-ஐ பராமரிக்க சேவைகளுக்கிடையே trace context-ஐ pass செய்யும் mechanism.</p>
+        </section>
+
+        <section>
+          <h3>Metrics மற்றும் கண்காணிப்பு</h3>
+
+          <h4>Golden Signals</h4>
+          <p>Application health-ஐ கண்காணிப்பதற்கான நான்கு முக்கிய மெட்ரிக்ஸ்: தாமதம், throughput, பிழை விகிதம் மற்றும் saturation.</p>
+
+          <h4>தாமதம் (Latency)</h4>
+          <p>ஒரு கோரிக்கை செயலாக்கப்பட எடுக்கும் நேரம், பொதுவாக percentiles-ல் (P50, P90, P99) அளவிடப்படுகிறது.</p>
+
+          <h4>Throughput</h4>
+          <p>கோரிக்கைகள் செயலாக்கப்படும் விகிதம், பொதுவாக வினாடிக்கு கோரிக்கைகளாக அளவிடப்படுகிறது.</p>
+
+          <h4>பிழை விகிதம் (Error Rate)</h4>
+          <p>பிழைகளில் முடிவடையும் கோரிக்கைகளின் சதவீதம்.</p>
+
+          <h4>Saturation</h4>
+          <p>System resources பயன்படுத்தப்படும் அளவு.</p>
+
+          <h4>Service Level Objective (SLO)</h4>
+          <p>சேவை வழங்குநர்கள் மற்றும் நுகர்வோர் இடையே ஒப்புக்கொள்ளப்பட்ட சேவை தரத்தின் இலக்கு நிலை.</p>
+
+          <h4>Service Level Indicator (SLI)</h4>
+          <p>தாமதம் அல்லது கிடைக்கும் தன்மை போன்ற வழங்கப்படும் சேவை நிலையின் அளவிடக்கூடிய அம்சம்.</p>
+        </section>
+
+        <section>
+          <h3>RUM மற்றும் Synthetics</h3>
+
+          <h4>Real User Monitoring (RUM)</h4>
+          <p>Production-ல் web பயன்பாடுகளுடனான உண்மையான பயனர் தொடர்புகளின் கண்காணிப்பு.</p>
+
+          <h4>Synthetic Monitoring</h4>
+          <p>Simulated user interactions பயன்படுத்தி பயன்பாடுகளின் தானியங்கி testing.</p>
+
+          <h4>Canary</h4>
+          <p>உங்கள் பயன்பாட்டிற்கு எதிராக தானியங்கி tests இயக்கும் synthetic monitoring script.</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>Web-ல் பயனர் அனுபவத்தை அளவிடுவதற்கான Google-ன் metrics: LCP, FID மற்றும் CLS.</p>
+
+          <h4>Largest Contentful Paint (LCP)</h4>
+          <p>Screen-ல் மிகப்பெரிய content element render ஆக எடுக்கும் நேரம்.</p>
+
+          <h4>First Input Delay (FID)</h4>
+          <p>பயனர் முதலில் ஒரு பக்கத்துடன் interact செய்யும் நேரத்திலிருந்து browser respond செய்யும் நேரம் வரை.</p>
+
+          <h4>Cumulative Layout Shift (CLS)</h4>
+          <p>Visual stability-ன் அளவீடு, எதிர்பாராத layout shifts-ஐ அளவிடுகிறது.</p>
+        </section>
+
+        <section>
+          <h3>AWS-குறிப்பிட்ட சொற்கள்</h3>
+
+          <h4>Application Signals</h4>
+          <p>APM, RUM மற்றும் synthetics-ஐ ஒருங்கிணைக்கும் AWS-ன் ஒருங்கிணைந்த observability தீர்வு.</p>
+
+          <h4>X-Ray</h4>
+          <p>AWS-ன் distributed tracing சேவை, இப்போது Application Signals-உடன் ஒருங்கிணைக்கப்பட்டுள்ளது.</p>
+
+          <h4>CloudWatch</h4>
+          <p>Metrics, logs மற்றும் traces சேகரிக்கும் AWS-ன் monitoring மற்றும் observability சேவை.</p>
+
+          <h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+          <p>AWS சேவைகளுக்கு optimized செய்யப்பட்ட AWS-ன் OpenTelemetry distribution.</p>
+        </section>
+
+        <section>
+          <h2>ஆதரிக்கப்படும் Runtimes மற்றும் Frameworks</h2>
+          <p>Application Signals ஆதரிக்கும் programming languages மற்றும் frameworks.</p>
+        </section>
+
+        <section>
+          <h3>Auto-Instrumentation ஆதரவு</h3>
+
+          <p>அதிகாரப்பூர்வ compatibility மற்றும் runtime/version matrix-க்கு, <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">ஆதரிக்கப்படும் அமைப்புகள்</a>-ஐ பாருங்கள். முக்கிய அம்சங்கள்:</p>
+
+          <ul>
+            <li><strong>Java:</strong> JVM 8/11/17/21/23 (framework support ADOT/OpenTelemetry Java instrumentation-ஐ பின்பற்றுகிறது).</li>
+            <li><strong>Python:</strong> Python 3.9+ (framework support ADOT/OpenTelemetry Python instrumentation-ஐ பின்பற்றுகிறது).</li>
+            <li><strong>Node.js:</strong> Node 14/16/18/20/22 (framework support ADOT/OpenTelemetry JS instrumentation-ஐ பின்பற்றுகிறது).</li>
+            <li><strong>.NET:</strong> x86-64 அல்லது ARM64-ல் ஆதரிக்கப்படுகிறது; Linux x64/ARM64 மற்றும் Windows Server 2022 x64 (library support ADOT/OpenTelemetry .NET instrumentation-ஐ பின்பற்றுகிறது).</li>
+            <li><strong>PHP/Ruby/Go:</strong> OpenTelemetry zero-code/auto-instrumentation paths வழியாக ஆதரிக்கப்படுகிறது (இந்த மொழிகளுக்கு ADOT SDK இல்லை).</li>
+          </ul>
+
+          <h4>குறிப்புகள் மற்றும் அறியப்பட்ட considerations</h4>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM support limited; docs-ல் உள்ள ESM-specific setup-ஐ பின்பற்றாவிட்டால் CommonJS-ஐ prefer செய்யுங்கள்.</li>
+            <li><strong>Python:</strong> Containerized apps-க்கு <code>PYTHONPATH</code> set செய்ய வேண்டியிருக்கலாம் (அறியப்பட்ட OTel autoinstrumentation சிக்கல்).</li>
+            <li><strong>.NET:</strong> ADOT .NET-க்கு AWS SDK for .NET V4-உடன் limitations உள்ளன; முழு support-க்கு AWS SDK V3 பரிந்துரைக்கப்படுகிறது.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Manual Instrumentation</h3>
+          <p>OpenTelemetry SDKs வழியாக அனைத்து முக்கிய programming languages ஆதரிக்கப்படுகின்றன:</p>
+          <ul>
+            <li>Java, Scala, Kotlin</li>
+            <li>Python, Ruby</li>
+            <li>JavaScript/TypeScript, Go</li>
+            <li>.NET (C#, F#, VB.NET)</li>
+            <li>PHP, Rust, C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Configuration Reference</h2>
+          <p>பொதுவான configuration options மற்றும் environment variables.</p>
+        </section>
+
+        <section>
+          <h3>Environment Variables</h3>
+
+          <h4>OpenTelemetry Configuration:</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - உங்கள் சேவையின் பெயர்</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - Trace exporter (otlp, jaeger, zipkin)</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLP endpoint URL</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - Sampling strategy</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - Sampling parameter</li>
+          </ul>
+
+          <h4>AWS-குறிப்பிட்ட Configuration:</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - AWS region</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Ray daemon address</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - Service attributes (Application Map-ல் custom grouping-க்கும் பயன்படுத்தப்படுகிறது)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Sampling Configuration</h3>
+
+          <h4>Sampling Strategies:</h4>
+          <ul>
+            <li><code>always_on</code> - அனைத்து traces-ஐயும் sample செய்யுங்கள்</li>
+            <li><code>always_off</code> - எந்த traces-ஐயும் sample செய்யாதீர்கள்</li>
+            <li><code>traceidratio</code> - Ratio அடிப்படையில் sample செய்யுங்கள் (எ.கா., 10%-க்கு 0.1)</li>
+            <li><code>parentbased_always_on</code> - Parent sampling decision-ஐ மதிக்கவும்</li>
+            <li><code>parentbased_traceidratio</code> - Parent-based ratio sampling</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>செலவு Optimization</h2>
+          <p>Observability செலவுகளை கட்டுப்படுத்துவதற்கான strategies.</p>
+        </section>
+
+        <section>
+          <h3>Sampling Strategies</h3>
+          <ul>
+            <li><strong>Production:</strong> 5-10% sampling rate</li>
+            <li><strong>Development:</strong> 50-100% sampling rate</li>
+            <li><strong>Error traces:</strong> Errors-உடன் traces-ஐ எப்போதும் sample செய்யுங்கள்</li>
+            <li><strong>High-value operations:</strong> முக்கியமான paths-க்கு 100% sampling</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Data Retention Policies</h3>
+          <p>Retention அடிப்படை telemetry stores-ஆல் கட்டுப்படுத்தப்படுகிறது (எடுத்துக்காட்டாக, CloudWatch metrics/logs மற்றும் AWS X-Ray traces). அந்த சேவைகளில் retention-ஐ configure செய்து உங்கள் troubleshooting மற்றும் compliance requirements-உடன் align செய்யுங்கள்.</p>
+        </section>
+
+        <section>
+          <h3>Resource Optimization</h3>
+          <ul>
+            <li><strong>Batch exports:</strong> Network overhead-ஐ குறைக்கவும்</li>
+            <li><strong>Compression:</strong> Data compression-ஐ இயக்குங்கள்</li>
+            <li><strong>Filtering:</strong> தேவையற்ற spans மற்றும் attributes-ஐ அகற்றுங்கள்</li>
+            <li><strong>Buffering:</strong> பொருத்தமான buffer sizes பயன்படுத்துங்கள்</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

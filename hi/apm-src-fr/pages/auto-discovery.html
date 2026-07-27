@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Decouverte automatique — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Decouverte automatique</h1></header>
+      <article>
+        <section>
+          <h2>Ce qu'Application Signals decouvre</h2>
+          <p>Apres avoir active Application Signals et une fois que vos services emettent de la telemetrie, CloudWatch decouvre et affiche automatiquement :</p>
+          <ul>
+            <li><strong>Les services</strong> et leurs <strong>operations</strong></li>
+            <li><strong>Les dependances</strong> (appels en aval)</li>
+            <li><strong>La topologie</strong> (carte applicative)</li>
+          </ul>
+          <p>La decouverte est pilotee par les metriques et les traces emises dans la plage de temps selectionnee (par exemple, les « trois dernieres heures » par defaut). Si un service n'a aucune activite dans la plage de temps, il ne sera pas affiche.</p>
+        </section>
+
+        <section>
+          <h2>Configuration initiale du compte (decouverte de services)</h2>
+          <p>La premiere fois que vous demarrez la decouverte de services dans un compte, CloudWatch cree le role lie au service <code>AWSServiceRoleForCloudWatchApplicationSignals</code>. Ce role permet a CloudWatch de decouvrir et de correler les services.</p>
+          <p>Etapes officielles : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">Activer Application Signals dans votre compte</a>.</p>
+        </section>
+
+        <section>
+          <h2>Attentes operationnelles</h2>
+          <ul>
+            <li><strong>Latence de decouverte :</strong> la topologie et la decouverte de services peuvent etre retardees jusqu'a environ 10 minutes.</li>
+            <li><strong>Evaluation SLO/SLI :</strong> l'evaluation de la sante des SLI peut etre retardee (par exemple, jusqu'a environ 15 minutes).</li>
+            <li><strong>Limites de mise a l'echelle :</strong> jusqu'a 1 000 services peuvent etre affiches dans la console.</li>
+          </ul>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Surveiller la sante operationnelle de vos applications avec Application Signals</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

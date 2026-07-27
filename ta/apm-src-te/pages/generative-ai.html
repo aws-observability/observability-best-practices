@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>జనరేటివ్ AI observability — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>జనరేటివ్ AI observability</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals Amazon Bedrock మోడల్‌లతో ఇంటరాక్ట్ అయ్యే జనరేటివ్ AI అప్లికేషన్‌లను ట్రబుల్‌షూట్ చేయడానికి మద్దతు ఇస్తుంది. ఇది Bedrock API కాల్‌ల కోసం అవుట్-ఆఫ్-ది-బాక్స్ టెలిమెట్రీని అందిస్తుంది, తద్వారా మీరు ఈ క్రింది వాటిని పరిశోధించవచ్చు:</p>
+          <ul>
+            <li><strong>మోడల్ కాన్ఫిగరేషన్ సమస్యలు</strong></li>
+            <li><strong>వినియోగం మరియు ఖర్చు డ్రైవర్లు</strong> (టోకెన్ వినియోగం)</li>
+            <li><strong>మోడల్ లేటెన్సీ</strong></li>
+            <li><strong>ప్రతిస్పందనల కోసం ఆగిన/ముగింపు కారణాలు</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>సూక్ష్మ-స్థాయి మెట్రిక్స్ మరియు ట్రేస్‌లు</h2>
+          <p>Bedrock కాల్‌ల కోసం, Application Signals రిసోర్స్-స్థాయి వివరాలతో (ఉదాహరణకు: మోడల్ ID, guardrails ID, knowledge base ID, మరియు Bedrock agent ID) పనితీరు మెట్రిక్స్ మరియు ట్రేస్ స్పాన్‌లను ఉత్పత్తి చేసి సంబంధం కలుపగలదు.</p>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">ఉదాహరణ: Amazon Bedrock తో ఇంటరాక్ట్ అయ్యే జనరేటివ్ AI యాప్‌లను ట్రబుల్‌షూట్ చేయడం</a>.</p>
+        </section>
+
+        <section>
+          <h2>GenAI సెమాంటిక్ అట్రిబ్యూట్‌లు + Transaction Search</h2>
+          <p>Application Signals OpenTelemetry GenAI సెమాంటిక్ కన్వెన్షన్ అట్రిబ్యూట్‌లను (ఉదాహరణకు, <code>gen_ai.request.model</code> మరియు టోకెన్ వినియోగ ఫీల్డ్‌లు) విడుదల చేయగలదు. ప్రాంప్ట్‌లు, టోకెన్ వినియోగం మరియు మోడల్‌ల మధ్య లేటెన్సీని పోల్చడానికి మీరు వీటిని CloudWatch Transaction Search తో విశ్లేషించవచ్చు.</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">స్పాన్‌లను శోధించడం మరియు విశ్లేషించడం</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>మరింత చదవడం</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS ప్రకటన: Application Signals Bedrock కు మద్దతు ఇస్తుంది</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">బ్లాగ్: Amazon CloudWatch AppSignals తో Amazon Bedrock observability ను మెరుగుపరచండి</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

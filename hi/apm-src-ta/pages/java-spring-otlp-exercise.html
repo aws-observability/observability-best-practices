@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Java Spring + OTLP + CloudWatch பயிற்சி — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch (நடைமுறை பயிற்சி)</h1></header>
+      <article>
+        <section>
+          <p>இந்த வழிகாட்டி Java Spring Boot சேவையை OpenTelemetry-உடன் instrument செய்து, AWS-க்கு telemetry ஏற்றுமதி செய்து, ECS/Fargate-க்கு deploy செய்து, traces/logs/Application Signals நடத்தையை சரிபார்க்கும் முழு பயிற்சியை ஆவணப்படுத்துகிறது.</p>
+          <p>இது ஒரு implementation example பாணியில் எழுதப்பட்டுள்ளது மற்றும் runbook அல்லது workshop handout ஆக பயன்படுத்தப்படலாம்.</p>
+        </section>
+
+        <section>
+          <h2>1) இந்த பயிற்சி என்ன நிரூபிக்கிறது</h2>
+          <ul>
+            <li>Java app-லிருந்து End-to-end telemetry:
+              <ul>
+                <li><strong>Traces</strong> (X-Ray / Transaction Search)</li>
+                <li><strong>Logs</strong> (CloudWatch Logs OTLP endpoint அல்லது ECS-ல் <code>awslogs</code>)</li>
+                <li><strong>Metrics/Application Signals</strong> (CloudWatch Agent sidecar path)</li>
+              </ul>
+            </li>
+            <li>இவற்றுக்கிடையேயான வேறுபாடு:
+              <ul>
+                <li><strong>Micrometer tracing bridge</strong> (<code>micrometer-tracing-bridge-otel</code>) tracing API bridging-க்கு</li>
+                <li><strong>Micrometer registries</strong> (<code>micrometer-registry-cloudwatch2</code>, <code>micrometer-registry-otlp</code>) இவை metrics-only sinks</li>
+              </ul>
+            </li>
+            <li>OTLP endpoint wiring env vars (<code>OTEL_*</code>) வழியாக, hardcoded Java constants அல்ல.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) Architecture</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) Deployment topology (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) OTLP endpoint mapping</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Signal</th>
+                <th>Endpoint pattern</th>
+                <th>பொதுவான env vars</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Traces</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>Metrics</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code> (அல்லது sidecar வழியாக App Signals path)</td>
+              </tr>
+              <tr>
+                <td>Logs</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>ECS sidecar mode-ல், app container traces/metrics-ஐ <code>http://localhost:4316/...</code>-க்கு point செய்கிறது மற்றும் CloudWatch Agent forwarding-ஐ கையாளுகிறது.</p>
+        </section>
+
+        <section>
+          <h2>5) இந்த repo-வில் பயன்படுத்தப்படும் Instrumentation model</h2>
+
+          <h3>5.1 Dependencies</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code> <code>pom.xml</code>-ல் உள்ளது.</li>
+            <li>Tracing-க்கு <code>micrometer-registry-cloudwatch2</code> அல்லது <code>micrometer-registry-otlp</code> மீது dependency இல்லை.</li>
+          </ul>
+
+          <h3>5.2 Auto + manual tracing</h3>
+          <ul>
+            <li>ADOT Java agent-லிருந்து Auto instrumentation framework/client spans-ஐ capture செய்கிறது.</li>
+            <li><code>DemoService.greet()</code>-க்குள் Manual enrichment சேர்க்கப்பட்டுள்ளது:
+              <ul>
+                <li>attributes: <code>demo.operation</code>, <code>demo.request.name</code>, <code>demo.downstream.status</code>, <code>demo.downstream.elapsed_ms</code>, <code>demo.custom.instrumented</code></li>
+                <li>events: <code>demo.greet.start</code>, <code>demo.httpbin.success</code>, <code>demo.httpbin.failure</code></li>
+                <li><code>recordException(...)</code> மற்றும் <code>setStatus(ERROR, ...)</code>-உடன் error recording</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) Screenshot (trace details)</h2>
+          <p>Workshop/demo docs-க்கு கீழே கொடுக்கப்பட்ட screenshot-ஐ பயன்படுத்துங்கள்:</p>
+          <img src="../assets/images/cw.png" alt="CloudWatch trace screenshot" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) AWS Console-ல் telemetry-ஐ எங்கே பார்ப்பது</h2>
+
+          <h3>Traces (முதன்மை)</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>Region: <code>us-east-1</code></li>
+            <li>நேர வரம்பு: கடந்த 15-60 நிமிடங்கள்</li>
+            <li>Service: <code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>தனிப்பயன் fields-க்கு:</p>
+          <ul>
+            <li>ஒரு trace திறக்கவும் → segment <code>java-spring-otel-poc</code> → <strong>Metadata</strong></li>
+            <li>இந்த keys-ஐ பாருங்கள்:
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>Logs</h3>
+          <ul>
+            <li>ECS app logs: <code>/ecs/java-spring-otel</code></li>
+            <li>CW agent sidecar logs: <code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>Local OTLP log group (locally இயக்கினால்): <code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>Sustained traffic மற்றும் sidecar path வழியாக வெற்றிகரமான metrics forwarding-க்குப் பிறகு <code>java-spring-otel-poc</code>-ஐ பாருங்கள்.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) முக்கிய takeaway</h2>
+          <p>OpenTelemetry auto instrumentation spans-ஐ உருவாக்க முடியும், ஆனால் வெற்றிகரமான AWS observability outcomes இன்னும் இவற்றைச் சார்ந்துள்ளன:</p>
+          <ol>
+            <li>சரியான OTLP endpoint wiring</li>
+            <li>சரியான auth/forwarding path (metrics/App Signals-க்கு பெரும்பாலும் sidecar/collector வழியாக)</li>
+            <li>Tracing bridge vs metrics registries இடையே சரியான வேறுபாடு</li>
+            <li>Sustained traffic மற்றும் சரியான console view (traces-க்கு X-Ray)</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

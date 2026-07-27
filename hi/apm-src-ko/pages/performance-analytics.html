@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>성능 분석 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>성능 분석</h1></header>
+      <article>
+        <section>
+          <h2>표준 애플리케이션 메트릭</h2>
+          <p>Application Signals는 표준 애플리케이션 메트릭을 CloudWatch(네임스페이스 <code>ApplicationSignals</code>)에 게시합니다. 이 메트릭은 서비스, 오퍼레이션 및 종속성 전반에 걸쳐 빠른 분류를 위해 설계되었습니다.</p>
+          <ul>
+            <li><strong>지연 시간</strong> (ms)</li>
+            <li><strong>장애</strong> (HTTP 5xx 및 스팬 상태 오류)</li>
+            <li><strong>오류</strong> (HTTP 4xx)</li>
+            <li><strong>가용성</strong>은 콘솔에서 \( (1 - \text{Faults}/\text{Total}) \times 100 \)으로 계산됩니다. 여기서 Total은 <code>SampleCount(Latency)</code>에서 파생됩니다. 4xx 응답은 이 가용성 계산에서 성공으로 처리됩니다.</li>
+          </ul>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals에서 수집하는 메트릭</a>.</p>
+        </section>
+
+        <section>
+          <h2>차원 (서비스 vs 종속성)</h2>
+          <p>메트릭은 다음과 같은 차원과 함께 생성되어 성능을 세분화할 수 있습니다:</p>
+          <ul>
+            <li><strong>서비스 메트릭</strong>: Environment, Service, Operation</li>
+            <li><strong>종속성 메트릭</strong>: Environment, Service, Operation에 RemoteService / RemoteOperation(및 플랫폼에 따라 기타 원격 차원)이 추가됨</li>
+          </ul>
+          <p>이를 통해 "어떤 오퍼레이션이 성능 저하되었는가?" 및 "지연 시간이 종속성 호출에 의해 발생하는가?"와 같은 질문에 쉽게 답할 수 있습니다.</p>
+        </section>
+
+        <section>
+          <h2>런타임 메트릭 (지원되는 경우)</h2>
+          <p>Application Signals는 지원되는 런타임에 대해 런타임 메트릭도 수집할 수 있습니다(예: JVM GC, 메모리, CPU; Python 프로세스 메트릭; .NET 런타임 메트릭). Node.js에서는 런타임 메트릭이 수집되지 않습니다.</p>
+          <p><code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code>로 런타임 메트릭 수집을 비활성화할 수 있습니다(플랫폼별 단계는 문서에 있습니다).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AWS Application Signals for Python on Lambda</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #0056b3;
+        }
+
+        .section {
+            margin: 30px 0;
+        }
+
+        .section h2 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #6c757d;
+            margin: 20px 0 10px 0;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 15px 0;
+        }
+
+        .step {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .endpoint {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 40px;
+            color: #6c757d;
+        }
+
+        /* Enhanced Code Block Styling */
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: inherit;
+            font-family: inherit;
+        }
+
+        code {
+            background: #f1f5f9;
+            color: #e53e3e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .header {
+                margin: -10px -10px 20px -10px;
+                padding: 20px 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+  </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>AWS Application Signals for Python on Lambda</h1>
+<div class="subtitle">AWS Application Signals 実装ガイド</div>
+<div class="platform-badge">Lambda</div>
+<div class="language-badge">Python</div>
+</div>
+<div class="content">
+<a class="back-link" href="index.html">← すべての実装に戻る</a>
+<div class="section">
+<h2>概要</h2>
+<p>このガイドでは、 <strong>ステップバイステップの手順</strong> を提供します。AWS Application Signals を有効にした Python Lambda 関数をデプロイするための手順です。AWS Lambda コンソールと組み込みレイヤーサポートを使用した最もシンプルなアプローチです。</p>
+<div class="highlight">
+<strong>達成できること：</strong>
+<ul>
+<li>Application Signals を使用した Python Lambda 関数のデプロイ</li>
+<li>Lambda Layer による AWS Application Signals 自動計装の有効化</li>
+<li>CloudWatch Application Signals コンソールでのサービスの確認</li>
+<li>サービスのメトリクス、トレース、およびオペレーションの監視</li>
+</ul>
+</div>
+<div class="success">
+<strong>完了までの時間：</strong> 15〜20 分
+                </div>
+</div>
+<div class="section">
+<h2>前提条件</h2>
+<h3>必要なツール</h3>
+<ul>
+<li>AWS CLI v2（最新バージョン）</li>
+<li>Python 3.11+</li>
+<li>適切な権限を持つ AWS アカウント</li>
+<li>テキストエディタ</li>
+</ul>
+<h3>必要な AWS 権限</h3>
+<ul>
+<li>Lambda: 関数の作成と管理</li>
+<li>IAM: ロールとポリシーの作成</li>
+<li>CloudWatch: ログおよび Application Signals へのアクセス</li>
+<li>S3: 基本的な読み取りアクセス（テスト用）</li>
+</ul>
+<h3>前提知識</h3>
+<ul>
+<li>AWS CLI の基本的な使用方法</li>
+<li>Lambda の概念に関する基本的な理解</li>
+</ul>
+</div>
+<div class="section">
+<h2>アーキテクチャ</h2>
+<p>Lambda 関数は以下を使用して自動的に計装されます：</p>
+<ol>
+<li><strong>OpenTelemetry 用 AWS Lambda Layer</strong> - 自動計装を提供</li>
+<li><strong>Application Signals との統合</strong> - レイヤーに組み込み済み</li>
+<li><strong>自動トレーシング</strong> - HTTP リクエスト、AWS SDK 呼び出し、関数の実行</li>
+</ol>
+<pre><code><strong>Flow:</strong>
+Lambda Function (auto-instrumented)
+  → Sends traces/metrics to Application Signals
+  → View in CloudWatch Application Signals console</code></pre>
+</div>
+<div class="section">
+<h2>ステップ 1: アカウントで Application Signals を有効にする</h2>
+<div class="warning">
+<strong>重要：</strong> Application Signals は、AWS アカウントごとにリージョンごとに1回有効化する必要があります。
+                </div>
+<h3>オプション1：AWS コンソールから有効化する（推奨）</h3>
+<ol>
+<li>AWS コンソール → CloudWatch → Application Signals に移動する</li>
+<li>リージョンを選択する（例： <code>us-east-1</code>)</li>
+<li>「Get Started」または「Enable Application Signals」をクリックする</li>
+<li>有効化されるまで2〜3分待つ</li>
+</ol>
+<h3>オプション2：すでに有効化されているか確認する</h3>
+<pre><code># Check if service-linked role exists
+aws iam get-role \
+  --role-name AWSServiceRoleForCloudWatchApplicationSignals \
+  --region us-east-1
+
+# If role exists, Application Signals is enabled</code></pre>
+<p><strong>出力結果は以下のようになります：</strong> 有効化されている場合はロール ARN、されていない場合はエラーが表示されます。</p>
+</div>
+<div class="section">
+<h2>ステップ2：Python Lambda 関数を準備する</h2>
+<h3>2.1 アプリケーションディレクトリを作成する</h3>
+<pre><code>mkdir -p ~/my-lambda-appsignals-app
+cd ~/my-lambda-appsignals-app</code></pre>
+<h3>2.2 作成する <code>lambda_function.py</code></h3>
+<pre><code>"""
+AWS Application Signals Lambda Function
+Adapted from ECS FastAPI implementation for Lambda
+"""
+import json
+import time
+import random
+import boto3
+import requests
+from typing import Dict, Any
+
+
+def lambda_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """
+    Main Lambda handler with Application Signals auto-instrumentation
+    
+    The AWS Lambda Layer for OpenTelemetry automatically instruments:
+    - HTTP requests (requests library)
+    - AWS SDK calls (boto3)
+    - Lambda function execution
+    - Custom spans and metrics
+    """
+    
+    # Parse the event to determine which endpoint to call
+    path = event.get('path', '/')
+    http_method = event.get('httpMethod', 'GET')
+    
+    try:
+        if path == '/' or path == '':
+            return root_handler(event, context)
+        elif path == '/health':
+            return health_handler(event, context)
+        elif path.startswith('/api/hello/'):
+            name = path.split('/')[-1]
+            return hello_handler(name, event, context)
+        elif path == '/api/slow':
+            return slow_handler(event, context)
+        elif path == '/api/error':
+            return error_handler(event, context)
+        elif path == '/api/external':
+            return external_handler(event, context)
+        elif path == '/api/s3':
+            return s3_handler(event, context)
+        else:
+            return {
+                'statusCode': 404,
+                'headers': {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                'body': json.dumps({
+                    'error': 'Not Found',
+                    'path': path,
+                    'timestamp': time.time()
+                })
+            }
+            
+    except Exception as e:
+        print(f"Error processing request: {str(e)}")
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'error': 'Internal Server Error',
+                'message': str(e),
+                'timestamp': time.time()
+            })
+        }
+
+
+def root_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Root endpoint handler"""
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'message': 'AWS Application Signals Lambda Demo',
+            'timestamp': time.time(),
+            'function_name': context.function_name,
+            'request_id': context.aws_request_id
+        })
+    }
+
+
+def health_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Health check endpoint"""
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'status': 'healthy',
+            'timestamp': time.time(),
+            'function_name': context.function_name,
+            'memory_limit': context.memory_limit_in_mb,
+            'remaining_time': context.get_remaining_time_in_millis()
+        })
+    }
+
+
+def hello_handler(name: str, event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Personalized greeting with simulated processing"""
+    # Simulate some processing time
+    time.sleep(random.uniform(0.01, 0.1))
+    
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'message': f'Hello, {name}!',
+            'timestamp': time.time(),
+            'function_name': context.function_name
+        })
+    }
+
+
+def slow_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Intentionally slow endpoint for latency testing"""
+    time.sleep(random.uniform(0.5, 1.5))
+    
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'message': 'Slow operation completed',
+            'timestamp': time.time(),
+            'duration': '1-1.5 seconds'
+        })
+    }
+
+
+def error_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Endpoint that randomly raises errors for testing error rates"""
+    if random.random() &gt; 0.5:
+        raise Exception("Simulated error for testing Application Signals error tracking")
+    
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+        },
+        'body': json.dumps({
+            'message': 'No error occurred',
+            'timestamp': time.time()
+        })
+    }
+
+
+def external_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Makes external HTTP call for distributed tracing"""
+    try:
+        # This will be automatically traced by OpenTelemetry
+        response = requests.get("https://httpbin.org/delay/1", timeout=5)
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'message': 'External call completed',
+                'external_status_code': response.status_code,
+                'timestamp': time.time()
+            })
+        }
+    except Exception as e:
+        raise Exception(f"External call failed: {str(e)}")
+
+
+def s3_handler(event: Dict[str, Any], context: Any) -&gt; Dict[str, Any]:
+    """Makes AWS S3 call for testing AWS SDK instrumentation"""
+    try:
+        # This will be automatically traced by OpenTelemetry
+        s3_client = boto3.client('s3')
+        
+        # List buckets (this is a safe operation that doesn't require specific permissions)
+        response = s3_client.list_buckets()
+        bucket_names = [bucket['Name'] for bucket in response['Buckets']]
+        
+        return {
+            'statusCode': 200,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'message': 'S3 call completed successfully',
+                'bucket_count': len(bucket_names),
+                'buckets': bucket_names[:5],  # Show first 5 buckets
+                'timestamp': time.time()
+            })
+        }
+    except Exception as e:
+        return {
+            'statusCode': 500,
+            'headers': {
+                'Content-Type': 'application/json',
+                'Access-Control-Allow-Origin': '*'
+            },
+            'body': json.dumps({
+                'error': 'S3 call failed',
+                'message': str(e),
+                'timestamp': time.time()
+            })
+        }</code></pre>
+<h3>2.3 作成する <code>requirements.txt</code></h3>
+<pre><code># Core dependencies for Lambda function
+# OpenTelemetry instrumentation is provided by AWS Lambda Layer
+boto3==1.35.0
+requests==2.32.3</code></pre>
+<div class="warning">
+<strong>重要：</strong> インストールしないでください <code>opentelemetry-*</code> パッケージは AWS Lambda Layer によって提供されます。
+                </div>
+</div>
+<div class="section">
+<h2>ステップ3：Lambda デプロイパッケージを作成する</h2>
+<h3>3.1 変数を設定する</h3>
+<pre><code># Replace with your values
+export AWS_REGION="us-east-1"
+export AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
+export FUNCTION_NAME="my-appsignals-lambda"</code></pre>
+<p>アカウント ID を取得する：</p>
+<pre><code>export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "Account ID: $AWS_ACCOUNT_ID"</code></pre>
+<h3>3.2 デプロイパッケージを作成する</h3>
+<pre><code># Create deployment package
+pip install -r requirements.txt -t ./package
+cp lambda_function.py ./package/
+cd package
+zip -r ../lambda-deployment.zip .
+cd ..</code></pre>
+</div>
+<div class="section">
+<h2>ステップ4：Lambda 用の IAM ロールを作成する</h2>
+<h3>4.1 信頼ポリシーを作成する</h3>
+<pre><code>cat &gt; /tmp/lambda-trust-policy.json &lt;&lt; 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "lambda.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF</code></pre>
+<h3>4.2 実行ロールを作成する</h3>
+<pre><code>aws iam create-role \
+  --role-name ${FUNCTION_NAME}-execution-role \
+  --assume-role-policy-document file:///tmp/lambda-trust-policy.json
+
+# Attach basic Lambda execution policy
+aws iam attach-role-policy \
+  --role-name ${FUNCTION_NAME}-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+# Attach Application Signals policy (CRITICAL!)
+aws iam attach-role-policy \
+  --role-name ${FUNCTION_NAME}-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy
+
+# Attach S3 read policy for testing
+aws iam attach-role-policy \
+  --role-name ${FUNCTION_NAME}-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess</code></pre>
+</div>
+<div class="section">
+<h2>ステップ5：Lambda 関数をデプロイする</h2>
+<h3>5.1 Lambda 関数を作成する</h3>
+<pre><code># Get the role ARN
+ROLE_ARN=$(aws iam get-role \
+  --role-name ${FUNCTION_NAME}-execution-role \
+  --query 'Role.Arn' \
+  --output text)
+
+echo "Role ARN: $ROLE_ARN"
+
+# Create the Lambda function
+aws lambda create-function \
+  --function-name ${FUNCTION_NAME} \
+  --runtime python3.11 \
+  --role ${ROLE_ARN} \
+  --handler lambda_function.lambda_handler \
+  --zip-file fileb://lambda-deployment.zip \
+  --timeout 30 \
+  --memory-size 512 \
+  --region ${AWS_REGION}</code></pre>
+<h3>5.2 OpenTelemetry 用の AWS Lambda Layer を追加する</h3>
+<p><strong>リージョンに対応した正しいレイヤー ARN を取得する：</strong></p>
+<p>対象： <code>us-east-1</code>:</p>
+<pre><code>LAYER_ARN="arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroPython:18"</code></pre>
+<p>他のリージョンについては、 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html#CloudWatch-Application-Signals-Enable-LambdaMain-layer-arns">AWS ドキュメント</a>.</p>
+<pre><code># Add the layer
+aws lambda update-function-configuration \
+  --function-name ${FUNCTION_NAME} \
+  --layers ${LAYER_ARN} \
+  --region ${AWS_REGION}</code></pre>
+<h3>5.3 環境変数を設定する</h3>
+<pre><code>aws lambda update-function-configuration \
+  --function-name ${FUNCTION_NAME} \
+  --environment Variables='{
+    "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",
+    "OTEL_SERVICE_NAME": "'${FUNCTION_NAME}'",
+    "OTEL_RESOURCE_ATTRIBUTES": "service.name='${FUNCTION_NAME}',deployment.environment=lambda:'${AWS_REGION}'"
+  }' \
+  --region ${AWS_REGION}</code></pre>
+</div>
+<div class="section">
+<h2>ステップ6：Lambda 関数をテストする</h2>
+<h3>6.1 基本機能をテストする</h3>
+<pre><code># Test root endpoint
+aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  response.json
+
+cat response.json | jq '.body' | jq fromjson</code></pre>
+<h3>6.2 ヘルスエンドポイントをテストする</h3>
+<pre><code># Test health endpoint
+aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/health", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  health-response.json
+
+cat health-response.json | jq '.body' | jq fromjson</code></pre>
+<h3>6.3 API エンドポイントをテストする</h3>
+<pre><code># Test hello endpoint
+aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/api/hello/TestUser", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  hello-response.json
+
+cat hello-response.json | jq '.body' | jq fromjson
+
+# Test slow endpoint
+aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/api/slow", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  slow-response.json
+
+cat slow-response.json | jq '.body' | jq fromjson
+
+# Test S3 endpoint
+aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/api/s3", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  s3-response.json
+
+cat s3-response.json | jq '.body' | jq fromjson</code></pre>
+<h3>6.4 Application Signals 用のトラフィックを生成する</h3>
+<pre><code># Generate multiple requests to create traces and metrics
+for i in {1..50}; do
+  echo "Request $i"
+  aws lambda invoke \
+    --function-name ${FUNCTION_NAME} \
+    --payload "{\"path\": \"/api/hello/User${i}\", \"httpMethod\": \"GET\"}" \
+    --region ${AWS_REGION} \
+    /dev/null &gt; /dev/null 2&gt;&amp;1
+  
+  aws lambda invoke \
+    --function-name ${FUNCTION_NAME} \
+    --payload '{"path": "/health", "httpMethod": "GET"}' \
+    --region ${AWS_REGION} \
+    /dev/null &gt; /dev/null 2&gt;&amp;1
+done
+
+echo "50 requests sent! Wait 5-10 minutes for Application Signals..."</code></pre>
+</div>
+<div class="section">
+<h2>ステップ7：Application Signals を確認する</h2>
+<h3>7.1 CloudWatch ログを確認する</h3>
+<pre><code># Check Lambda function logs
+aws logs tail /aws/lambda/${FUNCTION_NAME} --region ${AWS_REGION} --since 5m --format short</code></pre>
+<p><strong>以下を確認する：</strong></p>
+<ul>
+<li>アプリケーションログに正常実行が表示される</li>
+<li>OpenTelemetry関連のエラーがない</li>
+</ul>
+<h3>7.2 Application Signals サービスディスカバリーの確認</h3>
+<pre><code># Wait 5-10 minutes after traffic generation
+aws application-signals list-services \
+  --region ${AWS_REGION} \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --query 'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</code></pre>
+<p><strong>期待される結果：</strong> サービスが以下の情報とともに表示されること：</p>
+<ul>
+<li>名前： <code>${FUNCTION_NAME}</code></li>
+<li>環境： <code>lambda:${AWS_REGION}</code></li>
+</ul>
+<h3>7.3 サービスオペレーションの確認</h3>
+<pre><code>aws application-signals list-service-operations \
+  --region ${AWS_REGION} \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --key-attributes Name=${FUNCTION_NAME},Type=Service,Environment=lambda:${AWS_REGION} \
+  --query 'ServiceOperations[*].Name'</code></pre>
+<p><strong>期待されるオペレーション：</strong></p>
+<ul>
+<li><code>lambda_handler</code></li>
+<li>自動インストルメンテーションによる各種内部オペレーション</li>
+</ul>
+<h3>7.4 メトリクスの確認</h3>
+<pre><code># Check Application Signals metrics
+aws cloudwatch list-metrics \
+  --namespace ApplicationSignals \
+  --region ${AWS_REGION} \
+  --dimensions Name=Service,Value=${FUNCTION_NAME} \
+  --query 'Metrics[*].MetricName' \
+  --output text | tr '\t' '\n' | sort -u</code></pre>
+<p><strong>期待されるメトリクス：</strong></p>
+<ul>
+<li>LambdaDuration</li>
+<li>LambdaErrors</li>
+<li>LambdaInvocations</li>
+<li>Latency</li>
+<li>Error</li>
+<li>Fault</li>
+</ul>
+</div>
+<div class="section">
+<h2>ステップ8：AWS コンソールで確認する</h2>
+<h3>コンソールアクセス</h3>
+<ol>
+<li><strong>以下に移動：</strong><br/>
+<code>AWS Console → CloudWatch → Application Signals → Services</code><br/>
+                        または直接リンク：<br/>
+<code>https://${AWS_REGION}.console.aws.amazon.com/cloudwatch/home?region=${AWS_REGION}#application-signals:services</code>
+</li>
+<li><strong>サービスを探す：</strong>
+<ul>
+<li>サービス名：の値 <code>${FUNCTION_NAME}</code></li>
+<li>環境： <code>lambda:${AWS_REGION}</code></li>
+</ul>
+</li>
+<li><strong>探索：</strong>
+<ul>
+<li>サービスマップ：ビジュアルトポロジー</li>
+<li>サービスダッシュボード：レイテンシー、エラー、フォルト</li>
+<li>オペレーション：オペレーションごとのメトリクス</li>
+<li>依存関係：ダウンストリームサービスの呼び出し</li>
+</ul>
+</li>
+</ol>
+</div>
+<div class="section">
+<h2>代替方法：Lambda コンソール経由で有効化する（最もシンプルな方法）</h2>
+<p>AWS コンソールを使用する場合：</p>
+<h3>8.1 コンソールから関数を作成する</h3>
+<ol>
+<li>AWS Lambda コンソールに移動する</li>
+<li>「関数の作成」をクリックする</li>
+<li>「一から作成」を選択する</li>
+<li>関数名： <code>${FUNCTION_NAME}</code></li>
+<li>ランタイム：Python 3.11</li>
+<li>関数を作成する</li>
+</ol>
+<h3>8.2 コードをアップロードする</h3>
+<ol>
+<li>関数コードセクションで、デフォルトのコードを以下のコードに置き換えてください <code>lambda_function.py</code></li>
+<li>「Deploy」をクリックします</li>
+</ol>
+<h3>8.3 Application Signals を有効にする</h3>
+<ol>
+<li>Configuration → Monitoring and operations tools に移動します</li>
+<li>「Edit」をクリックします</li>
+<li>「CloudWatch Application Signals and X-Ray」セクションで：
+                        <ul>
+<li>「Automatically collect application traces and standard application metrics with Application Signals」にチェックを入れます</li>
+<li>「Automatically collect Lambda service traces for end to end visibility with X-Ray」にチェックを入れます</li>
+</ul>
+</li>
+<li>「Save」をクリックします</li>
+</ol>
+<div class="success">
+<strong>以上です！</strong> コンソールが自動的に：
+                    <ul>
+<li>OpenTelemetry 用の AWS Lambda Layer を追加します</li>
+<li>を設定します <code>AWS_LAMBDA_EXEC_WRAPPER</code> 環境変数</li>
+<li>必要な IAM ポリシーをアタッチします</li>
+</ul>
+</div>
+</div>
+<div class="section">
+<h2>トラブルシューティング</h2>
+<h3>問題：サービスが Application Signals に表示されない</h3>
+<p><strong>確認事項：</strong></p>
+<pre><code># 1. Verify Application Signals is enabled
+aws iam get-role \
+  --role-name AWSServiceRoleForCloudWatchApplicationSignals
+
+# 2. Check if the layer is attached
+aws lambda get-function \
+  --function-name ${FUNCTION_NAME} \
+  --query 'Configuration.Layers'
+
+# 3. Check environment variables
+aws lambda get-function-configuration \
+  --function-name ${FUNCTION_NAME} \
+  --query 'Environment.Variables'</code></pre>
+<h3>問題：Lambda 関数のエラー</h3>
+<p><strong>確認事項：</strong></p>
+<pre><code># Check function logs
+aws logs tail /aws/lambda/${FUNCTION_NAME} --region ${AWS_REGION} --since 10m</code></pre>
+<p><strong>よくある問題：</strong></p>
+<ol>
+<li><strong>IAM ポリシーが不足している</strong> - 以下を確認してください <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> がアタッチされていること</li>
+<li><strong>レイヤーの ARN が間違っている</strong> - お使いのリージョンのレイヤー ARN を確認してください</li>
+<li><strong>環境変数が不足している</strong> - 以下を確認してください <code>AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument</code></li>
+</ol>
+<h3>問題：X-Ray にトレースが表示されない</h3>
+<p><strong>よくある原因：</strong></p>
+<ol>
+<li><strong>X-Ray の権限が不足している</strong> - Application Signals ポリシーには X-Ray の権限が含まれています</li>
+<li><strong>レイヤーが機能していない</strong> - レイヤーがアタッチされており、環境変数が設定されていることを確認してください</li>
+<li><strong>トラフィックがない</strong> - トレースを生成するためにリクエストを送信してください</li>
+</ol>
+</div>
+<div class="section">
+<h2>主要な設定の詳細</h2>
+<h3>重要な環境変数</h3>
+<table>
+<tr>
+<th>変数</th>
+<th>値</th>
+<th>目的</th>
+</tr>
+<tr>
+<td><code>AWS_LAMBDA_EXEC_WRAPPER</code></td>
+<td><code>/opt/otel-instrument</code></td>
+<td>OpenTelemetryインストルメンテーションを有効にする</td>
+</tr>
+<tr>
+<td><code>OTEL_SERVICE_NAME</code></td>
+<td><code>${FUNCTION_NAME}</code></td>
+<td>Application Signalsにおけるサービス名</td>
+</tr>
+<tr>
+<td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
+<td><code>service.name=NAME,deployment.environment=lambda:REGION</code></td>
+<td>サービスの識別</td>
+</tr>
+</table>
+<h3>OpenTelemetry用AWS Lambdaレイヤー</h3>
+<p><strong>提供される内容：</strong></p>
+<ul>
+<li>OpenTelemetry Python SDK</li>
+<li>AWS固有のインストルメンテーション</li>
+<li>Application Signalsの統合</li>
+<li>HTTPリクエストおよびAWS SDK呼び出しの自動トレース</li>
+</ul>
+<p><strong>サポートされているリージョン：</strong> 主要なAWSリージョンすべて<br/>
+<strong>サポートされているランタイム：</strong> Python 3.8、3.9、3.10、3.11、3.12</p>
+<h3>IAMポリシーの要件</h3>
+<p><strong>必要なポリシー：</strong> <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code></p>
+<p><strong>以下の権限を含む：</strong></p>
+<ul>
+<li>CloudWatch Logs</li>
+<li>X-Rayトレース</li>
+<li>Application Signalsメトリクス</li>
+<li>CloudWatchメトリクス</li>
+</ul>
+</div>
+<div class="section">
+<h2>クリーンアップ</h2>
+<p>すべてのリソースを削除するには：</p>
+<pre><code># Delete Lambda function
+aws lambda delete-function \
+  --function-name ${FUNCTION_NAME} \
+  --region ${AWS_REGION}
+
+# Delete IAM role
+aws iam delete-role \
+  --role-name ${FUNCTION_NAME}-execution-role
+
+# Clean up local files
+rm -f lambda-deployment.zip response.json health-response.json hello-response.json slow-response.json s3-response.json</code></pre>
+</div>
+<div class="section">
+<h2>成功の基準</h2>
+<p>このガイドに従った後、以下が確認できるはずです：</p>
+<ol>
+<li><strong>Lambda関数の実行</strong> Application Signalsが有効な状態で</li>
+<li><strong>CloudWatchメトリクス</strong> 名前空間内 <code>ApplicationSignals</code>:
+                        <ul>
+<li>Lambda固有のメトリクス（Duration、Errors、Invocations）</li>
+<li>アプリケーション操作メトリクス（Latency、Error、Fault）</li>
+</ul>
+</li>
+<li><strong>Application Signalsコンソール</strong> 表示内容：
+                        <ul>
+<li>サービス一覧に表示されるサービス</li>
+<li>サービスノードを含むサービスマップ</li>
+<li>関数メトリクスを含むオペレーションダッシュボード</li>
+<li>X-Rayのトレース</li>
+</ul>
+</li>
+<li><strong>可視化までの時間：</strong> 最初のリクエストから5〜10分後</li>
+</ol>
+</div>
+<div class="section">
+<h2>主な学習内容</h2>
+<h3>なぜこれが機能するのか</h3>
+<ol>
+<li><strong>AWS Lambda Layer for OpenTelemetry:</strong> AWS公式のインストルメンテーションライブラリを提供</li>
+<li><strong>自動インストルメンテーション:</strong> 基本的なトレースにコード変更は不要</li>
+<li><strong>組み込みのApplication Signals:</strong> LayerにはApplication Signals統合が含まれる</li>
+<li><strong>シンプルな設定:</strong> Layerを追加して環境変数を設定するだけ</li>
+</ol>
+<h3>ECSとの比較</h3>
+<table>
+<tr>
+<th>項目</th>
+<th>Lambda</th>
+<th>ECS</th>
+</tr>
+<tr>
+<td>セットアップの複雑さ</td>
+<td>非常にシンプル</td>
+<td>複雑</td>
+</tr>
+<tr>
+<td>Initコンテナ</td>
+<td>不要</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>CloudWatch Agent</td>
+<td>不要</td>
+<td>必要</td>
+</tr>
+<tr>
+<td>設定</td>
+<td>最小限</td>
+<td>広範囲</td>
+</tr>
+<tr>
+<td>デプロイ時間</td>
+<td>5分</td>
+<td>30分以上</td>
+</tr>
+</table>
+<h3>バージョン互換性</h3>
+<ul>
+<li><strong>AWS Lambda Layer for OpenTelemetry:</strong> 最新バージョン（AWSドキュメントを確認）</li>
+<li><strong>Python:</strong> 3.8, 3.9, 3.10, 3.11, 3.12</li>
+<li><strong>boto3:</strong> 1.35.0+</li>
+<li><strong>requests:</strong> 2.32.3+</li>
+</ul>
+</div>
+<div class="section">
+<h2>FAQ</h2>
+<p><strong>Q: 他のPythonフレームワークでも使用できますか？</strong><br/>
+                A: はい！自動インストルメンテーションはFlask、Djangoなど、あらゆるPythonコードで動作します。</p>
+<p><strong>Q: アプリケーションコードを変更する必要がありますか？</strong><br/>
+                A: 不要です！Lambda レイヤーは、HTTP リクエストと AWS SDK 呼び出しに対して自動インストルメンテーションを提供します。</p>
+<p><strong>Q: カスタムトレース/スパンを追加できますか？</strong><br/>
+                A: はい！レイヤーが提供する OpenTelemetry API をインポートしてください：</p>
+<pre><code>from opentelemetry import trace
+tracer = trace.get_tracer(__name__)</code></pre>
+<p><strong>Q: コールドスタートはどうなりますか？</strong><br/>
+                A: レイヤーがコールドスタートに与えるオーバーヘッドは最小限です。Application Signals のメトリクスを使用して、コールドスタートのパフォーマンスを監視できます。</p>
+<p><strong>Q: Lambda コンテナで使用できますか？</strong><br/>
+                A: はい！同じレイヤーをコンテナベースの Lambda 関数に追加できます。</p>
+</div>
+<div class="section">
+<h2>追加リソース</h2>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">AWS Application Signals ドキュメント</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html">AWS Lambda Layer for OpenTelemetry</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-LambdaMain.html#CloudWatch-Application-Signals-Enable-LambdaMain-layer-arns">リージョン別 Lambda Layer ARN</a></li>
+</ul>
+</div>
+</div>
+</div></body>
+</html>

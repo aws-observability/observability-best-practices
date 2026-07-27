@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>언어별 가이드 — CloudWatch APM</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+    </header>
+    <div class="site">
+      <aside class="left-nav" id="left-nav"></aside>
+      <main class="content">
+        <header><h1>언어별 가이드</h1></header>
+        <article>
+          <section>
+            <p>CloudWatch Application Signals를 활성화할 플랫폼과 런타임을 선택하세요. 각 가이드는 <code>apm-center</code>에서 관리되는 활성화 콘텐츠를 기반으로 하며 동일한 문서 UI로 제공됩니다.</p>
+          </section>
+          <section>
+            <h2>활성화 가이드 (16가지 조합)</h2>
+            <div id="guide-grid">가이드 로딩 중...</div>
+          </section>
+        </article>
+      </main>
+    </div>
+
+    <script>
+      (() => {
+        const grid = document.getElementById('guide-grid');
+        const isDocusaurus = location.pathname.includes('/apm/');
+        const apmRoot = isDocusaurus ? location.pathname.split('/apm/')[0] + '/apm/' : '/';
+        const viewerBase = isDocusaurus ? 'pages/language-guide/?combo=' : 'pages/language-guide.html?combo=';
+
+        const combos = [
+          { platform: 'Lambda', id: 'lambda-java', label: 'Java' },
+          { platform: 'Lambda', id: 'lambda-python', label: 'Python' },
+          { platform: 'Lambda', id: 'lambda-nodejs', label: 'Node.js' },
+          { platform: 'Lambda', id: 'lambda-dotnet', label: '.NET' },
+          { platform: 'ECS', id: 'ecs-java', label: 'Java' },
+          { platform: 'ECS', id: 'ecs-python', label: 'Python' },
+          { platform: 'ECS', id: 'ecs-nodejs', label: 'Node.js' },
+          { platform: 'ECS', id: 'ecs-dotnet', label: '.NET' },
+          { platform: 'EKS', id: 'eks-java', label: 'Java' },
+          { platform: 'EKS', id: 'eks-python', label: 'Python' },
+          { platform: 'EKS', id: 'eks-nodejs', label: 'Node.js' },
+          { platform: 'EKS', id: 'eks-dotnet', label: '.NET' },
+          { platform: 'EC2', id: 'ec2-java', label: 'Java' },
+          { platform: 'EC2', id: 'ec2-python', label: 'Python' },
+          { platform: 'EC2', id: 'ec2-nodejs', label: 'Node.js' },
+          { platform: 'EC2', id: 'ec2-dotnet', label: '.NET' },
+        ];
+
+        const byPlatform = combos.reduce((acc, c) => {
+          (acc[c.platform] ||= []).push(c);
+          return acc;
+        }, {});
+
+        let html = '<div class="guide-grid">';
+        Object.keys(byPlatform).forEach((platform) => {
+          html += `<div class="guide-card"><h3>${platform}</h3><ul>`;
+          byPlatform[platform].forEach((c) => {
+            const href = apmRoot + viewerBase + encodeURIComponent(c.id);
+            html += `<li><a href="${href}">${c.label}</a></li>`;
+          });
+          html += '</ul></div>';
+        });
+        html += '</div>';
+        grid.innerHTML = html;
+      })();
+    </script>
+
+    <script src="../assets/js/site.js"></script>
+  </body>
+</html>

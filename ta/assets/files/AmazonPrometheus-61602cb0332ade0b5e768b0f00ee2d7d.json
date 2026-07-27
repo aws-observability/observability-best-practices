@@ -1,0 +1,685 @@
+{
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": "-- Grafana --",
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "target": {
+            "limit": 100,
+            "matchAny": false,
+            "tags": [],
+            "type": "dashboard"
+          },
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 14,
+    "iteration": 1678997649417,
+    "links": [],
+    "liveNow": false,
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 2,
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "orange",
+                  "value": 70
+                },
+                {
+                  "color": "red",
+                  "value": 85
+                }
+              ]
+            },
+            "unit": "currencyUSD"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 10,
+          "x": 0,
+          "y": 0
+        },
+        "id": 4,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "/^cost$/",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "column": "cost",
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "rawSQL": "select\r\n  sum(line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')",
+            "refId": "A",
+            "table": "prometheus_cost_only"
+          }
+        ],
+        "title": "Prometheus Cost - (YTD)",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisGridShow": true,
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "axisSoftMin": 0,
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              }
+            },
+            "mappings": [
+              {
+                "options": {
+                  "": {
+                    "color": "dark-blue",
+                    "index": 0
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "none"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cost"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "currencyUSD"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 14,
+          "x": 10,
+          "y": 0
+        },
+        "id": 7,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "colorByField": "line_item_usage_account_id",
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "orientation": "horizontal",
+          "showValue": "always",
+          "stacking": "none",
+          "text": {},
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "xField": "line_item_usage_account_id",
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "rawSQL": "select\r\n  line_item_usage_account_id,\r\n  sum (line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_usage_account_id",
+            "refId": "A"
+          }
+        ],
+        "title": "AWS Accounts - Cost (YTD)",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "axisSoftMin": 0,
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              }
+            },
+            "decimals": 2,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "currencyUSD"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 11,
+          "x": 0,
+          "y": 8
+        },
+        "id": 5,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom"
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSQL": "select\r\n  line_item_operation,\r\n  sum (line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_operation",
+            "refId": "A"
+          }
+        ],
+        "title": "Operations Cost - (YTD)",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "palette-classic"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "mappings": []
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 11,
+          "w": 13,
+          "x": 11,
+          "y": 8
+        },
+        "id": 8,
+        "options": {
+          "displayLabels": [
+            "percent"
+          ],
+          "legend": {
+            "displayMode": "list",
+            "placement": "right",
+            "values": []
+          },
+          "pieType": "donut",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": true
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSQL": "select\r\n  line_item_resource_id,\r\n  sum (line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_resource_id\r\nORDER BY cost;\r\n\r\n",
+            "refId": "A"
+          }
+        ],
+        "title": "Workspaces Cost - (YTD)",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "continuous-GrYlRd"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cost"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "currencyUSD"
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 9,
+          "w": 24,
+          "x": 0,
+          "y": 19
+        },
+        "id": 9,
+        "options": {
+          "displayMode": "lcd",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [],
+            "fields": "",
+            "values": true
+          },
+          "showUnfilled": true
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "hide": false,
+            "rawSQL": "select\r\n  line_item_operation,\r\n  line_item_resource_id,\r\n  sum (line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_operation, line_item_resource_id\r\nORDER BY cost;",
+            "refId": "A"
+          }
+        ],
+        "title": "Operations per Workspace Cost - (YTD)",
+        "type": "bargauge"
+      },
+      {
+        "datasource": {
+          "type": "grafana-athena-datasource",
+          "uid": "u-g8lI04k"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "align": "auto",
+              "displayMode": "auto"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "cost"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 164
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "line_item_resource_id"
+              },
+              "properties": [
+                {
+                  "id": "custom.width",
+                  "value": 495
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 15,
+          "w": 24,
+          "x": 0,
+          "y": 28
+        },
+        "id": 2,
+        "options": {
+          "footer": {
+            "fields": "",
+            "reducer": [
+              "sum"
+            ],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "year"
+            }
+          ]
+        },
+        "pluginVersion": "8.4.7",
+        "targets": [
+          {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "datasource": {
+              "type": "grafana-athena-datasource",
+              "uid": "u-g8lI04k"
+            },
+            "format": 1,
+            "rawSQL": "SELECT\r\n  line_item_usage_account_id\r\n, line_item_resource_id\r\n, line_item_operation\r\n, line_item_usage_type\r\n, month\r\n, year\r\n, \"sum\"(cast(line_item_unblended_cost as DECIMAL(16,2))) AS cost\r\n, \"sum\"(line_item_usage_amount) \"Usage\"\r\nFROM\r\n  curs3isengard_with_resourceids\r\nWHERE (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY 1, 2, 3, 4, 5, 6",
+            "refId": "A",
+            "table": "curs3isengard_with_resourceids"
+          }
+        ],
+        "title": "Prometheus",
+        "type": "table"
+      }
+    ],
+    "refresh": false,
+    "schemaVersion": 35,
+    "style": "dark",
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "u-g8lI04k"
+          },
+          "definition": "",
+          "hide": 0,
+          "includeAll": true,
+          "label": "AWS Account",
+          "multi": true,
+          "name": "Account",
+          "options": [],
+          "query": {
+            "column": "line_item_usage_account_id",
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "format": 1,
+            "rawSQL": "select\r\n  line_item_usage_account_id,\r\n  sum (line_item_unblended_cost) AS cost\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_usage_account_id\r\n",
+            "table": "prometheus_cost_only"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "u-g8lI04k"
+          },
+          "definition": "",
+          "hide": 0,
+          "includeAll": true,
+          "multi": true,
+          "name": "Workspace",
+          "options": [],
+          "query": {
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "format": 1,
+            "rawSQL": "select\r\n  line_item_resource_id\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_resource_id"
+          },
+          "refresh": 1,
+          "regex": "/.*workspace/([^]*).*/",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        },
+        {
+          "current": {
+            "selected": true,
+            "text": [
+              "All"
+            ],
+            "value": [
+              "$__all"
+            ]
+          },
+          "datasource": {
+            "type": "grafana-athena-datasource",
+            "uid": "u-g8lI04k"
+          },
+          "definition": "",
+          "hide": 0,
+          "includeAll": true,
+          "label": "Operation",
+          "multi": true,
+          "name": "Operation",
+          "options": [],
+          "query": {
+            "column": "line_item_operation",
+            "connectionArgs": {
+              "catalog": "__default",
+              "database": "__default",
+              "region": "__default"
+            },
+            "format": 1,
+            "rawSQL": "select\r\n  line_item_operation\r\nfrom curs3isengard_with_resourceids\r\nwhere\r\n  (\"line_item_product_code\" = 'AmazonPrometheus')\r\nGROUP BY line_item_operation",
+            "table": "prometheus_cost_only"
+          },
+          "refresh": 1,
+          "regex": "",
+          "skipUrlSync": false,
+          "sort": 0,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "",
+    "title": "Amazon Prometheus 2023",
+    "uid": "yCmLT01Vz",
+    "version": 26,
+    "weekStart": ""
+  }

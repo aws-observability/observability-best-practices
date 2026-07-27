@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>संदर्भ — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>संदर्भ</h1></header>
+      <article>
+        <section>
+          <h2>सर्विस सीमाएं और कोटा</h2>
+          <p>CloudWatch Application Signals की सीमाओं और कोटा को समझना।</p>
+        </section>
+
+        <section>
+          <h3>सीमाएं और कोटा</h3>
+          <p>Application Signals CloudWatch और AWS X-Ray पर निर्भर करता है। सीमाएं (इनजेशन, क्वेरी रेट, और कोटा) उन सर्विसेज़ द्वारा नियंत्रित होती हैं और समय के साथ बदल सकती हैं। वर्तमान मानों के लिए आधिकारिक दस्तावेज़ीकरण का उपयोग करें।</p>
+          <ul>
+            <li><strong>Application Signals:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals डॉक्स</a></li>
+            <li><strong>CloudWatch कोटा:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch सर्विस कोटा</a></li>
+            <li><strong>AWS X-Ray कोटा:</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API थ्रॉटलिंग और सीमाएं</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch मेट्रिक रिटेंशन (सामान्य संदर्भ)</h3>
+          <p>CloudWatch विभिन्न रेज़ोल्यूशन पर मेट्रिक डेटा बनाए रखता है। पूर्ण रिटेंशन मॉडल के लिए CloudWatch डॉक्स देखें।</p>
+          <ul>
+            <li><strong>1-मिनट रेज़ोल्यूशन:</strong> 15 दिन</li>
+            <li><strong>5-मिनट रेज़ोल्यूशन:</strong> 63 दिन</li>
+            <li><strong>1-घंटा रेज़ोल्यूशन:</strong> 15 महीने</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>सर्विस कोटा</h3>
+
+          <h4>Application Signals:</h4>
+          <ul>
+            <li><strong>प्रति अकाउंट सर्विसेज़:</strong> 1,000</li>
+            <li><strong>प्रति सर्विस ऑपरेशन:</strong> 100</li>
+            <li><strong>कस्टम मेट्रिक्स:</strong> प्रति सर्विस 30</li>
+          </ul>
+
+          <h4>RUM:</h4>
+          <ul>
+            <li><strong>प्रति अकाउंट ऐप मॉनिटर:</strong> 20</li>
+            <li><strong>प्रति सेकंड इवेंट:</strong> 10,000</li>
+            <li><strong>इवेंट आकार:</strong> 64 KB</li>
+          </ul>
+
+          <h4>Synthetics:</h4>
+          <ul>
+            <li><strong>प्रति अकाउंट कैनरी:</strong> 100</li>
+            <li><strong>कैनरी निष्पादन समय:</strong> अधिकतम 15 मिनट</li>
+            <li><strong>कैनरी आकार:</strong> 1 GB (अनज़िप्ड)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>शब्दावली</h2>
+          <p>CloudWatch Application Signals में प्रमुख शब्द और अवधारणाएं।</p>
+        </section>
+
+        <section>
+          <h3>मूल अवधारणाएं</h3>
+
+          <h4>एप्लिकेशन परफ़ॉर्मेंस मॉनिटरिंग (APM)</h4>
+          <p>सॉफ़्टवेयर एप्लिकेशन के प्रदर्शन और उपलब्धता की निगरानी और प्रबंधन की प्रथा।</p>
+
+          <h4>डिस्ट्रिब्यूटेड ट्रेसिंग</h4>
+          <p>डिस्ट्रिब्यूटेड सिस्टम में अनुरोधों को ट्रैक करने की एक विधि, जो आपको कई सर्विसेज़ में अनुरोधों के पथ और प्रदर्शन को समझने की अनुमति देती है।</p>
+
+          <h4>सर्विस मैप</h4>
+          <p>आपके एप्लिकेशन के आर्किटेक्चर का विज़ुअल प्रतिनिधित्व जो दिखाता है कि सर्विसेज़ कैसे कनेक्ट और इंटरैक्ट करती हैं।</p>
+
+          <h4>स्पैन</h4>
+          <p>एक ट्रेस के भीतर एक एकल ऑपरेशन, जो डेटाबेस क्वेरी या API कॉल जैसे कार्य की एक इकाई का प्रतिनिधित्व करता है।</p>
+
+          <h4>ट्रेस</h4>
+          <p>आपके एप्लिकेशन के माध्यम से एक अनुरोध की पूर्ण एंड-टू-एंड यात्रा, जिसमें कई स्पैन शामिल होते हैं।</p>
+        </section>
+
+        <section>
+          <h3>इंस्ट्रूमेंटेशन शब्द</h3>
+
+          <h4>ऑटो-इंस्ट्रूमेंटेशन</h4>
+          <p>कोड परिवर्तन की आवश्यकता के बिना एप्लिकेशन में observability कोड का स्वचालित जोड़ना।</p>
+
+          <h4>मैनुअल इंस्ट्रूमेंटेशन</h4>
+          <p>एप्लिकेशन सोर्स कोड में ट्रेसिंग और मेट्रिक्स कोड का स्पष्ट जोड़ना।</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>एक ओपन-सोर्स observability फ्रेमवर्क जो इंस्ट्रूमेंटेशन के लिए वेंडर-न्यूट्रल API प्रदान करता है।</p>
+
+          <h4>सैंपलिंग</h4>
+          <p>observability और लागत और प्रदर्शन के बीच संतुलन बनाने के लिए कौन से अनुरोधों को ट्रेस करना है यह चुनने की प्रक्रिया।</p>
+
+          <h4>कॉन्टेक्स्ट प्रोपेगेशन</h4>
+          <p>ट्रेस निरंतरता बनाए रखने के लिए सर्विसेज़ के बीच ट्रेस कॉन्टेक्स्ट पास करने का तंत्र।</p>
+        </section>
+
+        <section>
+          <h3>मेट्रिक्स और मॉनिटरिंग</h3>
+
+          <h4>गोल्डन सिग्नल</h4>
+          <p>एप्लिकेशन स्वास्थ्य की निगरानी के लिए चार प्रमुख मेट्रिक्स: लेटेंसी, थ्रूपुट, एरर रेट, और सैचुरेशन।</p>
+
+          <h4>लेटेंसी</h4>
+          <p>एक अनुरोध को प्रोसेस करने में लगने वाला समय, आमतौर पर पर्सेंटाइल (P50, P90, P99) में मापा जाता है।</p>
+
+          <h4>थ्रूपुट</h4>
+          <p>अनुरोधों को प्रोसेस करने की दर, आमतौर पर प्रति सेकंड अनुरोधों के रूप में मापा जाता है।</p>
+
+          <h4>एरर रेट</h4>
+          <p>अनुरोधों का वह प्रतिशत जो एरर में परिणत होता है।</p>
+
+          <h4>सैचुरेशन</h4>
+          <p>सिस्टम रिसोर्स के उपयोग की डिग्री।</p>
+
+          <h4>सर्विस लेवल ऑब्जेक्टिव (SLO)</h4>
+          <p>सर्विस प्रदाताओं और उपभोक्ताओं के बीच सहमत सर्विस गुणवत्ता का एक लक्ष्य स्तर।</p>
+
+          <h4>सर्विस लेवल इंडिकेटर (SLI)</h4>
+          <p>प्रदान किए गए सर्विस स्तर का एक मापने योग्य पहलू, जैसे लेटेंसी या उपलब्धता।</p>
+        </section>
+
+        <section>
+          <h3>RUM और Synthetics</h3>
+
+          <h4>रियल यूज़र मॉनिटरिंग (RUM)</h4>
+          <p>प्रोडक्शन में वेब एप्लिकेशन के साथ वास्तविक उपयोगकर्ता इंटरैक्शन की निगरानी।</p>
+
+          <h4>सिंथेटिक मॉनिटरिंग</h4>
+          <p>सिम्युलेटेड उपयोगकर्ता इंटरैक्शन का उपयोग करके एप्लिकेशन का स्वचालित परीक्षण।</p>
+
+          <h4>कैनरी</h4>
+          <p>एक सिंथेटिक मॉनिटरिंग स्क्रिप्ट जो आपके एप्लिकेशन के विरुद्ध स्वचालित परीक्षण चलाती है।</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>वेब पर उपयोगकर्ता अनुभव मापने के लिए Google के मेट्रिक्स: LCP, FID, और CLS।</p>
+
+          <h4>Largest Contentful Paint (LCP)</h4>
+          <p>स्क्रीन पर सबसे बड़े कंटेंट एलिमेंट को रेंडर होने में लगने वाला समय।</p>
+
+          <h4>First Input Delay (FID)</h4>
+          <p>उपयोगकर्ता पहली बार पेज के साथ इंटरैक्ट करने से लेकर ब्राउज़र के रिस्पॉन्ड करने तक का समय।</p>
+
+          <h4>Cumulative Layout Shift (CLS)</h4>
+          <p>विज़ुअल स्थिरता का एक माप, अप्रत्याशित लेआउट शिफ्ट की मात्रा निर्धारित करता है।</p>
+        </section>
+
+        <section>
+          <h3>AWS-विशिष्ट शब्द</h3>
+
+          <h4>Application Signals</h4>
+          <p>AWS का यूनिफ़ाइड observability समाधान जो APM, RUM, और Synthetics को जोड़ता है।</p>
+
+          <h4>X-Ray</h4>
+          <p>AWS की डिस्ट्रिब्यूटेड ट्रेसिंग सर्विस, अब Application Signals के साथ एकीकृत।</p>
+
+          <h4>CloudWatch</h4>
+          <p>AWS की मॉनिटरिंग और observability सर्विस जो मेट्रिक्स, लॉग्स, और ट्रेसेज़ एकत्र करती है।</p>
+
+          <h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+          <p>AWS सर्विसेज़ के लिए अनुकूलित OpenTelemetry का AWS वितरण।</p>
+        </section>
+
+        <section>
+          <h2>समर्थित रनटाइम और फ्रेमवर्क</h2>
+          <p>Application Signals द्वारा समर्थित प्रोग्रामिंग भाषाएं और फ्रेमवर्क।</p>
+        </section>
+
+        <section>
+          <h3>ऑटो-इंस्ट्रूमेंटेशन सपोर्ट</h3>
+
+          <p>आधिकारिक संगतता और रनटाइम/वर्ज़न मैट्रिक्स के लिए, देखें <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">समर्थित सिस्टम</a>। मुख्य बातें:</p>
+
+          <ul>
+            <li><strong>Java:</strong> JVM 8/11/17/21/23 (फ्रेमवर्क सपोर्ट ADOT/OpenTelemetry Java इंस्ट्रूमेंटेशन का अनुसरण करता है)।</li>
+            <li><strong>Python:</strong> Python 3.9+ (फ्रेमवर्क सपोर्ट ADOT/OpenTelemetry Python इंस्ट्रूमेंटेशन का अनुसरण करता है)।</li>
+            <li><strong>Node.js:</strong> Node 14/16/18/20/22 (फ्रेमवर्क सपोर्ट ADOT/OpenTelemetry JS इंस्ट्रूमेंटेशन का अनुसरण करता है)।</li>
+            <li><strong>.NET:</strong> x86-64 या ARM64 पर समर्थित; Linux x64/ARM64 और Windows Server 2022 x64 (लाइब्रेरी सपोर्ट ADOT/OpenTelemetry .NET इंस्ट्रूमेंटेशन का अनुसरण करता है)।</li>
+            <li><strong>PHP/Ruby/Go:</strong> OpenTelemetry ज़ीरो-कोड/ऑटो-इंस्ट्रूमेंटेशन पाथ के माध्यम से समर्थित (इन भाषाओं के लिए कोई ADOT SDK नहीं)।</li>
+          </ul>
+
+          <h4>नोट्स और ज्ञात विचार</h4>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM सपोर्ट सीमित है; डॉक्स में ESM-विशिष्ट सेटअप का पालन न करें तो CommonJS को प्राथमिकता दें।</li>
+            <li><strong>Python:</strong> कंटेनराइज़्ड ऐप्स को <code>PYTHONPATH</code> सेट करने की आवश्यकता हो सकती है (ज्ञात OTel ऑटोइंस्ट्रूमेंटेशन समस्या)।</li>
+            <li><strong>.NET:</strong> ADOT .NET में AWS SDK for .NET V4 के साथ सीमाएं हैं; पूर्ण सपोर्ट के लिए AWS SDK V3 अनुशंसित है।</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>मैनुअल इंस्ट्रूमेंटेशन</h3>
+          <p>OpenTelemetry SDK के माध्यम से सभी प्रमुख प्रोग्रामिंग भाषाएं समर्थित हैं:</p>
+          <ul>
+            <li>Java, Scala, Kotlin</li>
+            <li>Python, Ruby</li>
+            <li>JavaScript/TypeScript, Go</li>
+            <li>.NET (C#, F#, VB.NET)</li>
+            <li>PHP, Rust, C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>कॉन्फ़िगरेशन संदर्भ</h2>
+          <p>सामान्य कॉन्फ़िगरेशन विकल्प और एनवायरनमेंट वेरिएबल।</p>
+        </section>
+
+        <section>
+          <h3>एनवायरनमेंट वेरिएबल</h3>
+
+          <h4>OpenTelemetry कॉन्फ़िगरेशन:</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - आपकी सर्विस का नाम</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - ट्रेस एक्सपोर्टर (otlp, jaeger, zipkin)</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLP एंडपॉइंट URL</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - सैंपलिंग रणनीति</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - सैंपलिंग पैरामीटर</li>
+          </ul>
+
+          <h4>AWS-विशिष्ट कॉन्फ़िगरेशन:</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - AWS रीजन</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Ray डेमन एड्रेस</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - सर्विस एट्रिब्यूट (Application Map में कस्टम ग्रुपिंग के लिए भी उपयोग किया जाता है)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>सैंपलिंग कॉन्फ़िगरेशन</h3>
+
+          <h4>सैंपलिंग रणनीतियां:</h4>
+          <ul>
+            <li><code>always_on</code> - सभी ट्रेसेज़ सैंपल करें</li>
+            <li><code>always_off</code> - कोई ट्रेस सैंपल न करें</li>
+            <li><code>traceidratio</code> - अनुपात के आधार पर सैंपल करें (जैसे, 10% के लिए 0.1)</li>
+            <li><code>parentbased_always_on</code> - पैरेंट सैंपलिंग निर्णय का सम्मान करें</li>
+            <li><code>parentbased_traceidratio</code> - पैरेंट-आधारित अनुपात सैंपलिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>लागत अनुकूलन</h2>
+          <p>Observability लागत को नियंत्रित करने की रणनीतियां।</p>
+        </section>
+
+        <section>
+          <h3>सैंपलिंग रणनीतियां</h3>
+          <ul>
+            <li><strong>प्रोडक्शन:</strong> 5-10% सैंपलिंग रेट</li>
+            <li><strong>डेवलपमेंट:</strong> 50-100% सैंपलिंग रेट</li>
+            <li><strong>एरर ट्रेसेज़:</strong> एरर वाले ट्रेसेज़ को हमेशा सैंपल करें</li>
+            <li><strong>उच्च-मूल्य ऑपरेशन:</strong> महत्वपूर्ण पाथ के लिए 100% सैंपलिंग</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>डेटा रिटेंशन नीतियां</h3>
+          <p>रिटेंशन अंतर्निहित टेलीमेट्री स्टोर (उदाहरण के लिए, CloudWatch मेट्रिक्स/लॉग्स और AWS X-Ray ट्रेसेज़) द्वारा नियंत्रित होता है। उन सर्विसेज़ में रिटेंशन कॉन्फ़िगर करें और इसे अपनी समस्या निवारण और अनुपालन आवश्यकताओं के साथ संरेखित करें।</p>
+        </section>
+
+        <section>
+          <h3>रिसोर्स अनुकूलन</h3>
+          <ul>
+            <li><strong>बैच एक्सपोर्ट:</strong> नेटवर्क ओवरहेड कम करें</li>
+            <li><strong>कंप्रेशन:</strong> डेटा कंप्रेशन सक्षम करें</li>
+            <li><strong>फ़िल्टरिंग:</strong> अनावश्यक स्पैन और एट्रिब्यूट हटाएं</li>
+            <li><strong>बफ़रिंग:</strong> उचित बफ़र आकार का उपयोग करें</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

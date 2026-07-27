@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>故障排查 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>故障排查</h1></header>
+      <article>
+        <section>
+          <h2>常见问题</h2>
+          <p>本节涵盖实施 CloudWatch Application Signals 时最常遇到的问题及其解决方法。</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch 中未显示链路追踪</h3>
+
+          <h4>可能的原因：</h4>
+          <ul>
+            <li>服务未启用 Application Signals</li>
+            <li>IAM 权限不正确</li>
+            <li>代理未正确配置或未运行</li>
+            <li>采样率设置过低</li>
+            <li>到 CloudWatch 的网络连接问题</li>
+          </ul>
+
+          <h4>解决方案：</h4>
+          <ol>
+            <li>在 AWS 控制台中验证 Application Signals 已启用</li>
+            <li>检查 IAM 权限是否包含 <code>cloudwatch:PutMetricData</code> 和 <code>xray:PutTraceSegments</code></li>
+            <li>确认代理正在运行且配置正确</li>
+            <li>临时将采样率提高到 100% 进行测试</li>
+            <li>检查 VPC 安全组和 NACL 是否允许到 CloudWatch 的出站流量</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>链路追踪缺失或不完整</h3>
+
+          <h4>常见问题：</h4>
+          <ul>
+            <li>上下文未在服务间传播</li>
+            <li>部分服务未插桩</li>
+            <li>采样丢弃了 span</li>
+            <li>代理配置问题</li>
+          </ul>
+
+          <h4>调试步骤：</h4>
+          <ol>
+            <li>检查服务拓扑图以识别未插桩的服务</li>
+            <li>验证链路追踪上下文头是否被传递（例如 <code>x-amzn-trace-id</code>）</li>
+            <li>查看代理日志是否有配置错误</li>
+            <li>使用 100% 采样进行测试以排除采样问题</li>
+            <li>使用链路追踪搜索查找部分链路追踪</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>插桩开销过高</h3>
+
+          <h4>症状：</h4>
+          <ul>
+            <li>CPU 使用率增加</li>
+            <li>内存消耗增高</li>
+            <li>延迟增加</li>
+            <li>应用程序性能下降</li>
+          </ul>
+
+          <h4>优化策略：</h4>
+          <ul>
+            <li>降低采样率（生产环境从 10% 开始）</li>
+            <li>使用基于头部的采样而非尾部采样</li>
+            <li>配置适当的 span 限制</li>
+            <li>批量导出 span</li>
+            <li>监控插桩指标</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM 数据未显示</h3>
+
+          <h4>检查清单：</h4>
+          <ul>
+            <li>RUM Web 客户端已正确安装和加载</li>
+            <li>应用程序 ID 和配置正确</li>
+            <li>已为 RUM 域配置 CORS 头</li>
+            <li>内容安全策略允许 RUM 脚本</li>
+            <li>浏览器控制台无 JavaScript 错误</li>
+          </ul>
+
+          <h4>验证：</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>Synthetic 金丝雀失败</h3>
+
+          <h4>常见原因：</h4>
+          <ul>
+            <li>金丝雀 VPC 的网络连接问题</li>
+            <li>认证或授权失败</li>
+            <li>应用程序变更破坏了测试脚本</li>
+            <li>金丝雀运行时或依赖项过时</li>
+          </ul>
+
+          <h4>调试：</h4>
+          <ol>
+            <li>查看 CloudWatch Logs 中的金丝雀日志</li>
+            <li>在本地测试金丝雀脚本</li>
+            <li>检查 VPC 路由和安全组</li>
+            <li>如需要则更新金丝雀运行时</li>
+            <li>验证应用程序端点可访问</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>调试指南</h2>
+          <p>用于诊断复杂问题的分步指南。</p>
+        </section>
+
+        <section>
+          <h3>调试链路追踪上下文传播</h3>
+
+          <h4>步骤 1：验证插桩</h4>
+          <p>检查调用链中的所有服务是否都已正确插桩：</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>步骤 2：检查代理配置</h4>
+          <p>验证代理配置文件和环境变量。</p>
+
+          <h4>步骤 3：端到端测试</h4>
+          <p>发起一个测试请求并追踪它通过所有服务。</p>
+        </section>
+
+        <section>
+          <h3>性能问题诊断</h3>
+
+          <h4>识别瓶颈：</h4>
+          <ol>
+            <li>检查服务拓扑图中的高延迟服务</li>
+            <li>检查链路追踪时间线中的慢速 span</li>
+            <li>查看资源指标（CPU、内存、磁盘 I/O）</li>
+            <li>在日志中查找错误模式</li>
+            <li>检查数据库查询性能</li>
+          </ol>
+
+          <h4>常见瓶颈：</h4>
+          <ul>
+            <li>需要优化数据库查询</li>
+            <li>外部 API 调用超时</li>
+            <li>资源限制（CPU/内存）</li>
+            <li>线程池耗尽</li>
+            <li>服务间网络延迟</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>代理故障排查</h3>
+
+          <h4>检查代理状态：</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>常见代理问题：</h4>
+          <ul>
+            <li>Java 代理版本与 JVM 不匹配</li>
+            <li>缺少依赖项或库</li>
+            <li>配置文件语法错误</li>
+            <li>日志文件写入权限问题</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>工具和命令</h2>
+          <p>用于故障排查的实用工具和命令。</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI 命令</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>日志分析</h3>
+          <p>使用 CloudWatch Logs Insights 分析遥测数据：</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>获取帮助</h2>
+          <p>当您需要额外帮助时：</p>
+
+          <h3>文档资源：</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals 用户指南</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics 用户指南</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM 用户指南</a></li>
+          </ul>
+
+          <h3>支持选项：</h3>
+          <ul>
+            <li>AWS Support Center</li>
+            <li>AWS re:Post 社区</li>
+            <li>OpenTelemetry 项目的 GitHub issues</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

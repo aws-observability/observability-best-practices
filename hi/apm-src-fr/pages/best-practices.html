@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Bonnes pratiques — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Bonnes pratiques</h1></header>
+      <article>
+        <section>
+          <h2>Bonnes pratiques d'instrumentation</h2>
+          <p>Une instrumentation efficace est la clé pour obtenir des informations précieuses à partir de vos données d'observabilité. Suivez ces bonnes pratiques pour vous assurer que votre instrumentation fournit une valeur maximale tout en minimisant la surcharge.</p>
+        </section>
+
+        <section>
+          <h3>Quoi instrumenter</h3>
+          <p>Concentrez-vous sur l'instrumentation des parties les plus critiques de votre application :</p>
+
+          <h4>Priorité élevée :</h4>
+          <ul>
+            <li>Points de terminaison d'API publics et opérations orientées utilisateur</li>
+            <li>Requêtes de base de données et appels de services externes</li>
+            <li>Flux de travail et transactions critiques pour l'entreprise</li>
+            <li>Chemins d'erreur et gestion des exceptions</li>
+          </ul>
+
+          <h4>Priorité moyenne :</h4>
+          <ul>
+            <li>Communication interne entre services</li>
+            <li>Tâches en arrière-plan et tâches planifiées</li>
+            <li>Opérations de cache</li>
+          </ul>
+
+          <h4>Priorité basse :</h4>
+          <ul>
+            <li>Fonctions utilitaires simples</li>
+            <li>Service de contenu statique</li>
+            <li>Points de terminaison de vérification de santé</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Conventions de nommage</h3>
+          <p>Un nommage cohérent facilite la recherche et le filtrage de vos traces :</p>
+
+          <h4>Noms des spans :</h4>
+          <ul>
+            <li>Utilisez des minuscules avec des tirets : <code>http-get-user-profile</code></li>
+            <li>Incluez le type d'opération : <code>db-query-users</code>, <code>redis-get-session</code></li>
+            <li>Soyez descriptif mais concis : évitez les noms génériques comme « process » ou « handle »</li>
+          </ul>
+
+          <h4>Noms des services :</h4>
+          <ul>
+            <li>Utilisez un nommage de service cohérent entre les environnements</li>
+            <li>Incluez l'environnement dans le nom du service pour les configurations multi-environnements</li>
+            <li>Suivez les conventions de nommage de votre organisation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Attributs et étiquettes</h3>
+          <p>Utilisez des attributs pour ajouter du contexte à vos spans et traces :</p>
+
+          <h4>Attributs standards :</h4>
+          <ul>
+            <li><code>http.method</code> - Méthode HTTP (GET, POST, etc.)</li>
+            <li><code>http.url</code> - URL de la requête (attention aux informations personnelles)</li>
+            <li><code>http.status_code</code> - Code de statut de la réponse HTTP</li>
+            <li><code>db.system</code> - Type de base de données (mysql, postgres, etc.)</li>
+            <li><code>db.name</code> - Nom de la base de données</li>
+            <li><code>db.operation</code> - Opération de base de données (SELECT, INSERT, etc.)</li>
+          </ul>
+
+          <h4>Attributs personnalisés :</h4>
+          <ul>
+            <li><code>user.id</code> - Identifiant utilisateur (haché si information personnelle)</li>
+            <li><code>business.operation</code> - Type d'opération métier</li>
+            <li><code>version</code> - Version de l'application</li>
+            <li><code>environment</code> - Environnement de déploiement</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Considérations relatives aux informations personnelles et à la sécurité</h3>
+          <p>Protégez les données sensibles dans votre télémétrie :</p>
+
+          <h4>Ne jamais inclure :</h4>
+          <ul>
+            <li>Mots de passe, clés API ou jetons d'authentification</li>
+            <li>Informations personnellement identifiables (PII) comme les e-mails, numéros de téléphone</li>
+            <li>URL complètes avec des paramètres de requête contenant des données sensibles</li>
+            <li>Numéros de carte de crédit ou informations financières</li>
+          </ul>
+
+          <h4>Alternatives sûres :</h4>
+          <ul>
+            <li>Utiliser des identifiants hachés ou tokenisés</li>
+            <li>Inclure uniquement la partie chemin des URL</li>
+            <li>Utiliser des indicateurs d'état génériques au lieu de valeurs spécifiques</li>
+            <li>Implémenter le masquage des données au niveau de l'instrumentation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Stratégies d'échantillonnage</h2>
+          <p>L'échantillonnage aide à contrôler les coûts tout en maintenant la couverture d'observabilité.</p>
+        </section>
+
+        <section>
+          <h3>Choisir une stratégie d'échantillonnage</h3>
+
+          <h4>Échantillonnage basé sur le taux :</h4>
+          <ul>
+            <li>Échantillonner un pourcentage fixe de requêtes (par ex., 10 %)</li>
+            <li>Simple à implémenter et à comprendre</li>
+            <li>Peut manquer des événements importants mais rares</li>
+          </ul>
+
+          <h4>Échantillonnage en queue :</h4>
+          <ul>
+            <li>Prendre les décisions d'échantillonnage après la collecte des données de trace</li>
+            <li>Peut prioriser les traces avec des erreurs ou une latence élevée</li>
+            <li>Plus complexe mais plus intelligent</li>
+          </ul>
+
+          <h4>Échantillonnage basé sur des règles :</h4>
+          <ul>
+            <li>Échantillonner en fonction de conditions spécifiques (utilisateur, point de terminaison, etc.)</li>
+            <li>Garantir que les chemins critiques sont toujours tracés</li>
+            <li>Nécessite une définition soignée des règles</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Taux d'échantillonnage recommandés</h3>
+          <ul>
+            <li><strong>Développement :</strong> 100 % d'échantillonnage pour une visibilité complète</li>
+            <li><strong>Pré-production :</strong> 50-100 % d'échantillonnage pour les tests</li>
+            <li><strong>Production :</strong> 10-20 % pour une couverture rentable</li>
+            <li><strong>Services à fort trafic :</strong> 1-5 % pour contrôler le volume</li>
+            <li><strong>Chemins critiques :</strong> 100 % d'échantillonnage quelles que soient les autres règles</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Optimisation des performances</h2>
+          <p>Minimiser l'impact sur les performances de l'instrumentation.</p>
+        </section>
+
+        <section>
+          <h3>Réduire la surcharge</h3>
+          <ul>
+            <li>Utiliser le traitement asynchrone des spans lorsque possible</li>
+            <li>Regrouper les exportations de spans pour réduire les appels réseau</li>
+            <li>Configurer des tailles de tampon appropriées</li>
+            <li>Surveiller les métriques de performance de l'instrumentation</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Gestion des ressources</h3>
+          <ul>
+            <li>Définir des délais d'expiration raisonnables pour les exportations de spans</li>
+            <li>Implémenter des disjoncteurs pour les défaillances backend</li>
+            <li>Utiliser le pooling de connexions pour les collecteurs</li>
+            <li>Configurer des politiques de nouvelle tentative appropriées</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Alertes et surveillance</h2>
+          <p>Mettez en place des alertes efficaces pour rester au fait de la santé de vos applications.</p>
+        </section>
+
+        <section>
+          <h3>Métriques clés à surveiller</h3>
+          <ul>
+            <li><strong>Latence :</strong> Temps de réponse P95/P99</li>
+            <li><strong>Taux d'erreur :</strong> Pourcentage de requêtes échouées</li>
+            <li><strong>Débit :</strong> Requêtes par seconde</li>
+            <li><strong>Saturation :</strong> Utilisation des ressources</li>
+            <li><strong>Volume de traces :</strong> Nombre de traces collectées</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Alertes basées sur les SLO</h3>
+          <p>Définissez des objectifs de niveau de service et alertez lorsqu'ils sont menacés :</p>
+          <ul>
+            <li>SLO de latence : 95 % des requêtes < 500ms</li>
+            <li>SLO d'erreur : 99,9 % de taux de réussite</li>
+            <li>SLO de disponibilité : 99,95 % de temps de fonctionnement</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Gestion des coûts</h2>
+          <p>Contrôlez les coûts d'observabilité tout en maintenant la valeur.</p>
+        </section>
+
+        <section>
+          <h3>Stratégies d'optimisation des coûts</h3>
+          <ul>
+            <li>Implémenter des taux d'échantillonnage appropriés</li>
+            <li>Utiliser des politiques de rétention des données</li>
+            <li>Filtrer les spans et attributs inutiles</li>
+            <li>Archiver les anciennes données vers un stockage moins coûteux</li>
+            <li>Surveiller et optimiser le volume de données</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Politiques de rétention des données</h3>
+          <ul>
+            <li><strong>Stockage chaud :</strong> Données récentes (7-30 jours) pour le dépannage actif</li>
+            <li><strong>Stockage tiède :</strong> Données historiques (30-90 jours) pour l'analyse des tendances</li>
+            <li><strong>Stockage froid :</strong> Données archivées (90+ jours) pour la conformité et les requêtes rares</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

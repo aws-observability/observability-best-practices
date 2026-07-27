@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Application Map — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Application Map</h1></header>
+      <article>
+        <section>
+          <h2>What it is</h2>
+          <p>The CloudWatch <strong>Application Map</strong> visualizes your application topology and operational health. It replaces the legacy “Service Map” terminology for Application Signals.</p>
+          <p>It shows connections between clients, canaries, services, and dependencies, helping teams understand execution flow and quickly locate where faults and latency originate.</p>
+        </section>
+
+        <section>
+          <h2>Key capabilities</h2>
+          <ul>
+            <li><strong>SLO/SLI health:</strong> see which services are meeting or breaching objectives and how impact propagates downstream.</li>
+            <li><strong>Drill-down:</strong> select nodes/edges to view metrics and navigate to service details.</li>
+            <li><strong>Grouping and filtering:</strong> use default groupings (Related services, Environment) or define custom groups using tags or OTEL resource attributes.</li>
+            <li><strong>Un-instrumented services:</strong> Application Signals can display services that aren’t instrumented yet to help prioritize rollout.</li>
+            <li><strong>Cross-account visibility:</strong> visualize services across multiple accounts when cross-account observability is configured.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Official documentation</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceMap.html">View your application topology and monitor operational health with the CloudWatch application map</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

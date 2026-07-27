@@ -1,0 +1,1151 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AWS Application Signals for .NET Core on ECS</title>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+        
+        li {
+            margin: 8px 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .step-number {
+            background-color: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .architecture-diagram {
+            background-color: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .flow-arrow {
+            color: #3498db;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        
+        .endpoint-list {
+            background-color: #f8f9fa;
+            border-left: 4px solid #28a745;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .troubleshooting {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .faq-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .faq-question {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .version-info {
+            background-color: #e8f5e8;
+            border: 1px solid #28a745;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        
+        .cleanup-section {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .success-criteria {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 4px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .comparison-table {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 5px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>AWS Application Signals for .NET Core on ECS</h1>
+<p class="subtitle">完全実装ガイド</p>
+<div class="platform-badge">ECS</div>
+<div class="language-badge">.NET</div>
+</div>
+<div class="content">
+<a class="back-link" href="index.html">← すべての実装に戻る</a>
+<div class="section">
+<h2>概要</h2>
+<p>このガイドでは <strong>ステップバイステップの手順</strong> AWS Application Signals を有効にした Amazon ECS 上への .NET Core アプリケーションのデプロイ方法を説明します。CDK は不要で、AWS CLI と Docker のみを使用します。</p>
+<div class="highlight">
+<strong>達成できること：</strong>
+<ul>
+<li>ECS Fargate に .NET Core アプリをデプロイする</li>
+<li>AWS Application Signals の自動インストルメンテーションを有効にする</li>
+<li>CloudWatch Application Signals コンソールでサービスを確認する</li>
+<li>サービスのメトリクス、トレース、オペレーションを監視する</li>
+</ul>
+</div>
+<div class="success">
+<strong>所要時間：</strong> 30〜45 分
+                </div>
+</div>
+<h2>前提条件</h2>
+<h3>必要なツール</h3>
+<ul>
+<li>AWS CLI v2（最新バージョン）</li>
+<li>Docker Desktop</li>
+<li>.NET 8.0 SDK（ローカル開発用）</li>
+<li>適切な権限を持つ AWS アカウント</li>
+<li>テキストエディタ</li>
+</ul>
+<h3>必要な AWS 権限</h3>
+<ul>
+<li>ECS: フルアクセス（クラスター、サービス、タスク定義の作成）</li>
+<li>ECR: イメージのプッシュ</li>
+<li>IAM: ロールおよびポリシーの作成</li>
+<li>CloudWatch: ログおよび Application Signals へのアクセス</li>
+<li>EC2: VPC、サブネット、セキュリティグループへのアクセス</li>
+<li>SSM: Parameter Store への書き込みアクセス</li>
+</ul>
+<h3>前提とする知識</h3>
+<ul>
+<li>AWS CLI の基本的な使い方</li>
+<li>Docker の基本的なコマンド</li>
+<li>ECS の概念に関する基本的な理解</li>
+<li>.NET Core の基本的な知識</li>
+</ul>
+<h2>アーキテクチャ</h2>
+<p>ECS タスクには <strong>3 つのコンテナ</strong>:</p>
+<ol>
+<li><strong>Init コンテナ</strong> (<code>init</code>): ADOT .NET 自動インストルメンテーションファイルをコピーします</li>
+<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>): トレースとメトリクスを収集します</li>
+<li><strong>Application Container</strong> (<code>app</code>): .NET Core アプリケーション</li>
+</ol>
+<div class="info">
+<strong>互換性に関する重要な注意事項:</strong> AWS Distro for OpenTelemetry (ADOT) SDK for .NET は AWS SDK for .NET V4 をサポートしていません。Application Signals の完全なサポートには AWS SDK .NET V3 を使用してください。このガイドでは、AWS SDK .NET V3 を使用した基本的な OpenTelemetry 設定による ECS 実装の動作例を提供します。
+        </div>
+<div class="architecture-diagram">
+<p><strong>フロー:</strong></p>
+<p>Init コンテナ（一度だけ実行され、ファイルをコピーします）</p>
+<div class="flow-arrow">↓</div>
+<p>アプリケーションが起動します（.NET スタートアップフックによる自動インストルメンテーション）</p>
+<div class="flow-arrow">↓</div>
+<p>トレース/メトリクスを CloudWatch Agent に送信します（localhost:4316）</p>
+<div class="flow-arrow">↓</div>
+<p>CloudWatch Agent が Application Signals に送信します</p>
+</div>
+<h2><span class="step-number">1</span>アカウントで Application Signals を有効にする</h2>
+<div class="warning">
+<strong>重要:</strong> Application Signals はリージョンごとに AWS アカウントあたり一度だけ有効にする必要があります。
+        </div>
+<h3>オプション 1: AWS コンソールから有効にする（推奨）</h3>
+<ol>
+<li>AWS コンソール → CloudWatch → Application Signals に移動します</li>
+<li>リージョンを選択します（例： <code>us-east-1</code>)</li>
+<li>「Get Started」または「Enable Application Signals」をクリックします</li>
+<li>有効化されるまで 2〜3 分待ちます</li>
+</ol>
+<h3>オプション 2: すでに有効になっているか確認する</h3>
+<pre><code># Check if service-linked role exists
+aws iam get-role \
+  --role-name AWSServiceRoleForCloudWatchApplicationSignals \
+  --region us-east-1
+
+# If role exists, Application Signals is enabled</code></pre>
+<p><strong>出力結果:</strong> 有効な場合はロール ARN、無効な場合はエラーが表示されます。</p>
+<h2><span class="step-number">2</span>.NET Core アプリケーションを準備する</h2>
+<h3>2.1 アプリケーションディレクトリの作成</h3>
+<pre><code>mkdir -p ~/my-appsignals-dotnet-app
+cd ~/my-appsignals-dotnet-app</code></pre>
+<h3>2.2 アプリケーションファイルのコピー</h3>
+<p>提供された .NET アプリケーションファイルをディレクトリにコピーします：</p>
+<pre><code># Copy from the ecs-dotnet folder
+cp -r /path/to/ecs-dotnet/* ~/my-appsignals-dotnet-app/</code></pre>
+<p><strong>含まれるファイル：</strong></p>
+<ul>
+<li><code>src/ApplicationSignalsDemo/ApplicationSignalsDemo.csproj</code> - AWS SDK V3 と OpenTelemetry パッケージを含む .NET プロジェクトファイル</li>
+<li><code>src/ApplicationSignalsDemo/Program.cs</code> - OpenTelemetry 設定を含むメインアプリケーションエントリポイント</li>
+<li><code>src/ApplicationSignalsDemo/Controllers/DemoController.cs</code> - API コントローラー</li>
+<li><code>src/ApplicationSignalsDemo/appsettings.json</code> - アプリケーション設定</li>
+<li><code>Dockerfile</code> - コンテナ設定</li>
+<li><code>.dockerignore</code> - Docker 除外ファイル</li>
+</ul>
+<h4>2.2.1 プロジェクトの依存関係</h4>
+<p>このプロジェクトは Application Signals との互換性のために AWS SDK .NET V3 と OpenTelemetry パッケージを使用しています：</p>
+<p><strong>主な依存関係：</strong></p>
+<ul>
+<li><strong>AWS SDK .NET V3</strong>: <code>AWSSDK.Core</code>, <code>AWSSDK.CloudWatch</code>, <code>AWSSDK.XRay</code> （V3.7.400.1）</li>
+<li><strong>OpenTelemetry</strong>: トレースとメトリクスのコアパッケージ (V1.7.0)</li>
+<li><strong>AWS.DistributedOpenTelemetry</strong>: Application Signals 統合用 (V1.0.0)</li>
+</ul>
+<div class="info">
+<strong>AWS SDK V3 を使用する理由</strong> AWS Distro for OpenTelemetry (ADOT) SDK for .NET は AWS SDK for .NET V4 をサポートしていません。V3 を使用することで、Application Signals の完全なサポートが保証されます。
+        </div>
+<h3>2.3 アプリケーション構造の確認</h3>
+<pre><code>tree ~/my-appsignals-dotnet-app</code></pre>
+<p><strong>想定される構造:</strong></p>
+<pre><code>my-appsignals-dotnet-app/
+├── Dockerfile
+├── .dockerignore
+└── src/
+    └── ApplicationSignalsDemo/
+        ├── ApplicationSignalsDemo.csproj
+        ├── Program.cs
+        ├── appsettings.json
+        └── Controllers/
+            └── DemoController.cs</code></pre>
+<h3>2.4 ローカルビルドのテスト (オプション)</h3>
+<pre><code>cd ~/my-appsignals-dotnet-app
+
+# Build the application
+dotnet build src/ApplicationSignalsDemo/
+
+# Test locally (optional)
+dotnet run --project src/ApplicationSignalsDemo/</code></pre>
+<div class="endpoint-list">
+<p><strong>テストエンドポイント:</strong></p>
+<ul>
+<li>http://localhost:8080/api/</li>
+<li>http://localhost:8080/api/health</li>
+<li>http://localhost:8080/api/hello/TestUser</li>
+</ul>
+</div>
+<h2><span class="step-number">3</span>Docker イメージのビルドとプッシュ</h2>
+<h3>3.1 変数の設定</h3>
+<pre><code># Replace with your values
+export AWS_REGION="us-east-1"
+export AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
+export AWS_PROFILE="your-profile-name"  # Optional if using default
+export APP_NAME="my-appsignals-dotnet-app"</code></pre>
+<p>アカウント ID の取得:</p>
+<pre><code>export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+echo "Account ID: $AWS_ACCOUNT_ID"</code></pre>
+<h3>3.2 ECR リポジトリの作成</h3>
+<pre><code>aws ecr create-repository \
+  --repository-name ${APP_NAME} \
+  --region ${AWS_REGION}</code></pre>
+<p><strong>出力:</strong> リポジトリ URI (保存してください)</p>
+<h3>3.3 Docker イメージのビルド</h3>
+<div class="warning">
+<strong>重要:</strong> Apple Silicon (M1/M2) Mac でビルドする場合は、正しいアーキテクチャ向けにビルドする必要があります。
+        </div>
+<pre><code>cd ~/my-appsignals-dotnet-app
+
+# For Apple Silicon Macs, build for AMD64 architecture
+docker build --platform linux/amd64 -t ${APP_NAME} .
+
+# For Intel Macs or Linux, use standard build
+# docker build -t ${APP_NAME} .</code></pre>
+<h3>3.4 ECR へのプッシュ</h3>
+<pre><code># Login to ECR
+aws ecr get-login-password --region ${AWS_REGION} | \
+  docker login --username AWS --password-stdin \
+  ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com
+
+# Tag image
+docker tag ${APP_NAME}:latest \
+  ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest
+
+# Push image
+docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest</code></pre>
+<h2><span class="step-number">4</span>CloudWatch Agent 設定の作成</h2>
+<h3>4.1 設定ファイルの作成</h3>
+<pre><code>cat &gt; /tmp/ecs-cwagent-dotnet.json &lt;&lt; 'EOF'
+{
+  "traces": {
+    "traces_collected": {
+      "application_signals": {}
+    }
+  },
+  "logs": {
+    "metrics_collected": {
+      "application_signals": {}
+    }
+  }
+}
+EOF</code></pre>
+<h3>4.2 SSM Parameter Store へのアップロード</h3>
+<pre><code>aws ssm put-parameter \
+  --name "ecs-cwagent-${APP_NAME}" \
+  --type "String" \
+  --value "$(cat /tmp/ecs-cwagent-dotnet.json)" \
+  --region "${AWS_REGION}" \
+  --overwrite</code></pre>
+<p><strong>出力:</strong> バージョン番号 (新規の場合は 1、更新の場合はインクリメント)</p>
+<h2><span class="step-number">5</span>IAM ロールの作成</h2>
+<h3>5.1 信頼ポリシーの作成</h3>
+<pre><code>cat &gt; /tmp/task-trust-policy.json &lt;&lt; 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ecs-tasks.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+EOF</code></pre>
+<h3>5.2 タスクロールの作成</h3>
+<pre><code>aws iam create-role \
+  --role-name ${APP_NAME}-ecs-task-role \
+  --assume-role-policy-document file:///tmp/task-trust-policy.json
+
+# Attach required policies
+aws iam attach-role-policy \
+  --role-name ${APP_NAME}-ecs-task-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+
+aws iam attach-role-policy \
+  --role-name ${APP_NAME}-ecs-task-role \
+  --policy-arn arn:aws:iam::aws:policy/AWSXRayDaemonWriteAccess</code></pre>
+<h3>5.3 タスク実行ロールの作成</h3>
+<pre><code>aws iam create-role \
+  --role-name ${APP_NAME}-ecs-execution-role \
+  --assume-role-policy-document file:///tmp/task-trust-policy.json
+
+# Attach policies
+aws iam attach-role-policy \
+  --role-name ${APP_NAME}-ecs-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+aws iam attach-role-policy \
+  --role-name ${APP_NAME}-ecs-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess</code></pre>
+<h3>5.4 CloudWatch Logs 権限の追加</h3>
+<pre><code>cat &gt; /tmp/logs-policy.json &lt;&lt; 'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:log-group:/ecs/*"
+    }
+  ]
+}
+EOF
+
+aws iam put-role-policy \
+  --role-name ${APP_NAME}-ecs-execution-role \
+  --policy-name CloudWatchLogsPolicy \
+  --policy-document file:///tmp/logs-policy.json</code></pre>
+<h2><span class="step-number">6</span>ECS クラスターの作成</h2>
+<pre><code>export CLUSTER_NAME="${APP_NAME}-cluster"
+
+aws ecs create-cluster \
+  --cluster-name ${CLUSTER_NAME} \
+  --region ${AWS_REGION}</code></pre>
+<p><strong>出力:</strong> クラスター ARN とステータスが ACTIVE であることを確認してください</p>
+<h2><span class="step-number">7</span>ネットワークのセットアップ</h2>
+<h3>7.1 VPC とサブネットの取得</h3>
+<p>既に VPC がある場合:</p>
+<pre><code># List VPCs
+aws ec2 describe-vpcs --region ${AWS_REGION} \
+  --query 'Vpcs[*].{VpcId:VpcId,CIDR:CidrBlock,Name:Tags[?Key==`Name`].Value|[0]}'
+
+# Choose your VPC
+export VPC_ID="vpc-xxxxx"
+
+# Get private subnets
+aws ec2 describe-subnets --region ${AWS_REGION} \
+  --filters "Name=vpc-id,Values=${VPC_ID}" \
+  --query 'Subnets[?MapPublicIpOnLaunch==`false`].[SubnetId,AvailabilityZone,CidrBlock]'
+
+# Save subnet IDs
+export SUBNET_1="subnet-xxxxx"
+export SUBNET_2="subnet-yyyyy"</code></pre>
+<h3>7.2 セキュリティグループの作成</h3>
+<pre><code>export SG_NAME="${APP_NAME}-ecs-sg"
+
+# Create security group
+SG_ID=$(aws ec2 create-security-group \
+  --group-name ${SG_NAME} \
+  --description "Security group for ${APP_NAME} ECS tasks" \
+  --vpc-id ${VPC_ID} \
+  --region ${AWS_REGION} \
+  --query 'GroupId' \
+  --output text)
+
+echo "Security Group ID: $SG_ID"
+export SG_ID
+
+# Add ingress rule (allow HTTP from anywhere for testing)
+aws ec2 authorize-security-group-ingress \
+  --group-id ${SG_ID} \
+  --protocol tcp \
+  --port 8080 \
+  --cidr 0.0.0.0/0 \
+  --region ${AWS_REGION}</code></pre>
+<div class="warning">
+<strong>本番環境の場合:</strong> 置換 <code>0.0.0.0/0</code> 特定のIP範囲またはロードバランサーのセキュリティグループに置き換えてください。
+        </div>
+<h2><span class="step-number">8</span>ECSタスク定義の作成</h2>
+<h3>8.1 タスク定義JSONの作成</h3>
+<div class="highlight">
+<strong>重要：</strong> これは最も重要なステップです。すべての詳細に注意してください。
+        </div>
+<pre><code>cat &gt; /tmp/app-signals-dotnet-task-def.json &lt;&lt; EOF
+{
+  "family": "${APP_NAME}-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-ecs-task-role",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-ecs-execution-role",
+  "containerDefinitions": [
+    {
+      "name": "init",
+      "image": "public.ecr.aws/aws-observability/adot-autoinstrumentation-dotnet:v1.34.0",
+      "essential": false,
+      "command": ["cp", "-a", "/autoinstrumentation/.", "/otel-auto-instrumentation-dotnet"],
+      "mountPoints": [
+        {
+          "sourceVolume": "opentelemetry-auto-instrumentation-dotnet",
+          "containerPath": "/otel-auto-instrumentation-dotnet",
+          "readOnly": false
+        }
+      ]
+    },
+    {
+      "name": "ecs-cwagent",
+      "image": "public.ecr.aws/cloudwatch-agent/cloudwatch-agent:latest",
+      "essential": true,
+      "secrets": [
+        {
+          "name": "CW_CONFIG_CONTENT",
+          "valueFrom": "ecs-cwagent-${APP_NAME}"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ecs-cwagent-${APP_NAME}",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    },
+    {
+      "name": "app",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 8080,
+          "protocol": "tcp"
+        }
+      ],
+      "dependsOn": [
+        {
+          "containerName": "init",
+          "condition": "SUCCESS"
+        }
+      ],
+      "environment": [
+        {
+          "name": "ASPNETCORE_URLS",
+          "value": "http://+:8080"
+        },
+        {
+          "name": "ASPNETCORE_ENVIRONMENT",
+          "value": "Production"
+        }
+      ],
+      "mountPoints": [
+        {
+          "sourceVolume": "opentelemetry-auto-instrumentation-dotnet",
+          "containerPath": "/otel-auto-instrumentation-dotnet",
+          "readOnly": false
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/${APP_NAME}",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "app"
+        }
+      }
+    }
+  ],
+  "volumes": [
+    {
+      "name": "opentelemetry-auto-instrumentation-dotnet"
+    }
+  ]
+}
+EOF</code></pre>
+<h3>8.2 タスク定義の登録</h3>
+<pre><code>aws ecs register-task-definition \
+  --cli-input-json file:///tmp/app-signals-dotnet-task-def.json \
+  --region ${AWS_REGION}</code></pre>
+<p><strong>出力：</strong> ステータスACTIVEでリビジョン1が表示されるはずです</p>
+<h2><span class="step-number">9</span>ECSサービスのデプロイ</h2>
+<pre><code>aws ecs create-service \
+  --cluster ${CLUSTER_NAME} \
+  --service-name ${APP_NAME}-service \
+  --task-definition ${APP_NAME}-task:1 \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SG_ID}],assignPublicIp=ENABLED}" \
+  --region ${AWS_REGION}</code></pre>
+<div class="info">
+<strong>注意：</strong> <code>assignPublicIp=ENABLED</code> はテスト用です。本番環境ではロードバランサーを使用してください。
+        </div>
+<h2><span class="step-number">10</span>デプロイの確認</h2>
+<h3>10.1 サービスステータスの確認</h3>
+<pre><code>aws ecs describe-services \
+  --cluster ${CLUSTER_NAME} \
+  --services ${APP_NAME}-service \
+  --region ${AWS_REGION} \
+  --query 'services[0].{status:status,runningCount:runningCount,desiredCount:desiredCount}'</code></pre>
+<p><strong>期待される結果：</strong> <code>status: ACTIVE</code>, <code>runningCount: 1</code></p>
+<h3>10.2 実行中のタスクの取得</h3>
+<pre><code>TASK_ARN=$(aws ecs list-tasks \
+  --cluster ${CLUSTER_NAME} \
+  --service-name ${APP_NAME}-service \
+  --region ${AWS_REGION} \
+  --desired-status RUNNING \
+  --query 'taskArns[0]' \
+  --output text)
+
+echo "Task ARN: $TASK_ARN"</code></pre>
+<h3>10.3 コンテナステータスの確認</h3>
+<pre><code>aws ecs describe-tasks \
+  --cluster ${CLUSTER_NAME} \
+  --tasks ${TASK_ARN} \
+  --region ${AWS_REGION} \
+  --query 'tasks[0].{status:lastStatus,containers:containers[*].{name:name,status:lastStatus,exitCode:exitCode}}'</code></pre>
+<p><strong>期待される出力：</strong></p>
+<ul>
+<li><code>init</code>：status=STOPPED、exitCode=0（正常に完了）</li>
+<li><code>ecs-cwagent</code>：status=RUNNING</li>
+<li><code>app</code>：status=RUNNING</li>
+</ul>
+<h3>10.4 パブリックIPの取得</h3>
+<pre><code>TASK_IP=$(aws ecs describe-tasks \
+  --cluster ${CLUSTER_NAME} \
+  --tasks ${TASK_ARN} \
+  --region ${AWS_REGION} \
+  --query 'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value' \
+  --output text | xargs -I {} \
+  aws ec2 describe-network-interfaces \
+  --network-interface-ids {} \
+  --region ${AWS_REGION} \
+  --query 'NetworkInterfaces[0].Association.PublicIp' \
+  --output text)
+
+echo "Application URL: http://${TASK_IP}:8080/api/"</code></pre>
+<h3>10.5 アプリケーションのテスト</h3>
+<pre><code># Test root endpoint
+curl http://${TASK_IP}:8080/api/
+
+# Test health endpoint
+curl http://${TASK_IP}:8080/api/health
+
+# Test API endpoint
+curl http://${TASK_IP}:8080/api/hello/TestUser
+
+# Test slow endpoint
+curl http://${TASK_IP}:8080/api/slow
+
+# Test external call
+curl http://${TASK_IP}:8080/api/external</code></pre>
+<h2><span class="step-number">11</span>Application Signalsの確認</h2>
+<h3>11.1 CloudWatchログの確認</h3>
+<pre><code># Application logs
+aws logs tail /ecs/${APP_NAME} --region ${AWS_REGION} --since 5m --format short
+
+# CloudWatch agent logs
+aws logs tail /ecs/ecs-cwagent-${APP_NAME} --region ${AWS_REGION} --since 5m --format short</code></pre>
+<p><strong>確認する内容：</strong></p>
+<ul>
+<li>アプリケーションログ："Application started"</li>
+<li>エージェントログ："application_signals"、"X-Ray proxy server started"</li>
+</ul>
+<h3>11.2 メトリクスの確認</h3>
+<pre><code># Wait 2-3 minutes after first requests, then check
+aws cloudwatch list-metrics \
+  --namespace ApplicationSignals \
+  --region ${AWS_REGION} \
+  --dimensions Name=Service,Value=${APP_NAME} \
+  --query 'Metrics[*].MetricName' \
+  --output text | tr '\t' '\n' | sort -u</code></pre>
+<p><strong>期待されるメトリクス：</strong></p>
+<ul>
+<li>DotNetGcGen0Count</li>
+<li>DotNetGcGen1Count</li>
+<li>DotNetGcGen2Count</li>
+<li>DotNetThreadCount</li>
+<li>DotNetCpuUtilization</li>
+<li>Latency</li>
+<li>Error</li>
+<li>Fault</li>
+</ul>
+<h3>11.3 トラフィックの生成</h3>
+<pre><code># Generate traffic to create traces
+for i in {1..100}; do
+  curl -s http://${TASK_IP}:8080/api/hello/User${i} &gt; /dev/null
+  curl -s http://${TASK_IP}:8080/api/health &gt; /dev/null
+  curl -s http://${TASK_IP}:8080/api/database &gt; /dev/null
+done
+
+echo "100 requests sent! Wait 5-10 minutes for Application Signals..."</code></pre>
+<h3>11.4 Application Signalsサービスディスカバリーの確認</h3>
+<pre><code># Wait 5-10 minutes after traffic generation
+aws application-signals list-services \
+  --region ${AWS_REGION} \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --query 'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</code></pre>
+<p><strong>期待される結果：</strong> サービスは以下の情報で表示されるはずです：</p>
+<ul>
+<li>名前： <code>${APP_NAME}</code></li>
+<li>環境： <code>ecs:${AWS_REGION}</code></li>
+</ul>
+<h3>11.5 サービスオペレーションの確認</h3>
+<pre><code>aws application-signals list-service-operations \
+  --region ${AWS_REGION} \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --key-attributes Name=${APP_NAME},Type=Service,Environment=ecs:${AWS_REGION} \
+  --query 'ServiceOperations[*].Name'</code></pre>
+<p><strong>期待されるオペレーション：</strong></p>
+<ul>
+<li><code>GET /api/hello/{name}</code></li>
+<li><code>GET /api/health</code></li>
+<li><code>GET /api/</code></li>
+<li><code>GET /api/database</code></li>
+<li><code>GET /api/external</code></li>
+</ul>
+<h2><span class="step-number">12</span>AWS コンソールで表示</h2>
+<h3>コンソールアクセス</h3>
+<ol>
+<li><strong>移動先：</strong>
+<pre><code>AWS Console → CloudWatch → Application Signals → Services</code></pre>
+                または直接リンク：
+                <pre><code>https://${AWS_REGION}.console.aws.amazon.com/cloudwatch/home?region=${AWS_REGION}#application-signals:services</code></pre>
+</li>
+<li><strong>サービスを探す：</strong>
+<ul>
+<li>サービス名：の値 <code>${APP_NAME}</code></li>
+<li>環境： <code>ecs:${AWS_REGION}</code></li>
+</ul>
+</li>
+<li><strong>探索：</strong>
+<ul>
+<li>サービスマップ：ビジュアルトポロジー</li>
+<li>サービスダッシュボード：レイテンシー、エラー、フォルト</li>
+<li>オペレーション：エンドポイントごとのメトリクス</li>
+<li>依存関係：ダウンストリームサービスの呼び出し</li>
+</ul>
+</li>
+</ol>
+<h2>トラブルシューティング</h2>
+<div class="troubleshooting">
+<h3>問題：Application Signals にサービスが表示されない</h3>
+<p><strong>確認事項：</strong></p>
+<pre><code># 1. Verify metrics are being published
+aws cloudwatch list-metrics \
+  --namespace ApplicationSignals \
+  --region ${AWS_REGION} \
+  --dimensions Name=Service,Value=${APP_NAME}
+
+# 2. Check if Application Signals is enabled
+aws iam get-role \
+  --role-name AWSServiceRoleForCloudWatchApplicationSignals
+
+# 3. Check container logs for errors
+aws logs tail /ecs/${APP_NAME} --region ${AWS_REGION} --since 10m</code></pre>
+<h3>問題：Init コンテナが失敗する</h3>
+<p><strong>確認事項：</strong></p>
+<pre><code># Describe task to see init container exit code
+aws ecs describe-tasks \
+  --cluster ${CLUSTER_NAME} \
+  --tasks ${TASK_ARN} \
+  --region ${AWS_REGION} \
+  --query 'tasks[0].containers[?name==`init`].{name:name,exitCode:exitCode,reason:reason}'</code></pre>
+<p><strong>期待される結果：</strong> <code>exitCode: 0</code></p>
+<p><strong>ゼロ以外の場合：</strong> イメージが利用できない可能性があります。タグを確認してください <code>v1.34.0</code> 存在するか確認：</p>
+<pre><code>docker pull public.ecr.aws/aws-observability/adot-autoinstrumentation-dotnet:v1.34.0</code></pre>
+<h3>問題：アプリケーションが CloudWatch Agent に接続できない</h3>
+<p><strong>症状：</strong></p>
+<pre><code>Connection refused to localhost:4316</code></pre>
+<p><strong>確認事項：</strong></p>
+<ol>
+<li>CloudWatch agent コンテナが RUNNING 状態であることを確認</li>
+<li>コンテナの依存関係を確認 - アプリは以下に依存する必要があります <code>init</code> 条件 SUCCESS を指定して</li>
+<li>環境変数を確認（特にエンドポイント： <code>http://localhost:4316</code> および <code>http://localhost:2000</code>)</li>
+</ol>
+<h3>問題：X-Ray にトレースが表示されない</h3>
+<p><strong>よくある原因：</strong></p>
+<ol>
+<li><strong>不足している <code>DOTNET_STARTUP_HOOKS</code></strong> - .NET 自動インストルメンテーションに必須</li>
+<li><strong>不足している <code>DOTNET_ADDITIONAL_DEPS</code></strong> - .NETインストルメンテーションに必要</li>
+<li><strong>見つかりません <code>DOTNET_SHARED_STORE</code></strong> - .NETインストルメンテーションに必要</li>
+<li><strong>ボリュームマウントが見つかりません</strong> - .NETインストルメンテーションファイルにアクセス可能である必要があります</li>
+</ol>
+<h3>問題: IAM権限エラー</h3>
+<p><strong>症状:</strong></p>
+<pre><code>AccessDeniedException: ... logs:CreateLogGroup</code></pre>
+<p><strong>修正方法:</strong> 実行ロールにCloudWatch Logsの権限を追加する（ステップ5.4を参照）</p>
+<h3>問題: コンテナ内の「exec format error」</h3>
+<p><strong>症状:</strong></p>
+<pre><code>exec /usr/bin/dotnet: exec format error</code></pre>
+<p><strong>原因:</strong> アーキテクチャの不一致 - DockerイメージはARM64（Apple Silicon）でビルドされましたが、ECS FargateはX86_64で動作します。</p>
+<p><strong>修正方法:</strong> 正しいアーキテクチャ向けにDockerイメージを再ビルドする:</p>
+<pre><code># Rebuild for AMD64 architecture
+docker build --platform linux/amd64 -t ${APP_NAME} .
+
+# Tag and push the corrected image
+docker tag ${APP_NAME}:latest \
+  ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest
+
+docker push ${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest
+
+# Update the ECS service to use the new image
+aws ecs update-service \
+  --cluster ${CLUSTER_NAME} \
+  --service ${APP_NAME}-service \
+  --force-new-deployment \
+  --region ${AWS_REGION}</code></pre>
+</div>
+<h2>主要な設定の詳細</h2>
+<h3>重要な環境変数</h3>
+<table>
+<thead>
+<tr>
+<th>変数</th>
+<th>値</th>
+<th>目的</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ASPNETCORE_URLS</code></td>
+<td><code>http://+:8080</code></td>
+<td>ASP.NET Coreのバインド URL</td>
+</tr>
+<tr>
+<td><code>ASPNETCORE_ENVIRONMENT</code></td>
+<td><code>Production</code></td>
+<td>ASP.NET Coreの環境</td>
+</tr>
+</tbody>
+</table>
+<div class="info">
+<strong>注意:</strong> OpenTelemetryの設定は、AWS SDK .NET V3およびOpenTelemetryパッケージを使用したSDKベースのアプローチにより、アプリケーションコード内で処理されます。OpenTelemetryの設定に環境変数は必要ありません。
+        </div>
+<h3>Initコンテナの詳細</h3>
+<p><strong>イメージ:</strong> <code>public.ecr.aws/aws-observability/adot-autoinstrumentation-dotnet:v1.34.0</code></p>
+<p><strong>バージョン指定タグを使用する理由（ <code>:latest</code>?</strong></p>
+<ul>
+<li>The <code>:latest</code> .NET ADOTイメージには</li>
+<li>タグが存在しません。特定のバージョンタグを使用してください（確認先: <a href="https://github.com/aws-observability/aws-otel-dotnet-instrumentation/releases">https://github.com/aws-observability/aws-otel-dotnet-instrumentation/releases</a>)</li>
+<li>現在の安定版: <code>v1.34.0</code></li>
+</ul>
+<p><strong>動作内容:</strong></p>
+<ol>
+<li>アプリコンテナが起動する前に一度だけ実行されます</li>
+<li>ADOTの.NETインストルメンテーションファイルを <code>/autoinstrumentation/</code> から共有ボリュームにコピーします</li>
+<li>コード0で終了します</li>
+<li>アプリコンテナはボリュームをマウントし、.NETスタートアップフックを使用してインストルメンテーションを読み込みます</li>
+</ol>
+<h3>CloudWatch Agentの設定</h3>
+<p><strong>両方のセクションを含める必要があります:</strong></p>
+<pre><code>{
+  "traces": {
+    "traces_collected": {
+      "application_signals": {}   // Not just "otlp"!
+    }
+  },
+  "logs": {
+    "metrics_collected": {
+      "application_signals": {}
+    }
+  }
+}</code></pre>
+<h3>アプリケーションコードの要件</h3>
+<p><strong>すること：</strong></p>
+<ul>
+<li>通常の .NET Core コードを記述する</li>
+<li>標準ライブラリを使用する（ASP.NET Core、HttpClient など）</li>
+<li>コードをクリーンに保つ - OpenTelemetry のインポートは不要</li>
+<li>標準の ASP.NET Core 属性を使用する（[ApiController]、[HttpGet] など）</li>
+</ul>
+<p><strong>しないこと：</strong></p>
+<ul>
+<li>インポートしない <code>OpenTelemetry.*</code> パッケージ</li>
+<li>OpenTelemetry を手動で設定する</li>
+<li>手動トレースコードを追加する（カスタムスパンが必要な場合を除く）</li>
+<li>.csproj に OpenTelemetry の依存関係をインストールする</li>
+</ul>
+<div class="cleanup-section">
+<h2>クリーンアップ</h2>
+<p>すべてのリソースを削除するには：</p>
+<pre><code># Delete ECS service
+aws ecs update-service \
+  --cluster ${CLUSTER_NAME} \
+  --service ${APP_NAME}-service \
+  --desired-count 0 \
+  --region ${AWS_REGION}
+
+aws ecs delete-service \
+  --cluster ${CLUSTER_NAME} \
+  --service ${APP_NAME}-service \
+  --region ${AWS_REGION}
+
+# Delete ECS cluster
+aws ecs delete-cluster \
+  --cluster ${CLUSTER_NAME} \
+  --region ${AWS_REGION}
+
+# Delete ECR repository
+aws ecr delete-repository \
+  --repository-name ${APP_NAME} \
+  --force \
+  --region ${AWS_REGION}
+
+# Delete security group
+aws ec2 delete-security-group \
+  --group-id ${SG_ID} \
+  --region ${AWS_REGION}
+
+# Delete IAM roles
+aws iam delete-role \
+  --role-name ${APP_NAME}-ecs-task-role
+
+aws iam delete-role \
+  --role-name ${APP_NAME}-ecs-execution-role
+
+# Delete SSM parameter
+aws ssm delete-parameter \
+  --name ecs-cwagent-${APP_NAME} \
+  --region ${AWS_REGION}</code></pre>
+</div>
+</div>
+</div>
+</body>
+</html>

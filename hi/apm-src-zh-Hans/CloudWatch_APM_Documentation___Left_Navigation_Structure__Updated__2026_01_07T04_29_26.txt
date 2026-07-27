@@ -1,0 +1,629 @@
+CloudWatch APM Documentation - Left Navigation Structure
+
+🏠 HOME
+• Overview
+• What's New
+• Release Notes
+
+🚀 GETTING STARTED
+
+Introduction
+• What is CloudWatch APM?
+• Key Concepts
+• How It Works
+• Architecture Overview
+• Pricing
+
+Quick Start Guides
+• 5-Minute Quick Start
+• Choose Your Path
+• For Developers
+• For DevOps Engineers
+• For Architects
+
+Setup by Compute Type
+• AWS Lambda
+• Amazon ECS
+• Amazon EKS
+• AWS App Runner
+• Amazon EC2
+• Elastic Beanstalk
+• On-Premises / Hybrid
+
+Setup by Language
+• Java
+• Python
+• Node.js
+• .NET
+• Go
+• Ruby
+• PHP
+
+📚 CONCEPTS & FUNDAMENTALS
+
+Core Concepts
+• Distributed Tracing
+• Traces, Spans, and Segments
+• Service Maps
+• Sampling Strategies
+• Context Propagation
+
+Instrumentation
+• Automatic vs Manual Instrumentation
+• OpenTelemetry Overview
+• AWS Distro for OpenTelemetry (ADOT)
+• Custom Spans and Attributes
+• Trace Annotations
+
+Data Model
+• Trace Structure
+• Span Attributes
+• Metadata and Tags
+• Trace Context
+• Baggage
+
+🛠️ IMPLEMENTATION GUIDES
+
+Instrumentation
+
+Automatic Instrumentation
+• AWS Lambda
+• AWS SDK
+• HTTP Clients
+• Database Clients
+• Message Queues
+
+Manual Instrumentation
+• Creating Custom Spans
+• Adding Attributes
+• Recording Events
+• Setting Span Status
+• Error Handling
+
+Language-Specific Guides
+• Java
+• Spring Boot
+• Micronaut
+• Quarkus
+• JDBC / Hibernate
+• Python
+• Django
+• Flask
+• FastAPI
+• SQLAlchemy
+• Node.js
+• Express
+• NestJS
+• AWS SDK v3
+• .NET
+• ASP.NET Core
+• Entity Framework
+• HttpClient
+• Go
+• Standard Library
+• Popular Frameworks
+• Ruby
+• Rails
+• Sinatra
+• PHP
+• Laravel
+• Symfony
+
+Service Integration
+
+AWS Services
+• API Gateway
+• Application Load Balancer
+• AppSync
+• DynamoDB
+• RDS / Aurora
+• S3
+• SNS / SQS
+• Step Functions
+• EventBridge
+
+Container Platforms
+• ECS with ADOT Sidecar
+• EKS with ADOT DaemonSet
+• EKS with Service Mesh
+• Fargate Configuration
+
+Service Mesh
+• AWS App Mesh
+• Istio
+• Linkerd
+
+Configuration
+
+Agent Configuration
+• Environment Variables
+• Configuration Files
+• Sampling Rules
+• Exporter Settings
+• Resource Attributes
+
+ADOT Collector
+• Collector Architecture
+• Deployment Patterns
+• Pipeline Configuration
+• Processors and Extensions
+• Performance Tuning
+
+Sampling Configuration
+• Head-Based Sampling
+• Tail-Based Sampling
+• Sampling Rules
+• Cost Optimization
+
+📊 FEATURES & CAPABILITIES
+
+Distributed Tracing
+• End-to-End Tracing
+• Cross-Service Tracing
+• Cross-Region Tracing
+• Cross-Account Tracing
+• Trace Search and Filtering
+
+Service Map
+• Automatic Service Discovery
+• Dependency Visualization
+• Health Indicators
+• Traffic Metrics
+• Time-Travel View
+
+Application Insights
+• Automatic Problem Detection
+• Anomaly Detection
+• Root Cause Analysis
+• Intelligent Grouping
+• Recommended Actions
+
+Performance Analytics
+• Trace Analytics
+• Latency Analysis
+• Error Rate Tracking
+• Throughput Metrics
+• Custom Business Metrics
+
+Log Correlation
+• Automatic Trace-to-Log Linking
+• Context-Aware Log Search
+• Unified Troubleshooting
+• CloudWatch Logs Insights Integration
+
+Alerting & Monitoring
+• Metric Alarms
+• Anomaly Detection Alarms
+• Composite Alarms
+• Alert Actions
+• Integration with SNS, EventBridge
+
+💼 USE CASES & PATTERNS
+
+Architecture Patterns
+• Microservices Architecture
+• Serverless Applications
+• Container Workloads
+• Hybrid & Multi-Cloud
+• Event-Driven Architecture
+
+Common Scenarios
+• Performance Troubleshooting
+• Error Investigation
+• Dependency Analysis
+• Capacity Planning
+• Cost Optimization
+
+Industry Solutions
+• E-Commerce
+• Financial Services
+• Healthcare
+• Media & Entertainment
+• SaaS Applications
+
+📖 TUTORIALS & WORKSHOPS
+
+Step-by-Step Tutorials
+• Tutorial 1: Instrument Your First Lambda Function
+• Tutorial 2: Monitor a Microservices Application
+• Tutorial 3: Set Up Distributed Tracing for ECS
+• Tutorial 4: Create Custom Dashboards
+• Tutorial 5: Implement Tail-Based Sampling
+• Tutorial 6: Correlate Traces with Logs
+• Tutorial 7: Set Up Anomaly Detection
+• Tutorial 8: Optimize Sampling for Cost
+
+Hands-On Workshops
+• CloudWatch APM Fundamentals (2 hours)
+• Advanced Tracing Techniques (3 hours)
+• Troubleshooting with APM (2 hours)
+• Cost Optimization Workshop (1.5 hours)
+• Security & Compliance (2 hours)
+
+Video Tutorials
+• Introduction to CloudWatch APM (5 min)
+• Quick Start: Lambda Tracing (10 min)
+• Deep Dive: Service Maps (15 min)
+• Troubleshooting Workflow (20 min)
+• Best Practices Webinar (45 min)
+
+🔍 EXAMPLES & CODE SAMPLES
+
+Complete Examples
+• Simple Lambda Function
+• REST API with API Gateway
+• Microservices Application
+• Container Application (ECS)
+• Kubernetes Application (EKS)
+• Event-Driven Application
+
+Code Snippets
+
+By Language
+• Java Examples
+• Python Examples
+• Node.js Examples
+• .NET Examples
+• Go Examples
+• Ruby Examples
+• PHP Examples
+
+By Use Case
+• Custom Span Creation
+• Adding Attributes
+• Error Handling
+• Async Operations
+• Database Tracing
+• HTTP Client Tracing
+• Message Queue Tracing
+
+Sample Applications
+• E-Commerce Demo App
+• Serverless Blog Platform
+• Microservices Reference Architecture
+• Real-Time Analytics Pipeline
+
+CloudFormation / IaC Templates
+• Lambda with Tracing
+• ECS Cluster with ADOT
+• EKS Cluster with Observability
+• Complete Observability Stack
+
+📘 API REFERENCE
+
+REST APIs
+• Traces API
+• GetTraceSummaries
+• BatchGetTraces
+• GetTraceGraph
+• PutTraceSegments
+• Service Map API
+• GetServiceGraph
+• GetServiceGraphMetrics
+• Insights API
+• GetInsightSummaries
+• GetInsightEvents
+• GetInsightImpactGraph
+
+SDK Reference
+
+AWS SDK
+• Java SDK
+• Python SDK (Boto3)
+• JavaScript SDK
+• .NET SDK
+• Go SDK
+• Ruby SDK
+• PHP SDK
+
+OpenTelemetry SDK
+• Tracer API
+• Span API
+• Context API
+• Propagators
+• Exporters
+
+CLI Reference
+• AWS CLI Commands
+• aws xray get-trace-summaries
+• aws xray batch-get-traces
+• aws xray get-service-graph
+• aws cloudwatch get-metric-data
+• ADOT CLI Tools
+
+CloudFormation Reference
+• AWS::XRay::SamplingRule
+• AWS::CloudWatch::Alarm
+• AWS::Logs::MetricFilter
+• Custom Resources
+
+🎯 BEST PRACTICES
+
+Instrumentation Best Practices
+• What to Instrument
+• Naming Conventions
+• Attribute Standards
+• Error Handling
+• Performance Considerations
+
+Sampling Strategies
+• Choosing Sampling Rates
+• Implementing Tail-Based Sampling
+• Cost vs Coverage Trade-offs
+• Dynamic Sampling
+
+Performance Optimization
+• Agent Configuration
+• Reducing Overhead
+• Batch Processing
+• Network Optimization
+
+Security Best Practices
+• Data Sanitization
+• PII Handling
+• IAM Policies
+• Encryption
+• Compliance
+
+Cost Optimization
+• Understanding Pricing
+• Sampling Strategies
+• Data Retention
+• Query Optimization
+• Monitoring Costs
+
+Operational Excellence
+• Monitoring Your Monitoring
+• Alert Fatigue Prevention
+• Dashboard Design
+• Team Workflows
+• Documentation
+
+🔧 TROUBLESHOOTING
+
+Common Issues
+
+Setup & Configuration
+• Agent Not Sending Traces
+• Missing Traces
+• Incomplete Traces
+• Service Not Appearing in Service Map
+• High Latency from Agent
+
+Instrumentation Issues
+• Custom Spans Not Appearing
+• Attributes Not Showing
+• Context Not Propagating
+• Memory Leaks
+• Performance Degradation
+
+Integration Problems
+• AWS Service Integration
+• Third-Party Integration
+• Cross-Account Tracing
+• Cross-Region Tracing
+
+Debugging Guides
+• Enable Debug Logging
+• Validate Configuration
+• Test Connectivity
+• Analyze Agent Metrics
+• Use X-Ray Console
+
+Error Messages
+• Common Error Codes
+• Error Message Reference
+• Resolution Steps
+
+Performance Issues
+• High Agent Overhead
+• Slow Trace Queries
+• Service Map Loading Slowly
+• Dashboard Performance
+
+FAQ
+• General Questions
+• Technical Questions
+• Billing Questions
+
+🔐 SECURITY & COMPLIANCE
+
+Security
+• IAM Policies and Permissions
+• Resource-Based Policies
+• Service Control Policies
+• Encryption at Rest
+• Encryption in Transit
+• VPC Endpoints
+• PrivateLink
+
+Data Privacy
+• PII Detection and Redaction
+• Data Sanitization
+• Data Residency
+• Data Retention Policies
+
+Compliance
+• HIPAA Compliance
+• PCI DSS Compliance
+• SOC 2 Compliance
+• GDPR Compliance
+• FedRAMP
+
+Audit & Governance
+• CloudTrail Integration
+• AWS Config Rules
+• Compliance Reporting
+• Access Logging
+
+🔗 INTEGRATIONS
+
+AWS Service Integrations
+• CloudWatch Metrics
+• CloudWatch Logs
+• CloudWatch Dashboards
+• CloudWatch Alarms
+• EventBridge
+• Systems Manager
+• Service Catalog
+
+Third-Party Integrations
+• Grafana
+• Prometheus
+• Splunk
+• PagerDuty
+• Slack
+• Jira
+• ServiceNow
+
+CI/CD Integration
+• AWS CodePipeline
+• AWS CodeBuild
+• Jenkins
+• GitHub Actions
+• GitLab CI
+• CircleCI
+
+Observability Platforms
+• OpenTelemetry Collector
+• Jaeger
+• Zipkin
+
+📊 DASHBOARDS & VISUALIZATION
+
+Pre-Built Dashboards
+• Application Overview
+• Service Performance
+• Error Analysis
+• Latency Analysis
+• Dependency Map
+
+Custom Dashboards
+• Dashboard Design Principles
+• Widget Types
+• Metric Math
+• Log Insights Queries
+• Trace Analytics Queries
+
+Visualization Best Practices
+• Choosing Chart Types
+• Color Coding
+• Threshold Lines
+• Annotations
+
+🎓 LEARNING RESOURCES
+
+Documentation
+• User Guide
+• Developer Guide
+• API Reference
+• CLI Reference
+
+Training
+• Getting Started Course
+• Advanced Techniques Course
+• Certification Prep
+
+Videos & Webinars
+• Introduction Videos
+• Deep Dive Sessions
+• Customer Success Stories
+• re:Invent Sessions
+
+Blogs & Articles
+• AWS Blog Posts
+• Community Articles
+• Case Studies
+• Whitepapers
+
+Community
+• AWS Forums
+• Stack Overflow
+• GitHub Discussions
+• User Groups
+
+🆘 SUPPORT & RESOURCES
+
+Getting Help
+• AWS Support Plans
+• Technical Support
+• Account Support
+• Community Forums
+
+Service Health
+• Service Status Dashboard
+• Planned Maintenance
+• Service Limits
+• Quota Increase Requests
+
+Feedback
+• Feature Requests
+• Bug Reports
+• Documentation Feedback
+
+Additional Resources
+• AWS Architecture Center
+• Well-Architected Framework
+• Reference Architectures
+• Solution Libraries
+
+📋 REFERENCE
+
+Service Limits & Quotas
+• Trace Ingestion Limits
+• API Rate Limits
+• Retention Limits
+• Query Limits
+
+Supported Regions
+• Regional Availability
+• Feature Availability by Region
+
+Supported Languages & Frameworks
+• Language Support Matrix
+• Framework Compatibility
+• Version Requirements
+
+Glossary
+• APM Terminology
+• OpenTelemetry Terms
+• AWS Service Terms
+
+Release History
+• Version History
+• Deprecation Notices
+
+🔄 WHAT'S NEW
+
+Latest Features
+• Recent Announcements
+• New Capabilities
+• Enhanced Integrations
+
+Upcoming Features
+• Roadmap
+• Preview Features
+• Beta Programs
+
+💡 RELATED SERVICES
+
+CloudWatch Family
+• CloudWatch Metrics
+• CloudWatch Logs
+• CloudWatch Alarms
+• CloudWatch Dashboards
+• CloudWatch Insights
+• CloudWatch Synthetics
+• CloudWatch RUM (Real User Monitoring)
+• CloudWatch Evidently
+
+Observability Services
+• AWS X-Ray
+• AWS Distro for OpenTelemetry
+• Amazon Managed Service for Prometheus
+• Amazon Managed Grafana
+
+Developer Tools
+• AWS CodeGuru
+• AWS DevOps Guru
+• AWS Fault Injection Simulator

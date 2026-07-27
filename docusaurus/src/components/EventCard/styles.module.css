@@ -1,0 +1,243 @@
+/* ===== CloudOps events: 7 theme groups, each one card + one combined session dropdown ===== */
+
+.eventsPage {
+  margin-top: 0.5rem;
+}
+
+.leadText {
+  font-size: 1.05rem;
+  color: var(--ifm-color-emphasis-800);
+  max-width: 820px;
+  margin-bottom: 1.75rem;
+}
+
+/* Grid of theme boxes */
+.eventGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.themeHeading {
+  font-size: 1.2rem;
+  margin: 0 0 0.35rem;
+  color: var(--ifm-heading-color);
+}
+
+.themeDesc {
+  color: var(--ifm-color-emphasis-700);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0 0 1rem;
+}
+
+.eventCard {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 12px;
+  background: var(--ifm-background-surface-color);
+  padding: 1.2rem 1.3rem 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.eventCard:hover {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+/* NEXT SESSION block (accent bar) */
+.nextSession {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: auto;
+  border-left: 3px solid #ff9900;
+  background: var(--ifm-color-emphasis-100);
+  border-radius: 0 8px 8px 0;
+  padding: 0.7rem 0.9rem;
+}
+
+.nextMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nextLabel {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.nextLevel {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ifm-color-emphasis-700);
+  background: var(--ifm-color-emphasis-200);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin-left: 0.35rem;
+  vertical-align: middle;
+}
+
+.nextName {
+  font-size: 0.98rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+.nextDate {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+.nextWhere {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-700);
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.registerButton {
+  flex-shrink: 0;
+  background: #232f3e;
+  color: #fff !important;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 6px 14px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.registerButton:hover {
+  background: #ff9900;
+  color: #232f3e !important;
+}
+
+[data-theme='dark'] .registerButton {
+  background: #ff9900;
+  color: #232f3e !important;
+}
+
+/* "N more sessions" dropdown */
+.moreDates {
+  margin-top: 0.6rem;
+}
+
+.moreSummary {
+  cursor: pointer;
+  list-style: none;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ifm-color-primary);
+  padding: 0.35rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  user-select: none;
+}
+
+.moreSummary::-webkit-details-marker {
+  display: none;
+}
+
+.moreSummary::before {
+  content: '▸';
+  color: #ff9900;
+  transition: transform 0.15s ease;
+}
+
+.moreDates[open] .moreSummary::before {
+  transform: rotate(90deg);
+}
+
+.dateList {
+  list-style: none;
+  margin: 0.25rem 0 0;
+  padding: 0;
+}
+
+.dateRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--ifm-color-emphasis-100);
+}
+
+.dateMeta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.dateWhen {
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.dateName {
+  font-size: 0.85rem;
+  color: var(--ifm-color-emphasis-800);
+}
+
+.dateLoc {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-600);
+}
+
+.registerButtonSmall {
+  flex-shrink: 0;
+  background: #232f3e;
+  color: #fff !important;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: 6px;
+  text-decoration: none !important;
+  white-space: nowrap;
+}
+
+.registerButtonSmall:hover {
+  background: #ff9900;
+  color: #232f3e !important;
+}
+
+[data-theme='dark'] .registerButtonSmall {
+  background: #ff9900;
+  color: #232f3e !important;
+}
+
+/* Region badges */
+.geoBadge {
+  display: inline-block;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: #fff;
+  padding: 1px 7px;
+  border-radius: 4px;
+  vertical-align: middle;
+}
+
+.geoNAMER { background: #2196F3; }
+.geoEMEA  { background: #4CAF50; }
+.geoAPJ   { background: #FF9800; }
+.geoLATAM { background: #9C27B0; }

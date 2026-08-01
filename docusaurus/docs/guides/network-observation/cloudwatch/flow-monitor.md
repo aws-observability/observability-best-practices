@@ -42,7 +42,7 @@ Before creating monitors, use Workload Insights to understand your traffic patte
 
 Top contributors are network flows with the highest values for each metric type. Use this view to identify which flows deserve a dedicated monitor.
 
-![Workload Insights: Data Transferred]
+![Workload Insights: Data Transferred](../images/FM-SS1-WorkloadInsight.png)
 
 
 ## 3: Monitor Setup
@@ -52,6 +52,8 @@ Top contributors are network flows with the highest values for each metric type.
 Which agents do you want this monitor to pay attention to?
 
 Let me explain with an example:
+
+![Local Resources](../images/FM-SS2-3A.png)
 
 **Scenario 1:** Local = "Everywhere in us-east-1"
 → Use data from agents in Subnet A + B + C (all of them)
@@ -64,13 +66,19 @@ Let me explain with an example:
 
 Where is that traffic going? It's a filter on the destination.
 
+![Remote Resources](../images/FM-SS3-3A.png)
+
 The console gives the below options:
+
+![Remote Resources Options](../images/FM-SS4-3B.png)
 
 | Option | What it shows |
 |--------|---------------|
 | Everywhere | All destinations in the Region |
 | Specific resources | Only the VPCs/subnets/services you pick |
 | Remote Region | Traffic to another Region's edge only |
+
+![Remote Resources Selection](../images/FM-SS5-3B.png)
 
 
 ## What You See After Monitor Setup

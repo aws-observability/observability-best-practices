@@ -21,7 +21,6 @@ Important: This data is the same for ALL AWS accounts. It measures the AWS backb
 | Inter-Region Latency | Round-trip latency between two AWS Regions |
 | Inter-AZ Latency | Round-trip latency between two Availability Zones |
 | Intra-AZ Latency | Round-trip latency within a single AZ |
-| Health Status | Normal or Degraded (inter-Region and inter-AZ only) |
 
 ![Infrastructure Performance](../images/IP-SS1.png)
 

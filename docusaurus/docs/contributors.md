@@ -21,7 +21,7 @@ Thank you to the following people for their contributions :
 | Nirmal Mehta        | Lucas Vieira Souza da Silva | William Armiros   | Abhi Khanna        |
 | Arvind Raghunathan  | Doyita Mitra                | Rahul Popat       | Taiki Hibira       |
 | Siva Guruvareddiar  | Jay Joshi                   | Ashish Ranjan     | Xavier Figueroa    |
-| Yagr Xu             |                             |                   |
+| Yagr Xu             | Rahi Patel                  |                   |                    |
 
 
 

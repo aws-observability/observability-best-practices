@@ -6,24 +6,64 @@ on:
       - main
     paths:
       - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.html"
 
   pull_request:
     branches:
       - main
     paths:
       - "**/*.md"
+      - "**/*.mdx"
+      - "**/*.html"
 
 jobs:
   markdown-link-check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+        with:
+          # Full history is required to diff against the base ref and
+          # determine which content files actually changed.
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
         with:
           node-version: 20
       - name: install markdown-link-check
         run: npm install -g markdown-link-check@3.12.2
       - name: markdown-link-check version
         run: npm list -g markdown-link-check
-      - name: Run markdown-link-check on MD files
-        run: find docusaurus -name "*.md" | xargs -n 1 markdown-link-check -q -c .github/workflows/linkcheck.json
+      - name: Determine changed content files
+        id: changed
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+          else
+            base="${{ github.event.before }}"
+            head="${{ github.sha }}"
+          fi
+          # Fall back to the previous commit if the base is missing/empty
+          # (e.g. the very first push to a branch).
+          if [ -z "$base" ] || ! git cat-file -e "$base" 2>/dev/null; then
+            base="$(git rev-parse HEAD~1 2>/dev/null || git rev-parse HEAD)"
+          fi
+          # Added/Copied/Modified/Renamed Markdown (.md/.mdx) and HTML files under docusaurus.
+          git diff --name-only --diff-filter=ACMR "$base...$head" -- docusaurus \
+            | grep -E '\.(md|mdx|html)$' > changed-files.txt || true
+          echo "Changed content files:"
+          cat changed-files.txt || true
+      - name: Run markdown-link-check on changed files
+        run: |
+          if [ ! -s changed-files.txt ]; then
+            echo "No changed content files to check."
+            exit 0
+          fi
+          status=0
+          # Read line-by-line so paths containing spaces are handled correctly.
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            echo "Checking: $f"
+            markdown-link-check -q -c .github/workflows/linkcheck.json "$f" || status=1
+          done < changed-files.txt
+          exit $status

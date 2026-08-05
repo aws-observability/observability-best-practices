@@ -123,7 +123,7 @@ Your logs contain [metrics](../../signals/metrics/) that are just waiting to be 
 
 ## Log to `stdout`
 
-Where possible, applications shouould log to `stdout` rather than to a fixed location such as a file or socket. This enables log agents to collect and route your log events based on rules that make sense for your own observability solution. While not possible for all applications, this is the best practice for containerized workloads.
+Where possible, applications should log to `stdout` rather than to a fixed location such as a file or socket. This enables log agents to collect and route your log events based on rules that make sense for your own observability solution. While not possible for all applications, this is the best practice for containerized workloads.
 
 !!! note
 	While applications should be generic and simple in their logging practices, remaining loosely coupled from logging solutions, the transmission of log data does still require a [log collector](../../tools/logs/) to send data from `stdout` to a file. The important concept is to avoid application and business logic being dependant on your logging infrastructure - in other words, you should work to separate your concerns.

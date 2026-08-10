@@ -155,6 +155,37 @@ module.exports = {
         'guides/hybrid-and-multicloud',
         {
           type: 'category',
+          label: 'Network Observation',
+          items: [
+            {
+              type: 'category',
+              label: 'CloudWatch Network Monitoring',
+              items: [
+                'guides/network-observation/cloudwatch/flow-monitor',
+                'guides/network-observation/cloudwatch/internet-monitor',
+                'guides/network-observation/cloudwatch/synthetic-monitor',
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Network Manager',
+              items: [
+                'guides/network-observation/network-manager/infrastructure-performance',
+                'guides/network-observation/network-manager/reachability-analyzer',
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Comprehensive Solutions',
+              items: [
+                'guides/network-observation/comprehensive-solutions/north-south-traffic',
+                'guides/network-observation/comprehensive-solutions/east-west-traffic',
+              ],
+            },
+          ],
+        },
+        {
+          type: 'category',
           label: 'Operational',
           items: [
             {

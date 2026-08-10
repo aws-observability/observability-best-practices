@@ -358,6 +358,8 @@ module.exports = {
                 'recipes/rds',
                 'recipes/dynamodb',
                 'recipes/msk',
+                'recipes/recipes/msk-monitoring-with-managed-collector',
+                'recipes/recipes/opensearch-monitoring-with-managed-collector',
               ],
             },
           ],

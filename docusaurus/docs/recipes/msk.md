@@ -8,6 +8,7 @@ Amazon MSK secures your Apache Kafka cluster by encrypting data at rest.
 
 Check out the following recipes:
 
+- [Monitoring Amazon MSK with AWS Managed Collector](recipes/msk-monitoring-with-managed-collector.md)
 - [Amazon Managed Streaming for Apache Kafka: Open Monitoring with Prometheus][msk-prom]
 
 [msk-main]: https://aws.amazon.com/msk/

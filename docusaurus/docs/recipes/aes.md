@@ -19,6 +19,7 @@ Check out the following recipes:
 - [Send CloudTrail Logs to AOS][ct-ws]
 - [Searching DynamoDB Data with AOS][bs-ws]
 - [Getting Started with Trace Analytics in AOS][tracing-aes]
+- [Monitoring Amazon OpenSearch Service with AWS Managed Collector](recipes/opensearch-monitoring-with-managed-collector.md)
 
 [aes-main]: https://aws.amazon.com/opensearch-service/
 [aos-gs]: https://aws.amazon.com/blogs/big-data/get-started-with-amazon-opensearch-service-t-shirt-size-your-domain/

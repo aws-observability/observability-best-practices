@@ -245,6 +245,16 @@ You must consider the trade-offs of customizing metrics sent by Container Insigh
 
 As part of your Amazon EKS Cluster creation process using EKS Blueprints, you can setup Container Container Insights as a Day 2 operational tooling to collect, aggregate, and summarize metrics and logs from containerized applications and micro-services to Amazon CloudWatch console.
 
+### Container Insights vs. Managed Collector for EKS
+
+AWS provides two managed offerings for EKS observability, designed to suit different deployment needs. Both deliver OTel metrics to CloudWatch, both provide a vended CloudWatch dashboard, and both support PromQL queries. The difference is how you want to deploy your collection infrastructure:
+
+- **Container Insights** — Opinionated exporters and collector, all in-cluster. AWS deploys and maintains both the exporters (kube-state-metrics, node-exporter, cAdvisor) and the collector (CloudWatch Agent) inside your cluster. The agent runs as a DaemonSet (one pod per node) and consumes resources on your nodes. You get metrics, logs, traces, and GPU monitoring from a single managed add-on. Choose this when you need metrics, logs, and traces together, need Application Signals (APM, SLOs), or require GPU monitoring (NVIDIA DCGM, AWS Neuron).
+
+- **Managed Collector** — Agentless collection with customer-owned exporters. You deploy and maintain Prometheus exporters in your cluster. The managed collector scrapes the specified `/metrics` endpoints over your VPC, runs entirely outside your cluster on AWS-managed infrastructure, scales automatically, and consumes zero resources on your nodes. Choose this option when you want no monitoring footprint inside your cluster, have existing Prometheus-compatible exporters, or want to deliver metrics to Amazon CloudWatch, Amazon Managed Service for Prometheus (AMP), or both.
+
+For pricing details, see [CloudWatch pricing](https://aws.amazon.com/cloudwatch/pricing/) and [AMP pricing](https://aws.amazon.com/prometheus/pricing/).
+
 ### Conclusion
 
 In this section of Observability best practices guide, we covered lot of deeper details around CloudWatch Container insights which included a introduction to Amazon CloudWatch Container Insights and how it can help you to observe your containerized workloads on Amazon EKS. We covered deeper grounds on using Amazon CloudWatch Container Insights  with AWS Distro for Open Telemetry to enable collection fo Container insight metrics to visualize the metrics our your containerzied workloads on Amazon CloudWatch console. Next, we covered lot of depth around Fluent Bit Integration in CloudWatch Container Insights for Amazon EKS to create dedicated input streams within Fluent Bit and independent log groups within CloudWatch Logs for Application, Host and Data Plane logs. Next, we talked about two different approaches such as processors, metrics dimensions to achieve cost savings with CloudWatch Container insights. Finally we talked in brief about how use EKS Blueprints as a vehicle to setup Container Insights during the Amazon EKS cluster creation process. You can get hands-on experience with the [CloudWatch Container Insights module](https://catalog.workshops.aws/observability/en-US/aws-native/insights/containerinsights) with in the[One Observability Workshop](https://catalog.workshops.aws/observability/en-US).

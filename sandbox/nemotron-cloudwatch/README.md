@@ -88,7 +88,6 @@ The only change on the agent side is the `general.telemetry.tracing` block in
 ```
 configs/config_web_only_otel.yml     agent config — telemetry block only; the agent itself is untouched
 collector/collector-full.yaml        all three pipelines. The reusable artifact.
-collector/collector-traces.yaml      traces only, for bringing up the first signal on its own
 scripts/all.sh                       run everything, in order
 scripts/setup.sh                     agent env + CloudWatch prerequisites (idempotent)
 scripts/get-collector.sh             download otelcol-contrib for this platform

@@ -34,9 +34,6 @@ conventional OpenTelemetry split, and it's what keeps the no-code-changes promis
   because a bad key otherwise surfaces much later as an opaque mid-run agent failure
 - `git`, `curl`, `python3`, and the AWS CLI. `uv` is installed for you if absent
 
-No Serper key is needed. The observability config uses only Tavily; Serper belongs to NVIDIA's paper-search
-lab, which is out of scope here.
-
 ## Run it
 
 ```bash

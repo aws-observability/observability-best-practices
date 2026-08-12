@@ -1,12 +1,4 @@
-# Workshop 2 — AI-Q web-only config WITH OpenTelemetry tracing enabled.
-#
-# Identical to Workshop 1's config_web_only.yml, plus a telemetry.tracing block
-# that points the NeMo Agent Toolkit at the local ADOT collector. NAT emits OTLP
-# spans to http://localhost:4318; the collector forwards them to CloudWatch
-# (X-Ray) with SigV4 auth. No changes to the agent's code — observability is a
-# config addition.
-#
-# Required environment variables (same as WS1):
+# Required environment variables:
 #   MODEL          - e.g. nvidia.nemotron-super-3-120b
 #   ENDPOINT_URL   - https://bedrock-runtime.<region>.amazonaws.com/openai/v1
 #   OPENAI_API_KEY - AWS Bearer Token for Bedrock

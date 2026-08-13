@@ -24,9 +24,7 @@ conventional OpenTelemetry split, and it's what keeps the no-code-changes promis
 ## Prerequisites
 
 - An AWS account with Bedrock access to `nvidia.nemotron-super-3-120b` in your region (default `us-west-2`)
-- **X-Ray Transaction Search enabled** — a hard requirement of the OTLP traces endpoint, which rejects spans
-  without it. `setup.sh` checks and tells you how to turn it on; it does not enable it for you, because it is
-  an account-wide setting with billing implications
+- X-Ray Transaction Search enabled
 - An [Amazon Bedrock API key](https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys-generate.html) —
   the agent talks to Bedrock's OpenAI-compatible endpoint with bearer-token auth. **These expire**; a stale one
   is the most likely reason a previously working run starts failing
@@ -62,8 +60,7 @@ broken dashboard.
 
 Every script takes `--help`. Run them individually if you want to watch each signal appear on its own.
 
-Tear it all down with `./scripts/cleanup.sh` (`--dry-run` first to see the manifest). It is explicit about the
-three things it deliberately cannot undo.
+Tear it all down with `./scripts/cleanup.sh` 
 
 ## How the telemetry flows
 
@@ -77,8 +74,6 @@ localhost:4318  →  otelcol-contrib (SigV4 auth)
    └── logs    ───────────────────────────→ CloudWatch OTLP logs endpoint  → /aiq/agent
 ```
 
-The only change on the agent side is the `general.telemetry.tracing` block in
-`configs/config_web_only_otel.yml`, which points NAT at the local collector.
 
 ## Files
 
@@ -98,9 +93,6 @@ scripts/load-env.sh                  shared .env loader (sourced, not run)
 
 `setup.sh` creates an `agent/` directory here for the AI-Q checkout and its venv (~1.2 GB, gitignored), and
 downloads the collector binary into `bin/` (~352 MB, also gitignored). `cleanup.sh` removes both.
-
-If you're instrumenting a different OpenTelemetry-based agent, `collector/collector-full.yaml` is the file to
-take. Only the span attribute names in it are AI-Q-specific.
 
 
 ## License

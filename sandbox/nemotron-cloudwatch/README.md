@@ -102,31 +102,6 @@ downloads the collector binary into `bin/` (~352 MB, also gitignored). `cleanup.
 If you're instrumenting a different OpenTelemetry-based agent, `collector/collector-full.yaml` is the file to
 take. Only the span attribute names in it are AI-Q-specific.
 
-## Notes
-
-- **The collector is upstream `otelcol-contrib`, not ADOT** — and that is a requirement, not a preference.
-  **ADOT registers no connectors at all**, so `span_metrics` and `signal_to_metrics` cannot be configured
-  there, and this design derives metrics from spans. The `transform` processor that strips ANSI escapes is
-  also absent. ADOT does ship `sigv4auth`, `awsemf`, and `filelog`, so it would serve the traces and logs
-  pipelines on its own. Contrib also registers components with underscore names — `otlp_http`, `file_log`,
-  `span_metrics`, `signal_to_metrics`, `sigv4auth` — and the camelCase spellings in the upstream docs do not
-  resolve here. Check any distro with `./bin/otelcol-contrib components` before assuming a name works.
-- **Metrics reach CloudWatch as EMF rather than via an OTLP metrics endpoint.** CloudWatch does have a public
-  OTLP metrics endpoint; it requires delta data points carrying start timestamps, which these connectors do
-  not provide.
-- **`.env` holds your API keys.** `setup.sh` writes it `0600` and it's gitignored. Don't commit it, and don't
-  paste it into an issue. Note that gitignore does not protect against `zip -r`.
-- **Costs.** CloudWatch Logs ingestion, custom metrics, and Bedrock tokens. A deep query is genuinely
-  expensive — one measured run made 278 LLM calls totalling 6.26M tokens.
-- Log groups get 7-day retention by default (`LOG_RETENTION_DAYS`).
-
-## Relationship to NVIDIA's workshop
-
-If you've seen NVIDIA's *Build Agentic AI Applications with NVIDIA Nemotron on Amazon Bedrock* workshop, this
-is a standalone companion, not a continuation. That workshop ends where the agent runs; this starts there. It's
-where the agent and the query shapes come from, but nothing here depends on having done it — and if you already
-have its checkout, point `AGENT_DIR` at it to reuse the venv. That workshop is a separate upstream project
-under its own license and is not included in this repository.
 
 ## License
 

@@ -1,0 +1,17 @@
+name: "Amazon OpenSearch Service Monitoring"
+slug: opensearch-monitoring
+content_type: solution
+description: "Monitor Amazon OpenSearch Service domains using AWS Managed Collector with Prometheus metrics and CloudWatch"
+workload_type: [databases]
+compute_platform: []
+backends: [cloudwatch, amp, amg]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+setup_complexity: medium
+time_to_value_minutes: 20
+instrumentation: prometheus
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/monitoring.html"
+last_validated: "2026-08-17"

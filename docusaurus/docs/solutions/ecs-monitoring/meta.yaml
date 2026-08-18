@@ -1,0 +1,17 @@
+name: "ECS Monitoring"
+slug: ecs-monitoring
+content_type: solution
+description: "Monitor Amazon ECS workloads on EC2 and Fargate using Container Insights and ADOT with AMP/AMG backends"
+workload_type: [containers]
+compute_platform: [ecs, fargate]
+backends: [cloudwatch, amp, amg, xray]
+signals: [metrics, logs, traces]
+iac_available: []
+partner_integrations: []
+setup_complexity: medium
+time_to_value_minutes: 25
+instrumentation: adot
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-container-insights.html"
+last_validated: "2026-08-17"

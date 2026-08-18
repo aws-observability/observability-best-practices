@@ -1,0 +1,17 @@
+name: "Amazon MSK Monitoring"
+slug: msk-monitoring
+content_type: solution
+description: "Monitor Amazon MSK clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch"
+workload_type: [messaging]
+compute_platform: []
+backends: [cloudwatch, amp, amg]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+setup_complexity: medium
+time_to_value_minutes: 20
+instrumentation: prometheus
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html"
+last_validated: "2026-08-17"

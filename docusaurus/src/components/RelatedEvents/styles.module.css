@@ -1,0 +1,88 @@
+.container {
+  margin-top: 0.5rem;
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.row {
+  padding: 0.6rem 0.75rem;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+}
+
+.rowMain {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.formatBadge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: var(--ifm-color-primary-lightest);
+  color: var(--ifm-color-primary-darkest);
+  white-space: nowrap;
+}
+
+.eventName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--ifm-link-color);
+  text-decoration: none;
+}
+
+.eventName:hover {
+  text-decoration: underline;
+}
+
+.rowMeta {
+  font-size: 0.78rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.25rem;
+  padding-left: 0;
+}
+
+.browseLink {
+  font-size: 0.9rem;
+  color: var(--ifm-link-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.browseLink:hover {
+  text-decoration: underline;
+}
+
+.seeAll {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--ifm-color-emphasis-600);
+  text-decoration: none;
+}
+
+.seeAll:hover {
+  color: var(--ifm-link-color);
+  text-decoration: underline;
+}
+
+/* Dark mode */
+[data-theme='dark'] .row {
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+[data-theme='dark'] .formatBadge {
+  background: var(--ifm-color-emphasis-200);
+  color: var(--ifm-color-emphasis-900);
+}

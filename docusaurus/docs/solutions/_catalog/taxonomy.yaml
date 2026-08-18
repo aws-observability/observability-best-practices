@@ -1,0 +1,113 @@
+# Solutions Catalog Taxonomy
+# Defines the controlled vocabulary for solution classification
+
+workload_types:
+  - id: containers
+    label: Containers
+    icon: "🐳"
+  - id: kubernetes
+    label: Kubernetes
+    icon: "☸️"
+  - id: serverless
+    label: Serverless
+    icon: "⚡"
+  - id: ec2
+    label: EC2
+    icon: "🖥️"
+  - id: databases
+    label: Databases
+    icon: "🗄️"
+  - id: messaging
+    label: Messaging
+    icon: "📨"
+  - id: ai-ml
+    label: AI/ML
+    icon: "🤖"
+  - id: networking
+    label: Networking
+    icon: "🌐"
+  - id: applications
+    label: Applications
+    icon: "📦"
+  - id: security
+    label: Security
+    icon: "🔒"
+
+content_types:
+  - id: solution
+    label: Solution
+    description: "How to observe workload X — deployable, step-by-step"
+  - id: guide
+    label: Guide
+    description: "General advice and guidance — best practices, decision help"
+
+compute_platforms:
+  - id: eks
+    label: Amazon EKS
+  - id: ecs
+    label: Amazon ECS
+  - id: lambda
+    label: AWS Lambda
+  - id: ec2
+    label: Amazon EC2
+  - id: fargate
+    label: AWS Fargate
+  - id: sagemaker
+    label: Amazon SageMaker
+
+backends:
+  - id: cloudwatch
+    label: CloudWatch
+    color: "#FF9900"
+  - id: amp
+    label: Amazon Managed Prometheus
+    color: "#E6522C"
+  - id: amg
+    label: Amazon Managed Grafana
+    color: "#F46800"
+  - id: xray
+    label: AWS X-Ray
+    color: "#8C4FFF"
+  - id: opensearch
+    label: OpenSearch
+    color: "#005EB8"
+
+signals:
+  - id: metrics
+    label: Metrics
+    icon: "📊"
+  - id: logs
+    label: Logs
+    icon: "📝"
+  - id: traces
+    label: Traces
+    icon: "🔗"
+  - id: profiling
+    label: Profiling
+    icon: "🔬"
+
+instrumentation:
+  - id: otel
+    label: OpenTelemetry
+  - id: cwagent
+    label: CloudWatch Agent
+  - id: prometheus
+    label: Prometheus
+  - id: adot
+    label: AWS Distro for OpenTelemetry
+  - id: custom
+    label: Custom
+
+setup_complexity:
+  - id: low
+    label: Low
+    description: "< 5 steps, single service"
+    color: "#2ea44f"
+  - id: medium
+    label: Medium
+    description: "5-15 steps, multiple services"
+    color: "#d29922"
+  - id: high
+    label: High
+    description: "> 15 steps, complex integration"
+    color: "#cb2431"

@@ -1,0 +1,11 @@
+name: "WAF Security Analysis with CloudWatch"
+slug: waf-security-analysis
+content_type: guide
+description: "Analyze AWS WAF logs with CloudWatch Logs Insights, metric filters, and Contributor Insights for threat detection and response."
+workload_type: [security, networking]
+backends: [cloudwatch]
+signals: [logs, metrics]
+status: active
+last_validated: "2026-08-18"
+docs_link: https://docs.aws.amazon.com/waf/latest/developerguide/logging.html
+related_events: [security]

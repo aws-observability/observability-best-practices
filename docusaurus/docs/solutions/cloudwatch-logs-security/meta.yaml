@@ -1,0 +1,11 @@
+name: "CloudWatch Logs Security Best Practices"
+slug: cloudwatch-logs-security
+content_type: guide
+description: "Best practices for securing CloudWatch Logs with IAM policies, deletion protection, encryption, data protection, and auditing."
+workload_type: [security]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+last_validated: "2026-08-18"
+docs_link: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/security.html
+related_events: [security]

@@ -1,0 +1,11 @@
+name: "Querying Security Lake with CloudWatch"
+slug: security-lake-cloudwatch
+content_type: guide
+description: "Query historical Security Lake data alongside CloudWatch unified data store logs using Athena cross-catalog queries."
+workload_type: [security]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+last_validated: "2026-08-18"
+docs_link: https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html
+related_events: [security]

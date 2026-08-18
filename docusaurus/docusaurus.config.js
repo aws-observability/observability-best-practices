@@ -64,6 +64,8 @@ const config = {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
           //path: 'docs',
+          include: ['solutions/**/*.{md,mdx}', 'events/**/*.{md,mdx}'],
+          exclude: ['**/_catalog/**'],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -118,78 +120,9 @@ const config = {
         },
         items: [
           {
-            type: 'doc',
-            docId: 'home',
-            position: 'left',
-            label: 'Home',
-          },
-          {
-            type: 'doc',
-            docId: 'guides/index',
-            position: 'left',
-            label: 'Guides',
-          },
-          {
-            type: 'doc',
-            docId: 'signals/logs',
-            position: 'left',
-            label: 'Signals',
-          },
-          {
-            type: 'doc',
-            docId: 'tools/observability_accelerator',
-            position: 'left',
-            label: 'Tools',
-          },
-          {
-            type: 'doc',
-            docsPluginId: 'apm',
-            docId: 'index',
-            position: 'left',
-            label: 'APM',
-          },
-          {
-            type: 'doc',
-            docId: 'recipes/index',
-            position: 'left',
-            label: 'Recipes',
-          },
-          {
-            type: 'doc',
-            docId: 'ai/index',
-            position: 'left',
-            label: 'AI',
-          },
-          {
-            type: 'doc',
-            docId: 'patterns/Tracing/xrayec2',
-            position: 'left',
-            label: 'Patterns',
-          },
-          {
-            type: 'doc',
-            docId: 'persona/cloud_engineer',
-            position: 'left',
-            label: 'Persona',
-          },
-          {
-            type: 'doc',
-            docId: 'events/index',
+            to: '/events/',
             position: 'left',
             label: 'Events',
-            sidebarId: false,
-          },
-          {
-            type: 'doc',
-            docId: 'resources/index',
-            position: 'left',
-            label: 'Resources',
-          },
-          {
-            type: 'doc',
-            position: 'left',
-            docId: 'contributors',
-            label: 'Contributors',
           },
           {
             type: 'localeDropdown',

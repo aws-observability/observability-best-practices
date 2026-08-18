@@ -1,0 +1,94 @@
+name: Catalog validation
+
+# Enforce the catalog entry contract on every change to catalog content.
+# See docusaurus/docs/solutions/_catalog/CONTRIBUTING.md for the rules.
+on:
+  pull_request:
+    paths:
+      - 'docusaurus/docs/solutions/**'
+      - 'docusaurus/docs/events/events.json'
+      - 'docusaurus/scripts/generate-catalog.py'
+      - '.github/workflows/catalog-validation.yaml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docusaurus/docs/solutions/**'
+      - 'docusaurus/docs/events/events.json'
+      - 'docusaurus/scripts/generate-catalog.py'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate catalog entries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install 'pyyaml==6.0.2'
+
+      # Fails on: unknown taxonomy values, slug/directory mismatch, overlong
+      # descriptions, malformed last_validated, missing or misordered document
+      # sections. Warnings (stale entries, missing docs_link) do not block.
+      - name: Validate entries
+        working-directory: docusaurus
+        run: python3 scripts/generate-catalog.py --check
+
+      # catalog.json is a build artifact. If a contributor edited it by hand or
+      # forgot to regenerate after a meta.yaml change, the committed file will
+      # not match what the generator produces.
+      - name: Check catalog.json is up to date
+        working-directory: docusaurus
+        run: |
+          cp static/catalog.json /tmp/catalog-committed.json
+          python3 scripts/generate-catalog.py > /dev/null
+          python3 - <<'PY'
+          import json, sys
+
+          def normalize(path):
+              with open(path) as f:
+                  data = json.load(f)
+              # generated_at always differs between runs; compare content only.
+              data.pop("generated_at", None)
+              return data
+
+          committed = normalize("/tmp/catalog-committed.json")
+          regenerated = normalize("static/catalog.json")
+
+          if committed != regenerated:
+              print(
+                  "ERROR: static/catalog.json is out of date.\n"
+                  "Run: python3 scripts/generate-catalog.py\n"
+                  "Then commit the regenerated file.",
+                  file=sys.stderr,
+              )
+              sys.exit(1)
+          print("catalog.json is up to date.")
+          PY
+
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: docusaurus/package-lock.json
+
+      - name: Install dependencies
+        working-directory: docusaurus
+        run: npm ci
+
+      - name: Build
+        working-directory: docusaurus
+        run: npm run build

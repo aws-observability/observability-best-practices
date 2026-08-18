@@ -1,0 +1,49 @@
+# Guide meta.yaml template — copy this directory to docs/solutions/<your-slug>/
+# All allowed values are defined in _catalog/taxonomy.yaml.
+# Do NOT invent new values; propose taxonomy additions in a separate PR.
+
+# --- REQUIRED FIELDS ---
+
+# Card title displayed in the catalog UI
+name: "REPLACE_ME"
+
+# Must exactly match the directory name (lowercase, hyphens only)
+slug: REPLACE_ME
+
+# MUST be "guide" for guide entries
+content_type: guide
+
+# Max 200 characters. Shows on the catalog card.
+description: "REPLACE_ME"
+
+# Which workload types does this apply to?
+# These are the ONLY visible filter chips on the homepage.
+# Pick every one that genuinely applies, but do not pad.
+# Allowed: containers, kubernetes, serverless, ec2, databases, messaging, ai-ml, networking, applications, security
+workload_type: [REPLACE_ME]
+
+# Which telemetry signals does this cover?
+# Allowed: metrics, logs, traces, profiling
+signals: [REPLACE_ME]
+
+# Lifecycle status: active, deprecated, or preview
+status: active
+
+# Date you last reviewed this guidance (YYYY-MM-DD, must not be in the future)
+last_validated: "REPLACE_ME"
+
+# --- OPTIONAL FIELDS ---
+
+# Which observability backends are referenced?
+# Allowed: cloudwatch, amp, amg, xray, opensearch
+# backends: []
+
+# AWS Documentation page covering this topic (include if one exists)
+# docs_link: ""
+
+# Topic tags that link this entry to live events (must match topics in events.json)
+# Allowed topics: ai-ml, aiops, applications, apm, cloudwatch, databases, devops-agent, genai, general, logs, metrics, security
+# related_events: []
+
+# --- GUIDES MUST NOT INCLUDE THESE FIELDS ---
+# setup_complexity, time_to_value_minutes, instrumentation, compute_platform

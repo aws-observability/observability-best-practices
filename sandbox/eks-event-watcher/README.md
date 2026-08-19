@@ -35,7 +35,7 @@ A prebuilt multi-architecture image (`linux/amd64` and `linux/arm64`) is publish
 and the Helm chart in this repository already points at it. Nothing needs to be built or pushed:
 
 ```sh
-git clone https://github.com/aws-samples/eks-event-watcher.git
+git clone https://github.com/aws-observability/observability-best-practices/tree/main/sandbox/eks-event-watcher
 helm install cpe eks-event-watcher/helm/cpe-chart
 ```
 

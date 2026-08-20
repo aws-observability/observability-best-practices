@@ -1,0 +1,17 @@
+name: "Amazon WorkSpaces Monitoring"
+slug: workspaces-monitoring
+content_type: solution
+description: "Monitor Amazon WorkSpaces virtual desktops with Prometheus agents, Amazon Managed Service for Prometheus, and Amazon Managed Grafana."
+workload_type: [compute]
+compute_platform: [ec2]
+backends: [amp, amg]
+signals: [metrics]
+instrumentation: prometheus
+status: active
+time_to_value_minutes: 30
+last_validated: "2026-08-20"
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces-monitoring.html"
+related_events: [metrics]

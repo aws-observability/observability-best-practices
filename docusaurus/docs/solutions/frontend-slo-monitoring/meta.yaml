@@ -1,0 +1,17 @@
+name: "Frontend and SLO Monitoring"
+slug: frontend-slo-monitoring
+content_type: solution
+description: "Digital experience monitoring with CloudWatch RUM, Synthetics canaries, and Application Signals SLOs for frontend performance and reliability."
+workload_type: [applications]
+compute_platform: []
+backends: [cloudwatch, xray]
+signals: [metrics, traces]
+instrumentation: custom
+status: active
+time_to_value_minutes: 25
+last_validated: "2026-08-20"
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html"
+related_events: [apm, cloudwatch]

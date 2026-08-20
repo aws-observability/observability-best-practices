@@ -1,0 +1,17 @@
+name: "Hybrid and Multicloud Monitoring"
+slug: hybrid-monitoring
+content_type: solution
+description: "Monitor workloads spanning AWS and on-premises using CloudWatch agent, AMP remote write, and Amazon Managed Grafana as a unified visualization layer."
+workload_type: [compute]
+compute_platform: [ec2]
+backends: [cloudwatch, amp, amg]
+signals: [metrics, logs]
+instrumentation: cwagent
+status: active
+time_to_value_minutes: 40
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent-on-Premise.html"
+last_validated: "2026-08-20"
+related_events: []

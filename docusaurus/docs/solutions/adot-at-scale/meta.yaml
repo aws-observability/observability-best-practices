@@ -1,0 +1,17 @@
+name: "ADOT Collector at Scale"
+slug: adot-at-scale
+content_type: solution
+description: "Production deployment of the AWS Distro for OpenTelemetry Collector: modes, scaling, resource sizing, pipeline design, and Java Spring instrumentation"
+workload_type: [compute, applications]
+compute_platform: [eks, ecs, ec2]
+backends: [cloudwatch, amp, xray]
+signals: [metrics, logs, traces]
+instrumentation: adot
+status: active
+time_to_value_minutes: 45
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://aws-otel.github.io/docs/getting-started/collector"
+last_validated: "2026-08-20"
+related_events: []

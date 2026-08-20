@@ -1,0 +1,17 @@
+name: "Databricks Monitoring"
+slug: databricks-monitoring
+content_type: solution
+description: "Monitor Databricks clusters on AWS using CloudWatch for logs and metrics, with init scripts for collector installation and structured logging."
+workload_type: [data-streaming]
+compute_platform: [ec2]
+backends: [cloudwatch]
+signals: [metrics, logs]
+instrumentation: custom
+status: active
+time_to_value_minutes: 30
+iac_available: []
+partner_integrations: ["Databricks"]
+accelerator_link: ""
+docs_link: ""
+last_validated: "2026-08-20"
+related_events: []

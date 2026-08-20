@@ -1,0 +1,17 @@
+name: "Amazon Managed Grafana Setup"
+slug: managed-grafana-setup
+content_type: solution
+description: "Configure Amazon Managed Grafana with Athena, Redshift data sources, SAML authentication via Google Workspace, and Terraform automation"
+workload_type: [compute]
+compute_platform: []
+backends: [amg, amp, cloudwatch]
+signals: [metrics]
+instrumentation: custom
+status: active
+time_to_value_minutes: 30
+iac_available: [terraform]
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html"
+last_validated: "2026-08-20"
+related_events: []

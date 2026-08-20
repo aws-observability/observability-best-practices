@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # CloudWatch Logs Security Best Practices
 
+## Related Events
+
+<RelatedEvents topics={["security"]} />
+
+
 ## Overview
 
 Amazon CloudWatch Logs centralizes logs from systems, applications, and AWS services into a scalable, queryable platform. Without proper security controls, log data can become a vulnerability rather than an asset. This guide covers implementing least-privilege access, encryption, deletion protection, data protection policies, and comprehensive auditing to keep your log groups secure and compliant.
@@ -119,7 +124,3 @@ Configure audit operations (monitor and report) or de-identify operations (mask 
 - [Data protection policies](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/mask-sensitive-log-data.html)
 - [WAF Security Analysis with CloudWatch](/solutions/waf-security-analysis/)
 - [S3 Access Logs for Security & Compliance](/solutions/s3-access-logs-security/)
-
-## Related Events
-
-<RelatedEvents topics={["security"]} />

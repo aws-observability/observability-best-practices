@@ -56,6 +56,8 @@ This is the foundational EC2 observability pattern. The full reference is in the
 └──────────────┘ └──────────┘ └──────────────┘
 ```
 
+![CloudWatch Agent architecture for EC2 monitoring](../../images/cw-agent.png)
+
 ## Deploy
 
 ### Step 1: Install the CloudWatch agent
@@ -163,6 +165,8 @@ aws cloudwatch put-metric-alarm \
 2. **Verify metrics in CloudWatch:**
    Navigate to CloudWatch → Metrics → CWAgent namespace. Confirm CPU, memory, and disk metrics are present for your instance.
 
+   ![EC2 automatic CloudWatch dashboard with instance metrics](../../images/ec2-auto-dashboard.png)
+
 3. **Verify log delivery:**
    ```bash
    aws logs describe-log-streams --log-group-name /ec2/system/messages --limit 5
@@ -171,8 +175,16 @@ aws cloudwatch put-metric-alarm \
 4. **Check X-Ray traces (if enabled):**
    Navigate to CloudWatch → X-Ray traces → Service map. Confirm your application nodes appear.
 
+   ![X-Ray distributed tracing architecture for EC2 applications](../../patterns/images/xrayec2.png)
+
 5. **Use Resource Health dashboard:**
    Navigate to CloudWatch → ServiceLens → Resource Health for a fleet-wide view of EC2 instance health.
+
+6. **Grafana dashboard (if using ADOT + AMP):**
+
+   ![Grafana dashboard showing EC2 instance performance metrics](../../images/grafana-dashboard.png)
+
+   ![ADOT architecture for EC2 metric collection](../../images/adot-arch.png)
 
 ## Troubleshoot
 

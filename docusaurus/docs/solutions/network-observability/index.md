@@ -27,6 +27,8 @@ AWS provides a layered set of network observability tools that together give vis
 
 ## Architecture
 
+![VPC Flow Logs architecture and data flow](../../patterns/images/vpcflowlogs.png)
+
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
 │                          AWS Region                                     │
@@ -111,6 +113,14 @@ aws networkmonitor create-probe \
 ```
 
 ## Validate
+
+![Network Flow Monitor Workload Insights showing data transferred](../../guides/network-observation/images/FM-SS1-WorkloadInsight.png)
+
+![Internet Monitor overview showing performance and availability scores](../../guides/network-observation/images/IM-SS2-Overview.png)
+
+![Internet Monitor traffic analysis by geography](../../guides/network-observation/images/IM-SS3-Analyze.png)
+
+![Network Synthetic Monitor probes deployed across hybrid connectivity](../../guides/network-observation/images/SM-SS3.png)
 
 1. **VPC Flow Logs:** After 5–10 minutes, query the log group:
    ```bash

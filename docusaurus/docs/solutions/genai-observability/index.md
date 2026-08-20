@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # GenAI Workload Observability
 
+## Related Events
+
+<RelatedEvents topics={["genai", "ai-ml"]} />
+
+
 ## Overview
 
 Generative AI workloads on AWS (Amazon Bedrock, SageMaker, self-hosted models) present unique observability challenges: non-deterministic responses, token-based pricing, variable latency, and multi-service agent orchestration that chains API calls across Bedrock, S3, Lambda, and KMS within seconds. Without proper monitoring, teams face cost overruns from untracked token usage, silent agent failures, and compliance gaps.
@@ -25,6 +30,8 @@ Together these pipelines power DevOps dashboards (completion rate, component lat
 - AWS CLI v2 installed and configured
 
 ## Architecture
+
+![GenAI telemetry pipelines showing model invocation logging and agent trace flows](../../images/GenAI/genai-telemetry-pipelines.png)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
@@ -136,6 +143,10 @@ For a complete set of 17 persona-based dashboard queries (DevOps + FinOps), see 
 
 ## Validate
 
+![GenAI DevOps dashboard showing completion rates and agent error metrics](../../images/GenAI/genai-devops-dashboard.png)
+
+![GenAI FinOps dashboard showing token usage and cost attribution by model](../../images/GenAI/genai-finops-dashboard.png)
+
 1. **Model Invocation Logging:** Invoke a Bedrock model, then query:
    ```bash
    aws logs filter-log-events \
@@ -169,7 +180,3 @@ For a complete set of 17 persona-based dashboard queries (DevOps + FinOps), see 
 ## Related Solutions
 
 - [Coding Agents Observability](../coding-agents-observability/) — OTel-based telemetry for Claude Code, Codex, and Copilot developer fleets
-
-## Related Events
-
-<RelatedEvents topics={["genai", "ai-ml"]} />

@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # Coding Agents Observability
 
+## Related Events
+
+<RelatedEvents topics={["ai-ml"]} />
+
+
 ## Overview
 
 AI coding agents (Claude Code, OpenAI Codex, GitHub Copilot) run on developer laptops outside AWS, making traditional CloudWatch instrumentation impractical. Each of these agents ships a built-in OpenTelemetry SDK that can export metrics directly to the CloudWatch OTLP endpoint using bearer-token authentication — no collectors, sidecars, or AWS SDK required on developer machines.
@@ -185,7 +190,3 @@ Metrics take 2–5 minutes to appear. Verify resource attributes with `cwpromql 
 ## Related Solutions
 
 - [GenAI Workload Observability](../genai-observability/) — Bedrock/SageMaker model invocation monitoring and agent trace observability
-
-## Related Events
-
-<RelatedEvents topics={["ai-ml"]} />

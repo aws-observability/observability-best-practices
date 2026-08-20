@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # RDS & Aurora Monitoring
 
+## Related Events
+
+<RelatedEvents topics={["databases"]} />
+
+
 ## Overview
 
 Amazon RDS and Aurora publish instance-level metrics to CloudWatch in the `AWS/RDS` namespace at 1-minute granularity by default. Combined with Performance Insights, Database Insights, Enhanced Monitoring, and database log export, you get complete visibility into database health without installing any agents.
@@ -121,6 +126,14 @@ Navigate to CloudWatch → Database Insights in the console and select your clus
 
 ## Validate
 
+![CloudWatch metrics view for RDS database instances](../../images/db_cw_metrics.png)
+
+![Amazon Managed Grafana dashboard for RDS and Aurora monitoring](../../images/amg-rds-aurora.png)
+
+![Performance Insights showing database load analysis](../../images/db_perf_insights.png)
+
+![Enhanced Monitoring showing OS-level metrics for the database host](../../images/db_enhanced_monitoring.png)
+
 1. **CloudWatch metrics:** Confirm data in the `AWS/RDS` namespace:
    ```bash
    aws cloudwatch get-metric-statistics \
@@ -152,7 +165,3 @@ Navigate to CloudWatch → Database Insights in the console and select your clus
 
 - [Amazon OpenSearch Service Monitoring](../opensearch-monitoring/) — Monitor OpenSearch domains with Prometheus and CloudWatch
 - [Amazon MSK Monitoring](../msk-monitoring/) — Monitor Kafka clusters that feed data pipelines connected to your databases
-
-## Related Events
-
-<RelatedEvents topics={["databases"]} />

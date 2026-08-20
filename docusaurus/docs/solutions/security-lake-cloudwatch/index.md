@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # Querying Security Lake with CloudWatch
 
+## Related Events
+
+<RelatedEvents topics={["security"]} />
+
+
 ## Overview
 
 When migrating security log management to Amazon CloudWatch unified data store, historical data accumulated in Amazon Security Lake remains in place. Amazon Athena cross-catalog queries allow you to access both data stores from a single console — querying historical Security Lake records and new CloudWatch unified data store logs without exporting, copying, or duplicating data.
@@ -145,7 +150,3 @@ LIMIT 50;
 - [CloudWatch unified data store](https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/)
 - [OCSF Schema](https://schema.ocsf.io/)
 - [CloudWatch Logs Security Best Practices](/solutions/cloudwatch-logs-security/)
-
-## Related Events
-
-<RelatedEvents topics={["security"]} />

@@ -26,6 +26,8 @@ For complete reference material, see [Monitoring Amazon OpenSearch Service](http
 
 ## Architecture
 
+![OpenSearch pipeline architecture with managed collector](../../patterns/images/os.png)
+
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │              OpenSearch Domain (VPC access)                   │

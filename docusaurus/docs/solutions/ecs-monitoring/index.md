@@ -57,6 +57,10 @@ This entry covers two paths: the **fast path** (Container Insights, 5 minutes) a
                           └─────────────────┘
 ```
 
+![ECS monitoring architecture with AMP and AMG](../../patterns/images/ecs.png)
+
+![ADOT sidecar collector architecture for ECS tasks](../../images/ADOT-sidecar.png)
+
 ## Deploy
 
 ### Fast Path: Container Insights (5 minutes)
@@ -144,6 +148,8 @@ For application metrics exposed at `/metrics`, use the CloudWatch agent with ECS
 1. **Container Insights (fast path):**
    Navigate to CloudWatch → Container Insights → Performance monitoring. Select your ECS cluster and verify cluster/service/task metrics.
 
+   ![CloudWatch Container Insights metrics dashboard for ECS](../../images/ContainerInsightsMetrics.png)
+
 2. **Verify ADOT collector health:**
    ```bash
    aws ecs describe-tasks --cluster $CLUSTER_NAME --tasks $TASK_ARN \
@@ -152,6 +158,8 @@ For application metrics exposed at `/metrics`, use the CloudWatch agent with ECS
 
 3. **Check X-Ray traces:**
    Open CloudWatch → X-Ray traces → Service map. Confirm your ECS services appear with request flow.
+
+   ![X-Ray distributed tracing architecture for ECS services](../../patterns/images/xrayecs.png)
 
 4. **Query AMP metrics:**
    ```bash

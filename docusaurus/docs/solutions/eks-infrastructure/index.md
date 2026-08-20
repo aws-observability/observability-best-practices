@@ -52,6 +52,8 @@ This solution deploys a complete monitoring stack via Terraform, providing:
                   └────────────────────┘
 ```
 
+![EKS infrastructure monitoring with Node Exporter, AMP, and AMG](../../patterns/images/eksnodeexporterampamg.png)
+
 ## Deploy
 
 ### Step 1: Clone the accelerator
@@ -94,6 +96,12 @@ terraform apply
    ```
 
 3. **Check Grafana dashboards:** Navigate to your AMG workspace and verify the pre-built EKS dashboards show data.
+
+   ![Goldilocks VPA recommendation dashboard for EKS resource optimization](../../images/goldilocks-dashboard.png)
+
+   ![KEDA autoscaler metrics dashboard in Grafana](../../images/Containers/oss/eks/keda5.png)
+
+   ![EKS cluster infrastructure architecture overview](../../images/Containers/oss/eks/arch.png)
 
 ## Troubleshoot
 

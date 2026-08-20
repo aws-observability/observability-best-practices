@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # WAF Security Analysis with CloudWatch
 
+## Related Events
+
+<RelatedEvents topics={["security"]} />
+
+
 ## Overview
 
 AWS WAF generates detailed JSON logs for every web request evaluated by a web ACL. When sent to Amazon CloudWatch Logs, these logs unlock three complementary analysis capabilities: CloudWatch Logs Insights for ad-hoc investigation, metric filters for near-real-time alerting, and Contributor Insights for continuous top-N threat identification. Together, these form a complete security operations workflow for detecting, investigating, and responding to web application threats.
@@ -186,7 +191,3 @@ Contributor Insights only analyzes events ingested after rule creation. Create r
 - [Contributor Insights rule syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights-RuleSyntax.html)
 - [CloudWatch Logs Security Best Practices](/solutions/cloudwatch-logs-security/)
 - [S3 Access Logs for Security & Compliance](/solutions/s3-access-logs-security/)
-
-## Related Events
-
-<RelatedEvents topics={["security"]} />

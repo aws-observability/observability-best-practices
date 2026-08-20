@@ -56,6 +56,10 @@ This entry covers the fast-path setup using the CloudWatch agent and Fluent Bit.
 └─────────────────────┘
 ```
 
+![ADOT Collector pipeline architecture for EKS Container Insights](../../images/Containers/aws-native/eks/cw-adot-collector-pipeline-eks.jpg)
+
+![CloudWatch Container Insights components overview](../../images/Containers/aws-native/eks/cw-components.jpg)
+
 ## Deploy
 
 ### Step 1: Install the CloudWatch agent (Container Insights metrics)
@@ -107,11 +111,15 @@ Then deploy an `OpenTelemetryCollector` custom resource with the X-Ray exporter.
 1. **Check Container Insights dashboards:**
    Navigate to CloudWatch → Container Insights → Performance monitoring. Select your cluster and verify metrics appear for nodes, pods, and services.
 
+   ![CloudWatch Container Insights performance monitoring dashboard](../../images/Containers/aws-native/eks/api-mon-1.jpg)
+
 2. **Verify log groups exist:**
    ```bash
    aws logs describe-log-groups --log-group-name-prefix "/aws/containerinsights/${ClusterName}" --region $RegionName
    ```
    Expected groups: `/aws/containerinsights/<cluster>/application`, `/aws/containerinsights/<cluster>/host`, `/aws/containerinsights/<cluster>/dataplane`, `/aws/containerinsights/<cluster>/performance`.
+
+   ![CloudWatch Logs Insights query results for EKS containers](../../images/Containers/aws-native/eks/log-aggreg-1.jpg)
 
 3. **Query logs with Logs Insights:**
    ```
@@ -122,6 +130,8 @@ Then deploy an `OpenTelemetryCollector` custom resource with the X-Ray exporter.
 
 4. **Verify X-Ray traces (if enabled):**
    Open the CloudWatch → X-Ray traces → Service map console and confirm your services appear.
+
+   ![X-Ray distributed tracing service map for EKS workloads](../../images/Containers/aws-native/eks/tracing-3.jpg)
 
 ## Troubleshoot
 

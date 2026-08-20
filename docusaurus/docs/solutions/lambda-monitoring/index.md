@@ -25,6 +25,8 @@ Key observability features:
 
 ## Architecture
 
+![Lambda observability architecture with API Gateway integration](../../images/Serverless/aws-native/apigw_lambda.png)
+
 ```
 ┌───────────────────────────────────────────────────┐
 │                Lambda Function                     │
@@ -98,6 +100,14 @@ def handler(event, context):
 ```
 
 ## Validate
+
+![CloudWatch dashboard showing Lambda invocation metrics](../../images/Serverless/aws-native/cw_dashboard.png)
+
+![X-Ray distributed trace map for Lambda function](../../images/Serverless/aws-native/xray_trace.png)
+
+![Lambda Insights showing memory and CPU utilization](../../images/Serverless/aws-native/lambda_insights.png)
+
+![Lambda structured logging flow diagram](../../patterns/images/lambdalogging.png)
 
 1. **Invoke your function:**
    ```bash

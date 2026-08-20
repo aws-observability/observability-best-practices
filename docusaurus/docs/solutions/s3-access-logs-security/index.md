@@ -7,6 +7,11 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # S3 Access Logs for Security & Compliance
 
+## Related Events
+
+<RelatedEvents topics={["security"]} />
+
+
 ## Overview
 
 Amazon S3 server access logs record every request made to your buckets — successful or failed, authenticated or anonymous — with HTTP-level detail not available in other log sources. With S3 server access logs now available as a native data source for CloudWatch unified data store, logs are automatically delivered and transformed into a structured, queryable format without custom ETL pipelines.
@@ -185,7 +190,3 @@ Use advanced event selectors to log only write operations on sensitive buckets:
 - [Security best practices for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)
 - [CloudWatch Logs Security Best Practices](/solutions/cloudwatch-logs-security/)
 - [WAF Security Analysis with CloudWatch](/solutions/waf-security-analysis/)
-
-## Related Events
-
-<RelatedEvents topics={["security"]} />

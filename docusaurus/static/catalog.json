@@ -1,7 +1,511 @@
 {
-  "generated_at": "2026-08-20T20:57:39.872841+00:00",
+  "generated_at": "2026-08-20T21:07:13.856059+00:00",
   "schema_version": "1.0",
   "solutions": [
+    {
+      "name": "CloudWatch Logs Security Best Practices",
+      "slug": "cloudwatch-logs-security",
+      "content_type": "guide",
+      "description": "Best practices for securing CloudWatch Logs with IAM policies, deletion protection, encryption, data protection, and auditing.",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "featured": true,
+      "last_validated": "2026-08-18",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/security.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "Querying Security Lake with CloudWatch",
+      "slug": "security-lake-cloudwatch",
+      "content_type": "guide",
+      "description": "Query historical Security Lake data alongside CloudWatch unified data store logs using Athena cross-catalog queries.",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "featured": true,
+      "last_validated": "2026-08-18",
+      "docs_link": "https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "S3 Access Logs for Security & Compliance",
+      "slug": "s3-access-logs-security",
+      "content_type": "guide",
+      "description": "Use S3 server access logs with CloudWatch for security monitoring, compliance evidence, and operational auditing.",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "featured": true,
+      "last_validated": "2026-08-18",
+      "docs_link": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "WAF Security Analysis with CloudWatch",
+      "slug": "waf-security-analysis",
+      "content_type": "guide",
+      "description": "Analyze AWS WAF logs with CloudWatch Logs Insights, metric filters, and Contributor Insights for threat detection and response.",
+      "workload_type": [
+        "security",
+        "network"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "status": "active",
+      "featured": true,
+      "last_validated": "2026-08-18",
+      "docs_link": "https://docs.aws.amazon.com/waf/latest/developerguide/logging.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": ".NET Application Monitoring",
+      "slug": "dotnet-application-monitoring",
+      "content_type": "solution",
+      "description": "End-to-end observability for .NET applications using OpenTelemetry and CloudWatch-native instrumentation paths",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "Amazon MSK Monitoring",
+      "slug": "msk-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Amazon MSK (Managed Streaming for Apache Kafka) clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "prometheus",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "Amazon OpenSearch Service Monitoring",
+      "slug": "opensearch-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Amazon OpenSearch Service domains using AWS Managed Collector with Prometheus metrics and CloudWatch",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "prometheus",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/monitoring.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "Coding Agents Observability",
+      "slug": "coding-agents-observability",
+      "content_type": "solution",
+      "description": "OTel-based telemetry for Claude Code, OpenAI Codex, and GitHub Copilot fleets \u2014 token usage, cost tracking, and team attribution",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "ECS Monitoring",
+      "slug": "ecs-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Amazon ECS workloads on EC2 and Fargate using Container Insights and ADOT with AMP/AMG backends",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ecs",
+        "fargate"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 25,
+      "instrumentation": "adot",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-container-insights.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "EKS Monitoring with CloudWatch Container Insights",
+      "slug": "eks-container-insights",
+      "content_type": "solution",
+      "description": "Collect metrics, logs, and traces from Amazon EKS clusters using CloudWatch Container Insights with the CloudWatch agent and Fluent Bit",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "eks"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "cwagent",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "GenAI Workload Observability",
+      "slug": "genai-observability",
+      "content_type": "solution",
+      "description": "Bedrock and SageMaker model invocation monitoring with token/cost tracking, agent traces, and LLM performance dashboards",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "compute_platform": [
+        "sagemaker"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 45,
+      "instrumentation": "otel",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "Network Observability",
+      "slug": "network-observability",
+      "content_type": "solution",
+      "description": "VPC Flow Logs, Network Flow Monitor, Internet Monitor, and Synthetic Monitor for end-to-end AWS network visibility",
+      "workload_type": [
+        "network"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "RDS & Aurora Monitoring",
+      "slug": "rds-aurora-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Amazon RDS and Aurora databases with CloudWatch metrics, Performance Insights, Database Insights, and Enhanced Monitoring",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "custom",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html",
+      "last_validated": "2026-08-17"
+    },
+    {
+      "name": "EKS Infrastructure Monitoring",
+      "slug": "eks-infrastructure",
+      "content_type": "solution",
+      "description": "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "eks"
+      ],
+      "backends": [
+        "amp",
+        "amg",
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "https://github.com/aws-observability/terraform-aws-observability-accelerator",
+      "docs_link": "https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html",
+      "last_validated": "2026-07-15"
+    },
+    {
+      "name": "Lambda Monitoring",
+      "slug": "lambda-monitoring",
+      "content_type": "solution",
+      "description": "Comprehensive AWS Lambda monitoring with CloudWatch native metrics, X-Ray tracing, and Lambda Insights",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "lambda"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces",
+        "logs"
+      ],
+      "iac_available": [
+        "cdk",
+        "terraform",
+        "cloudformation"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 10,
+      "instrumentation": "cwagent",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html",
+      "last_validated": "2026-07-01"
+    },
+    {
+      "name": "EKS Java Application Monitoring",
+      "slug": "eks-application-signals",
+      "content_type": "solution",
+      "description": "Application-level monitoring for Java/JVM workloads on EKS using CloudWatch Application Signals and OpenTelemetry",
+      "workload_type": [
+        "compute",
+        "applications"
+      ],
+      "compute_platform": [
+        "eks"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces",
+        "logs"
+      ],
+      "iac_available": [
+        "cdk",
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "otel",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
+      "last_validated": "2026-06-20"
+    },
+    {
+      "name": "Kafka on EC2 Monitoring",
+      "slug": "kafka-ec2",
+      "content_type": "solution",
+      "description": "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics",
+      "workload_type": [
+        "data-streaming",
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 25,
+      "instrumentation": "cwagent",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-jmx.html",
+      "last_validated": "2026-06-01"
+    },
+    {
+      "name": "EC2 NGINX Monitoring",
+      "slug": "ec2-nginx",
+      "content_type": "solution",
+      "description": "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "cwagent",
+      "status": "active",
+      "featured": true,
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "last_validated": "2026-05-10"
+    },
     {
       "name": "ADOT Collector at Scale",
       "slug": "adot-at-scale",
@@ -755,492 +1259,6 @@
       "related_events": [
         "metrics"
       ]
-    },
-    {
-      "name": "CloudWatch Logs Security Best Practices",
-      "slug": "cloudwatch-logs-security",
-      "content_type": "guide",
-      "description": "Best practices for securing CloudWatch Logs with IAM policies, deletion protection, encryption, data protection, and auditing.",
-      "workload_type": [
-        "security"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "logs"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-18",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/security.html",
-      "related_events": [
-        "security"
-      ]
-    },
-    {
-      "name": "Querying Security Lake with CloudWatch",
-      "slug": "security-lake-cloudwatch",
-      "content_type": "guide",
-      "description": "Query historical Security Lake data alongside CloudWatch unified data store logs using Athena cross-catalog queries.",
-      "workload_type": [
-        "security"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "logs"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-18",
-      "docs_link": "https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html",
-      "related_events": [
-        "security"
-      ]
-    },
-    {
-      "name": "S3 Access Logs for Security & Compliance",
-      "slug": "s3-access-logs-security",
-      "content_type": "guide",
-      "description": "Use S3 server access logs with CloudWatch for security monitoring, compliance evidence, and operational auditing.",
-      "workload_type": [
-        "security"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "logs"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-18",
-      "docs_link": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html",
-      "related_events": [
-        "security"
-      ]
-    },
-    {
-      "name": "WAF Security Analysis with CloudWatch",
-      "slug": "waf-security-analysis",
-      "content_type": "guide",
-      "description": "Analyze AWS WAF logs with CloudWatch Logs Insights, metric filters, and Contributor Insights for threat detection and response.",
-      "workload_type": [
-        "security",
-        "network"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "logs",
-        "metrics"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-18",
-      "docs_link": "https://docs.aws.amazon.com/waf/latest/developerguide/logging.html",
-      "related_events": [
-        "security"
-      ]
-    },
-    {
-      "name": ".NET Application Monitoring",
-      "slug": "dotnet-application-monitoring",
-      "content_type": "solution",
-      "description": "End-to-end observability for .NET applications using OpenTelemetry and CloudWatch-native instrumentation paths",
-      "workload_type": [
-        "applications"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 30,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "Amazon MSK Monitoring",
-      "slug": "msk-monitoring",
-      "content_type": "solution",
-      "description": "Monitor Amazon MSK (Managed Streaming for Apache Kafka) clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch",
-      "workload_type": [
-        "data-streaming"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch",
-        "amp",
-        "amg"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 20,
-      "instrumentation": "prometheus",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "Amazon OpenSearch Service Monitoring",
-      "slug": "opensearch-monitoring",
-      "content_type": "solution",
-      "description": "Monitor Amazon OpenSearch Service domains using AWS Managed Collector with Prometheus metrics and CloudWatch",
-      "workload_type": [
-        "data-streaming"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch",
-        "amp",
-        "amg"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 20,
-      "instrumentation": "prometheus",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/monitoring.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "Coding Agents Observability",
-      "slug": "coding-agents-observability",
-      "content_type": "solution",
-      "description": "OTel-based telemetry for Claude Code, OpenAI Codex, and GitHub Copilot fleets \u2014 token usage, cost tracking, and team attribution",
-      "workload_type": [
-        "ai-ml"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch",
-        "amp",
-        "amg"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 30,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "ECS Monitoring",
-      "slug": "ecs-monitoring",
-      "content_type": "solution",
-      "description": "Monitor Amazon ECS workloads on EC2 and Fargate using Container Insights and ADOT with AMP/AMG backends",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "ecs",
-        "fargate"
-      ],
-      "backends": [
-        "cloudwatch",
-        "amp",
-        "amg",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 25,
-      "instrumentation": "adot",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-container-insights.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "EKS Monitoring with CloudWatch Container Insights",
-      "slug": "eks-container-insights",
-      "content_type": "solution",
-      "description": "Collect metrics, logs, and traces from Amazon EKS clusters using CloudWatch Container Insights with the CloudWatch agent and Fluent Bit",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "eks"
-      ],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "GenAI Workload Observability",
-      "slug": "genai-observability",
-      "content_type": "solution",
-      "description": "Bedrock and SageMaker model invocation monitoring with token/cost tracking, agent traces, and LLM performance dashboards",
-      "workload_type": [
-        "ai-ml"
-      ],
-      "compute_platform": [
-        "sagemaker"
-      ],
-      "backends": [
-        "cloudwatch",
-        "amg"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 45,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "Network Observability",
-      "slug": "network-observability",
-      "content_type": "solution",
-      "description": "VPC Flow Logs, Network Flow Monitor, Internet Monitor, and Synthetic Monitor for end-to-end AWS network visibility",
-      "workload_type": [
-        "network"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 30,
-      "instrumentation": "custom",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "RDS & Aurora Monitoring",
-      "slug": "rds-aurora-monitoring",
-      "content_type": "solution",
-      "description": "Monitor Amazon RDS and Aurora databases with CloudWatch metrics, Performance Insights, Database Insights, and Enhanced Monitoring",
-      "workload_type": [
-        "data-streaming"
-      ],
-      "compute_platform": [],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "custom",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "EKS Infrastructure Monitoring",
-      "slug": "eks-infrastructure",
-      "content_type": "solution",
-      "description": "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "eks"
-      ],
-      "backends": [
-        "amp",
-        "amg",
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [
-        "terraform"
-      ],
-      "partner_integrations": [],
-      "time_to_value_minutes": 30,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "https://github.com/aws-observability/terraform-aws-observability-accelerator",
-      "docs_link": "https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html",
-      "last_validated": "2026-07-15"
-    },
-    {
-      "name": "Lambda Monitoring",
-      "slug": "lambda-monitoring",
-      "content_type": "solution",
-      "description": "Comprehensive AWS Lambda monitoring with CloudWatch native metrics, X-Ray tracing, and Lambda Insights",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "lambda"
-      ],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "traces",
-        "logs"
-      ],
-      "iac_available": [
-        "cdk",
-        "terraform",
-        "cloudformation"
-      ],
-      "partner_integrations": [],
-      "time_to_value_minutes": 10,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html",
-      "last_validated": "2026-07-01"
-    },
-    {
-      "name": "EKS Java Application Monitoring",
-      "slug": "eks-application-signals",
-      "content_type": "solution",
-      "description": "Application-level monitoring for Java/JVM workloads on EKS using CloudWatch Application Signals and OpenTelemetry",
-      "workload_type": [
-        "compute",
-        "applications"
-      ],
-      "compute_platform": [
-        "eks"
-      ],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "traces",
-        "logs"
-      ],
-      "iac_available": [
-        "cdk",
-        "terraform"
-      ],
-      "partner_integrations": [],
-      "time_to_value_minutes": 20,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
-      "last_validated": "2026-06-20"
-    },
-    {
-      "name": "Kafka on EC2 Monitoring",
-      "slug": "kafka-ec2",
-      "content_type": "solution",
-      "description": "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics",
-      "workload_type": [
-        "data-streaming",
-        "compute"
-      ],
-      "compute_platform": [
-        "ec2"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 25,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-jmx.html",
-      "last_validated": "2026-06-01"
-    },
-    {
-      "name": "EC2 NGINX Monitoring",
-      "slug": "ec2-nginx",
-      "content_type": "solution",
-      "description": "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "ec2"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
-      "last_validated": "2026-05-10"
     }
   ],
   "taxonomy": {

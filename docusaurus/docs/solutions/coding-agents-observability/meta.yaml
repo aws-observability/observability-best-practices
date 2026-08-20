@@ -11,6 +11,7 @@ partner_integrations: []
 time_to_value_minutes: 30
 instrumentation: otel
 status: active
+featured: true
 accelerator_link: ""
 docs_link: ""
 last_validated: "2026-08-17"

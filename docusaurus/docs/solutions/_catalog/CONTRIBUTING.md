@@ -41,6 +41,7 @@ status: active                                 # active / deprecated / preview
 accelerator_link: ""                           # GitHub repo if IaC exists
 docs_link: "https://docs.aws.amazon.com/..."   # REQUIRED if AWS docs page exists
 last_validated: "2026-08-17"                   # Date you last tested/reviewed
+featured: false                                # Optional: pin ahead of others in catalog order
 related_events: []                             # Topic tags matching events.json topics
 ```
 

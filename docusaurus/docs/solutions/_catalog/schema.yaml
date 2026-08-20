@@ -17,6 +17,7 @@ required_fields:
   - last_validated
 
 optional_fields:
+  - featured
   - iac_available
   - partner_integrations
   - accelerator_link
@@ -58,6 +59,9 @@ field_definitions:
   time_to_value_minutes:
     type: integer
     description: "Estimated time to deploy and see first data"
+  featured:
+    type: boolean
+    description: "Pin ahead of non-featured entries in catalog order. Curation only; does not affect filtering or search."
   status:
     type: string
     allowed_values: [active, deprecated, preview]

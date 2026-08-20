@@ -335,10 +335,15 @@ def main() -> None:
         label = meta.get("content_type", "solution").upper()[:3]
         print(f"  {label}  {entry.name}/ -> {meta.get('name', 'UNNAMED')}")
 
-    # Newest validated first: freshness drives catalog order and page 1 placement.
-    # Stable sort: alphabetical first, then date descending, so ties stay alphabetical.
+    # Ordering, applied as a stable sort chain from weakest key to strongest:
+    #   1. name          - deterministic tiebreaker
+    #   2. last_validated - freshest first, so stale content sinks
+    #   3. featured       - curated entries lead regardless of date
+    # `featured` exists so ordering can be curated without falsifying
+    # last_validated, which is a re-test promise the validator checks.
     solutions.sort(key=lambda s: str(s.get("name", "")))
     solutions.sort(key=lambda s: str(s.get("last_validated", "")), reverse=True)
+    solutions.sort(key=lambda s: bool(s.get("featured", False)), reverse=True)
 
     if findings.warnings:
         print(f"\n{len(findings.warnings)} warning(s):")

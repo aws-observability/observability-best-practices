@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-18T16:47:56.699485+00:00",
+  "generated_at": "2026-08-20T17:22:19.158031+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -72,7 +72,7 @@
       "description": "Analyze AWS WAF logs with CloudWatch Logs Insights, metric filters, and Contributor Insights for threat detection and response.",
       "workload_type": [
         "security",
-        "networking"
+        "network"
       ],
       "backends": [
         "cloudwatch"
@@ -108,7 +108,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 30,
       "instrumentation": "otel",
       "status": "active",
@@ -120,9 +119,9 @@
       "name": "Amazon MSK Monitoring",
       "slug": "msk-monitoring",
       "content_type": "solution",
-      "description": "Monitor Amazon MSK clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch",
+      "description": "Monitor Amazon MSK (Managed Streaming for Apache Kafka) clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch",
       "workload_type": [
-        "messaging"
+        "data-streaming"
       ],
       "compute_platform": [],
       "backends": [
@@ -136,7 +135,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 20,
       "instrumentation": "prometheus",
       "status": "active",
@@ -150,7 +148,7 @@
       "content_type": "solution",
       "description": "Monitor Amazon OpenSearch Service domains using AWS Managed Collector with Prometheus metrics and CloudWatch",
       "workload_type": [
-        "databases"
+        "data-streaming"
       ],
       "compute_platform": [],
       "backends": [
@@ -164,7 +162,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 20,
       "instrumentation": "prometheus",
       "status": "active",
@@ -192,7 +189,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 30,
       "instrumentation": "otel",
       "status": "active",
@@ -206,7 +202,7 @@
       "content_type": "solution",
       "description": "Monitor Amazon EC2 instances with the unified CloudWatch agent for system metrics, logs, and X-Ray distributed tracing",
       "workload_type": [
-        "ec2"
+        "compute"
       ],
       "compute_platform": [
         "ec2"
@@ -222,7 +218,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "low",
       "time_to_value_minutes": 15,
       "instrumentation": "cwagent",
       "status": "active",
@@ -236,7 +231,7 @@
       "content_type": "solution",
       "description": "Monitor Amazon ECS workloads on EC2 and Fargate using Container Insights and ADOT with AMP/AMG backends",
       "workload_type": [
-        "containers"
+        "compute"
       ],
       "compute_platform": [
         "ecs",
@@ -255,7 +250,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 25,
       "instrumentation": "adot",
       "status": "active",
@@ -269,8 +263,7 @@
       "content_type": "solution",
       "description": "Collect metrics, logs, and traces from Amazon EKS clusters using CloudWatch Container Insights with the CloudWatch agent and Fluent Bit",
       "workload_type": [
-        "containers",
-        "kubernetes"
+        "compute"
       ],
       "compute_platform": [
         "eks"
@@ -286,7 +279,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "low",
       "time_to_value_minutes": 15,
       "instrumentation": "cwagent",
       "status": "active",
@@ -316,7 +308,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "high",
       "time_to_value_minutes": 45,
       "instrumentation": "otel",
       "status": "active",
@@ -330,7 +321,7 @@
       "content_type": "solution",
       "description": "VPC Flow Logs, Network Flow Monitor, Internet Monitor, and Synthetic Monitor for end-to-end AWS network visibility",
       "workload_type": [
-        "networking"
+        "network"
       ],
       "compute_platform": [],
       "backends": [
@@ -342,7 +333,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 30,
       "instrumentation": "custom",
       "status": "active",
@@ -356,7 +346,7 @@
       "content_type": "solution",
       "description": "Monitor Amazon RDS and Aurora databases with CloudWatch metrics, Performance Insights, Database Insights, and Enhanced Monitoring",
       "workload_type": [
-        "databases"
+        "data-streaming"
       ],
       "compute_platform": [],
       "backends": [
@@ -368,7 +358,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "low",
       "time_to_value_minutes": 15,
       "instrumentation": "custom",
       "status": "active",
@@ -382,8 +371,7 @@
       "content_type": "solution",
       "description": "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services",
       "workload_type": [
-        "containers",
-        "kubernetes"
+        "compute"
       ],
       "compute_platform": [
         "eks"
@@ -401,7 +389,6 @@
         "terraform"
       ],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 30,
       "instrumentation": "otel",
       "status": "active",
@@ -415,7 +402,7 @@
       "content_type": "solution",
       "description": "Comprehensive AWS Lambda monitoring with CloudWatch native metrics, X-Ray tracing, and Lambda Insights",
       "workload_type": [
-        "serverless"
+        "compute"
       ],
       "compute_platform": [
         "lambda"
@@ -435,7 +422,6 @@
         "cloudformation"
       ],
       "partner_integrations": [],
-      "setup_complexity": "low",
       "time_to_value_minutes": 10,
       "instrumentation": "cwagent",
       "status": "active",
@@ -449,8 +435,8 @@
       "content_type": "solution",
       "description": "Application-level monitoring for Java/JVM workloads on EKS using CloudWatch Application Signals and OpenTelemetry",
       "workload_type": [
-        "containers",
-        "kubernetes"
+        "compute",
+        "applications"
       ],
       "compute_platform": [
         "eks"
@@ -469,7 +455,6 @@
         "terraform"
       ],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 20,
       "instrumentation": "otel",
       "status": "active",
@@ -483,8 +468,8 @@
       "content_type": "solution",
       "description": "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics",
       "workload_type": [
-        "messaging",
-        "ec2"
+        "data-streaming",
+        "compute"
       ],
       "compute_platform": [
         "ec2"
@@ -498,7 +483,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "medium",
       "time_to_value_minutes": 25,
       "instrumentation": "cwagent",
       "status": "active",
@@ -512,7 +496,7 @@
       "content_type": "solution",
       "description": "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics",
       "workload_type": [
-        "ec2"
+        "compute"
       ],
       "compute_platform": [
         "ec2"
@@ -526,7 +510,6 @@
       ],
       "iac_available": [],
       "partner_integrations": [],
-      "setup_complexity": "low",
       "time_to_value_minutes": 15,
       "instrumentation": "cwagent",
       "status": "active",
@@ -538,54 +521,39 @@
   "taxonomy": {
     "workload_types": [
       {
-        "id": "containers",
-        "label": "Containers",
-        "icon": "\ud83d\udc33"
-      },
-      {
-        "id": "kubernetes",
-        "label": "Kubernetes",
-        "icon": "\u2638\ufe0f"
-      },
-      {
-        "id": "serverless",
-        "label": "Serverless",
-        "icon": "\u26a1"
-      },
-      {
-        "id": "ec2",
-        "label": "EC2",
-        "icon": "\ud83d\udda5\ufe0f"
-      },
-      {
-        "id": "databases",
-        "label": "Databases",
-        "icon": "\ud83d\uddc4\ufe0f"
-      },
-      {
-        "id": "messaging",
-        "label": "Messaging",
-        "icon": "\ud83d\udce8"
-      },
-      {
         "id": "ai-ml",
         "label": "AI/ML",
         "icon": "\ud83e\udd16"
       },
       {
-        "id": "networking",
-        "label": "Networking",
-        "icon": "\ud83c\udf10"
+        "id": "compute",
+        "label": "Compute",
+        "icon": "\ud83d\udce6"
       },
       {
         "id": "applications",
         "label": "Applications",
-        "icon": "\ud83d\udce6"
+        "icon": "\ud83e\udde9"
+      },
+      {
+        "id": "data-streaming",
+        "label": "Data & Streaming",
+        "icon": "\ud83d\uddc4\ufe0f"
       },
       {
         "id": "security",
-        "label": "Security",
+        "label": "Security & Compliance",
         "icon": "\ud83d\udd12"
+      },
+      {
+        "id": "network",
+        "label": "Network",
+        "icon": "\ud83c\udf10"
+      },
+      {
+        "id": "operations",
+        "label": "Operations",
+        "icon": "\u2699\ufe0f"
       }
     ],
     "content_types": [
@@ -695,26 +663,6 @@
       {
         "id": "custom",
         "label": "Custom"
-      }
-    ],
-    "setup_complexity": [
-      {
-        "id": "low",
-        "label": "Low",
-        "description": "< 5 steps, single service",
-        "color": "#2ea44f"
-      },
-      {
-        "id": "medium",
-        "label": "Medium",
-        "description": "5-15 steps, multiple services",
-        "color": "#d29922"
-      },
-      {
-        "id": "high",
-        "label": "High",
-        "description": "> 15 steps, complex integration",
-        "color": "#cb2431"
       }
     ]
   }

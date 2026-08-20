@@ -2,13 +2,12 @@ name: "Kafka on EC2 Monitoring"
 slug: kafka-ec2
 content_type: solution
 description: "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics"
-workload_type: [messaging, ec2]
+workload_type: [data-streaming, compute]
 compute_platform: [ec2]
 backends: [cloudwatch]
 signals: [metrics, logs]
 iac_available: []
 partner_integrations: []
-setup_complexity: medium
 time_to_value_minutes: 25
 instrumentation: cwagent
 status: active

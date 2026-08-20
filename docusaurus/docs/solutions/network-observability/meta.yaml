@@ -2,13 +2,12 @@ name: "Network Observability"
 slug: network-observability
 content_type: solution
 description: "VPC Flow Logs, Network Flow Monitor, Internet Monitor, and Synthetic Monitor for end-to-end AWS network visibility"
-workload_type: [networking]
+workload_type: [network]
 compute_platform: []
 backends: [cloudwatch]
 signals: [metrics, logs]
 iac_available: []
 partner_integrations: []
-setup_complexity: medium
 time_to_value_minutes: 30
 instrumentation: custom
 status: active

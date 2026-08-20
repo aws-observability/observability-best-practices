@@ -2,13 +2,12 @@ name: "EKS Infrastructure Monitoring"
 slug: eks-infrastructure
 content_type: solution
 description: "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services"
-workload_type: [containers, kubernetes]
+workload_type: [compute]
 compute_platform: [eks]
 backends: [amp, amg, cloudwatch]
 signals: [metrics, logs]
 iac_available: [terraform]
 partner_integrations: []
-setup_complexity: medium
 time_to_value_minutes: 30
 instrumentation: otel
 status: active

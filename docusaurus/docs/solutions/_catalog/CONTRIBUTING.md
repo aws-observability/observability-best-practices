@@ -29,13 +29,12 @@ name: "EKS Infrastructure Monitoring"          # Card title
 slug: eks-infrastructure                       # Must match directory name
 content_type: solution                         # solution / guide
 description: "One sentence. Max 200 chars. Shows on the card."
-workload_type: [containers, kubernetes]        # See _catalog/taxonomy.yaml
+workload_type: [compute]                       # See _catalog/taxonomy.yaml
 compute_platform: [eks]                        # Solutions only (guides may omit)
 backends: [amp, amg, cloudwatch]
 signals: [metrics, logs]
 iac_available: [terraform]                     # Empty list if none
 partner_integrations: []
-setup_complexity: medium                       # Solutions only: low / medium / high
 time_to_value_minutes: 30                      # Solutions only
 instrumentation: otel                          # Solutions only: otel / cwagent / prometheus / adot / custom
 status: active                                 # active / deprecated / preview
@@ -115,12 +114,35 @@ Links to 1-3 catalog entries (solutions or guides) and relevant AWS docs.
 
 Tags make an entry findable. The taxonomy is **closed** — every value you use must already exist in `_catalog/taxonomy.yaml`. To add a new value, open a separate PR proposing the addition with a justification.
 
+### workload_type values (current)
+
+The `workload_type` field drives the **filter chips** on the catalog homepage. The taxonomy was consolidated from 10 thin values to 6 balanced groups:
+
+| id | Label | Current entries |
+|---|---|---|
+| `ai-ml` | AI/ML | 2 |
+| `compute` | Compute | 8 |
+| `applications` | Applications | 2 |
+| `data-streaming` | Data & Streaming | 4 |
+| `security` | Security & Compliance | 4 |
+| `network` | Network | 2 |
+
+**Why six groups, not ten?** The previous values (`containers`, `kubernetes`, `serverless`, `ec2`, `databases`, `messaging`, `ai-ml`, `networking`, `applications`, `security`) produced chips matching 1–3 entries each and left `kubernetes` as a strict subset of `containers` — every kubernetes entry was also tagged containers, so the chip never narrowed anything. Fewer, better-populated groups give users meaningful filtering without dead-end clicks.
+
+Consolidation mapping:
+- `containers` + `kubernetes` + `serverless` + `ec2` → **compute**
+- `databases` + `messaging` → **data-streaming** (users reason about "my data tier", not databases vs. messaging)
+- `networking` → **network** (rename)
+- `security` absorbs compliance (a separate chip would hold ~1 entry)
+
+**Reserved value: `operations`** — intended for cloud operations management content (CloudTrail, Config, Control Tower, Organizations) but deliberately not active because no current entry would use it. An empty chip is worse than a missing one. Rule: a new chip value ships in the same PR as its first entry.
+
 ### What each tag field does for discovery
 
 | Field | Discovery role | Notes |
 |-------|---------------|-------|
-| `workload_type` | The **only** visible filter chips on the homepage. Answers "what am I running?" | Pick every one that genuinely applies, but do not pad. An entry tagged with 6 workload types is usually mis-scoped and should be split. |
-| `compute_platform` | Not a filter chip, but **fully searchable** | Solutions only. |
+| `workload_type` | The **only** visible filter chips on the homepage. Answers "what am I running?" | Pick the single most accurate group; dual-tag only when an entry genuinely spans two. |
+| `compute_platform` | Not a filter chip, but **fully searchable** | Solutions only. Deliberately rejected as a chip row: 10 of 19 entries have no compute platform at all, and four platforms have exactly one entry each — most chips would be empty or singleton. |
 | `backends` | Not a filter chip, but **fully searchable** | |
 | `signals` | Not a filter chip, but **fully searchable** | |
 | `instrumentation` | Not a filter chip, but **fully searchable** | Solutions only. |
@@ -128,7 +150,7 @@ Tags make an entry findable. The taxonomy is **closed** — every value you use 
 
 ### Search and synonyms
 
-The catalog search matches **all metadata fields** plus a built-in synonym map. Examples:
+The catalog search matches **all metadata fields** plus a built-in synonym map defined in `src/pages/index.tsx` (`SEARCH_SYNONYMS`). Examples:
 
 | User types | Finds entries tagged with |
 |------------|--------------------------|
@@ -138,12 +160,22 @@ The catalog search matches **all metadata fields** plus a built-in synonym map. 
 | `serverless` | `lambda` |
 | `prometheus` | `amp` |
 
-The synonym map lives in `src/pages/index.tsx` (`SEARCH_SYNONYMS`). When a new backend or platform is added to the taxonomy, extend the synonym map in the same PR.
+When a new backend or platform is added to the taxonomy, extend the synonym map in the same PR.
+
+#### Group-synonym rule
+
+Group-level synonyms (those keyed to a `workload_type` value) may contain **only domain vocabulary describing the whole group**. Specific technology names must NOT appear in a group synonym.
+
+**Cautionary example:** putting `"kubernetes"` as a synonym for `compute` caused every compute entry to match a kubernetes search — so typing "kubernetes" returned the EC2 NGINX entry. The fix: product-specific words come from `compute_platform`, `name`, and `description`, which are per-entry and precise. If a technology name should find a specific entry, put it in that entry's `description` field (e.g., MSK's description spells out "Managed Streaming for Apache Kafka" so users searching "kafka" find it without polluting the `data-streaming` group synonym).
 
 ### Tagging guidance
 
-- Prefer **accuracy over reach**. Tag what the entry actually deploys on or covers.
-- If you need more than 3 workload types, ask yourself whether the entry should be split into focused pieces.
+- Prefer the **single most accurate group**. Most entries belong to exactly one workload_type.
+- **Dual-tag only when an entry genuinely spans two groups.** Current real examples:
+  - *EKS Java Application Monitoring* → `compute` + `applications`
+  - *Kafka on EC2* → `data-streaming` + `compute`
+  - *WAF* → `security` + `network`
+- If you need more than 2 workload types, the entry is probably mis-scoped and should be split.
 - Use `content_type: guide` explicitly in meta.yaml for guides; solutions can omit it (defaults to `solution`).
 
 ## Catalog ordering and appearance
@@ -248,7 +280,20 @@ The only Python dependency is `pyyaml` (`pip install pyyaml`).
 
 ## Rules
 
-1. **Link out, don't fork.** If AWS Documentation covers a step, link to it.
+1. **Keep the images.** If source material has architecture diagrams, console
+   screenshots, or dashboard examples, carry them into the entry. Readers are
+   visual, and a screenshot of a working dashboard proves the thing succeeded in
+   a way prose cannot. An ASCII diagram is an acceptable *addition* for signal
+   flow, never a *replacement* for a real diagram that already exists.
+   - Images live in `docs/images/` (221 files), `docs/recipes/images/` (85),
+     `docs/patterns/images/` (19), and a few colocated directories.
+   - From `docs/solutions/<slug>/index.md`, `docs/images/` is `../../images/`.
+   - Verify the file exists at the resolved path before committing; a broken
+     image is worse than no image.
+   - Budget roughly four to six images per entry. Prefer one architecture
+     diagram plus screenshots that show what success looks like in `Validate`.
+     Do not carry over every step-by-step console capture.
+2. **Link out, don't fork.** If AWS Documentation covers a step, link to it.
    The catalog entry owns discovery, decision guidance, and the fast path —
    not exhaustive reference material.
 2. **One entry per workload+approach.** "EKS with CloudWatch" and "EKS with

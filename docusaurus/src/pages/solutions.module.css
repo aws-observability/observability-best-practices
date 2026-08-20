@@ -209,31 +209,6 @@
 }
 
 /* Badges */
-.badge {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.2rem 0.6rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.badgeLow {
-  background: #d4edda;
-  color: #155724;
-}
-
-.badgeMedium {
-  background: #fff3cd;
-  color: #856404;
-}
-
-.badgeHigh {
-  background: #f8d7da;
-  color: #721c24;
-}
 
 /* Signals */
 .signals {
@@ -256,15 +231,21 @@
 }
 
 /* Instrumentation badge */
+/* Instrumentation is metadata, not a status. It previously used the theme
+   primary colour, which renders green and made otel/prometheus louder than the
+   backend pills next to them. Outlined-neutral keeps it distinguishable from a
+   filled backend pill without competing with the Guide/Solution tag, which is
+   the only element that should carry colour. */
 .instrumentationBadge {
   display: inline-flex;
   align-items: center;
-  padding: 0.2rem 0.5rem;
+  padding: 0.15rem 0.5rem;
   font-size: 0.7rem;
-  font-weight: 600;
-  border-radius: 4px;
-  background: var(--ifm-color-primary-lightest);
-  color: var(--ifm-color-primary-darkest);
+  font-weight: 500;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  color: var(--ifm-color-emphasis-700);
 }
 
 /* Deprecated indicator */
@@ -303,20 +284,6 @@
 }
 
 /* Dark mode overrides */
-[data-theme='dark'] .badgeLow {
-  background: #1b4332;
-  color: #95d5b2;
-}
-
-[data-theme='dark'] .badgeMedium {
-  background: #4a3f00;
-  color: #ffd43b;
-}
-
-[data-theme='dark'] .badgeHigh {
-  background: #4a1520;
-  color: #f7a8b8;
-}
 
 [data-theme='dark'] .card {
   border-color: var(--ifm-color-emphasis-300);
@@ -375,4 +342,13 @@
 .pageIndicator {
   font-size: 0.9rem;
   color: var(--ifm-color-emphasis-600);
+}
+
+/* Freshness marker. Deliberately the quietest thing on the card and pushed to
+   the trailing edge: useful for judging staleness, never the reason to click. */
+.lastUpdated {
+  margin-left: auto;
+  font-size: 0.68rem;
+  color: var(--ifm-color-emphasis-500);
+  white-space: nowrap;
 }

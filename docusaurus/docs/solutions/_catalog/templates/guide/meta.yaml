@@ -16,10 +16,11 @@ content_type: guide
 # Max 200 characters. Shows on the catalog card.
 description: "REPLACE_ME"
 
-# Which workload types does this apply to?
+# Which group does this belong to?
 # These are the ONLY visible filter chips on the homepage.
-# Pick every one that genuinely applies, but do not pad.
-# Allowed: containers, kubernetes, serverless, ec2, databases, messaging, ai-ml, networking, applications, security
+# Prefer the single most accurate group. Dual-tag only when a guide genuinely
+# spans two (e.g. WAF analysis is security + network).
+# Allowed: ai-ml, compute, applications, data-streaming, security, network
 workload_type: [REPLACE_ME]
 
 # Which telemetry signals does this cover?
@@ -46,4 +47,4 @@ last_validated: "REPLACE_ME"
 # related_events: []
 
 # --- GUIDES MUST NOT INCLUDE THESE FIELDS ---
-# setup_complexity, time_to_value_minutes, instrumentation, compute_platform
+# time_to_value_minutes, instrumentation, compute_platform

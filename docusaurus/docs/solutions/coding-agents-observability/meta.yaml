@@ -8,7 +8,6 @@ backends: [cloudwatch, amp, amg]
 signals: [metrics, logs]
 iac_available: []
 partner_integrations: []
-setup_complexity: medium
 time_to_value_minutes: 30
 instrumentation: otel
 status: active

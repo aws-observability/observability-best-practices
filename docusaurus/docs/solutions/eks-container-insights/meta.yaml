@@ -2,13 +2,12 @@ name: "EKS Monitoring with CloudWatch Container Insights"
 slug: eks-container-insights
 content_type: solution
 description: "Collect metrics, logs, and traces from Amazon EKS clusters using CloudWatch Container Insights with the CloudWatch agent and Fluent Bit"
-workload_type: [containers, kubernetes]
+workload_type: [compute]
 compute_platform: [eks]
 backends: [cloudwatch, xray]
 signals: [metrics, logs, traces]
 iac_available: []
 partner_integrations: []
-setup_complexity: low
 time_to_value_minutes: 15
 instrumentation: cwagent
 status: active

@@ -13,10 +13,11 @@ slug: REPLACE_ME
 # Max 200 characters. Shows on the catalog card.
 description: "REPLACE_ME"
 
-# Which workload types does this apply to?
+# Which group does this belong to?
 # These are the ONLY visible filter chips on the homepage.
-# Pick every one that genuinely applies, but do not pad.
-# Allowed: containers, kubernetes, serverless, ec2, databases, messaging, ai-ml, networking, applications, security
+# Prefer the single most accurate group. Dual-tag only when an entry genuinely
+# spans two (e.g. Java-on-EKS is compute + applications).
+# Allowed: ai-ml, compute, applications, data-streaming, security, network
 workload_type: [REPLACE_ME]
 
 # What compute platform does this deploy on?
@@ -37,10 +38,6 @@ instrumentation: REPLACE_ME
 
 # Lifecycle status: active, deprecated, or preview
 status: active
-
-# Subjective complexity: low, medium, or high
-setup_complexity: REPLACE_ME
-
 # Approximate minutes from zero to seeing data
 time_to_value_minutes: REPLACE_ME
 

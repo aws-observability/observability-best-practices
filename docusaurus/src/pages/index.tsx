@@ -11,12 +11,12 @@ interface Solution {
   workload_type: string[];
   signals: string[];
   status: 'active' | 'deprecated' | 'preview';
+  last_validated?: string;
   content_type?: 'solution' | 'guide';
   // Solution-only fields — guides legitimately omit these.
   compute_platform?: string[];
   backends?: string[];
   instrumentation?: string;
-  setup_complexity?: 'low' | 'medium' | 'high';
   time_to_value_minutes?: number;
   iac_available?: string[];
 }
@@ -34,7 +34,6 @@ interface RawTaxonomy {
   backends: TaxonomyItem[];
   instrumentation: TaxonomyItem[];
   signals: TaxonomyItem[];
-  setup_complexity: TaxonomyItem[];
 }
 
 interface Catalog {
@@ -51,25 +50,40 @@ const SIGNAL_ICONS: Record<string, string> = {
   profiling: '🔬',
 };
 
-const COMPLEXITY_CLASS: Record<string, string> = {
-  low: styles.badgeLow,
-  medium: styles.badgeMedium,
-  high: styles.badgeHigh,
-};
-
 // Human-friendly synonyms so search "just works" without users knowing our taxonomy.
+// Keyed by tag value; the matching text is appended to that entry's search haystack.
+// Extend this whenever a taxonomy value is added, renamed, or retired.
 const SEARCH_SYNONYMS: Record<string, string> = {
+  // Backends
   cloudwatch: 'cw cloud watch',
   amp: 'prometheus managed prometheus',
   amg: 'grafana managed grafana',
   xray: 'x-ray tracing',
+  opensearch: 'elasticsearch search',
+  // Instrumentation
   otel: 'opentelemetry open telemetry',
   adot: 'opentelemetry distro',
   cwagent: 'cloudwatch agent',
+  prometheus: 'promql scrape exporter',
+  // Compute platforms
   eks: 'kubernetes k8s elastic kubernetes',
-  ecs: 'elastic container service',
-  ec2: 'virtual machine vm instance',
-  lambda: 'serverless function',
+  ecs: 'elastic container service containers',
+  ec2: 'virtual machine vm instance instances',
+  fargate: 'serverless containers',
+  lambda: 'serverless function functions',
+  sagemaker: 'machine learning ml training inference',
+  // Workload groups. These carry only DOMAIN-level vocabulary that describes
+  // the whole group. Specific technologies must not go here: putting
+  // "kubernetes" on `compute` made every compute entry match it, so searching
+  // kubernetes returned EC2 NGINX. Product-specific words come from
+  // compute_platform, name, and description, which are per-entry and precise.
+  compute: 'infrastructure nodes hosts instances workloads',
+  'data-streaming': 'data tier datastore persistence database messaging streaming',
+  security: 'compliance audit forensics governance',
+  network: 'networking traffic vpc dns latency connectivity',
+  operations: 'cloudops operational governance audit trail compliance patching landing zone accounts',
+  applications: 'application apm services service code runtime',
+  'ai-ml': 'ai ml machine learning genai llm model models agents inference',
 };
 
 /** Everything searchable about a solution, flattened into one lowercase haystack.
@@ -93,7 +107,14 @@ function buildHaystack(sol: Solution): string {
     sol.content_type || '',
   ];
   // Expand synonyms so "grafana" finds AMG entries, "kubernetes" finds EKS, etc.
-  for (const term of [...backends, ...platforms, instrumentation]) {
+  // Workload groups are included because consolidating the chips retired words
+  // like "kubernetes" and "messaging" that users still search for.
+  for (const term of [
+    ...(sol.workload_type ?? []),
+    ...backends,
+    ...platforms,
+    instrumentation,
+  ]) {
     if (SEARCH_SYNONYMS[term]) parts.push(SEARCH_SYNONYMS[term]);
   }
   return parts.join(' ').toLowerCase();
@@ -131,6 +152,21 @@ function useDebounce<T>(value: T, delay: number): T {
 }
 
 const PAGE_SIZE = 9;
+
+/** Render "2026-07-15" as "Jul 2026". Parsed as UTC to avoid a local-timezone
+ *  shift moving the date back a day west of Greenwich. */
+function formatValidated(raw: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
+  if (!match) return raw;
+  const [, year, month, day] = match;
+  const dt = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
+  if (Number.isNaN(dt.getTime())) return raw;
+  return dt.toLocaleDateString('en-US', {
+    month: 'short',
+    year: 'numeric',
+    timeZone: 'UTC',
+  });
+}
 
 export default function SolutionsPage(): React.ReactElement {
   const catalogUrl = useBaseUrl('/catalog.json');
@@ -320,11 +356,6 @@ export default function SolutionsPage(): React.ReactElement {
                         {sol.content_type === 'guide' ? 'Guide' : 'Solution'}
                       </span>
                     )}
-                    {sol.setup_complexity && (
-                      <span className={`${styles.badge} ${COMPLEXITY_CLASS[sol.setup_complexity]}`}>
-                        {sol.setup_complexity}
-                      </span>
-                    )}
                   </div>
                 </div>
 
@@ -348,6 +379,14 @@ export default function SolutionsPage(): React.ReactElement {
                   {typeof sol.time_to_value_minutes === 'number' && (
                     <span className={styles.timeToValue}>
                       ⏱ {sol.time_to_value_minutes}min
+                    </span>
+                  )}
+
+                  {/* Freshness. Month precision only: last_validated is a
+                      re-test date, and day precision implies more than it means. */}
+                  {sol.last_validated && (
+                    <span className={styles.lastUpdated}>
+                      Updated {formatValidated(sol.last_validated)}
                     </span>
                   )}
                 </div>

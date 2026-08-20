@@ -1,37 +1,47 @@
 # Solutions Catalog Taxonomy
 # Defines the controlled vocabulary for solution classification
 
+# workload_types are the ONLY visible filter chips on the catalog homepage.
+# They answer one question: "what are you observing?"
+#
+# Keep this list short and each value well populated. A chip that matches one
+# entry is a link, not a filter. Everything finer-grained (compute platform,
+# backend, instrumentation) is searchable rather than a chip.
+#
+# Order here is the order chips render.
 workload_types:
-  - id: containers
-    label: Containers
-    icon: "🐳"
-  - id: kubernetes
-    label: Kubernetes
-    icon: "☸️"
-  - id: serverless
-    label: Serverless
-    icon: "⚡"
-  - id: ec2
-    label: EC2
-    icon: "🖥️"
-  - id: databases
-    label: Databases
-    icon: "🗄️"
-  - id: messaging
-    label: Messaging
-    icon: "📨"
   - id: ai-ml
     label: AI/ML
     icon: "🤖"
-  - id: networking
-    label: Networking
-    icon: "🌐"
+  - id: compute
+    label: Compute
+    icon: "📦"
+    # Containers, Kubernetes, serverless, and instances. Previously split into
+    # containers/kubernetes/serverless/ec2, which produced chips of 1-3 entries
+    # and a redundant kubernetes chip that was a strict subset of containers.
   - id: applications
     label: Applications
-    icon: "📦"
+    icon: "🧩"
+    # Language and framework level monitoring, independent of where it runs.
+  - id: data-streaming
+    label: Data & Streaming
+    icon: "🗄️"
+    # Databases, search, and message streaming. Merged because users reason
+    # about "my data tier", not databases-versus-messaging.
   - id: security
-    label: Security
+    label: Security & Compliance
     icon: "🔒"
+    # Compliance is deliberately not separate: the content is usually both,
+    # and splitting forces contributors into a false either/or.
+  - id: network
+    label: Network
+    icon: "🌐"
+  - id: operations
+    label: Operations
+    icon: "⚙️"
+    # Cloud operations management: CloudTrail, Config, Control Tower,
+    # Organizations, region usage, patch and node management. Approved as a chip
+    # alongside the first tranche of operations entries; see DISPOSITIONS.md.
 
 content_types:
   - id: solution
@@ -98,16 +108,3 @@ instrumentation:
   - id: custom
     label: Custom
 
-setup_complexity:
-  - id: low
-    label: Low
-    description: "< 5 steps, single service"
-    color: "#2ea44f"
-  - id: medium
-    label: Medium
-    description: "5-15 steps, multiple services"
-    color: "#d29922"
-  - id: high
-    label: High
-    description: "> 15 steps, complex integration"
-    color: "#cb2431"

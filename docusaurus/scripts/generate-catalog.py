@@ -47,7 +47,7 @@ REQUIRED_SECTIONS = {
 REQUIRED_FIELDS = {
     "solution": [
         "name", "slug", "description", "workload_type", "compute_platform",
-        "backends", "signals", "instrumentation", "status", "setup_complexity",
+        "backends", "signals", "instrumentation", "status",
         "time_to_value_minutes", "last_validated",
     ],
     "guide": [
@@ -210,7 +210,6 @@ def validate_meta(meta: dict, taxonomy: dict, slug: str, event_topics: set[str],
 
     single_fields = {
         "instrumentation": "instrumentation",
-        "setup_complexity": "setup_complexity",
     }
     for meta_field, taxonomy_key in single_fields.items():
         val = meta.get(meta_field)

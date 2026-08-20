@@ -13,7 +13,6 @@ required_fields:
   - signals
   - instrumentation
   - status
-  - setup_complexity
   - time_to_value_minutes
   - last_validated
 
@@ -56,9 +55,6 @@ field_definitions:
   partner_integrations:
     type: array
     description: "Third-party tool integrations"
-  setup_complexity:
-    type: string
-    allowed_values: [low, medium, high]
   time_to_value_minutes:
     type: integer
     description: "Estimated time to deploy and see first data"

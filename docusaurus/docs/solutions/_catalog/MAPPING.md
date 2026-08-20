@@ -66,3 +66,21 @@ on disk unrendered until a call is made)
 4. Salvage: keep the best working steps/commands from sources; link to AWS docs
    for reference material; cut narrative filler.
 5. Sources stay on disk (unrendered) until this mapping is reviewed and approved.
+
+## High-level grouping overview
+
+Bird's-eye view of where all content lands under the six `workload_type` groups, including content not yet converted.
+
+| Group | Converted entries (count) | Not yet converted (from LATER/DROP) |
+|---|---|---|
+| **ai-ml** | 2 (`coding-agents-observability`, `genai-observability`) | — |
+| **compute** | 8 (`eks-container-insights`, `ecs-monitoring`, `ec2-monitoring`, `eks-infrastructure`, `eks-application-signals`, `ec2-nginx`, `lambda-monitoring`, `kafka-ec2`) | `observability-cost-management` (kubecost, cost-visualization, CW cost reduction), `hybrid-monitoring`, `cross-account-observability`, `adot-at-scale` |
+| **applications** | 2 (`dotnet-application-monitoring`, + shared with compute) | `managed-grafana-setup` (Grafana config recipes), `frontend-and-slo-monitoring` (SLO, RUM, synthetics) |
+| **data-streaming** | 4 (`rds-aurora-monitoring`, `msk-monitoring`, `opensearch-monitoring`, + shared with compute) | `databricks-monitoring`, `big-data-observability` (Spark) |
+| **security** | 4 (`network-observability` shared, + security entries) | `security-log-analytics` (security log tools + CloudTrail security recipes) |
+| **network** | 2 (`network-observability`, + shared with security) | — |
+| **operations** (reserved, no chip) | 0 | CloudTrail, Control Tower, AWS Config, Organizations, centralized-operations-management, application-operations, region-usage (~15+ pages — the largest unconverted bucket) |
+
+**Key takeaway:** Operations is the biggest cluster of unconverted content. The chip is reserved rather than removed because this content has a clear home once converted. The chip ships in the same PR as its first entry.
+
+Entries appearing in multiple groups (dual-tagged): `kafka-ec2` (data-streaming + compute), `network-observability` (network + security). Counts above reflect primary group assignment; shared entries are noted parenthetically.

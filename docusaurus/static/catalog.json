@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T17:22:19.158031+00:00",
+  "generated_at": "2026-08-20T18:47:19.542497+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -194,35 +194,6 @@
       "status": "active",
       "accelerator_link": "",
       "docs_link": "",
-      "last_validated": "2026-08-17"
-    },
-    {
-      "name": "EC2 Monitoring",
-      "slug": "ec2-monitoring",
-      "content_type": "solution",
-      "description": "Monitor Amazon EC2 instances with the unified CloudWatch agent for system metrics, logs, and X-Ray distributed tracing",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "ec2"
-      ],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring_ec2.html",
       "last_validated": "2026-08-17"
     },
     {

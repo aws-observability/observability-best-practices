@@ -271,6 +271,21 @@ export default function SolutionsPage(): React.ReactElement {
   const workloadTypes = catalog!.taxonomy.workload_types || [];
   const totalCount = catalog!.solutions.length;
 
+  // Only render a chip that can actually return something. A taxonomy value may
+  // be approved before its content is written (Operations was), and a chip that
+  // yields an empty grid reads as a broken filter rather than an empty category.
+  // Counting from the data means the chip appears the moment the first entry
+  // lands, with no second change required here.
+  const workloadCounts = new Map<string, number>();
+  for (const sol of catalog!.solutions) {
+    for (const w of sol.workload_type ?? []) {
+      workloadCounts.set(w, (workloadCounts.get(w) ?? 0) + 1);
+    }
+  }
+  const visibleWorkloads = workloadTypes.filter(
+    (item) => (workloadCounts.get(item.id) ?? 0) > 0,
+  );
+
   return (
     <Layout title="Solutions Catalog" description="Discover pre-built AWS Observability solutions">
       <main className={styles.container}>
@@ -298,7 +313,7 @@ export default function SolutionsPage(): React.ReactElement {
         {/* One filter question: what are you running? */}
         <div className={styles.filters}>
           <div className={styles.filterGroup} role="group" aria-label="Filter by workload">
-            {workloadTypes.map((item) => {
+            {visibleWorkloads.map((item) => {
               const isActive = workloads.includes(item.id);
               return (
                 <button

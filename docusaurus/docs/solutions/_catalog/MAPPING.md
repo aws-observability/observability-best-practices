@@ -17,7 +17,7 @@ on disk unrendered until a call is made)
 | 7 | `network-observability` | guides/network-observation/** (flow monitor, internet monitor, synthetic monitor, network manager, north-south/east-west scenarios), patterns/vpcflowlogs.md |
 | 8 | `coding-agents-observability` | ai/coding-agents-observability/* (Claude Code, Codex, Copilot) |
 | 9 | `genai-observability` | ai/genai/** (guides, recipes, dashboards, MCP integration) |
-| 10 | `ec2-monitoring` | guides/ec2-monitoring.md, patterns/Tracing/xrayec2.md |
+| 10 | ~~`ec2-monitoring`~~ | DROPPED 2026-08-20: source material judged too old to carry value |
 
 ## Existing entries (KEEP, unchanged)
 
@@ -74,7 +74,7 @@ Bird's-eye view of where all content lands under the six `workload_type` groups,
 | Group | Converted entries (count) | Not yet converted (from LATER/DROP) |
 |---|---|---|
 | **ai-ml** | 2 (`coding-agents-observability`, `genai-observability`) | — |
-| **compute** | 8 (`eks-container-insights`, `ecs-monitoring`, `ec2-monitoring`, `eks-infrastructure`, `eks-application-signals`, `ec2-nginx`, `lambda-monitoring`, `kafka-ec2`) | `observability-cost-management` (kubecost, cost-visualization, CW cost reduction), `hybrid-monitoring`, `cross-account-observability`, `adot-at-scale` |
+| **compute** | 7 (`eks-container-insights`, `ecs-monitoring`, `eks-infrastructure`, `eks-application-signals`, `ec2-nginx`, `lambda-monitoring`, `kafka-ec2`) | `observability-cost-management` (kubecost, cost-visualization, CW cost reduction), `hybrid-monitoring`, `cross-account-observability`, `adot-at-scale` |
 | **applications** | 2 (`dotnet-application-monitoring`, + shared with compute) | `managed-grafana-setup` (Grafana config recipes), `frontend-and-slo-monitoring` (SLO, RUM, synthetics) |
 | **data-streaming** | 4 (`rds-aurora-monitoring`, `msk-monitoring`, `opensearch-monitoring`, + shared with compute) | `databricks-monitoring`, `big-data-observability` (Spark) |
 | **security** | 4 (`network-observability` shared, + security entries) | `security-log-analytics` (security log tools + CloudTrail security recipes) |

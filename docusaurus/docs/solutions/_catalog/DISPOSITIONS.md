@@ -103,7 +103,6 @@ whose sources had usable visuals, all verified to resolve:
 
 | Entry | Images |
 |---|---|
-| ec2-monitoring | 5 |
 | eks-container-insights | 5 |
 | lambda-monitoring | 5 |
 | network-observability | 5 |
@@ -161,12 +160,12 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | tools/amp.md | Amazon Managed Service for Prometheus | FOLD: eks-container-insights > Related Solutions | AMP overview; most relevant to EKS metrics pipeline |
 | tools/application-signals/kotlin-signals.md | Application Signals for Kotlin Services | FOLD: eks-application-signals > Deploy | EC2-based Kotlin instrumentation via Application Signals |
 | tools/cloudwatch_agent.md | CloudWatch Agent | GUIDE | Proposed slug: `cloudwatch-agent-guide`, workload_type: compute; deployment/config advice applicable across workloads |
-| tools/cloudwatch-dashboard.md | CloudWatch Dashboard | FOLD: ec2-monitoring > Related Solutions | Dashboard widgets reference; not a standalone entry (UNSURE: could also be a GUIDE) |
+| tools/cloudwatch-dashboard.md | CloudWatch Dashboard | GUIDE (`cloudwatch-dashboards`) | Reassigned: ec2-monitoring dropped. The UNSURE alternative becomes the call |
 | tools/collector-arch.md | (empty) | DROP | Known-empty per rules |
 | tools/dashboards.md | Dashboards | GUIDE | Proposed slug: `dashboard-design-guide`, workload_type: compute; general dashboard best-practice guidance |
 | tools/emf.md | Embedded Metric Format | FOLD: lambda-monitoring > Architecture | EMF primarily used in Lambda/serverless context |
 | tools/internet_monitor.md | Internet Monitor | FOLD: network-observability > Guidance | Internet monitoring for network-traversing apps |
-| tools/logs/contributor_insights/contributor_insights.md | CloudWatch Contributor Insights | FOLD: ec2-monitoring > Related Solutions | Feature overview, supports multiple workloads |
+| tools/logs/contributor_insights/contributor_insights.md | CloudWatch Contributor Insights | FOLD: cloudwatch-logs-security > Guidance | Reassigned: ec2-monitoring dropped. Contributor Insights is log analysis |
 | tools/logs/dataprotection/data-protection-policies.md | CloudWatch Logs Data Protection Policies for SLG/EDU | FOLD: cloudwatch-logs-security > Guidance | Data masking / protection for log groups |
 | tools/logs/index.md | Logging | GUIDE | Proposed slug: `cloudwatch-logs-guide`, workload_type: compute; CW agent logging best practices |
 | tools/logs/logs-insights-examples.md | CloudWatch Logs Insights Example Queries | GUIDE | Proposed slug: `logs-insights-queries-guide`, workload_type: compute; query cookbook |
@@ -200,7 +199,7 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | patterns/sparkbigdata.md | Big Data Observability on AWS | NEW ENTRY | Proposed slug: `big-data-observability`, workload_type: data-streaming; EMR/Spark observability pattern |
 | patterns/Startup Observability Adoption/Anti-patterns and common pitfalls.md | Anti-patterns and common pitfalls | GUIDE | Proposed slug: `observability-adoption-guide`, workload_type: compute; startup anti-patterns |
 | patterns/Startup Observability Adoption/Startup Observability Adoption Stages.md | Startup Observability Adoption Stages | FOLD: observability-adoption-guide > Guidance | Staged maturity model; folds into the guide above |
-| patterns/Tracing/xrayec2.md | EC2 Tracing with AWS X-Ray | FOLD: ec2-monitoring > Architecture | X-Ray tracing on EC2 |
+| patterns/Tracing/xrayec2.md | EC2 Tracing with AWS X-Ray | FOLD: ec2-nginx > Architecture | Reassigned: ec2-monitoring dropped. ec2-nginx is the remaining EC2 entry |
 | patterns/Tracing/xrayecs.md | ECS Tracing with AWS X-Ray | FOLD: ecs-monitoring > Architecture | X-Ray tracing on ECS |
 | patterns/Tracing/xrayeks.md | EKS Tracing with AWS X-Ray | FOLD: eks-container-insights > Architecture | X-Ray tracing on EKS |
 | patterns/Tracing/xraylambda.md | Lambda Tracing with AWS X-Ray | FOLD: lambda-monitoring > Architecture | X-Ray tracing on Lambda |
@@ -261,15 +260,15 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | recipes/recipes/amg-subnet-free-ip-monitoring.md | Monitoring Free IP in Subnet | FOLD: network-observability > Deploy | CDK-based Lambda + CW dashboard for VPC subnet IP monitoring |
 | recipes/recipes/amp-alertmanager-terraform.md | Terraform to deploy AMP and configure Alert Manager | FOLD: eks-infrastructure > Deploy | AMP + alertmanager provisioning via Terraform with ADOT on EKS |
 | recipes/recipes/amp-mixin-dashboards.md | Adding kubernetes-mixin dashboards to Managed Grafana | FOLD: managed-grafana-setup > Deploy | Prometheus community mixin dashboards for EKS in AMG |
-| recipes/recipes/as-ec2-using-amp-and-alertmanager.md | Auto-scaling Amazon EC2 using AMP and alert manager | FOLD: ec2-monitoring > Deploy | EC2 auto-scaling driven by Prometheus metrics via AMP alert manager |
+| recipes/recipes/as-ec2-using-amp-and-alertmanager.md | Auto-scaling Amazon EC2 using AMP and alert manager | FOLD: ec2-nginx > Deploy | Reassigned: ec2-monitoring dropped. EC2 autoscaling via AMP alert manager |
 | recipes/recipes/ec2-eks-metrics-go-adot-ampamg.md | Using ADOT in EKS on EC2 with AMP | FOLD: eks-infrastructure > Deploy | ADOT collector on EKS EC2 ingesting to AMP, visualizing in AMG |
 | recipes/recipes/fargate-eks-metrics-go-adot-ampamg.md | Using ADOT in EKS on Fargate with AMP | FOLD: eks-infrastructure > Deploy | ADOT collector on EKS Fargate ingesting to AMP |
 | recipes/recipes/fargate-eks-xray-go-adot-amg.md | Using ADOT in EKS on Fargate with AWS X-Ray | FOLD: eks-infrastructure > Deploy | ADOT tracing on EKS Fargate with X-Ray, AMG visualization |
 | recipes/recipes/lambda-cw-metrics-go-amp.md | Exporting CloudWatch Metric Streams via Firehose and Lambda to AMP | FOLD: lambda-monitoring > Deploy | CW Metric Streams → Firehose → Lambda → AMP pipeline |
-| recipes/recipes/metrics-explorer-filter-by-tags.md | Using CW Metrics explorer to filter by tags | FOLD: ec2-monitoring > Validate | CloudWatch Metrics Explorer tag-based queries (UNSURE: lightweight console walkthrough, could DROP) |
+| recipes/recipes/metrics-explorer-filter-by-tags.md | Using CW Metrics explorer to filter by tags | DROP | Reassigned: ec2-monitoring dropped. The UNSURE alternative becomes the call; lightweight console walkthrough |
 | recipes/recipes/monitoring-hybridenv-amg.md | Monitoring hybrid environments using AMG | NEW ENTRY | slug: hybrid-monitoring, workload_type: compute, solution. Azure Monitor plugin in AMG + alerting |
 | recipes/recipes/servicemesh-monitoring-ampamg.md | Using AMP to monitor App Mesh on EKS | FOLD: eks-infrastructure > Deploy | App Mesh Envoy metrics via Grafana Agent to AMP |
-| recipes/recipes/Workspaces-Monitoring-AMP-AMG/README.md | Monitoring Amazon Workspaces with AMP and AMG | FOLD: ec2-monitoring > Deploy | Prometheus agents on Workspaces EC2 instances, remote-write to AMP (UNSURE: could be NEW ENTRY for VDI monitoring) |
+| recipes/recipes/Workspaces-Monitoring-AMP-AMG/README.md | Monitoring Amazon Workspaces with AMP and AMG | NEW ENTRY (`workspaces-monitoring`, compute) | Reassigned: ec2-monitoring dropped. The UNSURE alternative becomes the call |
 | recipes/application-operations/index.md | Application Operations | NEW ENTRY (operations, pending) | 4-word stub "Coming Soon"; operations content, blocked on workload_type decision |
 | recipes/centralized-operations-management/index.md | Centralized Operations Management | NEW ENTRY (operations, pending) | Landing page for JITNA, patch reporting, Run Command recipes; blocked |
 | recipes/centralized-operations-management/just-in-time-node-access/index.md | Just-in-time node access (JITNA) | NEW ENTRY (operations, pending) | SSM JITNA overview; blocked |
@@ -316,7 +315,7 @@ Generated: 2026-08-20
 | guides/full-stack.md | Full-stack | DROP | Empty stub (2 words, title only) |
 | guides/strategy.md | Creating an observability strategy | DROP | Empty stub (5 words, title only) |
 | guides/dashboards.md | Dashboarding | DROP | Near-empty stub (52w), headings only, no substance |
-| guides/ec2-monitoring.md | EC2 Monitoring and Observability | DUPLICATE | Winner: ec2-monitoring entry (already converted, 3521w) |
+| guides/ec2-monitoring.md | EC2 Monitoring and Observability | DROP | Owner: "quite old, no value at all". The converted entry was also dropped |
 | guides/choosing-a-tracing-agent.md | Choosing a tracing agent | GUIDE | Slug: choosing-a-tracing-agent, workload_type: applications. Decision advice on ADOT vs X-Ray SDK (444w). |
 | guides/cloudwatch_cross_account_observability.md | CloudWatch Cross-Account Observability | NEW ENTRY | Slug: cross-account-observability, workload_type: applications, type: solution. Step-by-step tutorial (3299w). |
 | guides/hybrid-and-multicloud.md | Best practices for hybrid and multicloud | NEW ENTRY | Slug: hybrid-monitoring, workload_type: applications, type: guide. Advisory best practices (1966w). |
@@ -463,7 +462,7 @@ Generated: 2026-08-20
 
 | Path | Title | Disposition | Notes |
 |------|-------|-------------|-------|
-| guides/rust-custom-metrics/README.md | Creating Custom Metrics with the AWS Rust SDK | FOLD: ec2-monitoring > Deploy | Rust SDK custom CloudWatch metrics tutorial (1930w). (UNSURE: could stand alone as applications guide) |
+| guides/rust-custom-metrics/README.md | Creating Custom Metrics with the AWS Rust SDK | NEW ENTRY (`rust-custom-metrics`, applications) | Reassigned: ec2-monitoring dropped. The UNSURE alternative becomes the call |
 
 ### guides/signal-collection/
 
@@ -497,7 +496,7 @@ Generated: 2026-08-20
 - **dotnet/oss/ vs dotnet/open-source/**: open-source/ wins (1812w vs 1194w). Content is near-identical at the start but open-source/ has more substance in logs/metrics/traces. oss/ marked DUPLICATE.
 - **guides/index.md** (1508w): Despite the generic name, this is a substantive best-practices overview — assigned GUIDE (observability-strategy), not DROP.
 - **guides/operational/alerting/amp-alertmgr.md**: Placed as FOLD into eks-infrastructure > Deploy since AMP alerting is EKS-centric, but could alternatively go into adot-at-scale.
-- **guides/rust-custom-metrics/README.md**: Placed as FOLD into ec2-monitoring > Deploy. Could also be a standalone applications guide.
+- **guides/rust-custom-metrics/README.md**: Now NEW ENTRY (`rust-custom-metrics`, applications), since ec2-monitoring was dropped.
 - **guides/cost/OLA-EC2-righsizing.md**: More about AWS licensing assessment than observability cost per se, but fits cost management broadly.
 
 ---
@@ -579,7 +578,7 @@ Generated: 2026-08-20
 |------|-------------|---------------|-------|
 | ai/index.md | DROP | — | Owner decision: navigation stub |
 | ai/_category_.json | DROP | — | Docusaurus metadata only |
-| ai/aiops/index.md | DROP | — | Owner decision. **FLAG:** 4 events are tagged `aiops` or `devops-agent`. Content is a short bullet list of AWS services (DevOps Guru, CloudWatch Anomaly Detection, Application Signals, Q Developer investigations) with 4 best-practice bullets. Dropping it does NOT leave a real content gap — the listed services are covered by existing entries (eks-application-signals, ec2-monitoring) or are linked AWS docs. The 4 events stand on their own as event descriptions. No unique architecture or deployment guidance is lost. |
+| ai/aiops/index.md | DROP | — | Owner decision. **FLAG:** 4 events are tagged `aiops` or `devops-agent`. Content is a short bullet list of AWS services (DevOps Guru, CloudWatch Anomaly Detection, Application Signals, Q Developer investigations) with 4 best-practice bullets. Dropping it does NOT leave a real content gap — the listed services are covered by existing entries (eks-application-signals) or are linked AWS docs. The 4 events stand on their own as event descriptions. No unique architecture or deployment guidance is lost. |
 | ai/aiops/_category_.json | DROP | — | Docusaurus metadata only |
 | ai/genai/index.md | DROP | — | Owner decision: navigation stub |
 | ai/genai/_category_.json | DROP | — | Docusaurus metadata only |

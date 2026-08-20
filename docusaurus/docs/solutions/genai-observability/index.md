@@ -139,7 +139,8 @@ fields traceId, status.code as statusCode
 | sort @timestamp desc
 ```
 
-For a complete set of 17 persona-based dashboard queries (DevOps + FinOps), see the [Custom Dashboards for GenAI Telemetry](../../ai/genai/guides/custom-dashboards-for-genai-telemetry) guide.
+A complete set of 17 persona-based dashboard queries (DevOps and FinOps) is
+scheduled to fold into this section; see `_catalog/DISPOSITIONS.md`.
 
 ## Validate
 

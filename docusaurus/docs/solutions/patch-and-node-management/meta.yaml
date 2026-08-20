@@ -1,0 +1,17 @@
+name: "Patch and Node Management"
+slug: patch-and-node-management
+content_type: solution
+description: "Fleet management with AWS Systems Manager: patch baselines, tag-based patching, SSM Agent lifecycle, session management, automation, and compliance reporting"
+workload_type: [operations]
+compute_platform: [ec2]
+backends: [cloudwatch]
+signals: [logs, metrics]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 40
+instrumentation: custom
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html"
+last_validated: "2026-08-20"
+related_events: []

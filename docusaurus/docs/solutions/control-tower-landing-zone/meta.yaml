@@ -1,0 +1,10 @@
+name: "Control Tower Landing Zone"
+slug: control-tower-landing-zone
+content_type: guide
+description: "Lifecycle guidance for AWS Control Tower landing zones: planning, customising, operating, enabling in existing organisations, and upgrading to 4.0."
+workload_type: [operations]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+docs_link: "https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html"
+last_validated: "2026-08-20"

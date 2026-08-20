@@ -1,0 +1,12 @@
+name: "CloudTrail Security Forensics"
+slug: cloudtrail-security-forensics
+content_type: guide
+description: "Security incident response and forensic analysis with CloudTrail: critical event fields, investigation patterns, and security dashboards."
+workload_type: [security, operations]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference.html"
+last_validated: "2026-08-20"
+related_events: [security]

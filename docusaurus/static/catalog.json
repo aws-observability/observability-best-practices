@@ -1,7 +1,761 @@
 {
-  "generated_at": "2026-08-20T18:47:19.542497+00:00",
+  "generated_at": "2026-08-20T20:57:39.872841+00:00",
   "schema_version": "1.0",
   "solutions": [
+    {
+      "name": "ADOT Collector at Scale",
+      "slug": "adot-at-scale",
+      "content_type": "solution",
+      "description": "Production deployment of the AWS Distro for OpenTelemetry Collector: modes, scaling, resource sizing, pipeline design, and Java Spring instrumentation",
+      "workload_type": [
+        "compute",
+        "applications"
+      ],
+      "compute_platform": [
+        "eks",
+        "ecs",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "instrumentation": "adot",
+      "status": "active",
+      "time_to_value_minutes": 45,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://aws-otel.github.io/docs/getting-started/collector",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "AI Workload Audit and Monitoring",
+      "slug": "ai-workload-audit-monitoring",
+      "content_type": "guide",
+      "description": "Audit and compliance monitoring for AI workloads using CloudTrail, Bedrock model invocation logging, and ADOT telemetry correlation.",
+      "workload_type": [
+        "ai-ml",
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-20",
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html",
+      "related_events": [
+        "ai-ml",
+        "security"
+      ]
+    },
+    {
+      "name": "AWS Config Compliance Monitoring",
+      "slug": "aws-config-compliance",
+      "content_type": "solution",
+      "description": "Configure AWS Config for resource tracking, compliance evaluation with managed and custom rules, conformance packs, remediation, and cost optimization.",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 35,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html",
+      "last_validated": "2026-08-20",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "AWS Organizations and Regions",
+      "slug": "aws-organizations-and-regions",
+      "content_type": "guide",
+      "description": "Account migration readiness, enabling new AWS Regions, extending a landing zone, and tagging strategy for application operations",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Alarms and Alerting",
+      "slug": "cloudwatch-alarms-alerting",
+      "content_type": "guide",
+      "description": "Design actionable alarms and alert routing with CloudWatch static/anomaly thresholds, composite alarms, and Prometheus Alertmanager on AMP.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-20",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Amazon Managed Grafana Setup",
+      "slug": "managed-grafana-setup",
+      "content_type": "solution",
+      "description": "Configure Amazon Managed Grafana with Athena, Redshift data sources, SAML authentication via Google Workspace, and Terraform automation",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "amg",
+        "amp",
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Amazon WorkSpaces Monitoring",
+      "slug": "workspaces-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Amazon WorkSpaces virtual desktops with Prometheus agents, Amazon Managed Service for Prometheus, and Amazon Managed Grafana.",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "prometheus",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "last_validated": "2026-08-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces-monitoring.html",
+      "related_events": [
+        "metrics"
+      ]
+    },
+    {
+      "name": "Big Data and Spark Observability",
+      "slug": "big-data-observability",
+      "content_type": "solution",
+      "description": "Observe Spark workloads on Amazon EMR using CloudWatch for logs and metrics, with Prometheus and Grafana for cluster-level dashboards.",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [
+        "eks",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "prometheus",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-manage-view-web-log-files.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrail Cost Optimization",
+      "slug": "cloudtrail-cost-optimization",
+      "content_type": "guide",
+      "description": "Estimate and control AWS CloudTrail costs: data event cost estimation, CloudWatch Logs ingestion pricing, log transformation, and CloudTrail Lake.",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-trail-pricing.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrail Monitoring",
+      "slug": "cloudtrail-monitoring",
+      "content_type": "solution",
+      "description": "Configure and operate AWS CloudTrail trails for management events, data events, and network activity events using advanced event selectors.",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrail Security Forensics",
+      "slug": "cloudtrail-security-forensics",
+      "content_type": "guide",
+      "description": "Security incident response and forensic analysis with CloudTrail: critical event fields, investigation patterns, and security dashboards.",
+      "workload_type": [
+        "security",
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference.html",
+      "last_validated": "2026-08-20",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "CloudWatch Agent Configuration",
+      "slug": "cloudwatch-agent-configuration",
+      "content_type": "guide",
+      "description": "Guidance on CloudWatch agent configuration, deployment via Systems Manager, and when to use the agent versus ADOT.",
+      "workload_type": [
+        "compute"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "last_validated": "2026-08-20",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "CloudWatch Dashboards",
+      "slug": "cloudwatch-dashboards",
+      "content_type": "guide",
+      "description": "Design effective CloudWatch dashboards with the right layout, widgets, and stories to reduce MTTR and drive data-driven decisions.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-20",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "CloudWatch Logs Analysis",
+      "slug": "cloudwatch-logs-analysis",
+      "content_type": "guide",
+      "description": "Guidance on structured logging, log levels, filtering, Logs Insights query patterns, Contributor Insights, and data protection policies.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html",
+      "last_validated": "2026-08-20",
+      "related_events": [
+        "logs",
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "CloudWatch Metrics and EMF",
+      "slug": "cloudwatch-metrics",
+      "content_type": "guide",
+      "description": "Metrics guidance covering dimensions, cardinality, high-resolution metrics, vended vs custom metrics, and Embedded Metric Format for log-derived metrics.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-20",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Control Tower Landing Zone",
+      "slug": "control-tower-landing-zone",
+      "content_type": "guide",
+      "description": "Lifecycle guidance for AWS Control Tower landing zones: planning, customising, operating, enabling in existing organisations, and upgrading to 4.0.",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html",
+      "last_validated": "2026-08-20"
+    },
+    {
+      "name": "Cross-Account Observability",
+      "slug": "cross-account-observability",
+      "content_type": "solution",
+      "description": "Centralize metrics, logs, and traces across AWS accounts using CloudWatch cross-account observability and AMP cross-account scraping.",
+      "workload_type": [
+        "compute",
+        "operations"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 40,
+      "last_validated": "2026-08-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Databricks Monitoring",
+      "slug": "databricks-monitoring",
+      "content_type": "solution",
+      "description": "Monitor Databricks clusters on AWS using CloudWatch for logs and metrics, with init scripts for collector installation and structured logging.",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [],
+      "partner_integrations": [
+        "Databricks"
+      ],
+      "accelerator_link": "",
+      "docs_link": "",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Distributed Tracing",
+      "slug": "distributed-tracing",
+      "content_type": "guide",
+      "description": "Guidance on distributed tracing with AWS X-Ray and OpenTelemetry, including sampling strategy and choosing a tracing agent.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "xray",
+        "cloudwatch"
+      ],
+      "signals": [
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html",
+      "last_validated": "2026-08-20",
+      "related_events": [
+        "apm"
+      ]
+    },
+    {
+      "name": "Frontend and SLO Monitoring",
+      "slug": "frontend-slo-monitoring",
+      "content_type": "solution",
+      "description": "Digital experience monitoring with CloudWatch RUM, Synthetics canaries, and Application Signals SLOs for frontend performance and reliability.",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 25,
+      "last_validated": "2026-08-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html",
+      "related_events": [
+        "apm",
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "Getting Started with Observability",
+      "slug": "getting-started-with-observability",
+      "content_type": "guide",
+      "description": "An onboarding path for CloudWatch observability: account setup, unified data store, agents and collectors, then dashboards and alerts.",
+      "workload_type": [
+        "compute"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-20",
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html",
+      "related_events": [
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "Hybrid and Multicloud Monitoring",
+      "slug": "hybrid-monitoring",
+      "content_type": "solution",
+      "description": "Monitor workloads spanning AWS and on-premises using CloudWatch agent, AMP remote write, and Amazon Managed Grafana as a unified visualization layer.",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "cwagent",
+      "status": "active",
+      "time_to_value_minutes": 40,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent-on-Premise.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Just-in-Time Node Access",
+      "slug": "just-in-time-node-access",
+      "content_type": "solution",
+      "description": "Approval-based temporary access to managed nodes with Cedar policies, EventBridge integration, and Infrastructure-as-Code enablement",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "iac_available": [
+        "cloudformation"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Observability Adoption Guide",
+      "slug": "observability-adoption-guide",
+      "content_type": "guide",
+      "description": "Staged adoption framework for growing organizations covering reactive, foundational, and integrated observability plus anti-patterns to avoid.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "",
+      "last_validated": "2026-08-20"
+    },
+    {
+      "name": "Observability Cost Management",
+      "slug": "observability-cost-management",
+      "content_type": "solution",
+      "description": "Gain visibility into CloudWatch, AMP, AMG, and X-Ray spend using CUR dashboards, reduce CloudWatch costs, and attribute EKS GPU expenses with Kubecost.",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "eks",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "last_validated": "2026-08-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_billing.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Observability Maturity Model",
+      "slug": "observability-maturity-model",
+      "content_type": "guide",
+      "description": "A staged assessment model to evaluate and advance your organization's observability capabilities across four maturity levels.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "",
+      "last_validated": "2026-08-20"
+    },
+    {
+      "name": "Observability Strategy",
+      "slug": "observability-strategy",
+      "content_type": "guide",
+      "description": "Strategic guidance for IT leaders on tying observability to business outcomes, ROI framing, KPI selection, and SLA measurement with percentiles.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html",
+      "last_validated": "2026-08-20"
+    },
+    {
+      "name": "Patch and Node Management",
+      "slug": "patch-and-node-management",
+      "content_type": "solution",
+      "description": "Fleet management with AWS Systems Manager: patch baselines, tag-based patching, SSM Agent lifecycle, session management, automation, and compliance reporting",
+      "workload_type": [
+        "operations"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 40,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html",
+      "last_validated": "2026-08-20",
+      "related_events": []
+    },
+    {
+      "name": "Rust Custom Metrics",
+      "slug": "rust-custom-metrics",
+      "content_type": "solution",
+      "description": "Publish custom CloudWatch metrics from Rust applications using the AWS SDK for Rust with PutMetricData and Embedded Metric Format.",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [
+        "ec2",
+        "lambda"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 20,
+      "last_validated": "2026-08-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html",
+      "related_events": [
+        "metrics"
+      ]
+    },
     {
       "name": "CloudWatch Logs Security Best Practices",
       "slug": "cloudwatch-logs-security",

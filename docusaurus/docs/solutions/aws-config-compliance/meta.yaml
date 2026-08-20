@@ -1,0 +1,17 @@
+name: "AWS Config Compliance Monitoring"
+slug: aws-config-compliance
+content_type: solution
+description: "Configure AWS Config for resource tracking, compliance evaluation with managed and custom rules, conformance packs, remediation, and cost optimization."
+workload_type: [operations, security]
+compute_platform: []
+backends: [cloudwatch]
+signals: [logs, metrics]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 35
+instrumentation: custom
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html"
+last_validated: "2026-08-20"
+related_events: [security]

@@ -1,0 +1,13 @@
+name: "Getting Started with Observability"
+slug: getting-started-with-observability
+content_type: guide
+description: "An onboarding path for CloudWatch observability: account setup, unified data store, agents and collectors, then dashboards and alerts."
+workload_type: [compute]
+backends: [cloudwatch]
+signals: [metrics, logs, traces]
+status: active
+last_validated: "2026-08-20"
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html"
+related_events: [cloudwatch]

@@ -1,0 +1,10 @@
+name: "Observability Maturity Model"
+slug: observability-maturity-model
+content_type: guide
+description: "A staged assessment model to evaluate and advance your organization's observability capabilities across four maturity levels."
+workload_type: [applications]
+backends: [cloudwatch]
+signals: [metrics, logs, traces]
+status: active
+docs_link: ""
+last_validated: "2026-08-20"

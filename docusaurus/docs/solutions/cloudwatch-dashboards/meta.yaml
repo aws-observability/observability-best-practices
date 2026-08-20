@@ -1,0 +1,11 @@
+name: "CloudWatch Dashboards"
+slug: cloudwatch-dashboards
+content_type: guide
+description: "Design effective CloudWatch dashboards with the right layout, widgets, and stories to reduce MTTR and drive data-driven decisions."
+workload_type: [applications]
+backends: [cloudwatch]
+signals: [metrics, logs]
+status: active
+last_validated: "2026-08-20"
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html"
+related_events: [cloudwatch, metrics]

@@ -1,0 +1,11 @@
+name: "CloudWatch Logs Analysis"
+slug: cloudwatch-logs-analysis
+content_type: guide
+description: "Guidance on structured logging, log levels, filtering, Logs Insights query patterns, Contributor Insights, and data protection policies."
+workload_type: [applications]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html"
+last_validated: "2026-08-20"
+related_events: [logs, cloudwatch]

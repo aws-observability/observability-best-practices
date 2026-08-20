@@ -1,0 +1,13 @@
+name: "AI Workload Audit and Monitoring"
+slug: ai-workload-audit-monitoring
+content_type: guide
+description: "Audit and compliance monitoring for AI workloads using CloudTrail, Bedrock model invocation logging, and ADOT telemetry correlation."
+workload_type: [ai-ml, security]
+backends: [cloudwatch]
+signals: [logs, metrics, traces]
+status: active
+last_validated: "2026-08-20"
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html"
+related_events: [ai-ml, security]

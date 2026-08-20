@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mega-pod
+spec:
+  containers:
+  - name: impossible-pod
+    image: nginx
+    resources:
+      requests:
+        cpu: 5000m
+        memory: 64Ti
+      limits:
+        cpu: 5000m
+        memory: 512Ti

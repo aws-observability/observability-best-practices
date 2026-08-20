@@ -1,0 +1,262 @@
+########################################################################
+# Collector config — all three signals: traces, metrics, logs.
+#
+# NOTE ON NAMING: this is upstream `otelcol-contrib` (see scripts/get-collector.sh),
+# not the AWS Distro binary. It is used because it ships sigv4authextension,
+# spanmetricsconnector and signaltometricsconnector in one build. Component names
+# in this distribution use underscores (`otlp_http`, `file_log`, `span_metrics`) —
+# the upstream docs' camelCase names (`otlphttp`, `filelog`, `spanmetrics`) will
+# not resolve here. Check with `./bin/otelcol-contrib components`.
+#
+# Signal routing:
+#   traces  -> OTLP endpoint  https://xray.<region>.amazonaws.com  (service: xray)
+#   metrics -> awsemf exporter (EMF over CloudWatch Logs -> CW metrics)
+#   logs    -> OTLP endpoint  https://logs.<region>.amazonaws.com  (service: logs)
+#
+# WHY METRICS DO NOT USE THE OTLP ENDPOINT
+# ----------------------------------------
+# The CloudWatch OTLP metrics endpoint rejects delta sums from the connectors:
+#   HTTP 400  "StartTimeUnixNano is required [...Metrics.1.Datapoint.1]"
+# The connector-generated token sums carry no start timestamp, so the endpoint
+# drops them (`dropped_items: 2`, "not retryable"). The awsemf exporter has no
+# such requirement and puts the same series into CloudWatch metrics, so metrics
+# go via EMF. Traces and logs do use their OTLP endpoints.
+#
+# The agent emits no metrics of its own — NAT's `general.telemetry` supports only
+# `logging` and `tracing`. Metrics are therefore DERIVED from spans by the two
+# connectors below, which is what keeps the "no agent code changes" promise.
+#
+# Prerequisites (scripts/setup.sh handles these):
+#   - X-Ray Transaction Search ACTIVE with Destination=CloudWatchLogs
+#   - the log group AND log stream below must already exist; the OTLP logs
+#     endpoint creates neither and returns 400 if either is missing
+#
+# Run: scripts/run-collector.sh collector/collector-full.yaml
+########################################################################
+
+extensions:
+  sigv4auth/xray:
+    region: ${AWS_REGION}
+    service: xray
+  sigv4auth/logs:
+    region: ${AWS_REGION}
+    service: logs
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+  # The agent's own log file, tailed and shipped as OTLP logs. NAT's `file`
+  # logging exporter writes it (see configs/config_web_only_otel.yml); this turns
+  # those lines into log records without touching agent code.
+  file_log:
+    # Quoted and on its own line: an unquoted ${VAR} inside a YAML flow sequence
+    # ([ ... ]) is expanded before the YAML parse and an absolute path's contents
+    # break the sequence syntax.
+    include:
+      - "${AIQ_LOG_FILE}"
+    start_at: beginning
+    # Keep multi-line tracebacks and wrapped agent output attached to their own
+    # record: a new record starts only at a leading ISO-8601 timestamp. Without
+    # this every continuation line becomes a separate, contextless log entry.
+    multiline:
+      line_start_pattern: '^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}'
+    operators:
+      - type: regex_parser
+        regex: '^(?P<ts>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}) - (?P<sev>[A-Z]+)\s+- (?P<logger>[^:]+):(?P<lineno>\d+) - (?P<msg>(?s).*)$'
+        parse_from: body
+        timestamp:
+          parse_from: attributes.ts
+          layout: '%Y-%m-%d %H:%M:%S'
+        severity:
+          parse_from: attributes.sev
+        on_error: send
+
+connectors:
+  # Traces -> RED metrics. Gives per-agent latency and call counts without the
+  # agent emitting a single metric.
+  span_metrics:
+    histogram:
+      # Exponential, NOT explicit buckets — for two reasons.
+      #
+      # 1. awsemf writes an explicit-bucket histogram as a statistic set with
+      #    "Max": 0, "Min": 0 (the connector leaves OTLP's optional min/max
+      #    unset, and awsemf has nothing to read). Sum/Count/Average are right,
+      #    but Maximum is exactly the statistic a "find the slow query" walkthrough
+      #    needs, and it silently reads as zero. Exponential histograms carry real
+      #    Max/Min through to CloudWatch.
+      # 2. Measured latency here spans 5s (meta) to 54 minutes (deep) — a 654x
+      #    range. Exponential buckets cover that automatically instead of needing
+      #    a hand-tuned ladder whose top bucket still swallows the outliers.
+      exponential:
+        max_size: 60
+    dimensions:
+      - name: nat.function.name
+      - name: nat.framework
+    metrics_flush_interval: 15s
+    # Delta, not the default cumulative. awsemf translates each flush into its own
+    # EMF record, so a cumulative histogram re-publishes its entire running total
+    # every 15s: CloudWatch then sees the same latency samples again in the next
+    # period and Sum/SampleCount inflate without bound. Observed directly here —
+    # two adjacent 5-minute periods both reporting Sum 59725.03 / SampleCount 42.
+    aggregation_temporality: AGGREGATION_TEMPORALITY_DELTA
+
+  # Traces -> token-cost metrics, read from the openinference attributes the NAT
+  # OTel plugin already puts on LLM spans.
+  #
+  # This is the only complete source of token cost. NAT prints `[Tokens]` lines
+  # only on the deep-research path — meta and shallow queries print none at all,
+  # yet their spans still carry llm.token_count.*. Deriving from spans therefore
+  # captures query classes that log scraping misses entirely.
+  signal_to_metrics:
+    spans:
+      # include_resource_attributes/attributes are required for the series to be
+      # sliceable: without them awsemf emits a single OTelLib-only dimension and
+      # the metric cannot be broken down per agent or per model.
+      - name: gen_ai.client.token_usage.prompt
+        description: Prompt tokens consumed per LLM call
+        unit: "1"
+        include_resource_attributes:
+          - key: service.name
+        attributes:
+          # These keys must actually exist on the span: signaltometrics drops a
+          # datapoint outright when a listed attribute is missing, which is silent
+          # — no error, the metric simply never appears. NAT spans carry
+          # nat.function.name / nat.framework / nat.subspan.name, and the model
+          # name is nat.subspan.name (there is no gen_ai.request.model here).
+          - key: nat.function.name
+          - key: nat.framework
+          - key: nat.subspan.name
+        # Skip spans without this attribute. signaltometrics drops a span's ENTIRE
+        # metric set — not just the unresolvable one — if any OTTL value fails,
+        # and silently. NAT's LLM_START spans carry only llm.token_count.prompt,
+        # so an unguarded completion expression made BOTH token metrics disappear
+        # for every real span while span_metrics kept working. OTTL has no ternary
+        # or coalesce, so a condition is the mechanism.
+        conditions:
+          - 'span.attributes["llm.token_count.prompt"] != nil'
+        sum:
+          value: 'Int(span.attributes["llm.token_count.prompt"])'
+
+      - name: gen_ai.client.token_usage.completion
+        description: Completion tokens produced per LLM call
+        unit: "1"
+        include_resource_attributes:
+          - key: service.name
+        attributes:
+          # These keys must actually exist on the span: signaltometrics drops a
+          # datapoint outright when a listed attribute is missing, which is silent
+          # — no error, the metric simply never appears. NAT spans carry
+          # nat.function.name / nat.framework / nat.subspan.name, and the model
+          # name is nat.subspan.name (there is no gen_ai.request.model here).
+          - key: nat.function.name
+          - key: nat.framework
+          - key: nat.subspan.name
+        # See the note above — same guard, on this metric's own attribute.
+        conditions:
+          - 'span.attributes["llm.token_count.completion"] != nil'
+        sum:
+          value: 'Int(span.attributes["llm.token_count.completion"])'
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+
+  # NAT colourises its console output and the same ANSI escapes reach the log
+  # file, so raw records arrive in CloudWatch containing ESC[32m sequences that
+  # render as noise in the console and in Logs Insights. A regex_parser cannot do
+  # this (it matches, it does not rewrite), so the strip happens here — on both the
+  # body and the parsed msg field, since each is displayed independently.
+  transform/strip_ansi:
+    log_statements:
+      - replace_pattern(log.body, "\\x1b\\[[0-9;]*m", "")
+      - replace_pattern(log.attributes["msg"], "\\x1b\\[[0-9;]*m", "")
+
+exporters:
+  otlp_http/traces:
+    # traces_endpoint, not endpoint: with `endpoint` the collector appends the
+    # signal path to a URL that already carries it (/v1/traces/v1/traces) and the
+    # request 404s. The AWS documentation's own example has this bug.
+    traces_endpoint: https://xray.${AWS_REGION}.amazonaws.com/v1/traces
+    compression: gzip
+    auth:
+      authenticator: sigv4auth/xray
+
+  otlp_http/logs:
+    logs_endpoint: https://logs.${AWS_REGION}.amazonaws.com/v1/logs
+    compression: gzip
+    headers:
+      # Both must pre-exist — the endpoint creates neither.
+      x-aws-log-group: ${LOG_GROUP}
+      x-aws-log-stream: ${LOG_STREAM}
+    auth:
+      authenticator: sigv4auth/logs
+
+  # Metrics path. awsemf writes EMF records to a log group and CloudWatch turns
+  # them into metrics; it needs no sigv4auth extension (it uses the SDK's own
+  # credential chain) and no StartTimeUnixNano.
+  awsemf:
+    region: ${AWS_REGION}
+    namespace: AIQ/Agent
+    log_group_name: ${EMF_LOG_GROUP}
+    # Emit the dimension sets the dashboard actually groups by. Without an
+    # explicit list, awsemf also publishes a no-dimension rollup per metric,
+    # which doubles the metric count and reads as a duplicate series.
+    dimension_rollup_option: NoDimensionRollup
+    # REQUIRED for the token metrics below to become CloudWatch metrics at all.
+    #
+    # signaltometrics' `include_resource_attributes` keeps service.name as a
+    # *resource* attribute; it does not copy it onto the datapoint. awsemf builds
+    # dimensions only from datapoint attributes, so every token dimension set
+    # here (all of which name service.name) failed to match — and a record that
+    # matches no declaration is written WITHOUT an _aws.CloudWatchMetrics block,
+    # so CloudWatch stores it as a plain log line and no metric ever appears.
+    # This flag promotes resource attributes onto the datapoint, which fixes it.
+    # spanmetrics needs no such help: it adds service.name as a datapoint
+    # dimension itself, which is why span metrics worked while token metrics
+    # silently did not.
+    resource_to_telemetry_conversion:
+      enabled: true
+    metric_declarations:
+      - dimensions:
+          - [service.name, nat.function.name]
+          - [service.name, span.name]
+          - [service.name]
+        metric_name_selectors:
+          - "traces.span.metrics.duration"
+          - "traces.span.metrics.calls"
+      - dimensions:
+          - [service.name, nat.function.name]
+          - [service.name, nat.subspan.name]
+          - [service.name]
+        metric_name_selectors:
+          - "gen_ai.client.token_usage.prompt"
+          - "gen_ai.client.token_usage.completion"
+
+  debug:
+    verbosity: normal
+
+service:
+  extensions: [sigv4auth/xray, sigv4auth/logs]
+  pipelines:
+    # Spans go to X-Ray AND fan out to both connectors, which feed the metrics
+    # pipeline below.
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp_http/traces, span_metrics, signal_to_metrics, debug]
+
+    metrics:
+      receivers: [span_metrics, signal_to_metrics]
+      processors: [batch]
+      exporters: [awsemf]
+
+    logs:
+      receivers: [otlp, file_log]
+      processors: [transform/strip_ansi, batch]
+      exporters: [otlp_http/logs]

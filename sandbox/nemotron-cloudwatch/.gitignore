@@ -1,0 +1,40 @@
+# Secrets — written by scripts/setup.sh (Bedrock/Tavily keys).
+# Deliberately globs, not a bare `.env`: a backup named `.env.backup-o11y` is
+# exactly as sensitive as `.env`, and the narrow rule silently failed to cover one.
+.env
+.env.*
+*.env
+
+# Backups and scratch copies — these have held both draft content and key material.
+*.bak
+*.orig
+*.rej
+
+# Load generator output (per-query logs + summary.tsv)
+.loadgen/
+
+# Collector binary (~352 MB, from scripts/get-collector.sh) and runtime state
+bin/
+.collector.pid
+.collector.log
+.aiq-agent.log
+.ws1_dir
+
+# Agent environment built by scripts/setup.sh (venv + AI-Q clone, ~1.2 GB).
+# setup.sh creates this; cleanup.sh removes it. Leading slash so this only ever
+# matches the repo root, not some future source directory named `agent`.
+/agent/
+
+# Editor / tooling local state
+.claude/
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+**/checkpoints.db
+
+# OS
+.DS_Store

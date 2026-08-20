@@ -1,0 +1,113 @@
+# Required environment variables:
+#   MODEL          - e.g. nvidia.nemotron-super-3-120b
+#   ENDPOINT_URL   - https://bedrock-runtime.<region>.amazonaws.com/openai/v1
+#   OPENAI_API_KEY - AWS Bearer Token for Bedrock
+#   TAVILY_API_KEY - for web search
+
+general:
+  telemetry:
+    logging:
+      console:
+        _type: console
+        level: INFO
+      # Also write runtime logs to a file so the collector's file_log receiver can
+      # tail them into CloudWatch Logs. NAT has no OTLP *logs* exporter (only
+      # `console` and `file`), so a tailed file is how the logs signal is wired
+      # without modifying agent code.
+      file:
+        _type: file
+        # No relative-path fallback on purpose. `nat run` executes with the
+        # workshop-1 directory as its cwd, so a default of ./aiq-agent.log put the
+        # file there while the collector tailed the repo's .aiq-agent.log — the logs
+        # pipeline then reported "Started watching file" and shipped nothing, with
+        # no error anywhere. Requiring the variable makes the mismatch impossible;
+        # setup.sh writes it to .env and run-collector.sh exports the same value.
+        path: ${AIQ_LOG_FILE}
+        level: INFO
+    tracing:
+      # 'otelcollector' is provided by the NAT OpenTelemetry plugin. It ships
+      # OTLP spans to the endpoint below (the local collector's OTLP/HTTP port).
+      otel_collector:
+        _type: otelcollector
+        endpoint: http://localhost:4318/v1/traces
+        project: aiq-observability-workshop
+
+llms:
+  nemotron_llm_intent:
+    _type: openai
+    model_name: ${MODEL}
+    base_url: ${ENDPOINT_URL}
+    api_key: ${OPENAI_API_KEY}
+    temperature: 0.5
+    top_p: 0.9
+    max_tokens: 4096
+    num_retries: 5
+
+  nemotron_llm:
+    _type: openai
+    model_name: ${MODEL}
+    base_url: ${ENDPOINT_URL}
+    api_key: ${OPENAI_API_KEY}
+    temperature: 0.1
+    top_p: 0.3
+    max_tokens: 16384
+    num_retries: 5
+
+  nemotron_llm_deep:
+    _type: openai
+    model_name: ${MODEL}
+    base_url: ${ENDPOINT_URL}
+    api_key: ${OPENAI_API_KEY}
+    temperature: 1.0
+    top_p: 1.0
+    max_tokens: 128000
+    num_retries: 5
+
+functions:
+  web_search_tool:
+    _type: tavily_web_search
+    max_results: 5
+    max_content_length: 3000
+
+  advanced_web_search_tool:
+    _type: tavily_web_search
+    max_results: 2
+    advanced_search: true
+
+  intent_classifier:
+    _type: intent_classifier
+    llm: nemotron_llm_intent
+    tools:
+      - web_search_tool
+
+  clarifier_agent:
+    _type: clarifier_agent
+    llm: nemotron_llm
+    planner_llm: nemotron_llm
+    tools:
+      - web_search_tool
+    max_turns: 3
+    enable_plan_approval: false
+    log_response_max_chars: 2000
+    verbose: true
+
+  shallow_research_agent:
+    _type: shallow_research_agent
+    llm: nemotron_llm
+    tools:
+      - web_search_tool
+    max_llm_turns: 10
+    max_tool_calls: 5
+
+  deep_research_agent:
+    _type: deep_research_agent
+    orchestrator_llm: nemotron_llm_deep
+    max_loops: 2
+    tools:
+      - advanced_web_search_tool
+
+workflow:
+  _type: chat_deepresearcher_agent
+  enable_escalation: true
+  enable_clarifier: false
+  checkpoint_db: ${AIQ_CHECKPOINT_DB:-./checkpoints.db}

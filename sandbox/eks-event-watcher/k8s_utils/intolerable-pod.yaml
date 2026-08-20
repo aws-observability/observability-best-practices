@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: intolerable-pod
+spec:
+  containers:
+  - name: intolerable-pod
+    image: nginx
+  tolerations:
+  - key: "key2"
+    value: "value2"
+    effect: "NoSchedule"

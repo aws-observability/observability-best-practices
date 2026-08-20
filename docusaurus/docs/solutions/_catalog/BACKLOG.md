@@ -29,11 +29,25 @@ without inventing steps.
 
 ## Other deferred items
 
+- **Delete the 257 retained source files** (scheduled: a few weeks out). All are
+  superseded by the 47 catalog entries and are already unrendered, but the
+  catalog is only 14% of the source word count, so a human should spot-check
+  entries against sources before removal. Start with the thinnest entries listed
+  in `DISPOSITIONS.md`. Deleting is a single change once reviewed.
+- Restore i18n locales once solutions content is translated. `docusaurus.config.js`
+  currently ships English only; the ~1670 translated documents are untouched
+  on disk but none cover `solutions/`.
+- Write Java and Node.js application entries from scratch. The existing
+  `recipes/java.md` and `recipes/nodejs.md` are 14 and 12 word stubs, so there is
+  nothing to convert, yet the two languages are obvious gaps beside
+  `dotnet-application-monitoring` and `rust-custom-metrics`.
+- Write a general-purpose EC2 entry. `ec2-monitoring` was dropped as too old to
+  carry value, leaving only workload-specific EC2 coverage in `ec2-nginx` and
+  `kafka-ec2`.
 - Content trimming pass on the remaining ~40 guide candidates (owner: team)
 - Decide featured/pinned entries on top of the `last_validated` ordering
 - Analytics-driven ordering (most viewed) once RUM data is wired up
-- Convert the LATER clusters listed in `MAPPING.md` (cost management,
-  cross-account observability, security log analytics, Databricks partner pilot)
-- Resolve `.github/workflows/linkcheck.json`: an uncommitted change broadens the
+- Resolve `.github/workflows/linkcheck.json`: a stashed change broadens the
   ignore list to include `^/`, which would disable validation of all absolute
-  internal links
+  internal links. The build is currently at zero broken links, which that change
+  would let regress unnoticed.

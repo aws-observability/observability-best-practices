@@ -7,6 +7,58 @@ authoring them.
 Companion to `MAPPING.md`, which records the ten clusters already converted.
 `CONTRIBUTING.md` defines the entry format that FOLD targets refer to.
 
+## Execution status (2026-08-20)
+
+**The additive half is done. The deletions are deliberately deferred.**
+
+28 new entries were authored from the content below, taking the catalog from
+18 to 47 entries (28 solutions, 19 guides) with all seven workload chips
+populated. Every entry validates, and the site builds with zero broken links.
+
+| Wave | Entries | Covering |
+|---|---|---|
+| Solutions | 10 | cost management, cross-account, ADOT at scale, Managed Grafana, hybrid, Databricks, big data, frontend and SLO, WorkSpaces, Rust |
+| Guides | 11 | strategy, maturity, adoption, dashboards, alarms, metrics and EMF, logs analysis, tracing, agent config, getting started, AI audit |
+| Operations | 8 | CloudTrail (3), Config, Control Tower, patch and node management, JITNA, Organizations and Regions |
+
+### Source files are retained on purpose
+
+All 257 source files remain on disk. They are **inert**: the docs plugin is
+scoped to `solutions/` and `events/`, so nothing under `guides/`, `recipes/`,
+`tools/`, `patterns/`, `ai/`, `signals/`, `persona/`, `faq/`, or `resources/`
+is rendered or reachable. Retaining them is a decision, not an oversight.
+
+The reason is a ratio worth checking before anything is deleted:
+
+> The 47 entries hold **45,701 words**. The 257 sources hold **320,985**.
+> The catalog is **14%** of the source volume.
+
+Much of that reduction is intended: cutting marketing prose, linking to AWS
+Documentation instead of duplicating reference material, collapsing genuine
+duplicates, and discarding stubs. One case is deliberate by instruction, the
+21,000-word AI workload source distilled into a single guide.
+
+But 14% is aggressive enough that agent-authored entries should be read by a
+human before 275,000 words of source material is removed. Deletion is scheduled
+as a separate change in a few weeks.
+
+**Review the thinnest entries first**, since they carry the most compression
+risk: `workspaces-monitoring` (401 words), `big-data-observability` (440),
+`databricks-monitoring` (656), `cloudtrail-monitoring` (674, standing in for six
+CloudTrail sources), `aws-config-compliance` (702).
+
+### Corrections found while executing
+
+- `recipes/java.md` (14 words) and `recipes/nodejs.md` (12 words) were recorded
+  as NEW ENTRY but are stubs with no content to convert. Both become DROP.
+  Java and Node.js entries would have to be written from scratch.
+- Four further sources turned out to be unusable: `tools/adot-traces.md`
+  contains only "todo", `tools/collector-arch.md` is empty,
+  `tools/alerting_and_incident_management.md` is five words, and
+  `guides/dashboards.md` is a 52-word heading skeleton.
+- `recipes/dimensions.md` is about conceptual observability dimensions, not
+  CloudWatch metric dimensions, so it did not fit `cloudwatch-metrics`.
+
 ## The five dispositions
 
 | Disposition | Meaning |

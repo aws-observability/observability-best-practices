@@ -35,7 +35,7 @@ The setup has three components:
 * A CloudWatch metrics API key (created below).
 
 :::tip
-For enterprise rollouts — corporate SSO and IdP federation (Okta, Azure AD, Auth0, Amazon Cognito, AWS IAM Identity Center), OIDC credential federation that eliminates long-lived API keys, per-user attribution (department, team, cost center) from JWT claims, and quota/cost controls — see the [Guidance for Claude Code with Amazon Bedrock](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock) repository. It provides deployable authentication patterns (External IdP OIDC, IAM Identity Center) for both the Claude Code CLI and Claude Cowork Desktop. That guidance handles **how developers authenticate to Bedrock at scale**; the CloudWatch metrics setup in this recipe is independent and layers on top of it.
+For enterprise rollouts — corporate SSO and IdP federation (Okta, Azure AD, Auth0, Amazon Cognito, AWS IAM Identity Center), OIDC credential federation that eliminates long-lived API keys, per-user attribution (department, team, cost center) from JWT claims, and quota/cost controls — see the [Claude Apps Gateway](https://github.com/aws-samples/anthropic-on-aws/tree/main/claude-apps-gateway) repository. It provides deployable authentication patterns (External IdP OIDC, IAM Identity Center) for both the Claude Code CLI and Claude Cowork Desktop. That guidance handles **how developers authenticate to Bedrock at scale**; the CloudWatch metrics setup in this recipe is independent and layers on top of it.
 :::
 
 ## Create a bearer token
@@ -246,7 +246,7 @@ unset CLAUDE_CODE_ENABLE_TELEMETRY OTEL_METRICS_EXPORTER OTEL_EXPORTER_OTLP_PROT
 ## Resources
 
 * [Analyzing Claude Code usage with CloudWatch and OpenTelemetry (AWS blog)](https://aws.amazon.com/blogs/mt/analyzing-claude-code-usage-with-cloudwatch-and-opentelemetry/)
-* [Guidance for Claude Code with Amazon Bedrock (enterprise SSO, IdP federation, and Bedrock access patterns)](https://github.com/aws-solutions-library-samples/guidance-for-claude-code-with-amazon-bedrock)
+* [Claude Apps Gateway (enterprise SSO, IdP federation, and Bedrock access patterns)](https://github.com/aws-samples/anthropic-on-aws/tree/main/claude-apps-gateway)
 * [Claude Code: Monitoring usage](https://docs.claude.com/en/docs/claude-code/monitoring-usage)
 * [CloudWatch OTLP Metrics Bearer Token Auth](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-MetricsBearerTokenAuth.html)
 * [Query Amazon CloudWatch metrics using PromQL (Amazon Managed Grafana)](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html)

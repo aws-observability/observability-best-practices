@@ -293,7 +293,7 @@ Amazon RDS is a managed relational database service supporting multiple engines 
 
 ##### CloudWatch Database Insights
 
-[Amazon CloudWatch Database Insights](../../../databases/DBI) is the unified, database-focused observability experience for Amazon RDS and Aurora. It builds on Performance Insights and Enhanced Monitoring and centers on **DB Load** — the average number of active sessions (AAS) in the database — which you can slice by SQL, wait event, host, user, and application to find the root cause of a performance incident. It is the successor to the standalone Performance Insights console experience.
+[Amazon CloudWatch Database Insights](/solutions/rds-aurora-monitoring/) is the unified, database-focused observability experience for Amazon RDS and Aurora. It builds on Performance Insights and Enhanced Monitoring and centers on **DB Load** — the average number of active sessions (AAS) in the database — which you can slice by SQL, wait event, host, user, and application to find the root cause of a performance incident. It is the successor to the standalone Performance Insights console experience.
 
 For incident detection, Database Insights adds signals that the base `AWS/RDS` infrastructure metrics above do not capture — most importantly **database saturation relative to compute capacity** and **where that load is waiting** (CPU vs. I/O vs. locks).
 
@@ -312,7 +312,7 @@ aws rds modify-db-instance \
     --performance-insights-retention-period 465
 ```
 
-See the full [Database Insights guide](../../../databases/DBI) for modes, features, limitations, and fleet/cross-account setup.
+See [RDS & Aurora Monitoring](/solutions/rds-aurora-monitoring/) for Database Insights setup, and the [AWS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html) for modes, limitations, and fleet or cross-account configuration.
 
 ###### Recommended Database Insights metrics to alarm on
 
@@ -364,7 +364,7 @@ Recommended CloudWatch alarms for **Amazon Aurora** to detect customer-impacting
 
 ##### CloudWatch Database Insights
 
-[Amazon CloudWatch Database Insights](../../../databases/DBI) is the unified, database-focused observability experience for Amazon Aurora and RDS. It builds on Performance Insights and Enhanced Monitoring and centers on **DB Load** — the average number of active sessions (AAS) in the database — sliced by SQL, wait event, host, user, and application. For Aurora it adds cluster-wide fleet health views and, on Aurora PostgreSQL, **lock analysis** (blocking-session trees) and **execution-plan analysis** to catch plan regressions.
+[Amazon CloudWatch Database Insights](/solutions/rds-aurora-monitoring/) is the unified, database-focused observability experience for Amazon Aurora and RDS. It builds on Performance Insights and Enhanced Monitoring and centers on **DB Load** — the average number of active sessions (AAS) in the database — sliced by SQL, wait event, host, user, and application. For Aurora it adds cluster-wide fleet health views and, on Aurora PostgreSQL, **lock analysis** (blocking-session trees) and **execution-plan analysis** to catch plan regressions.
 
 For incident detection, Database Insights surfaces the two signals the base `AWS/RDS` metrics above do not: **database saturation relative to compute capacity** (`DBLoad` vs. vCPUs, or ACUs for Serverless v2) and **where load is waiting** (CPU vs. I/O vs. lock contention).
 
@@ -383,7 +383,7 @@ aws rds modify-db-cluster \
     --performance-insights-retention-period 465
 ```
 
-See the full [Database Insights guide](../../../databases/DBI) for modes, features, Aurora engine support, limitations, and fleet/cross-account setup.
+See [RDS & Aurora Monitoring](/solutions/rds-aurora-monitoring/) for Database Insights setup, and the [AWS documentation](https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html) for modes, Aurora engine support, limitations, and fleet or cross-account configuration.
 
 ###### Recommended Database Insights metrics to alarm on
 

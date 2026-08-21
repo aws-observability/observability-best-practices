@@ -19,7 +19,7 @@
   ],
   "ignorePatterns": [
     {
-      "pattern": "^/img/"
+      "pattern": "^/"
     },
     {
       "pattern": "^../"

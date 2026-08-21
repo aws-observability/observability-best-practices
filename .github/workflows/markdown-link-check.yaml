@@ -5,13 +5,21 @@ on:
     branches:
       - main
     paths:
-      - "**/*.md"
+      - "docusaurus/docs/solutions/**"
+      - "docusaurus/docs/events/**"
+      - "*.md"
+      - ".github/workflows/linkcheck.json"
+      - ".github/workflows/markdown-link-check.yaml"
 
   pull_request:
     branches:
       - main
     paths:
-      - "**/*.md"
+      - "docusaurus/docs/solutions/**"
+      - "docusaurus/docs/events/**"
+      - "*.md"
+      - ".github/workflows/linkcheck.json"
+      - ".github/workflows/markdown-link-check.yaml"
 
 jobs:
   markdown-link-check:
@@ -25,5 +33,25 @@ jobs:
         run: npm install -g markdown-link-check@3.12.2
       - name: markdown-link-check version
         run: npm list -g markdown-link-check
-      - name: Run markdown-link-check on MD files
-        run: find docusaurus -name "*.md" | xargs -n 1 markdown-link-check -q -c .github/workflows/linkcheck.json
+
+      # Scoped to published content plus repository-root documents.
+      #
+      # Previously this scanned every .md under docusaurus/, which is 1932 files
+      # of which only 53 are published: the rest are i18n translations (1433) and
+      # legacy directories that are no longer rendered and are scheduled for
+      # deletion. Checking them produced failures nobody would act on.
+      #
+      # Internal link correctness is covered separately and more accurately by
+      # the Docusaurus build, which resolves real routes and fails on a broken
+      # one. This job exists to catch dead EXTERNAL links.
+      - name: Run markdown-link-check on published content
+        run: |
+          find docusaurus/docs/solutions docusaurus/docs/events \
+               -type f \( -name '*.md' -o -name '*.mdx' \) \
+               -not -path '*/node_modules/*' -print0 \
+            | xargs -0 -n 1 markdown-link-check -q -c .github/workflows/linkcheck.json
+
+      - name: Run markdown-link-check on root documents
+        run: |
+          find . -maxdepth 1 -type f -name '*.md' -print0 \
+            | xargs -0 -n 1 markdown-link-check -q -c .github/workflows/linkcheck.json

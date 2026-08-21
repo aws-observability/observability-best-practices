@@ -22,6 +22,7 @@ optional_fields:
   - partner_integrations
   - accelerator_link
   - docs_link
+  - search_keywords
 
 field_definitions:
   name:
@@ -71,6 +72,9 @@ field_definitions:
   docs_link:
     type: string
     format: url
+  search_keywords:
+    type: array
+    description: "Extra free-text terms appended to the catalog search index for this entry. Use for aliases and covered products that do not appear in name/description (e.g., a multi-service guide). Does not affect filter chips."
   last_validated:
     type: string
     format: date

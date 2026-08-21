@@ -6,6 +6,6 @@ workload_type: [applications]
 backends: [cloudwatch, amp]
 signals: [metrics, logs]
 status: active
-last_validated: "2026-08-20"
+last_validated: "2026-08-21"
 docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html"
 related_events: [cloudwatch, metrics]

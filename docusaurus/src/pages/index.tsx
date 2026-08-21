@@ -19,6 +19,8 @@ interface Solution {
   instrumentation?: string;
   time_to_value_minutes?: number;
   iac_available?: string[];
+  // Free-text search terms appended to the haystack (aliases, covered products).
+  search_keywords?: string[];
 }
 
 interface TaxonomyItem {
@@ -105,6 +107,7 @@ function buildHaystack(sol: Solution): string {
     instrumentation,
     ...(sol.iac_available ?? []),
     sol.content_type || '',
+    ...(sol.search_keywords ?? []),
   ];
   // Expand synonyms so "grafana" finds AMG entries, "kubernetes" finds EKS, etc.
   // Workload groups are included because consolidating the chips retired words

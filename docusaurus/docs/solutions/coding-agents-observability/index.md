@@ -53,13 +53,18 @@ The pattern is consistent across agents: create a CloudWatch metrics API key (be
               │  monitoring.<region>.aws.com │
               └──────────────┬───────────────┘
                              │
-              ┌──────────────┼──────────────┐
-              ▼              ▼              ▼
-     ┌──────────────┐ ┌───────────┐ ┌───────────────┐
-     │  CloudWatch  │ │    AMP    │ │     AMG       │
-     │  Dashboards  │ │ (PromQL)  │ │  (Grafana)    │
-     │  + Alarms    │ │           │ │               │
-     └──────────────┘ └───────────┘ └───────────────┘
+                             ▼
+              ┌──────────────────────────────┐
+              │  CloudWatch metric store     │
+              │  queryable via PromQL API    │
+              └──────┬────────────────┬──────┘
+                     │                │
+                     ▼                ▼
+          ┌────────────────────┐  ┌────────────────────┐
+          │  CloudWatch        │  │  Grafana           │
+          │  Dashboards        │  │  (Prometheus data  │
+          │  + Alarms          │  │   source, SigV4)   │
+          └────────────────────┘  └────────────────────┘
 ```
 
 ## Deploy
@@ -188,7 +193,12 @@ aws cloudwatch put-dashboard --dashboard-name CopilotDashboard \
 
 ### Step 6: Deploy Grafana dashboards
 
-If your organization uses Amazon Managed Grafana (or self-managed Grafana), import the equivalent Grafana JSON for each agent. Each uses the same PromQL against an [Amazon Managed Service for Prometheus data source pointed at the CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) (set the SigV4 **Service** to `monitoring`). Select that data source for the dashboard's `datasource` variable on import.
+If your organization uses Amazon Managed Grafana (or self-managed Grafana), import the equivalent Grafana JSON for each agent. Each uses the same PromQL, so add a **Prometheus** data source pointed at the [CloudWatch PromQL endpoint](https://docs.aws.amazon.com/grafana/latest/userguide/cloudwatch-promql.html) with SigV4 authentication and the **Service** set to `monitoring`. Select that data source for the dashboard's `datasource` variable on import.
+
+Note this path does not involve Amazon Managed Service for Prometheus. The
+metrics stay in CloudWatch; the PromQL API is a CloudWatch query surface over
+OTLP-ingested metrics, and Grafana reads it using a generic Prometheus data
+source.
 
 ```bash
 # Claude Code

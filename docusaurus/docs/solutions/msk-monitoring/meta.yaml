@@ -1,0 +1,17 @@
+name: "Amazon MSK Monitoring"
+slug: msk-monitoring
+content_type: solution
+description: "Monitor Amazon MSK (Managed Streaming for Apache Kafka) clusters using Open Monitoring with Prometheus, AWS Managed Collector, and CloudWatch"
+workload_type: [data-streaming]
+compute_platform: []
+backends: [cloudwatch, amp, amg]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 20
+instrumentation: prometheus
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html"
+last_validated: "2026-08-17"

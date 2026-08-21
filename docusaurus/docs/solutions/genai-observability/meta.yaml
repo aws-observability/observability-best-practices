@@ -1,0 +1,17 @@
+name: "GenAI Workload Observability"
+slug: genai-observability
+content_type: solution
+description: "Bedrock and SageMaker model invocation monitoring with token/cost tracking, agent traces, and LLM performance dashboards"
+workload_type: [ai-ml]
+compute_platform: [sagemaker]
+backends: [cloudwatch, amg]
+signals: [metrics, logs, traces]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 45
+instrumentation: otel
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html"
+last_validated: "2026-08-17"

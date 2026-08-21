@@ -1,0 +1,11 @@
+name: "Alarms and Alerting"
+slug: cloudwatch-alarms-alerting
+content_type: guide
+description: "Design actionable alarms and alert routing with CloudWatch static/anomaly thresholds, composite alarms, and Prometheus Alertmanager on AMP."
+workload_type: [applications]
+backends: [cloudwatch, amp]
+signals: [metrics, logs]
+status: active
+last_validated: "2026-08-20"
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html"
+related_events: [cloudwatch, metrics]

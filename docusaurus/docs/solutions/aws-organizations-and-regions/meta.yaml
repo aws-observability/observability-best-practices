@@ -1,0 +1,11 @@
+name: "AWS Organizations and Regions"
+slug: aws-organizations-and-regions
+content_type: guide
+description: "Account migration readiness, enabling new AWS Regions, extending a landing zone, and tagging strategy for application operations"
+workload_type: [operations]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+docs_link: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html"
+last_validated: "2026-08-20"
+related_events: []

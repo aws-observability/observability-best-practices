@@ -1,0 +1,11 @@
+name: "Distributed Tracing"
+slug: distributed-tracing
+content_type: guide
+description: "Guidance on distributed tracing with AWS X-Ray and OpenTelemetry, including sampling strategy and choosing a tracing agent."
+workload_type: [applications]
+backends: [xray, cloudwatch]
+signals: [traces]
+status: active
+docs_link: "https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html"
+last_validated: "2026-08-20"
+related_events: [apm]

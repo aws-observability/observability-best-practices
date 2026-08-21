@@ -1,0 +1,77 @@
+# Solution Catalog Schema
+# Each solution entry must have a meta.yaml conforming to this schema
+
+schema_version: "1.0"
+
+required_fields:
+  - name
+  - slug
+  - description
+  - workload_type
+  - compute_platform
+  - backends
+  - signals
+  - instrumentation
+  - status
+  - time_to_value_minutes
+  - last_validated
+
+optional_fields:
+  - featured
+  - iac_available
+  - partner_integrations
+  - accelerator_link
+  - docs_link
+
+field_definitions:
+  name:
+    type: string
+    description: "Human-readable solution name"
+  slug:
+    type: string
+    pattern: "^[a-z0-9-]+$"
+    description: "URL-safe identifier, must match directory name"
+  description:
+    type: string
+    max_length: 200
+    description: "One-line description for catalog cards"
+  workload_type:
+    type: array
+    allowed_values: $ref:taxonomy.workload_types
+  compute_platform:
+    type: array
+    allowed_values: $ref:taxonomy.compute_platforms
+  backends:
+    type: array
+    allowed_values: $ref:taxonomy.backends
+  signals:
+    type: array
+    allowed_values: $ref:taxonomy.signals
+  instrumentation:
+    type: string
+    allowed_values: $ref:taxonomy.instrumentation
+  iac_available:
+    type: array
+    allowed_values: [terraform, cdk, cloudformation, pulumi]
+  partner_integrations:
+    type: array
+    description: "Third-party tool integrations"
+  time_to_value_minutes:
+    type: integer
+    description: "Estimated time to deploy and see first data"
+  featured:
+    type: boolean
+    description: "Pin ahead of non-featured entries in catalog order. Curation only; does not affect filtering or search."
+  status:
+    type: string
+    allowed_values: [active, deprecated, preview]
+  accelerator_link:
+    type: string
+    format: url
+  docs_link:
+    type: string
+    format: url
+  last_validated:
+    type: string
+    format: date
+    description: "YYYY-MM-DD when solution was last tested"

@@ -1,0 +1,17 @@
+name: "Rust Custom Metrics"
+slug: rust-custom-metrics
+content_type: solution
+description: "Publish custom CloudWatch metrics from Rust applications using the AWS SDK for Rust with PutMetricData and Embedded Metric Format."
+workload_type: [applications]
+compute_platform: [ec2, lambda]
+backends: [cloudwatch]
+signals: [metrics]
+instrumentation: custom
+status: active
+time_to_value_minutes: 20
+last_validated: "2026-08-20"
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html"
+related_events: [metrics]

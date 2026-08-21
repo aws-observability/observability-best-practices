@@ -1,0 +1,110 @@
+# Solutions Catalog Taxonomy
+# Defines the controlled vocabulary for solution classification
+
+# workload_types are the ONLY visible filter chips on the catalog homepage.
+# They answer one question: "what are you observing?"
+#
+# Keep this list short and each value well populated. A chip that matches one
+# entry is a link, not a filter. Everything finer-grained (compute platform,
+# backend, instrumentation) is searchable rather than a chip.
+#
+# Order here is the order chips render.
+workload_types:
+  - id: ai-ml
+    label: AI/ML
+    icon: "🤖"
+  - id: compute
+    label: Compute
+    icon: "📦"
+    # Containers, Kubernetes, serverless, and instances. Previously split into
+    # containers/kubernetes/serverless/ec2, which produced chips of 1-3 entries
+    # and a redundant kubernetes chip that was a strict subset of containers.
+  - id: applications
+    label: Applications
+    icon: "🧩"
+    # Language and framework level monitoring, independent of where it runs.
+  - id: data-streaming
+    label: Data & Streaming
+    icon: "🗄️"
+    # Databases, search, and message streaming. Merged because users reason
+    # about "my data tier", not databases-versus-messaging.
+  - id: security
+    label: Security & Compliance
+    icon: "🔒"
+    # Compliance is deliberately not separate: the content is usually both,
+    # and splitting forces contributors into a false either/or.
+  - id: network
+    label: Network
+    icon: "🌐"
+  - id: operations
+    label: Operations
+    icon: "⚙️"
+    # Cloud operations management: CloudTrail, Config, Control Tower,
+    # Organizations, region usage, patch and node management. Approved as a chip
+    # alongside the first tranche of operations entries; see DISPOSITIONS.md.
+
+content_types:
+  - id: solution
+    label: Solution
+    description: "How to observe workload X — deployable, step-by-step"
+  - id: guide
+    label: Guide
+    description: "General advice and guidance — best practices, decision help"
+
+compute_platforms:
+  - id: eks
+    label: Amazon EKS
+  - id: ecs
+    label: Amazon ECS
+  - id: lambda
+    label: AWS Lambda
+  - id: ec2
+    label: Amazon EC2
+  - id: fargate
+    label: AWS Fargate
+  - id: sagemaker
+    label: Amazon SageMaker
+
+backends:
+  - id: cloudwatch
+    label: CloudWatch
+    color: "#FF9900"
+  - id: amp
+    label: Amazon Managed Prometheus
+    color: "#E6522C"
+  - id: amg
+    label: Amazon Managed Grafana
+    color: "#F46800"
+  - id: xray
+    label: AWS X-Ray
+    color: "#8C4FFF"
+  - id: opensearch
+    label: OpenSearch
+    color: "#005EB8"
+
+signals:
+  - id: metrics
+    label: Metrics
+    icon: "📊"
+  - id: logs
+    label: Logs
+    icon: "📝"
+  - id: traces
+    label: Traces
+    icon: "🔗"
+  - id: profiling
+    label: Profiling
+    icon: "🔬"
+
+instrumentation:
+  - id: otel
+    label: OpenTelemetry
+  - id: cwagent
+    label: CloudWatch Agent
+  - id: prometheus
+    label: Prometheus
+  - id: adot
+    label: AWS Distro for OpenTelemetry
+  - id: custom
+    label: Custom
+

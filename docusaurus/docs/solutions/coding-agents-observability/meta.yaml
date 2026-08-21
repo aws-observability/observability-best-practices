@@ -1,0 +1,17 @@
+name: "Coding Agents Observability"
+slug: coding-agents-observability
+content_type: solution
+description: "OTel-based telemetry for Claude Code, OpenAI Codex, and GitHub Copilot fleets — token usage, cost tracking, and team attribution"
+workload_type: [ai-ml]
+compute_platform: []
+backends: [cloudwatch, amp, amg]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 30
+instrumentation: otel
+status: active
+featured: true
+accelerator_link: ""
+docs_link: ""
+last_validated: "2026-08-17"

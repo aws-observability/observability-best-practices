@@ -1,0 +1,11 @@
+name: "CloudWatch Agent Configuration"
+slug: cloudwatch-agent-configuration
+content_type: guide
+description: "Guidance on CloudWatch agent configuration, deployment via Systems Manager, and when to use the agent versus ADOT."
+workload_type: [compute]
+backends: [cloudwatch]
+signals: [metrics, logs]
+status: active
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html"
+last_validated: "2026-08-20"
+related_events: [cloudwatch, metrics]

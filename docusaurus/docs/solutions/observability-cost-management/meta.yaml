@@ -1,0 +1,17 @@
+name: "Observability Cost Management"
+slug: observability-cost-management
+content_type: solution
+description: "Gain visibility into CloudWatch, AMP, AMG, and X-Ray spend using CUR dashboards, reduce CloudWatch costs, and attribute EKS GPU expenses with Kubecost."
+workload_type: [compute]
+compute_platform: [eks, ec2]
+backends: [cloudwatch, amp, amg, xray]
+signals: [metrics, logs]
+instrumentation: custom
+status: active
+time_to_value_minutes: 30
+last_validated: "2026-08-20"
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_billing.html"
+related_events: [cloudwatch, metrics]

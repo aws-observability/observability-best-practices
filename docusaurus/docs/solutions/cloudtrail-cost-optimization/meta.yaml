@@ -1,0 +1,12 @@
+name: "CloudTrail Cost Optimization"
+slug: cloudtrail-cost-optimization
+content_type: guide
+description: "Estimate and control AWS CloudTrail costs: data event cost estimation, CloudWatch Logs ingestion pricing, log transformation, and CloudTrail Lake."
+workload_type: [operations]
+backends: [cloudwatch]
+signals: [logs]
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-trail-pricing.html"
+last_validated: "2026-08-20"
+related_events: []

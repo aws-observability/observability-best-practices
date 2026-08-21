@@ -1,0 +1,17 @@
+name: "Network Observability"
+slug: network-observability
+content_type: solution
+description: "VPC Flow Logs, Network Flow Monitor, Internet Monitor, and Synthetic Monitor for end-to-end AWS network visibility"
+workload_type: [network]
+compute_platform: []
+backends: [cloudwatch]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 30
+instrumentation: custom
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html"
+last_validated: "2026-08-17"

@@ -1,0 +1,10 @@
+name: "Observability Adoption Guide"
+slug: observability-adoption-guide
+content_type: guide
+description: "Staged adoption framework for growing organizations covering reactive, foundational, and integrated observability plus anti-patterns to avoid."
+workload_type: [applications]
+backends: [cloudwatch]
+signals: [metrics, logs, traces]
+status: active
+docs_link: ""
+last_validated: "2026-08-20"

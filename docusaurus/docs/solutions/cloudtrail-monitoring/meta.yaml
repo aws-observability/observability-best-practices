@@ -1,0 +1,17 @@
+name: "CloudTrail Monitoring"
+slug: cloudtrail-monitoring
+content_type: solution
+description: "Configure and operate AWS CloudTrail trails for management events, data events, and network activity events using advanced event selectors."
+workload_type: [operations, security]
+compute_platform: []
+backends: [cloudwatch]
+signals: [logs]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 30
+instrumentation: custom
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html"
+last_validated: "2026-08-20"
+related_events: []

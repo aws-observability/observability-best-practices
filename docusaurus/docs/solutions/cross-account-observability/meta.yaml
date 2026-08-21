@@ -1,0 +1,17 @@
+name: "Cross-Account Observability"
+slug: cross-account-observability
+content_type: solution
+description: "Centralize metrics, logs, and traces across AWS accounts using CloudWatch cross-account observability and AMP cross-account scraping."
+workload_type: [compute, operations]
+compute_platform: []
+backends: [cloudwatch, amp, amg, xray]
+signals: [metrics, logs, traces]
+instrumentation: custom
+status: active
+time_to_value_minutes: 40
+last_validated: "2026-08-20"
+iac_available: []
+partner_integrations: []
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html"
+related_events: [cloudwatch, metrics]

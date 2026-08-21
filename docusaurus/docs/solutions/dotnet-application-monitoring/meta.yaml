@@ -1,0 +1,17 @@
+name: ".NET Application Monitoring"
+slug: dotnet-application-monitoring
+content_type: solution
+description: "End-to-end observability for .NET applications using OpenTelemetry and CloudWatch-native instrumentation paths"
+workload_type: [applications]
+compute_platform: []
+backends: [cloudwatch, xray]
+signals: [metrics, logs, traces]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 30
+instrumentation: otel
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html"
+last_validated: "2026-08-17"

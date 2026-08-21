@@ -58,6 +58,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/5aeed/hands-on-aws-observability-mastering-ai-operations-aiops"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "aiops"
     ]
   },
   {
@@ -89,6 +93,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/5f21a/hands-on-aws-observability-mastering-application-performance-monitoring-apm"
       }
+    ],
+    "topics": [
+      "applications",
+      "apm"
     ]
   },
   {
@@ -132,6 +140,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/b043f/hands-on-aws-observability-mastering-cloudwatch-logs"
       }
+    ],
+    "topics": [
+      "logs",
+      "security"
     ]
   },
   {
@@ -187,6 +199,9 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/6fccf/hands-on-aws-observability-mastering-cloudwatch-metrics-alarms--dashboards"
       }
+    ],
+    "topics": [
+      "metrics"
     ]
   },
   {
@@ -199,7 +214,11 @@
     "time": "14:00 – 15:00 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/8f171/amazon-cloudwatch-otel-metrics-deep-dive-to-customer-wins",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "metrics",
+      "cloudwatch"
+    ]
   },
   {
     "theme": "CloudWatch Fundamentals & What's New",
@@ -211,7 +230,10 @@
     "time": "15:00 – 16:00 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/4b504/i-didnt-know-amazon-cloudwatch-could-do-that",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch"
+    ]
   },
   {
     "theme": "DevOps Agent",
@@ -242,6 +264,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/2f656/aws-devops-agent-workshop"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "devops-agent"
     ]
   },
   {
@@ -297,6 +323,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/2c5fe/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "devops-agent"
     ]
   },
   {
@@ -309,7 +339,11 @@
     "time": "16:00 – 17:00 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/da0ec/what-makes-aws-devops-agent-different",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "ai-ml",
+      "devops-agent"
+    ]
   },
   {
     "theme": "GenAI Observability",
@@ -340,6 +374,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/0bc9c/cloudwatch-genai-observability-for-amazon-bedrock-and-bedrock-agentcore"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "genai"
     ]
   },
   {
@@ -383,6 +421,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/1e90e/end-to-end-genai-observability-infrastructure-agents-and-applications"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "genai"
     ]
   },
   {
@@ -468,6 +510,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/d8ccf/optimizing-genai-performance-with-amazon-cloudwatch"
       }
+    ],
+    "topics": [
+      "ai-ml",
+      "genai"
     ]
   },
   {
@@ -511,6 +557,9 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/6d8d6/hands-on-aws-observability-mastering-database-observability"
       }
+    ],
+    "topics": [
+      "databases"
     ]
   },
   {
@@ -536,6 +585,9 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/8c0a6/zero-to-hero-improve-operations-by-gaining-actionable-database-insights-with-cloudwatch"
       }
+    ],
+    "topics": [
+      "databases"
     ]
   },
   {
@@ -555,6 +607,10 @@
         "location": "Online",
         "registerUrl": "https://aws-experience.com/amer/smb/e/de465/simplified-security-visibility---cloudwatch-unified-data-store"
       }
+    ],
+    "topics": [
+      "security",
+      "logs"
     ]
   },
   {
@@ -567,7 +623,11 @@
     "time": "03:30 – 05:30 UTC",
     "location": "In-person",
     "registerUrl": "https://aws-experience.com/amer/smb/e/ff504/ai-for-cloud-operations-aiops",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "ai-ml",
+      "aiops"
+    ]
   },
   {
     "theme": "Regional & In-Person Events",
@@ -579,7 +639,10 @@
     "time": "14:00 – 21:00 UTC",
     "location": "In-person",
     "registerUrl": "https://aws-experience.com/amer/smb/e/3f7ac/dallas-cloudops-regional-event",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "general"
+    ]
   },
   {
     "theme": "Regional & In-Person Events",
@@ -591,6 +654,10 @@
     "time": "11:30 – 20:30 UTC",
     "location": "In-person",
     "registerUrl": "https://aws-experience.com/amer/smb/e/6c209/observabilidade-e-operacões-com-ia-da-visao-à-pratica",
-    "additionalDates": []
+    "additionalDates": [],
+    "topics": [
+      "ai-ml",
+      "general"
+    ]
   }
 ]

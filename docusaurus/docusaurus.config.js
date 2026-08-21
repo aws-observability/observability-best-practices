@@ -30,27 +30,17 @@ const config = {
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
+  // English only for now. The i18n/ directories still hold ~1670 translated
+  // documents, but none of them cover docs/solutions/, so every non-English
+  // locale rendered an untranslated catalog with zero entries. Publishing that
+  // is worse than publishing nothing. Files are retained on disk; restore a
+  // locale here once its solutions content is translated.
   i18n: {
     defaultLocale: 'en',
-    locales: ['en','ja','ko','zh-Hans','hi','ta'],
+    locales: ['en'],
     localeConfigs: {
       en: {
         label: 'English',
-      },
-      ja: {
-        label: '日本語',
-      },
-      ko: {
-        label: '한국어',
-      },
-      'zh-Hans': {
-        label: '简体中文',
-      },
-      hi: {
-        label: 'हिन्दी',
-      },
-      ta: {
-        label: 'தமிழ்',
       },
     },
   },
@@ -64,6 +54,8 @@ const config = {
           routeBasePath: '/',
           sidebarPath: './sidebars.js',
           //path: 'docs',
+          include: ['solutions/**/*.{md,mdx}', 'events/**/*.{md,mdx}'],
+          exclude: ['**/_catalog/**'],
           // Please change this to your repo.
           // Remove this to remove the "edit this page" links.
           editUrl:
@@ -118,82 +110,9 @@ const config = {
         },
         items: [
           {
-            type: 'doc',
-            docId: 'home',
-            position: 'left',
-            label: 'Home',
-          },
-          {
-            type: 'doc',
-            docId: 'guides/index',
-            position: 'left',
-            label: 'Guides',
-          },
-          {
-            type: 'doc',
-            docId: 'signals/logs',
-            position: 'left',
-            label: 'Signals',
-          },
-          {
-            type: 'doc',
-            docId: 'tools/observability_accelerator',
-            position: 'left',
-            label: 'Tools',
-          },
-          {
-            type: 'doc',
-            docsPluginId: 'apm',
-            docId: 'index',
-            position: 'left',
-            label: 'APM',
-          },
-          {
-            type: 'doc',
-            docId: 'recipes/index',
-            position: 'left',
-            label: 'Recipes',
-          },
-          {
-            type: 'doc',
-            docId: 'ai/index',
-            position: 'left',
-            label: 'AI',
-          },
-          {
-            type: 'doc',
-            docId: 'patterns/Tracing/xrayec2',
-            position: 'left',
-            label: 'Patterns',
-          },
-          {
-            type: 'doc',
-            docId: 'persona/cloud_engineer',
-            position: 'left',
-            label: 'Persona',
-          },
-          {
-            type: 'doc',
-            docId: 'events/index',
+            to: '/events/',
             position: 'left',
             label: 'Events',
-            sidebarId: false,
-          },
-          {
-            type: 'doc',
-            docId: 'resources/index',
-            position: 'left',
-            label: 'Resources',
-          },
-          {
-            type: 'doc',
-            position: 'left',
-            docId: 'contributors',
-            label: 'Contributors',
-          },
-          {
-            type: 'localeDropdown',
-            position: 'right',
           },
           {
             href: 'https://github.com/aws-observability/observability-best-practices',

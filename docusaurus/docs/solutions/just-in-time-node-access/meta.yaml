@@ -1,0 +1,17 @@
+name: "Just-in-Time Node Access"
+slug: just-in-time-node-access
+content_type: solution
+description: "Approval-based temporary access to managed nodes with Cedar policies, EventBridge integration, and Infrastructure-as-Code enablement"
+workload_type: [operations, security]
+compute_platform: [ec2]
+backends: [cloudwatch]
+signals: [logs]
+iac_available: [cloudformation]
+partner_integrations: []
+time_to_value_minutes: 30
+instrumentation: custom
+status: active
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html"
+last_validated: "2026-08-20"
+related_events: []

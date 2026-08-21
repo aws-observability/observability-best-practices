@@ -1,0 +1,17 @@
+name: "EKS Java Application Monitoring"
+slug: eks-application-signals
+content_type: solution
+description: "Application-level monitoring for Java/JVM workloads on EKS using CloudWatch Application Signals and OpenTelemetry"
+workload_type: [compute, applications]
+compute_platform: [eks]
+backends: [cloudwatch, xray]
+signals: [metrics, traces, logs]
+iac_available: [cdk, terraform]
+partner_integrations: []
+time_to_value_minutes: 20
+instrumentation: otel
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html"
+last_validated: "2026-06-20"

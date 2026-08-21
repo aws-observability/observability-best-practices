@@ -1,0 +1,17 @@
+name: "EC2 NGINX Monitoring"
+slug: ec2-nginx
+content_type: solution
+description: "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics"
+workload_type: [compute]
+compute_platform: [ec2]
+backends: [cloudwatch]
+signals: [metrics, logs]
+iac_available: []
+partner_integrations: []
+time_to_value_minutes: 15
+instrumentation: cwagent
+status: active
+featured: true
+accelerator_link: ""
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html"
+last_validated: "2026-05-10"

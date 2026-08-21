@@ -1,0 +1,11 @@
+name: "CloudWatch Metrics and EMF"
+slug: cloudwatch-metrics
+content_type: guide
+description: "Metrics guidance covering dimensions, cardinality, high-resolution metrics, vended vs custom metrics, and Embedded Metric Format for log-derived metrics."
+workload_type: [applications]
+backends: [cloudwatch]
+signals: [metrics]
+status: active
+last_validated: "2026-08-20"
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html"
+related_events: [cloudwatch, metrics]

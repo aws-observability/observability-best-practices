@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-20T21:07:13.856059+00:00",
+  "generated_at": "2026-08-21T20:56:53.398463+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -507,6 +507,108 @@
       "last_validated": "2026-05-10"
     },
     {
+      "name": "Alarms and Alerting",
+      "slug": "cloudwatch-alarms-alerting",
+      "content_type": "guide",
+      "description": "Design actionable alarms and alert routing with CloudWatch static/anomaly thresholds, composite alarms, and Prometheus Alertmanager on AMP.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-21",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Recommended Alarms by AWS Service",
+      "slug": "recommended-alarms-by-service",
+      "content_type": "guide",
+      "description": "Recommended CloudWatch alarms for incident detection across 30+ AWS services: the metrics, statistics, and thresholds to alarm on \u2014 EC2, RDS, Lambda, DynamoDB, EKS, and more.",
+      "workload_type": [
+        "operations"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-21",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ],
+      "search_keywords": [
+        "recommended alarms",
+        "alarm guide",
+        "alarms guide",
+        "baseline alarms",
+        "alerting",
+        "cloudwatch alarms",
+        "incident detection",
+        "ec2 monitoring",
+        "ecs monitoring",
+        "eks monitoring",
+        "lambda monitoring",
+        "rds monitoring",
+        "aurora",
+        "dynamodb",
+        "dax",
+        "elasticache",
+        "redshift",
+        "dms",
+        "opensearch",
+        "api gateway",
+        "elb",
+        "alb",
+        "nlb",
+        "load balancer",
+        "cloudfront",
+        "route 53",
+        "direct connect",
+        "transit gateway",
+        "vpn",
+        "network firewall",
+        "sns",
+        "sqs",
+        "eventbridge",
+        "step functions",
+        "kinesis",
+        "msk",
+        "kafka",
+        "amazon mq",
+        "activemq",
+        "rabbitmq",
+        "s3",
+        "efs",
+        "fsx",
+        "sagemaker",
+        "lex",
+        "amazon connect",
+        "medialive",
+        "mediapackage",
+        "mediaconvert",
+        "elemental",
+        "outposts",
+        "iot core"
+      ]
+    },
+    {
       "name": "ADOT Collector at Scale",
       "slug": "adot-at-scale",
       "content_type": "solution",
@@ -614,30 +716,6 @@
       "docs_link": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html",
       "last_validated": "2026-08-20",
       "related_events": []
-    },
-    {
-      "name": "Alarms and Alerting",
-      "slug": "cloudwatch-alarms-alerting",
-      "content_type": "guide",
-      "description": "Design actionable alarms and alert routing with CloudWatch static/anomaly thresholds, composite alarms, and Prometheus Alertmanager on AMP.",
-      "workload_type": [
-        "applications"
-      ],
-      "backends": [
-        "cloudwatch",
-        "amp"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-20",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html",
-      "related_events": [
-        "cloudwatch",
-        "metrics"
-      ]
     },
     {
       "name": "Amazon Managed Grafana Setup",

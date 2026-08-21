@@ -1,0 +1,64 @@
+name: "Recommended Alarms by AWS Service"
+slug: recommended-alarms-by-service
+content_type: guide
+description: "Recommended CloudWatch alarms for incident detection across 30+ AWS services: the metrics, statistics, and thresholds to alarm on — EC2, RDS, Lambda, DynamoDB, EKS, and more."
+workload_type: [operations]
+signals: [metrics, logs]
+backends: [cloudwatch, amp]
+status: active
+last_validated: "2026-08-21"
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html"
+related_events: [cloudwatch, metrics]
+search_keywords:
+  - recommended alarms
+  - alarm guide
+  - alarms guide
+  - baseline alarms
+  - alerting
+  - cloudwatch alarms
+  - incident detection
+  - ec2 monitoring
+  - ecs monitoring
+  - eks monitoring
+  - lambda monitoring
+  - rds monitoring
+  - aurora
+  - dynamodb
+  - dax
+  - elasticache
+  - redshift
+  - dms
+  - opensearch
+  - api gateway
+  - elb
+  - alb
+  - nlb
+  - load balancer
+  - cloudfront
+  - route 53
+  - direct connect
+  - transit gateway
+  - vpn
+  - network firewall
+  - sns
+  - sqs
+  - eventbridge
+  - step functions
+  - kinesis
+  - msk
+  - kafka
+  - amazon mq
+  - activemq
+  - rabbitmq
+  - s3
+  - efs
+  - fsx
+  - sagemaker
+  - lex
+  - amazon connect
+  - medialive
+  - mediapackage
+  - mediaconvert
+  - elemental
+  - outposts
+  - iot core

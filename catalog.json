@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T20:56:53.398463+00:00",
+  "generated_at": "2026-08-21T21:59:06.178709+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -187,7 +187,6 @@
       "compute_platform": [],
       "backends": [
         "cloudwatch",
-        "amp",
         "amg"
       ],
       "signals": [

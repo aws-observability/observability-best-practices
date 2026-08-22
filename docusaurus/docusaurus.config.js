@@ -73,6 +73,19 @@ const config = {
   ],
 
   plugins: [
+
+     // Consolidated or removed entries keep their published URLs working.
+     // eks-container-insights merged into eks-infrastructure, which now covers
+     // Container Insights, the CloudWatch managed collector, and AMP as three
+     // documented paths.
+     [
+       '@docusaurus/plugin-client-redirects',
+       ({
+         redirects: [
+           { from: '/solutions/eks-container-insights', to: '/solutions/eks-infrastructure' },
+         ],
+       }),
+     ],
    
      [
        require.resolve("@easyops-cn/docusaurus-search-local"),

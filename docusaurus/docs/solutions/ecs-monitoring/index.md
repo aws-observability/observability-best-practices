@@ -179,5 +179,5 @@ For application metrics exposed at `/metrics`, use the CloudWatch agent with ECS
 
 ## Related Solutions
 
-- [EKS Monitoring with CloudWatch Container Insights](../eks-container-insights/) — Similar approach for EKS workloads
+- [EKS Infrastructure Monitoring](../eks-infrastructure/) — Equivalent paths for EKS workloads
 - [Lambda Monitoring](../lambda-monitoring/) — Monitor serverless functions invoked by ECS services

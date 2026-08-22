@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T02:46:30.112530+00:00",
+  "generated_at": "2026-08-22T03:41:25.152897+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -129,37 +129,6 @@
       "status": "active",
       "accelerator_link": "",
       "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
-      "last_validated": "2026-08-18"
-    },
-    {
-      "name": "EKS Infrastructure Monitoring",
-      "slug": "eks-infrastructure",
-      "content_type": "solution",
-      "description": "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "eks"
-      ],
-      "backends": [
-        "amp",
-        "amg",
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [
-        "terraform"
-      ],
-      "partner_integrations": [],
-      "time_to_value_minutes": 30,
-      "instrumentation": "otel",
-      "status": "active",
-      "accelerator_link": "https://github.com/aws-observability/terraform-aws-observability-accelerator",
-      "docs_link": "https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html",
       "last_validated": "2026-08-18"
     },
     {
@@ -311,10 +280,10 @@
       "last_validated": "2026-08-10"
     },
     {
-      "name": "EKS Monitoring with CloudWatch Container Insights",
-      "slug": "eks-container-insights",
+      "name": "EKS Infrastructure Monitoring",
+      "slug": "eks-infrastructure",
       "content_type": "solution",
-      "description": "Collect metrics, logs, and traces from Amazon EKS clusters using CloudWatch Container Insights with the CloudWatch agent and Fluent Bit",
+      "description": "End-to-end infrastructure monitoring for Amazon EKS clusters using Prometheus, Grafana, and AWS managed services",
       "workload_type": [
         "compute"
       ],
@@ -322,22 +291,25 @@
         "eks"
       ],
       "backends": [
-        "cloudwatch",
-        "xray"
+        "amp",
+        "amg",
+        "cloudwatch"
       ],
       "signals": [
         "metrics",
-        "logs",
-        "traces"
+        "logs"
       ],
-      "iac_available": [],
+      "iac_available": [
+        "terraform"
+      ],
       "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "cwagent",
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
       "status": "active",
       "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html",
-      "last_validated": "2026-08-10"
+      "docs_link": "https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html",
+      "last_validated": "2026-08-10",
+      "related_events": []
     },
     {
       "name": "Network Observability",

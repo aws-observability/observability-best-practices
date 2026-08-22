@@ -101,7 +101,7 @@ permit (principal in AWS::IdentityStore::Group::"34688438-1061-702c-a03d-1fa788d
     };
 ```
 
-For the full schema and built-in operators, see [Statement structure for auto-approval and deny-access policies](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html). Test policies in the [Cedar playground](https://www.cedarpolicy.com/en/playground).
+For the full schema and built-in operators, see [Statement structure for auto-approval and deny-access policies](https://docs.aws.amazon.com/systems-manager/latest/userguide/auto-approval-deny-access-policy-statement-structure.html). For Cedar syntax and built-in operators generally, see the [Cedar policy language reference](https://docs.cedarpolicy.com/).
 
 ### Step 4: Configure EventBridge rules for notifications
 

@@ -10,7 +10,7 @@ iac_available: []
 partner_integrations: []
 time_to_value_minutes: 15
 instrumentation: cwagent
-status: active
+status: needs-refresh
 accelerator_link: ""
 docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html"
 last_validated: "2026-08-18"

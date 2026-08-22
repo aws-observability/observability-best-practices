@@ -41,7 +41,7 @@ Each object in `solutions` carries:
 | `instrumentation` | single value; solutions only, may be absent |
 | `time_to_value_minutes` | integer; solutions only, may be absent |
 | `iac_available` | array, e.g. `terraform`, `cdk`; may be absent |
-| `status` | `active`, `deprecated`, or `preview` |
+| `status` | `active`, `needs-refresh`, `deprecated`, or `preview` |
 | `last_validated` | `YYYY-MM-DD`, the date a human last re-tested it |
 | `featured` | boolean, ordering only; may be absent |
 | `docs_link` | link to authoritative AWS documentation, may be empty |
@@ -171,6 +171,11 @@ Before authoring or modifying content, read:
   exception: Docusaurus bundles them at build time, so they resolve fine.
 - **The homepage is the catalog**, a React page, not a document. There is no
   index document to parse.
+- **`status: needs-refresh` means do not present this as current.** The topic is
+  right and the steps still work, but the recommendation is behind current AWS
+  guidance and a rework is pending. These entries sort last and carry a caution
+  admonition naming what is missing. Read that admonition before summarising the
+  entry, and prefer the AWS documentation it links to.
 - **`last_validated` is a promise, not a timestamp.** It means a human re-tested
   the steps. Do not update it unless that happened.
 - **Ordering is `featured`, then `last_validated` descending, then name.** It is

@@ -15,6 +15,22 @@ Key metrics captured:
 - Consumer groups: consumer lag, commit rate
 - JVM: heap usage, GC time, thread count
 
+:::caution Needs refresh
+
+This entry collects Kafka broker metrics over JMX with the CloudWatch agent. It
+predates the current recommendation and does not cover:
+
+- **OpenTelemetry collection**, including the JMX receiver, which replaces the
+  agent's JMX plugin for new deployments
+- The **CloudWatch managed Prometheus collector** as an alternative for
+  self-managed Kafka
+- Dashboards from the observability accelerator artifacts
+
+The steps below still work. If you run **Amazon MSK** rather than self-managed
+Kafka, use [Amazon MSK Monitoring](../msk-monitoring/) instead, which is current.
+
+:::
+
 ## Prerequisites
 
 - Kafka cluster running on EC2 (v2.8+)

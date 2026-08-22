@@ -16,6 +16,23 @@ Key observability features:
 - Structured logging with embedded metric format (EMF)
 - Cost-per-invocation tracking
 
+:::caution Needs refresh
+
+This entry leads with Lambda Insights and native CloudWatch metrics. It predates
+the current recommendation and does not cover:
+
+- **CloudWatch Application Signals for Lambda**, which provides service-level
+  latency, error rate, and dependency mapping
+- The **AWS-managed OpenTelemetry Lambda layers** for OTLP export
+- **Transaction Search** for trace-level analysis
+
+The steps below still work and Lambda Insights remains useful for memory and
+cold-start analysis. Prefer
+[Application Signals](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html)
+as the starting point for new functions.
+
+:::
+
 ## Prerequisites
 
 - AWS Lambda function(s) deployed

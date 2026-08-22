@@ -6,6 +6,6 @@ workload_type: [applications]
 backends: [cloudwatch]
 signals: [metrics]
 status: active
-last_validated: "2026-08-20"
+last_validated: "2026-05-20"
 docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html"
 related_events: [cloudwatch, metrics]

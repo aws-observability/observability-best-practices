@@ -9,7 +9,7 @@ signals: [metrics]
 instrumentation: prometheus
 status: active
 time_to_value_minutes: 30
-last_validated: "2026-08-20"
+last_validated: "2024-09-30"
 iac_available: []
 partner_integrations: []
 accelerator_link: ""

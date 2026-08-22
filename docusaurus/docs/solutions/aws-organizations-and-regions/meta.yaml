@@ -7,5 +7,5 @@ backends: [cloudwatch]
 signals: [logs]
 status: active
 docs_link: "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html"
-last_validated: "2026-08-20"
+last_validated: "2026-05-27"
 related_events: []

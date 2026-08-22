@@ -6,7 +6,7 @@ workload_type: [ai-ml, security]
 backends: [cloudwatch]
 signals: [logs, metrics, traces]
 status: active
-last_validated: "2026-08-20"
+last_validated: "2026-05-27"
 partner_integrations: []
 accelerator_link: ""
 docs_link: "https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html"

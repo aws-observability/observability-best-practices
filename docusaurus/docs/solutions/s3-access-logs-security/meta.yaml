@@ -6,7 +6,6 @@ workload_type: [security]
 backends: [cloudwatch]
 signals: [logs]
 status: active
-featured: true
-last_validated: "2026-08-18"
+last_validated: "2026-07-06"
 docs_link: https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html
 related_events: [security]

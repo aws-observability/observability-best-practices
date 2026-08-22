@@ -6,7 +6,6 @@ workload_type: [security, network]
 backends: [cloudwatch]
 signals: [logs, metrics]
 status: active
-featured: true
-last_validated: "2026-08-18"
+last_validated: "2026-07-10"
 docs_link: https://docs.aws.amazon.com/waf/latest/developerguide/logging.html
 related_events: [security]

@@ -7,4 +7,4 @@ backends: [cloudwatch]
 signals: [metrics, logs, traces]
 status: active
 docs_link: "https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html"
-last_validated: "2026-08-20"
+last_validated: "2025-03-31"

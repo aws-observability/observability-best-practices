@@ -45,7 +45,7 @@ Each pipeline captures different data and serves different audit purposes:
 2. Enable logging with CloudWatch Logs as destination (default log group: `bedrock-model-invocation-logging`)
 3. Configure the service role for log delivery
 
-For PII masking and dashboard setup, see [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#pipeline-1-bedrock-model-invocation-logging).
+For data protection policies that mask sensitive fields, and for dashboard setup, see [GenAI Workload Observability](../genai-observability/).
 
 **Pipeline B: Agent Telemetry (ADOT)** — For AgentCore, telemetry flows automatically to `aws/spans`. For EKS/ECS, attach the ADOT auto-instrumentation agent. Enable [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) for the full Application Signals experience.
 

@@ -8,7 +8,7 @@ on disk unrendered until a call is made)
 
 | # | New entry (slug) | Sources folded in |
 |---|------------------|-------------------|
-| 1 | `eks-container-insights` | guides/containers/aws-native/eks/* (Container Insights, log aggregation, API server monitoring, X-Ray tracing), patterns/adoteksfargate.md, patterns/Tracing/xrayeks.md |
+| 1 | `eks-infrastructure` | guides/containers/aws-native/eks/* (Container Insights, log aggregation, API server monitoring, X-Ray tracing), patterns/adoteksfargate.md, patterns/Tracing/xrayeks.md |
 | 2 | `ecs-monitoring` | guides/containers/aws-native/ecs/* , guides/containers/oss/ecs/* , patterns/ecsampamg.md, patterns/Tracing/xrayecs.md, recipes/ecs.md |
 | 3 | `dotnet-application-monitoring` | guides/dotnet/aws-native/* , guides/dotnet/oss/* (logs/metrics/traces/OTel) |
 | 4 | `rds-aurora-monitoring` | guides/databases/rds-and-aurora.md, guides/databases/DBI.md, recipes/rds.md |
@@ -74,7 +74,7 @@ Bird's-eye view of where all content lands under the six `workload_type` groups,
 | Group | Converted entries (count) | Not yet converted (from LATER/DROP) |
 |---|---|---|
 | **ai-ml** | 2 (`coding-agents-observability`, `genai-observability`) | — |
-| **compute** | 7 (`eks-container-insights`, `ecs-monitoring`, `eks-infrastructure`, `eks-application-signals`, `ec2-nginx`, `lambda-monitoring`, `kafka-ec2`) | `observability-cost-management` (kubecost, cost-visualization, CW cost reduction), `hybrid-monitoring`, `cross-account-observability`, `adot-at-scale` |
+| **compute** | 6 (`ecs-monitoring`, `eks-infrastructure`, `eks-application-signals`, `ec2-nginx`, `lambda-monitoring`, `kafka-ec2`) | `observability-cost-management` (kubecost, cost-visualization, CW cost reduction), `hybrid-monitoring`, `cross-account-observability`, `adot-at-scale` |
 | **applications** | 2 (`dotnet-application-monitoring`, + shared with compute) | `managed-grafana-setup` (Grafana config recipes), `frontend-and-slo-monitoring` (SLO, RUM, synthetics) |
 | **data-streaming** | 4 (`rds-aurora-monitoring`, `msk-monitoring`, `opensearch-monitoring`, + shared with compute) | `databricks-monitoring`, `big-data-observability` (Spark) |
 | **security** | 4 (`network-observability` shared, + security entries) | `security-log-analytics` (security log tools + CloudTrail security recipes) |

@@ -155,7 +155,7 @@ whose sources had usable visuals, all verified to resolve:
 
 | Entry | Images |
 |---|---|
-| eks-container-insights | 5 |
+
 | lambda-monitoring | 5 |
 | network-observability | 5 |
 | ecs-monitoring | 4 |
@@ -209,7 +209,7 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | tools/adot-traces.md | Tracing with ADOT | DROP | Stub file — contains only "todo" |
 | tools/alarms.md | Alarms | GUIDE | Proposed slug: `cloudwatch-alarms-guide`, workload_type: compute; cross-cutting alarm best practices |
 | tools/alerting_and_incident_management.md | Alerting and incident management | DROP | Empty stub — title only |
-| tools/amp.md | Amazon Managed Service for Prometheus | FOLD: eks-container-insights > Related Solutions | AMP overview; most relevant to EKS metrics pipeline |
+| tools/amp.md | Amazon Managed Service for Prometheus | FOLD: eks-infrastructure > Related Solutions | AMP overview; most relevant to EKS metrics pipeline |
 | tools/application-signals/kotlin-signals.md | Application Signals for Kotlin Services | FOLD: eks-application-signals > Deploy | EC2-based Kotlin instrumentation via Application Signals |
 | tools/cloudwatch_agent.md | CloudWatch Agent | GUIDE | Proposed slug: `cloudwatch-agent-guide`, workload_type: compute; deployment/config advice applicable across workloads |
 | tools/cloudwatch-dashboard.md | CloudWatch Dashboard | GUIDE (`cloudwatch-dashboards`) | Reassigned: ec2-monitoring dropped. The UNSURE alternative becomes the call |
@@ -226,7 +226,7 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | tools/logs/security/s3-server-access-logs-security-compliance.mdx | Amazon S3 server access logs for Security, Compliance & Auditing | DUPLICATE | Winner: s3-access-logs-security |
 | tools/logs/security/waf-security-analysis-with-cloudwatch.md | AWS WAF Security Analysis with CloudWatch | DUPLICATE | Winner: waf-security-analysis |
 | tools/metrics.md | Metrics | GUIDE | Proposed slug: `cloudwatch-metrics-guide`, workload_type: compute; general metrics best practices |
-| tools/observability_accelerator.md | AWS Observability Accelerator | FOLD: eks-container-insights > Related Solutions | EKS-focused accelerator for Terraform/CDK |
+| tools/observability_accelerator.md | AWS Observability Accelerator | FOLD: eks-infrastructure > Related Solutions | EKS-focused accelerator for Terraform/CDK |
 | tools/rum.md | Real User Monitoring | NEW ENTRY | Proposed slug: `frontend-slo-monitoring`, workload_type: applications; candidate alongside SLOs and Synthetics |
 | tools/slos.md | Service Level Objectives (SLOs) | FOLD: frontend-slo-monitoring > Overview | Core SLO concepts; folds into the proposed frontend-slo-monitoring entry |
 | tools/synthetics.md | Synthetic testing | FOLD: frontend-slo-monitoring > Deploy | Canary testing; folds into frontend-slo-monitoring |
@@ -236,8 +236,8 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 
 | Path | Title | Disposition | Notes |
 |------|-------|-------------|-------|
-| patterns/adoteksfargate.md | CloudWatch Container Insights | FOLD: eks-container-insights > Architecture | ADOT + CI on EKS Fargate |
-| patterns/ampagentless.md | Pushing Metrics from EKS to Prometheus | FOLD: eks-container-insights > Deploy | AMP managed collector for EKS |
+| patterns/adoteksfargate.md | CloudWatch Container Insights | FOLD: eks-infrastructure > Architecture | ADOT + CI on EKS Fargate |
+| patterns/ampagentless.md | Pushing Metrics from EKS to Prometheus | FOLD: eks-infrastructure > Deploy | AMP managed collector for EKS |
 | patterns/ampxa.md | Amazon Managed Prometheus Cross Account Scraping | FOLD: cross-account-observability > Architecture | Cross-account AMP scraping setup |
 | patterns/apmappsignals.md | APM with Application Signals | FOLD: eks-application-signals > Overview | Application Signals overview and capabilities |
 | patterns/ecsampamg.md | Monitoring ECS Workloads | FOLD: ecs-monitoring > Architecture | ECS with ADOT, X-Ray, and AMP |
@@ -245,15 +245,15 @@ Scan the Disposition column. Most rows are mechanical. Focus on:
 | patterns/lambdalogging.md | Lambda Logging | FOLD: lambda-monitoring > Architecture | Lambda → CloudWatch Logs pattern |
 | patterns/multiaccount.md | Cross account Monitoring with AWS Native services | NEW ENTRY | Proposed slug: `cross-account-observability`, workload_type: compute; AWS-native multi-account pattern |
 | patterns/multiaccountoss.md | Cross account monitoring with AWS Open source service | FOLD: cross-account-observability > Architecture | OSS variant (ADOT + AMP + Grafana) folds into cross-account-observability |
-| patterns/o11ypipeline.md | ADOT Observability Pipeline | FOLD: eks-container-insights > Deploy | ADOT operator Helm-based pipeline on EKS (UNSURE: could be adot-at-scale NEW ENTRY) |
+| patterns/o11ypipeline.md | ADOT Observability Pipeline | FOLD: eks-infrastructure > Deploy | ADOT operator Helm-based pipeline on EKS (UNSURE: could be adot-at-scale NEW ENTRY) |
 | patterns/opensearch.md | Opensearch Logging on AWS | FOLD: opensearch-monitoring > Architecture | Log pipeline to OpenSearch from ECS/EKS/EC2 |
-| patterns/otel.md | Observability with OpenTelemetry | FOLD: eks-container-insights > Architecture | General OTel overview with EKS focus |
+| patterns/otel.md | Observability with OpenTelemetry | FOLD: eks-infrastructure > Architecture | General OTel overview with EKS focus |
 | patterns/sparkbigdata.md | Big Data Observability on AWS | NEW ENTRY | Proposed slug: `big-data-observability`, workload_type: data-streaming; EMR/Spark observability pattern |
 | patterns/Startup Observability Adoption/Anti-patterns and common pitfalls.md | Anti-patterns and common pitfalls | GUIDE | Proposed slug: `observability-adoption-guide`, workload_type: compute; startup anti-patterns |
 | patterns/Startup Observability Adoption/Startup Observability Adoption Stages.md | Startup Observability Adoption Stages | FOLD: observability-adoption-guide > Guidance | Staged maturity model; folds into the guide above |
 | patterns/Tracing/xrayec2.md | EC2 Tracing with AWS X-Ray | FOLD: ec2-nginx > Architecture | Reassigned: ec2-monitoring dropped. ec2-nginx is the remaining EC2 entry |
 | patterns/Tracing/xrayecs.md | ECS Tracing with AWS X-Ray | FOLD: ecs-monitoring > Architecture | X-Ray tracing on ECS |
-| patterns/Tracing/xrayeks.md | EKS Tracing with AWS X-Ray | FOLD: eks-container-insights > Architecture | X-Ray tracing on EKS |
+| patterns/Tracing/xrayeks.md | EKS Tracing with AWS X-Ray | FOLD: eks-infrastructure > Architecture | X-Ray tracing on EKS |
 | patterns/Tracing/xraylambda.md | Lambda Tracing with AWS X-Ray | FOLD: lambda-monitoring > Architecture | X-Ray tracing on Lambda |
 | patterns/vpcflowlogs.md | VPC Flow Logs for Network Observability | FOLD: network-observability > Architecture | VPC Flow Logs pattern with Grafana visualization |
 
@@ -402,10 +402,10 @@ Generated: 2026-08-20
 
 | Path | Title | Disposition | Notes |
 |------|-------|-------------|-------|
-| guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md | Amazon CloudWatch Container Insights | DUPLICATE | Winner: eks-container-insights entry (3477w) |
-| guides/containers/aws-native/eks/container-tracing-with-aws-xray.md | Container Tracing with AWS X-Ray | DUPLICATE | Winner: eks-container-insights entry (1767w) |
-| guides/containers/aws-native/eks/eks-api-server-monitoring.md | Amazon EKS API Server Monitoring | DUPLICATE | Winner: eks-container-insights entry (2679w) |
-| guides/containers/aws-native/eks/log-aggregation.md | Log Aggregation | DUPLICATE | Winner: eks-container-insights entry (3402w) |
+| guides/containers/aws-native/eks/amazon-cloudwatch-container-insights.md | Amazon CloudWatch Container Insights | DUPLICATE | Winner: eks-infrastructure entry (3477w) |
+| guides/containers/aws-native/eks/container-tracing-with-aws-xray.md | Container Tracing with AWS X-Ray | DUPLICATE | Winner: eks-infrastructure entry (1767w) |
+| guides/containers/aws-native/eks/eks-api-server-monitoring.md | Amazon EKS API Server Monitoring | DUPLICATE | Winner: eks-infrastructure entry (2679w) |
+| guides/containers/aws-native/eks/log-aggregation.md | Log Aggregation | DUPLICATE | Winner: eks-infrastructure entry (3402w) |
 
 ### guides/containers/oss/ecs/
 

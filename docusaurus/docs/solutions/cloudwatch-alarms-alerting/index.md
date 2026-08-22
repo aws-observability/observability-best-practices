@@ -198,7 +198,7 @@ Independent of the specific AWS service, most workloads are well covered by alar
 For the specific metrics worth alarming on per AWS service, use two sources rather than a long list here:
 
 - **AWS documentation** — [Recommended alarms for AWS services](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html) enumerates the metric, statistic, and threshold guidance per service.
-- **This catalog** — the per-service monitoring solutions carry concrete, tested alarm steps: [RDS & Aurora](../rds-aurora-monitoring/), [ECS](../ecs-monitoring/), [EKS Container Insights](../eks-container-insights/), [Lambda](../lambda-monitoring/), [MSK](../msk-monitoring/), [OpenSearch](../opensearch-monitoring/), and [Network Observability](../network-observability/).
+- **This catalog** — the per-service monitoring solutions carry concrete, tested alarm steps: [RDS & Aurora](../rds-aurora-monitoring/), [ECS](../ecs-monitoring/), [EKS Infrastructure](../eks-infrastructure/), [Lambda](../lambda-monitoring/), [MSK](../msk-monitoring/), [OpenSearch](../opensearch-monitoring/), and [Network Observability](../network-observability/).
 
 ### Recommended baseline alerts
 

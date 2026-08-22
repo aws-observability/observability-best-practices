@@ -11,7 +11,6 @@ partner_integrations: []
 time_to_value_minutes: 15
 instrumentation: cwagent
 status: active
-featured: true
 accelerator_link: ""
 docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContainerInsights.html"
-last_validated: "2026-08-17"
+last_validated: "2026-08-10"

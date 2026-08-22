@@ -13,5 +13,5 @@ instrumentation: custom
 status: active
 accelerator_link: ""
 docs_link: "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html"
-last_validated: "2026-08-20"
+last_validated: "2026-05-27"
 related_events: []

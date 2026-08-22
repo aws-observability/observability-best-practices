@@ -13,5 +13,5 @@ iac_available: [terraform]
 partner_integrations: []
 accelerator_link: ""
 docs_link: "https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html"
-last_validated: "2026-08-20"
+last_validated: "2025-04-01"
 related_events: []

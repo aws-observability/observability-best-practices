@@ -183,7 +183,31 @@ Group-level synonyms (those keyed to a `workload_type` value) may contain **only
 
 `catalog.json` is **generated** — never hand-edit it. The generator reads every `meta.yaml`, validates it, and writes the catalog file.
 
-Entries are ordered by `last_validated` descending. The freshest 9 entries land on page 1 of the catalog homepage. Bumping the date without actually re-testing the steps is a **review-blocking offense** — reviewers will check the commit diff against the entry content.
+Entries are ordered by `featured` first, then `last_validated` descending, then name. The freshest 9 entries land on page 1 of the catalog homepage.
+
+### `last_validated` must be a real date
+
+It records **when a human last verified this entry's steps against reality**. It is not the date you edited the file, and it is not a dial for controlling placement.
+
+Three rules follow from that:
+
+1. **Bumping the date without re-testing is a review-blocking offense.** Reviewers check the commit diff against the entry content.
+2. **Editing prose does not refresh it.** Fixing a typo, a link, or a caption leaves the date alone, because none of that revalidates the instructions.
+3. **When converting existing material, inherit the source's date**, not today's. Use the last commit date of the files you drew from:
+   ```bash
+   git log -1 --format=%cs -- <source paths>
+   ```
+   An entry assembled from a 2024 guide is 2024-vintage content in a new wrapper. Dating it today claims a verification that never happened.
+
+The validator warns when an entry passes 365 days. Those warnings are the point: they are the re-test backlog, and a catalog that shows several is being honest rather than broken.
+
+### `featured` is deliberately rare
+
+`featured: true` pins an entry above the date ordering. It exists for a genuine editorial reason to override freshness, and **no entry currently carries it**.
+
+It was previously applied to 18 entries to keep reviewed content ahead of bulk-converted content. That inverted its own purpose: new, deliberately authored entries defaulted to unpinned and landed on page 3, below older pinned material. Reviewed-versus-unreviewed is not a thing the catalog should model at all, since anything merged has been reviewed.
+
+If you pin something, expect to justify it in review and to unpin it later.
 
 To regenerate after adding or updating an entry:
 

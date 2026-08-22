@@ -166,6 +166,12 @@ Before authoring or modifying content, read:
 - **`last_validated` is a promise, not a timestamp.** It means a human re-tested
   the steps. Do not update it unless that happened.
 - **Ordering is `featured`, then `last_validated` descending, then name.** It is
-  not relevance ranked.
+  not relevance ranked. No entry currently sets `featured`, so in practice the
+  catalog is ordered by freshness.
+- **`last_validated` reflects the vintage of the content, not the file.** Entries
+  converted from older material inherit that material's date, so a recent commit
+  to an entry does not mean its instructions were recently verified. Several
+  entries are deliberately over a year old; that is a visible re-test backlog,
+  not a defect.
 - Only English is published. Translation files exist under `docusaurus/i18n/`
   but no locale covers the catalog yet.

@@ -9,7 +9,7 @@ signals: [metrics, traces]
 instrumentation: custom
 status: active
 time_to_value_minutes: 25
-last_validated: "2026-08-20"
+last_validated: "2026-05-20"
 iac_available: []
 partner_integrations: []
 accelerator_link: ""

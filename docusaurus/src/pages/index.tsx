@@ -10,7 +10,7 @@ interface Solution {
   description: string;
   workload_type: string[];
   signals: string[];
-  status: 'active' | 'deprecated' | 'preview';
+  status: 'active' | 'deprecated' | 'preview' | 'needs-refresh';
   last_validated?: string;
   content_type?: 'solution' | 'guide';
   // Solution-only fields — guides legitimately omit these.
@@ -107,6 +107,7 @@ function buildHaystack(sol: Solution): string {
     instrumentation,
     ...(sol.iac_available ?? []),
     sol.content_type || '',
+    sol.status === 'needs-refresh' ? 'needs refresh rework outdated' : '',
     ...(sol.search_keywords ?? []),
   ];
   // Expand synonyms so "grafana" finds AMG entries, "kubernetes" finds EKS, etc.
@@ -369,6 +370,14 @@ export default function SolutionsPage(): React.ReactElement {
                     {sol.name}
                   </h3>
                   <div className={styles.cardBadges}>
+                    {/* Sets expectations before the click. These entries stay
+                        published because the topics matter and the URLs are
+                        live; the badge is what stops them reading as current. */}
+                    {sol.status === 'needs-refresh' && (
+                      <span className={styles.needsRefresh} title="Recommendation is behind current AWS guidance; rework pending">
+                        Needs refresh
+                      </span>
+                    )}
                     {sol.content_type && (
                       <span className={`${styles.typeTag} ${sol.content_type === 'guide' ? styles.typeGuide : styles.typeSolution}`}>
                         {sol.content_type === 'guide' ? 'Guide' : 'Solution'}

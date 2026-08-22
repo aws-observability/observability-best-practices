@@ -57,7 +57,7 @@ REQUIRED_FIELDS = {
 }
 
 VALID_CONTENT_TYPES = ("solution", "guide")
-VALID_STATUSES = ("active", "deprecated", "preview")
+VALID_STATUSES = ("active", "deprecated", "preview", "needs-refresh")
 VALID_IAC = ("terraform", "cdk", "cloudformation", "pulumi")
 
 SLUG_PATTERN = re.compile(r"^[a-z0-9-]+$")
@@ -336,14 +336,19 @@ def main() -> None:
         print(f"  {label}  {entry.name}/ -> {meta.get('name', 'UNNAMED')}")
 
     # Ordering, applied as a stable sort chain from weakest key to strongest:
-    #   1. name          - deterministic tiebreaker
+    #   1. name           - deterministic tiebreaker
     #   2. last_validated - freshest first, so stale content sinks
     #   3. featured       - curated entries lead regardless of date
+    #   4. needs-refresh  - sinks to the end whatever else is true
     # `featured` exists so ordering can be curated without falsifying
     # last_validated, which is a re-test promise the validator checks.
+    # `needs-refresh` is the strongest key deliberately: an entry whose
+    # recommendation is behind current guidance should not lead the catalog even
+    # if its date is recent, which is exactly how these entries reached page one.
     solutions.sort(key=lambda s: str(s.get("name", "")))
     solutions.sort(key=lambda s: str(s.get("last_validated", "")), reverse=True)
     solutions.sort(key=lambda s: bool(s.get("featured", False)), reverse=True)
+    solutions.sort(key=lambda s: s.get("status") == "needs-refresh")
 
     if findings.warnings:
         print(f"\n{len(findings.warnings)} warning(s):")
@@ -359,6 +364,17 @@ def main() -> None:
             file=sys.stderr,
         )
         sys.exit(1)
+
+    # Surface entries awaiting rework on every run. Keeping them published
+    # avoids dead links on important topics; listing them here is what stops
+    # "someone will refresh it" from meaning nobody.
+    needs = sorted(s.get("slug", "?") for s in solutions
+                   if s.get("status") == "needs-refresh")
+    if needs:
+        print(f"\n{len(needs)} entr{'y' if len(needs)==1 else 'ies'} awaiting refresh "
+              f"(published, sorted last):")
+        for slug in needs:
+            print(f"  {slug}")
 
     if args.check:
         print(f"\nValidated {len(solutions)} entries. No errors. (--check: nothing written)")

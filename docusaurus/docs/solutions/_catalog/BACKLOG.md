@@ -27,6 +27,21 @@ site. Intended contents:
 contract file makes that usable by agents answering "how do I monitor X on AWS"
 without inventing steps.
 
+## Entries awaiting refresh (`status: needs-refresh`)
+
+Published and reachable, sorted last, badged on their cards. The generator lists
+them on every run. Each carries a caution admonition naming what is missing.
+
+- **ec2-nginx** — configures the CloudWatch agent directly; needs OpenTelemetry
+  collection into CloudWatch, a dashboard artifact, and real validation steps.
+- **kafka-ec2** — collects broker metrics over JMX via the agent's JMX plugin;
+  needs the OpenTelemetry JMX receiver, the CloudWatch managed Prometheus
+  collector as an alternative, and accelerator dashboards. Readers on Amazon MSK
+  should use `msk-monitoring`, which is current.
+- **lambda-monitoring** — leads with Lambda Insights; needs Application Signals
+  for Lambda, the AWS-managed OpenTelemetry Lambda layers, and Transaction
+  Search. Lambda Insights stays useful for memory and cold-start analysis.
+
 ## Other deferred items
 
 - **Delete the 257 retained source files** (scheduled: a few weeks out). All are

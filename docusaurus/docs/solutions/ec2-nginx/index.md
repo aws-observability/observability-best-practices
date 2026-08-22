@@ -17,6 +17,24 @@ Key metrics captured:
 - Response time percentiles
 - Upstream connect/response time
 
+:::caution Needs refresh
+
+This entry predates the current recommendation. It configures the CloudWatch
+agent directly and does not cover:
+
+- **OpenTelemetry collection into CloudWatch**, now the preferred path for
+  application metrics on EC2
+- A **dashboard worth shipping** — there is no accelerator artifact referenced
+- Validation showing what a working NGINX monitoring setup looks like
+
+The steps below still work. Prefer the
+[AWS documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)
+when starting fresh, and see
+[CloudWatch Agent Configuration](../cloudwatch-agent-configuration/) for
+current agent guidance.
+
+:::
+
 ## Prerequisites
 
 - EC2 instance with NGINX installed

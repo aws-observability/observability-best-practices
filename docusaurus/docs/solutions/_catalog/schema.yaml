@@ -65,7 +65,7 @@ field_definitions:
     description: "Pin ahead of non-featured entries in catalog order. Curation only; does not affect filtering or search."
   status:
     type: string
-    allowed_values: [active, deprecated, preview]
+    allowed_values: [active, deprecated, preview, needs-refresh]
   accelerator_link:
     type: string
     format: url

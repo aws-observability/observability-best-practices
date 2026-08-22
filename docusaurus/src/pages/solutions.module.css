@@ -352,3 +352,27 @@
   color: var(--ifm-color-emphasis-500);
   white-space: nowrap;
 }
+
+/* Entries whose recommendation is behind current guidance. Amber rather than
+   red: the topic is still right and the content is still largely usable, so
+   this is a caution, not a rejection. */
+.needsRefresh {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  background: #fff4e5;
+  color: #8a5300;
+  border: 1px solid #f0c893;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .needsRefresh {
+  background: rgba(240, 200, 147, 0.14);
+  color: #f0c893;
+  border-color: rgba(240, 200, 147, 0.35);
+}

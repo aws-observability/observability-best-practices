@@ -233,6 +233,56 @@ Both should return nothing.
   checking covers these; the site build does not.
 - **Images**: see the images rule below.
 
+||||||| parent of f633caf42 (feat(catalog): Add needs-refresh status for entries behind current guidance)
+## When an entry falls behind: `needs-refresh`
+
+Sometimes an entry is not stale by date and not factually wrong, but its
+**recommendation is behind current AWS guidance**. The topic still matters, the
+steps still work, and it should be reworked rather than removed.
+
+Set `status: needs-refresh` and add a `:::caution` admonition after the Overview
+naming exactly what is missing, with links out.
+
+```yaml
+status: needs-refresh
+```
+
+What that does:
+
+- **Sorts the entry last**, ahead of nothing. This is the strongest ordering key,
+  stronger than `featured` and `last_validated`, because an entry behind current
+  guidance should not lead the catalog even when its date is recent.
+- **Renders a "Needs refresh" badge** on its card, so a reader knows before
+  clicking rather than after following the steps.
+- **Appears in generator output on every run**, which is the tracking mechanism.
+
+### Why the entry stays published
+
+Retiring it to an unrendered folder was considered and rejected. These are
+important topics with live URLs that may be linked or indexed, so removing them
+trades thin content for dead links. Hiding them also removes the pressure to fix
+them: content nobody can see is content nobody prioritises.
+
+The badge sets expectations; the ordering stops it being promoted; the generator
+report stops it being forgotten. Nothing moves on disk, so no redirects are
+needed.
+
+### Distinguish the three status values
+
+| `status` | Means | Card | Order |
+|---|---|---|---|
+| `active` | current | normal | by date |
+| `needs-refresh` | right topic, recommendation behind current guidance, rework pending | "Needs refresh" badge | last |
+| `deprecated` | approach superseded; retained for readers already on it | warning marker | by date |
+
+`deprecated` and `needs-refresh` differ in maintainer intent: a deprecated entry
+is on its way out, a needs-refresh entry is on its way to being rewritten.
+
+### Clearing it
+
+Set `status: active`, remove the admonition, and set `last_validated` to the date
+you actually verified the reworked steps.
+
 ## Catalog ordering and appearance
 
 `catalog.json` is **generated** — never hand-edit it. The generator reads every `meta.yaml`, validates it, and writes the catalog file.

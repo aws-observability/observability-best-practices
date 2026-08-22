@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-22T03:41:25.152897+00:00",
+  "generated_at": "2026-08-22T04:30:23.492047+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -105,33 +105,6 @@
       ]
     },
     {
-      "name": "EC2 NGINX Monitoring",
-      "slug": "ec2-nginx",
-      "content_type": "solution",
-      "description": "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "ec2"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 15,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
-      "last_validated": "2026-08-18"
-    },
-    {
       "name": "EKS Java Application Monitoring",
       "slug": "eks-application-signals",
       "content_type": "solution",
@@ -162,67 +135,6 @@
       "status": "active",
       "accelerator_link": "",
       "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
-      "last_validated": "2026-08-18"
-    },
-    {
-      "name": "Kafka on EC2 Monitoring",
-      "slug": "kafka-ec2",
-      "content_type": "solution",
-      "description": "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics",
-      "workload_type": [
-        "data-streaming",
-        "compute"
-      ],
-      "compute_platform": [
-        "ec2"
-      ],
-      "backends": [
-        "cloudwatch"
-      ],
-      "signals": [
-        "metrics",
-        "logs"
-      ],
-      "iac_available": [],
-      "partner_integrations": [],
-      "time_to_value_minutes": 25,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-jmx.html",
-      "last_validated": "2026-08-18"
-    },
-    {
-      "name": "Lambda Monitoring",
-      "slug": "lambda-monitoring",
-      "content_type": "solution",
-      "description": "Comprehensive AWS Lambda monitoring with CloudWatch native metrics, X-Ray tracing, and Lambda Insights",
-      "workload_type": [
-        "compute"
-      ],
-      "compute_platform": [
-        "lambda"
-      ],
-      "backends": [
-        "cloudwatch",
-        "xray"
-      ],
-      "signals": [
-        "metrics",
-        "traces",
-        "logs"
-      ],
-      "iac_available": [
-        "cdk",
-        "terraform",
-        "cloudformation"
-      ],
-      "partner_integrations": [],
-      "time_to_value_minutes": 10,
-      "instrumentation": "cwagent",
-      "status": "active",
-      "accelerator_link": "",
-      "docs_link": "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html",
       "last_validated": "2026-08-18"
     },
     {
@@ -1290,6 +1202,94 @@
       "related_events": [
         "metrics"
       ]
+    },
+    {
+      "name": "EC2 NGINX Monitoring",
+      "slug": "ec2-nginx",
+      "content_type": "solution",
+      "description": "Monitor NGINX web servers on EC2 using CloudWatch Agent with StatsD and custom metrics",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "last_validated": "2026-08-18"
+    },
+    {
+      "name": "Kafka on EC2 Monitoring",
+      "slug": "kafka-ec2",
+      "content_type": "solution",
+      "description": "Monitor self-managed Apache Kafka clusters on EC2 using CloudWatch Agent JMX plugin for broker and consumer metrics",
+      "workload_type": [
+        "data-streaming",
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 25,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-jmx.html",
+      "last_validated": "2026-08-18"
+    },
+    {
+      "name": "Lambda Monitoring",
+      "slug": "lambda-monitoring",
+      "content_type": "solution",
+      "description": "Comprehensive AWS Lambda monitoring with CloudWatch native metrics, X-Ray tracing, and Lambda Insights",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "lambda"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces",
+        "logs"
+      ],
+      "iac_available": [
+        "cdk",
+        "terraform",
+        "cloudformation"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 10,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html",
+      "last_validated": "2026-08-18"
     }
   ],
   "taxonomy": {

@@ -161,6 +161,14 @@ Before authoring or modifying content, read:
   `docs/faq/`, and `docs/resources/` still exist on disk but are **not rendered**
   and are superseded by catalog entries. Do not cite them as current guidance,
   and do not treat their absence from the site as a bug. Deletion is planned.
+- **Never link to a legacy path.** This is the most common broken link in the
+  repository, and it has bitten three separate changes. A relative
+  `../../../databases/DBI/`, an absolute `/guides/genai/...`, and a full
+  `https://aws-observability.github.io/observability-best-practices/guides/...`
+  all resolve into unrendered trees and 404 in CI, even though the file is
+  visibly present on disk. Link to the catalog entry that absorbed the content,
+  or to AWS Documentation. Image *assets* under those directories are the one
+  exception: Docusaurus bundles them at build time, so they resolve fine.
 - **The homepage is the catalog**, a React page, not a document. There is no
   index document to parse.
 - **`last_validated` is a promise, not a timestamp.** It means a human re-tested

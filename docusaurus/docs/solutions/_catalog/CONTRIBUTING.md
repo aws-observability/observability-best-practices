@@ -179,6 +179,60 @@ Group-level synonyms (those keyed to a `workload_type` value) may contain **only
 - If you need more than 2 workload types, the entry is probably mis-scoped and should be split.
 - Use `content_type: guide` explicitly in meta.yaml for guides; solutions can omit it (defaults to `solution`).
 
+## Linking rules
+
+### Legacy paths are not link targets
+
+Several hundred documents remain on disk under `docs/guides/`, `docs/recipes/`,
+`docs/tools/`, `docs/patterns/`, `docs/ai/`, `docs/signals/`, `docs/persona/`,
+`docs/faq/`, and `docs/resources/`. **None of them are rendered.** The docs
+plugin is scoped to `solutions/` and `events/`, so any link into those trees is
+dead on the published site even though the file plainly exists in your editor.
+
+This is the single most common broken link in this repository, and it has three
+disguises:
+
+| Looks like | Example | Why it breaks |
+|---|---|---|
+| A relative path up and over | `../../../databases/DBI/` | resolves to an unrendered tree |
+| An absolute site path | `/guides/genai/genai-observability-on-aws/` | same, with no relative hint that it is leaving |
+| A full production URL | `https://aws-observability.github.io/observability-best-practices/guides/...` | passes a glance, 404s in CI |
+
+It happens most when converting legacy material, because the source you are
+reading sits right next to the thing you want to link.
+
+**Link to the catalog entry that absorbed the content instead.** If no entry
+covers it yet, link to AWS Documentation, or say nothing. Do not link a file
+because it is on disk.
+
+**Images are the exception.** An image *asset* under a legacy directory is fine
+to reference. Docusaurus bundles it into `assets/` with a content hash at build
+time, so it resolves regardless of whether the page it came from is rendered.
+Only *page* links into legacy trees break. Do not "fix" a working image path.
+
+Check before you open a PR. The `grep -v` is what keeps image assets out of the
+results:
+
+```bash
+# page links into unrendered trees, ignoring image assets
+grep -nE '\]\((\.\./)*[a-z-]+/(guides|recipes|tools|patterns|ai|signals|persona|faq|resources)/[^)]*\)' \
+  docs/solutions/*/index.md | grep -vE '\.(png|jpe?g|gif|svg|webp)\)'
+
+# full production URLs pointing at unrendered trees
+grep -n 'observability-best-practices/\(guides\|recipes\|tools\|patterns\|ai\|signals\|persona\|faq\|resources\)/' \
+  docs/solutions/*/index.md
+```
+
+Both should return nothing.
+
+### Which link style to use
+
+- **Another catalog entry**: relative, `../<slug>/`. The site build validates
+  these and fails on a broken one.
+- **AWS Documentation and other external targets**: full `https://` URL. CI link
+  checking covers these; the site build does not.
+- **Images**: see the images rule below.
+
 ## Catalog ordering and appearance
 
 `catalog.json` is **generated** — never hand-edit it. The generator reads every `meta.yaml`, validates it, and writes the catalog file.

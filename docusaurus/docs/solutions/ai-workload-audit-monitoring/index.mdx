@@ -148,7 +148,7 @@ Captures full prompt, response, inference parameters, and caller IAM identity fo
 3. Enable logging and choose CloudWatch Logs (and/or S3) as the destination
 4. Configure the log group name (default: `bedrock-model-invocation-logging`) and service role
 
-For detailed configuration, PII masking, and dashboard setup, see [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#pipeline-1-bedrock-model-invocation-logging).
+For detailed configuration, PII masking, and dashboard setup, see [GenAI Observability on AWS](../genai-observability/).
 
 **Pipeline B: Agent Telemetry (collected by ADOT SDK)**
 
@@ -159,7 +159,7 @@ Captures agent orchestration, distributed traces, and tool execution.
 
 Enable [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) to unlock the full Application Signals experience.
 
-For detailed enablement steps, see [GenAI Observability on AWS — Enabling Observability for Agentic Workloads](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#enabling-observability-for-agentic-workloads) and the [AgentCore Observability Quickstart](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability).
+For detailed enablement steps, see [GenAI Observability on AWS — Enabling Observability for Agentic Workloads](../genai-observability/) and the [AgentCore Observability Quickstart](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability).
 
 #### Phase 2: Enable CloudTrail — Start with Bedrock, Expand Coverage, Ingest to CloudWatch
 
@@ -3874,7 +3874,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
   |---|---|---|
   | Alarm Status Grid | Alarm Status | All metric filter alarms from [CloudWatch Alarms](#cloudwatch-alarms) |
   | Bedrock Model Invocations Count | Number (Metric) | AIWorkloadMetrics/BedrockModelInvocations |
-  | Total Bedrock Spend | Single value (Logs) | Model Invocation Log — total cost query ([FinOps dashboard](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/#finops-persona-dashboard)) |
+  | Total Bedrock Spend | Single value (Logs) | Model Invocation Log — total cost query ([FinOps dashboard](../genai-observability/)) |
   | Agent Cross-Service Denied Count | Number (Metric) | AIWorkloadMetrics/AgentCrossServiceAccessDenied |
 
   </TabItem>
@@ -3934,7 +3934,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
 
   | Widget | Widget Type | Data Source |
   |---|---|---|
-  | Completion Rate (ok vs truncated) | Time series (Logs) | Model Invocation Log — DevOps query ([DevOps dashboard](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/#devops-persona-dashboard)) |
+  | Completion Rate (ok vs truncated) | Time series (Logs) | Model Invocation Log — DevOps query ([DevOps dashboard](../genai-observability/)) |
   | Cross-Region Latency by Model | Table (Logs) | Model Invocation Log — latency query |
 
   **Row 6** — Agent Workflow
@@ -3978,7 +3978,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
 </Tabs>
 
 :::note
-Rows 5-7 use queries from the companion [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) guide. Use those queries directly rather than duplicating them here.
+Rows 5-7 use queries from the companion [Custom Dashboards for GenAI Telemetry](../genai-observability/) guide. Use those queries directly rather than duplicating them here.
 :::
 
 ### Conclusion and Next Steps
@@ -4003,15 +4003,15 @@ Together, these capabilities provide concrete implementation for the security di
 
 - [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — Security dimensions for generative AI workloads (Governance & Compliance, Legal & Privacy, Risk Management, Controls, Resilience)
 - [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Security dimensions for agentic AI systems (Identity, Data, Audit & Logging, Guardrails, Scope, Orchestration)
-- [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
-- [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
+- [GenAI Observability on AWS](../genai-observability/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
+- [Custom Dashboards for GenAI Telemetry](../genai-observability/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
 
 ## Related
 
 - [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — Security dimensions for generative AI workloads
 - [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Security dimensions for agentic AI systems
-- [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
-- [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
+- [GenAI Observability on AWS](../genai-observability/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
+- [Custom Dashboards for GenAI Telemetry](../genai-observability/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
 - [AWS CloudTrail Documentation](https://docs.aws.amazon.com/cloudtrail/)
 - [Amazon CloudWatch Documentation](https://docs.aws.amazon.com/cloudwatch/)
 - [Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)

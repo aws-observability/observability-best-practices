@@ -30,7 +30,17 @@ Both Security Lake and Amazon CloudWatch unified data store normalize their data
 
 ---
 
-## Why Query In-Place Instead of Exporting?
+## When to use this
+
+- You are migrating (or have migrated) security log management from Amazon Security Lake to Amazon CloudWatch unified data store and need to query historical data that remains in Security Lake
+- You need a single query console (Amazon Athena) to access both historical Security Lake data and current CloudWatch unified data store logs without exporting or duplicating data
+- You want to perform cross-platform investigations — such as threat hunting, compliance audits, or incident response — spanning data collected before and after your migration
+- You want to avoid building and maintaining ETL pipelines to export historical Security Lake data into CloudWatch
+- You need to compare security events (e.g., CloudTrail, VPC Flow Logs, Security Hub findings) across the migration boundary using `UNION ALL` queries
+
+## Guidance
+
+### Why Query In-Place Instead of Exporting?
 
 Athena cross-catalog queries let you access historical Security Lake data directly without the need to export the data. Below are some of the benefits that make querying in-place the more efficient approach.
 
@@ -48,11 +58,11 @@ You retain full access to your historical Security Lake data for event investiga
 
 ---
 
-## How It Works
+### How It Works
 
 Understanding how the two data stores fit together makes the queries easier to reason about.
 
-### Architecture
+#### Architecture
 
 - **Security Lake** → `"awsdatacatalog"."<database>"."<table>"`
 - **CloudWatch unified data store** → `"s3tablescatalog/aws-cloudwatch"."logs"."<table>"`
@@ -63,11 +73,11 @@ Both sources normalize their data to OCSF, so field names, types, and structures
 
 ![Architecture Diagram](/img/Athena-Arch-ASL-CW.png "Architecture Diagram")
 
-## Prerequisites
+### Prerequisites
 
 Before running cross-catalog queries, confirm your catalog paths, databases, and table names using the Athena console. The examples in this guide use the following naming conventions based on a `us-east-1` deployment.
 
-### Security Lake Tables
+#### Security Lake Tables
 
 | Catalog | Database | Example Tables |
 |---|---|---|
@@ -78,7 +88,7 @@ Before running cross-catalog queries, confirm your catalog paths, databases, and
 | | | `amazon_security_lake_table_us_east_1_eks_audit_2_0` |
 | | | `amazon_security_lake_table_us_east_1_lambda_execution_2_0` |
 
-### CloudWatch Unified Data Store Tables
+#### CloudWatch Unified Data Store Tables
 
 | Catalog | Database | Example Tables |
 |---|---|---|
@@ -103,7 +113,7 @@ SHOW TABLES IN "s3tablescatalog/aws-cloudwatch"."logs"
 
 ---
 
-## Querying Both Data Stores from Athena
+### Querying Both Data Stores from Athena
 
 After migrating to CloudWatch unified data store, Athena becomes your single query console for both historical and current security data. Security Lake tables are registered in the AWS Glue Data Catalog, and CloudWatch unified data store tables are registered in an S3 Tables catalog. Athena can access both — no data movement, no export pipelines, no duplication.
 
@@ -113,7 +123,7 @@ The sections below walk through three levels of querying:
 2. **Querying CloudWatch unified data store** — access your current data via S3 Tables
 3. **Combining both with UNION ALL** — view historical and recent data side by side in a single result set
 
-### Syntax Overview
+#### Syntax Overview
 
 The general pattern for referencing a table from a specific catalog:
 
@@ -129,11 +139,11 @@ FROM "s3tablescatalog/aws-cloudwatch"."logs"."table_name"
 
 ---
 
-## Available Tables Reference
+### Available Tables Reference
 
 Use these tables as a reference when building your own queries. Both Security Lake and CloudWatch unified data store use OCSF normalization, so the field names are consistent across data source types.
 
-### Security Lake
+#### Security Lake
 
 | Table | OCSF Class | Common Query Fields |
 |---|---|---|
@@ -148,7 +158,7 @@ Use these tables as a reference when building your own queries. Both Security La
 In OCSF v2 (1.1.0), Security Hub CSPM findings map to multiple OCSF class names — Vulnerability Finding, Compliance Finding, or Detection Finding — depending on the finding type.
 :::
 
-### CloudWatch Unified Data Store
+#### CloudWatch Unified Data Store
 
 | Table | OCSF Class | Common Query Fields |
 |---|---|---|
@@ -172,11 +182,11 @@ SHOW TABLES IN "s3tablescatalog/aws-cloudwatch"."logs"
 
 ---
 
-## Part 1 — Querying Security Lake (Historical Data)
+### Part 1 — Querying Security Lake (Historical Data)
 
 Your historical security data remains in Security Lake, stored in Amazon S3 and registered in the AWS Glue Data Catalog. These queries run against the `awsdatacatalog` catalog and access the same OCSF-formatted data that was collected before your migration.
 
-### Example 1a — Historical CloudTrail Management Events
+#### Example 1a — Historical CloudTrail Management Events
 
 Query CloudTrail management events from your Security Lake archive. This is useful for investigating past events, auditing historical API activity, or establishing baselines.
 
@@ -199,7 +209,7 @@ LIMIT 25;
 
 </details>
 
-### Example 1b — Historical VPC Flow Logs
+#### Example 1b — Historical VPC Flow Logs
 
 Query VPC Flow Logs from your Security Lake archive to investigate historical network activity.
 
@@ -224,7 +234,7 @@ LIMIT 25;
 
 </details>
 
-### Example 1c — Historical Security Hub Findings
+#### Example 1c — Historical Security Hub Findings
 
 Query Security Hub findings from your Security Lake archive to review your historical security posture.
 
@@ -249,11 +259,11 @@ LIMIT 25;
 
 ---
 
-## Part 2 — Querying CloudWatch Unified Data Store (Recent Data)
+### Part 2 — Querying CloudWatch Unified Data Store (Recent Data)
 
 After migration, your new security data flows into CloudWatch unified data store and is stored in Amazon S3 Tables. These queries run against the `s3tablescatalog/aws-cloudwatch` catalog and access OCSF-formatted data collected after your migration.
 
-### Example 2a — Recent CloudTrail Management Events
+#### Example 2a — Recent CloudTrail Management Events
 
 Query recent CloudTrail management events from CloudWatch unified data store. The same OCSF field names used in Security Lake queries work here.
 
@@ -276,7 +286,7 @@ LIMIT 25;
 
 </details>
 
-### Example 2b — Recent VPC Flow Logs
+#### Example 2b — Recent VPC Flow Logs
 
 Query recent VPC Flow Logs from CloudWatch unified data store.
 
@@ -301,7 +311,7 @@ LIMIT 25;
 
 </details>
 
-### Example 2c — Recent Security Hub Findings
+#### Example 2c — Recent Security Hub Findings
 
 Query recent Security Hub compliance findings from CloudWatch unified data store.
 
@@ -339,7 +349,7 @@ Run `SHOW TABLES IN "s3tablescatalog/aws-cloudwatch"."logs"` to discover your av
 
 ---
 
-## Part 3 — Combining Both Data Stores with UNION ALL
+### Part 3 — Combining Both Data Stores with UNION ALL
 
 Once you're comfortable querying each data store independently, you can combine results from both in a single query using `UNION ALL`. This gives you a unified view across the migration boundary — historical data from Security Lake and recent data from CloudWatch unified data store, side by side.
 
@@ -353,7 +363,7 @@ Cross-catalog JOINs between the AWS Glue Data Catalog (Security Lake) and S3 Tab
 The WHERE clauses in these examples use hardcoded date ranges for both data sources to reflect the migration scenario. Security Lake filters target your historical archive (e.g., `TIMESTAMP '2025-01-01'` to `TIMESTAMP '2025-06-01'`), while CloudWatch unified data store filters target the period after migration (e.g., `TIMESTAMP '2025-06-01'` to `TIMESTAMP '2025-07-01'`). Replace these with the actual dates that match your migration timeline and retention periods.
 :::
 
-### UNION ALL Query Template
+#### UNION ALL Query Template
 
 ```sql
 SELECT
@@ -379,7 +389,7 @@ WHERE time_dt BETWEEN TIMESTAMP '<YYYY-MM-DD>' AND TIMESTAMP '<YYYY-MM-DD>'
 LIMIT 50;
 ```
 
-### Example 3a — AssumeRole Activity Across Both Time Periods
+#### Example 3a — AssumeRole Activity Across Both Time Periods
 
 Track `AssumeRole` calls across the migration boundary. This is useful for investigating whether the same roles are being assumed before and after migration, or for detecting changes in access patterns.
 
@@ -434,7 +444,7 @@ LIMIT 50;
 
 ---
 
-### Example 3b — Rejected VPC Flows Across Both Time Periods
+#### Example 3b — Rejected VPC Flows Across Both Time Periods
 
 Compare rejected network flows from Security Lake (historical) and CloudWatch unified data store (recent). This is useful for validating that security group and NACL rules are producing consistent deny patterns before and after migration.
 
@@ -489,7 +499,7 @@ LIMIT 50;
 
 ---
 
-### Example 3c — High-Severity Security Hub Findings Across Both Time Periods
+#### Example 3c — High-Severity Security Hub Findings Across Both Time Periods
 
 Track high-severity Security Hub findings across the migration boundary. This is useful for identifying whether critical findings that existed before migration have been remediated, or whether new high-severity findings have appeared.
 
@@ -545,3 +555,14 @@ LIMIT 50;
 | Query vulnerability findings | Replace the CW UDS table with `aws_security_hub__vulnerability_finding` |
 
 ---
+
+## Related
+
+- [Amazon Security Lake User Guide](https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html)
+- [Amazon CloudWatch Unified Data Store announcement](https://aws.amazon.com/blogs/aws/amazon-cloudwatch-introduces-unified-data-management-and-analytics-for-operations-security-and-compliance/)
+- [Open Cybersecurity Schema Framework (OCSF)](https://schema.ocsf.io/)
+- [AWS Glue Data Catalog](https://docs.aws.amazon.com/glue/latest/dg/catalog-and-crawler.html)
+
+## Related Events
+
+<RelatedEvents />

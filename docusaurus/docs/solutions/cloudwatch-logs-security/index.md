@@ -9,28 +9,21 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 Securing your Amazon CloudWatch Logs is essential for maintaining compliance, protecting sensitive data, and ensuring proper audit trails. This guide provides comprehensive best practices for implementing robust permission controls and security policies around your log groups, including the critical deletion protection feature.
 
-## Introduction
+## Overview
 
 Amazon CloudWatch Logs enables you to centralize logs from your systems, applications, and AWS services into a single, highly scalable service ([What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)). However, without proper security controls, log data can become a vulnerability rather than an asset. This guide focuses on implementing least-privilege access, encryption, resource-based policies, deletion protection, and comprehensive auditing to keep your log groups secure and compliant. 
 
 
-## Why This Matters
+## When to use this
 
-### Security Implications
-
-Log data often contains sensitive information including user activities, system configurations, API calls, and potentially personally identifiable information (PII). Unauthorized access to logs can expose critical security details about your infrastructure, application behavior, and business operations. Additionally, accidental or malicious deletion of log groups can result in loss of critical audit trails and compliance violations.
-
-### Compliance Requirements
-
-Many regulatory frameworks require specific controls around log data including access restrictions, encryption at rest and in transit, retention policies, deletion protection, and audit trails. Proper permission management and deletion protection are fundamental to meeting these requirements.
-
-### Operational Excellence
-
-Well-structured permissions enable teams to access the logs they need while preventing unwanted modifications and deletions. This balance supports both security and operational efficiency while maintaining data integrity.
+- **Your log data contains sensitive information** — Log data often contains user activities, system configurations, API calls, and potentially personally identifiable information (PII). Unauthorized access to logs can expose critical security details about your infrastructure, application behavior, and business operations.
+- **You need to prevent accidental or malicious deletion of log groups** — Accidental or malicious deletion of log groups can result in loss of critical audit trails and compliance violations.
+- **You must meet regulatory compliance requirements** — Many regulatory frameworks require specific controls around log data including access restrictions, encryption at rest and in transit, retention policies, deletion protection, and audit trails. Proper permission management and deletion protection are fundamental to meeting these requirements.
+- **You want to balance security with operational efficiency** — Well-structured permissions enable teams to access the logs they need while preventing unwanted modifications and deletions. This balance supports both security and operational efficiency while maintaining data integrity.
 
 
 
-## Security Best Practices
+## Guidance
 
 CloudWatch Logs security operates through multiple layers of access control, deletion protection, and encryption mechanisms that work together to protect your log data. Implementing comprehensive security requires a multi-layered approach combining IAM policies, deletion protection, encryption, resource policies, and continuous monitoring.
 
@@ -242,6 +235,19 @@ Use VPC endpoints to establish private connectivity between your VPC and CloudWa
 *   **Monitor Failed Access Attempts**: Create metric filters to track failed API calls to CloudWatch Logs (AccessDenied errors). Alert security teams when patterns suggest attempted unauthorized access or privilege escalation
 *   **Implement Deletion Protection Monitoring**: Use IAM policies with explicit deny statements and CloudWatch alarms to monitor attempts to disable deletion protection or delete protected log groups. Consider using AWS Organizations Service Control Policies (SCPs) for organization-wide protection
 
-## Conclusion
+## Related
 
-Securing Amazon CloudWatch Logs requires a comprehensive, multi-layered approach that combines identity-based policies, deletion protection, encryption, data protection policies, and continuous monitoring to protect your critical log data. By implementing these security best practices—from least-privilege IAM policies and deletion protection to VPC endpoints and automated sensitive data detection—you create a robust defense against both accidental and malicious threats to your log infrastructure. These controls not only protect sensitive operational and compliance data but also ensure your organization meets regulatory requirements while maintaining the operational visibility needed for effective monitoring and troubleshooting. Proper CloudWatch Logs security is essential for maintaining trust in your logging infrastructure and protecting the valuable insights contained within your log data.
+Securing Amazon CloudWatch Logs requires a comprehensive, multi-layered approach that combines identity-based policies, deletion protection, encryption, data protection policies, and continuous monitoring to protect your critical log data.
+
+- [Amazon CloudWatch Logs Security documentation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/security.html)
+- [What is Amazon CloudWatch Logs?](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/WhatIsCloudWatchLogs.html)
+- [CloudWatch Logs permissions reference](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/permissions-reference-cwl.html)
+- [Protecting log groups from deletion](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/protecting-log-groups-from-deletion.html)
+- [Encrypt log data in CloudWatch Logs using AWS KMS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/encrypt-log-data-kms.html)
+- [Protecting sensitive log data with masking](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/mask-sensitive-log-data.html)
+- [Cross-account cross-Region log centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)
+- [Using CloudWatch Logs with interface VPC endpoints](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-and-interface-VPC.html)
+
+## Related Events
+
+<RelatedEvents />

@@ -9,7 +9,7 @@ import TabItem from '@theme/TabItem';
 
 # Monitoring and Auditing AI Workloads on AWS
 
-## Introduction
+## Overview
 
 Modern AI workloads on AWS generate telemetry across three independent pipelines — CloudTrail (who called what), Bedrock Model Invocation Logging (what the model said), and Agent Telemetry collected by the ADOT SDK (how the agent performed). Each pipeline is essential. CloudTrail by itself can tell you that an IAM role called `InvokeModel`, but not what that role asked the model or how the agent responded. Model Invocation Logging captures the content but not the agent orchestration. ADOT captures the orchestration but not inference parameters or IAM identity. Security and operational investigations almost always require correlating at least two.
 
@@ -66,7 +66,19 @@ AWS is responsible for the security of the cloud infrastructure running CloudTra
 - Cross-pipeline correlation queries for investigations
 - A unified dashboard combining all three data sources
 
-## The GenAI Telemetry Landscape: Three Complementary Pipelines
+## When to use this
+
+- You are building, operating, or securing AI workloads on AWS using Amazon Bedrock, Amazon Bedrock AgentCore, or self-hosted models
+- You need to establish a complete audit trail for AI model invocations, agent actions, and tool usage
+- You are implementing the security dimensions defined in the Generative AI Security Scoping Matrix or the Agentic AI Security Scoping Matrix
+- You need to correlate identity, content, and performance data across CloudTrail, Bedrock Model Invocation Logging, and Agent Telemetry (ADOT SDK)
+- You want to detect unauthorized access, guardrail modifications, logging disruption, or agent credential access anomalies in near real time
+- You are setting up CloudWatch metric filters, alarms, Contributor Insights rules, or cross-pipeline correlation queries for AI workloads
+- You need a unified CloudWatch dashboard combining security audit, operational monitoring, and cost attribution for AI workloads
+
+## Guidance
+
+### The GenAI Telemetry Landscape: Three Complementary Pipelines
 
 CloudTrail is one of three telemetry pipelines that together provide full observability for AI workloads on AWS. Each captures different data, serves different purposes, and is enabled differently. Security investigations almost always require correlating at least two.
 
@@ -78,7 +90,7 @@ CloudTrail is one of three telemetry pipelines that together provide full observ
 | **Bedrock Model Invocation Logging** | What the model said — full prompt, full response, inference parameters (temperature, max_tokens), caller IAM identity, token counts | `bedrock-model-invocation-logging` | Content audit, compliance, prompt quality debugging, cost attribution |
 | **Agent Telemetry (collected by AWS Distro for OpenTelemetry — ADOT)** | How the agent performed — model call latency, tool execution, distributed trace correlation, session tracking | `aws/spans`, `/aws/bedrock-agentcore/runtimes/<agent>` | Operational monitoring, performance debugging, agent workflow observability |
 
-### What Each Pipeline Answers on Its Own
+#### What Each Pipeline Answers on Its Own
 
 **CloudTrail alone tells you:**
 
@@ -103,7 +115,7 @@ CloudTrail is one of three telemetry pipelines that together provide full observ
 - Did a tool fail, and which component caused the error?
 - How is the agent session chained across multiple model calls?
 
-### Where Correlation Unlocks Investigation
+#### Where Correlation Unlocks Investigation
 
 **Questions only correlation can answer**
 
@@ -119,11 +131,11 @@ CloudTrail is one of three telemetry pipelines that together provide full observ
 The [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries) section gives you the actual JOIN queries for these scenarios.
 :::
 
-## Implementation Overview
+### Implementation Overview
 
 A phased rollout that enables all three pipelines, then layers detection and correlation on top.
 
-### Phase 1: Enable Observability Pipelines
+#### Phase 1: Enable Observability Pipelines
 
 Start with the two observability pipelines (Bedrock Model Invocation Logging and Agent Telemetry collected by the ADOT SDK). They're quick to enable and they're what makes the correlation queries possible. CloudTrail setup follows in Phase 2.
 
@@ -149,7 +161,7 @@ Enable [CloudWatch Transaction Search](https://docs.aws.amazon.com/AmazonCloudWa
 
 For detailed enablement steps, see [GenAI Observability on AWS — Enabling Observability for Agentic Workloads](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/#enabling-observability-for-agentic-workloads) and the [AgentCore Observability Quickstart](https://aws.github.io/bedrock-agentcore-starter-toolkit/user-guide/observability/quickstart.html#getting-started-with-agentcore-observability).
 
-### Phase 2: Enable CloudTrail — Start with Bedrock, Expand Coverage, Ingest to CloudWatch
+#### Phase 2: Enable CloudTrail — Start with Bedrock, Expand Coverage, Ingest to CloudWatch
 
 Configure CloudTrail to capture the full AI workload audit surface, starting with the highest-value resource (Bedrock) and expanding outward. Deliver everything to CloudWatch Logs so it can be joined with Pipelines A and B.
 
@@ -198,31 +210,31 @@ Plus any remaining AgentCore resource types as they become available.
 
 - Configure your CloudTrail trail to deliver to a [CloudWatch Logs log group](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/send-cloudtrail-events-to-cloudwatch-logs.html).
 
-### Phase 3: Build Detection Rules on CloudTrail
+#### Phase 3: Build Detection Rules on CloudTrail
 
 - Create metric filters for CloudTrail events (unauthorized Bedrock access, guardrail changes, logging disruption). See [Metric Filters](#metric-filters).
 - Create CloudWatch Alarms on each metric filter with SNS notification targets. See [CloudWatch Alarms](#cloudwatch-alarms).
 - Create Contributor Insights rules to identify top IAM identities and source IPs. See [Contributor Insights Rules](#contributor-insights-rules).
 
-### Phase 4: Build Cross-Pipeline Correlation Queries
+#### Phase 4: Build Cross-Pipeline Correlation Queries
 
 - Develop CloudWatch Logs Insights queries for standard CloudTrail detection. See [Security Analytics](#security-analytics).
 - Build cross-pipeline JOIN queries that combine CloudTrail with Bedrock Model Invocation Logging and ADOT spans. See [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries).
 - Save validated queries for recurring use by security and operations analysts.
 
-### Phase 5: Optimize with Event Aggregation
+#### Phase 5: Optimize with Event Aggregation
 
 - Enable CloudTrail Event Aggregation (`API_ACTIVITY`, `RESOURCE_ACCESS`, `USER_ACTIONS` templates) for 5-minute summaries alongside raw data events. See [CloudTrail Data Event Aggregation](#cloudtrail-data-event-aggregation).
 - Use CloudWatch Subscription Filters to forward only management and aggregated events to downstream SIEM, reducing ingestion volume.
 
-### Phase 6: Assemble the Unified Dashboard
+#### Phase 6: Assemble the Unified Dashboard
 
 - Build a CloudWatch Dashboard combining CloudTrail alarms, Contributor Insights widgets, Model Invocation Log cost widgets, ADOT performance widgets, and correlation query results into a single pane. See [Unified Audit & Monitoring Dashboard](#unified-audit--monitoring-dashboard).
-## Amazon Bedrock Data Events
+### Amazon Bedrock Data Events
 
 By default, CloudTrail logs [management events](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-management-events-with-cloudtrail.html) for your account, which already captures common Bedrock runtime calls like `InvokeModel`, `Converse`, and `ConverseStream`. Many key AI workload operations are logged as data events, including agent invocations, knowledge base retrievals, flow executions, guardrail applications, bidirectional streaming, async invocations, and prompt rendering. These operations require advanced event selectors on your trail. Data events provide your security team with visibility into model invocations. See [Advanced Event Selectors for Bedrock](#advanced-event-selectors-for-bedrock) below for the specific selectors to apply.
 
-### Key APIs to Monitor
+#### Key APIs to Monitor
 
 The table below shows which Bedrock APIs are captured automatically and which require advanced event selector configuration on your trail.
 
@@ -271,7 +283,7 @@ The table below shows which Bedrock APIs are captured automatically and which re
 Because `InvokeModel`, `Converse`, and `ConverseStream` are logged as management events, they are captured by default on any trail with management event logging enabled. However, agent invocations, knowledge base retrievals, flow invocations, guardrail applications, prompt rendering, async invocations, bidirectional streaming, session activity, flow executions, automated reasoning, data automation, blueprint operations, advanced prompt optimization, and tool operations are only logged when you configure advanced event selectors for the corresponding Bedrock resource types on your trail. See [Advanced Event Selectors for Bedrock](#advanced-event-selectors-for-bedrock) for the configuration, and the [Amazon Bedrock CloudTrail documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html) for the full list of supported resource types.
 :::
 
-### Advanced Event Selectors for Bedrock
+#### Advanced Event Selectors for Bedrock
 
 Use the following advanced event selectors to capture Bedrock data events on your CloudTrail trail. Each Bedrock resource type requires its own selector, and each selector should scope logging to your specific resources using `resources.ARN` prefixes. This configures eighteen separate selectors — one per resource type. Most filter on `eventCategory = Data` with a `resources.ARN` prefix scoped to your account. The `Model` and `AsyncInvoke` selectors use `eventName` filtering instead because foundation model ARNs are AWS-owned and don't contain your account ID.
 
@@ -671,7 +683,7 @@ To log **all** resources of a given type, remove the resource ID from the ARN pr
 
 </details>
 
-### Bedrock Data Event Resource Types
+#### Bedrock Data Event Resource Types
 
 CloudTrail is designed to support data events for the following Bedrock resource types, providing full visibility into your AI pipeline:
 
@@ -766,13 +778,13 @@ The `AWS::Bedrock::InlineAgent` selector does not include a `resources.ARN` filt
 Configuring the [advanced event selectors above](#advanced-event-selectors-for-bedrock) across all relevant resource types is the **critical first step for enabling AI workload visibility** in this guide. Do not enable data events without specifying advanced event selectors — unfiltered data event logging can generate high volume and cost. For the latest supported resource types, see [Amazon Bedrock data events in CloudTrail](https://docs.aws.amazon.com/bedrock/latest/userguide/logging-using-cloudtrail.html).
 :::
 
-## Amazon Bedrock AgentCore Data Events
+### Amazon Bedrock AgentCore Data Events
 
 [Amazon Bedrock AgentCore](https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/) provides managed infrastructure for running, securing, and connecting AI agents — including hosted runtimes, built-in tools (code interpreters, browsers), identity and credential management, API gateways, and persistent memory. Each of these components generates data-plane activity that CloudTrail can capture as data events, giving you visibility into how your agents execute code, browse the web, authenticate to third-party services, and interact with users through gateways.
 
 AgentCore data events provide runtime visibility into agent behavior, including code runs, tool usage, memory operations — which tools they're invoking, which credentials they're fetching, which gateways are receiving traffic, or whether unrecognized callers are accessing your agent infrastructure.
 
-### Why AgentCore Data Events Matter for AI Security
+#### Why AgentCore Data Events Matter for AI Security
 
 AgentCore components represent the operational surface of your AI agents — the layer where agents take real-world actions. While Bedrock data events (covered above) capture what the agent is asked to do (invoke a model, retrieve from a knowledge base), AgentCore data events capture what the agent actually does. The [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) defines six critical security dimensions for agentic systems — the bullets below map each AgentCore capability to the matrix dimension it addresses:
 
@@ -784,7 +796,7 @@ AgentCore components represent the operational surface of your AI agents — the
 - **Memory operations** — Agents with persistent memory store and retrieve conversation context across sessions. Unintended memory access may allow retrieval of conversation history or modification of agent context. Monitoring memory operations helps verify access stays within authorized scope. *(Agentic Matrix: [Data](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — persistent memory and state security)*
 - **Agent evaluation** — Evaluator events track automated quality and safety assessments of agent outputs. Monitoring these helps verify your evaluation pipeline remains configured as intended. *(Agentic Matrix: [Audit & Logging](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — action-level agent action tracking)*
 
-### AgentCore Data Event Resource Types
+#### AgentCore Data Event Resource Types
 
 CloudTrail supports data events for the following AgentCore resource types:
 
@@ -829,7 +841,7 @@ CloudTrail supports data events for the following AgentCore resource types:
   </TabItem>
 </Tabs>
 
-### Advanced Event Selectors for AgentCore
+#### Advanced Event Selectors for AgentCore
 
 Use the following advanced event selectors to capture AgentCore data events on your CloudTrail trail. These selectors are organized into four groups based on security function: built-in tools, identity and credentials, runtime and gateway, and memory and evaluation. Each selector scopes logging using `resources.ARN` prefixes. For AWS-managed built-in tools (`CodeInterpreter` and `Browser`), the `resources.ARN` filter is omitted because these use AWS-owned ARNs — the `resources.type` filter alone is sufficient.
 
@@ -1023,18 +1035,18 @@ AgentCore data events can generate significant volume, especially for Gateway (e
 **Narrowing selectors by resource ID:** Use specific `resources.ARN` values to target individual resources — for example, `arn:aws:bedrock-agentcore:REGION:ACCOUNT_ID:gateway/PROD_GATEWAY_ID` for a single gateway. For managed built-in tools (`CodeInterpreter` and `Browser`), the `resources.ARN` filter is omitted because these use AWS-owned ARNs — the `resources.type` filter alone is sufficient.
 :::
 
-## CloudTrail Insights Events
+### CloudTrail Insights Events
 
 [CloudTrail Insights](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-insights-events-with-cloudtrail.html) is designed to identify unusual API activity by continuously analyzing your account's operational baseline. For AI workloads, where legitimate usage can itself involve high call volumes, Insights provides a way to detect anomalous spikes that deviate from the established norm — even when the absolute call volume appears reasonable in isolation.
 
-### Insight Types
+#### Insight Types
 
 | Insight Type | Detection Purpose |
 |-------------|-------------------|
 | ApiCallRateInsight | Detects spikes in API call volume that deviate from the baseline. |
 | ApiErrorRateInsight | Detects unusual error rate patterns. A sudden increase in AccessDenied or ThrottlingException errors can indicate repeated access attempts to credentials, repeated unintended access attempts, or an automated agent hitting rate limits. |
 
-### Configuration Guidance
+#### Configuration Guidance
 
 Enable Insights on your CloudTrail trail by navigating to the trail in the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/), selecting **Edit**, and enabling both Insights event types under the **Insights** section.
 
@@ -1042,13 +1054,13 @@ For trails, you can enable Insights for both management events and data events. 
 
 CloudTrail Insights events are delivered to the same Amazon S3 bucket and CloudWatch Logs log group as your standard events, under an `Insights` prefix. You can create metric filters and alarms directly on Insights events to trigger automated responses when anomalous activity is detected. CloudTrail may take up to 36 hours to begin delivering Insights events after enablement, provided unusual activity is detected during that time.
 
-## CloudTrail Management Events
+### CloudTrail Management Events
 
 CloudTrail Management events are designed to record control-plane operations in your AWS environment: creating and deleting resources, modifying configurations, and changing permissions. For AI workload security, these events surface unexpected access patterns for review — disabling logging, redirecting audit trails, or weakening AI service guardrails.
 
 Verify that both **Read** and **Write** management events are logged on all regions. The default CloudTrail trail provides one free copy of management events per region; additional copies incur charges. See [CloudTrail pricing](https://aws.amazon.com/cloudtrail/pricing/) for details.
 
-### Key Management Events for AI Security
+#### Key Management Events for AI Security
 
 <Tabs>
   <TabItem value="bedrock-config" label="Bedrock Configuration" default>
@@ -1093,11 +1105,11 @@ Verify that both **Read** and **Write** management events are logged on all regi
 A common unintended access pattern involves changes to logging configurations, such as disabling trails or redirecting logs to an externally controlled bucket, before conducting further activity. Monitoring for `StopLogging`, `DeleteTrail`, and `PutModelInvocationLoggingConfiguration` is recommended to protect the integrity of your audit trail.
 :::
 
-## Amazon S3 and Lambda Data Events
+### Amazon S3 and Lambda Data Events
 
 AI workloads frequently interact with Amazon S3 buckets (for training data, model artifacts, and CI/CD pipeline assets) and Lambda functions (for AI inference, data preprocessing, and agent orchestration). Monitoring these resource types at the [data event](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html) level gives you visibility into the object-level and function-invocation-level activity that management events do not capture.
 
-### Amazon S3 Target Buckets and Event Types
+#### Amazon S3 Target Buckets and Event Types
 
 Enable Amazon S3 data events for buckets containing:
 
@@ -1112,7 +1124,7 @@ Key Amazon S3 operations to monitor:
 - **DeleteObject** — Detects data deletion or log modification activity
 - **CopyObject** — Detects unintended data movement across buckets
 
-### Amazon S3 Write-Only Selector
+#### Amazon S3 Write-Only Selector
 
 The following selector reduces Amazon S3 data event volume by logging only write operations on specifically named AI-related buckets:
 
@@ -1154,7 +1166,7 @@ Filters Amazon S3 data events to capture only write operations (`readOnly = fals
 ]
 ```
 
-### Lambda AI Pipeline Functions
+#### Lambda AI Pipeline Functions
 
 Enable Lambda data events to log `InvokeFunction` calls for:
 
@@ -1166,7 +1178,7 @@ Enable Lambda data events to log `InvokeFunction` calls for:
 An unexpected spike in Lambda invocations, especially from an unfamiliar IAM role, is an early indicator that an unintended access to your Lambda-based AI pipeline functions.
 :::
 
-### Lambda Production-Only Selector
+#### Lambda Production-Only Selector
 
 This selector excludes development and test functions to focus logging on production AI workloads:
 
@@ -1203,11 +1215,11 @@ Logs Lambda `Invoke` data events only for functions whose ARN starts with `prod-
 ]
 ```
 
-## CloudTrail Network Activity Events
+### CloudTrail Network Activity Events
 
 [CloudTrail Network Activity Events](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-network-events-with-cloudtrail.html) are designed to enable VPC endpoint owners to record AWS API calls made through VPC endpoints from a private VPC to AWS services. For AI workloads, this provides visibility into whether your Bedrock-integrated VPCs are making unexpected outbound calls or whether VPC endpoint access controls are being violated. *(Implements the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) Scope dimension — enforcing clear operational boundaries and detecting agents operating outside their intended network perimeter.)*
 
-### AI Workload VPC Endpoints
+#### AI Workload VPC Endpoints
 
 CloudTrail Network activity events support Amazon Bedrock (`bedrock.amazonaws.com`), Amazon S3 (`s3.amazonaws.com`), and AWS Lambda (`lambda.amazonaws.com`) as event sources. Enable these events on your VPC endpoints to capture API calls routed through each endpoint, including both permitted and denied access attempts. For AI workloads, this is particularly important because Bedrock agents operating within a VPC access downstream services — Amazon S3 for knowledge base data sources, Lambda for action group handlers — through VPC endpoints. Denied access at the VPC endpoint level indicates either a misconfigured endpoint policy or an unauthorized workload attempting to reach AI resources from within your private network.
 
@@ -1221,7 +1233,7 @@ Additional event sources to consider enabling:
 | lambda.amazonaws.com | Track Lambda invocations through VPC endpoints from AI pipeline functions. |
 | sagemaker.amazonaws.com | Track SageMaker endpoint activity in AI workload environments. |
 
-### Advanced event selector fields for network activity events
+#### Advanced event selector fields for network activity events
 
 For initial deployment, focus on capturing `VpceAccessDenied` errors across all AI-relevant VPC endpoints to detect violations of your [VPC endpoint policies](https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-access.html) with minimal additional data volume. The selectors below cover Bedrock, Amazon S3, and Lambda — the three services most commonly accessed by AI agents through VPC endpoints.
 
@@ -1290,7 +1302,7 @@ Logs network activity events where Bedrock, Amazon S3, or Lambda returned a `Vpc
 
 </details>
 
-## Implementation Priority Checklist
+### Implementation Priority Checklist
 
 The following table presents the recommended implementation order for enabling CloudTrail event types in your AI workload environment. Each step builds on the previous, starting with the high-impact changes and progressing to more targeted monitoring configurations.
 
@@ -1304,11 +1316,11 @@ The following table presents the recommended implementation order for enabling C
 | 6 | Data Events | `AWS::Lambda::Function` | Production AI functions only; exclude dev and test function name prefixes |
 | 7 | Network Activity Events | Bedrock, S3, and Lambda VPC endpoints | `VpceAccessDenied` on `bedrock.amazonaws.com`, `s3.amazonaws.com`, and `lambda.amazonaws.com` |
 
-## Optimizing Data Event Collection
+### Optimizing Data Event Collection
 
 [Advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html#creating-data-event-selectors-advanced) enable precise filtering to control both costs and log volume. The following strategies show how to narrow each major resource type to only the events of security interest.
 
-### Bedrock: Narrow to Production Resources
+#### Bedrock: Narrow to Production Resources
 
 The [advanced event selectors above](#advanced-event-selectors-for-bedrock) already scope Bedrock data events to specific resources by ARN. To further reduce volume, narrow the ARN prefixes to only production agents and knowledge bases, excluding non-production or experimental resources:
 
@@ -1363,13 +1375,13 @@ Restricts Bedrock data event logging to only agent aliases and knowledge bases w
 ]
 ```
 
-### Amazon S3: Write-Only on AI Buckets
+#### Amazon S3: Write-Only on AI Buckets
 
 Reduce Amazon S3 data event volume by logging only write operations on AI-specific buckets. Read operations can be added later for high-value buckets if unauthorized data transfer detection is prioritized.
 
 > Refer to [Section 6.2](#amazon-s3-write-only-selector) for the complete Amazon S3 write-only advanced event selector JSON.
 
-### Inline Agent: Filter by IAM Identity
+#### Inline Agent: Filter by IAM Identity
 
 The `AWS::Bedrock::InlineAgent` selector does not support `resources.ARN` filtering because inline agents do not have persistent resource ARNs. Without additional filtering, this selector captures all `InvokeInlineAgent` calls across the account, which can generate high data event volume and cost. Use the [`userIdentity.arn`](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-user-identity.html) field to scope logging to specific IAM roles — for example, your production Bedrock execution roles — while excluding development or automated service roles that generate high-volume inline agent calls.
 
@@ -1451,19 +1463,19 @@ Restricts InlineAgent data event logging to only invocations made by IAM roles m
 The `userIdentity.arn` field is supported on all advanced event selectors, not just InlineAgent. You can apply the same filtering technique to any high-volume data event selector where `resources.ARN` filtering is insufficient. For the full list of supported fields and operators, see [Filtering data events by using advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html).
 :::
 
-### Lambda: Production Functions Only
+#### Lambda: Production Functions Only
 
 Focus data event logging on production AI workloads by scoping the `StartsWith` operator to only production function prefixes (`prod-`, `ai-agent-`). Development and test functions are excluded by definition because their prefixes do not match.
 
 > Refer to [Section 6.4](#lambda-production-only-selector) for the complete Lambda production-only advanced event selector JSON.
 
-### CloudTrail Network Activity Events: VpceAccessDenied Only
+#### CloudTrail Network Activity Events: VpceAccessDenied Only
 
 For network activity events, logging only denied access across Bedrock, Amazon S3, and Lambda VPC endpoints captures the key security events while reducing the volume compared to logging all network activity.
 
 > Refer to [Advanced event selector fields for network activity events](#advanced-event-selector-fields-for-network-activity-events) for the complete Bedrock, Amazon S3, and Lambda VpceAccessDenied network activity event selector JSON.
 
-### AgentCore: Phased Enablement by Security Priority
+#### AgentCore: Phased Enablement by Security Priority
 
 AgentCore data events span fourteen resource types. Enable them in phases based on security priority:
 
@@ -1490,7 +1502,7 @@ Similarly, to narrow Runtime data events to a specific agent runtime:
 }
 ```
 
-### CloudTrail Advanced Event Selectors for Organization Level Trail
+#### CloudTrail Advanced Event Selectors for Organization Level Trail
 
 For an AWS Organizations trail covering multiple accounts, combine all AI workload selectors into a single trail configuration. This defines a complete set of advanced event selectors combining Bedrock data events, AgentCore data events, S3 write-only filtering, Lambda production function logging, and Bedrock network activity denied-access detection — all in one trail.
 
@@ -1797,7 +1809,7 @@ See the [Bedrock](#advanced-event-selectors-for-bedrock) and [AgentCore](#advanc
 
 </details>
 
-## Security Analytics for Your AI Workloads {#security-analytics}
+### Security Analytics for Your AI Workloads {#security-analytics}
 
 The previous sections configured what CloudTrail captures — event selectors, resource types, and delivery to CloudWatch Logs. This section shifts from enablement to detection: the queries below surface the security signals buried in those events, from unintended access attempts and guardrail modification to agent credential access and gateway authentication failures.
 
@@ -2393,7 +2405,7 @@ LIMIT 50
   </TabItem>
 </Tabs>
 
-## Cross-Pipeline Correlation Queries
+### Cross-Pipeline Correlation Queries
 
 The queries above operate on CloudTrail alone. The queries below join CloudTrail with Bedrock Model Invocation Logging and ADOT spans to answer questions that no single pipeline can answer on its own.
 
@@ -2406,7 +2418,7 @@ These queries require all three pipelines enabled:
 - Query language set to **SQL** when creating these widgets (all correlation queries use OpenSearch SQL)
 :::
 
-### Correlation Keys
+#### Correlation Keys
 
 | Join | Key Field | Notes |
 | --- | --- | --- |
@@ -2602,7 +2614,7 @@ LIMIT 50
 Cross-log-group JOINs in CloudWatch Logs Insights SQL may be slow on large datasets. Test with narrow time windows (last 15 minutes, last hour) before scheduling these as dashboard widgets with long time ranges. For continuous correlation, consider exporting all three log groups to a single destination (S3, OpenSearch) and running the joins there.
 :::
 
-## Metric Filters
+### Metric Filters
 
 [Metric filters](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html) are designed to extract values from CloudTrail log events and create custom CloudWatch metrics, enabling near real-time alerting without continuous querying. The [filter pattern syntax](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html) uses JSON property selectors to match specific fields in CloudTrail event records. The filters below are scoped specifically to AI workload security events — detecting unauthorized access to Bedrock resources, agent activity anomalies, guardrail modification, and AI infrastructure configuration changes.
 
@@ -3076,7 +3088,7 @@ Gateway changes affect how external callers access your agents — an unintended
 </Tabs>
 
 
-## CloudWatch Alarms
+### CloudWatch Alarms
 
 Create [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html) on each of the metric filters defined in [Section 11](#metric-filters). Route alarm notifications through [Amazon SNS](https://docs.aws.amazon.com/sns/latest/dg/welcome.html) to your security operations team with appropriate severity tiers. The table below provides recommended thresholds and evaluation periods for each alarm.
 
@@ -3124,7 +3136,7 @@ Create [CloudWatch Alarms](https://docs.aws.amazon.com/AmazonCloudWatch/latest/m
   </TabItem>
 </Tabs>
 
-## Contributor Insights Rules
+### Contributor Insights Rules
 
 [CloudWatch Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) is designed to analyze time-series data in near real time to surface the top contributors influencing activity patterns in your CloudWatch Logs log groups. Applied to your CloudTrail log group, Contributor Insights rules continuously identify the top IAM identities, resources, and source IPs driving activity across your AI workload — without requiring manual query execution. The rules below cover every event category the guide captures: management events, data events, network activity events, and security configuration changes.
 
@@ -3768,7 +3780,7 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
 
 </details>
 
-#### Rule 18: AgentCore Gateway Configuration Changes {#agentcore}
+##### Rule 18: AgentCore Gateway Configuration Changes {#agentcore}
 
 <details>
 <summary>Monitors creation, modification, and deletion of AgentCore Gateways and targets</summary>
@@ -3800,11 +3812,11 @@ AgentCore gateway configuration changes (`CreateGateway`, `UpdateGateway`, `Dele
   </TabItem>
 </Tabs>
 
-## CloudTrail Data Event Aggregation
+### CloudTrail Data Event Aggregation
 
 [Event Aggregation](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/aggregating-data-events.html) is designed to consolidate data events into 5-minute summaries, providing visibility into key trends such as access frequency, error rates, and most frequently used API actions. This significantly reduces the volume of data transmitted to downstream analysis systems while preserving the recommended insights needed for security monitoring and trend analysis. Aggregated events use the `eventCategory = Aggregated` and `eventType = AwsAggregatedEvent` fields in the [aggregated event record](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aggregated-events.html).
 
-### Enabling Aggregation
+#### Enabling Aggregation
 
 Navigate to the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/) and select your trail. Under the **Aggregated Events** section, choose **Edit** and enable the following aggregation templates:
 
@@ -3812,7 +3824,7 @@ Navigate to the [CloudTrail console](https://console.aws.amazon.com/cloudtrail/)
 - **Resource Access** — Activity patterns on your AWS resources showing who is accessing which resources and how many times
 - **User Actions** — Activity patterns based on IAM principals making API calls, useful for identifying behavioral anomalies
 
-### Querying CloudTrail Aggregated Events
+#### Querying CloudTrail Aggregated Events
 
 Aggregated events are delivered alongside standard events in your CloudWatch Logs log group with `eventCategory = 'Aggregated'`. Use the following OpenSearch SQL query to surface aggregated Bedrock API activity summaries:
 
@@ -3828,7 +3840,7 @@ WHERE eventCategory = 'Aggregated'
 ORDER BY eventTime DESC
 ```
 
-### Subscription Filter for Downstream Efficiency
+#### Subscription Filter for Downstream Efficiency
 
 To reduce the volume sent to downstream systems such as a SIEM or Kinesis Data Firehose, create a [CloudWatch Logs Subscription Filter](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/SubscriptionFilters.html) that forwards only management events and aggregated summaries instead of raw data events. This reduces downstream ingestion volume while maintaining recommended security insights from the 5-minute aggregated summaries.
 
@@ -3838,16 +3850,16 @@ To reduce the volume sent to downstream systems such as a SIEM or Kinesis Data F
 { ($.eventCategory = "Management") || ($.eventCategory = "Aggregated") }
 ```
 
-## Unified Audit & Monitoring Dashboard
+### Unified Audit & Monitoring Dashboard
 
 Build a unified [CloudWatch dashboard](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html) that combines the security/audit surface (CloudTrail) with operational monitoring (Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK)) into a centralized view. The layout below organizes widgets by audience — security/audit on the left, operational monitoring in the middle, cost/FinOps on the right — and tiers them from high-level status indicators to detailed investigation queries.
 
-### Dashboard Name
+#### Dashboard Name
 
 Create the dashboard with the name `AI-Workload-Security-Dashboard` in your primary monitoring region.
 
 ![AI-Workload-Security-Dashboard](/img/cloudops/recipes/AWS%20CloudTrail/monitoring-and-auditing-genAI/dashboard.png)
-### Recommended Widget Layout
+#### Recommended Widget Layout
 
 :::tip[Pro Tip]
 For Logs Insights widgets, select **SQL** or **CWLI** as the query language depending on the query source. Cross-log-group JOIN queries (from [Cross-Pipeline Correlation Queries](#cross-pipeline-correlation-queries)) must use SQL. Single-log-group queries can use either.
@@ -3969,7 +3981,7 @@ For Logs Insights widgets, select **SQL** or **CWLI** as the query language depe
 Rows 5-7 use queries from the companion [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) guide. Use those queries directly rather than duplicating them here.
 :::
 
-## Conclusion and Next Steps
+### Conclusion and Next Steps
 
 This guide covered the end-to-end monitoring and auditing architecture for AI workloads on AWS — the three telemetry pipelines, enablement for each, CloudTrail-specific detection (metric filters, alarms, Contributor Insights) for both Bedrock and AgentCore data events, cross-pipeline correlation queries that join CloudTrail with Bedrock Model Invocation Logging and ADOT spans, and a unified CloudWatch dashboard. Each section is designed to be implemented incrementally following the phased roadmap in the [Implementation Overview](#implementation-overview).
 
@@ -3977,7 +3989,7 @@ The core idea: CloudTrail alone shows *who did what*, Model Invocation Logging s
 
 Together, these capabilities provide concrete implementation for the security dimensions defined in the [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) and the [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/).
 
-### Next Steps
+#### Next Steps
 
 1. **Start with Phase 1.** Enable all three telemetry pipelines. The other two (Model Invocation Logging, ADOT) which makes the correlation queries possible.
 2. **Enable CloudTrail Bedrock data events.** A critical step for auditing AI workloads.
@@ -3987,9 +3999,23 @@ Together, these capabilities provide concrete implementation for the security di
 5. **Integrate with GuardDuty.** [Amazon GuardDuty](https://docs.aws.amazon.com/guardduty/latest/ug/what-is-guardduty.html) provides managed threat detection that complements the custom monitoring here. GuardDuty analyzes CloudTrail events for known threat patterns without requiring you to maintain detection rules.
 6. **Review costs.** Data events, Insights analysis, and network activity events all incur charges. Use the [CloudTrail pricing page](https://aws.amazon.com/cloudtrail/pricing/) and the volume reduction strategies in [Optimizing Data Event Collection](#optimizing-data-event-collection).
 
-### Companion Guides
+#### Companion Guides
 
 - [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — Security dimensions for generative AI workloads (Governance & Compliance, Legal & Privacy, Risk Management, Controls, Resilience)
 - [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Security dimensions for agentic AI systems (Identity, Data, Audit & Logging, Guardrails, Scope, Orchestration)
 - [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
 - [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
+
+## Related
+
+- [Generative AI Security Scoping Matrix](https://aws.amazon.com/ai/security/generative-ai-scoping-matrix/) — Security dimensions for generative AI workloads
+- [Agentic AI Security Scoping Matrix](https://aws.amazon.com/ai/security/agentic-ai-scoping-matrix/) — Security dimensions for agentic AI systems
+- [GenAI Observability on AWS](https://aws-observability.github.io/observability-best-practices/guides/genai/genai-observability-on-aws/) — Deep dive on Bedrock Model Invocation Logging and Agent Telemetry (ADOT SDK) pipelines
+- [Custom Dashboards for GenAI Telemetry](https://aws-observability.github.io/observability-best-practices/guides/genai/custom-dashboards-for-genai-telemetry/) — Persona-based dashboards (DevOps, FinOps) with ready-to-use queries
+- [AWS CloudTrail Documentation](https://docs.aws.amazon.com/cloudtrail/)
+- [Amazon CloudWatch Documentation](https://docs.aws.amazon.com/cloudwatch/)
+- [Amazon Bedrock Documentation](https://docs.aws.amazon.com/bedrock/)
+
+## Related Events
+
+<RelatedEvents />

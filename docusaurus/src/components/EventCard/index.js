@@ -12,6 +12,8 @@ const THEME_ORDER = [
   'Database Observability',
   'Security Visibility',
   'Regional & In-Person Events',
+  'Amazon CloudWatch Omni',
+  'OpenTelemetry native AWS',
 ];
 
 const THEME_INFO = {

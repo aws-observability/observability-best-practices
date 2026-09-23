@@ -5,6 +5,7 @@ const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7,
 
 // Theme display order and short descriptions. Add/adjust here to change the page sections.
 const THEME_ORDER = [
+  'Amazon CloudWatch Omni',
   'One Observability Workshop',
   "CloudWatch Fundamentals & What's New",
   'DevOps Agent',
@@ -12,11 +13,15 @@ const THEME_ORDER = [
   'Database Observability',
   'Security Visibility',
   'Regional & In-Person Events',
-  'Amazon CloudWatch Omni',
   'OpenTelemetry native AWS',
 ];
 
+// Themes flagged here get a "Newly Launched" banner on their card.
+const FEATURED_THEMES = new Set(['Amazon CloudWatch Omni']);
+
 const THEME_INFO = {
+  'Amazon CloudWatch Omni':
+    'AI agents are moving into production and applications are more distributed than ever. Meet Amazon CloudWatch Omni — the newest way to observe it all.',
   'One Observability Workshop':
     'Intensive hands-on labs across the full AWS observability toolset — metrics, alarms, dashboards, logs, application performance monitoring, and AI operations.',
   "CloudWatch Fundamentals & What's New":
@@ -107,8 +112,11 @@ function ThemeCard({ theme, sessions }) {
   const rest = sessions.slice(1);
   if (!next) return null;
 
+  const featured = FEATURED_THEMES.has(theme);
+
   return (
-    <article className={styles.eventCard}>
+    <article className={`${styles.eventCard} ${featured ? styles.eventCardFeatured : ''}`}>
+      {featured && <span className={styles.newBadge}>✨ Newly Launched</span>}
       <h2 className={styles.themeHeading}>{theme}</h2>
       <p className={styles.themeDesc}>{THEME_INFO[theme]}</p>
       <div className={styles.nextSession}>

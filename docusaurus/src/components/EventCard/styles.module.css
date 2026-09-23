@@ -48,6 +48,40 @@
   border-color: var(--ifm-color-emphasis-300);
 }
 
+/* Featured card ("Newly Launched") */
+.eventCardFeatured {
+  position: relative;
+  border-color: #ff9900;
+  border-width: 2px;
+  box-shadow: 0 3px 16px rgba(255, 153, 0, 0.18);
+}
+
+.eventCardFeatured:hover {
+  border-color: #ff9900;
+  box-shadow: 0 6px 20px rgba(255, 153, 0, 0.28);
+}
+
+.newBadge {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #232f3e;
+  background: linear-gradient(90deg, #ff9900, #ffc46b);
+  border-radius: 999px;
+  padding: 3px 12px;
+  margin-bottom: 0.6rem;
+  box-shadow: 0 1px 4px rgba(255, 153, 0, 0.35);
+}
+
+[data-theme='dark'] .newBadge {
+  color: #232f3e;
+}
+
 /* NEXT SESSION block (accent bar) */
 .nextSession {
   display: flex;

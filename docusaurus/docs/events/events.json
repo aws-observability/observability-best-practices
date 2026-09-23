@@ -1,5 +1,30 @@
 [
   {
+    "theme": "Amazon CloudWatch Omni",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Introducing Amazon CloudWatch Omni",
+    "description": "AI agents are moving into production, and the applications they run alongside are more distributed than ever.",
+    "date": "Wed 7 Oct",
+    "time": "18:00 – 19:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/095bd/introducing-amazon-cloudwatch-omni",
+    "additionalDates": [
+      {
+        "date": "Thu 8 Oct",
+        "time": "01:00 – 02:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/amer/smb/e/eee4b/introducing-amazon-cloudwatch-omni"
+      },
+      {
+        "date": "Thu 8 Oct",
+        "time": "13:30 – 14:30 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/amer/smb/e/996a2/introducing-amazon-cloudwatch-omni"
+      }
+    ]
+  },
+  {
     "theme": "One Observability Workshop",
     "level": 300,
     "format": "Hands-on workshop",
@@ -177,8 +202,8 @@
     "format": "Hands-on workshop",
     "name": "Monitoring Generative AI for Public Sector & Defense",
     "description": "Why Attend Defense and Public Sector are moving generative AI from experimentation to production on Amazon Bedrock in high security environments such as GovCloud and FedRamp High.",
-    "date": "Tue 29 Sep",
-    "time": "15:00 – 16:00 UTC",
+    "date": "Tue 20 Oct",
+    "time": "16:00 – 17:00 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/77098/monitoring-generative-ai-for-public-sector--defense",
     "additionalDates": []
@@ -293,17 +318,11 @@
     "format": "Technical talk",
     "name": "Evolution of the Single Pane of Glass: From Dashboards to DevOps Agents",
     "description": "IT teams still spend 40% of their time manually correlating data across dashboards—despite promises of simplified troubleshooting.",
-    "date": "Tue 22 Sep",
-    "time": "15:00 – 16:00 UTC",
+    "date": "Wed 23 Sep",
+    "time": "04:30 – 05:30 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/0e5c1/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/1f8c7/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents",
     "additionalDates": [
-      {
-        "date": "Wed 23 Sep",
-        "time": "04:30 – 05:30 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/1f8c7/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents"
-      },
       {
         "date": "Wed 23 Sep",
         "time": "19:00 – 20:00 UTC",
@@ -372,23 +391,11 @@
     "format": "Technical talk",
     "name": "CloudWatch GenAI Observability for Amazon Bedrock and Bedrock AgentCore",
     "description": "Get started with GenAI observability – Set up foundational observability for your GenAI workloads by understanding what telemetry is automatically available for your Bedrock and AgentCore applications and how to acces…",
-    "date": "Tue 22 Sep",
+    "date": "Tue 27 Oct",
     "time": "10:00 – 11:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/a9d30/cloudwatch-genai-observability-for-amazon-bedrock-and-bedrock-agentcore",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/b68d0/cloudwatch-genai-observability-for-amazon-bedrock-and-bedrock-agentcore",
     "additionalDates": [
-      {
-        "date": "Tue 22 Sep",
-        "time": "18:00 – 19:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/0bc9c/cloudwatch-genai-observability-for-amazon-bedrock-and-bedrock-agentcore"
-      },
-      {
-        "date": "Tue 27 Oct",
-        "time": "10:00 – 11:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/b68d0/cloudwatch-genai-observability-for-amazon-bedrock-and-bedrock-agentcore"
-      },
       {
         "date": "Tue 27 Oct",
         "time": "18:00 – 19:00 UTC",
@@ -403,18 +410,11 @@
     "format": "Technical talk",
     "name": "End-to-End GenAI Observability: Infrastructure, Agents, and Applications",
     "description": "CloudWatch OTLP for Metrics Leverage OpenTelemetry Protocol (OTLP) for standardized metrics collection Configure CloudWatch to receive OTLP metrics from distributed GenAI workloads Enable vendor-agnostic observability…",
-    "date": "Tue 22 Sep",
-    "time": "19:00 – 20:00 UTC",
+    "date": "Wed 23 Sep",
+    "time": "09:00 – 10:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/c911c/end-to-end-genai-observability-infrastructure-agents-and-applications",
-    "additionalDates": [
-      {
-        "date": "Wed 23 Sep",
-        "time": "09:00 – 10:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/1e90e/end-to-end-genai-observability-infrastructure-agents-and-applications"
-      }
-    ]
+    "registerUrl": "https://aws-experience.com/amer/smb/e/1e90e/end-to-end-genai-observability-infrastructure-agents-and-applications",
+    "additionalDates": []
   },
   {
     "theme": "GenAI Observability",
@@ -471,17 +471,11 @@
     "format": "Technical talk",
     "name": "Amazon DevOps Agent + Database Insights: Detect, Diagnose, and Resolve Database Issues",
     "description": "Join us for a 60-minute live session exploring how Amazon CloudWatch Database Insights and Amazon DevOps Agent can work together to fundamentally shift your database operations from reactive incident response to proac…",
-    "date": "Tue 22 Sep",
-    "time": "11:00 – 12:00 UTC",
+    "date": "Wed 30 Sep",
+    "time": "03:30 – 04:30 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/0a3ba/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/6839c/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues",
     "additionalDates": [
-      {
-        "date": "Wed 30 Sep",
-        "time": "03:30 – 04:30 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/6839c/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      },
       {
         "date": "Wed 14 Oct",
         "time": "16:00 – 17:00 UTC",
@@ -575,10 +569,10 @@
     "format": "Hands-on workshop",
     "name": "Simplified Security Visibility - CloudWatch Unified Data Store",
     "description": "The AWS Events for Security Visibility and Analytics Activation Day provides hands-on experience working with AWS CloudTrail Management Events and Data Events in the Amazon CloudWatch unified data store.",
-    "date": "Mon 21 Sep",
-    "time": "14:00 – 16:00 UTC",
+    "date": "Wed 28 Oct",
+    "time": "08:00 – 10:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/de465/simplified-security-visibility---cloudwatch-unified-data-store",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/7d156/simplified-security-visibility---cloudwatch-unified-data-store",
     "additionalDates": [
       {
         "date": "Wed 28 Oct",

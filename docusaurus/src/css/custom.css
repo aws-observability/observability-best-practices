@@ -68,6 +68,456 @@
   border: 1px solid var(--ifm-color-emphasis-300);
   background: var(--ifm-color-emphasis-100);
 }
+/* ===== CloudWatch Omni guide: Overview hero image ===== */
+.omni-hero {
+  float: right;
+  width: 46%;
+  max-width: 440px;
+  margin: 4px 0 20px 28px;
+}
+.omni-hero-frame {
+  position: relative;
+  border-radius: 16px;
+  padding: 3px; /* thickness of the gradient frame */
+  background: linear-gradient(
+    135deg,
+    var(--ifm-color-primary) 0%,
+    color-mix(in srgb, var(--ifm-color-primary) 55%, #8b5cf6) 100%
+  );
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.omni-hero-frame::after {
+  /* subtle sheen sweep on hover */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 45%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.omni-hero:hover .omni-hero-frame {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.2);
+}
+.omni-hero:hover .omni-hero-frame::after {
+  transform: translateX(120%);
+}
+.omni-hero-frame img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 13px;
+}
+.omni-hero-caption {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--ifm-color-emphasis-600);
+}
+
+/* Clear the float so following sections start on their own line */
+.markdown > h2 {
+  clear: both;
+}
+
+@supports not (background: color-mix(in srgb, red, blue)) {
+  .omni-hero-frame {
+    background: linear-gradient(135deg, var(--ifm-color-primary) 0%, #8b5cf6 100%);
+  }
+}
+
+/* Stack full-width on narrow viewports */
+@media (max-width: 996px) {
+  .omni-hero {
+    float: none;
+    width: 100%;
+    max-width: none;
+    margin: 28px 0 8px;
+  }
+}
+
+/* ===== CloudWatch Omni guide: "When to use this" reveal cards ===== */
+.omni-usecase-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px;
+  margin: 24px 0;
+  align-items: start; /* cards keep their own height; open card grows without stretching row */
+}
+
+.omni-usecase-grid details.omni-usecase {
+  position: relative;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 14px;
+  background: var(--ifm-background-surface-color);
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+
+/* Accent bar down the left edge */
+.omni-usecase-grid details.omni-usecase::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(
+    to bottom,
+    var(--ifm-color-primary),
+    var(--ifm-color-primary-lighter)
+  );
+  opacity: 0.55;
+  transition: opacity 0.2s ease;
+}
+
+.omni-usecase-grid details.omni-usecase:hover {
+  border-color: var(--ifm-color-primary-light);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-3px);
+}
+.omni-usecase-grid details.omni-usecase:hover::before,
+.omni-usecase-grid details.omni-usecase[open]::before {
+  opacity: 1;
+}
+.omni-usecase-grid details.omni-usecase[open] {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.omni-usecase-grid summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 18px 52px 18px 22px; /* right pad leaves room for the toggle */
+  font-weight: 600;
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ifm-heading-color);
+  position: relative;
+  transition: color 0.2s ease;
+}
+.omni-usecase-grid summary:hover {
+  color: var(--ifm-color-primary);
+}
+.omni-usecase-grid summary::-webkit-details-marker {
+  display: none;
+}
+.omni-usecase-grid summary::marker {
+  content: "";
+}
+
+/* Circular +/x toggle pinned top-right */
+.omni-usecase-grid summary::after {
+  content: "+";
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--ifm-color-primary);
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  transition: transform 0.25s ease, background 0.2s ease;
+}
+.omni-usecase-grid details[open] summary::after {
+  content: "\00d7"; /* × */
+  transform: rotate(180deg);
+}
+
+.omni-usecase-grid .omni-usecase-answer {
+  padding: 4px 22px 20px;
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--ifm-color-emphasis-700);
+  animation: omni-reveal 0.25s ease;
+}
+
+@keyframes omni-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.omni-usecase-hint {
+  font-size: 0.9rem;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 4px;
+}
+
+/* ===== CloudWatch Omni guide: sample application showcase ===== */
+.omni-showcase {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin: 24px 0;
+}
+.omni-app {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 26px;
+  align-items: center;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 16px;
+  padding: 24px;
+  background: var(--ifm-background-surface-color);
+  transition: border-color 0.2s ease, box-shadow 0.25s ease, transform 0.2s ease;
+}
+.omni-app:hover {
+  border-color: var(--ifm-color-primary-light);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
+  transform: translateY(-3px);
+}
+/* Alternate image side on even rows for the zig-zag layout */
+.omni-app:nth-child(even) .omni-app-media {
+  order: 2;
+}
+.omni-app:nth-child(even) .omni-app-body {
+  order: 1;
+}
+
+.omni-app-media {
+  border-radius: 12px;
+  overflow: hidden;
+  line-height: 0;
+  border: 1px solid var(--ifm-color-emphasis-200);
+  background: var(--ifm-color-emphasis-100);
+}
+.omni-app-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.omni-app:hover .omni-app-media img {
+  transform: scale(1.03);
+}
+
+.omni-app-eyebrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--ifm-color-primary-dark);
+  background: color-mix(in srgb, var(--ifm-color-primary) 12%, transparent);
+  padding: 4px 10px;
+  border-radius: 999px;
+  margin-bottom: 10px;
+}
+.omni-app-title {
+  margin: 0 0 10px;
+  font-size: 1.2rem;
+}
+.omni-app-title a {
+  text-decoration: none;
+}
+.omni-app-title a:hover {
+  text-decoration: underline;
+}
+.omni-app-body p {
+  margin: 0 0 10px;
+  line-height: 1.6;
+  font-size: 0.94rem;
+  color: var(--ifm-color-emphasis-800);
+}
+.omni-app-repo {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--ifm-color-primary);
+}
+.omni-app-repo::before {
+  content: "\276F"; /* › */
+  font-weight: 700;
+}
+.omni-app-repo:hover {
+  text-decoration: underline;
+}
+
+/* Placeholder shown until the real screenshot is dropped in */
+.omni-app-media--placeholder {
+  aspect-ratio: 16 / 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 16px;
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.85rem;
+  border-style: dashed;
+}
+
+@media (max-width: 768px) {
+  .omni-app {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .omni-app:nth-child(even) .omni-app-media {
+    order: 0;
+  }
+  .omni-app:nth-child(even) .omni-app-body {
+    order: 0;
+  }
+}
+
+@supports not (background: color-mix(in srgb, red, blue)) {
+  .omni-app-eyebrow {
+    background: var(--ifm-color-emphasis-200);
+  }
+}
+
+/* ===== CloudWatch Omni guide: Resources hub ===== */
+.omni-resources {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: 24px 0;
+}
+/* Each category is its own bordered panel with a tinted header */
+.omni-res-cat {
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--ifm-background-surface-color);
+}
+.omni-res-cat-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  background: color-mix(in srgb, var(--ifm-color-primary) 8%, transparent);
+  border-bottom: 1px solid var(--ifm-color-emphasis-200);
+  border-left: 4px solid var(--ifm-color-primary);
+}
+.omni-res-cat-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+  filter: saturate(1.1);
+}
+.omni-res-cat-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--ifm-heading-color);
+}
+/* Grid sits inside the panel body; a faint fill makes the white cards pop */
+.omni-res-cat .omni-res-grid {
+  padding: 16px 18px 18px;
+  background: var(--ifm-color-emphasis-100);
+}
+
+.omni-res-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+a.omni-res-card {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 16px 14px 18px;
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 10px;
+  background: var(--ifm-background-surface-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+}
+/* Accent stripe down the left edge of each card */
+a.omni-res-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 3px;
+  background: var(--ifm-color-primary);
+  opacity: 0.35;
+  transition: opacity 0.2s ease;
+}
+a.omni-res-card:hover {
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.14);
+  transform: translateY(-3px);
+  text-decoration: none;
+}
+a.omni-res-card:hover::before {
+  opacity: 1;
+}
+.omni-res-card-icon {
+  font-size: 1.35rem;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+.omni-res-card-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.omni-res-card-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ifm-color-emphasis-600);
+  margin-bottom: 2px;
+}
+.omni-res-card-title {
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1.35;
+  color: var(--ifm-color-primary);
+}
+a.omni-res-card:hover .omni-res-card-title {
+  text-decoration: underline;
+}
+/* Cards still awaiting a confirmed URL */
+a.omni-res-card.omni-res-todo {
+  border-style: dashed;
+  opacity: 0.75;
+}
+a.omni-res-card.omni-res-todo .omni-res-card-label::after {
+  content: " · link pending";
+  font-weight: 600;
+  color: var(--ifm-color-warning-dark, #b26a00);
+}
+
+@media (max-width: 500px) {
+  .omni-res-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ===== Responsive Navigation Bar Adjustment (Korean i18n) =====*/
 /* Prevent menu item line breaks */
 .navbar__link {

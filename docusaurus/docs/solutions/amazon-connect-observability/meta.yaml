@@ -1,0 +1,8 @@
+name: "Amazon Connect Observability"
+slug: amazon-connect-observability
+content_type: guide
+description: "Best practices for monitoring Amazon Connect using CloudWatch, Contact Lens, CTRs, EventBridge, and CloudTrail across voice, chat, and digital channels."
+workload_type: [applications, ai-ml]
+signals: [metrics, logs, traces]
+status: active
+last_validated: "2026-08-01"

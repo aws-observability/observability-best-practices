@@ -1,0 +1,372 @@
+---
+title: Introducing Amazon CloudWatch Omni
+sidebar_label: CloudWatch Omni
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import OmniPillars from '@site/src/components/OmniPillars';
+
+# Introducing Amazon CloudWatch Omni
+
+## Overview
+
+<figure className="omni-hero">
+  <div className="omni-hero-frame">
+    <img
+      src={require('@site/docs/images/cw-omni-guide/omni-console.png').default}
+      alt="The Amazon CloudWatch Omni console showing unified observability across AI agents, applications, and infrastructure"
+    />
+  </div>
+  <figcaption className="omni-hero-caption">
+    The CloudWatch Omni experience — AI agents, applications, and infrastructure in one off-console view.
+  </figcaption>
+</figure>
+
+[Amazon CloudWatch Omni](https://aws.amazon.com/cloudwatch/omni/) is the next generation of [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/): a re-imagined observability experience that is AI-powered, built on open standards, and delivered outside the AWS Console. Purpose-built for the AI era, CloudWatch Omni unifies monitoring of AI agents, applications, and infrastructure in a single solution.
+
+Omni is delivered both as a standalone web UI for operators and as native IDE extensions for developers, so agent traces show up the moment code runs locally. It is built on [OpenTelemetry](https://opentelemetry.io/): the telemetry you already send to CloudWatch appears in Omni with nothing to reconfigure, and any other workload you instrument with OpenTelemetry sends its telemetry to an OpenTelemetry Protocol (OTLP) endpoint.
+
+Because Omni sits on the CloudWatch unified data store, it connects agent behavior to application health to infrastructure — so you can find the real root cause, whether it is the agent's reasoning, a stale knowledge base, or a downstream latency spike.
+
+## When to use this
+
+<p className="omni-usecase-hint">Select a scenario to see how CloudWatch Omni fits.</p>
+
+<div className="omni-usecase-grid">
+
+<details className="omni-usecase">
+<summary>You need to know why your AI agent did something, not just whether it is running.</summary>
+<p className="omni-usecase-answer">Omni brings eval-driven observability to agents — observe behavior, evaluate quality continuously, and validate fixes before they ship, across Strands, CrewAI, LangGraph, the OpenAI Agents SDK, and the Vercel AI SDK.</p>
+</details>
+
+<details className="omni-usecase">
+<summary>You want one place to observe AI agents, applications, and infrastructure.</summary>
+<p className="omni-usecase-answer">Omni unifies all three in a single experience built on the CloudWatch unified data store, so you can move from agent behavior to application health to infrastructure without switching tools.</p>
+</details>
+
+<details className="omni-usecase">
+<summary>You already send telemetry to CloudWatch and want an AI-first experience on top of it.</summary>
+<p className="omni-usecase-answer">The telemetry you already send to CloudWatch appears in Omni with nothing to reconfigure, and every investigation starts from a plain-language question rather than a dashboard you built and maintained.</p>
+</details>
+
+<details className="omni-usecase">
+<summary>You instrument workloads with OpenTelemetry and want a vendor-neutral ingestion path.</summary>
+<p className="omni-usecase-answer">Omni is built on OpenTelemetry. Any workload you instrument sends its telemetry to an OpenTelemetry Protocol (OTLP) endpoint — no proprietary agent required.</p>
+</details>
+
+<details className="omni-usecase">
+<summary>You need to correlate signals across multiple accounts, regions, and clouds.</summary>
+<p className="omni-usecase-answer">Omni ingests agent and application telemetry from multiple AWS accounts and regions, and from multi-cloud sources — starting with Azure today.</p>
+</details>
+
+<details className="omni-usecase">
+<summary>Your developers want observability inside the IDE, alongside a web experience for operators.</summary>
+<p className="omni-usecase-answer">Operators get an off-console web experience; developers get native IDE extensions for VS Code, Kiro, and Cursor, so agent traces show up the moment code runs locally.</p>
+</details>
+
+</div>
+
+## Guidance
+
+Amazon CloudWatch Omni rests on five capabilities. Step through them to see what each delivers, why it matters, and the trade-off if you skip it.
+
+<OmniPillars
+  pillars={[
+    {
+      title: 'Ship agents you can trust',
+      tagline: 'Eval-driven observability, not just uptime',
+      body: (
+        <>
+          Omni observes agent behavior, evaluates quality continuously, and lets you
+          validate fixes before they ship — across Strands, CrewAI, LangGraph, the
+          OpenAI Agents SDK, and the Vercel AI SDK.
+        </>
+      ),
+      why: 'Agents are non-deterministic. "Is it running?" is not the same question as "is it doing the right thing?" Continuous evaluation catches quality regressions that uptime monitoring misses.',
+      tradeoff: 'You find out about a bad agent from your customers rather than from your telemetry.',
+    },
+    {
+      title: 'See applications as your customers do',
+      tagline: 'Spaces organized around journeys, not resources',
+      body: (
+        <>
+          Work in an Omni space organized around your services, user journeys, and
+          business transactions, with auto-discovered topology, fleet dashboards,
+          golden metrics, and native alerting in one place. It ingests telemetry from
+          multiple AWS accounts and regions, and multi-cloud sources — starting with
+          Azure today.
+        </>
+      ),
+      why: 'Organizing around customer-facing journeys keeps investigations focused on impact rather than on individual resources.',
+      tradeoff: 'You spend the first minutes of every incident reconstructing which services belong to which journey.',
+    },
+    {
+      title: 'Correlate across the full stack',
+      tagline: 'Agent behavior → application health → infrastructure',
+      body: (
+        <>
+          Built on the CloudWatch unified data store trusted by millions of customers,
+          Omni connects agent behavior to application health to infrastructure, so a
+          single investigation can move from an agent's reasoning to a stale knowledge
+          base to a downstream latency spike without switching tools.
+        </>
+      ),
+      why: 'Agent problems are rarely isolated to the agent — root cause often lives a layer down.',
+      tradeoff: 'You fix the symptom (the agent) and miss the cause (the dependency).',
+    },
+    {
+      title: 'Start every investigation from a question',
+      tagline: 'AI-first, not dashboard-first',
+      body: (
+        <>
+          Every investigation starts from a plain-language question, not a dashboard
+          you built and maintained. A built-in assistant handles discovery and guided
+          investigation, and the{' '}
+          <a href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-collaborative-ai-powered-observability-for-your-applications/">
+            AWS DevOps Agent
+          </a>{' '}
+          integration correlates data and identifies root cause across agents,
+          applications, and infrastructure.
+        </>
+      ),
+      why: 'Dashboards answer questions you already knew to ask. An AI-first workflow lets you interrogate telemetry you never pre-built a view for.',
+      tradeoff: 'Unknown-unknowns stay invisible until someone thinks to chart them.',
+    },
+    {
+      title: 'Use flexible interfaces',
+      tagline: 'A web experience for operators, IDE extensions for developers',
+      body: (
+        <>
+          Access Omni through an off-console web experience for operators, or through
+          native IDE extensions for VS Code, Kiro, and Cursor for developers, so agent
+          traces show up the moment code runs locally. See the interface breakdown
+          below.
+        </>
+      ),
+      why: 'The person debugging an agent locally and the person triaging a production incident need different surfaces over the same data.',
+      tradeoff: 'With a single interface, one of those two audiences is always working against the grain.',
+    },
+  ]}
+/>
+
+### Choose the interface that fits the role
+
+CloudWatch Omni meets operators and developers where they work.
+
+<Tabs>
+  <TabItem value="operators" label="Operators (Web UI)" default>
+
+Access Omni through an **off-console web experience** built for operators: Omni spaces, application map, services, dashboards, alerts, evaluation dashboards, and guided investigations — all outside the AWS Console.
+
+  </TabItem>
+  <TabItem value="developers" label="Developers (IDE)">
+
+Use native **IDE extensions for VS Code, Kiro, and Cursor**. Agent traces show up the moment code runs locally, so developers can observe and evaluate agent behavior without leaving the editor.
+
+  </TabItem>
+</Tabs>
+
+**Why it matters:** the person debugging an agent locally and the person triaging a production incident need different surfaces over the same data. The trade-off with a single interface: one of those two audiences is always working against the grain.
+
+### Sample applications to get started
+
+Two reference applications are useful for exploring Omni before pointing it at your own workloads.
+
+<div className="omni-showcase">
+
+<div className="omni-app">
+  <div className="omni-app-media">
+    <img src={require('@site/docs/images/cw-omni-guide/pet-adoption-demo.png').default} alt="Pet Adoptions store with the Waggle AI assistant recommending pets" /> 
+  </div>
+  <div className="omni-app-body">
+    <span className="omni-app-eyebrow">Agents and Applications</span>
+    <h4 className="omni-app-title">
+      <a href="https://github.com/aws-samples/one-observability-demo">Pet Adoptions</a>
+    </h4>
+    <p>
+      Part of the <a href="https://catalog.workshops.aws/observability/en-US">AWS One Observability Workshop</a>: a polyglot microservices pet
+      adoption store running across EKS, ECS, and Lambda, fully instrumented with
+      ADOT/OTel SDK.
+    </p>
+    <p>
+      Its Waggle AI assistant is a Strands orchestrator that delegates to four
+      sub-agents, each built on a different framework (LangGraph, CrewAI, LlamaIndex,
+      OpenAI SDK) and a different Bedrock model, and each deployed as its own AgentCore
+      Runtime behind an AgentCore Gateway. Rounded out with AgentCore Memory,
+      Guardrails, and a Knowledge Base, with responses streaming end to end.
+    </p>
+    <a className="omni-app-repo" href="https://github.com/aws-samples/one-observability-demo">
+      View on GitHub
+    </a>
+  </div>
+</div>
+
+<div className="omni-app">
+  <div className="omni-app-media">
+    <img src={require('@site/docs/images/cw-omni-guide/otel-demo.png').default} alt="OpenTelemetry Astronomy Shop demo storefront" />
+  </div>
+  <div className="omni-app-body">
+    <span className="omni-app-eyebrow">Applications</span>
+    <h4 className="omni-app-title">
+      <a href="https://github.com/sunkavar/opentelemetry-demo/tree/otel-cw/eks-cloudwatch">Open Telemetry Astronomy Shop Demo</a>
+    </h4>
+    <p>
+      The upstream <a href="https://opentelemetry.io/docs/demo/">CNCF OpenTelemetry</a> reference app: a telescope e-commerce store built
+      from ~20 microservices across 10+ languages, every one natively instrumented for
+      traces, metrics, and logs.
+    </p>
+    <p>
+      Ships with Jaeger, Prometheus, Grafana, and OpenSearch, plus feature flags that
+      inject realistic failures on demand. Best used to show vendor-neutral
+      instrumentation patterns and how OTel data flows into CloudWatch Omni.
+    </p>
+    <a className="omni-app-repo" href="https://github.com/sunkavar/opentelemetry-demo/tree/otel-cw/eks-cloudwatch">
+      View on GitHub
+    </a>
+  </div>
+</div>
+
+</div>
+
+:::tip
+Start with the **Astronomy Shop** to see how OpenTelemetry data flows into Omni with nothing to reconfigure, then move to **Pet Adoptions** to explore agent-level, eval-driven observability across multiple frameworks.
+:::
+
+## Related
+
+- [GenAI Workload Observability](../genai-observability/) — Bedrock/SageMaker invocation monitoring, agent traces, and token/cost dashboards on CloudWatch
+- [Coding Agents Observability](../coding-agents-observability/) — OTel-based telemetry for Claude Code, Codex, and Copilot developer fleets
+
+### Resources
+
+Curated resources for learning and adopting CloudWatch Omni, grouped by type. This
+list grows over time — new blogs, training, webinars, videos, and demos are added as
+they publish.
+
+{/*
+  ADDING A RESOURCE: copy an <a className="omni-res-card"> block into the right
+  category grid. Fields: icon (emoji), label (short type), title (link text), href.
+  For a link that is not published yet, add className="omni-res-card omni-res-todo"
+  and set href="#" — it renders as a dashed "link pending" card.
+  Add a whole new category by copying an <div className="omni-res-cat"> block.
+*/}
+
+<div className="omni-resources">
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">📣</span>
+    <h4 className="omni-res-cat-title">Blogs &amp; announcements</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/mt/introducing-amazon-cloudwatch-omni-observability-for-the-ai-era/">
+      <span className="omni-res-card-icon">📣</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Announcement blog</span>
+        <span className="omni-res-card-title">Introducing Amazon CloudWatch Omni: Observability for the AI Era</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-collaborative-ai-powered-observability-for-your-applications/">
+      <span className="omni-res-card-icon">📝</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Blog</span>
+        <span className="omni-res-card-title">Collaborative AI-powered observability for your applications</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-ai-powered-observability-for-generative-ai-and-agentic-workloads/">
+      <span className="omni-res-card-icon">📝</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Blog</span>
+        <span className="omni-res-card-title">AI-powered observability for generative AI and agentic workloads</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-cloudwatch-omni-ai/">
+      <span className="omni-res-card-icon">🆕</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">What's New</span>
+        <span className="omni-res-card-title">CloudWatch Omni: AI-first observability for agents and applications</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🌐</span>
+    <h4 className="omni-res-cat-title">Product &amp; pricing</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws.amazon.com/cloudwatch/omni/">
+      <span className="omni-res-card-icon">🌐</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Product page</span>
+        <span className="omni-res-card-title">Amazon CloudWatch Omni</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/cloudwatch/omni/pricing/">
+      <span className="omni-res-card-icon">💰</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Pricing</span>
+        <span className="omni-res-card-title">CloudWatch Omni pricing</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">📖</span>
+    <h4 className="omni-res-cat-title">Getting started &amp; documentation</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-omni.html">
+      <span className="omni-res-card-icon">📖</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">User guide</span>
+        <span className="omni-res-card-title">What is CloudWatch Omni</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni.html">
+      <span className="omni-res-card-icon">⚙️</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Setup guide</span>
+        <span className="omni-res-card-title">Set up Omni</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🎓</span>
+    <h4 className="omni-res-cat-title">Training</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://skillbuilder.aws/learn/NZDASJ5FBZ">
+      <span className="omni-res-card-icon">🎓</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Skill Builder course</span>
+        <span className="omni-res-card-title">CloudWatch Omni foundational course</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">▶️</span>
+    <h4 className="omni-res-cat-title">Interactive demos</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws-cloudops.storylane.io/hub/cw-omni">
+      <span className="omni-res-card-icon">▶️</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Interactive demos</span>
+        <span className="omni-res-card-title">Omni clickthrough demos</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+</div>

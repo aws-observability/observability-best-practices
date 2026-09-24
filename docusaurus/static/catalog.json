@@ -1,7 +1,28 @@
 {
-  "generated_at": "2026-09-22T17:26:48.593853+00:00",
+  "generated_at": "2026-09-23T20:40:41.849696+00:00",
   "schema_version": "1.0",
   "solutions": [
+    {
+      "name": "Introducing Amazon CloudWatch Omni",
+      "slug": "cw-omni-guide",
+      "content_type": "guide",
+      "description": "AI-powered, OpenTelemetry-based observability for AI agents, applications, and infrastructure, delivered outside the AWS Console as a web UI and IDE extension.",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://aws.amazon.com/cloudwatch/omni/",
+      "last_validated": "2026-09-23"
+    },
     {
       "name": "Alarms and Alerting",
       "slug": "cloudwatch-alarms-alerting",

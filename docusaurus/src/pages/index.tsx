@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Layout from '@theme/Layout';
 import Link from '@docusaurus/Link';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import styles from './solutions.module.css';
 
 interface Solution {
@@ -88,6 +89,59 @@ const SEARCH_SYNONYMS: Record<string, string> = {
   'ai-ml': 'ai ml machine learning genai llm model models agents inference',
 };
 
+const UI_STRINGS: Record<string, Record<string, string>> = {
+  en: {
+    pageTitle: 'Solutions Catalog',
+    pageDescription: 'Discover pre-built AWS Observability solutions',
+    headerTitle: 'Solutions Catalog',
+    headerSubtitle: 'Pre-built observability solutions for common AWS workloads.',
+    searchPlaceholder: 'Search anything: "kubernetes", "grafana", "tracing", "kafka"...',
+    searchLabel: 'Search solutions',
+    filterLabel: 'Filter by workload',
+    clearButton: '✕ Clear',
+    loading: 'Loading solutions...',
+    errorPrefix: 'Error loading solutions:',
+    noResults: 'No solutions match',
+    noResultsHint: 'Try fewer words, or clear the workload filter.',
+    needsRefresh: 'Needs refresh',
+    needsRefreshTitle: 'Recommendation is behind current AWS guidance; rework pending',
+    guide: 'Guide',
+    solution: 'Solution',
+    updated: 'Updated',
+    previous: '← Previous',
+    next: 'Next →',
+    page: 'Page',
+    of: 'of',
+    showing: 'Showing',
+    solutions: 'solutions',
+  },
+  ja: {
+    pageTitle: 'ソリューションカタログ',
+    pageDescription: 'AWS オブザーバビリティソリューションを見つける',
+    headerTitle: 'ソリューションカタログ',
+    headerSubtitle: '一般的な AWS ワークロード向けのオブザーバビリティソリューション',
+    searchPlaceholder: '検索: "kubernetes", "grafana", "tracing", "kafka"...',
+    searchLabel: 'ソリューションを検索',
+    filterLabel: 'ワークロードでフィルター',
+    clearButton: '✕ クリア',
+    loading: 'ソリューションを読み込み中...',
+    errorPrefix: 'ソリューションの読み込みエラー：',
+    noResults: '一致するソリューションがありません',
+    noResultsHint: 'キーワードを減らすか、ワークロードフィルターをクリアしてください。',
+    needsRefresh: '要更新',
+    needsRefreshTitle: '推奨事項が現在の AWS ガイダンスより古くなっています。更新予定',
+    guide: 'ガイド',
+    solution: 'ソリューション',
+    updated: '更新日',
+    previous: '← 前へ',
+    next: '次へ →',
+    page: 'ページ',
+    of: '/',
+    showing: '表示中',
+    solutions: 'ソリューション',
+  },
+};
+
 /** Everything searchable about a solution, flattened into one lowercase haystack.
  *  All list fields are guarded: guide entries omit compute_platform, backends,
  *  instrumentation, and iac_available. */
@@ -159,13 +213,13 @@ const PAGE_SIZE = 9;
 
 /** Render "2026-07-15" as "Jul 2026". Parsed as UTC to avoid a local-timezone
  *  shift moving the date back a day west of Greenwich. */
-function formatValidated(raw: string): string {
+function formatValidated(raw: string, dateLocale: string): string {
   const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(raw);
   if (!match) return raw;
   const [, year, month, day] = match;
   const dt = new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
   if (Number.isNaN(dt.getTime())) return raw;
-  return dt.toLocaleDateString('en-US', {
+  return dt.toLocaleDateString(dateLocale, {
     month: 'short',
     year: 'numeric',
     timeZone: 'UTC',
@@ -173,7 +227,13 @@ function formatValidated(raw: string): string {
 }
 
 export default function SolutionsPage(): React.ReactElement {
-  const catalogUrl = useBaseUrl('/catalog.json');
+  const {i18n: {currentLocale}} = useDocusaurusContext();
+
+  const catalogFile = currentLocale === 'ja' ? '/catalog.ja.json' : '/catalog.json';
+  const catalogUrl = useBaseUrl(catalogFile);
+
+  const t = UI_STRINGS[currentLocale] || UI_STRINGS.en;
+  const dateLocale = currentLocale === 'ja' ? 'ja-JP' : 'en-US';
 
   const [catalog, setCatalog] = useState<Catalog | null>(null);
   const [loading, setLoading] = useState(true);
@@ -254,9 +314,9 @@ export default function SolutionsPage(): React.ReactElement {
 
   if (loading) {
     return (
-      <Layout title="Solutions Catalog" description="AWS Observability Solutions Catalog">
+      <Layout title={t.pageTitle} description={t.pageDescription}>
         <div className={styles.container}>
-          <p>Loading solutions...</p>
+          <p>{t.loading}</p>
         </div>
       </Layout>
     );
@@ -264,9 +324,9 @@ export default function SolutionsPage(): React.ReactElement {
 
   if (error) {
     return (
-      <Layout title="Solutions Catalog" description="AWS Observability Solutions Catalog">
+      <Layout title={t.pageTitle} description={t.pageDescription}>
         <div className={styles.container}>
-          <p>Error loading solutions: {error}</p>
+          <p>{t.errorPrefix} {error}</p>
         </div>
       </Layout>
     );
@@ -291,12 +351,12 @@ export default function SolutionsPage(): React.ReactElement {
   );
 
   return (
-    <Layout title="Solutions Catalog" description="Discover pre-built AWS Observability solutions">
+    <Layout title={t.pageTitle} description={t.pageDescription}>
       <main className={styles.container}>
         <header className={styles.header}>
-          <h1 className={styles.title}>Solutions Catalog</h1>
+          <h1 className={styles.title}>{t.headerTitle}</h1>
           <p className={styles.subtitle}>
-            Pre-built observability solutions for common AWS workloads.
+            {t.headerSubtitle}
           </p>
         </header>
 
@@ -306,17 +366,17 @@ export default function SolutionsPage(): React.ReactElement {
           <input
             type="search"
             className={styles.searchInput}
-            placeholder="Search anything: “kubernetes”, “grafana”, “tracing”, “kafka”..."
+            placeholder={t.searchPlaceholder}
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
-            aria-label="Search solutions"
+            aria-label={t.searchLabel}
             autoFocus
           />
         </div>
 
         {/* One filter question: what are you running? */}
         <div className={styles.filters}>
-          <div className={styles.filterGroup} role="group" aria-label="Filter by workload">
+          <div className={styles.filterGroup} role="group" aria-label={t.filterLabel}>
             {visibleWorkloads.map((item) => {
               const isActive = workloads.includes(item.id);
               return (
@@ -337,7 +397,7 @@ export default function SolutionsPage(): React.ReactElement {
                 onClick={() => { setWorkloads([]); setSearchText(''); }}
                 type="button"
               >
-                ✕ Clear
+                {t.clearButton}
               </button>
             )}
           </div>
@@ -345,15 +405,15 @@ export default function SolutionsPage(): React.ReactElement {
 
         <p className={styles.resultsCount}>
           {filteredSolutions.length > PAGE_SIZE
-            ? `Showing ${currentPage * PAGE_SIZE + 1}–${currentPage * PAGE_SIZE + pagedSolutions.length} of ${filteredSolutions.length} solutions`
-            : `Showing ${filteredSolutions.length} of ${totalCount} solutions`}
+            ? `${t.showing} ${currentPage * PAGE_SIZE + 1}–${currentPage * PAGE_SIZE + pagedSolutions.length} ${t.of} ${filteredSolutions.length} ${t.solutions}`
+            : `${t.showing} ${filteredSolutions.length} ${t.of} ${totalCount} ${t.solutions}`}
         </p>
 
         {filteredSolutions.length === 0 ? (
           <div className={styles.emptyState}>
             <div className={styles.emptyStateIcon}>🔍</div>
-            <p className={styles.emptyStateText}>No solutions match</p>
-            <p className={styles.emptyStateHint}>Try fewer words, or clear the workload filter.</p>
+            <p className={styles.emptyStateText}>{t.noResults}</p>
+            <p className={styles.emptyStateHint}>{t.noResultsHint}</p>
           </div>
         ) : (
           <>
@@ -374,13 +434,13 @@ export default function SolutionsPage(): React.ReactElement {
                         published because the topics matter and the URLs are
                         live; the badge is what stops them reading as current. */}
                     {sol.status === 'needs-refresh' && (
-                      <span className={styles.needsRefresh} title="Recommendation is behind current AWS guidance; rework pending">
-                        Needs refresh
+                      <span className={styles.needsRefresh} title={t.needsRefreshTitle}>
+                        {t.needsRefresh}
                       </span>
                     )}
                     {sol.content_type && (
                       <span className={`${styles.typeTag} ${sol.content_type === 'guide' ? styles.typeGuide : styles.typeSolution}`}>
-                        {sol.content_type === 'guide' ? 'Guide' : 'Solution'}
+                        {sol.content_type === 'guide' ? t.guide : t.solution}
                       </span>
                     )}
                   </div>
@@ -413,7 +473,7 @@ export default function SolutionsPage(): React.ReactElement {
                       re-test date, and day precision implies more than it means. */}
                   {sol.last_validated && (
                     <span className={styles.lastUpdated}>
-                      Updated {formatValidated(sol.last_validated)}
+                      {t.updated} {formatValidated(sol.last_validated, dateLocale)}
                     </span>
                   )}
                 </div>
@@ -429,10 +489,10 @@ export default function SolutionsPage(): React.ReactElement {
                   disabled={currentPage === 0}
                   type="button"
                 >
-                  ← Previous
+                  {t.previous}
                 </button>
                 <span className={styles.pageIndicator}>
-                  Page {currentPage + 1} of {pageCount}
+                  {t.page} {currentPage + 1} {t.of} {pageCount}
                 </span>
                 <button
                   className={styles.pageButton}
@@ -440,7 +500,7 @@ export default function SolutionsPage(): React.ReactElement {
                   disabled={currentPage >= pageCount - 1}
                   type="button"
                 >
-                  Next →
+                  {t.next}
                 </button>
               </nav>
             )}

@@ -1,39 +1,9 @@
 {
   "title": {
-    "message": "AWS Observability Best Practices"
+    "message": "AWS オブザーバビリティベストプラクティス"
   },
-  "item.label.Home": {
-    "message": "ホーム"
-  },
-  "item.label.Guides": {
-    "message": "ガイド"
-  },
-  "item.label.Signals": {
-    "message": "シグナル"
-  },
-  "item.label.Tools": {
-    "message": "ツール"
-  },
-  "item.label.APM": {
-    "message": "APM"
-  },
-  "item.label.Recipes": {
-    "message": "レシピ"
-  },
-  "item.label.AI": {
-    "message": "AI"
-  },
-  "item.label.Patterns": {
-    "message": "パターン"
-  },
-  "item.label.Persona": {
-    "message": "ペルソナ"
-  },
-  "item.label.Resources": {
-    "message": "リソース"
-  },
-  "item.label.Contributors": {
-    "message": "コントリビューター"
+  "item.label.Events": {
+    "message": "イベント"
   },
   "item.label.GitHub": {
     "message": "GitHub"

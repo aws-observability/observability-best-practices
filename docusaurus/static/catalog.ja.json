@@ -1,0 +1,1481 @@
+{
+  "generated_at": "2026-10-14T12:00:15.508795+00:00",
+  "schema_version": "1.0",
+  "solutions": [
+    {
+      "name": "Amazon CloudWatch Omni の紹介",
+      "slug": "cw-omni-guide",
+      "content_type": "guide",
+      "description": "AIを活用したOpenTelemetryベースのオブザーバビリティ。AIエージェント、アプリケーション、インフラストラクチャを対象に、AWSコンソール外のWeb UIとIDE拡張機能として提供。",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://aws.amazon.com/cloudwatch/omni/",
+      "last_validated": "2026-09-23"
+    },
+    {
+      "name": "アラームとアラート通知",
+      "slug": "cloudwatch-alarms-alerting",
+      "content_type": "guide",
+      "description": "CloudWatchの静的/異常検知しきい値、複合アラーム、AMP上のPrometheus Alertmanagerを使用した、実用的なアラーム設計とアラートルーティング。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-21",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AlarmThatSendsEmail.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "AWSサービス別推奨アラーム",
+      "slug": "recommended-alarms-by-service",
+      "content_type": "guide",
+      "description": "30以上のAWSサービスにおけるインシデント検知のための推奨CloudWatchアラーム：EC2、RDS、Lambda、DynamoDB、EKSなどの主要メトリクス、統計、しきい値。",
+      "workload_type": [
+        "operations"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-21",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Best_Practice_Recommended_Alarms_AWS_Services.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ],
+      "search_keywords": [
+        "recommended alarms",
+        "alarm guide",
+        "alarms guide",
+        "baseline alarms",
+        "alerting",
+        "cloudwatch alarms",
+        "incident detection",
+        "ec2 monitoring",
+        "ecs monitoring",
+        "eks monitoring",
+        "lambda monitoring",
+        "rds monitoring",
+        "aurora",
+        "dynamodb",
+        "dax",
+        "elasticache",
+        "redshift",
+        "dms",
+        "opensearch",
+        "api gateway",
+        "elb",
+        "alb",
+        "nlb",
+        "load balancer",
+        "cloudfront",
+        "route 53",
+        "direct connect",
+        "transit gateway",
+        "vpn",
+        "network firewall",
+        "sns",
+        "sqs",
+        "eventbridge",
+        "step functions",
+        "kinesis",
+        "msk",
+        "kafka",
+        "amazon mq",
+        "activemq",
+        "rabbitmq",
+        "s3",
+        "efs",
+        "fsx",
+        "sagemaker",
+        "lex",
+        "amazon connect",
+        "medialive",
+        "mediapackage",
+        "mediaconvert",
+        "elemental",
+        "outposts",
+        "iot core"
+      ]
+    },
+    {
+      "name": "EKS Javaアプリケーションモニタリング",
+      "slug": "eks-application-signals",
+      "content_type": "solution",
+      "description": "CloudWatch Application SignalsとOpenTelemetryを使用した、EKS上のJava/JVMワークロードのアプリケーションレベルモニタリング",
+      "workload_type": [
+        "compute",
+        "applications"
+      ],
+      "compute_platform": [
+        "eks"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces",
+        "logs"
+      ],
+      "iac_available": [
+        "cdk",
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "otel",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
+      "last_validated": "2026-08-18"
+    },
+    {
+      "name": "Amazon MSKモニタリング",
+      "slug": "msk-monitoring",
+      "content_type": "solution",
+      "description": "Prometheusオープンモニタリング、AWSマネージドコレクター、CloudWatchを使用したAmazon MSK（Apache Kafka向けマネージドストリーミング）クラスターの監視",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "prometheus",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/msk/latest/developerguide/monitoring.html",
+      "last_validated": "2026-08-10"
+    },
+    {
+      "name": "Amazon OpenSearch Serviceモニタリング",
+      "slug": "opensearch-monitoring",
+      "content_type": "solution",
+      "description": "AWSマネージドコレクターによるPrometheusメトリクスとCloudWatchを使用したAmazon OpenSearch Serviceドメインの監視",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 20,
+      "instrumentation": "prometheus",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/opensearch-service/latest/developerguide/monitoring.html",
+      "last_validated": "2026-08-10"
+    },
+    {
+      "name": "EKSインフラストラクチャモニタリング",
+      "slug": "eks-infrastructure",
+      "content_type": "solution",
+      "description": "Prometheus、Grafana、AWSマネージドサービスを使用したAmazon EKSクラスターのエンドツーエンドのインフラストラクチャ監視",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "eks"
+      ],
+      "backends": [
+        "amp",
+        "amg",
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/eks/latest/userguide/monitoring.html",
+      "last_validated": "2026-08-10",
+      "related_events": []
+    },
+    {
+      "name": "ネットワークオブザーバビリティ",
+      "slug": "network-observability",
+      "content_type": "solution",
+      "description": "VPCフローログ、Network Flow Monitor、Internet Monitor、Synthetic MonitorによるエンドツーエンドのAWSネットワーク可視化",
+      "workload_type": [
+        "network"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
+      "last_validated": "2026-08-02"
+    },
+    {
+      "name": "Amazon Connectオブザーバビリティ",
+      "slug": "amazon-connect-observability",
+      "content_type": "guide",
+      "description": "CloudWatch、Contact Lens、CTR、EventBridge、CloudTrailを使用した、音声・チャット・デジタルチャネルにおけるAmazon Connectモニタリングのベストプラクティス。",
+      "workload_type": [
+        "applications",
+        "ai-ml"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-08-01"
+    },
+    {
+      "name": "オブザーバビリティコスト管理",
+      "slug": "observability-cost-management",
+      "content_type": "solution",
+      "description": "CURダッシュボードによるCloudWatch、AMP、AMG、X-Rayの費用可視化、CloudWatchコスト削減、KubecostによるEKS GPUコスト配分。",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "eks",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "last_validated": "2026-07-21",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_billing.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "CloudWatch Logs分析",
+      "slug": "cloudwatch-logs-analysis",
+      "content_type": "guide",
+      "description": "構造化ログ、ログレベル、フィルタリング、Logs Insightsクエリパターン、Contributor Insights、データ保護ポリシーに関するガイダンス。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html",
+      "last_validated": "2026-07-10",
+      "related_events": [
+        "logs",
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "CloudWatchによるWAFセキュリティ分析",
+      "slug": "waf-security-analysis",
+      "content_type": "guide",
+      "description": "CloudWatch Logs Insights、メトリクスフィルター、Contributor Insightsを使用したAWS WAFログの分析による脅威検知と対応。",
+      "workload_type": [
+        "security",
+        "network"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "status": "active",
+      "last_validated": "2026-07-10",
+      "docs_link": "https://docs.aws.amazon.com/waf/latest/developerguide/logging.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "セキュリティとコンプライアンスのためのS3アクセスログ",
+      "slug": "s3-access-logs-security",
+      "content_type": "guide",
+      "description": "S3サーバーアクセスログとCloudWatchを使用したセキュリティモニタリング、コンプライアンス証跡、運用監査。",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-07-06",
+      "docs_link": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "コーディングエージェントのオブザーバビリティ",
+      "slug": "coding-agents-observability",
+      "content_type": "solution",
+      "description": "Claude Code、OpenAI Codex、GitHub Copilotフリートに対するOTelベースのテレメトリー — トークン使用量、コスト追跡、チーム帰属",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "",
+      "last_validated": "2026-06-22"
+    },
+    {
+      "name": "AIワークロードの監査とモニタリング",
+      "slug": "ai-workload-audit-monitoring",
+      "content_type": "guide",
+      "description": "CloudTrail、Bedrockモデル呼び出しログ、ADOTテレメトリー相関を使用したAIワークロードの監査・コンプライアンスモニタリング。",
+      "workload_type": [
+        "ai-ml",
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-05-27",
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/bedrock/latest/userguide/model-invocation-logging.html",
+      "related_events": [
+        "ai-ml",
+        "security"
+      ]
+    },
+    {
+      "name": "AWS Configコンプライアンスモニタリング",
+      "slug": "aws-config-compliance",
+      "content_type": "solution",
+      "description": "AWS Configによるリソース追跡、マネージド/カスタムルールによるコンプライアンス評価、適合パック、修復、コスト最適化の構成。",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 35,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/config/latest/developerguide/WhatIsConfig.html",
+      "last_validated": "2026-05-27",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "AWS Organizationsとリージョン",
+      "slug": "aws-organizations-and-regions",
+      "content_type": "guide",
+      "description": "アカウント移行の準備状況、新しいAWSリージョンの有効化、ランディングゾーンの拡張、アプリケーション運用のためのタグ付け戦略",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html",
+      "last_validated": "2026-05-27",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrailコスト最適化",
+      "slug": "cloudtrail-cost-optimization",
+      "content_type": "guide",
+      "description": "AWS CloudTrailコストの見積もりと管理：データイベントコスト見積もり、CloudWatch Logs取り込み料金、ログ変換、CloudTrail Lake。",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-trail-pricing.html",
+      "last_validated": "2026-05-27",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrailモニタリング",
+      "slug": "cloudtrail-monitoring",
+      "content_type": "solution",
+      "description": "高度なイベントセレクターを使用した、管理イベント、データイベント、ネットワークアクティビティイベントのAWS CloudTrail証跡の構成と運用。",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-user-guide.html",
+      "last_validated": "2026-05-27",
+      "related_events": []
+    },
+    {
+      "name": "CloudTrailセキュリティフォレンジクス",
+      "slug": "cloudtrail-security-forensics",
+      "content_type": "guide",
+      "description": "CloudTrailを使用したセキュリティインシデント対応とフォレンジック分析：重要イベントフィールド、調査パターン、セキュリティダッシュボード。",
+      "workload_type": [
+        "security",
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference.html",
+      "last_validated": "2026-05-27",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "Control Towerランディングゾーン",
+      "slug": "control-tower-landing-zone",
+      "content_type": "guide",
+      "description": "AWS Control Towerランディングゾーンのライフサイクルガイダンス：計画、カスタマイズ、運用、既存組織での有効化、4.0へのアップグレード。",
+      "workload_type": [
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/controltower/latest/userguide/what-is-control-tower.html",
+      "last_validated": "2026-05-27"
+    },
+    {
+      "name": "生成AIワークロードのオブザーバビリティ",
+      "slug": "genai-observability",
+      "content_type": "solution",
+      "description": "BedrockとSageMakerのモデル呼び出しモニタリング。トークン/コスト追跡、エージェントトレース、LLMパフォーマンスダッシュボード",
+      "workload_type": [
+        "ai-ml"
+      ],
+      "compute_platform": [
+        "sagemaker"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 45,
+      "instrumentation": "otel",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring.html",
+      "last_validated": "2026-05-27"
+    },
+    {
+      "name": "ジャストインタイムノードアクセス",
+      "slug": "just-in-time-node-access",
+      "content_type": "solution",
+      "description": "Cedarポリシー、EventBridge統合、Infrastructure-as-Code対応による、承認ベースのマネージドノードへの一時アクセス",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "iac_available": [
+        "cloudformation"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-just-in-time-node-access.html",
+      "last_validated": "2026-05-27",
+      "related_events": []
+    },
+    {
+      "name": "パッチおよびノード管理",
+      "slug": "patch-and-node-management",
+      "content_type": "solution",
+      "description": "AWS Systems Managerによるフリート管理：パッチベースライン、タグベースパッチ適用、SSM Agentライフサイクル、セッション管理、自動化、コンプライアンスレポート",
+      "workload_type": [
+        "operations"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 40,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/systems-manager/latest/userguide/what-is-systems-manager.html",
+      "last_validated": "2026-05-27",
+      "related_events": []
+    },
+    {
+      "name": "CloudWatchダッシュボード",
+      "slug": "cloudwatch-dashboards",
+      "content_type": "guide",
+      "description": "MTTR短縮とデータ駆動型意思決定のための、適切なレイアウト、ウィジェット、ストーリーを備えた効果的なCloudWatchダッシュボード設計。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-05-20",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Dashboards.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "CloudWatchメトリクスとEMF",
+      "slug": "cloudwatch-metrics",
+      "content_type": "guide",
+      "description": "ディメンション、カーディナリティ、高解像度メトリクス、ベンダー提供/カスタムメトリクス、ログ由来メトリクスのEmbedded Metric Formatに関するガイダンス。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "status": "active",
+      "last_validated": "2026-05-20",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/working_with_metrics.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "分散トレーシング",
+      "slug": "distributed-tracing",
+      "content_type": "guide",
+      "description": "AWS X-RayとOpenTelemetryによる分散トレーシングのガイダンス。サンプリング戦略とトレーシングエージェントの選択を含む。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "xray",
+        "cloudwatch"
+      ],
+      "signals": [
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html",
+      "last_validated": "2026-05-20",
+      "related_events": [
+        "apm"
+      ]
+    },
+    {
+      "name": "フロントエンドとSLOモニタリング",
+      "slug": "frontend-slo-monitoring",
+      "content_type": "solution",
+      "description": "CloudWatch RUM、Syntheticsカナリア、Application Signals SLOによるフロントエンドパフォーマンスと信頼性のデジタルエクスペリエンスモニタリング。",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 25,
+      "last_validated": "2026-05-20",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html",
+      "related_events": [
+        "apm",
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "オブザーバビリティ入門",
+      "slug": "getting-started-with-observability",
+      "content_type": "guide",
+      "description": "CloudWatchオブザーバビリティのオンボーディングパス：アカウント設定、統合データストア、エージェントとコレクター、ダッシュボードとアラート。",
+      "workload_type": [
+        "compute"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-05-20",
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html",
+      "related_events": [
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "RDSとAuroraのモニタリング",
+      "slug": "rds-aurora-monitoring",
+      "content_type": "solution",
+      "description": "CloudWatchメトリクス、Performance Insights、Database Insights、Enhanced Monitoringを使用したAmazon RDSおよびAuroraデータベースの監視",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "custom",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_Monitoring.html",
+      "last_validated": "2026-05-20"
+    },
+    {
+      "name": "CloudWatchによるSecurity Lakeクエリ",
+      "slug": "security-lake-cloudwatch",
+      "content_type": "guide",
+      "description": "Athenaクロスカタログクエリを使用した、Security Lake履歴データとCloudWatch統合データストアログの横断クエリ。",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-04-24",
+      "docs_link": "https://docs.aws.amazon.com/security-lake/latest/userguide/what-is-security-lake.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": "CloudWatchエージェント設定",
+      "slug": "cloudwatch-agent-configuration",
+      "content_type": "guide",
+      "description": "CloudWatchエージェントの設定、Systems Managerによるデプロイ、エージェントとADOTの使い分けに関するガイダンス。",
+      "workload_type": [
+        "compute"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "last_validated": "2026-02-20",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "オブザーバビリティ導入ガイド",
+      "slug": "observability-adoption-guide",
+      "content_type": "guide",
+      "description": "成長する組織のための段階的導入フレームワーク。リアクティブ、基盤、統合オブザーバビリティと避けるべきアンチパターンを網羅。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "",
+      "last_validated": "2026-02-12"
+    },
+    {
+      "name": "CloudWatch Logsセキュリティベストプラクティス",
+      "slug": "cloudwatch-logs-security",
+      "content_type": "guide",
+      "description": "IAMポリシー、削除保護、暗号化、データ保護、監査によるCloudWatch Logsセキュリティのベストプラクティス。",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-01-12",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/security.html",
+      "related_events": [
+        "security"
+      ]
+    },
+    {
+      "name": ".NETアプリケーションモニタリング",
+      "slug": "dotnet-application-monitoring",
+      "content_type": "solution",
+      "description": "OpenTelemetryとCloudWatchネイティブの計装パスを使用した.NETアプリケーションのエンドツーエンドオブザーバビリティ",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 30,
+      "instrumentation": "otel",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html",
+      "last_validated": "2025-05-29"
+    },
+    {
+      "name": "クロスアカウントオブザーバビリティ",
+      "slug": "cross-account-observability",
+      "content_type": "solution",
+      "description": "CloudWatchクロスアカウントオブザーバビリティとAMPクロスアカウントスクレイピングによる、AWSアカウント間のメトリクス、ログ、トレースの一元管理。",
+      "workload_type": [
+        "compute",
+        "operations"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 40,
+      "last_validated": "2025-04-23",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Unified-Cross-Account.html",
+      "related_events": [
+        "cloudwatch",
+        "metrics"
+      ]
+    },
+    {
+      "name": "Amazon Managed Grafanaセットアップ",
+      "slug": "managed-grafana-setup",
+      "content_type": "solution",
+      "description": "Athena、Redshiftデータソース、Google WorkspaceによるSAML認証、Terraform自動化を使用したAmazon Managed Grafanaの構成",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [],
+      "backends": [
+        "amg",
+        "amp",
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [
+        "terraform"
+      ],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/grafana/latest/userguide/what-is-Amazon-Managed-Service-Grafana.html",
+      "last_validated": "2025-04-01",
+      "related_events": []
+    },
+    {
+      "name": "オブザーバビリティ戦略",
+      "slug": "observability-strategy",
+      "content_type": "guide",
+      "description": "ITリーダー向けの戦略ガイダンス。オブザーバビリティとビジネス成果の連携、ROIフレーミング、KPI選定、パーセンタイルによるSLA測定。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/whitepapers/latest/aws-caf-operations-perspective/observability.html",
+      "last_validated": "2025-03-31"
+    },
+    {
+      "name": "ADOTコレクターのスケーリング",
+      "slug": "adot-at-scale",
+      "content_type": "solution",
+      "description": "AWS Distro for OpenTelemetry Collectorの本番デプロイ：モード、スケーリング、リソースサイジング、パイプライン設計、Java Spring計装",
+      "workload_type": [
+        "compute",
+        "applications"
+      ],
+      "compute_platform": [
+        "eks",
+        "ecs",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "instrumentation": "adot",
+      "status": "active",
+      "time_to_value_minutes": 45,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://aws-otel.github.io/docs/getting-started/collector",
+      "last_validated": "2024-09-30",
+      "related_events": []
+    },
+    {
+      "name": "Amazon WorkSpacesモニタリング",
+      "slug": "workspaces-monitoring",
+      "content_type": "solution",
+      "description": "Prometheusエージェント、Amazon Managed Service for Prometheus、Amazon Managed Grafanaを使用したAmazon WorkSpaces仮想デスクトップの監視。",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "prometheus",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "last_validated": "2024-09-30",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/workspaces/latest/adminguide/amazon-workspaces-monitoring.html",
+      "related_events": [
+        "metrics"
+      ]
+    },
+    {
+      "name": "ビッグデータとSparkオブザーバビリティ",
+      "slug": "big-data-observability",
+      "content_type": "solution",
+      "description": "CloudWatchによるログとメトリクス、PrometheusとGrafanaによるクラスターレベルダッシュボードを使用したAmazon EMR上のSparkワークロードの監視。",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [
+        "eks",
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "prometheus",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-manage-view-web-log-files.html",
+      "last_validated": "2024-09-30",
+      "related_events": []
+    },
+    {
+      "name": "Databricksモニタリング",
+      "slug": "databricks-monitoring",
+      "content_type": "solution",
+      "description": "CloudWatchのログとメトリクスを使用したAWS上のDatabricksクラスター監視。initスクリプトによるコレクターインストールと構造化ログ。",
+      "workload_type": [
+        "data-streaming"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 30,
+      "iac_available": [],
+      "partner_integrations": [
+        "Databricks"
+      ],
+      "accelerator_link": "",
+      "docs_link": "",
+      "last_validated": "2024-09-30",
+      "related_events": []
+    },
+    {
+      "name": "ECSモニタリング",
+      "slug": "ecs-monitoring",
+      "content_type": "solution",
+      "description": "Container InsightsとADOTを使用し、AMP/AMGバックエンドによるEC2およびFargate上のAmazon ECSワークロードの監視",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ecs",
+        "fargate"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 25,
+      "instrumentation": "adot",
+      "status": "active",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cloudwatch-container-insights.html",
+      "last_validated": "2024-09-30"
+    },
+    {
+      "name": "ハイブリッドおよびマルチクラウドモニタリング",
+      "slug": "hybrid-monitoring",
+      "content_type": "solution",
+      "description": "CloudWatchエージェント、AMPリモートライト、Amazon Managed Grafanaを統合可視化レイヤーとして使用した、AWSとオンプレミスにまたがるワークロードの監視。",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch",
+        "amp",
+        "amg"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "instrumentation": "cwagent",
+      "status": "active",
+      "time_to_value_minutes": 40,
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent-on-Premise.html",
+      "last_validated": "2024-09-30",
+      "related_events": []
+    },
+    {
+      "name": "オブザーバビリティ成熟度モデル",
+      "slug": "observability-maturity-model",
+      "content_type": "guide",
+      "description": "4つの成熟度レベルにわたり、組織のオブザーバビリティ能力を評価・向上させるための段階的アセスメントモデル。",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "",
+      "last_validated": "2024-09-30"
+    },
+    {
+      "name": "Rustカスタムメトリクス",
+      "slug": "rust-custom-metrics",
+      "content_type": "solution",
+      "description": "AWS SDK for RustのPutMetricDataとEmbedded Metric Formatを使用した、RustアプリケーションからのカスタムCloudWatchメトリクス発行。",
+      "workload_type": [
+        "applications"
+      ],
+      "compute_platform": [
+        "ec2",
+        "lambda"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics"
+      ],
+      "instrumentation": "custom",
+      "status": "active",
+      "time_to_value_minutes": 20,
+      "last_validated": "2024-09-30",
+      "iac_available": [],
+      "partner_integrations": [],
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/publishingMetrics.html",
+      "related_events": [
+        "metrics"
+      ]
+    },
+    {
+      "name": "EC2 NGINXモニタリング",
+      "slug": "ec2-nginx",
+      "content_type": "solution",
+      "description": "CloudWatch AgentのStatsDとカスタムメトリクスを使用したEC2上のNGINX Webサーバーの監視",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 15,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html",
+      "last_validated": "2026-08-18"
+    },
+    {
+      "name": "EC2上のKafkaモニタリング",
+      "slug": "kafka-ec2",
+      "content_type": "solution",
+      "description": "CloudWatch Agent JMXプラグインによるブローカーおよびコンシューマーメトリクスを使用した、EC2上の自己管理型Apache Kafkaクラスターの監視",
+      "workload_type": [
+        "data-streaming",
+        "compute"
+      ],
+      "compute_platform": [
+        "ec2"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs"
+      ],
+      "iac_available": [],
+      "partner_integrations": [],
+      "time_to_value_minutes": 25,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-jmx.html",
+      "last_validated": "2026-08-18"
+    },
+    {
+      "name": "Lambdaモニタリング",
+      "slug": "lambda-monitoring",
+      "content_type": "solution",
+      "description": "CloudWatchネイティブメトリクス、X-Rayトレーシング、Lambda Insightsによる包括的なAWS Lambdaモニタリング",
+      "workload_type": [
+        "compute"
+      ],
+      "compute_platform": [
+        "lambda"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces",
+        "logs"
+      ],
+      "iac_available": [
+        "cdk",
+        "terraform",
+        "cloudformation"
+      ],
+      "partner_integrations": [],
+      "time_to_value_minutes": 10,
+      "instrumentation": "cwagent",
+      "status": "needs-refresh",
+      "accelerator_link": "",
+      "docs_link": "https://docs.aws.amazon.com/lambda/latest/dg/monitoring-functions.html",
+      "last_validated": "2026-08-18"
+    }
+  ],
+  "taxonomy": {
+    "workload_types": [
+      {
+        "id": "ai-ml",
+        "label": "AI/ML",
+        "icon": "\ud83e\udd16"
+      },
+      {
+        "id": "compute",
+        "label": "コンピューティング",
+        "icon": "\ud83d\udce6"
+      },
+      {
+        "id": "applications",
+        "label": "アプリケーション",
+        "icon": "\ud83e\udde9"
+      },
+      {
+        "id": "data-streaming",
+        "label": "データとストリーミング",
+        "icon": "\ud83d\uddc4\ufe0f"
+      },
+      {
+        "id": "security",
+        "label": "セキュリティとコンプライアンス",
+        "icon": "\ud83d\udd12"
+      },
+      {
+        "id": "network",
+        "label": "ネットワーク",
+        "icon": "\ud83c\udf10"
+      },
+      {
+        "id": "operations",
+        "label": "オペレーション",
+        "icon": "\u2699\ufe0f"
+      }
+    ],
+    "content_types": [
+      {
+        "id": "solution",
+        "label": "ソリューション",
+        "description": "ワークロードXの監視方法 — デプロイ可能なステップバイステップガイド"
+      },
+      {
+        "id": "guide",
+        "label": "ガイド",
+        "description": "一般的なアドバイスとガイダンス — ベストプラクティス、意思決定の支援"
+      }
+    ],
+    "compute_platforms": [
+      {
+        "id": "eks",
+        "label": "Amazon EKS"
+      },
+      {
+        "id": "ecs",
+        "label": "Amazon ECS"
+      },
+      {
+        "id": "lambda",
+        "label": "AWS Lambda"
+      },
+      {
+        "id": "ec2",
+        "label": "Amazon EC2"
+      },
+      {
+        "id": "fargate",
+        "label": "AWS Fargate"
+      },
+      {
+        "id": "sagemaker",
+        "label": "Amazon SageMaker"
+      }
+    ],
+    "backends": [
+      {
+        "id": "cloudwatch",
+        "label": "CloudWatch",
+        "color": "#FF9900"
+      },
+      {
+        "id": "amp",
+        "label": "Amazon Managed Prometheus",
+        "color": "#E6522C"
+      },
+      {
+        "id": "amg",
+        "label": "Amazon Managed Grafana",
+        "color": "#F46800"
+      },
+      {
+        "id": "xray",
+        "label": "AWS X-Ray",
+        "color": "#8C4FFF"
+      },
+      {
+        "id": "opensearch",
+        "label": "OpenSearch",
+        "color": "#005EB8"
+      }
+    ],
+    "signals": [
+      {
+        "id": "metrics",
+        "label": "メトリクス",
+        "icon": "\ud83d\udcca"
+      },
+      {
+        "id": "logs",
+        "label": "ログ",
+        "icon": "\ud83d\udcdd"
+      },
+      {
+        "id": "traces",
+        "label": "トレース",
+        "icon": "\ud83d\udd17"
+      },
+      {
+        "id": "profiling",
+        "label": "プロファイリング",
+        "icon": "\ud83d\udd2c"
+      }
+    ],
+    "instrumentation": [
+      {
+        "id": "otel",
+        "label": "OpenTelemetry"
+      },
+      {
+        "id": "cwagent",
+        "label": "CloudWatch Agent"
+      },
+      {
+        "id": "prometheus",
+        "label": "Prometheus"
+      },
+      {
+        "id": "adot",
+        "label": "AWS Distro for OpenTelemetry"
+      },
+      {
+        "id": "custom",
+        "label": "カスタム"
+      }
+    ]
+  }
+}

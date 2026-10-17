@@ -529,7 +529,8 @@ a.omni-res-card.omni-res-todo .omni-res-card-label::after {
 .navbar__items--right {
   flex-shrink: 0;
 }
-/* Site-wide Korean word-unit line breaks */
-body {
+/* Korean word-unit line breaks. Scoped to Korean: Japanese expects
+   per-character breaking, and inheriting `keep-all` broke layout on /ja/. */
+html[lang='ko'] body {
   word-break: keep-all;
 }

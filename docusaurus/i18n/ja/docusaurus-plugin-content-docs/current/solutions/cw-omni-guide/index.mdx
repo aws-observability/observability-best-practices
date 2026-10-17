@@ -1,0 +1,384 @@
+---
+title: Amazon CloudWatch Omni の紹介
+sidebar_label: CloudWatch Omni
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import OmniPillars from '@site/src/components/OmniPillars';
+
+# Amazon CloudWatch Omni の紹介
+
+## 概要
+
+<figure className="omni-hero">
+  <div className="omni-hero-frame">
+    <img
+      src={require('@site/docs/images/cw-omni-guide/omni-console.png').default}
+      alt="AI エージェント、アプリケーション、インフラストラクチャにわたる統合オブザーバビリティを表示する Amazon CloudWatch Omni コンソール"
+    />
+  </div>
+  <figcaption className="omni-hero-caption">
+    CloudWatch Omni エクスペリエンス — AI エージェント、アプリケーション、インフラストラクチャを 1 つのオフコンソールビューで。
+  </figcaption>
+</figure>
+
+[Amazon CloudWatch Omni](https://aws.amazon.com/cloudwatch/omni/) は [Amazon CloudWatch](https://aws.amazon.com/cloudwatch/) の次世代版です：AI を活用し、オープンスタンダード上に構築され、AWS コンソール外で提供される、再構想されたオブザーバビリティエクスペリエンスです。AI 時代のために設計された CloudWatch Omni は、AI エージェント、アプリケーション、インフラストラクチャのモニタリングを単一のソリューションに統合します。
+
+Omni はオペレーター向けのスタンドアロン Web UI と開発者向けのネイティブ IDE 拡張機能の両方として提供されるため、コードをローカルで実行した瞬間にエージェントトレースが表示されます。[OpenTelemetry](https://opentelemetry.io/) 上に構築されています：既に CloudWatch に送信しているテレメトリは再設定なしで Omni に表示され、OpenTelemetry で計装した他のワークロードは OpenTelemetry Protocol（OTLP）エンドポイントにテレメトリを送信します。
+
+Omni は CloudWatch 統合データストア上に位置するため、エージェントの動作をアプリケーションの健全性からインフラストラクチャまで接続します — エージェントの推論、古いナレッジベース、下流のレイテンシスパイクなど、真の根本原因を見つけることができます。
+
+## 使用するタイミング
+
+<p className="omni-usecase-hint">シナリオを選択して、CloudWatch Omni がどのように適合するかを確認してください。</p>
+
+<div className="omni-usecase-grid">
+
+<details className="omni-usecase">
+<summary>AI エージェントが実行中かどうかだけでなく、なぜそのような行動をしたかを知る必要がある。</summary>
+<p className="omni-usecase-answer">Omni はエージェントに評価駆動のオブザーバビリティをもたらします — Strands、CrewAI、LangGraph、OpenAI Agents SDK、Vercel AI SDK にわたって、動作を観察し、品質を継続的に評価し、出荷前に修正を検証します。</p>
+</details>
+
+<details className="omni-usecase">
+<summary>AI エージェント、アプリケーション、インフラストラクチャを 1 か所で観察したい。</summary>
+<p className="omni-usecase-answer">Omni は CloudWatch 統合データストア上に構築された単一のエクスペリエンスで 3 つすべてを統合するため、ツールを切り替えることなくエージェントの動作からアプリケーションの健全性、インフラストラクチャへと移動できます。</p>
+</details>
+
+<details className="omni-usecase">
+<summary>既に CloudWatch にテレメトリを送信しており、その上に AI ファーストのエクスペリエンスが欲しい。</summary>
+<p className="omni-usecase-answer">既に CloudWatch に送信しているテレメトリは再設定なしで Omni に表示され、すべての調査は構築・メンテナンスしたダッシュボードではなく、自然言語の質問から始まります。</p>
+</details>
+
+<details className="omni-usecase">
+<summary>OpenTelemetry でワークロードを計装しており、ベンダーニュートラルな取り込みパスが欲しい。</summary>
+<p className="omni-usecase-answer">Omni は OpenTelemetry 上に構築されています。計装したワークロードは OpenTelemetry Protocol（OTLP）エンドポイントにテレメトリを送信します — プロプライエタリなエージェントは不要です。</p>
+</details>
+
+<details className="omni-usecase">
+<summary>複数のアカウント、リージョン、クラウドにわたるシグナルを相関させる必要がある。</summary>
+<p className="omni-usecase-answer">Omni は複数の AWS アカウントとリージョン、およびマルチクラウドソースからエージェントとアプリケーションのテレメトリを取り込みます — 現在 Azure から始まっています。</p>
+</details>
+
+<details className="omni-usecase">
+<summary>開発者が IDE 内でオブザーバビリティを必要とし、オペレーター向けの Web エクスペリエンスも必要。</summary>
+<p className="omni-usecase-answer">オペレーターにはオフコンソール Web エクスペリエンスが、開発者には VS Code、Kiro、Cursor 向けのネイティブ IDE 拡張機能が提供され、コードをローカルで実行した瞬間にエージェントトレースが表示されます。</p>
+</details>
+
+</div>
+
+## ガイダンス
+
+Amazon CloudWatch Omni は 5 つの機能に基づいています。各機能が何を提供するか、なぜ重要か、スキップした場合のトレードオフを確認するためにステップスルーしてください。
+
+<OmniPillars
+  pillars={[
+    {
+      title: '信頼できるエージェントを出荷する',
+      tagline: '単なるアップタイムではなく、評価駆動のオブザーバビリティ',
+      body: (
+        <>
+          Omni はエージェントの動作を観察し、品質を継続的に評価し、出荷前に修正を検証します — Strands、CrewAI、LangGraph、OpenAI Agents SDK、Vercel AI SDK にわたって。
+        </>
+      ),
+      why: 'エージェントは非決定的です。「実行中ですか？」は「正しいことをしていますか？」と同じ質問ではありません。継続的な評価は、アップタイムモニタリングが見逃す品質の退行をキャッチします。',
+      tradeoff: 'テレメトリではなく、お客様からエージェントの問題を知ることになります。',
+    },
+    {
+      title: 'お客様の視点でアプリケーションを見る',
+      tagline: 'リソースではなく、ジャーニーで整理されたスペース',
+      body: (
+        <>
+          サービス、ユーザージャーニー、ビジネストランザクションで整理された Omni スペースで作業し、自動検出されたトポロジー、フリートダッシュボード、ゴールデンメトリクス、ネイティブアラーティングが 1 か所にあります。複数の AWS アカウントとリージョン、およびマルチクラウドソース — 現在 Azure から — テレメトリを取り込みます。
+        </>
+      ),
+      why: '顧客向けジャーニーで整理することで、個々のリソースではなくインパクトに焦点を当てた調査が可能になります。',
+      tradeoff: 'すべてのインシデントの最初の数分を、どのサービスがどのジャーニーに属するかを再構築するために費やすことになります。',
+    },
+    {
+      title: 'フルスタックで相関させる',
+      tagline: 'エージェントの動作 → アプリケーションの健全性 → インフラストラクチャ',
+      body: (
+        <>
+          何百万もの顧客に信頼されている CloudWatch 統合データストア上に構築された Omni は、エージェントの動作をアプリケーションの健全性からインフラストラクチャまで接続するため、ツールを切り替えることなく、エージェントの推論から古いナレッジベース、下流のレイテンシスパイクまで単一の調査で移動できます。
+        </>
+      ),
+      why: 'エージェントの問題がエージェントだけに分離されていることはまれです — 根本原因はしばしば一層下にあります。',
+      tradeoff: '症状（エージェント）を修正し、原因（依存関係）を見逃します。',
+    },
+    {
+      title: 'すべての調査を質問から始める',
+      tagline: 'ダッシュボードファーストではなく、AI ファースト',
+      body: (
+        <>
+          すべての調査は、構築・メンテナンスしたダッシュボードではなく、自然言語の質問から始まります。組み込みアシスタントが検出とガイド付き調査を処理し、{' '}
+          <a href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-collaborative-ai-powered-observability-for-your-applications/">
+            AWS DevOps Agent
+          </a>{' '}
+          統合がエージェント、アプリケーション、インフラストラクチャにわたってデータを相関させ、根本原因を特定します。
+        </>
+      ),
+      why: 'ダッシュボードは既に知っている質問に答えます。AI ファーストのワークフローにより、事前にビューを構築していないテレメトリを問い合わせることができます。',
+      tradeoff: '未知の未知は、誰かがチャートに描くことを思いつくまで見えないままです。',
+    },
+    {
+      title: '柔軟なインターフェースを使用する',
+      tagline: 'オペレーター向けの Web エクスペリエンス、開発者向けの IDE 拡張機能',
+      body: (
+        <>
+          オペレーター向けのオフコンソール Web エクスペリエンス、または開発者向けの VS Code、Kiro、Cursor のネイティブ IDE 拡張機能を通じて Omni にアクセスし、コードをローカルで実行した瞬間にエージェントトレースが表示されます。以下のインターフェースの内訳を参照してください。
+        </>
+      ),
+      why: 'エージェントをローカルでデバッグする人と本番環境のインシデントをトリアージする人は、同じデータに対して異なるサーフェスが必要です。',
+      tradeoff: '単一のインターフェースでは、2 つのオーディエンスのいずれか一方が常に不利な条件で作業することになります。',
+    },
+  ]}
+/>
+
+### 役割に合ったインターフェースを選択する
+
+CloudWatch Omni はオペレーターと開発者が作業する場所で対応します。
+
+<Tabs>
+  <TabItem value="operators" label="オペレーター（Web UI）" default>
+
+オペレーター向けに構築された**オフコンソール Web エクスペリエンス**を通じて Omni にアクセスします：Omni スペース、アプリケーションマップ、サービス、ダッシュボード、アラート、評価ダッシュボード、およびガイド付き調査 — すべて AWS コンソール外で。
+
+  </TabItem>
+  <TabItem value="developers" label="開発者（IDE）">
+
+**VS Code、Kiro、Cursor 向けのネイティブ IDE 拡張機能**を使用します。コードをローカルで実行した瞬間にエージェントトレースが表示されるため、開発者はエディターを離れることなくエージェントの動作を観察・評価できます。
+
+  </TabItem>
+</Tabs>
+
+**なぜ重要か：** エージェントをローカルでデバッグする人と本番環境のインシデントをトリアージする人は、同じデータに対して異なるサーフェスが必要です。単一のインターフェースでのトレードオフ：2 つのオーディエンスのいずれか一方が常に不利な条件で作業することになります。
+
+### 始めるためのサンプルアプリケーション
+
+自身のワークロードに Omni を向ける前に、2 つのリファレンスアプリケーションを探索するのに役立ちます。
+
+<div className="omni-showcase">
+
+<div className="omni-app">
+  <div className="omni-app-media">
+    <img src={require('@site/docs/images/cw-omni-guide/pet-adoption-demo.png').default} alt="Waggle AI アシスタントがペットを推奨する Pet Adoptions ストア" /> 
+  </div>
+  <div className="omni-app-body">
+    <span className="omni-app-eyebrow">エージェントとアプリケーション</span>
+    <h4 className="omni-app-title">
+      <a href="https://github.com/aws-samples/one-observability-demo">Pet Adoptions</a>
+    </h4>
+    <p>
+      <a href="https://catalog.workshops.aws/observability/en-US">AWS One Observability Workshop</a> の一部：EKS、ECS、Lambda にわたって実行される、ADOT/OTel SDK で完全に計装されたポリグロットマイクロサービスのペット養子縁組ストアです。
+    </p>
+    <p>
+      その Waggle AI アシスタントは、4 つのサブエージェントに委任する Strands オーケストレーターで、各サブエージェントは異なるフレームワーク（LangGraph、CrewAI、LlamaIndex、OpenAI SDK）と異なる Bedrock モデルで構築され、それぞれが AgentCore Gateway の背後にある独自の AgentCore Runtime としてデプロイされています。AgentCore Memory、Guardrails、Knowledge Base で補完され、エンドツーエンドでレスポンスがストリーミングされます。
+    </p>
+    <a className="omni-app-repo" href="https://github.com/aws-samples/one-observability-demo">
+      GitHub で表示
+    </a>
+  </div>
+</div>
+
+<div className="omni-app">
+  <div className="omni-app-media">
+    <img src={require('@site/docs/images/cw-omni-guide/otel-demo.png').default} alt="OpenTelemetry Astronomy Shop デモストアフロント" />
+  </div>
+  <div className="omni-app-body">
+    <span className="omni-app-eyebrow">アプリケーション</span>
+    <h4 className="omni-app-title">
+      <a href="https://github.com/sunkavar/opentelemetry-demo/tree/otel-cw/eks-cloudwatch">Open Telemetry Astronomy Shop デモ</a>
+    </h4>
+    <p>
+      アップストリームの <a href="https://opentelemetry.io/docs/demo/">CNCF OpenTelemetry</a> リファレンスアプリ：10 以上の言語にわたる約 20 のマイクロサービスで構築された望遠鏡の e コマースストアで、すべてがトレース、メトリクス、ログのためにネイティブに計装されています。
+    </p>
+    <p>
+      Jaeger、Prometheus、Grafana、OpenSearch が同梱され、オンデマンドで現実的な障害を注入するフィーチャーフラグも備えています。ベンダーニュートラルな計装パターンと OTel データが CloudWatch Omni にどのように流入するかを示すのに最適です。
+    </p>
+    <a className="omni-app-repo" href="https://github.com/sunkavar/opentelemetry-demo/tree/otel-cw/eks-cloudwatch">
+      GitHub で表示
+    </a>
+  </div>
+</div>
+
+</div>
+
+:::tip
+まず **Astronomy Shop** で OpenTelemetry データが再設定なしで Omni にどのように流入するかを確認し、その後 **Pet Adoptions** に移動して複数のフレームワークにわたるエージェントレベルの評価駆動オブザーバビリティを探索してください。
+:::
+
+## 関連リソース
+
+- [GenAI ワークロードオブザーバビリティ](../genai-observability/) — CloudWatch での Bedrock/SageMaker 呼び出しモニタリング、エージェントトレース、トークン/コストダッシュボード
+- [コーディングエージェントオブザーバビリティ](../coding-agents-observability/) — Claude Code、Codex、Copilot 開発者フリート向けの OTel ベースのテレメトリ
+
+### リソース
+
+CloudWatch Omni の学習と採用のための厳選されたリソースで、タイプ別にグループ化されています。このリストは時間とともに成長します — 新しいブログ、トレーニング、ウェビナー、ビデオ、デモが公開されるたびに追加されます。
+
+{/*
+  ADDING A RESOURCE: copy an <a className="omni-res-card"> block into the right
+  category grid. Fields: icon (emoji), label (short type), title (link text), href.
+  For a link that is not published yet, add className="omni-res-card omni-res-todo"
+  and set href="#" — it renders as a dashed "link pending" card.
+  Add a whole new category by copying an <div className="omni-res-cat"> block.
+*/}
+
+<div className="omni-resources">
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">📣</span>
+    <h4 className="omni-res-cat-title">ブログと発表</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/mt/introducing-amazon-cloudwatch-omni-observability-for-the-ai-era/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">📣</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">発表ブログ</span>
+        <span className="omni-res-card-title">Introducing Amazon CloudWatch Omni: Observability for the AI Era</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-collaborative-ai-powered-observability-for-your-applications/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">📝</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">ブログ</span>
+        <span className="omni-res-card-title">Collaborative AI-powered observability for your applications</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/blogs/aws/introducing-amazon-cloudwatch-omni-ai-powered-observability-for-generative-ai-and-agentic-workloads/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">📝</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">ブログ</span>
+        <span className="omni-res-card-title">AI-powered observability for generative AI and agentic workloads</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/about-aws/whats-new/2026/09/amazon-cloudwatch-omni-ai/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">🆕</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">新着情報</span>
+        <span className="omni-res-card-title">CloudWatch Omni: AI-first observability for agents and applications</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🌐</span>
+    <h4 className="omni-res-cat-title">製品と料金</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws.amazon.com/cloudwatch/omni/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">🌐</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">製品ページ</span>
+        <span className="omni-res-card-title">Amazon CloudWatch Omni</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://aws.amazon.com/cloudwatch/omni/pricing/" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">💰</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">料金</span>
+        <span className="omni-res-card-title">CloudWatch Omni の料金</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">📖</span>
+    <h4 className="omni-res-cat-title">入門とドキュメント</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-omni.html" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">📖</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">ユーザーガイド</span>
+        <span className="omni-res-card-title">CloudWatch Omni とは</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni.html" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">⚙️</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">セットアップガイド</span>
+        <span className="omni-res-card-title">Omni のセットアップ</span>
+      </span>
+    </a>
+    <a className="omni-res-card" href="https://docs.aws.amazon.com/boto3/latest/reference/services/cloudwatchomni.html">
+      <span className="omni-res-card-icon">📘</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Boto3 リファレンス</span>
+        <span className="omni-res-card-title">CloudWatchOmni — Boto3 API リファレンス</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🛠️</span>
+    <h4 className="omni-res-cat-title">ツールと統合</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://github.com/aws/agent-toolkit-for-aws/tree/main/plugins/aws-core/skills/aws-observability/references/cloudwatch-omni">
+      <span className="omni-res-card-icon">🛠️</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Agent Toolkit for AWS</span>
+        <span className="omni-res-card-title">CloudWatch Omni スキルリファレンス</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🎓</span>
+    <h4 className="omni-res-cat-title">トレーニング</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://skillbuilder.aws/learn/NZDASJ5FBZ" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">🎓</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">Skill Builder コース</span>
+        <span className="omni-res-card-title">CloudWatch Omni 基礎コース</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">▶️</span>
+    <h4 className="omni-res-cat-title">インタラクティブデモ</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://aws-cloudops.storylane.io/hub/cw-omni" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">▶️</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">インタラクティブデモ</span>
+        <span className="omni-res-card-title">Omni クリックスルーデモ</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+<div className="omni-res-cat">
+  <div className="omni-res-cat-head">
+    <span className="omni-res-cat-icon">🎥</span>
+    <h4 className="omni-res-cat-title">動画</h4>
+  </div>
+  <div className="omni-res-grid">
+    <a className="omni-res-card" href="https://www.youtube.com/live/d63KGbEwTdU?si=s5Gpwgw-fuzBoMOB" target="_blank" rel="noopener noreferrer">
+      <span className="omni-res-card-icon">🎥</span>
+      <span className="omni-res-card-text">
+        <span className="omni-res-card-label">動画</span>
+        <span className="omni-res-card-title">Getting Started with CloudWatch Omni: Demo, Hands-On, and Live Q&amp;A</span>
+      </span>
+    </a>
+  </div>
+</div>
+
+</div>

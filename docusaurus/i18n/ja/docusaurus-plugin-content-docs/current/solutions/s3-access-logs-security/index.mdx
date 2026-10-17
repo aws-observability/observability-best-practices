@@ -1,0 +1,1025 @@
+---
+title: セキュリティとコンプライアンスのための S3 アクセスログ
+sidebar_label: S3 アクセスログセキュリティ
+---
+
+import RelatedEvents from '@site/src/components/RelatedEvents';
+
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# セキュリティ、コンプライアンス、監査のための Amazon S3 サーバーアクセスログの活用
+
+
+
+## 概要
+
+AWS でワークロードを運用する組織は、アプリケーションデータや分析データセットからバックアップ、ログ、規制対象コンテンツに至るまで、最も重要なデータを [Amazon S3](https://aws.amazon.com/s3/) に保存することがよくあります。そのような責任には、根本的な問いが伴います：**自分のデータに誰がアクセスしているのか、そのデータで何をしているのか、そしてそれらのアクションがセキュリティポリシーに準拠しているかをどのように把握するのか？**
+
+[Amazon S3 サーバーアクセスログ](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html)は、バケットに対するリクエスト（成功・失敗、認証済み・匿名を問わず）を記録し、他の一般的なログソースでは得られない HTTP レベルの詳細を提供することで、この問いに答えます。Amazon S3 サーバーアクセスログが [CloudWatch 統合データストア](https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/)のネイティブデータソースとして利用可能になったことで、カスタム ETL パイプラインや変換ワークフローを構築することなく、ログが自動的に CloudWatch に配信されるようになりました。CloudWatch 統合データストアは、生の Amazon S3 サーバーアクセスログデータを構造化されたクエリ可能なフォーマットに変換し、[CloudWatch Logs Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AnalyzingLogData.html)、メトリクスフィルター、[Contributor Insights](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights.html) ルール、および [Amazon S3 Tables](https://aws.amazon.com/s3/features/tables/) 統合の即座の利用を可能にします。[AWS CloudTrail](https://aws.amazon.com/cloudtrail/) 管理イベントと組み合わせることで、サーバーアクセスログは Amazon S3 のセキュリティとコンプライアンス体制の強力でコスト効率の高い柱となります。
+
+### お客様の課題
+
+:::info[課題]
+多くのチームが Amazon S3 データプレーンアクティビティの監視において、共通の課題に直面しています：
+
+- **可視性のギャップ：** CloudTrail 管理イベント（追加コストなしで含まれる）はバケットレベルの設定変更をカバーしますが、個々のオブジェクトを誰が読み取り、書き込み、削除しているかは表示されません。
+- **スケール時のコスト：** 大量のリクエストを処理するバケット（1日あたり数百万リクエスト）には、コストが際限なく増大しない可視性が必要です。
+- **パイプラインの複雑さ：** 従来のサーバーアクセスログの設定では、CloudWatch などのツールでログをクエリ可能にするために、バケットポリシー、ライフサイクル管理、カスタム変換ワークフローが必要でした。CloudWatch 統合データストアにより、分析用のログの配信と構造化のためにカスタム ETL パイプラインを構築する必要がなくなりました。
+- **コンプライアンスの証拠：** PCI-DSS、HIPAA、SOC 2、FedRAMP などのフレームワークでは、転送中の暗号化（TLS バージョン）、アクセス制御、データ保持の証明が求められます。これらのフィールドはサーバーアクセスログでのみ利用可能です。
+- **運用の深度：** リクエストレイテンシー、転送バイト数、HTTP ステータスコード、Amazon S3 ライフサイクルオペレーション（有効期限切れ、移行）はサーバーアクセスログでのみキャプチャされます。
+:::
+
+:::tip[ソリューション]
+このガイドでは、CloudWatch 統合データストアにネイティブに配信される Amazon S3 サーバーアクセスログがこれらの課題にどのように対処するか、また CloudTrail と併用して**多層防御**を実現する方法を説明します。
+
+CloudWatch 統合データストアのネイティブデータソースとしての Amazon S3 サーバーアクセスログにより、組み込みの変換と即時のクエリ可能性を備えた幅広い低コストの可視性が得られ、最も機密性の高いバケットに対するスコープ付き CloudTrail データイベントからの保証された配信と組み合わされます。カスタム ETL パイプラインも追加の変換ワークフローも不要です。ネイティブ統合を有効にするだけで、Amazon S3 アクセスデータのクエリ、フィルタリング、アラートの設定を開始できます。
+:::
+
+---
+
+## 使用するタイミング
+
+- 重要な、規制対象の、または機密性の高いデータを Amazon S3 に保存しており、誰がアクセスしているかを監視する必要がある場合
+- 転送中の暗号化の証拠、アクセス制御の監査、データ保持の証明を義務付けるコンプライアンス要件（PCI-DSS、HIPAA、SOC 2、FedRAMP）を満たす必要がある場合
+- 大量のリクエストを処理する S3 バケット（1日あたり数百万リクエスト）を運用しており、コスト効率の高いデータプレーンの可視性が必要な場合
+- 不正アクセスの試行、データ流出パターン、匿名アクセス、一括削除などのセキュリティ脅威を検出したい場合
+- CloudTrail ではキャプチャされない S3 ライフサイクルオペレーション（有効期限切れ、移行）を追跡する必要がある場合
+- バケットへのリクエストで非推奨の SigV2 使用や古い TLS バージョンを特定したい場合
+- CloudTrail データイベントとサーバーアクセスログを組み合わせた多層防御のハイブリッドログ戦略を設計している場合
+- カスタム ETL パイプラインを構築せずに、CloudWatch Logs Insights、メトリクスフィルター、Contributor Insights をリアルタイム S3 セキュリティモニタリングに使用したい場合
+
+## ガイダンス
+
+### CloudTrail Amazon S3 データイベントとサーバーアクセスログ：相互補完する強み {#cloudtrail-vs-sal}
+
+CloudTrail Amazon S3 データイベントと Amazon S3 サーバーアクセスログはどちらもオブジェクトレベルのアクティビティを記録し、キャプチャするオペレーションには意味のある重複があります。各ソースが何をもたらすかを理解することで、コストを管理しながらカバレッジを最大化するログ戦略を設計できます。
+
+#### 重複する部分
+
+コアデータプレーンオペレーション（`GetObject`、`PutObject`、`DeleteObject`、`CopyObject`、`HeadObject`、マルチパートアップロード、`ListObjects`）は、両方が有効な場合に**両方の**ログソースに記録されます。これらのオペレーションでは、同じリクエストの独立した 2 つのレコードが取得されます。
+
+#### 各ソースが独自に提供するもの
+
+どちらか一方を選ぶのではなく、それぞれが他方では提供できない何を追加するかを検討してください：
+
+<Tabs>
+<TabItem value="cloudtrail" label="☁️ CloudTrail データイベント" default>
+
+| 機能 | 詳細 |
+|---|---|
+| **配信保証** | ✅ すべての API コールが記録され配信されます |
+| **配信レイテンシー** | 通常 5〜15 分 |
+| **IAM ID の詳細** | ✅ 完全な `userIdentity` ブロック：ARN、セッションコンテキスト、引き受けたロールチェーン、MFA ステータス |
+| **リクエスト/レスポンスパラメータ** | ✅ 完全な JSON：暗号化設定、ACL 付与、条件キー |
+| **ストリーミング宛先** | ✅ Amazon S3、CloudWatch Logs、または CloudTrail Lake |
+| **選択的ログ記録** | ✅ 高度なイベントセレクターによるバケット ARN、イベント名、読み取り/書き込みでのフィルタリング |
+| **イベントあたりのコスト** | イベントごとの課金（[料金を参照](https://aws.amazon.com/cloudtrail/pricing/)） |
+
+</TabItem>
+<TabItem value="sal" label="📋 サーバーアクセスログ">
+
+| 機能 | 詳細 |
+|---|---|
+| **HTTP レベルの詳細** | ✅ `http_status`、`bytes_sent_size`、`object_size`、`total_duration`、`turn_around_duration`、`referer` |
+| **署名バージョン** | ✅ 明示的な `signature_version` フィールド（SigV2 対 SigV4） |
+| **認証タイプ** | ✅ 明示的なフィールド（`AuthHeader`、`QueryString`、または匿名の場合 `null`） |
+| **ACL 必須** | ✅ オーナーシップコントロール移行のための `acl_required` フィールド |
+| **S3 ライフサイクルオペレーション** | ✅ `S3.EXPIRE.OBJECT`、`S3.TRANSITION_SIA.OBJECT` など |
+| **ソースリージョン** | ✅ `source_region`（発信元リージョン、クロスリージョン検出に有用） |
+| **ネイティブ CloudWatch 統合データストア統合** | ✅ ログが CloudWatch 統合データストアに直接流れ、Logs Insights、メトリクスフィルター、Contributor Insights、Amazon S3 Tables に即座にアクセス可能 |
+| **組み込み変換** | ✅ CloudWatch 統合データストアが生の Amazon S3 サーバーアクセスログを構造化されたクエリ可能なフォーマットに自動変換（カスタム ETL パイプライン不要） |
+| **イベントあたりのコスト** | ✅ CloudWatch Logs 取り込み + ストレージ（[料金を参照](https://aws.amazon.com/cloudwatch/pricing/)）。Amazon S3 サーバーアクセスログイベントは CloudTrail データイベントよりも大幅に小さいため、イベントあたりの取り込みコストが低くなります |
+
+</TabItem>
+<TabItem value="shared" label="🤝 共有フィールド">
+
+両方のソースがこれらのフィールドを提供し、どちらのソースでも利用できます：
+
+| フィールド | 説明 |
+|---|---|
+| **TLS バージョンと暗号スイート** | 接続のトランスポート層セキュリティの詳細 |
+| **ソース IP アドレス** | リクエスターの IP アドレス |
+| **ユーザーエージェント** | リクエストを行ったクライアントツールまたは SDK |
+| **エラーコード** | Amazon S3 エラーレスポンス（例：`AccessDenied`、`NoSuchKey`） |
+| **オブジェクトキー** | アクセスされたオブジェクト名 |
+| **バケット名** | リクエストのターゲットバケット |
+
+</TabItem>
+</Tabs>
+
+#### 各ソースに頼るべきタイミング
+
+<Tabs>
+<TabItem value="ct-stronger" label="CloudTrail の強み" default>
+
+- 🔒 **すべてのオブジェクトアクセスの完全な説明責任を必要とするコンプライアンス監査。** 保証された配信により、監査証跡にギャップがありません。
+- 🔍 **フォレンジック調査。** 完全な IAM ID チェーンが必要な場合：誰がどのロールを引き受けたか、MFA が使用されたか、どのセッションコンテキストがアクティブだったか。
+- 📋 **リクエストパラメータの理解。** PutObject にどの暗号化アルゴリズムが適用されたか、どの ACL 付与が設定されたか、どの条件キーが評価されたか。
+- ⚡ **リアルタイムストリーミング。** CloudWatch Logs または CloudTrail Lake への即時の分析、アラート、ダッシュボード作成。
+- 🎯 **選択的でコスト制御されたログ記録。** 高度なイベントセレクターにより、特定のバケットの書き込みオペレーションのみをログに記録できるため、最も重要なもののみに費用を支払います。
+
+</TabItem>
+<TabItem value="sal-stronger" label="サーバーアクセスログの強み">
+
+- 🔑 **非推奨の SigV2 使用の検出。** `signature_version` フィールドはサーバーアクセスログでのみ利用可能です。
+- ♻️ **Amazon S3 ライフサイクルオペレーションの追跡。** 有効期限切れ、移行、削除マーカーの作成は Amazon S3 の内部アクションであり、CloudTrail はこれらをログに記録しません。
+- ⏱️ **パフォーマンス分析。** リクエストレイテンシー（`total_duration`、`turn_around_duration`）、転送バイト数、オブジェクトサイズはサーバーアクセスログにのみ含まれます。
+- 💰 **コスト効率の高い大量バケット。** 1日あたり数百万のリクエストを処理するバケットの場合、CloudWatch 統合データストアを通じて配信されるサーバーアクセスログは、CloudWatch Logs の取り込みとストレージコストで包括的な可視性を提供します。Amazon S3 サーバーアクセスログイベントは CloudTrail データイベントよりも大幅に小さいため、イベントあたりの取り込みコストが大幅に低く、CloudWatch のボリューム階層料金によりスケール時のコストがさらに削減されます（[CloudWatch 料金](https://aws.amazon.com/cloudwatch/pricing/)を参照）。
+- 🔄 **パイプライン管理ゼロ。** CloudWatch 統合データストアは、取り込み時に生の Amazon S3 サーバーアクセスログデータを構造化されたクエリ可能なフォーマットに自動変換します。これにより、宛先 Amazon S3 バケットのプロビジョニング、バケットポリシーの管理、ログオブジェクトのライフサイクルルールの設定、データの解析と正規化のためのカスタム ETL パイプラインの構築が不要になります。
+- 📊 **即時のオブザーバビリティ。** Amazon S3 サーバーアクセスログは CloudWatch 統合データストアに直接配信されるため、追加の設定やパイプラインのセットアップなしで、Logs Insights クエリ、メトリクスフィルター、Contributor Insights ルール、Amazon S3 Tables 統合に即座にアクセスできます。
+- 🏷️ **ACL 依存リクエストの特定。** `acl_required` フィールドは、バケットオーナー強制の Object Ownership への移行計画に役立ちます。
+
+</TabItem>
+</Tabs>
+
+---
+
+### ハイブリッドアプローチ：多層防御 {#hybrid-approach}
+
+:::tip[推奨戦略]
+ハイブリッド戦略は、両方のソースの強みを組み合わせて、管理可能なコストで幅広いカバレッジを実現します。[Amazon S3 セキュリティベストプラクティス](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)のドキュメントでは、サーバーアクセスログの有効化と AWS CloudTrail の使用を、それぞれ別のモニタリングおよび監査のベストプラクティスとして推奨しています。両方を併用することで多層防御が実現します。
+:::
+
+#### 3 層アーキテクチャ
+
+| 層 | 有効にするもの | 目的 | コスト |
+|---|---|---|---|
+| **1. CloudTrail 管理イベント** | Trail（最初のコピーは追加コストなし） | バケットレベルの設定変更、PutBucketPolicy、DeleteBucketEncryption など。保証された配信。 | **追加コストなし**（最初のコピー） |
+| **2. Amazon S3 サーバーアクセスログ（CloudWatch 統合データストア経由）** | CloudWatch 統合データストアを宛先としてすべてのバケットで有効化 | HTTP レベルの詳細、ライフサイクル追跡、SigV2 検出、パフォーマンスメトリクスを備えた幅広いデータプレーンの可視性。ログは CloudWatch 統合データストアによって ETL 不要で構造化されたクエリ可能なフォーマットに自動変換されます。Logs Insights、メトリクスフィルター、Contributor Insights、Amazon S3 Tables に即座にアクセス可能。 | **CloudWatch Logs の取り込み + ストレージ**（Amazon S3 サーバーアクセスログイベントは CloudTrail データイベントよりも小さいため、イベントあたりのコストが低い。ボリューム階層料金によりスケール時のコストがさらに削減） |
+| **3. CloudTrail データイベント（スコープ付き）** | 高度なイベントセレクターによる機密バケットの書き込み専用 | 最も重要なミューテーションの保証された配信。PII、財務データ、規制対象コンテンツを保持するバケットの PutObject、DeleteObject、CopyObject。 | イベントごとの課金（[料金を参照](https://aws.amazon.com/cloudtrail/pricing/)）、ボリュームを削減するためにスコープ付き |
+
+
+#### CloudTrail データイベントのスコープ設定によるコスト管理
+
+ハイブリッドアプローチをコスト効率の高いものにする鍵は、[高度なイベントセレクター](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/logging-data-events-with-cloudtrail.html)を使用して最も重要なもののみをログに記録することです。例えば、3 つの機密バケットの書き込みオペレーションのみをログに記録する場合：
+
+```json title="advanced-event-selector.json"
+[
+  {
+    "Name": "S3WriteOnlySensitiveBuckets",
+    "FieldSelectors": [
+      { "Field": "eventCategory",  "Equals": ["Data"] },
+      { "Field": "resources.type", "Equals": ["AWS::S3::Object"] },
+      // highlight-next-line
+      { "Field": "readOnly",       "Equals": ["false"] },
+      { "Field": "resources.ARN",  "StartsWith": [
+          "arn:aws:s3:::my-pii-bucket/",
+          "arn:aws:s3:::my-financial-data/",
+          "arn:aws:s3:::my-compliance-archive/"
+        ]
+      }
+    ]
+  }
+]
+```
+
+> このセレクターは、3 つの特定のバケットに対する**書き込みオペレーション**（PutObject、DeleteObject、CopyObject など）のみをログに記録します。これにより、すべてのバケットのすべてのデータイベントをログに記録する場合と比較してコストが大幅に削減され、最もセキュリティ上重要なミューテーションの配信が保証されます。CloudTrail コンソール、CLI（`put-event-selectors`）、または CloudFormation を使用して、Trail またはイベントデータストアに適用してください。
+
+
+### スケール時のコスト
+
+ハイブリッドアプローチのコストの優位性は、2 つのデータソースの CloudWatch Logs 取り込み料金を並べて比較すると明確になります。
+
+**Amazon S3 サーバーアクセスログ**は [CloudWatch ベンデッドログ](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/AWS-logs-and-resource-policy.html)として分類され、**ボリューム階層取り込み料金**の恩恵を受けます。月間取り込み量が増えるにつれて GB あたりの料金が下がります（例えば、US East では最初の 10 TB は $0.50/GB、50 TB を超えると $0.05/GB に低下）。これにより、サーバーアクセスログはスケール時にますますコスト効率が高くなります。さらに、Amazon S3 サーバーアクセスログイベントは CloudTrail データイベントと比較してサイズが大幅に小さいため、同じ数のリクエストでもより少ない GB を取り込むことになります。
+
+**CloudTrail イベント**（管理イベントとデータイベント）を CloudWatch Logs ロググループに配信する場合、配信料金に加えて CloudWatch カスタムログの取り込み料金が課金されます。CloudTrail データイベントは追加のコンテキストを提供するため（[各ソースが独自に提供するもの](#各ソースが独自に提供するもの)を参照）、完全な監査証跡にギャップがあってはならない最も機密性の高いバケットに適した選択肢です。
+
+ボリューム階層料金とイベントサイズの小ささの組み合わせにより、大量のリクエスト時には、Amazon S3 サーバーアクセスログは CloudTrail データイベントよりもリクエストあたりの CloudWatch への取り込みコストが大幅に低くなります。高度なイベントセレクターを使用して CloudTrail データイベントを最も機密性の高いバケットの書き込み専用オペレーションにスコープすることで、保証された配信を必要とするトラフィックの一部のみに、そのより高コストの取り込みを限定します。サーバーアクセスログが残りの幅広い部分をより低い GB あたりの料金でカバーします。
+
+CloudWatch 統合データストアは、カスタム ETL パイプラインの構築にかかる運用コストと複雑さも排除します。ログはネイティブに配信され、取り込み時に構造化された JSON に自動変換されるため、宛先バケットのプロビジョニング、ログオブジェクトのライフサイクル管理、カスタム変換ワークフローが不要になります。
+
+:::tip[最新の料金を確認してください]
+料金は時間とともに変更されます。ログ戦略を確定する前に、[Amazon CloudWatch 料金](https://aws.amazon.com/cloudwatch/pricing/)ページで最新の料金を確認してください。**ベンデッドログ**階層（Amazon S3 サーバーアクセスログ用）と**カスタムログ**取り込み料金（CloudWatch Logs に配信される CloudTrail イベント用）を比較してください。コストの計算には [AWS 料金計算ツール](https://calculator.aws/)をご利用ください。
+:::
+
+#### 意思決定ガイド
+
+バケットごとのログ戦略を決定するためのクイックリファレンスです：
+
+<Tabs>
+<TabItem value="q1" label="Q1：機密データ？" default>
+
+**このバケットには規制対象、機密、またはビジネスクリティカルなデータが保存されていますか？**
+
+✅ **はい** → 保証された配信と完全な ID チェーンのために CloudTrail データイベント（最低でも書き込み専用）を有効にします。また、HTTP レベルの詳細、ライフサイクル追跡、ETL 不要の組み込み変換のために CloudWatch 統合データストア経由のサーバーアクセスログも有効にします。
+
+➡️ **いいえ** → **Q2** を参照してください。
+
+</TabItem>
+<TabItem value="q2" label="Q2：固有のフィールド？">
+
+**SigV2 の使用を検出したり、ライフサイクルオペレーションを追跡したり、リクエストレイテンシーを分析したりする必要がありますか？**
+
+✅ **はい** → CloudWatch 統合データストア経由のサーバーアクセスログを有効にします。これらのフィールドは Amazon S3 サーバーアクセスログでのみ利用可能であり、CloudWatch 統合データストアは即時の分析のためにログを構造化されたクエリ可能なフォーマットに自動変換します。
+
+➡️ **いいえ** → **Q3** を参照してください。
+
+</TabItem>
+<TabItem value="q3" label="Q3：大量？">
+
+**バケットは大量（1日あたり数百万リクエスト）でコスト感度が高いですか？**
+
+✅ **はい** → CloudWatch 統合データストア経由のサーバーアクセスログを有効にします。Amazon S3 サーバーアクセスログイベントは CloudTrail データイベントよりも大幅に小さいため、大量のリクエスト時でも CloudWatch の取り込みコストが低く抑えられます。CloudWatch のボリューム階層料金によりスケール時のコストがさらに削減されます。CloudWatch 統合データストアは ETL パイプライン不要でログを即時クエリ用に自動変換します。バケットレベルの設定変更のアラートには CloudTrail 管理イベント（追加コストなしで含まれる）を使用してください。
+
+❌ **いいえ** → 保証されたクエリ可能なオブジェクトレベルのログ記録のために CloudTrail データイベントを有効にします。CloudWatch 統合データストア経由のサーバーアクセスログはオプションですが、CloudTrail データイベントよりも低いイベントあたりのコストで HTTP レベルの詳細、ライフサイクル追跡、パフォーマンスメトリクスを追加します。
+
+</TabItem>
+</Tabs>
+
+
+---
+
+### Amazon S3 サーバーアクセスログがキャプチャする内容 {#log-fields}
+
+サーバーアクセスログが有効な Amazon S3 バケットへのすべてのリクエストは、25 以上のフィールドを持つログレコードを生成します。セキュリティ、コンプライアンス、監査に最も関連性の高いフィールドは、以下にユースケース別にグループ化されています。
+
+<Tabs>
+<TabItem value="identity" label="👤 ID とアクセス" default>
+
+| フィールド | 値 | 例 |
+|---|---|---|
+| `requester` | IAM プリンシパル（正規ユーザー ID または引き受けたロール ARN） | `arn:aws:sts::123456789012:assumed-role/MyRole/session` |
+| `remote_ip` | リクエスターのソース IP | `203.0.113.42` |
+| `authentication_type` | リクエストの認証方法 | `AuthHeader`、`QueryString`、または `null`（匿名） |
+| `signature_version` | 使用された署名プロトコル | `SigV4` または `SigV2`（非推奨） |
+| `acl_required` | ACL 認可が必要だったかどうか（ブール値） | `true`、`false`、または `null` |
+| `access_point_arn` | S3 Access Point ARN（使用された場合） | `arn:aws:s3:us-east-1:123456789012:accesspoint/my-ap` |
+
+:::info[重要な理由]
+これらのフィールドは、**誰が**データにアクセスし、**どのように**認証したかに答えます。匿名アクセス（`authentication_type IS NULL`）、非推奨の SigV2 クライアント、Access Point 経由のリクエストを検出するために使用します。
+:::
+
+</TabItem>
+<TabItem value="request" label="📦 リクエストの詳細">
+
+| フィールド | 値 | 例 |
+|---|---|---|
+| `operation` | 実行された Amazon S3 オペレーション | `REST.GET.OBJECT`、`REST.DELETE.OBJECT`、`S3.EXPIRE.OBJECT` |
+| `key_name` | アクセスされたオブジェクトキー | `/data/customers/export-2025.csv` |
+| `bucket_name` | ターゲットバケット | `my-production-bucket` |
+| `source_region` | リクエストが発生した AWS リージョン | `us-east-1` または `null` |
+| `user_agent` | クライアントツールまたは SDK | `aws-cli/2.15.0`、`curl/7.88.1`、`Boto3/1.34.0` |
+
+:::info[重要な理由]
+これらのフィールドは、**何が**アクセスされ、**どこから**アクセスされたかに答えます。機密オブジェクトに対する予期しないオペレーション、クロスリージョンアクセスパターン、不正なツール（本番バケットでの curl、wget）の検出に使用します。
+:::
+
+</TabItem>
+<TabItem value="response" label="📊 レスポンスとパフォーマンス">
+
+| フィールド | 値 | 例 |
+|---|---|---|
+| `http_status` | HTTP レスポンスコード | `200`、`403`、`404`、`503` |
+| `error_code` | Amazon S3 エラー文字列 | `AccessDenied`、`NoSuchKey`、`SlowDown` |
+| `bytes_sent_size` | レスポンスの転送バイト数 | `2662992` |
+| `object_size` | オブジェクトの合計サイズ | `3462992` |
+| `total_duration` | エンドツーエンドのリクエスト期間（ミリ秒） | `70` |
+| `turn_around_duration` | Amazon S3 の処理時間（ミリ秒） | `10` |
+
+:::info[重要な理由]
+これらのフィールドは、**何が起こったか**と**どの程度速かったか**に答えます。403/404 のスパイク（ブルートフォース）、大量のデータ流出（bytes_sent_size）、5xx スロットリング（SlowDown）、パフォーマンスの低下を検出するために使用します。
+:::
+
+</TabItem>
+<TabItem value="encryption" label="🔐 暗号化とコンプライアンス">
+
+| フィールド | 値 | 例 |
+|---|---|---|
+| `tls_version` | ネゴシエートされた TLS バージョン | `TLSv1.2`、`TLSv1.3` |
+| `cipher_suite` | 使用された TLS 暗号スイート | `ECDHE-RSA-AES128-GCM-SHA256` |
+| `signature_version` | 署名プロトコル | `SigV4` または `SigV2` |
+
+:::info[重要な理由]
+これらのフィールドは、転送中の暗号化要件に対する**コンプライアンスの証拠**を提供します。PCI-DSS、FedRAMP、NIST 800-53 は TLS 1.2 以上を義務付けています。`signature_version` フィールドは、非推奨の SigV2 をまだ使用しているクライアントを見つける唯一の方法です。
+:::
+
+</TabItem>
+<TabItem value="lifecycle" label="♻️ ライフサイクルと内部">
+
+S3 ライフサイクルオペレーションはサーバーアクセスログに**のみ**記録されます。CloudTrail はこれらの内部アクションをログに記録しません。
+
+| オペレーション | 意味 |
+|---|---|
+| `S3.EXPIRE.OBJECT` | ライフサイクルルールによりオブジェクトが期限切れ |
+| `S3.CREATE.DELETEMARKER` | バージョニング対応バケットでライフサイクルにより削除マーカーが作成 |
+| `S3.TRANSITION_SIA.OBJECT` | オブジェクトが Amazon S3 Standard-IA に移行 |
+| `S3.TRANSITION_ZIA.OBJECT` | オブジェクトが Amazon S3 One Zone-IA に移行 |
+| `S3.TRANSITION_INT.OBJECT` | オブジェクトが Amazon S3 Intelligent-Tiering に移行 |
+| `S3.TRANSITION_GIR.OBJECT` | オブジェクトが Amazon S3 Glacier Instant Retrieval に移行 |
+| `S3.TRANSITION.OBJECT` | オブジェクトが Amazon S3 Glacier Flexible Retrieval に移行 |
+| `S3.TRANSITION_GDA.OBJECT` | オブジェクトが Amazon S3 Glacier Deep Archive に移行 |
+
+:::caution[サーバーアクセスログ限定]
+これらのライフサイクルオペレーションは CloudTrail データイベントでは**利用できません**。データ保持ポリシーが適用されていることを証明する必要がある場合（有効期限切れ、移行、削除マーカー）、サーバーアクセスログが唯一のソースです。
+:::
+
+</TabItem>
+</Tabs>
+
+---
+
+### CloudWatch 向け Amazon S3 サーバーアクセスログの有効化 {#enabling}
+
+配信のセットアップには、Amazon S3 コンソールでの数ステップ、または AWS CLI でのいくつかの API コールが必要です。CloudWatch テレメトリ有効化ルールを使用して、AWS Organization 全体で配信を標準化することもできます。
+
+#### オプション 1：テレメトリ有効化ルール
+
+[CloudWatch テレメトリ有効化ルール](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-rules.html)を使用すると、バケットごとのセットアップなしで、新規および既存のバケットの Amazon S3 サーバーアクセスログの CloudWatch Logs への配信を自動的に有効にできます。ルールは個々のアカウントレベルまたは AWS Organization 全体でスコープ設定できます。組織全体のルールの場合、管理アカウントまたは委任管理者アカウントから設定する必要があります。
+
+1. **CloudWatch コンソール**を開きます。
+2. ナビゲーションペインで **Ingestion** を選択します。
+3. **Enablement rules** タブを選択し、**Add rule** を選択します。
+4. **Configure telemetry for Amazon S3** を選択します。
+5. わかりやすい **Rule name**（例：`S3-Access-Logs-Enablement`）を入力します。
+6. オプションで *Select data source scope* の下に **Tag Key/Value** を追加して、ルールを特定のリソースにスコープします。
+7. **Target regions** で、現在のリージョンのデフォルトのままにするか、特定のリージョンを選択します。**Next** を選択します。
+8. **Log group name pattern** と **Retention setting** を設定します。**Next** を選択します。
+9. 確認して **Configure Amazon S3 Logs** を選択します。
+
+有効化されると、CloudWatch はスコープ内のリソースから Amazon S3 ログの取り込みを開始します。ログは追加の Lambda 関数や Glue ジョブなしで、構造化された JSON に自動変換されます。
+
+#### オプション 2：Amazon S3 コンソール（バケットごと）
+
+1. **Amazon S3 コンソール**を開き、バケットに移動して **Properties** タブを選択します。
+2. **Log delivery to CloudWatch** セクションで、**Add → To Amazon CloudWatch Logs** を選択します。
+3. **Destination log group** を選択します。SQL でもクエリする場合は、**Enable Amazon S3 Tables integration** を選択します。
+4. **Service access** で、*Auto-create a new role with default permissions* を選択したままにします。
+5. **Add** を選択します。
+
+#### オプション 3：AWS CLI（自動化）
+
+複数のバケットにわたるスクリプトまたは自動化されたデプロイメントの場合、AWS CLI で各ステップを完全に制御できます。
+
+**ステップ 1：配信ソースの作成**（ソースバケットごと）
+
+```bash
+aws logs put-delivery-source \
+    --name my-sal-source \
+    --resource-arn arn:aws:s3:::my-bucket \
+    --log-type S3_SERVER_ACCESS_LOGS \
+    --region us-east-1
+```
+
+**ステップ 2：配信先の作成**（ロググループごとに 1 回）
+
+```bash
+aws logs put-delivery-destination \
+    --name my-sal-destination \
+    --delivery-destination-configuration \
+        '{"destinationResourceArn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/vendedlogs/s3/my-bucket"}' \
+    --region us-east-1
+```
+
+**ステップ 3：配信の作成**（ソースバケットごと）
+
+```bash
+aws logs create-delivery \
+    --delivery-source-name my-sal-source \
+    --delivery-destination-arn arn:aws:logs:us-east-1:123456789012:delivery-destination:my-sal-destination \
+    --region us-east-1
+```
+
+**ステップ 4：Amazon S3 Tables 統合の有効化**（アカウントごと、リージョンごとに 1 回、オプション）
+
+```bash
+aws observabilityadmin create-s3-table-integration \
+    --role-arn arn:aws:iam::123456789012:role/CWLogsS3TableIntegrationRole \
+    --encryption '{"SseAlgorithm":"AES256"}' \
+    --region us-east-1
+```
+
+次に、Amazon S3 サーバーアクセスログデータソースを関連付けます：
+
+```bash
+aws logs associate-source-to-s3-table-integration \
+    --integration-arn arn:aws:observabilityadmin:us-east-1:123456789012:s3tableintegration/s3tableintegration \
+    --data-source '{"name":"amazon_s3","type":"server_access"}' \
+    --region us-east-1
+```
+
+---
+
+### セキュリティとコンプライアンスのクエリ {#queries}
+
+以下の [OpenSearch SQL](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CWL_AnalyzeLogData_SQL.html) クエリは、Amazon S3 サーバーアクセスロググループに対して CloudWatch Logs Insights で実行します。実行前に言語ドロップダウンから **「OpenSearch SQL」** を選択してください。`YOUR_S3_ACCESS_LOG_GROUP` を実際のロググループ名に置き換えてください。
+
+<Tabs>
+<TabItem value="security" label="🚨 セキュリティ" default>
+
+#### 不正アクセス試行の検出
+
+単一の IP アドレスからの HTTP 403 および 404 のスパイクは、クレデンシャルスタッフィング、オブジェクトキーの列挙、またはブルートフォースアクセスの試行を示す可能性があります。
+
+```sql title="query-403-404-errors.sql"
+SELECT
+    remote_ip,
+    error_code,
+    operation,
+    COUNT(*)                   AS error_count,
+    COUNT(DISTINCT key_name)   AS unique_keys_targeted,
+    COUNT(DISTINCT bucket_name) AS buckets_targeted
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE http_status IN (403, 404)
+GROUP BY remote_ip, error_code, operation
+ORDER BY error_count DESC
+LIMIT 50
+```
+
+#### 異常なデータ転送パターンの検出
+
+リクエスターと IP ごとにダウンロードバイト数を集計することで、漏洩した可能性のある認証情報や内部の不正アクティビティを示す異常なダウンロードパターンが明らかになります。
+
+```sql title="query-data-exfiltration.sql"
+SELECT
+    remote_ip,
+    requester,
+    SUM(bytes_sent_size) / 1048576  AS total_MB_downloaded,
+    COUNT(*)                        AS request_count,
+    COUNT(DISTINCT key_name)        AS unique_objects,
+    COUNT(DISTINCT bucket_name)     AS buckets_accessed
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE 'REST.GET.OBJECT'
+  AND http_status = 200
+GROUP BY remote_ip, requester
+ORDER BY total_MB_downloaded DESC
+LIMIT 25
+```
+
+#### 匿名（未認証）アクセスの検出
+
+`authentication_type IS NULL` のリクエストは、認証情報が提示されなかったことを意味します。これは通常、バケットポリシーまたは ACL がパブリックアクセスを許可していることを示します。
+
+```sql title="query-anonymous-access.sql"
+SELECT
+    `@timestamp`,
+    bucket_name,
+    operation,
+    key_name,
+    remote_ip,
+    http_status,
+    bytes_sent_size,
+    user_agent
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE authentication_type IS NULL
+  AND operation NOT LIKE '%OPTIONS%'
+ORDER BY `@timestamp` DESC
+LIMIT 100
+```
+
+#### 一括削除オペレーションの検出
+
+単一のリクエスターからの大量削除は、不正な一括削除パターン、内部脅威、または暴走した自動化パイプラインを示す可能性があります。
+
+```sql title="query-bulk-deletes.sql"
+SELECT
+    requester,
+    remote_ip,
+    operation,
+    COUNT(*)                   AS delete_count,
+    COUNT(DISTINCT key_name)   AS unique_objects,
+    COUNT(DISTINCT bucket_name) AS buckets_affected
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE '%DELETE%'
+   OR operation = 'REST.POST.MULTI_OBJECT_DELETE'
+   OR operation = 'BATCH.DELETE.OBJECT'
+GROUP BY requester, remote_ip, operation
+ORDER BY delete_count DESC
+LIMIT 50
+```
+
+</TabItem>
+<TabItem value="compliance" label="✅ コンプライアンス">
+
+#### TLS バージョンコンプライアンス（PCI-DSS、FedRAMP、NIST 800-53）
+
+コンプライアンスフレームワークは、転送中のデータに TLS 1.2 以上を要求します。サーバーアクセスログは、すべてのリクエストの正確な TLS バージョンと暗号スイートを記録します。
+
+```sql title="query-outdated-tls.sql"
+SELECT
+    tls_version,
+    cipher_suite,
+    remote_ip,
+    requester,
+    user_agent,
+    bucket_name,
+    COUNT(*) AS outdated_tls_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE tls_version IN ('TLSv1', 'TLSv1.1')
+GROUP BY tls_version, cipher_suite, remote_ip,
+         requester, user_agent, bucket_name
+ORDER BY outdated_tls_count DESC
+LIMIT 50
+```
+
+#### 非推奨署名バージョンの検出
+
+AWS は SigV4 に移行し SigV2 を非推奨にしました。サーバーアクセスログの `signature_version` フィールドは、まだ SigV2 を使用しているクライアントを特定する**唯一の**方法です。
+
+```sql title="query-sigv2-requests.sql"
+SELECT
+    requester,
+    remote_ip,
+    user_agent,
+    bucket_name,
+    operation,
+    COUNT(*) AS sigv2_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE signature_version = 'SigV2'
+GROUP BY requester, remote_ip, user_agent, bucket_name, operation
+ORDER BY sigv2_count DESC
+LIMIT 50
+```
+
+#### データ保持ポリシーの検証
+
+S3 ライフサイクルオペレーション（有効期限切れ、移行、削除マーカーの作成）はサーバーアクセスログに**のみ**記録されます。データ保持ポリシーの適用を証明するために不可欠です。
+
+```sql title="query-lifecycle-operations.sql"
+SELECT
+    operation,
+    bucket_name,
+    COUNT(*) AS event_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE operation LIKE 'S3.%'
+GROUP BY operation, bucket_name
+ORDER BY event_count DESC
+```
+
+#### クロスアカウントアクセスの監査
+
+他の AWS アカウントの IAM プリンシパルからのリクエストを特定することで、クロスアカウントアクセスが明示的に許可されていることを検証できます。
+
+```sql title="query-cross-account-access.sql"
+-- YOUR_ACCOUNT_ID を 12 桁の AWS アカウント ID に置き換えてください
+SELECT
+    requester,
+    bucket_name,
+    operation,
+    COUNT(*)                       AS request_count,
+    COUNT(DISTINCT key_name)       AS objects_accessed,
+    SUM(bytes_sent_size) / 1048576 AS MB_transferred
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE requester NOT LIKE '%YOUR_ACCOUNT_ID%'
+  AND requester IS NOT NULL
+  AND authentication_type IS NOT NULL
+GROUP BY requester, bucket_name, operation
+ORDER BY request_count DESC
+LIMIT 50
+```
+
+</TabItem>
+<TabItem value="audit" label="📋 監査">
+
+#### ボリューム別トップリクエスター
+
+アクセスレビューとコスト配分のために、IAM プリンシパルをリクエスト総数とデータ転送量でランク付けします。
+
+```sql title="query-top-requesters.sql"
+SELECT
+    requester,
+    COUNT(*)                          AS total_requests,
+    SUM(bytes_sent_size) / 1073741824 AS total_GB_sent,
+    COUNT(DISTINCT bucket_name)       AS buckets_accessed,
+    COUNT(DISTINCT operation)         AS unique_operations
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+GROUP BY requester
+ORDER BY total_requests DESC
+LIMIT 25
+```
+
+#### バケットごとのユニークユーザーエージェント
+
+本番バケットでの予期しないユーザーエージェント（curl、wget、不明な SDK）は、不正なツールの使用や不正アクセスを示す可能性があります。
+
+```sql title="query-user-agents.sql"
+SELECT
+    bucket_name,
+    user_agent,
+    COUNT(*)                   AS request_count,
+    COUNT(DISTINCT requester)  AS unique_requesters
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+GROUP BY bucket_name, user_agent
+ORDER BY request_count DESC
+LIMIT 50
+```
+
+#### 暗号スイートの分布
+
+強力で承認された暗号スイートのみが使用されていることを確認します。これは SOC 2、HIPAA、PCI-DSS の一般的な要件です。
+
+```sql title="query-cipher-suites.sql"
+SELECT
+    tls_version,
+    cipher_suite,
+    COUNT(*) AS request_count
+FROM `YOUR_S3_ACCESS_LOG_GROUP`
+WHERE cipher_suite IS NOT NULL
+GROUP BY tls_version, cipher_suite
+ORDER BY request_count DESC
+```
+
+</TabItem>
+</Tabs>
+
+---
+
+### メトリクスフィルターと Contributor Insights によるリアルタイムモニタリング {#real-time-monitoring}
+
+上記のクエリはアドホック調査に強力です。**継続的なリアルタイムモニタリング**には、同じログデータに対して CloudWatch [メトリクスフィルター](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/MonitoringLogData.html)と Contributor Insights ルールを作成します。
+
+<Tabs>
+<TabItem value="metric-filters" label="📊 メトリクスフィルター（7）" default>
+
+メトリクスフィルターは、ログパターンからカスタム CloudWatch メトリクスを発行します。各メトリクスは、リアルタイムアラートのための CloudWatch アラームを駆動できます。
+
+:::info[メトリクスフィルターには Standard ログクラスが必要]
+メトリクスフィルターは、**Standard** クラスを使用する CloudWatch Logs ロググループでのみサポートされています。取り込みコストを低く抑えるために Infrequent Access クラスを選択した場合は、代わりに Logs Insights クエリと Contributor Insights ルールを使用してください。
+:::
+
+---
+
+**メトリクスフィルター 1：アクセス拒否（403）エラー**
+
+<details>
+<summary>HTTP 403 レスポンスをカウントします。スパイクはクレデンシャルプロービングまたはポリシーの設定ミスを示す可能性があります</summary>
+
+単一の IP またはリクエスターからの 403 エラーの急増は、クレデンシャルスタッフィング、ブルートフォースの試行、または正当なワークロードに影響する IAM ポリシーの設定ミスを示す可能性があります。
+
+**フィルターパターン：**
+
+```
+{ $.http_status = 403 }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `AccessDeniedErrors`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 5 分間で 100 を超過 → セキュリティチームへの SNS 通知
+
+</details>
+
+---
+
+**メトリクスフィルター 2：Not Found（404）エラー**
+
+<details>
+<summary>HTTP 404 レスポンスをカウントします。大量の場合はオブジェクトキーの列挙を示す可能性があります</summary>
+
+オブジェクトキーを発見しようとする攻撃者は、多数の 404 レスポンスを生成します。404 を 403 と分離することで、各攻撃パターンに対して異なるしきい値を設定できます。
+
+**フィルターパターン：**
+
+```
+{ $.http_status = 404 }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `NotFoundErrors`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 5 分間で 500 を超過 → セキュリティチームへの SNS 通知
+
+</details>
+
+---
+
+**メトリクスフィルター 3：サーバーエラー（5xx）**
+
+<details>
+<summary>HTTP 5xx レスポンスをカウントします。503 SlowDown エラーのスパイクはリクエストスロットリングを示す可能性があります</summary>
+
+異常に高いリクエストレートは Amazon S3 スロットリング（503 SlowDown）をトリガーする可能性があります。これは暴走した自動化パイプライン、DDoS イベント、またはタイトなループでリトライする設定ミスのアプリケーションが原因である可能性があります。
+
+**フィルターパターン：**
+
+```
+{ $.http_status = 5* }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `ServerErrors5xx`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 5 分間で 50 を超過 → 運用チームへの SNS 通知
+
+</details>
+
+---
+
+**メトリクスフィルター 4：匿名/未認証リクエスト**
+
+<details>
+<summary>認証情報のないリクエストを検出します。ゼロ以外の値は調査が必要です</summary>
+
+匿名リクエストは、AWS 認証情報が提示されなかったことを意味します。これは通常、バケットポリシーまたは ACL がパブリックアクセスを許可していることを示しており、意図的な場合（静的ウェブサイト）もあれば、設定ミスの場合もあります。
+
+**フィルターパターン：**
+
+```
+{ $.authentication_type NOT EXISTS }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `AnonymousRequests`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 5 分間で 0 を超過（パブリックであるべきでないバケットの場合）
+
+</details>
+
+---
+
+**メトリクスフィルター 5：非推奨 SigV2 を使用するリクエスト**
+
+<details>
+<summary>SigV2 で署名されたリクエストをカウントします。完全な SigV4 移行の進捗を追跡します</summary>
+
+AWS は Signature Version 2 を非推奨にしました。サーバーアクセスログの `signature_version` フィールドは、まだ SigV2 を使用しているクライアントを見つける唯一の方法です。アップグレードが必要なクライアントを特定するために、発生時にアラームを設定します。
+
+**フィルターパターン：**
+
+```
+{ $.signature_version = "SigV2" }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `SigV2Requests`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 15 分間で 0 を超過 → SDK アップグレードのためアプリケーションオーナーに通知
+
+</details>
+
+---
+
+**メトリクスフィルター 6：古い TLS（1.0/1.1）**
+
+<details>
+<summary>TLS 1.0 または 1.1 を使用するリクエストをカウントします。コンプライアンスフレームワークは TLS 1.2 以上を要求します</summary>
+
+PCI-DSS、FedRAMP、NIST 800-53 は TLS 1.2 以上を義務付けています。このフィルターはアップグレードしていないクライアントを追跡し、コンプライアンスレポートの証拠と修復のターゲットリストを提供します。
+
+**フィルターパターン：**
+
+```
+{ $.tls_version = "TLSv1" || $.tls_version = "TLSv1.1" }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `OutdatedTLSRequests`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 15 分間で 0 を超過 → コンプライアンスチームに通知
+
+</details>
+
+---
+
+**メトリクスフィルター 7：大量データダウンロード（潜在的なデータ流出）**
+
+<details>
+<summary>100 MB を超える成功した GET レスポンスをカウントします。持続的な大量ダウンロードはデータ流出を示す可能性があります</summary>
+
+大量のダウンロードは多くのワークロードで正常ですが、予期しないリクエスターや IP からの大量 GET レスポンスの急増は調査が必要です。
+
+**フィルターパターン：**
+
+```
+{ $.http_status = 200 && $.bytes_sent_size > 104857600 && $.operation = "REST.GET.OBJECT" }
+```
+
+- **メトリクス名前空間：** `S3ServerAccessLogs`
+- **メトリクス名：** `LargeDownloads`
+- **メトリクス値：** `1`
+- **推奨アラーム：** 15 分間で 50 を超過 → 調査のためセキュリティチームに通知
+
+</details>
+
+</TabItem>
+<TabItem value="contributor-insights" label="🔎 Contributor Insights（6）">
+
+Contributor Insights ルールは、ログデータを継続的に分析し、指定されたキーのトップ N コントリビューターを表示します。コンソールの *CloudWatch → Contributor Insights → Create rule* で作成するか、以下の JSON ルールボディを使用して `put-insight-rule` CLI で作成します。
+
+---
+
+**Contributor Insights ルール 1：403/404 エラーを生成するトップ IP**
+
+<details>
+<summary>ソース IP をエラー数でランク付けします。列挙攻撃やブルートフォースの試行を検出します</summary>
+
+Amazon S3 バケットに対して最も多くの 403 および 404 エラーを生成している IP アドレスを継続的に特定し、不正アクセスの可能性やクライアントの設定ミスに対するリアルタイムの可視性を提供します。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.http_status", "In": [ 403, 404 ] }
+    ],
+    "Keys": [ "$.remote_ip" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Count
+- **キー：** `remote_ip`
+
+</details>
+
+---
+
+**Contributor Insights ルール 2：ダウンロードボリューム別トップリクエスター**
+
+<details>
+<summary>bytes_sent_size で集約し、リアルタイムで潜在的なデータ流出を検出します</summary>
+
+Amazon S3 バケットから最も多くのデータをダウンロードしている IAM プリンシパルと IP を表示します。異常なスパイクは、漏洩した可能性のある認証情報や内部の不正アクティビティを示す可能性があります。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Sum",
+  "ValueKey": "$.bytes_sent_size",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.operation", "StartsWith": "REST.GET.OBJECT" },
+      { "Match": "$.http_status", "EqualTo": 200 }
+    ],
+    "Keys": [ "$.requester", "$.remote_ip" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Sum（`bytes_sent_size`）
+- **キー：** `requester`、`remote_ip`
+
+</details>
+
+---
+
+**Contributor Insights ルール 3：削除を実行するトップリクエスター**
+
+<details>
+<summary>最も多くの削除オペレーションを実行している IAM プリンシパルを表示します。大量削除は不正な一括削除パターンを示す可能性があります</summary>
+
+バケット全体でリクエスターを削除ボリュームでランク付けします。異常に高い削除数を持つ単一のリクエスターは、即座の調査が必要です。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.operation", "In": [
+          "REST.DELETE.OBJECT",
+          "REST.POST.MULTI_OBJECT_DELETE",
+          "BATCH.DELETE.OBJECT"
+        ]
+      }
+    ],
+    "Keys": [ "$.requester", "$.bucket_name" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Count
+- **キー：** `requester`、`bucket_name`
+
+</details>
+
+---
+
+**Contributor Insights ルール 4：バケットごとのトップユーザーエージェント**
+
+<details>
+<summary>ユーザーエージェントをリクエストボリュームでランク付けします。予期しないエージェントは不正なツールの使用を示す可能性があります</summary>
+
+本番バケットでの予期しないユーザーエージェント（curl、wget、不明な SDK）は、意図しないツールの使用や不正アクセスを示す可能性があります。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [],
+    "Keys": [ "$.user_agent", "$.bucket_name" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Count
+- **キー：** `user_agent`、`bucket_name`
+
+</details>
+
+---
+
+**Contributor Insights ルール 5：リクエスト総数別トップリクエスター**
+
+<details>
+<summary>リクエスターをリクエスト総数でランク付けします。コスト配分とアクセスレビューのために最もヘビーな API コンシューマーを特定します</summary>
+
+誰が最も多くのリクエストを行っているかを理解することは、コスト配分、キャパシティプランニング、暴走した自動化や予期しないアクセスパターンの特定に役立ちます。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [],
+    "Keys": [ "$.requester", "$.operation" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Count
+- **キー：** `requester`、`operation`
+
+</details>
+
+---
+
+**Contributor Insights ルール 6：エラー率別トップバケット**
+
+<details>
+<summary>バケットをエラーボリュームでランク付けします。ポリシーや設定の問題があるバケットをすばやく特定します</summary>
+
+1 つのバケットが他のバケットよりも大幅に多くのエラーを生成している場合、ポリシーの設定ミス、オブジェクトの欠落の問題、または不正アクセスの試行のターゲットになっている可能性があります。
+
+**ルールボディ：**
+
+```json
+{
+  "Schema": { "Name": "CloudWatchLogRule", "Version": 1 },
+  "AggregateOn": "Count",
+  "Contribution": {
+    "Filters": [
+      { "Match": "$.http_status", "GreaterThan": 399 }
+    ],
+    "Keys": [ "$.bucket_name", "$.error_code" ]
+  },
+  "LogFormat": "JSON",
+  "LogGroupNames": [ "YOUR_S3_ACCESS_LOG_GROUP" ]
+}
+```
+
+- **集約：** Count
+- **キー：** `bucket_name`、`error_code`
+
+</details>
+
+</TabItem>
+</Tabs>
+
+:::tip[多層防御：3 つすべてを組み合わせて使用]
+| ツール | 役割 | 最適な用途 |
+|---|---|---|
+| **メトリクスフィルター** | CloudWatch メトリクスを発行 → アラームをトリガー | しきい値ベースのアラート（「5 分間で 50 件以上のエラー」） |
+| **Contributor Insights** | トップ N コントリビューターを継続的にランク付け | ライブダッシュボード（「現在最も多くのエラーを生成している IP はどれか？」） |
+| **Logs Insights クエリ** | 生ログデータに対するアドホック SQL 分析 | インシデント調査とフォレンジックの深掘り |
+:::
+
+---
+
+## 関連リソース
+
+CloudWatch 統合データストアにネイティブに配信される Amazon S3 サーバーアクセスログは、他のログソースではキャプチャできないフィールドとオペレーションを含む、バケットへのすべてのリクエストのコスト効率の高い HTTP レベルのビューを提供します。CloudWatch 統合データストアは、宛先バケットのプロビジョニング、ログオブジェクトのライフサイクル管理、カスタム ETL パイプラインの必要性を排除し、生の Amazon S3 サーバーアクセスログデータを構造化されたクエリ可能なフォーマットに自動的に変換します。CloudTrail Amazon S3 データイベントは、保証された配信、豊富な IAM ID コンテキスト、および柔軟なストリーミング宛先を提供します。これらを組み合わせることで、コストと保証のバランスを取った**多層防御戦略**が形成されます。
+
+:::note[重要なポイント]
+ハイブリッドアプローチにより、最も管理しやすいコストで最も幅広いカバレッジが得られます：
+
+- CloudWatch 統合データストアを通じて配信される**すべてのバケットの Amazon S3 サーバーアクセスログ**により、ボリューム階層料金で幅広い可視性、ライフサイクル追跡、SigV2 検出、パフォーマンスメトリクスを実現。
+- 最も重要なデータに対する保証された配信と完全な ID コンテキストのための、**機密バケットのスコープ付き CloudTrail データイベント**。
+- 設定変更のアラートのための **CloudTrail 管理イベント（追加コストなし）**。
+
+CloudWatch 統合データストアが変換を自動的に処理するため、追加のパイプラインセットアップなしで Amazon S3 アクセスデータのクエリ、フィルタリング、アラート設定を即座に開始できます。CloudTrail の信頼性の高い配信により、最も重要なデータに対する重要な書き込みイベントを見逃すことがありません。
+:::
+
+- [Amazon S3 server access logs now deliver to Amazon CloudWatch Logs and Amazon S3 Tables](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-s3-cloudwatch-logs-tables/)
+- [Using Amazon S3 Server Access Logs with Amazon CloudWatch Logs](https://aws.amazon.com/blogs/mt/using-amazon-s3-server-access-logs-with-amazon-cloudwatch-logs/)
+- [Query Amazon S3 access logs instantly with CloudWatch and S3 Tables](https://aws.amazon.com/blogs/storage/query-amazon-s3-access-logs-instantly-with-cloudwatch-and-s3-tables/)
+- [Logging requests with server access logging](https://docs.aws.amazon.com/AmazonS3/latest/userguide/ServerLogs.html)（Amazon S3 ユーザーガイド）
+- [Amazon S3 server access log format](https://docs.aws.amazon.com/AmazonS3/latest/userguide/LogFormat.html)（完全なフィールドリファレンス）
+- [Security best practices for Amazon S3](https://docs.aws.amazon.com/AmazonS3/latest/userguide/security-best-practices.html)（モニタリングと監査の推奨事項）
+
+## 関連イベント
+
+<RelatedEvents />

@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # オブザーバビリティの開始方法
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["cloudwatch"]} />
 

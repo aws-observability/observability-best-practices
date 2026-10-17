@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # CloudWatch メトリクスと EMF
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["cloudwatch", "metrics"]} />
 

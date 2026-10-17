@@ -124,6 +124,6 @@ AWS は、トレース収集のための 2 つのツールセットをサポー�
 - [AWS ドキュメント：X-Ray デベロッパーガイド](https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html)
 - [AWS ドキュメント：AWS Distro for OpenTelemetry](https://aws-otel.github.io/)
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["apm"]} />

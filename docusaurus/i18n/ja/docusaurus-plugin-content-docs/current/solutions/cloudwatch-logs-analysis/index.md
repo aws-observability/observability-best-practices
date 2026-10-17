@@ -439,6 +439,6 @@ fields @timestamp, @message
 - [AWS ドキュメント：Contributor Insights ルール構文](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ContributorInsights-RuleSyntax.html)
 - [AWS ドキュメント：Data Protection ポリシー](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-data-protection-policies.html)
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["logs", "cloudwatch"]} />

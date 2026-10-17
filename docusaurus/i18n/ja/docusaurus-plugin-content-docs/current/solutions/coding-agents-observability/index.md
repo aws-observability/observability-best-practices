@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # コーディングエージェントのオブザーバビリティ
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["ai-ml"]} />
 

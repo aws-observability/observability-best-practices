@@ -248,6 +248,6 @@ Amazon CloudWatch Logs のセキュリティ確保には、アイデンティテ
 - [クロスアカウント・クロスリージョンログの一元化](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)
 - [CloudWatch Logs でのインターフェース VPC エンドポイントの使用](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/cloudwatch-logs-and-interface-VPC.html)
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents />

@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # CloudTrail セキュリティフォレンジクス
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["security"]} />
 

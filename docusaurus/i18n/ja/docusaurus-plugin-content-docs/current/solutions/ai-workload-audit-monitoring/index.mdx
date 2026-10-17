@@ -3224,7 +3224,10 @@ Contributor Insights ルールは CloudWatch Logs **Standard** ロググラス�
   "Contribution": {
     "Filters": [
       { "Match": "$.eventSource", "In": ["bedrock.amazonaws.com"] },
-      { "Match": "$.eventName", "In": ["Retrieve", "RetrieveAndGenerate"] }
+      {
+        "Match": "$.eventName",
+        "In": ["Retrieve", "RetrieveAndGenerate"]
+      }
     ],
     "Keys": ["$.userIdentity.arn", "$.eventName", "$.sourceIPAddress"]
   },

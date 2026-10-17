@@ -125,6 +125,6 @@ EKS ワークロードの場合、Amazon CloudWatch Observability EKS アドオ�
 - [AWS ドキュメント：CloudWatch Agent のインストール](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html)
 - [AWS ドキュメント：CloudWatch Agent 設定ファイルリファレンス](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Agent-Configuration-File-Details.html)
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["cloudwatch", "metrics"]} />

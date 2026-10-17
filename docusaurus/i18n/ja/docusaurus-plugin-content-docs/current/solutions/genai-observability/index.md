@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # 生成 AI ワークロードのオブザーバビリティ
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["genai", "ai-ml"]} />
 

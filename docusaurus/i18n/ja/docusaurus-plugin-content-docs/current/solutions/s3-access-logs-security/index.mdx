@@ -552,7 +552,7 @@ ORDER BY event_count DESC
 他の AWS アカウントの IAM プリンシパルからのリクエストを特定することで、クロスアカウントアクセスが明示的に許可されていることを検証できます。
 
 ```sql title="query-cross-account-access.sql"
--- YOUR_ACCOUNT_ID を 12 桁の AWS アカウント ID に置き換えてください
+-- Replace YOUR_ACCOUNT_ID with your 12-digit AWS account ID
 SELECT
     requester,
     bucket_name,

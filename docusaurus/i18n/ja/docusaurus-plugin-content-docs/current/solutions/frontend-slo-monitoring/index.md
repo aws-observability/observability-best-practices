@@ -7,7 +7,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 
 # フロントエンドと SLO モニタリング
 
-## Related Events
+## 関連イベント
 
 <RelatedEvents topics={["apm", "cloudwatch"]} />
 

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Application Map — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Application Map</h1></header>
+<article>
+<section>
+<h2>概要</h2>
+<p>CloudWatch <strong>Application Map</strong> は、アプリケーションのトポロジーと運用上の健全性を可視化します。Application Signals における従来の「Service Map」という用語に代わるものです。</p>
+<p>クライアント、カナリア、サービス、および依存関係間の接続を表示し、チームが実行フローを把握して、障害やレイテンシーの発生箇所を迅速に特定するのに役立ちます。</p>
+</section>
+<section>
+<h2>主な機能</h2>
+<ul>
+<li><strong>SLO/SLI の健全性:</strong> どのサービスが目標を達成または違反しているか、また影響がダウンストリームにどのように伝播するかを確認できます。</li>
+<li><strong>ドリルダウン:</strong> ノードやエッジを選択してメトリクスを表示し、サービスの詳細に移動できます。</li>
+<li><strong>グループ化とフィルタリング:</strong> デフォルトのグループ（関連サービス、環境）を使用するか、タグや OTEL リソース属性を使用してカスタムグループを定義できます。</li>
+<li><strong>未インストルメント済みサービス:</strong> Application Signals は、まだインストルメントされていないサービスを表示して、ロールアウトの優先順位付けを支援できます。</li>
+<li><strong>クロスアカウントの可視性:</strong> クロスアカウントオブザーバビリティが設定されている場合、複数のアカウントにまたがるサービスを可視化できます。</li>
+</ul>
+</section>
+<section>
+<h2>公式ドキュメント</h2>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/ServiceMap.html">CloudWatch アプリケーションマップを使用して、アプリケーションのトポロジーを表示し、運用上の健全性を監視する</a></p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>自动检测 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>自动检测</h1></header>
+      <article>
+        <section>
+          <h2>"自动检测"的含义</h2>
+          <p>自动检测在运行时添加 OpenTelemetry 检测（无需更改应用程序代码），使服务发出 Application Signals 用于发现和健康监控的遥测数据。</p>
+        </section>
+
+        <section>
+          <h2>常见 AWS 设置组件</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK 和/或收集器</li>
+            <li><strong>CloudWatch Agent</strong> 在支持的设置中收集/导出遥测数据</li>
+            <li><strong>平台启用</strong>（EKS 插件 / ECS 边车 / EC2 代理设置 / Lambda 层）</li>
+          </ul>
+          <p>从这里开始：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals 概述</a>。</p>
+        </section>
+
+        <section>
+          <h2>支持的语言和系统</h2>
+          <p>Application Signals 支持 Java、Python、Node.js 和 .NET 应用程序，并在 Amazon EKS、Kubernetes、Amazon ECS 和 Amazon EC2 上支持/测试。</p>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">支持的系统</a>。</p>
+        </section>
+
+        <section>
+          <h2>注意事项和常见问题</h2>
+          <ul>
+            <li><strong>Node.js ESM：</strong>ESM 支持有限；除非您遵循文档中的 ESM 特定指南，否则建议使用 CommonJS。</li>
+            <li><strong>容器中的 Python：</strong>您可能需要配置 <code>PYTHONPATH</code> 以用于 OTel 自动检测。</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

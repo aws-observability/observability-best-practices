@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Auto Instrumentation — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Auto Instrumentation</h1></header>
+      <article>
+        <section>
+          <h2>"Auto instrumentation" என்றால் என்ன</h2>
+          <p>Auto instrumentation இயக்க நேரத்தில் OpenTelemetry instrumentation-ஐ சேர்க்கிறது (உங்கள் பயன்பாட்டு code-ஐ மாற்றாமல்), இதனால் சேவை Application Signals கண்டறிதல் மற்றும் ஆரோக்கிய கண்காணிப்புக்கு பயன்படுத்தும் telemetry-ஐ வெளியிடுகிறது.</p>
+        </section>
+
+        <section>
+          <h2>பொதுவான AWS அமைப்பு கூறுகள்</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK மற்றும்/அல்லது collector</li>
+            <li><strong>CloudWatch Agent</strong> ஆதரிக்கப்படும் அமைப்புகளில் telemetry-ஐ சேகரிக்க/ஏற்றுமதி செய்ய</li>
+            <li><strong>Platform enablement</strong> (EKS add-on / ECS sidecar / EC2 agent அமைப்பு / Lambda layers)</li>
+          </ul>
+          <p>இங்கே தொடங்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals மேலோட்டம்</a>.</p>
+        </section>
+
+        <section>
+          <h2>ஆதரிக்கப்படும் மொழிகள் மற்றும் அமைப்புகள்</h2>
+          <p>Application Signals Java, Python, Node.js மற்றும் .NET பயன்பாடுகளை ஆதரிக்கிறது மற்றும் Amazon EKS, Kubernetes, Amazon ECS மற்றும் Amazon EC2-ல் ஆதரிக்கப்படுகிறது/சோதிக்கப்படுகிறது.</p>
+          <p>பாருங்கள்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">ஆதரிக்கப்படும் அமைப்புகள்</a>.</p>
+        </section>
+
+        <section>
+          <h2>குறிப்புகள் மற்றும் கவனிக்க வேண்டியவை</h2>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM ஆதரவு வரையறுக்கப்பட்டது; ஆவணங்களில் ESM-குறிப்பிட்ட வழிகாட்டுதலைப் பின்பற்றாவிட்டால் CommonJS பரிந்துரைக்கப்படும் பாதையாகும்.</li>
+            <li><strong>Containers-ல் Python:</strong> OTel autoinstrumentation-க்கு <code>PYTHONPATH</code> கட்டமைக்கப்பட வேண்டியிருக்கலாம்.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

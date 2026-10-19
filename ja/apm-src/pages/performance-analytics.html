@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Performance Analytics — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Performance Analytics</h1></header>
+      <article>
+        <section>
+          <h2>Standard application metrics</h2>
+          <p>Application Signals publishes standard application metrics to CloudWatch (namespace <code>ApplicationSignals</code>). These metrics are designed for fast triage across services, operations, and dependencies.</p>
+          <ul>
+            <li><strong>Latency</strong> (ms)</li>
+            <li><strong>Fault</strong> (HTTP 5xx and span status errors)</li>
+            <li><strong>Error</strong> (HTTP 4xx)</li>
+            <li><strong>Availability</strong> is computed in the console as \( (1 - \text{Faults}/\text{Total}) \times 100 \) where Total is derived from <code>SampleCount(Latency)</code>. 4xx responses are treated as successful for this availability calculation.</li>
+          </ul>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Metrics collected by Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>Dimensions (service vs dependency)</h2>
+          <p>Metrics are emitted with dimensions that let you break down performance by:</p>
+          <ul>
+            <li><strong>Service metrics</strong>: Environment, Service, Operation</li>
+            <li><strong>Dependency metrics</strong>: Environment, Service, Operation plus RemoteService / RemoteOperation (and other remote dimensions depending on platform)</li>
+          </ul>
+          <p>This makes it easier to answer questions like “which operation regressed?” and “is latency driven by a dependency call?”</p>
+        </section>
+
+        <section>
+          <h2>Runtime metrics (where supported)</h2>
+          <p>Application Signals can also collect runtime metrics for supported runtimes (for example, JVM GC, memory, CPU; Python process metrics; .NET runtime metrics). Runtime metrics are not collected for Node.js.</p>
+          <p>You can disable runtime metrics collection with <code>OTEL_AWS_APPLICATION_SIGNALS_RUNTIME_ENABLED=false</code> (platform-specific steps are in the docs).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

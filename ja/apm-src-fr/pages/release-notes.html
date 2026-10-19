@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Notes de version — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Notes de version</h1></header>
+      <article>
+        <section>
+          <h2>Notes de version : ou chercher</h2>
+          <p>CloudWatch Application Signals est une fonctionnalite geree par AWS. Les notes de version publiques et les annonces de fonctionnalites sont publiees via la documentation AWS et la section « Quoi de neuf » d'AWS.</p>
+          <ul>
+            <li><strong>« Quoi de neuf » AWS :</strong> <a href="https://aws.amazon.com/about-aws/whats-new/">aws.amazon.com/about-aws/whats-new</a></li>
+            <li><strong>Documentation Application Signals :</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">CloudWatch Application Signals</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Composants d'instrumentation</h2>
+          <p>Vos mises a niveau « versionnees » proviennent generalement de la distribution d'instrumentation et de ses dependances (par exemple, AWS Distro for OpenTelemetry et les bibliotheques d'instrumentation OpenTelemetry), ainsi que de CloudWatch Agent et des extensions de plateforme.</p>
+          <ul>
+            <li><strong>ADOT :</strong> suivez les notes de version d'AWS Distro for OpenTelemetry appropriees pour votre langage/environnement d'execution.</li>
+            <li><strong>CloudWatch Agent :</strong> mettez a jour l'agent lorsque cela est necessaire pour les nouvelles fonctionnalites d'Application Signals (par exemple, le regroupement via les attributs de ressource).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Problemes connus et compatibilite</h2>
+          <p>Pour la matrice de compatibilite actuelle et les problemes connus, consultez la page officielle « Systemes pris en charge ».</p>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">Systemes pris en charge</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

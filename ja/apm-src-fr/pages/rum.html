@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RUM — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Surveillance des utilisateurs reels (RUM)</h1></header>
+      <article>
+        <section>
+          <h2>Comment RUM se connecte a Application Signals</h2>
+          <p>Les clients web CloudWatch RUM peuvent apparaitre dans Application Signals lorsque vous activez le tracage X-Ray pour le client RUM. Les requetes du client vers les services backend sont alors associees et affichees dans les details du service et sur la Carte d'application.</p>
+          <p>Voir : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Comment Application Signals permet la surveillance de la sante operationnelle</a>.</p>
+        </section>
+
+        <section>
+          <h2>A quelles questions RUM aide a repondre</h2>
+          <ul>
+            <li><strong>Ce probleme impacte-t-il les utilisateurs ?</strong> Correlez la sante du backend aux signaux de chargement de page et d'erreurs JS</li>
+            <li><strong>Ou les utilisateurs sont-ils impactes ?</strong> Comparez les performances par geographie, appareil et navigateur</li>
+            <li><strong>Qu'est-ce qui a change ?</strong> Correlez avec les deploiements/evenements de changement lors de l'investigation des regressions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Prochaines etapes</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

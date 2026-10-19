@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Features &amp; Capabilities — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>機能と特長</h1></header>
+<article>
+<section>
+<h2>Application Signals: 提供される機能</h2>
+<p>CloudWatch Application Signals は、CloudWatch における AWS のアプリケーションパフォーマンスモニタリング (APM) エクスペリエンスです。有効化後、アプリケーションのテレメトリを自動的に収集し、 <strong>サービス</strong>, <strong>オペレーション</strong>、および <strong>依存関係</strong> ごとに整理することで、運用上の健全性を迅速にトリアージし、長期的なパフォーマンス目標を追跡できます。</p>
+<ul>
+<li><strong>標準アプリケーションメトリクス:</strong> 呼び出し量、可用性、レイテンシー、障害、およびエラー。</li>
+<li><strong>サービスと依存関係のトポロジー:</strong> 検出されたサービスと関係から生成されたアプリケーションマップ。</li>
+<li><strong>詳細なトラブルシューティング:</strong> サービスの健全性から相関トレースおよび関連テレメトリへのドリルダウン。</li>
+</ul>
+</section>
+<section>
+<h2>アプリケーションマップ (トポロジー + 健全性)</h2>
+<p>アプリケーションマップは、アプリケーションのトポロジーを可視化し、運用上の健全性を強調表示します。クライアント、カナリア、サービス、および依存関係間の接続を表示することで、オペレーターは実行フローを把握し、問題が伝播している箇所を特定できます。</p>
+<h3>できること</h3>
+<ul>
+<li><strong>SLO/SLI の健全性を確認:</strong> 目標を達成していないサービス (および上流/下流への影響) を素早く把握できます。</li>
+<li><strong>ドリルダウン:</strong> ノード/エッジを選択して詳細メトリクスを開き、サービスの詳細に移動します。</li>
+<li><strong>グループ化とフィルタリング:</strong> デフォルトのグループ (関連サービス、環境) を使用し、AWS タグまたは OpenTelemetry リソース属性を使用してカスタムグループを作成します。</li>
+<li><strong>クロスアカウントの可視性:</strong> 複数の AWS アカウントにまたがるサービスを表示します (クロスアカウントオブザーバビリティ経由で設定した場合)。</li>
+</ul>
+</section>
+<section>
+<h2>サービス、オペレーション、および依存関係</h2>
+<p>Application Signals は、チームが本番システムをデバッグする方法に合わせたモデルにテレメトリを構造化します:</p>
+<ul>
+<li><strong>サービス:</strong> デプロイ可能なユニット (例: ECS サービス、EKS ワークロード、Lambda 関数)。</li>
+<li><strong>オペレーション:</strong> サービス内のリクエストハンドラー (例: HTTP ルートまたは RPC メソッド)。</li>
+<li><strong>依存関係:</strong> サービスが行うダウンストリーム呼び出し (例: 別のサービスまたは AWS の依存関係)。</li>
+</ul>
+<p>この構造により、「どのオペレーションが低下したか」、「これは上流または下流の問題か」、「どの依存関係がレイテンシーや障害の原因となっているか」といった質問に答えやすくなります。</p>
+</section>
+<section>
+<h2>サービスレベル目標 (SLO)</h2>
+<p>Application Signals が収集するテレメトリから直接 SLO を作成および監視します。SLO は、目標に対するパフォーマンスと信頼性を追跡し、「リスクのある」サービスを早期に表面化するのに役立ちます。</p>
+<ul>
+<li><strong>主要な SLI に対して SLO を定義:</strong> 可用性、レイテンシー、またはビジネス目標に関連するその他の CloudWatch メトリクス。</li>
+<li><strong>健全性の追跡:</strong> サービスリストおよび Application Map で SLI の健全性ステータスを確認する。</li>
+<li><strong>アラート:</strong> 停止前にチームが対応できるよう、SLO のステータス/バーンレートに連動したアラームを作成する。</li>
+</ul>
+</section>
+<section>
+<h2>インストルメンテーション（OpenTelemetry 互換）</h2>
+<p>Application Signals は OpenTelemetry 互換であり、プラットフォームおよび言語に応じてアプリケーションをインストルメント化する複数の方法をサポートしています。</p>
+<ul>
+<li><strong>サポート対象言語:</strong> Java、Python、Node.js、および .NET（さらに OpenTelemetry のゼロコードインストルメンテーションパスを通じた追加ランタイムも対応）。</li>
+<li><strong>サポート対象システム:</strong> Amazon EKS、Kubernetes、Amazon ECS、Amazon EC2（および CloudWatch エージェント + AWS Distro for OpenTelemetry を利用した有効化パターン）。</li>
+<li><strong>一般的なセットアップパターン:</strong> 環境に応じて、AWS Distro for OpenTelemetry（ADOT）SDK/コレクター、または OpenTelemetry SDK + コレクターを使用する。</li>
+</ul>
+</section>
+<section>
+<h2>RUM および Synthetics との連携</h2>
+<p>Application Signals は CloudWatch RUM および CloudWatch Synthetics と統合されています。これらのクライアント/カナリアのトレースを有効にすると、Application Map に表示され、ユーザーエクスペリエンスおよびプロアクティブテストを、それらが呼び出すバックエンドサービスに関連付けることができます。</p>
+<ul>
+<li><strong>RUM クライアント:</strong> フロントエンドのパフォーマンスおよび JS エラーをバックエンドのサービス呼び出しに関連付ける。</li>
+<li><strong>Synthetics カナリア:</strong> 重要なフローを検証し、ユーザーより先に問題を検出するのに役立てる。</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

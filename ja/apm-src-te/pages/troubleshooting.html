@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ట్రబుల్‌షూటింగ్ — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ట్రబుల్‌షూటింగ్</h1></header>
+      <article>
+        <section>
+          <h2>సాధారణ సమస్యలు</h2>
+          <p>ఈ విభాగం CloudWatch Application Signals ను అమలు చేసేటప్పుడు తరచుగా ఎదుర్కొనే సమస్యలను మరియు వాటిని ఎలా పరిష్కరించాలో వివరిస్తుంది.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch లో ట్రేస్‌లు కనిపించడం లేదు</h3>
+
+          <h4>సాధ్యమైన కారణాలు:</h4>
+          <ul>
+            <li>సేవ కోసం Application Signals ఎనేబుల్ చేయబడలేదు</li>
+            <li>తప్పు IAM అనుమతులు</li>
+            <li>ఏజెంట్ సరిగ్గా కాన్ఫిగర్ చేయబడలేదు లేదా రన్ అవడం లేదు</li>
+            <li>శాంప్లింగ్ రేట్ చాలా తక్కువగా సెట్ చేయబడింది</li>
+            <li>CloudWatch కు నెట్‌వర్క్ కనెక్టివిటీ సమస్యలు</li>
+          </ul>
+
+          <h4>పరిష్కారాలు:</h4>
+          <ol>
+            <li>AWS కన్సోల్‌లో Application Signals ఎనేబుల్ అయ్యిందని ధృవీకరించండి</li>
+            <li>IAM అనుమతులలో <code>cloudwatch:PutMetricData</code> మరియు <code>xray:PutTraceSegments</code> ఉన్నాయని చెక్ చేయండి</li>
+            <li>ఏజెంట్ రన్ అవుతోందని మరియు సరిగ్గా కాన్ఫిగర్ చేయబడిందని నిర్ధారించండి</li>
+            <li>పరీక్ష కోసం శాంప్లింగ్ రేట్‌ను పెంచండి (తాత్కాలికంగా 100% కు సెట్ చేయండి)</li>
+            <li>VPC సెక్యూరిటీ గ్రూప్‌లు మరియు NACL లు CloudWatch కు అవుట్‌బౌండ్ ట్రాఫిక్‌ను అనుమతిస్తాయని చెక్ చేయండి</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>తప్పిపోయిన లేదా అసంపూర్ణ ట్రేస్‌లు</h3>
+
+          <h4>సాధారణ సమస్యలు:</h4>
+          <ul>
+            <li>సేవల మధ్య సందర్భం ప్రచారం కాలేదు</li>
+            <li>కొన్ని సేవలు ఇన్‌స్ట్రుమెంట్ చేయబడలేదు</li>
+            <li>శాంప్లింగ్ స్పాన్‌లను డ్రాప్ చేస్తోంది</li>
+            <li>ఏజెంట్ కాన్ఫిగరేషన్ సమస్యలు</li>
+          </ul>
+
+          <h4>డీబగ్గింగ్ దశలు:</h4>
+          <ol>
+            <li>ఇన్‌స్ట్రుమెంట్ చేయబడని సేవలను గుర్తించడానికి సర్వీస్ మ్యాప్ చెక్ చేయండి</li>
+            <li>ట్రేస్ కాంటెక్స్ట్ హెడర్‌లు పాస్ అవుతున్నాయని ధృవీకరించండి (ఉదా., <code>x-amzn-trace-id</code>)</li>
+            <li>కాన్ఫిగరేషన్ ఎర్రర్‌ల కోసం ఏజెంట్ లాగ్‌లను సమీక్షించండి</li>
+            <li>శాంప్లింగ్ సమస్యలను తొలగించడానికి 100% శాంప్లింగ్‌తో పరీక్షించండి</li>
+            <li>పాక్షిక ట్రేస్‌లను కనుగొనడానికి ట్రేస్ సెర్చ్ ఉపయోగించండి</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>అధిక ఇన్‌స్ట్రుమెంటేషన్ ఓవర్‌హెడ్</h3>
+
+          <h4>లక్షణాలు:</h4>
+          <ul>
+            <li>పెరిగిన CPU వినియోగం</li>
+            <li>అధిక మెమరీ వినియోగం</li>
+            <li>పెరిగిన లేటెన్సీ</li>
+            <li>అప్లికేషన్ పనితీరు క్షీణత</li>
+          </ul>
+
+          <h4>ఆప్టిమైజేషన్ వ్యూహాలు:</h4>
+          <ul>
+            <li>శాంప్లింగ్ రేట్‌ను తగ్గించండి (ప్రొడక్షన్ కోసం 10% తో ప్రారంభించండి)</li>
+            <li>టెయిల్-ఆధారిత బదులు హెడ్-ఆధారిత శాంప్లింగ్ ఉపయోగించండి</li>
+            <li>తగిన స్పాన్ పరిమితులను కాన్ఫిగర్ చేయండి</li>
+            <li>బ్యాచ్ స్పాన్ ఎక్స్‌పోర్ట్‌లు</li>
+            <li>ఇన్‌స్ట్రుమెంటేషన్ మెట్రిక్స్‌ను మానిటర్ చేయండి</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM డేటా కనిపించడం లేదు</h3>
+
+          <h4>చెక్‌లిస్ట్:</h4>
+          <ul>
+            <li>RUM వెబ్ క్లయింట్ సరిగ్గా ఇన్‌స్టాల్ చేసి లోడ్ చేయబడింది</li>
+            <li>అప్లికేషన్ ID మరియు కాన్ఫిగరేషన్ సరైనది</li>
+            <li>RUM డొమైన్‌ల కోసం CORS హెడర్‌లు కాన్ఫిగర్ చేయబడ్డాయి</li>
+            <li>Content Security Policy RUM స్క్రిప్ట్‌లను అనుమతిస్తుంది</li>
+            <li>బ్రౌజర్ కన్సోల్ JavaScript ఎర్రర్‌లు చూపించదు</li>
+          </ul>
+
+          <h4>ధృవీకరణ:</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>Synthetic కెనరీలు విఫలమవుతున్నాయి</h3>
+
+          <h4>సాధారణ కారణాలు:</h4>
+          <ul>
+            <li>కెనరీ VPC నుండి నెట్‌వర్క్ కనెక్టివిటీ సమస్యలు</li>
+            <li>ప్రమాణీకరణ లేదా ఆథరైజేషన్ వైఫల్యాలు</li>
+            <li>టెస్ట్ స్క్రిప్ట్‌లను విచ్ఛిన్నం చేసే అప్లికేషన్ మార్పులు</li>
+            <li>కెనరీ రన్‌టైమ్ లేదా డిపెండెన్సీలు పాతవి</li>
+          </ul>
+
+          <h4>డీబగ్గింగ్:</h4>
+          <ol>
+            <li>CloudWatch Logs లో కెనరీ లాగ్‌లను సమీక్షించండి</li>
+            <li>కెనరీ స్క్రిప్ట్‌లను స్థానికంగా పరీక్షించండి</li>
+            <li>VPC రూటింగ్ మరియు సెక్యూరిటీ గ్రూప్‌లను చెక్ చేయండి</li>
+            <li>అవసరమైతే కెనరీ రన్‌టైమ్‌ను అప్‌డేట్ చేయండి</li>
+            <li>అప్లికేషన్ ఎండ్‌పాయింట్‌లు యాక్సెస్ చేయగలవని ధృవీకరించండి</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>డీబగ్గింగ్ గైడ్‌లు</h2>
+          <p>సంక్లిష్ట సమస్యలను నిర్ధారించడానికి దశల వారీ గైడ్‌లు.</p>
+        </section>
+
+        <section>
+          <h3>ట్రేస్ కాంటెక్స్ట్ ప్రచారాన్ని డీబగ్ చేయడం</h3>
+
+          <h4>దశ 1: ఇన్‌స్ట్రుమెంటేషన్ ధృవీకరించండి</h4>
+          <p>మీ కాల్ చైన్‌లోని అన్ని సేవలు సరిగ్గా ఇన్‌స్ట్రుమెంట్ చేయబడ్డాయని చెక్ చేయండి:</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>దశ 2: ఏజెంట్ కాన్ఫిగరేషన్ చెక్ చేయండి</h4>
+          <p>ఏజెంట్ కాన్ఫిగరేషన్ ఫైల్‌లు మరియు ఎన్విరాన్‌మెంట్ వేరియబుల్‌లను ధృవీకరించండి.</p>
+
+          <h4>దశ 3: ఎండ్-టు-ఎండ్ పరీక్ష</h4>
+          <p>ఒక టెస్ట్ రిక్వెస్ట్ చేసి అన్ని సేవల ద్వారా దాన్ని ట్రేస్ చేయండి.</p>
+        </section>
+
+        <section>
+          <h3>పనితీరు సమస్య నిర్ధారణ</h3>
+
+          <h4>అడ్డంకిని గుర్తించండి:</h4>
+          <ol>
+            <li>అధిక-లేటెన్సీ సేవల కోసం సర్వీస్ మ్యాప్ చెక్ చేయండి</li>
+            <li>నెమ్మదైన స్పాన్‌ల కోసం ట్రేస్ టైమ్‌లైన్‌లను పరిశీలించండి</li>
+            <li>రిసోర్స్ మెట్రిక్స్ (CPU, మెమరీ, డిస్క్ I/O) సమీక్షించండి</li>
+            <li>లాగ్‌లలో ఎర్రర్ నమూనాల కోసం చూడండి</li>
+            <li>డేటాబేస్ క్వెరీ పనితీరును చెక్ చేయండి</li>
+          </ol>
+
+          <h4>సాధారణ అడ్డంకులు:</h4>
+          <ul>
+            <li>డేటాబేస్ క్వెరీ ఆప్టిమైజేషన్ అవసరం</li>
+            <li>బాహ్య API కాల్‌లు టైమ్ అవుట్ అవుతున్నాయి</li>
+            <li>రిసోర్స్ పరిమితులు (CPU/మెమరీ)</li>
+            <li>థ్రెడ్ పూల్ నిండిపోవడం</li>
+            <li>సేవల మధ్య నెట్‌వర్క్ లేటెన్సీ</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>ఏజెంట్ ట్రబుల్‌షూటింగ్</h3>
+
+          <h4>ఏజెంట్ స్థితిని చెక్ చేయండి:</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>సాధారణ ఏజెంట్ సమస్యలు:</h4>
+          <ul>
+            <li>JVM కోసం తప్పు Java ఏజెంట్ వెర్షన్</li>
+            <li>తప్పిపోయిన డిపెండెన్సీలు లేదా లైబ్రరీలు</li>
+            <li>కాన్ఫిగరేషన్ ఫైల్ సింటాక్స్ ఎర్రర్‌లు</li>
+            <li>లాగ్ ఫైల్‌లకు రాయడంలో అనుమతి సమస్యలు</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>సాధనాలు మరియు కమాండ్‌లు</h2>
+          <p>ట్రబుల్‌షూటింగ్ కోసం ఉపయోగకరమైన సాధనాలు మరియు కమాండ్‌లు.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI కమాండ్‌లు</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>లాగ్ విశ్లేషణ</h3>
+          <p>టెలిమెట్రీ డేటాను విశ్లేషించడానికి CloudWatch Logs Insights ఉపయోగించండి:</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>సహాయం పొందడం</h2>
+          <p>మీకు అదనపు సహాయం అవసరమైనప్పుడు:</p>
+
+          <h3>డాక్యుమెంటేషన్ రిసోర్సులు:</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals వినియోగదారు గైడ్</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics వినియోగదారు గైడ్</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM వినియోగదారు గైడ్</a></li>
+          </ul>
+
+          <h3>సపోర్ట్ ఎంపికలు:</h3>
+          <ul>
+            <li>AWS Support Center</li>
+            <li>AWS re:Post కమ్యూనిటీ</li>
+            <li>OpenTelemetry ప్రాజెక్ట్‌ల కోసం GitHub issues</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

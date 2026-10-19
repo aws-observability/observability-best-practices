@@ -1,0 +1,27 @@
+receivers:
+  otlp:
+    protocols:
+      grpc: {}
+
+processors:
+  batch:
+  memory_limiter:
+
+exporters:
+  awsxray:
+    # No config required for IAM role-based authentication
+  awsemf:
+    namespace: "CWAPM/SampleApp"
+  logging:
+    logLevel: info
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsxray, logging]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsemf, logging]

@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for Python FastAPI on ECS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Python FastAPI on ECS</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">ECS</div>
+            <div class="language-badge">Python</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Python FastAPI application on Amazon ECS with AWS Application Signals enabled. No CDK required - pure AWS CLI and Docker.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a Python FastAPI app on ECS Fargate</li>
+                        <li>Enable AWS Application Signals auto-instrumentation</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 30-45 minutes
+                </div>
+            </div>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="required-tools">Required Tools</h3>
+<ul>
+<li>AWS CLI v2 (latest version)</li>
+<li>Docker Desktop</li>
+<li>Python 3.11+</li>
+<li>AWS Account with appropriate permissions</li>
+<li>Text editor</li>
+</ul>
+<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<ul>
+<li>ECS: Full access (create clusters, services, task definitions)</li>
+<li>ECR: Push images</li>
+<li>IAM: Create roles and policies</li>
+<li>CloudWatch: Logs and Application Signals access</li>
+<li>EC2: VPC, subnet, and security group access</li>
+<li>SSM: Parameter Store write access</li>
+</ul>
+<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<ul>
+<li>Basic AWS CLI usage</li>
+<li>Basic Docker commands</li>
+<li>Basic understanding of ECS concepts</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<p>Your ECS task will contain <strong>3 containers</strong>:</p>
+<ol>
+<li><strong>Init Container</strong> (<code>init</code>): Copies ADOT Python auto-instrumentation files</li>
+<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>): Collects traces and metrics  </li>
+<li><strong>Application Container</strong> (<code>your-app</code>): Your FastAPI application</li>
+</ol>
+<p><strong>Flow:</strong></p>
+<pre><code><span class="hljs-selector-tag">Init</span> <span class="hljs-selector-tag">Container</span> (runs once, copies files) 
+  → <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">starts</span> (auto-instrumented via PYTHONPATH)
+  → <span class="hljs-selector-tag">Sends</span> <span class="hljs-selector-tag">traces</span>/<span class="hljs-selector-tag">metrics</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> (<span class="hljs-attribute">localhost</span>:<span class="hljs-number">4316</span>)
+  → <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> <span class="hljs-selector-tag">sends</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">Signals</span>
+</code></pre><h2 id="step-1-enable-application-signals-in-your-account">Step 1: Enable Application Signals in Your Account</h2>
+<p><strong>Important:</strong> Application Signals must be enabled once per AWS account per region.</p>
+<h3 id="option-1-enable-via-aws-console-recommended-">Option 1: Enable via AWS Console (Recommended)</h3>
+<ol>
+<li>Go to AWS Console → CloudWatch → Application Signals</li>
+<li>Select your region (e.g., <code>us-east-1</code>)</li>
+<li>Click &quot;Get Started&quot; or &quot;Enable Application Signals&quot;</li>
+<li>Wait 2-3 minutes for activation</li>
+</ol>
+<h3 id="option-2-verify-if-already-enabled">Option 2: Verify if Already Enabled</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Check if service-linked role exists</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">get-role</span> \
+  <span class="hljs-built_in">--role-name</span> <span class="hljs-string">AWSServiceRoleForCloudWatchApplicationSignals </span>\
+  <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># If role exists, Application Signals is enabled</span>
+</code></pre>
+<p><strong>Output should show:</strong> Role ARN if enabled, error if not.</p>
+<h2 id="step-2-prepare-your-python-fastapi-application">Step 2: Prepare Your Python FastAPI Application</h2>
+<h3 id="2-1-create-application-directory">2.1 Create Application Directory</h3>
+<pre><code class="lang-bash"><span class="hljs-keyword">mkdir</span> -p ~/my-appsignals-<span class="hljs-keyword">app</span>
+<span class="hljs-keyword">cd</span> ~/my-appsignals-<span class="hljs-keyword">app</span>
+</code></pre>
+<h3 id="2-2-create-app-py-">2.2 Create <code>app.py</code></h3>
+<pre><code class="lang-python"><span class="hljs-string">"""
+Simple FastAPI application for AWS Application Signals
+"""</span>
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">from</span> fastapi <span class="hljs-keyword">import</span> FastAPI, HTTPException
+<span class="hljs-keyword">from</span> pydantic <span class="hljs-keyword">import</span> BaseModel
+<span class="hljs-keyword">import</span> requests
+
+app = FastAPI(
+    title=<span class="hljs-string">"My Application Signals App"</span>,
+    description=<span class="hljs-string">"FastAPI app with Application Signals integration"</span>,
+    version=<span class="hljs-string">"1.0.0"</span>
+)
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">HealthResponse</span><span class="hljs-params">(BaseModel)</span>:</span>
+    status: str
+    timestamp: float
+
+
+<span class="hljs-meta">@app.get("/", )</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">root</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"Application Signals Demo"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time()
+    }
+
+
+<span class="hljs-meta">@app.get("/health", response_model=HealthResponse)</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">health_check</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Health check endpoint"""</span>
+    <span class="hljs-keyword">return</span> HealthResponse(
+        status=<span class="hljs-string">"healthy"</span>,
+        timestamp=time.time()
+    )
+
+
+<span class="hljs-meta">@app.get("/api/hello/{name}")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello</span><span class="hljs-params">(name: str)</span>:</span>
+    <span class="hljs-string">"""Personalized greeting with simulated processing"""</span>
+    time.sleep(random.uniform(<span class="hljs-number">0.01</span>, <span class="hljs-number">0.1</span>))
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: f<span class="hljs-string">"Hello, {name}!"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time()
+    }
+
+
+<span class="hljs-meta">@app.get("/api/slow")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">slow_endpoint</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Intentionally slow endpoint for latency testing"""</span>
+    time.sleep(random.uniform(<span class="hljs-number">0.5</span>, <span class="hljs-number">1.5</span>))
+    <span class="hljs-keyword">return</span> {<span class="hljs-string">"message"</span>: <span class="hljs-string">"Slow operation completed"</span>}
+
+
+<span class="hljs-meta">@app.get("/api/error")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">error_endpoint</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Endpoint that randomly raises errors"""</span>
+    <span class="hljs-keyword">if</span> random.random() &gt; <span class="hljs-number">0.5</span>:
+        <span class="hljs-keyword">raise</span> HTTPException(status_code=<span class="hljs-number">500</span>, detail=<span class="hljs-string">"Simulated error"</span>)
+    <span class="hljs-keyword">return</span> {<span class="hljs-string">"message"</span>: <span class="hljs-string">"No error"</span>}
+
+
+<span class="hljs-meta">@app.get("/api/external")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">external_call</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Makes external HTTP call for distributed tracing"""</span>
+    <span class="hljs-keyword">try</span>:
+        response = requests.get(<span class="hljs-string">"https://httpbin.org/delay/1"</span>, timeout=<span class="hljs-number">5</span>)
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">"message"</span>: <span class="hljs-string">"External call completed"</span>,
+            <span class="hljs-string">"status_code"</span>: response.status_code
+        }
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">raise</span> HTTPException(status_code=<span class="hljs-number">500</span>, detail=str(e))
+
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    <span class="hljs-keyword">import</span> uvicorn
+    uvicorn.run(app, host=<span class="hljs-string">"0.0.0.0"</span>, port=<span class="hljs-number">80</span>)
+</code></pre>
+<h3 id="2-3-create-requirements-txt-">2.3 Create <code>requirements.txt</code></h3>
+<pre><code class="lang-txt"><span class="hljs-comment"># Core dependencies only - OpenTelemetry provided by ADOT init container</span>
+<span class="hljs-attr">fastapi</span>==<span class="hljs-number">0.115</span>.<span class="hljs-number">0</span>
+<span class="hljs-attr">uvicorn</span>==<span class="hljs-number">0.32</span>.<span class="hljs-number">1</span>
+<span class="hljs-attr">pydantic</span>==<span class="hljs-number">2.10</span>.<span class="hljs-number">3</span>
+<span class="hljs-attr">requests</span>==<span class="hljs-number">2.32</span>.<span class="hljs-number">3</span>
+</code></pre>
+<p><strong>IMPORTANT:</strong> Do NOT install <code>opentelemetry-*</code> packages. They&#39;re provided by the ADOT init container.</p>
+<h3 id="2-4-create-start-sh-">2.4 Create <code>start.sh</code></h3>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash</span>
+<span class="hljs-comment"># Startup script for Application Signals</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Starting Application with Application Signals..."</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"PYTHONPATH: <span class="hljs-variable">${PYTHONPATH:-not set}</span>"</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Application Signals: <span class="hljs-variable">${OTEL_AWS_APPLICATION_SIGNALS_ENABLED:-not set}</span>"</span>
+
+<span class="hljs-comment"># Run uvicorn directly - NO opentelemetry-instrument wrapper needed</span>
+<span class="hljs-comment"># NO --workers flag - auto-instrumentation requires single worker</span>
+<span class="hljs-built_in">exec</span> uvicorn app:app --host 0.0.0.0 --port 80
+</code></pre>
+<p>Make it executable:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-literal">start</span>.sh
+</code></pre>
+<h3 id="2-5-create-dockerfile-">2.5 Create <code>Dockerfile</code></h3>
+<pre><code class="lang-dockerfile"><span class="hljs-keyword">FROM</span> public.ecr.aws/docker/library/python:<span class="hljs-number">3.11</span>-slim as builder
+
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span>
+<span class="hljs-comment"># Install system dependencies</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y gcc &amp;&amp; rm -rf /var/lib/apt/lists/*
+</span>
+<span class="hljs-comment"># Install Python dependencies</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> requirements.txt .
+</span><span class="hljs-keyword">RUN</span><span class="bash"> pip install --no-cache-dir -r requirements.txt
+</span>
+<span class="hljs-comment"># Copy application code</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> . .
+</span>
+<span class="hljs-comment"># Production stage</span>
+<span class="hljs-keyword">FROM</span> public.ecr.aws/docker/library/python:<span class="hljs-number">3.11</span>-slim
+
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span>
+<span class="hljs-comment"># Install runtime dependencies</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y curl &amp;&amp; rm -rf /var/lib/apt/lists/*
+</span>
+<span class="hljs-comment"># Copy from builder</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> --from=builder /usr/<span class="hljs-built_in">local</span>/lib/python3.11/site-packages /usr/<span class="hljs-built_in">local</span>/lib/python3.11/site-packages
+</span><span class="hljs-keyword">COPY</span><span class="bash"> --from=builder /usr/<span class="hljs-built_in">local</span>/bin /usr/<span class="hljs-built_in">local</span>/bin
+</span><span class="hljs-keyword">COPY</span><span class="bash"> --from=builder /app .
+</span>
+<span class="hljs-comment"># Make start script executable</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> chmod +x start.sh
+</span>
+<span class="hljs-comment"># Health check</span>
+<span class="hljs-keyword">HEALTHCHECK</span><span class="bash"> --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl <span class="hljs-_">-f</span> http://localhost:80/health || <span class="hljs-built_in">exit</span> 1
+</span>
+<span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">80</span>
+
+<span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"./start.sh"</span>]</span>
+</code></pre>
+<h2 id="step-3-build-and-push-docker-image">Step 3: Build and Push Docker Image</h2>
+<h3 id="3-1-set-variables">3.1 Set Variables</h3>
+<pre><code class="lang-bash"># Replace <span class="hljs-keyword">with</span> your values
+<span class="hljs-keyword">export</span> AWS_REGION=<span class="hljs-string">"us-east-1"</span>
+<span class="hljs-keyword">export</span> AWS_ACCOUNT_ID=<span class="hljs-string">"YOUR_ACCOUNT_ID"</span>
+<span class="hljs-keyword">export</span> AWS_PROFILE=<span class="hljs-string">"your-profile-name"</span>  # Optional <span class="hljs-keyword">if</span> using default
+<span class="hljs-keyword">export</span> APP_NAME=<span class="hljs-string">"my-appsignals-app"</span>
+</code></pre>
+<p>Get your account ID:</p>
+<pre><code class="lang-bash"><span class="hljs-string">export </span><span class="hljs-string">AWS_ACCOUNT_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">sts </span><span class="hljs-built_in">get-caller-identity</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">Account </span><span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Account ID: $AWS_ACCOUNT_ID"</span>
+</code></pre>
+<h3 id="3-2-create-ecr-repository">3.2 Create ECR Repository</h3>
+<pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">create-repository</span> \
+  <span class="hljs-built_in">--repository-name</span> ${<span class="hljs-string">APP_NAME}</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+</code></pre>
+<p><strong>Output:</strong> Repository URI (save this)</p>
+<h3 id="3-3-build-docker-image">3.3 Build Docker Image</h3>
+<pre><code class="lang-bash"><span class="hljs-keyword">cd</span> ~/my-appsignals-<span class="hljs-keyword">app</span>
+docker build -t <span class="hljs-variable">${APP_NAME}</span> .
+</code></pre>
+<h3 id="3-4-push-to-ecr">3.4 Push to ECR</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Login to ECR</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">get-login-password</span> <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> | \
+  <span class="hljs-string">docker </span><span class="hljs-string">login </span><span class="hljs-built_in">--username</span> <span class="hljs-string">AWS </span><span class="hljs-built_in">--password-stdin</span> \
+  ${<span class="hljs-string">AWS_ACCOUNT_ID}</span>.<span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span>${<span class="hljs-string">AWS_REGION}</span>.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com
+</span>
+<span class="hljs-comment"># Tag image</span>
+<span class="hljs-string">docker </span><span class="hljs-string">tag </span>${<span class="hljs-string">APP_NAME}</span>:<span class="hljs-string">latest </span>\
+  ${<span class="hljs-string">AWS_ACCOUNT_ID}</span>.<span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span>${<span class="hljs-string">AWS_REGION}</span>.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com/</span>${<span class="hljs-string">APP_NAME}</span>:<span class="hljs-string">latest
+</span>
+<span class="hljs-comment"># Push image</span>
+<span class="hljs-string">docker </span><span class="hljs-string">push </span>${<span class="hljs-string">AWS_ACCOUNT_ID}</span>.<span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span>${<span class="hljs-string">AWS_REGION}</span>.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com/</span>${<span class="hljs-string">APP_NAME}</span>:<span class="hljs-string">latest</span>
+</code></pre>
+<h2 id="step-4-create-cloudwatch-agent-configuration">Step 4: Create CloudWatch Agent Configuration</h2>
+<h3 id="4-1-create-configuration-file">4.1 Create Configuration File</h3>
+<pre><code class="lang-bash">cat &gt; /tmp/ecs-cwagent.json &lt;&lt; <span class="hljs-string">'EOF'</span>
+{
+  <span class="hljs-string">"traces"</span>: {
+    <span class="hljs-string">"traces_collected"</span>: {
+      <span class="hljs-string">"application_signals"</span>: {}
+    }
+  },
+  <span class="hljs-string">"logs"</span>: {
+    <span class="hljs-string">"metrics_collected"</span>: {
+      <span class="hljs-string">"application_signals"</span>: {}
+    }
+  }
+}
+EOF
+</code></pre>
+<h3 id="4-2-upload-to-ssm-parameter-store">4.2 Upload to SSM Parameter Store</h3>
+<pre><code class="lang-bash">aws ssm put-parameter \
+  -<span class="ruby">-name <span class="hljs-string">"ecs-cwagent-${APP_NAME}"</span> \
+</span>  -<span class="ruby">-type <span class="hljs-string">"String"</span> \
+</span>  -<span class="ruby">-value <span class="hljs-string">"$(cat /tmp/ecs-cwagent.json)"</span> \
+</span>  -<span class="ruby">-region <span class="hljs-string">"${AWS_REGION}"</span> \
+</span>  -<span class="ruby">-overwrite</span>
+</code></pre>
+<p><strong>Output:</strong> Version number (1 if new, incremented if updating)</p>
+<h2 id="step-5-create-iam-roles">Step 5: Create IAM Roles</h2>
+<h3 id="5-1-create-trust-policy">5.1 Create Trust Policy</h3>
+<pre><code class="lang-bash">cat &gt; /tmp/task-trust-policy.json &lt;&lt; <span class="hljs-string">'EOF'</span>
+{
+  <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
+  <span class="hljs-string">"Statement"</span>: [
+    {
+      <span class="hljs-string">"Effect"</span>: <span class="hljs-string">"Allow"</span>,
+      <span class="hljs-string">"Principal"</span>: {
+        <span class="hljs-string">"Service"</span>: <span class="hljs-string">"ecs-tasks.amazonaws.com"</span>
+      },
+      <span class="hljs-string">"Action"</span>: <span class="hljs-string">"sts:AssumeRole"</span>
+    }
+  ]
+}
+EOF
+</code></pre>
+<h3 id="5-2-create-task-role">5.2 Create Task Role</h3>
+<pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">create-role</span> \
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--assume-role-policy-document</span> <span class="hljs-string">file:</span>///<span class="hljs-string">tmp/</span><span class="hljs-string">task-trust-</span><span class="hljs-string">policy.</span><span class="hljs-string">json
+</span>
+<span class="hljs-comment"># Attach required policies</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">attach-role-</span><span class="hljs-string">policy </span>\
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">CloudWatchAgentServerPolicy
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">attach-role-</span><span class="hljs-string">policy </span>\
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AWSXRayDaemonWriteAccess</span>
+</code></pre>
+<h3 id="5-3-create-task-execution-role">5.3 Create Task Execution Role</h3>
+<pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">create-role</span> \
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--assume-role-policy-document</span> <span class="hljs-string">file:</span>///<span class="hljs-string">tmp/</span><span class="hljs-string">task-trust-</span><span class="hljs-string">policy.</span><span class="hljs-string">json
+</span>
+<span class="hljs-comment"># Attach policies</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">attach-role-</span><span class="hljs-string">policy </span>\
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">service-role/</span><span class="hljs-string">AmazonECSTaskExecutionRolePolicy
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">attach-role-</span><span class="hljs-string">policy </span>\
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+  <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AmazonSSMReadOnlyAccess</span>
+</code></pre>
+<h3 id="5-4-add-cloudwatch-logs-permissions">5.4 Add CloudWatch Logs Permissions</h3>
+<pre><code class="lang-bash">cat &gt; <span class="hljs-regexp">/tmp/</span>logs-policy.json &lt;&lt; <span class="hljs-string">'EOF'</span>
+{
+  <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
+  <span class="hljs-string">"Statement"</span>: [
+    {
+      <span class="hljs-string">"Effect"</span>: <span class="hljs-string">"Allow"</span>,
+      <span class="hljs-string">"Action"</span>: [
+        <span class="hljs-string">"logs:CreateLogGroup"</span>,
+        <span class="hljs-string">"logs:CreateLogStream"</span>,
+        <span class="hljs-string">"logs:PutLogEvents"</span>
+      ],
+      <span class="hljs-string">"Resource"</span>: <span class="hljs-string">"arn:aws:logs:*:*:log-group:/ecs/*"</span>
+    }
+  ]
+}
+EOF
+
+aws iam put-role-policy \
+  --role-name <span class="hljs-variable">${APP_NAME}</span>-ecs-execution-role \
+  --policy-name CloudWatchLogsPolicy \
+  --policy-document file:<span class="hljs-regexp">//</span><span class="hljs-regexp">/tmp/</span>logs-policy.json
+</code></pre>
+<h2 id="step-6-create-ecs-cluster">Step 6: Create ECS Cluster</h2>
+<pre><code class="lang-bash"><span class="hljs-string">export </span><span class="hljs-string">CLUSTER_NAME=</span><span class="hljs-string">"${APP_NAME}-cluster"</span>
+
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-cluster</span> \
+  <span class="hljs-built_in">--cluster-name</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+</code></pre>
+<p><strong>Output:</strong> Cluster ARN and status should be ACTIVE</p>
+<h2 id="step-7-setup-networking">Step 7: Setup Networking</h2>
+<h3 id="7-1-get-vpc-and-subnets">7.1 Get VPC and Subnets</h3>
+<p>If you already have a VPC:</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># List VPCs</span>
+aws ec2 describe-vpcs --region <span class="hljs-variable">${AWS_REGION}</span> \
+  --query <span class="hljs-string">'Vpcs[*].{VpcId:VpcId,CIDR:CidrBlock,Name:Tags[?Key==`Name`].Value|[0]}'</span>
+
+<span class="hljs-comment"># Choose your VPC</span>
+<span class="hljs-built_in">export</span> VPC_ID=<span class="hljs-string">"vpc-xxxxx"</span>
+
+<span class="hljs-comment"># Get private subnets</span>
+aws ec2 describe-subnets --region <span class="hljs-variable">${AWS_REGION}</span> \
+  --filters <span class="hljs-string">"Name=vpc-id,Values=<span class="hljs-variable">${VPC_ID}</span>"</span> \
+  --query <span class="hljs-string">'Subnets[?MapPublicIpOnLaunch==`false`].[SubnetId,AvailabilityZone,CidrBlock]'</span>
+
+<span class="hljs-comment"># Save subnet IDs</span>
+<span class="hljs-built_in">export</span> SUBNET_1=<span class="hljs-string">"subnet-xxxxx"</span>
+<span class="hljs-built_in">export</span> SUBNET_2=<span class="hljs-string">"subnet-yyyyy"</span>
+</code></pre>
+<h3 id="7-2-create-security-group">7.2 Create Security Group</h3>
+<pre><code class="lang-bash">export SG_NAME="${APP_NAME}-ecs-sg"
+
+# Create security group
+SG_ID=$(aws ec2 create-security-group \
+  -<span class="ruby">-group-name ${SG_NAME} \
+</span>  -<span class="ruby">-description <span class="hljs-string">"Security group for ${APP_NAME} ECS tasks"</span> \
+</span>  -<span class="ruby">-vpc-id ${VPC_ID} \
+</span>  -<span class="ruby">-region ${AWS_REGION} \
+</span>  -<span class="ruby">-query <span class="hljs-string">'GroupId'</span> \
+</span>  -<span class="ruby">-output text)
+</span>
+echo "Security Group ID: $SG_ID"
+export SG_ID
+
+# Add ingress rule (allow HTTP from anywhere for testing)
+aws ec2 authorize-security-group-ingress \
+  -<span class="ruby">-group-id ${SG_ID} \
+</span>  -<span class="ruby">-protocol tcp \
+</span>  -<span class="ruby">-port <span class="hljs-number">80</span> \
+</span>  -<span class="ruby">-cidr <span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span>/<span class="hljs-number">0</span> \
+</span>  -<span class="ruby">-region ${AWS_REGION}</span>
+</code></pre>
+<p><strong>For production:</strong> Replace <code>0.0.0.0/0</code> with specific IP ranges or load balancer security group.</p>
+<h2 id="step-8-create-ecs-task-definition">Step 8: Create ECS Task Definition</h2>
+<h3 id="8-1-create-task-definition-json">8.1 Create Task Definition JSON</h3>
+<p><strong>CRITICAL:</strong> This is the most important step. Pay attention to every detail.</p>
+<pre><code class="lang-bash">cat &gt; /tmp/app-signals-task-def.json &lt;&lt; EOF
+{
+  <span class="hljs-string">"family"</span>: <span class="hljs-string">"${APP_NAME}-task"</span>,
+  <span class="hljs-string">"networkMode"</span>: <span class="hljs-string">"awsvpc"</span>,
+  <span class="hljs-string">"requiresCompatibilities"</span>: [<span class="hljs-string">"FARGATE"</span>],
+  <span class="hljs-string">"cpu"</span>: <span class="hljs-string">"512"</span>,
+  <span class="hljs-string">"memory"</span>: <span class="hljs-string">"1024"</span>,
+  <span class="hljs-string">"taskRoleArn"</span>: <span class="hljs-string">"arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-ecs-task-role"</span>,
+  <span class="hljs-string">"executionRoleArn"</span>: <span class="hljs-string">"arn:aws:iam::${AWS_ACCOUNT_ID}:role/${APP_NAME}-ecs-execution-role"</span>,
+  <span class="hljs-string">"containerDefinitions"</span>: [
+    {
+      <span class="hljs-string">"name"</span>: <span class="hljs-string">"init"</span>,
+      <span class="hljs-string">"image"</span>: <span class="hljs-string">"public.ecr.aws/aws-observability/adot-autoinstrumentation-python:v0.12.1"</span>,
+      <span class="hljs-string">"essential"</span>: false,
+      <span class="hljs-string">"command"</span>: [<span class="hljs-string">"cp"</span>, <span class="hljs-string">"-a"</span>, <span class="hljs-string">"/autoinstrumentation/."</span>, <span class="hljs-string">"/otel-auto-instrumentation-python"</span>],
+      <span class="hljs-string">"mountPoints"</span>: [
+        {
+          <span class="hljs-string">"sourceVolume"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-python"</span>,
+          <span class="hljs-string">"containerPath"</span>: <span class="hljs-string">"/otel-auto-instrumentation-python"</span>,
+          <span class="hljs-string">"readOnly"</span>: false
+        }
+      ]
+    },
+    {
+      <span class="hljs-string">"name"</span>: <span class="hljs-string">"ecs-cwagent"</span>,
+      <span class="hljs-string">"image"</span>: <span class="hljs-string">"public.ecr.aws/cloudwatch-agent/cloudwatch-agent:latest"</span>,
+      <span class="hljs-string">"essential"</span>: true,
+      <span class="hljs-string">"secrets"</span>: [
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"CW_CONFIG_CONTENT"</span>,
+          <span class="hljs-string">"valueFrom"</span>: <span class="hljs-string">"ecs-cwagent-${APP_NAME}"</span>
+        }
+      ],
+      <span class="hljs-string">"logConfiguration"</span>: {
+        <span class="hljs-string">"logDriver"</span>: <span class="hljs-string">"awslogs"</span>,
+        <span class="hljs-string">"options"</span>: {
+          <span class="hljs-string">"awslogs-create-group"</span>: <span class="hljs-string">"true"</span>,
+          <span class="hljs-string">"awslogs-group"</span>: <span class="hljs-string">"/ecs/ecs-cwagent-${APP_NAME}"</span>,
+          <span class="hljs-string">"awslogs-region"</span>: <span class="hljs-string">"${AWS_REGION}"</span>,
+          <span class="hljs-string">"awslogs-stream-prefix"</span>: <span class="hljs-string">"ecs"</span>
+        }
+      }
+    },
+    {
+      <span class="hljs-string">"name"</span>: <span class="hljs-string">"app"</span>,
+      <span class="hljs-string">"image"</span>: <span class="hljs-string">"${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/${APP_NAME}:latest"</span>,
+      <span class="hljs-string">"essential"</span>: true,
+      <span class="hljs-string">"portMappings"</span>: [
+        {
+          <span class="hljs-string">"containerPort"</span>: <span class="hljs-number">80</span>,
+          <span class="hljs-string">"protocol"</span>: <span class="hljs-string">"tcp"</span>
+        }
+      ],
+      <span class="hljs-string">"dependsOn"</span>: [
+        {
+          <span class="hljs-string">"containerName"</span>: <span class="hljs-string">"init"</span>,
+          <span class="hljs-string">"condition"</span>: <span class="hljs-string">"SUCCESS"</span>
+        }
+      ],
+      <span class="hljs-string">"environment"</span>: [
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"PYTHONPATH"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"/otel-auto-instrumentation-python/opentelemetry/instrumentation/auto_instrumentation:/app:/otel-auto-instrumentation-python"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_EXPORTER_OTLP_PROTOCOL"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"http/protobuf"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_TRACES_SAMPLER_ARG"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"endpoint=http://localhost:2000"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_LOGS_EXPORTER"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"none"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_PYTHON_CONFIGURATOR"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"aws_configurator"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_TRACES_SAMPLER"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"xray"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"http://localhost:4316/v1/traces"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"http://localhost:4316/v1/metrics"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_AWS_APPLICATION_SIGNALS_ENABLED"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"true"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_RESOURCE_ATTRIBUTES"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"service.name=${APP_NAME},deployment.environment=ecs:${AWS_REGION}"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_METRICS_EXPORTER"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"none"</span>
+        },
+        {
+          <span class="hljs-string">"name"</span>: <span class="hljs-string">"OTEL_PYTHON_DISTRO"</span>,
+          <span class="hljs-string">"value"</span>: <span class="hljs-string">"aws_distro"</span>
+        }
+      ],
+      <span class="hljs-string">"mountPoints"</span>: [
+        {
+          <span class="hljs-string">"sourceVolume"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-python"</span>,
+          <span class="hljs-string">"containerPath"</span>: <span class="hljs-string">"/otel-auto-instrumentation-python"</span>,
+          <span class="hljs-string">"readOnly"</span>: false
+        }
+      ],
+      <span class="hljs-string">"logConfiguration"</span>: {
+        <span class="hljs-string">"logDriver"</span>: <span class="hljs-string">"awslogs"</span>,
+        <span class="hljs-string">"options"</span>: {
+          <span class="hljs-string">"awslogs-create-group"</span>: <span class="hljs-string">"true"</span>,
+          <span class="hljs-string">"awslogs-group"</span>: <span class="hljs-string">"/ecs/${APP_NAME}"</span>,
+          <span class="hljs-string">"awslogs-region"</span>: <span class="hljs-string">"${AWS_REGION}"</span>,
+          <span class="hljs-string">"awslogs-stream-prefix"</span>: <span class="hljs-string">"app"</span>
+        }
+      }
+    }
+  ],
+  <span class="hljs-string">"volumes"</span>: [
+    {
+      <span class="hljs-string">"name"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-python"</span>
+    }
+  ]
+}
+EOF
+</code></pre>
+<h3 id="8-2-register-task-definition">8.2 Register Task Definition</h3>
+<pre><code class="lang-bash">aws ecs register-task-definition \
+  --<span class="hljs-keyword">cli</span>-<span class="hljs-keyword">input</span>-json <span class="hljs-keyword">file</span>:<span class="hljs-comment">///tmp/app-signals-task-def.json \</span>
+  --region <span class="hljs-variable">${AWS_REGION}</span>
+</code></pre>
+<p><strong>Output:</strong> Should show revision 1 with status ACTIVE</p>
+<h2 id="step-9-deploy-ecs-service">Step 9: Deploy ECS Service</h2>
+<pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-service</span> \
+  <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--service-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
+  <span class="hljs-built_in">--task-definition</span> ${<span class="hljs-string">APP_NAME}</span><span class="hljs-string">-task:1 </span>\
+  <span class="hljs-built_in">--desired-count</span> 1 \
+  <span class="hljs-built_in">--launch-type</span> <span class="hljs-string">FARGATE </span>\
+  <span class="hljs-built_in">--network-configuration</span> <span class="hljs-string">"awsvpcConfiguration={subnets=[${SUBNET_1},${SUBNET_2}],securityGroups=[${SG_ID}],assignPublicIp=ENABLED}"</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+</code></pre>
+<p><strong>Note:</strong> <code>assignPublicIp=ENABLED</code> is for testing. For production, use a load balancer.</p>
+<h2 id="step-10-verify-deployment">Step 10: Verify Deployment</h2>
+<h3 id="10-1-check-service-status">10.1 Check Service Status</h3>
+<pre><code class="lang-bash">aws ecs describe-services \
+  -<span class="ruby">-cluster ${CLUSTER_NAME} \
+</span>  -<span class="ruby">-services ${APP_NAME}-service \
+</span>  -<span class="ruby">-region ${AWS_REGION} \
+</span>  -<span class="ruby">-query <span class="hljs-string">'services[0].{status:status,runningCount:runningCount,desiredCount:desiredCount}'</span></span>
+</code></pre>
+<p><strong>Expected:</strong> <code>status: ACTIVE</code>, <code>runningCount: 1</code></p>
+<h3 id="10-2-get-running-task">10.2 Get Running Task</h3>
+<pre><code class="lang-bash"><span class="hljs-string">TASK_ARN=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">list-tasks</span> \
+  <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--service-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--desired-status</span> <span class="hljs-string">RUNNING </span>\
+  <span class="hljs-built_in">--query</span> <span class="hljs-string">'taskArns[0]'</span> \
+  <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-string">echo </span><span class="hljs-string">"Task ARN: $TASK_ARN"</span>
+</code></pre>
+<h3 id="10-3-check-container-status">10.3 Check Container Status</h3>
+<pre><code class="lang-bash">aws ecs describe-tasks \
+  -<span class="ruby">-cluster ${CLUSTER_NAME} \
+</span>  -<span class="ruby">-tasks ${TASK_ARN} \
+</span>  -<span class="ruby">-region ${AWS_REGION} \
+</span>  -<span class="ruby">-query <span class="hljs-string">'tasks[0].{status:lastStatus,containers:containers[*].{name:name,status:lastStatus,exitCode:exitCode}}'</span></span>
+</code></pre>
+<p><strong>Expected output:</strong></p>
+<ul>
+<li><code>init</code>: status=STOPPED, exitCode=0 (completed successfully)</li>
+<li><code>ecs-cwagent</code>: status=RUNNING</li>
+<li><code>app</code>: status=RUNNING</li>
+</ul>
+<h3 id="10-4-get-public-ip">10.4 Get Public IP</h3>
+<pre><code class="lang-bash">TASK_IP=$(aws ecs describe-tasks \
+  -<span class="ruby">-cluster ${CLUSTER_NAME} \
+</span>  -<span class="ruby">-tasks ${TASK_ARN} \
+</span>  -<span class="ruby">-region ${AWS_REGION} \
+</span>  -<span class="ruby">-query <span class="hljs-string">'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value'</span> \
+</span>  -<span class="ruby">-output text <span class="hljs-params">| xargs -I {} \
+</span></span>  aws ec2 describe-network-interfaces \
+  -<span class="ruby"><span class="hljs-params">-network-interface-ids {} \
+</span></span>  -<span class="ruby"><span class="hljs-params">-region ${AWS_REGION} \
+</span></span>  -<span class="ruby"><span class="hljs-params">-query 'NetworkInterfaces[0].Association.PublicIp' \
+</span></span>  -<span class="ruby"><span class="hljs-params">-output text)
+</span></span>
+echo "Application URL: http://${TASK_IP}/"
+</code></pre>
+<h3 id="10-5-test-application">10.5 Test Application</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Test root endpoint</span>
+<span class="hljs-attribute">curl</span> http://<span class="hljs-variable">${TASK_IP}</span>/
+
+<span class="hljs-comment"># Test health endpoint</span>
+curl http://<span class="hljs-variable">${TASK_IP}</span>/health
+
+<span class="hljs-comment"># Test API endpoint</span>
+curl http://<span class="hljs-variable">${TASK_IP}</span>/api/hello/TestUser
+</code></pre>
+<h2 id="step-11-verify-application-signals">Step 11: Verify Application Signals</h2>
+<h3 id="11-1-check-cloudwatch-logs">11.1 Check CloudWatch Logs</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Application logs</span>
+aws logs tail <span class="hljs-regexp">/ecs/</span><span class="hljs-variable">${APP_NAME}</span> --region <span class="hljs-variable">${AWS_REGION}</span> --since <span class="hljs-number">5</span>m --format short
+
+<span class="hljs-comment"># CloudWatch agent logs</span>
+aws logs tail <span class="hljs-regexp">/ecs/</span>ecs-cwagent-<span class="hljs-variable">${APP_NAME}</span> --region <span class="hljs-variable">${AWS_REGION}</span> --since <span class="hljs-number">5</span>m --format short
+</code></pre>
+<p><strong>Look for:</strong></p>
+<ul>
+<li>Application logs: &quot;PYTHONPATH: /otel-auto-instrumentation-python/...&quot;</li>
+<li>Agent logs: &quot;application_signals&quot;, &quot;X-Ray proxy server started&quot;</li>
+</ul>
+<h3 id="11-2-check-metrics">11.2 Check Metrics</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Wait 2-3 minutes after first requests, then check</span>
+<span class="hljs-string">aws </span><span class="hljs-string">cloudwatch </span><span class="hljs-built_in">list-metrics</span> \
+  <span class="hljs-built_in">--namespace</span> <span class="hljs-string">ApplicationSignals </span>\
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--dimensions</span> <span class="hljs-string">Name=</span><span class="hljs-string">Service,</span><span class="hljs-string">Value=</span>${<span class="hljs-string">APP_NAME}</span> \
+  <span class="hljs-built_in">--query</span> <span class="hljs-string">'Metrics[*].MetricName'</span> \
+  <span class="hljs-built_in">--output</span> <span class="hljs-string">text </span>| <span class="hljs-string">tr </span><span class="hljs-string">'\t'</span> <span class="hljs-string">'\n'</span> | <span class="hljs-string">sort </span>-u
+</code></pre>
+<p><strong>Expected metrics:</strong></p>
+<ul>
+<li>PythonProcessCpuUtilization</li>
+<li>PythonProcessRSSMemoryUsed</li>
+<li>PythonProcessThreadCount</li>
+<li>Latency</li>
+<li>Error</li>
+<li>Fault</li>
+</ul>
+<h3 id="11-3-generate-traffic">11.3 Generate Traffic</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Generate traffic to create traces</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> {1..100}; <span class="hljs-keyword">do</span>
+  curl <span class="hljs-_">-s</span> http://<span class="hljs-variable">${TASK_IP}</span>/api/hello/User<span class="hljs-variable">${i}</span> &gt; /dev/null
+  curl <span class="hljs-_">-s</span> http://<span class="hljs-variable">${TASK_IP}</span>/health &gt; /dev/null
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"100 requests sent! Wait 5-10 minutes for Application Signals..."</span>
+</code></pre>
+<h3 id="11-4-check-application-signals-service-discovery">11.4 Check Application Signals Service Discovery</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Wait 5-10 minutes after traffic generation</span>
+<span class="hljs-string">aws </span><span class="hljs-string">application-signals </span><span class="hljs-built_in">list-services</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--start-time</span> $(<span class="hljs-string">date </span>-u -<span class="hljs-string">v-2H </span>+%s) \
+  <span class="hljs-built_in">--end-time</span> $(<span class="hljs-string">date </span>-u +%s) \
+  <span class="hljs-built_in">--query</span> <span class="hljs-string">'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</span>
+</code></pre>
+<p><strong>Expected:</strong> Your service should appear with:</p>
+<ul>
+<li>Name: <code>${APP_NAME}</code></li>
+<li>Environment: <code>ecs:${AWS_REGION}</code></li>
+</ul>
+<h3 id="11-5-check-service-operations">11.5 Check Service Operations</h3>
+<pre><code class="lang-bash"><span class="hljs-string">aws </span><span class="hljs-string">application-signals </span><span class="hljs-built_in">list-service-operations</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--start-time</span> $(<span class="hljs-string">date </span>-u -<span class="hljs-string">v-2H </span>+%s) \
+  <span class="hljs-built_in">--end-time</span> $(<span class="hljs-string">date </span>-u +%s) \
+  <span class="hljs-built_in">--key-attributes</span> <span class="hljs-string">Name=</span>${<span class="hljs-string">APP_NAME}</span>,<span class="hljs-string">Type=</span><span class="hljs-string">Service,</span><span class="hljs-string">Environment=</span><span class="hljs-string">ecs:</span>${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--query</span> <span class="hljs-string">'ServiceOperations[*].Name'</span>
+</code></pre>
+<p><strong>Expected operations:</strong></p>
+<ul>
+<li><code>GET /api/hello/{name}</code></li>
+<li><code>GET /health</code></li>
+<li><code>GET /</code></li>
+</ul>
+<h2 id="step-12-view-in-aws-console">Step 12: View in AWS Console</h2>
+<h3 id="console-access">Console Access</h3>
+<ol>
+<li><p><strong>Navigate to:</strong></p>
+<pre><code>AWS <span class="hljs-built_in">Console</span> → CloudWatch → Application Signals → Services
+</code></pre><p>Or direct link:</p>
+<pre><code>https:<span class="hljs-regexp">//</span><span class="hljs-variable">${AWS_REGION}</span>.console.aws.amazon.com<span class="hljs-regexp">/cloudwatch/</span>home?region=<span class="hljs-variable">${AWS_REGION}</span><span class="hljs-comment">#application-signals:services</span>
+</code></pre></li>
+<li><p><strong>Look for your service:</strong></p>
+<ul>
+<li>Service Name: Value of <code>${APP_NAME}</code></li>
+<li>Environment: <code>ecs:${AWS_REGION}</code></li>
+</ul>
+</li>
+<li><p><strong>Explore:</strong></p>
+<ul>
+<li>Service Map: Visual topology</li>
+<li>Service Dashboard: Latency, errors, faults</li>
+<li>Operations: Per-endpoint metrics</li>
+<li>Dependencies: Downstream service calls</li>
+</ul>
+</li>
+</ol>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="issue-service-not-appearing-in-application-signals">Issue: Service Not Appearing in Application Signals</h3>
+<p><strong>Check:</strong></p>
+<pre><code class="lang-bash"><span class="hljs-comment"># 1. Verify metrics are being published</span>
+<span class="hljs-string">aws </span><span class="hljs-string">cloudwatch </span><span class="hljs-built_in">list-metrics</span> \
+  <span class="hljs-built_in">--namespace</span> <span class="hljs-string">ApplicationSignals </span>\
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> \
+  <span class="hljs-built_in">--dimensions</span> <span class="hljs-string">Name=</span><span class="hljs-string">Service,</span><span class="hljs-string">Value=</span>${<span class="hljs-string">APP_NAME}</span>
+
+<span class="hljs-comment"># 2. Check if Application Signals is enabled</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">get-role</span> \
+  <span class="hljs-built_in">--role-name</span> <span class="hljs-string">AWSServiceRoleForCloudWatchApplicationSignals
+</span>
+<span class="hljs-comment"># 3. Check container logs for errors</span>
+<span class="hljs-string">aws </span><span class="hljs-string">logs </span><span class="hljs-string">tail </span>/<span class="hljs-string">ecs/</span>${<span class="hljs-string">APP_NAME}</span> <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span> <span class="hljs-built_in">--since</span> <span class="hljs-string">10m</span>
+</code></pre>
+<h3 id="issue-init-container-fails">Issue: Init Container Fails</h3>
+<p><strong>Check:</strong></p>
+<pre><code class="lang-bash"># Describe task to see init container exit code
+aws ecs describe-tasks \
+  -<span class="ruby">-cluster ${CLUSTER_NAME} \
+</span>  -<span class="ruby">-tasks ${TASK_ARN} \
+</span>  -<span class="ruby">-region ${AWS_REGION} \
+</span>  -<span class="ruby">-query <span class="hljs-string">'tasks[0].containers[?name==`init`].{name:name,exitCode:exitCode,reason:reason}'</span></span>
+</code></pre>
+<p><strong>Expected:</strong> <code>exitCode: 0</code></p>
+<p><strong>If non-zero:</strong> Image might not be available. Verify tag <code>v0.12.1</code> exists:</p>
+<pre><code class="lang-bash">docker pull <span class="hljs-keyword">public</span>.ecr.aws<span class="hljs-regexp">/aws-observability/</span>adot-autoinstrumentation-<span class="hljs-string">python:</span>v0<span class="hljs-number">.12</span><span class="hljs-number">.1</span>
+</code></pre>
+<h3 id="issue-application-can-t-connect-to-cloudwatch-agent">Issue: Application Can&#39;t Connect to CloudWatch Agent</h3>
+<p><strong>Symptoms:</strong></p>
+<pre><code>ConnectionRefusedError: <span class="hljs-string">[Errno 111]</span> Connection refused
+</code></pre><p><strong>Check:</strong></p>
+<ol>
+<li>Verify CloudWatch agent container is RUNNING</li>
+<li>Check container dependency - app should depend on <code>init</code> with condition SUCCESS</li>
+<li>Verify environment variables (especially endpoints: <code>http://localhost:4316</code> and <code>http://localhost:2000</code>)</li>
+</ol>
+<h3 id="issue-no-traces-in-x-ray">Issue: No Traces in X-Ray</h3>
+<p><strong>Common causes:</strong></p>
+<ol>
+<li><strong>Missing <code>OTEL_PYTHON_DISTRO=aws_distro</code></strong> - Critical for Application Signals</li>
+<li><strong>Missing <code>OTEL_TRACES_SAMPLER_ARG</code></strong> - X-Ray sampler endpoint required</li>
+<li><strong>Using multiple workers</strong> - Must run single worker (<code>uvicorn app:app</code> without <code>--workers</code>)</li>
+<li><strong>Using <code>opentelemetry-instrument</code> wrapper</strong> - Don&#39;t use it, let PYTHONPATH handle instrumentation</li>
+</ol>
+<h3 id="issue-iam-permission-errors">Issue: IAM Permission Errors</h3>
+<p><strong>Symptoms:</strong></p>
+<pre><code><span class="hljs-string">AccessDeniedException:</span> ... <span class="hljs-string">logs:</span>CreateLogGroup
+</code></pre><p><strong>Fix:</strong>
+Add CloudWatch Logs permissions to execution role (see Step 5.4)</p>
+<h2 id="key-configuration-details">Key Configuration Details</h2>
+<h3 id="critical-environment-variables">Critical Environment Variables</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Value</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PYTHONPATH</code></td>
+<td><code>/otel-auto-instrumentation-python/opentelemetry/instrumentation/auto_instrumentation:/app:/otel-auto-instrumentation-python</code></td>
+<td>Auto-instrumentation entry point</td>
+</tr>
+<tr>
+<td><code>OTEL_PYTHON_DISTRO</code></td>
+<td><code>aws_distro</code></td>
+<td>Use AWS distribution (CRITICAL!)</td>
+</tr>
+<tr>
+<td><code>OTEL_PYTHON_CONFIGURATOR</code></td>
+<td><code>aws_configurator</code></td>
+<td>AWS-specific configuration</td>
+</tr>
+<tr>
+<td><code>OTEL_TRACES_SAMPLER</code></td>
+<td><code>xray</code></td>
+<td>Use X-Ray sampling</td>
+</tr>
+<tr>
+<td><code>OTEL_TRACES_SAMPLER_ARG</code></td>
+<td><code>endpoint=http://localhost:2000</code></td>
+<td>X-Ray sampler endpoint</td>
+</tr>
+<tr>
+<td><code>OTEL_AWS_APPLICATION_SIGNALS_ENABLED</code></td>
+<td><code>true</code></td>
+<td>Enable Application Signals</td>
+</tr>
+<tr>
+<td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code></td>
+<td><code>http://localhost:4316/v1/traces</code></td>
+<td>Send traces to CW agent</td>
+</tr>
+<tr>
+<td><code>OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT</code></td>
+<td><code>http://localhost:4316/v1/metrics</code></td>
+<td>Send metrics to CW agent</td>
+</tr>
+<tr>
+<td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
+<td><code>service.name=YOUR_SERVICE,deployment.environment=ecs:REGION</code></td>
+<td>Service identification</td>
+</tr>
+</tbody>
+</table>
+<h3 id="init-container-details">Init Container Details</h3>
+<p><strong>Image:</strong> <code>public.ecr.aws/aws-observability/adot-autoinstrumentation-python:v0.12.1</code></p>
+<p><strong>Why versioned tag, not <code>:latest</code>?</strong></p>
+<ul>
+<li>The <code>:latest</code> tag doesn&#39;t exist for Python ADOT images</li>
+<li>Use specific version tags (check <a href="https://github.com/aws-observability/aws-otel-python-instrumentation/releases">https://github.com/aws-observability/aws-otel-python-instrumentation/releases</a>)</li>
+<li>Current stable: <code>v0.12.1</code></li>
+</ul>
+<p><strong>What it does:</strong></p>
+<ol>
+<li>Runs once before app container starts</li>
+<li>Copies ADOT Python instrumentation files from <code>/autoinstrumentation/</code> to shared volume</li>
+<li>Exits with code 0</li>
+<li>App container mounts the volume and uses PYTHONPATH to load instrumentation</li>
+</ol>
+<h3 id="cloudwatch-agent-configuration">CloudWatch Agent Configuration</h3>
+<p><strong>Must include BOTH sections:</strong></p>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"traces"</span>: {
+    <span class="hljs-attr">"traces_collected"</span>: {
+      <span class="hljs-attr">"application_signals"</span>: {}   // Not just <span class="hljs-string">"otlp"</span>!
+    }
+  },
+  <span class="hljs-attr">"logs"</span>: {
+    <span class="hljs-attr">"metrics_collected"</span>: {
+      <span class="hljs-attr">"application_signals"</span>: {}
+    }
+  }
+}
+</code></pre>
+<h3 id="application-code-requirements">Application Code Requirements</h3>
+<p><strong>DO:</strong></p>
+<ul>
+<li>Write normal FastAPI code</li>
+<li>Use standard libraries (requests, psycopg2, etc.)</li>
+<li>Keep code clean - no OpenTelemetry imports needed</li>
+</ul>
+<p><strong>DON&#39;T:</strong></p>
+<ul>
+<li>Import <code>opentelemetry-*</code> packages</li>
+<li>Call <code>FastAPIInstrumentor.instrument_app()</code></li>
+<li>Use <code>opentelemetry-instrument</code> wrapper in CMD</li>
+<li>Run with <code>--workers</code> flag (must be single worker)</li>
+<li>Install OpenTelemetry packages in requirements.txt</li>
+</ul>
+<h2 id="cleanup">Cleanup</h2>
+<p>To remove all resources:</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># Delete ECS service</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-string">update-service </span>\
+  <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--service</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
+  <span class="hljs-built_in">--desired-count</span> 0 \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">delete-service</span> \
+  <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--service</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">service </span>\
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+
+<span class="hljs-comment"># Delete ECS cluster</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">delete-cluster</span> \
+  <span class="hljs-built_in">--cluster</span> ${<span class="hljs-string">CLUSTER_NAME}</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+
+<span class="hljs-comment"># Delete ECR repository</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">delete-repository</span> \
+  <span class="hljs-built_in">--repository-name</span> ${<span class="hljs-string">APP_NAME}</span> \
+  <span class="hljs-built_in">--force</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+
+<span class="hljs-comment"># Delete security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-security-group</span> \
+  <span class="hljs-built_in">--group-id</span> ${<span class="hljs-string">SG_ID}</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+
+<span class="hljs-comment"># Delete IAM roles</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">delete-role</span> \
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-task-</span><span class="hljs-string">role
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">delete-role</span> \
+  <span class="hljs-built_in">--role-name</span> ${<span class="hljs-string">APP_NAME}</span>-<span class="hljs-string">ecs-execution-</span><span class="hljs-string">role
+</span>
+<span class="hljs-comment"># Delete SSM parameter</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ssm </span><span class="hljs-built_in">delete-parameter</span> \
+  <span class="hljs-built_in">--name</span> <span class="hljs-string">ecs-cwagent-</span>${<span class="hljs-string">APP_NAME}</span> \
+  <span class="hljs-built_in">--region</span> ${<span class="hljs-string">AWS_REGION}</span>
+</code></pre>
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>安全与合规 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>安全与合规</h1></header>
+      <article>
+        <section>
+          <h2>安全</h2>
+          <p>CloudWatch Application Signals 实施了多层安全措施来保护您的 Observability 数据，并确保符合行业标准。</p>
+        </section>
+
+        <section>
+          <h3>数据加密</h3>
+
+          <h4>静态加密：</h4>
+          <ul>
+            <li>所有链路追踪数据使用 AES-256 加密</li>
+            <li>RUM 数据使用 AWS Key Management Service (KMS) 加密</li>
+            <li>Synthetic Monitoring 数据以加密方式存储</li>
+            <li>您可以使用客户托管密钥进行额外控制</li>
+          </ul>
+
+          <h4>传输加密：</h4>
+          <ul>
+            <li>所有数据传输使用 TLS 1.2 或更高版本</li>
+            <li>对 CloudWatch 服务的 API 调用均已加密</li>
+            <li>RUM 数据收集使用 HTTPS</li>
+            <li>代理到收集器之间的通信已加密保护</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>身份和访问管理</h3>
+
+          <h4>IAM 权限：</h4>
+          <p>在授予 Application Signals 访问权限时，请使用最小权限原则：</p>
+
+          <h5>只读访问：</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+          <h5>完全访问：</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>数据隐私和 PII 保护</h3>
+
+          <h4>数据脱敏：</h4>
+          <ul>
+            <li>对敏感信息实施数据掩码处理</li>
+            <li>对链路追踪属性中的 PII 使用令牌化</li>
+            <li>配置数据保留策略</li>
+            <li>定期审计收集的数据</li>
+          </ul>
+
+          <h4>最佳实践：</h4>
+          <ul>
+            <li>切勿在链路追踪中包含密码、API 密钥或令牌</li>
+            <li>对电子邮件地址和电话号码进行哈希或掩码处理</li>
+            <li>从包含敏感数据的 URL 中删除查询参数</li>
+            <li>使用通用标识符代替个人信息</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>网络安全</h3>
+
+          <h4>VPC 配置：</h4>
+          <ul>
+            <li>在您的 VPC 内部署代理以增强安全性</li>
+            <li>使用 VPC 端点进行 CloudWatch API 调用</li>
+            <li>配置安全组以限制流量</li>
+            <li>实施网络 ACL 进行额外控制</li>
+          </ul>
+
+          <h4>代理安全：</h4>
+          <ul>
+            <li>以最小必要权限运行代理</li>
+            <li>及时更新代理的安全补丁</li>
+            <li>监控代理日志中的安全事件</li>
+            <li>尽可能使用只读访问</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>数据隐私</h2>
+          <p>了解 Application Signals 如何处理您的数据隐私要求。</p>
+        </section>
+
+        <section>
+          <h3>数据收集和使用</h3>
+
+          <h4>我们收集的数据：</h4>
+          <ul>
+            <li>应用程序性能指标和链路追踪</li>
+            <li>服务依赖关系信息</li>
+            <li>错误信息和堆栈跟踪</li>
+            <li>系统和基础设施元数据</li>
+          </ul>
+
+          <h4>我们不收集的数据：</h4>
+          <ul>
+            <li>应用程序业务数据或用户内容</li>
+            <li>数据库内容或文件系统数据</li>
+            <li>用户凭证或认证令牌</li>
+            <li>个人身份信息（除非明确包含）</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>数据保留</h3>
+
+          <h4>默认保留期限：</h4>
+          <ul>
+            <li><strong>链路追踪数据：</strong>30 天（可配置最长 1 年）</li>
+            <li><strong>指标：</strong>15 个月（标准 CloudWatch 保留期）</li>
+            <li><strong>RUM 数据：</strong>30 天（可配置最长 1 年）</li>
+            <li><strong>Synthetics 结果：</strong>90 天（可配置）</li>
+          </ul>
+
+          <h4>数据删除：</h4>
+          <ul>
+            <li>使用 CloudWatch 数据保留策略</li>
+            <li>实施自动化数据生命周期管理</li>
+            <li>如需要，可通过 AWS Support 请求数据删除</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>合规框架</h3>
+
+          <h4>支持的标准：</h4>
+          <ul>
+            <li><strong>SOC 2：</strong>安全性、可用性和保密性控制</li>
+            <li><strong>PCI DSS：</strong>支付卡行业数据安全标准</li>
+            <li><strong>HIPAA：</strong>健康保险流通与责任法案</li>
+            <li><strong>GDPR：</strong>通用数据保护条例</li>
+            <li><strong>FedRAMP：</strong>联邦风险和授权管理计划</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>合规指南</h2>
+          <p>针对常见合规场景的具体指导。</p>
+        </section>
+
+        <section>
+          <h3>HIPAA 合规</h3>
+
+          <h4>要求：</h4>
+          <ul>
+            <li>对链路追踪中的受保护健康信息 (PHI) 进行加密</li>
+            <li>实施访问控制和审计日志</li>
+            <li>与 AWS 签订业务关联协议 (BAA)</li>
+            <li>配置适当的数据保留策略</li>
+          </ul>
+
+          <h4>实施：</h4>
+          <ul>
+            <li>在链路追踪属性和 span 名称中掩码 PHI</li>
+            <li>使用客户托管的 KMS 密钥</li>
+            <li>启用 CloudTrail 进行审计日志记录</li>
+            <li>配置 VPC 端点实现数据隔离</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PCI DSS 合规</h3>
+
+          <h4>关键考虑事项：</h4>
+          <ul>
+            <li>切勿在链路追踪或日志中包含持卡人数据</li>
+            <li>实施网络分段</li>
+            <li>对传输中和静态数据使用加密</li>
+            <li>定期进行安全评估和渗透测试</li>
+          </ul>
+
+          <h4>最佳实践：</h4>
+          <ul>
+            <li>在插桩前对敏感数据进行令牌化</li>
+            <li>为 Application Signals 代理使用私有子网</li>
+            <li>实施最小权限 IAM 策略</li>
+            <li>定期审查收集的数据</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GDPR 合规</h3>
+
+          <h4>数据主体权利：</h4>
+          <ul>
+            <li>访问个人数据的权利</li>
+            <li>更正权</li>
+            <li>删除权（"被遗忘权"）</li>
+            <li>数据可移植权</li>
+          </ul>
+
+          <h4>实施：</h4>
+          <ul>
+            <li>最小化遥测数据中的 PII 收集</li>
+            <li>实施数据匿名化技术</li>
+            <li>根据业务需求配置数据保留</li>
+            <li>记录数据处理活动</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>安全监控</h2>
+          <p>监控您的 Application Signals 部署中的安全事件。</p>
+        </section>
+
+        <section>
+          <h3>安全最佳实践</h3>
+          <ul>
+            <li>启用 CloudTrail 进行 API 活动日志记录</li>
+            <li>监控 IAM 策略变更和访问模式</li>
+            <li>为异常数据访问模式设置告警</li>
+            <li>定期进行安全评估和漏洞扫描</li>
+            <li>实施多因素认证 (MFA)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>事件响应</h3>
+          <ul>
+            <li>制定安全事件的事件响应计划</li>
+            <li>了解在遭到入侵时如何禁用 Application Signals</li>
+            <li>记录升级流程</li>
+            <li>定期进行事件响应测试</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>생성형 AI 관찰성 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>생성형 AI 관찰성</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals + Amazon Bedrock</h2>
+          <p>CloudWatch Application Signals는 Amazon Bedrock 모델과 상호 작용하는 생성형 AI 애플리케이션의 문제 해결을 지원합니다. Bedrock API 호출에 대한 즉시 사용 가능한 텔레메트리를 제공하여 다음을 조사할 수 있습니다:</p>
+          <ul>
+            <li><strong>모델 구성 문제</strong></li>
+            <li><strong>사용량 및 비용 요인</strong> (토큰 사용량)</li>
+            <li><strong>모델 지연 시간</strong></li>
+            <li><strong>응답의 중단/완료 이유</strong></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>세분화된 메트릭 및 트레이스</h2>
+          <p>Bedrock 호출의 경우, Application Signals는 리소스 수준의 세부 정보(예: 모델 ID, 가드레일 ID, 지식 기반 ID, Bedrock 에이전트 ID)와 함께 성능 메트릭 및 트레이스 스팬을 생성하고 상관시킬 수 있습니다.</p>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services-example-scenario-GenerativeAI.html">예제: Amazon Bedrock과 상호 작용하는 생성형 AI 앱 문제 해결</a>.</p>
+        </section>
+
+        <section>
+          <h2>GenAI 시맨틱 속성 + Transaction Search</h2>
+          <p>Application Signals는 OpenTelemetry GenAI 시맨틱 규약 속성(예: <code>gen_ai.request.model</code> 및 토큰 사용량 필드)을 생성할 수 있습니다. CloudWatch Transaction Search를 사용하여 모델 간 프롬프트, 토큰 사용량, 지연 시간을 분석하고 비교할 수 있습니다.</p>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search.html">Transaction Search</a></li>
+            <li><a href="searching-spans.html">스팬 검색 및 분석</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>추가 참고 자료</h2>
+          <ul>
+            <li><a href="https://aws.amazon.com/about-aws/whats-new/2024/08/amazon-cloudwatch-application-signals-bedrock/">AWS 발표: Application Signals의 Bedrock 지원</a></li>
+            <li><a href="https://aws.amazon.com/blogs/mt/improve-amazon-bedrock-observability-with-amazon-cloudwatch-appsignals/">블로그: AppSignals로 Amazon Bedrock 관찰성 개선</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

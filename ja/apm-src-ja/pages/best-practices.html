@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Best Practices — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>ベストプラクティス</h1></header>
+<article>
+<section>
+<h2>インストルメンテーションのベストプラクティス</h2>
+<p>効果的なインストルメンテーションは、オブザーバビリティデータから価値あるインサイトを得るための鍵です。以下のベストプラクティスに従って、オーバーヘッドを最小限に抑えながら最大限の価値を提供するインストルメンテーションを実現してください。</p>
+</section>
+<section>
+<h3>インストルメント対象</h3>
+<p>アプリケーションの最も重要な部分のインストルメントに集中してください：</p>
+<h4>優先度：高</h4>
+<ul>
+<li>パブリック API エンドポイントとユーザー向け操作</li>
+<li>データベースクエリと外部サービス呼び出し</li>
+<li>ビジネスクリティカルなワークフローとトランザクション</li>
+<li>エラーパスと例外処理</li>
+</ul>
+<h4>優先度：中</h4>
+<ul>
+<li>内部サービス間通信</li>
+<li>バックグラウンドジョブとスケジュールタスク</li>
+<li>キャッシュ操作</li>
+</ul>
+<h4>優先度：低</h4>
+<ul>
+<li>シンプルなユーティリティ関数</li>
+<li>静的コンテンツの配信</li>
+<li>ヘルスチェックエンドポイント</li>
+</ul>
+</section>
+<section>
+<h3>命名規則</h3>
+<p>一貫した命名により、トレースの検索とフィルタリングが容易になります：</p>
+<h4>スパン名：</h4>
+<ul>
+<li>ハイフン区切りの小文字を使用する： <code>http-get-user-profile</code></li>
+<li>操作タイプを含める： <code>db-query-users</code>, <code>redis-get-session</code></li>
+<li>説明的かつ簡潔にする：「process」や「handle」のような汎用的な名前は避けてください</li>
+</ul>
+<h4>サービス名：</h4>
+<ul>
+<li>環境全体で一貫したサービス命名を使用する</li>
+<li>マルチ環境構成ではサービス名に環境を含める</li>
+<li>組織の命名規則に従う</li>
+</ul>
+</section>
+<section>
+<h3>属性とタグ</h3>
+<p>属性を使用してスパンとトレースにコンテキストを追加してください：</p>
+<h4>標準属性：</h4>
+<ul>
+<li><code>http.method</code> - HTTP メソッド（GET、POST など）</li>
+<li><code>http.url</code> - リクエスト URL（PII に注意）</li>
+<li><code>http.status_code</code> - HTTP レスポンスステータス</li>
+<li><code>db.system</code> - データベースタイプ（mysql、postgres など）</li>
+<li><code>db.name</code> - データベース名</li>
+<li><code>db.operation</code> - データベース操作（SELECT、INSERT など）</li>
+</ul>
+<h4>カスタム属性：</h4>
+<ul>
+<li><code>user.id</code> - ユーザー識別子（PIIの場合はハッシュ化）</li>
+<li><code>business.operation</code> - ビジネス操作タイプ</li>
+<li><code>version</code> - アプリケーションバージョン</li>
+<li><code>environment</code> - デプロイ環境</li>
+</ul>
+</section>
+<section>
+<h3>PIIとセキュリティに関する考慮事項</h3>
+<p>テレメトリ内の機密データを保護してください：</p>
+<h4>絶対に含めないもの：</h4>
+<ul>
+<li>パスワード、APIキー、または認証トークン</li>
+<li>メールアドレスや電話番号などの個人識別情報（PII）</li>
+<li>機密データを含むクエリパラメータ付きの完全なURL</li>
+<li>クレジットカード番号または財務情報</li>
+</ul>
+<h4>安全な代替手段：</h4>
+<ul>
+<li>ハッシュ化またはトークン化された識別子を使用する</li>
+<li>URLのパス部分のみを含める</li>
+<li>具体的な値の代わりに汎用的なステータス指標を使用する</li>
+<li>インストルメンテーションレベルでデータマスキングを実装する</li>
+</ul>
+</section>
+<section>
+<h2>サンプリング戦略</h2>
+<p>サンプリングは、オブザーバビリティのカバレッジを維持しながらコストを管理するのに役立ちます。</p>
+</section>
+<section>
+<h3>サンプリング戦略の選択</h3>
+<h4>レートベースサンプリング：</h4>
+<ul>
+<li>リクエストの一定割合をサンプリングする（例：10%）</li>
+<li>実装と理解が簡単</li>
+<li>重要だが稀なイベントを見逃す可能性がある</li>
+</ul>
+<h4>テールサンプリング：</h4>
+<ul>
+<li>トレースデータを収集した後にサンプリングを決定する</li>
+<li>エラーや高レイテンシのトレースを優先できる</li>
+<li>より複雑だが、よりインテリジェント</li>
+</ul>
+<h4>ルールベースサンプリング：</h4>
+<ul>
+<li>特定の条件（ユーザー、エンドポイントなど）に基づいてサンプリングする</li>
+<li>重要なパスが常にトレースされることを保証する</li>
+<li>慎重なルール定義が必要</li>
+</ul>
+</section>
+<section>
+<h3>推奨サンプリングレート</h3>
+<ul>
+<li><strong>開発環境：</strong> 完全な可視性のために100%サンプリング</li>
+<li><strong>ステージング環境：</strong> テスト用に50〜100%サンプリング</li>
+<li><strong>本番環境：</strong> 費用対効果の高いカバレッジのために10〜20%</li>
+<li><strong>高トラフィックサービス：</strong> ボリュームを制御するために1〜5%</li>
+<li><strong>重要なパス：</strong> 他のルールに関係なく100%サンプリング</li>
+</ul>
+</section>
+<section>
+<h2>パフォーマンス最適化</h2>
+<p>インストルメンテーションのパフォーマンスへの影響を最小限に抑える。</p>
+</section>
+<section>
+<h3>オーバーヘッドの削減</h3>
+<ul>
+<li>可能な限り非同期スパン処理を使用する</li>
+<li>ネットワーク呼び出しを減らすためにスパンエクスポートをバッチ処理する</li>
+<li>適切なバッファサイズを設定する</li>
+<li>インストルメンテーションのパフォーマンスメトリクスを監視する</li>
+</ul>
+</section>
+<section>
+<h3>リソース管理</h3>
+<ul>
+<li>スパンエクスポートに合理的なタイムアウトを設定する</li>
+<li>バックエンド障害に対してサーキットブレーカーを実装する</li>
+<li>コレクター用に接続プーリングを使用する</li>
+<li>適切なリトライポリシーを設定する</li>
+</ul>
+</section>
+<section>
+<h2>アラートと監視</h2>
+<p>アプリケーションの健全性を把握するための効果的なアラートを設定する。</p>
+</section>
+<section>
+<h3>監視すべき主要メトリクス</h3>
+<ul>
+<li><strong>レイテンシー：</strong> P95/P99レスポンスタイム</li>
+<li><strong>エラーレート：</strong> 失敗したリクエストの割合</li>
+<li><strong>スループット：</strong> 1秒あたりのリクエスト数</li>
+<li><strong>飽和度：</strong> リソース使用率</li>
+<li><strong>トレース量：</strong> 収集されたトレース数</li>
+</ul>
+</section>
+<section>
+<h3>SLOベースのアラート</h3>
+<p>サービスレベル目標を定義し、リスクがある場合にアラートを発する：</p>
+<ul>
+<li>レイテンシーSLO：リクエストの95%が500ms未満</li>
+<li>エラーSLO：99.9%の成功率</li>
+<li>可用性SLO：99.95%の稼働時間</li>
+</ul>
+</section>
+<section>
+<h2>コスト管理</h2>
+<p>価値を維持しながらオブザーバビリティのコストを管理する。</p>
+</section>
+<section>
+<h3>コスト最適化戦略</h3>
+<ul>
+<li>適切なサンプリングレートを実装する</li>
+<li>データ保持ポリシーを使用する</li>
+<li>不要なスパンと属性をフィルタリングする</li>
+<li>古いデータをより安価なストレージにアーカイブする</li>
+<li>データ量を監視して最適化する</li>
+</ul>
+</section>
+<section>
+<h3>データ保持ポリシー</h3>
+<ul>
+<li><strong>ホットストレージ:</strong> アクティブなトラブルシューティング用の最近のデータ（7〜30日）</li>
+<li><strong>ウォームストレージ:</strong> トレンド分析用の過去のデータ（30〜90日）</li>
+<li><strong>コールドストレージ:</strong> コンプライアンスおよびまれなクエリ用のアーカイブデータ（90日以上）</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

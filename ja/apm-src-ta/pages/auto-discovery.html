@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Auto Discovery — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Auto Discovery</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals கண்டறிவது என்ன</h2>
+          <p>நீங்கள் Application Signals-ஐ இயக்கி, உங்கள் சேவைகள் telemetry-ஐ வெளியிடும்போது, CloudWatch தானாகவே கண்டறிந்து காட்டுவது:</p>
+          <ul>
+            <li><strong>சேவைகள்</strong> மற்றும் அவற்றின் <strong>செயல்பாடுகள்</strong></li>
+            <li><strong>சார்புகள்</strong> (கீழ்நிலை அழைப்புகள்)</li>
+            <li><strong>Topology</strong> (Application Map)</li>
+          </ul>
+          <p>தேர்ந்தெடுக்கப்பட்ட நேர வரம்பிற்குள் (எடுத்துக்காட்டாக, இயல்புநிலை "கடந்த மூன்று மணி நேரம்") வெளியிடப்படும் metrics மற்றும் traces மூலம் கண்டறிதல் இயக்கப்படுகிறது. ஒரு சேவைக்கு நேர வரம்பில் செயல்பாடு இல்லையென்றால், அது காட்டப்படாது.</p>
+        </section>
+
+        <section>
+          <h2>ஒரு முறை கணக்கு அமைப்பு (சேவை கண்டறிதல்)</h2>
+          <p>நீங்கள் ஒரு கணக்கில் முதல் முறையாக சேவை கண்டறிதலைத் தொடங்கும்போது, CloudWatch சேவை-இணைக்கப்பட்ட பங்கு <code>AWSServiceRoleForCloudWatchApplicationSignals</code>-ஐ உருவாக்குகிறது. இந்த பங்கு CloudWatch-க்கு சேவைகளைக் கண்டறிந்து தொடர்புபடுத்த அனுமதிக்கிறது.</p>
+          <p>அதிகாரப்பூர்வ படிகள்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">உங்கள் கணக்கில் Application Signals-ஐ இயக்கவும்</a>.</p>
+        </section>
+
+        <section>
+          <h2>செயல்பாட்டு எதிர்பார்ப்புகள்</h2>
+          <ul>
+            <li><strong>கண்டறிதல் தாமதம்:</strong> topology மற்றும் சேவை கண்டறிதல் ~10 நிமிடங்கள் வரை தாமதமாகலாம்.</li>
+            <li><strong>SLO/SLI மதிப்பீடு:</strong> SLI ஆரோக்கிய மதிப்பீடு தாமதமாகலாம் (எடுத்துக்காட்டாக, ~15 நிமிடங்கள் வரை).</li>
+            <li><strong>அளவு வரம்புகள்:</strong> console-ல் 1,000 சேவைகள் வரை காட்டப்படலாம்.</li>
+          </ul>
+          <p>பாருங்கள்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals மூலம் உங்கள் பயன்பாடுகளின் செயல்பாட்டு ஆரோக்கியத்தை கண்காணிக்கவும்</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

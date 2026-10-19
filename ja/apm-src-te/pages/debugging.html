@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>డీబగ్గింగ్ గైడ్‌లు — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>డీబగ్గింగ్ గైడ్‌లు</h1></header>
+      <article>
+        <section>
+          <h2>వేగవంతమైన ట్రయేజ్ వర్క్‌ఫ్లో (సిఫార్సు చేయబడింది)</h2>
+          <ol>
+            <li><strong>SLOల వద్ద ప్రారంభించండి (నిర్వచించినట్లయితే):</strong> అనారోగ్య సేవలు/ఆపరేషన్‌లు/డిపెండెన్సీలను గుర్తించండి.</li>
+            <li><strong>సేవలను ఉపయోగించండి:</strong> అధిక లేటెన్సీ లేదా ఫాల్ట్ రేటు ద్వారా క్రమబద్ధం చేసి అగ్ర దోషులను కనుగొనండి.</li>
+            <li><strong>సేవ వివరాలను తెరవండి:</strong> ఆపరేషన్‌లు మరియు డిపెండెన్సీ ఎడ్జ్‌లను పరిశీలించండి; లేటెన్సీ/ఫాల్ట్ డేటాపాయింట్‌ను ఎంచుకోండి.</li>
+            <li><strong>సహసంబంధిత ట్రేస్‌లు/span లకు జంప్ చేయండి:</strong> నెమ్మదిగా/విఫలమవుతున్న డౌన్‌స్ట్రీమ్ కాల్‌ను కనుగొనడానికి ట్రేస్ టైమ్‌లైన్‌ను పరిశీలించండి.</li>
+            <li><strong>లాగ్‌లు/రన్‌టైమ్ మెట్రిక్స్‌తో నిర్ధారించండి:</strong> సంబంధితమైనప్పుడు ఎర్రర్ లాగ్‌లు మరియు JVM/CPU/GC ను సహసంబంధం చేయండి.</li>
+          </ol>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals తో కార్యాచరణ ఆరోగ్యాన్ని పర్యవేక్షించండి</a>.</p>
+        </section>
+
+        <section>
+          <h2>"అరుదైన స్పైక్‌ల" కోసం Transaction Search ఉపయోగించడం</h2>
+          <p>అడపాదడపా స్పైక్‌ల కోసం, Transaction Search అట్రిబ్యూట్ ద్వారా span లను విశ్లేషించడంలో మరియు ప్రభావిత వినియోగదారులు/అభ్యర్థనలలో డ్రిల్ చేయడంలో సహాయపడుతుంది. సాధారణ నమూనాలు:</p>
+          <ul>
+            <li><strong>గ్రూప్ విశ్లేషణ</strong> వ్యాపార అట్రిబ్యూట్ ద్వారా (ఉదాహరణకు, కస్టమర్ ID) ఎవరు ప్రభావితమయ్యారో కనుగొనడానికి.</li>
+            <li><strong>ఫిల్టర్</strong> సేవ/ఆపరేషన్ మరియు వ్యవధి (p99) ద్వారా అవుట్‌లయర్‌లను వేరు చేయడానికి.</li>
+            <li><strong>ట్రేస్ తెరవండి</strong> అవుట్‌లయర్ span నుండి మరియు డిపెండెన్సీ కాల్ మార్గాన్ని అనుసరించండి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-troubleshooting.html">అప్లికేషన్ సమస్యలను ట్రబుల్‌షూట్ చేయడం (Transaction Search)</a>.</p>
+        </section>
+
+        <section>
+          <h2>సాధారణ "నాకు డేటా ఎందుకు కనిపించడం లేదు?" తనిఖీలు</h2>
+          <ul>
+            <li><strong>ఖాతా ప్రారంభం:</strong> Application Signals ప్రతి ఖాతా/రీజియన్‌కు ఒక్కసారి ప్రారంభించబడాలి (సేవ-లింక్డ్ రోల్ సృష్టించబడింది).</li>
+            <li><strong>సమయ పరిధి:</strong> ఎంచుకున్న సమయ విండోలో కార్యాచరణ ఉన్నప్పుడు మాత్రమే సేవలు/ఆపరేషన్‌లు చూపబడతాయి.</li>
+            <li><strong>సేవ నామకరణం:</strong> <code>service.name</code> / <code>OTEL_RESOURCE_ATTRIBUTES</code> తగినంతంగా సెట్ చేయబడిందని నిర్ధారించుకోండి (EKS కాని సందర్భాలలో తరచుగా స్పష్టమైన సేవ/పర్యావరణ పేర్లు అవసరం).</li>
+            <li><strong>పైప్‌లైన్ ఆరోగ్యం:</strong> CloudWatch Agent/కలెక్టర్ నడుస్తూ OTLP అందుకుంటోంది; స్థానిక ఎండ్‌పాయింట్‌లు మరియు IAM అనుమతులను ధృవీకరించండి.</li>
+          </ul>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-Troubleshoot.html">మీ Application Signals ఇన్‌స్టాలేషన్‌ను ట్రబుల్‌షూట్ చేయడం</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

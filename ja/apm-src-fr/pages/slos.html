@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Objectifs de niveau de service (SLO) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Objectifs de niveau de service (SLO)</h1></header>
+      <article>
+        <section>
+          <h2>Pourquoi les SLO sont importants</h2>
+          <p>Les SLO vous permettent d'exprimer des objectifs de fiabilite et de performance (par exemple, "99,9 % de disponibilite" ou "latence p99 inferieure a 500 ms") et de les suivre dans le temps. Dans Application Signals, la sante SLO/SLI est affichee dans la page Services et la Carte d'application pour accelerer le tri.</p>
+        </section>
+
+        <section>
+          <h2>Sur quoi vous pouvez creer des SLO</h2>
+          <p>Les SLO CloudWatch sont bases sur des metriques. Les metriques standard d'Application Signals (latence, panne, erreur, disponibilite) sont des entrees SLI courantes.</p>
+          <p>Documentation officielle : <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html">Objectifs de niveau de service (SLO)</a>.</p>
+        </section>
+
+        <section>
+          <h2>Flux de travail typique</h2>
+          <ul>
+            <li><strong>Choisissez un service</strong> et decidez quel indicateur reflete le mieux l'impact utilisateur (disponibilite vs latence).</li>
+            <li><strong>Definissez l'objectif</strong> (cible, fenetre temporelle et evaluation).</li>
+            <li><strong>Alertez</strong> en utilisant des alarmes sur le statut SLO/SLI ou le taux de consommation.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Java Spring + OTLP + CloudWatch 실습 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Java Spring + OTLP + CloudWatch (실습 연습)</h1></header>
+      <article>
+        <section>
+          <p>이 가이드는 Java Spring Boot 서비스를 OpenTelemetry로 계측하고, 텔레메트리를 AWS로 내보내며, ECS/Fargate에 배포하고, 트레이스/로그/Application Signals 동작을 확인하는 전체 실습을 문서화합니다.</p>
+          <p>구현 예제 형태로 작성되었으며 런북 또는 워크숍 핸드아웃으로 사용할 수 있습니다.</p>
+        </section>
+
+        <section>
+          <h2>1) 이 실습에서 보여주는 내용</h2>
+          <ul>
+            <li>Java 앱의 엔드투엔드 텔레메트리:
+              <ul>
+                <li><strong>트레이스</strong> (X-Ray / Transaction Search)</li>
+                <li><strong>로그</strong> (CloudWatch Logs OTLP 엔드포인트 또는 ECS의 <code>awslogs</code>)</li>
+                <li><strong>메트릭/Application Signals</strong> (CloudWatch Agent 사이드카 경로)</li>
+              </ul>
+            </li>
+            <li>다음의 차이점:
+              <ul>
+                <li><strong>Micrometer 트레이싱 브릿지</strong> (<code>micrometer-tracing-bridge-otel</code>) - 트레이싱 API 브릿징용</li>
+                <li><strong>Micrometer 레지스트리</strong> (<code>micrometer-registry-cloudwatch2</code>, <code>micrometer-registry-otlp</code>) - 메트릭 전용 싱크</li>
+              </ul>
+            </li>
+            <li>하드코딩된 Java 상수가 아닌 환경 변수(<code>OTEL_*</code>)를 통한 OTLP 엔드포인트 연결.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>2) 아키텍처</h2>
+          <pre><code>+----------------------------------------------------------------------------------+
+|                               Developer / Runtime Host                           |
+|                                                                                  |
+|  loadgen.sh ---&gt; Spring Boot app (:8080)                                         |
+|                    |                                                             |
+|                    +--&gt; @Observed method (DemoService.greet)                     |
+|                    |      +--&gt; custom span attrs/events                          |
+|                    |      +--&gt; downstream call to httpbin.org                    |
+|                    |                                                             |
+|                    +--&gt; ADOT Java agent (-javaagent)                             |
+|                           |                                                      |
+|                           +--&gt; OTLP traces ----&gt; xray.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; OTLP logs ------&gt; logs.&lt;region&gt;.amazonaws.com     |
+|                           +--&gt; AppSignals -----&gt; monitoring.&lt;region&gt;.amazonaws.. |
+|                                                                                  |
++----------------------------------------------------------------------------------+</code></pre>
+        </section>
+
+        <section>
+          <h2>3) 배포 토폴로지 (ASCII)</h2>
+          <pre><code>                 +-----------------------------------------------+
+                 |                  Amazon ECS                   |
+                 |            Cluster: PetsiteECS-cluster        |
+                 +-----------------------------------------------+
+                                   |
+                                   v
+                    +-------------------------------------+
+                    | Fargate Task (awsvpc network mode) |
+                    |-------------------------------------|
+                    | container: java-spring-otel        |
+                    |  - app.jar + ADOT javaagent        |
+                    |  - OTEL_EXPORTER_OTLP_TRACES_*=    |
+                    |      http://localhost:4316/v1/traces|
+                    |  - OTEL_AWS_APPLICATION_SIGNALS_*=  |
+                    |      http://localhost:4316/v1/metrics|
+                    |-------------------------------------|
+                    | container: ecs-cwagent (sidecar)   |
+                    |  - receives OTLP on localhost:4316 |
+                    |  - forwards to CloudWatch/X-Ray    |
+                    +-------------------------------------+
+                                   |
+               +-------------------+-------------------+
+               |                   |                   |
+               v                   v                   v
+         CloudWatch Logs      X-Ray / Traces      Application Signals</code></pre>
+        </section>
+
+        <section>
+          <h2>4) OTLP 엔드포인트 매핑</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>시그널</th>
+                <th>엔드포인트 패턴</th>
+                <th>일반적인 환경 변수</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>트레이스</td>
+                <td><code>https://xray.&lt;region&gt;.amazonaws.com/v1/traces</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_TRACES_PROTOCOL=http/protobuf</code></td>
+              </tr>
+              <tr>
+                <td>메트릭</td>
+                <td><code>https://monitoring.&lt;region&gt;.amazonaws.com/v1/metrics</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_METRICS_ENDPOINT</code> (또는 사이드카를 통한 App Signals 경로)</td>
+              </tr>
+              <tr>
+                <td>로그</td>
+                <td><code>https://logs.&lt;region&gt;.amazonaws.com/v1/logs</code></td>
+                <td><code>OTEL_EXPORTER_OTLP_LOGS_ENDPOINT</code>, <code>OTEL_EXPORTER_OTLP_LOGS_HEADERS</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <p>ECS 사이드카 모드에서 앱 컨테이너는 트레이스/메트릭을 <code>http://localhost:4316/...</code>으로 보내고 CloudWatch Agent가 포워딩을 처리합니다.</p>
+        </section>
+
+        <section>
+          <h2>5) 이 저장소에서 사용된 계측 모델</h2>
+
+          <h3>5.1 의존성</h3>
+          <ul>
+            <li><code>micrometer-tracing-bridge-otel</code>이 <code>pom.xml</code>에 포함되어 있습니다.</li>
+            <li>트레이싱을 위한 <code>micrometer-registry-cloudwatch2</code> 또는 <code>micrometer-registry-otlp</code>에 대한 의존성이 없습니다.</li>
+          </ul>
+
+          <h3>5.2 자동 + 수동 트레이싱</h3>
+          <ul>
+            <li>ADOT Java 에이전트의 자동 계측이 프레임워크/클라이언트 스팬을 캡처합니다.</li>
+            <li><code>DemoService.greet()</code> 내부에 수동 보강이 추가됩니다:
+              <ul>
+                <li>속성: <code>demo.operation</code>, <code>demo.request.name</code>, <code>demo.downstream.status</code>, <code>demo.downstream.elapsed_ms</code>, <code>demo.custom.instrumented</code></li>
+                <li>이벤트: <code>demo.greet.start</code>, <code>demo.httpbin.success</code>, <code>demo.httpbin.failure</code></li>
+                <li><code>recordException(...)</code> 및 <code>setStatus(ERROR, ...)</code>를 사용한 오류 기록</li>
+              </ul>
+            </li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>6) 스크린샷 (트레이스 세부 정보)</h2>
+          <p>워크숍/데모 문서에는 아래 제공된 스크린샷을 사용하세요:</p>
+          <img src="../assets/images/cw.png" alt="CloudWatch 트레이스 스크린샷" style="max-width: 100%; border: 1px solid #ddd; margin: 10px 0;">
+        </section>
+
+        <section>
+          <h2>7) AWS 콘솔에서 텔레메트리를 보는 위치</h2>
+
+          <h3>트레이스 (기본)</h3>
+          <ol>
+            <li><strong>X-Ray</strong> → <strong>Traces</strong></li>
+            <li>리전: <code>us-east-1</code></li>
+            <li>시간 범위: 최근 15-60분</li>
+            <li>서비스: <code>java-spring-otel-poc</code></li>
+          </ol>
+
+          <p>사용자 정의 필드의 경우:</p>
+          <ul>
+            <li>트레이스 열기 → 세그먼트 <code>java-spring-otel-poc</code> → <strong>Metadata</strong></li>
+            <li>다음 키를 찾으세요:
+              <ul>
+                <li><code>demo.operation</code></li>
+                <li><code>demo.request.name</code></li>
+                <li><code>demo.downstream.status</code></li>
+                <li><code>demo.downstream.elapsed_ms</code></li>
+                <li><code>demo.custom.instrumented</code></li>
+              </ul>
+            </li>
+          </ul>
+
+          <h3>로그</h3>
+          <ul>
+            <li>ECS 앱 로그: <code>/ecs/java-spring-otel</code></li>
+            <li>CW 에이전트 사이드카 로그: <code>/ecs/ecs-cwagent-java-spring-otel</code></li>
+            <li>로컬 OTLP 로그 그룹 (로컬 실행 시): <code>/aws/otel/java-spring-otel-poc</code></li>
+          </ul>
+
+          <h3>Application Signals</h3>
+          <ul>
+            <li><strong>CloudWatch</strong> → <strong>Application Signals</strong> → <strong>Services</strong></li>
+            <li>지속적인 트래픽과 사이드카 경로를 통한 성공적인 메트릭 포워딩 후 <code>java-spring-otel-poc</code>를 찾으세요.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>8) 핵심 요점</h2>
+          <p>OpenTelemetry 자동 계측은 스팬을 생성할 수 있지만, 성공적인 AWS 관찰성 결과는 여전히 다음에 달려 있습니다:</p>
+          <ol>
+            <li>올바른 OTLP 엔드포인트 연결</li>
+            <li>올바른 인증/포워딩 경로 (메트릭/App Signals의 경우 사이드카/콜렉터를 통하는 경우가 많음)</li>
+            <li>트레이싱 브릿지와 메트릭 레지스트리의 올바른 구분</li>
+            <li>지속적인 트래픽과 올바른 콘솔 뷰 (트레이스에는 X-Ray)</li>
+          </ol>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

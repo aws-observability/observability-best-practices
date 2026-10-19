@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ta">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>அம்சங்கள் & திறன்கள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>அம்சங்கள் & திறன்கள்</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals: இது என்ன வழங்குகிறது</h2>
+          <p>CloudWatch Application Signals என்பது CloudWatch-ல் AWS-ன் application performance monitoring (APM) அனுபவமாகும். இயக்கப்பட்ட பிறகு, இது தானாகவே பயன்பாட்டு telemetry-ஐ சேகரித்து <strong>சேவை</strong>, <strong>செயல்பாடு</strong>, மற்றும் <strong>சார்பு</strong> அடிப்படையில் ஒழுங்கமைக்கிறது, இதன்மூலம் செயல்பாட்டு நிலையை விரைவாக பகுப்பாய்வு செய்யலாம் மற்றும் நீண்டகால செயல்திறன் இலக்குகளை கண்காணிக்கலாம்.</p>
+          <ul>
+            <li><strong>நிலையான பயன்பாட்டு மெட்ரிக்ஸ்:</strong> அழைப்பு எண்ணிக்கை, கிடைக்கும் தன்மை, தாமதம், தவறுகள் மற்றும் பிழைகள்.</li>
+            <li><strong>சேவை மற்றும் சார்பு டோபாலஜி:</strong> கண்டறியப்பட்ட சேவைகள் மற்றும் உறவுகளிலிருந்து உருவாக்கப்படும் Application Map.</li>
+            <li><strong>ஆழமான பிழைத்திருத்தம்:</strong> சேவை நிலையிலிருந்து தொடர்புடைய traces மற்றும் தொடர்புடைய telemetry-க்கு drill down செய்யுங்கள்.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Application Map (டோபாலஜி + நிலை)</h2>
+          <p>Application Map உங்கள் பயன்பாட்டின் டோபாலஜியை காட்சிப்படுத்துகிறது மற்றும் செயல்பாட்டு நிலையை முன்னிலைப்படுத்துகிறது. இது clients, canaries, சேவைகள் மற்றும் சார்புகளுக்கு இடையிலான இணைப்புகளைக் காட்டுகிறது, இதனால் ஆபரேட்டர்கள் செயல்படுத்தல் ஓட்டத்தைப் புரிந்துகொள்ளவும் சிக்கல்கள் எங்கே பரவுகின்றன என்பதை அடையாளம் காணவும் முடியும்.</p>
+
+          <h3>நீங்கள் என்ன செய்யலாம்</h3>
+          <ul>
+            <li><strong>SLO/SLI நிலையைப் பாருங்கள்:</strong> இலக்குகளை பூர்த்தி செய்யாத சேவைகளை (மற்றும் upstream/downstream தாக்கத்தை) விரைவாக கண்டறியுங்கள்.</li>
+            <li><strong>Drill down:</strong> விரிவான மெட்ரிக்ஸைத் திறக்க மற்றும் சேவை விவரங்களுக்கு செல்ல nodes/edges-ஐ தேர்ந்தெடுங்கள்.</li>
+            <li><strong>குழுப்படுத்தல் மற்றும் வடிகட்டுதல்:</strong> இயல்புநிலை குழுப்படுத்தல்களை (Related services, Environment) பயன்படுத்துங்கள் மற்றும் AWS tags அல்லது OpenTelemetry resource attributes பயன்படுத்தி தனிப்பயன் குழுப்படுத்தல்களை உருவாக்குங்கள்.</li>
+            <li><strong>Cross-account visibility:</strong> பல AWS கணக்குகளில் உள்ள சேவைகளைக் காணுங்கள் (cross-account observability அமைக்கப்பட்டிருக்கும்போது).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>சேவைகள், செயல்பாடுகள் மற்றும் சார்புகள்</h2>
+          <p>Application Signals telemetry-ஐ குழுக்கள் production systems-ஐ debug செய்யும் விதத்தை பிரதிபலிக்கும் மாடலாக கட்டமைக்கிறது:</p>
+          <ul>
+            <li><strong>சேவை:</strong> உங்கள் deploy செய்யக்கூடிய அலகு (எடுத்துக்காட்டாக, ஒரு ECS service, EKS workload, Lambda function).</li>
+            <li><strong>செயல்பாடு:</strong> ஒரு சேவைக்குள் ஒரு கோரிக்கை handler (எடுத்துக்காட்டாக, ஒரு HTTP route அல்லது RPC method).</li>
+            <li><strong>சார்பு:</strong> ஒரு சேவையால் செய்யப்படும் கீழ்நிலை அழைப்புகள் (எடுத்துக்காட்டாக, மற்றொரு சேவை அல்லது AWS சார்பு).</li>
+          </ul>
+          <p>இந்த கட்டமைப்பு "எந்த செயல்பாடு பின்னடைந்தது?", "இது upstream அல்லது downstream சிக்கலா?", மற்றும் "எந்த சார்புகள் தாமதம் அல்லது தவறுகளுக்கு பங்களிக்கின்றன?" போன்ற கேள்விகளுக்கு பதிலளிப்பதை எளிதாக்குகிறது.</p>
+        </section>
+
+        <section>
+          <h2>Service level objectives (SLOs)</h2>
+          <p>Application Signals சேகரிக்கும் telemetry-யிலிருந்து நேரடியாக SLO-களை உருவாக்கி கண்காணிக்கவும். SLO-கள் இலக்குகளுக்கு எதிராக செயல்திறன் மற்றும் நம்பகத்தன்மையை கண்காணிக்கவும் "ஆபத்தில் உள்ள" சேவைகளை முன்கூட்டியே கண்டறியவும் உதவுகின்றன.</p>
+          <ul>
+            <li><strong>முக்கிய SLI-களில் SLO-களை வரையறுக்கவும்:</strong> கிடைக்கும் தன்மை, தாமதம், அல்லது வணிக இலக்குகளுக்கு தொடர்புடைய பிற CloudWatch மெட்ரிக்ஸ்.</li>
+            <li><strong>நிலையை கண்காணிக்கவும்:</strong> சேவை பட்டியல்கள் மற்றும் Application Map-ல் SLI நிலை நிலையைப் பாருங்கள்.</li>
+            <li><strong>எச்சரிக்கை:</strong> குழுக்கள் செயலிழப்பிற்கு முன் பதிலளிக்க SLO நிலை/burn-உடன் இணைக்கப்பட்ட அலாரங்களை உருவாக்குங்கள்.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instrumentation (OpenTelemetry-இணக்கமான)</h2>
+          <p>Application Signals OpenTelemetry-இணக்கமானது மற்றும் platform மற்றும் மொழியைப் பொறுத்து பயன்பாடுகளை instrument செய்ய பல வழிகளை ஆதரிக்கிறது.</p>
+          <ul>
+            <li><strong>ஆதரிக்கப்படும் மொழிகள்:</strong> Java, Python, Node.js, மற்றும் .NET (மேலும் OpenTelemetry zero-code instrumentation paths வழியாக கூடுதல் runtimes).</li>
+            <li><strong>ஆதரிக்கப்படும் அமைப்புகள்:</strong> Amazon EKS, Kubernetes, Amazon ECS, Amazon EC2 (மற்றும் CloudWatch agent + AWS Distro for OpenTelemetry-ஐ சார்ந்த enablement patterns).</li>
+            <li><strong>பொதுவான அமைப்பு வடிவங்கள்:</strong> சூழலைப் பொறுத்து AWS Distro for OpenTelemetry (ADOT) SDK/collector அல்லது OpenTelemetry SDK + collector.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>RUM மற்றும் Synthetics-உடன் செயல்படுகிறது</h2>
+          <p>Application Signals CloudWatch RUM மற்றும் CloudWatch Synthetics-உடன் ஒருங்கிணைகிறது. அந்த clients/canaries-க்கு tracing-ஐ இயக்கும்போது, அவை Application Map-ல் தோன்றலாம் மற்றும் பயனர் அனுபவத்தையும் முன்கூட்டிய சோதனைகளையும் அவை அழைக்கும் backend சேவைகளுடன் இணைக்க உதவுகின்றன.</p>
+          <ul>
+            <li><strong>RUM clients:</strong> frontend செயல்திறன் மற்றும் JS பிழைகளை backend சேவை அழைப்புகளுடன் இணைக்கவும்.</li>
+            <li><strong>Synthetics canaries:</strong> முக்கியமான flows-ஐ சரிபார்க்கவும் மற்றும் பயனர்களுக்கு முன் சிக்கல்களைக் கண்டறியவும்.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

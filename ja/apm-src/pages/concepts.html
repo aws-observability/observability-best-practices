@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Concepts & Fundamentals — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Concepts & Fundamentals</h1></header>
+      <article>
+        <section>
+          <h2>Core Concepts</h2>
+          <p>Understanding the fundamental concepts of Application Performance Monitoring (APM) is essential for effectively using CloudWatch Application Signals. This section covers the key building blocks that form the foundation of modern observability.</p>
+        </section>
+
+        <section>
+          <h3>Distributed Tracing</h3>
+          <p>Distributed tracing is the practice of tracking requests as they flow through distributed systems. In microservices architectures, a single user request might traverse multiple services, databases, and external APIs. Distributed tracing provides visibility into this entire journey.</p>
+          
+          <h4>Key Components:</h4>
+          <ul>
+            <li><strong>Trace:</strong> A complete end-to-end journey of a request through your system</li>
+            <li><strong>Span:</strong> A single operation within a trace (e.g., a database query or API call)</li>
+            <li><strong>Trace Context:</strong> Metadata that connects spans across service boundaries</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Traces, Spans, and Segments</h3>
+          <p>These are the fundamental data structures used in distributed tracing:</p>
+          
+          <h4>Traces</h4>
+          <p>A trace represents the complete path of a request through your application. It contains timing information, metadata, and all the spans that make up the request's journey.</p>
+          
+          <h4>Spans</h4>
+          <p>A span represents a single unit of work within a trace. Each span has:</p>
+          <ul>
+            <li>A name and operation type</li>
+            <li>Start and end timestamps</li>
+            <li>Tags and attributes for additional context</li>
+            <li>References to parent spans</li>
+          </ul>
+          
+          <h4>Segments</h4>
+          <p>In AWS X-Ray terminology, segments are the basic units of trace data. Each segment corresponds to a span and contains information about the work done for that part of the trace.</p>
+        </section>
+
+        <section>
+          <h3>Service Maps</h3>
+          <p>Service maps provide a visual representation of your application's architecture and dependencies. They show:</p>
+          <ul>
+            <li>How services connect to each other</li>
+            <li>Traffic flow between services</li>
+            <li>Performance metrics for each service</li>
+            <li>Error rates and latency patterns</li>
+          </ul>
+          <p>Service maps are automatically generated from trace data and help you understand your system's topology at a glance.</p>
+        </section>
+
+        <section>
+          <h3>Instrumentation</h3>
+          <p>Instrumentation is the process of adding observability code to your applications. There are several approaches:</p>
+          
+          <h4>Auto-Instrumentation</h4>
+          <p>Automatic instrumentation requires no code changes. Libraries and agents automatically instrument common frameworks and libraries.</p>
+          
+          <h4>Manual Instrumentation</h4>
+          <p>Manual instrumentation involves adding tracing code to your application. This provides fine-grained control but requires more development effort.</p>
+          
+          <h4>OpenTelemetry</h4>
+          <p>OpenTelemetry is an open-source observability framework that provides vendor-neutral APIs for instrumentation. It supports multiple programming languages and can export data to various backends.</p>
+        </section>
+
+        <section>
+          <h3>Data Model</h3>
+          <p>Application Signals uses a structured data model to organize telemetry data:</p>
+          
+          <h4>Metrics</h4>
+          <ul>
+            <li><strong>Latency:</strong> Response time measurements (P50, P90, P99)</li>
+            <li><strong>Throughput:</strong> Request rate (requests per second)</li>
+            <li><strong>Error Rate:</strong> Percentage of failed requests</li>
+            <li><strong>Saturation:</strong> Resource utilization (CPU, memory, etc.)</li>
+          </ul>
+          
+          <h4>Traces</h4>
+          <p>Structured trace data with spans, tags, and timing information.</p>
+          
+          <h4>Logs</h4>
+          <p>Application logs correlated with traces and metrics for complete context.</p>
+        </section>
+
+        <section>
+          <h3>Sampling Strategies</h3>
+          <p>Sampling controls which requests are traced to balance observability with cost and performance:</p>
+          
+          <h4>Head Sampling</h4>
+          <p>Decides whether to trace a request at the beginning of its lifecycle.</p>
+          
+          <h4>Tail Sampling</h4>
+          <p>Makes sampling decisions after collecting trace data, allowing for more intelligent sampling based on request characteristics.</p>
+          
+          <h4>Rate-Based Sampling</h4>
+          <p>Traces a fixed percentage of requests (e.g., 10% of all requests).</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

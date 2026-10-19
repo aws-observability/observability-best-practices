@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>வெளியீட்டு குறிப்புகள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>வெளியீட்டு குறிப்புகள்</h1></header>
+      <article>
+        <section>
+          <h2>வெளியீட்டு குறிப்புகள்: எங்கே பார்ப்பது</h2>
+          <p>CloudWatch Application Signals ஒரு managed AWS திறன் ஆகும். பொது வெளியீட்டு குறிப்புகள் மற்றும் அம்ச அறிவிப்புகள் AWS documentation மற்றும் AWS "What's New" வழியாக publish செய்யப்படுகின்றன.</p>
+          <ul>
+            <li><strong>AWS "What's New":</strong> <a href="https://aws.amazon.com/about-aws/whats-new/">aws.amazon.com/about-aws/whats-new</a></li>
+            <li><strong>Application Signals docs:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">CloudWatch Application Signals</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instrumentation components</h2>
+          <p>உங்கள் "versioned" upgrades பொதுவாக instrumentation distribution மற்றும் அதன் dependencies-லிருந்து (எடுத்துக்காட்டாக, AWS Distro for OpenTelemetry மற்றும் OpenTelemetry instrumentation libraries), மற்றும் CloudWatch Agent / platform add-ons-லிருந்து வருகின்றன.</p>
+          <ul>
+            <li><strong>ADOT:</strong> உங்கள் language/runtime-க்கு பொருத்தமான AWS Distro for OpenTelemetry release notes-ஐ பின்தொடரவும்.</li>
+            <li><strong>CloudWatch Agent:</strong> புதிய Application Signals திறன்களுக்கு (எடுத்துக்காட்டாக, resource attributes வழியாக grouping) தேவைப்படும்போது agent-ஐ upgrade செய்யுங்கள்.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>அறியப்பட்ட சிக்கல்கள் மற்றும் இணக்கத்தன்மை</h2>
+          <p>தற்போதைய இணக்கத்தன்மை matrix மற்றும் அறியப்பட்ட சிக்கல்களுக்கு, அதிகாரப்பூர்வ "Supported systems" பக்கத்தைப் பாருங்கள்.</p>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">ஆதரிக்கப்படும் அமைப்புகள்</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

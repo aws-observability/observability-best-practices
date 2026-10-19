@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>ఆటో ఇన్‌స్ట్రుమెంటేషన్ — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>ఆటో ఇన్‌స్ట్రుమెంటేషన్</h1></header>
+      <article>
+        <section>
+          <h2>"ఆటో ఇన్‌స్ట్రుమెంటేషన్" అంటే ఏమిటి</h2>
+          <p>ఆటో ఇన్‌స్ట్రుమెంటేషన్ రన్‌టైమ్‌లో OpenTelemetry ఇన్‌స్ట్రుమెంటేషన్‌ను జోడిస్తుంది (మీ అప్లికేషన్ కోడ్‌ను మార్చకుండా), తద్వారా సేవ Application Signals డిస్కవరీ మరియు ఆరోగ్య పర్యవేక్షణ కోసం ఉపయోగించే టెలిమెట్రీని విడుదల చేస్తుంది.</p>
+        </section>
+
+        <section>
+          <h2>సాధారణ AWS సెటప్ భాగాలు</h2>
+          <ul>
+            <li><strong>AWS Distro for OpenTelemetry (ADOT)</strong> SDK మరియు/లేదా collector</li>
+            <li><strong>CloudWatch Agent</strong> మద్దతు ఉన్న సెటప్‌లలో టెలిమెట్రీని సేకరించడానికి/ఎక్స్‌పోర్ట్ చేయడానికి</li>
+            <li><strong>ప్లాట్‌ఫార్మ్ ఎనేబుల్‌మెంట్</strong> (EKS యాడ్-ఆన్ / ECS సైడ్‌కార్ / EC2 ఏజెంట్ సెటప్ / Lambda లేయర్‌లు)</li>
+          </ul>
+          <p>ఇక్కడ ప్రారంభించండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals అవలోకనం</a>.</p>
+        </section>
+
+        <section>
+          <h2>మద్దతు ఉన్న భాషలు మరియు సిస్టమ్‌లు</h2>
+          <p>Application Signals Java, Python, Node.js, మరియు .NET అప్లికేషన్‌లకు మద్దతు ఇస్తుంది మరియు Amazon EKS, Kubernetes, Amazon ECS, మరియు Amazon EC2 లో మద్దతు/పరీక్షించబడింది.</p>
+          <p>చూడండి: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">మద్దతు ఉన్న సిస్టమ్‌లు</a>.</p>
+        </section>
+
+        <section>
+          <h2>గమనికలు మరియు జాగ్రత్తలు</h2>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM మద్దతు పరిమితంగా ఉంది; మీరు డాక్స్‌లో ESM-నిర్దిష్ట మార్గదర్శకత్వాన్ని అనుసరించకపోతే CommonJS సిఫార్సు చేయబడిన మార్గం.</li>
+            <li><strong>కంటైనర్లలో Python:</strong> OTel ఆటోఇన్‌స్ట్రుమెంటేషన్ కోసం మీరు <code>PYTHONPATH</code> కాన్ఫిగర్ చేయాల్సి రావచ్చు.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

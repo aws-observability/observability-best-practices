@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Auto Discovery — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Auto Discovery</h1></header>
+<article>
+<section>
+<h2>Application Signals が検出する内容</h2>
+<p>Application Signals を有効にしてサービスがテレメトリを送信すると、CloudWatch は自動的に以下を検出して表示します：</p>
+<ul>
+<li><strong>サービス</strong> および <strong>オペレーション</strong></li>
+<li><strong>依存関係</strong> （ダウンストリーム呼び出し）</li>
+<li><strong>トポロジー</strong> （アプリケーションマップ）</li>
+</ul>
+<p>検出は、選択した時間範囲（例：デフォルトの「過去3時間」）内に送信されたメトリクスとトレースによって行われます。時間範囲内にアクティビティがないサービスは表示されません。</p>
+</section>
+<section>
+<h2>アカウントの初回セットアップ（サービス検出）</h2>
+<p>アカウントで初めてサービス検出を開始すると、CloudWatch はサービスにリンクされたロールを作成します <code>AWSServiceRoleForCloudWatchApplicationSignals</code>。このロールにより、CloudWatch はサービスを検出して関連付けることができます。</p>
+<p>公式手順： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">アカウントで Application Signals を有効にする</a>.</p>
+</section>
+<section>
+<h2>運用上の注意事項</h2>
+<ul>
+<li><strong>検出のレイテンシー：</strong> トポロジーおよびサービスの検出は、最大約10分遅延する場合があります。</li>
+<li><strong>SLO/SLI の評価：</strong> SLI のヘルス評価は遅延する場合があります（例：最大約15分）。</li>
+<li><strong>スケールの制限：</strong> コンソールに表示できるサービスは最大1,000件です。</li>
+</ul>
+<p>参照： <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals を使用してアプリケーションの運用状態を監視する</a>.</p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

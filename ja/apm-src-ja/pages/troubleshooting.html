@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Troubleshooting — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM Documentation</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>トラブルシューティング</h1></header>
+<article>
+<section>
+<h2>よくある問題</h2>
+<p>このセクションでは、CloudWatch Application Signals の実装時に最もよく発生する問題とその解決方法について説明します。</p>
+</section>
+<section>
+<h3>CloudWatch にトレースが表示されない</h3>
+<h4>考えられる原因：</h4>
+<ul>
+<li>サービスに対して Application Signals が有効になっていない</li>
+<li>IAM 権限が正しくない</li>
+<li>エージェントが正しく設定されていないか、実行されていない</li>
+<li>サンプリングレートが低すぎる</li>
+<li>CloudWatch へのネットワーク接続の問題</li>
+</ul>
+<h4>解決策：</h4>
+<ol>
+<li>AWS コンソールで Application Signals が有効になっていることを確認する</li>
+<li>IAM 権限に以下が含まれていることを確認する <code>cloudwatch:PutMetricData</code> および <code>xray:PutTraceSegments</code></li>
+<li>エージェントが実行中であり、正しく設定されていることを確認する</li>
+<li>テスト用にサンプリングレートを上げる（一時的に 100% に設定する）</li>
+<li>VPC セキュリティグループおよび NACL が CloudWatch へのアウトバウンドトラフィックを許可していることを確認する</li>
+</ol>
+</section>
+<section>
+<h3>トレースが欠落しているまたは不完全である</h3>
+<h4>よくある問題：</h4>
+<ul>
+<li>サービス間でコンテキストが伝播されていない</li>
+<li>一部のサービスがインストルメント化されていない</li>
+<li>サンプリングによってスパンが欠落している</li>
+<li>エージェントの設定の問題</li>
+</ul>
+<h4>デバッグ手順：</h4>
+<ol>
+<li>サービスマップを確認してインストルメント化されていないサービスを特定する</li>
+<li>トレースコンテキストヘッダーが渡されていることを確認する（例： <code>x-amzn-trace-id</code>)</li>
+<li>エージェントログで設定エラーを確認する</li>
+<li>サンプリングの問題を除外するために 100% サンプリングでテストする</li>
+<li>トレース検索を使用して部分的なトレースを見つける</li>
+</ol>
+</section>
+<section>
+<h3>インストルメンテーションのオーバーヘッドが高い</h3>
+<h4>症状：</h4>
+<ul>
+<li>CPU 使用率の増加</li>
+<li>メモリ消費量の増加</li>
+<li>レイテンシーの増加</li>
+<li>アプリケーションパフォーマンスの低下</li>
+</ul>
+<h4>最適化戦略：</h4>
+<ul>
+<li>サンプリングレートを下げる（本番環境では 10% から始める）</li>
+<li>テールベースのサンプリングではなくヘッドベースのサンプリングを使用する</li>
+<li>適切なスパン制限を設定する</li>
+<li>スパンエクスポートをバッチ処理する</li>
+<li>インストルメンテーションメトリクスを監視する</li>
+</ul>
+</section>
+<section>
+<h3>RUMデータが表示されない</h3>
+<h4>チェックリスト：</h4>
+<ul>
+<li>RUM Webクライアントが正しくインストールおよびロードされている</li>
+<li>アプリケーションIDと設定が正しい</li>
+<li>RUMドメインにCORSヘッダーが設定されている</li>
+<li>コンテンツセキュリティポリシーがRUMスクリプトを許可している</li>
+<li>ブラウザコンソールにJavaScriptエラーが表示されていない</li>
+</ul>
+<h4>確認：</h4>
+<pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+</section>
+<section>
+<h3>Synthetic Canaryが失敗している</h3>
+<h4>よくある原因：</h4>
+<ul>
+<li>Canary VPCからのネットワーク接続の問題</li>
+<li>認証または認可の失敗</li>
+<li>アプリケーションの変更によるテストスクリプトの破損</li>
+<li>Canaryランタイムまたは依存関係が古い</li>
+</ul>
+<h4>デバッグ：</h4>
+<ol>
+<li>CloudWatch LogsでCanaryログを確認する</li>
+<li>Canaryスクリプトをローカルでテストする</li>
+<li>VPCルーティングとセキュリティグループを確認する</li>
+<li>必要に応じてCanaryランタイムを更新する</li>
+<li>アプリケーションエンドポイントにアクセスできることを確認する</li>
+</ol>
+</section>
+<section>
+<h2>デバッグガイド</h2>
+<p>複雑な問題を診断するためのステップバイステップガイド。</p>
+</section>
+<section>
+<h3>トレースコンテキスト伝播のデバッグ</h3>
+<h4>ステップ1：インストルメンテーションを確認する</h4>
+<p>コールチェーン内のすべてのサービスが適切にインストルメント化されていることを確認します：</p>
+<pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+<h4>ステップ2：エージェント設定を確認する</h4>
+<p>エージェント設定ファイルと環境変数を確認します。</p>
+<h4>ステップ3：エンドツーエンドでテストする</h4>
+<p>テストリクエストを送信し、すべてのサービスを通じてトレースします。</p>
+</section>
+<section>
+<h3>パフォーマンス問題の診断</h3>
+<h4>ボトルネックを特定する：</h4>
+<ol>
+<li>サービスマップで高レイテンシーのサービスを確認する</li>
+<li>トレースタイムラインで遅いスパンを調べる</li>
+<li>リソースメトリクス（CPU、メモリ、ディスクI/O）を確認する</li>
+<li>ログのエラーパターンを探す</li>
+<li>データベースクエリのパフォーマンスを確認する</li>
+</ol>
+<h4>よくあるボトルネック：</h4>
+<ul>
+<li>データベースクエリの最適化が必要</li>
+<li>外部API呼び出しがタイムアウトしている</li>
+<li>リソースの制約（CPU/メモリ）</li>
+<li>スレッドプールの枯渇</li>
+<li>サービス間のネットワークレイテンシー</li>
+</ul>
+</section>
+<section>
+<h3>エージェントのトラブルシューティング</h3>
+<h4>エージェントのステータスを確認する：</h4>
+<pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+<h4>エージェントの一般的な問題：</h4>
+<ul>
+<li>JVM に対して誤った Java エージェントバージョンを使用している</li>
+<li>依存関係またはライブラリが不足している</li>
+<li>設定ファイルの構文エラー</li>
+<li>ログファイルへの書き込み権限の問題</li>
+</ul>
+</section>
+<section>
+<h2>ツールとコマンド</h2>
+<p>トラブルシューティングに役立つツールとコマンド。</p>
+</section>
+<section>
+<h3>CloudWatch CLI コマンド</h3>
+<pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+</section>
+<section>
+<h3>ログ分析</h3>
+<p>CloudWatch Logs Insights を使用してテレメトリデータを分析する：</p>
+<pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+</section>
+<section>
+<h2>ヘルプの取得</h2>
+<p>追加のサポートが必要な場合：</p>
+<h3>ドキュメントリソース：</h3>
+<ul>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals ユーザーガイド</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics ユーザーガイド</a></li>
+<li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM ユーザーガイド</a></li>
+</ul>
+<h3>サポートオプション：</h3>
+<ul>
+<li>AWS サポートセンター</li>
+<li>AWS re:Post コミュニティ</li>
+<li>OpenTelemetry プロジェクトの GitHub イシュー</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

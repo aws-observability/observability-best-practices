@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>தொடங்குதல் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>CloudWatch APM-உடன் தொடங்குதல்</h1></header>
+      <article>
+        <!-- Callout moved to the right sidebar -->
+        <section>
+          <h2>கண்ணோட்டம்</h2>
+          <p>Application Performance Monitoring (APM) என்பது நவீன distributed பயன்பாடுகளின் நிலை மற்றும் செயல்திறனைப் புரிந்துகொள்வதற்கும் மேம்படுத்துவதற்கும் அவசியமானது. APM இல்லாமல், குழுக்கள் மெதுவான பதில் நேரங்கள், அடிக்கடி செயலிழப்புகள் மற்றும் சிக்கலான microservices architectures-ல் சிக்கல்களை கண்டறிவதில் சிரமப்படுகின்றன. Amazon CloudWatch Application Signals உங்கள் பயன்பாடுகளை தானாக instrument செய்து, telemetry தரவை சேகரித்து, முன்கூட்டியே உருவாக்கப்பட்ட டாஷ்போர்டுகள் மற்றும் நுண்ணறிவு எச்சரிக்கைகள் மூலம் செயல்படக்கூடிய insights-ஐ வழங்குவதன் மூலம் இந்த சவால்களை தீர்க்கிறது.</p>
+          <p>CloudWatch Application Signals முக்கிய APM திறன்களை ஆதரிக்கிறது, இதில் விரைவான நிலை மதிப்பீட்டுக்கான Golden Metrics (தாமதம், throughput, பிழை விகிதங்கள் மற்றும் saturation), விரிவான கோரிக்கை ஓட்ட பகுப்பாய்வுக்கான Trace மற்றும் Span analytics, மற்றும் முழு OpenTelemetry (OTel) இணக்கத்தன்மை ஆகியவை அடங்கும். OpenTelemetry முக்கியமானது ஏனெனில் இது telemetry தரவை சேகரிக்கவும் ஏற்றுமதி செய்யவும் vendor-neutral standards வழங்குகிறது, lock-in இல்லாமல் ஒருமுறை instrument செய்து பல observability platforms-க்கு தரவை அனுப்ப முடியும் என்பதை உறுதி செய்கிறது. இது development-லிருந்து production-க்கான உங்கள் பயணத்தை துரிதப்படுத்துகிறது, சூழல்கள் முழுவதும் நிலையான கண்காணிப்பை செயல்படுத்துகிறது, mean time to resolution (MTTR)-ஐ குறைக்கிறது, மற்றும் முன்கூட்டிய சிக்கல் கண்டறிதல் மற்றும் தானியங்கு insights மூலம் நிலையான, நம்பகமான பயன்பாடுகளை உறுதி செய்கிறது.</p>
+        </section>
+
+        <section>
+          <h2>முக்கிய அம்சங்கள்</h2>
+
+          <h3>குழப்பத்திலிருந்து தெளிவுக்கு</h3>
+          <p>எந்த கட்டமைப்பும் இல்லாமல் உங்கள் முழு system architecture-ஐ காட்சிப்படுத்தி பிழைத்திருத்துங்கள். Instrumented மற்றும் uninstrumented சேவைகளின் தானியங்கி கண்டுபிடிப்பு, AWS கணக்குகள் மற்றும் பகுதிகள் முழுவதும் distributed பயன்பாடுகளின் தானியங்கி mapping, cross-account visibility, பொதுவான சிக்கல்களுக்கான தானியங்கி செயல்பாட்டு audits, மற்றும் உங்கள் பயன்பாட்டிற்கான சமீபத்திய மாற்றங்கள் ஆகியவற்றின் மூலம் சார்புகளைப் புரிந்துகொள்ளுங்கள் மற்றும் சிக்கல்களை விரைவாக தீர்க்கவும்.</p>
+
+          <h3>ஒவ்வொரு Trace-லிருந்தும் வணிக Insights</h3>
+          <p>உள்ளுணர்வு சார்ந்த visual query builder பயன்படுத்தி transaction பகுப்பாய்வை எளிதாக்குங்கள். Transaction tracing-ஐ வணிக இலக்குகளுடன் இணைப்பதன் மூலம் வணிக insights-ஐ வெளிக்கொணருங்கள். குறைந்தபட்ச அமைப்பு மற்றும் one-click analytics மூலம் வணிக-முக்கிய transactions-ன் end-to-end பார்வையை உடனடியாக பெறுங்கள்.</p>
+
+          <h3>உங்கள் Source Code-உடன் Production Telemetry</h3>
+          <p>VS Code அல்லது GitHub போன்ற உங்கள் IDE-ல் இயற்கை மொழியைப் பயன்படுத்தி நேரடியாக production சிக்கல்களை ஆராயுங்கள், கருவிகளை மாற்றாமல் அல்லது query மொழிகளை கற்காமல். "ஏன் எனது billing service பணம் செலுத்துதலை வெற்றிகரமாக செயலாக்கத் தவறுகிறது?" போன்ற எளிய ஆங்கில கேள்விகளைக் கேளுங்கள், AI-powered analysis உங்களுக்கு firing alarms-ஐ ஆராய்ந்து, log anomalies-ஐ investigate செய்து, metrics-ஐ deployments-உடன் correlate செய்து, நொடிகளில் சிக்கலை ஏற்படுத்தும் exact code-ஐ சுட்டிக்காட்டுகிறது. GitHub issues-ல் @awsapm பயன்படுத்துவதன் மூலம், live telemetry-யை source code-உடன் தானியங்கி பகுப்பாய்வை trigger செய்யலாம், விரிவான fixes பெறலாம், மற்றும் AI-ஐ precise solutions-உடன் pull requests சமர்ப்பிக்க அனுமதிக்கலாம் - production telemetry-ஐ நேரடியாக நீங்கள் code எழுதும் இடத்திற்கு கொண்டு வரலாம்.</p>
+
+          <h3>உங்கள் வாடிக்கையாளர்களை மகிழ்ச்சியாகவும் உங்கள் சேவையை இயக்கத்திலும் வைத்திருங்கள்</h3>
+          <p>SLO-கள் மற்றும் SLI-களைப் பயன்படுத்தி சேவை நம்பகத்தன்மையை கண்காணிப்பதன் மூலம் உங்கள் வாடிக்கையாளர்களை மகிழ்ச்சியாக வைத்திருங்கள். நிகழ்நேர SLO நிலை மற்றும் இணக்கத்தை கண்காணிக்க CloudWatch-ன் ஒருங்கிணைந்த console-ஐ பயன்படுத்தி நிலையான சேவை தரத்தை வழங்குங்கள். நம்பகத்தன்மை சிக்கல்கள் ஏற்படுவதற்கு முன் CloudWatch-ல் வணிக-மையமான SLO alerts அமைப்பதன் மூலம் வாடிக்கையாளர் விரக்தியைத் தடுக்கவும்.</p>
+
+          <h3>உங்கள் பயனர் நடத்தையை அறியுங்கள்</h3>
+          <p>உங்கள் web மற்றும் mobile பயன்பாடுகளுக்கான real user monitoring (RUM)-ஐ கண்காணிப்பதன் மூலம் வாடிக்கையாளர்கள் உங்கள் தளத்தை எப்படி அனுபவிக்கிறார்கள் என்பதை துல்லியமாக புரிந்து கொள்ளுங்கள். CloudWatch-ல் முக்கியமான வாடிக்கையாளர் பயணங்களை simulate செய்யும் synthetic monitoring (canaries) இயக்குவதன் மூலம் வாடிக்கையாளர்களுக்கு முன் தள சிக்கல்களைக் கண்டறியுங்கள். செயல்திறன் சிக்கல்கள் மற்றும் போக்குகளை உடனடியாக முன்னிலைப்படுத்தும் CloudWatch-ன் உள்ளமைக்கப்பட்ட டாஷ்போர்டுகளைப் பயன்படுத்தி உங்கள் வாடிக்கையாளர் அனுபவத்தை மேம்படுத்த விரைவான முடிவுகளை எடுங்கள்.</p>
+        </section>
+
+        <section>
+          <p>CloudWatch Application Performance Monitoring (APM) Application Signals - எங்கள் flagship observability platform மூலம் distributed systems முழுவதும் உங்கள் பயன்பாடுகளைப் புரிந்துகொள்ளவும், பிழைத்திருத்தவும், மேம்படுத்தவும் உதவுகிறது. நீங்கள் code debug செய்யும் developer ஆக இருந்தாலும், production systems-ஐ பராமரிக்கும் operator ஆக இருந்தாலும், அல்லது observability strategies-ஐ வடிவமைக்கும் architect ஆக இருந்தாலும், இந்த வழிகாட்டி விரைவாக தொடங்க உதவும்.</p>
+
+          <h2>நான் எங்கே தொடங்குவது?</h2>
+          <p>Developers → <a href="#developers">உங்கள் முதல் பயன்பாட்டை Instrument செய்யுங்கள்</a><br>
+          Operators → <a href="#operators">Production Systems-ஐ கண்காணிக்கவும்</a><br>
+          Architects → <a href="#architects">உங்கள் Observability Strategy-ஐ வடிவமைக்கவும்</a></p>
+        </section>
+
+        <section>
+          <h2>CloudWatch APM என்றால் என்ன?</h2>
+          <p>CloudWatch Application Performance Monitoring (APM) என்பது Application Signals மீது கட்டப்பட்ட AWS-ன் விரிவான observability தீர்வாகும் - backend சேவைகளிலிருந்து frontend பயனர் அனுபவங்கள் வரை உங்கள் பயன்பாடுகளில் end-to-end visibility வழங்கும் எங்கள் flagship product.</p>
+
+          <p>Application Signals தானாகவே உங்கள் application topology-ஐ கண்டறிகிறது, உங்கள் code-ஐ instrument செய்கிறது, மற்றும் முழுமையான observability-ஐ வழங்க ஒன்றாக செயல்படும் மூன்று ஒருங்கிணைந்த கண்காணிப்பு திறன்களை வழங்குகிறது.</p>
+        </section>
+
+        <section>
+          <h2>Application Performance Monitoring (APM)-ன் மூன்று தூண்கள்</h2>
+
+          <h3>CloudWatch Application Signals</h3>
+          <p>CloudWatch Application Signals என்பது AWS-ன் flagship observability platform ஆகும், இது தானாகவே உங்கள் application topology-ஐ கண்டறிகிறது, உங்கள் code-ஐ instrument செய்கிறது, மற்றும் முழுமையான observability-ஐ வழங்க ஒன்றாக செயல்படும் மூன்று ஒருங்கிணைந்த கண்காணிப்பு திறன்களை வழங்குகிறது.</p>
+          <p><strong>நீங்கள் பெறுவது:</strong></p>
+          <ul>
+            <li>தானியங்கி சேவை கண்டுபிடிப்பு மற்றும் instrumentation</li>
+            <li>ஒரே platform-ல் ஒருங்கிணைந்த APM, RUM மற்றும் Synthetics</li>
+            <li>முன்கூட்டியே உருவாக்கப்பட்ட டாஷ்போர்டுகள் மற்றும் தானியங்கு insights</li>
+            <li>Cross-account மற்றும் cross-region visibility</li>
+          </ul>
+
+          <h3>Real User Monitoring (RUM)</h3>
+          <p>Production-ல் உண்மையான பயனர் அனுபவங்களைப் பிடிக்கவும். வெவ்வேறு browsers, devices மற்றும் புவியியல் இடங்களில் உண்மையான பயனர்கள் உங்கள் web பயன்பாடுகளுடன் எவ்வாறு தொடர்பு கொள்கிறார்கள் என்பதைக் கண்காணிக்கவும். RUM பக்க செயல்திறன், JavaScript பிழைகள் மற்றும் Core Web Vitals ஆகியவற்றைக் கண்காணித்து பயனர் அனுபவத்தைப் புரிந்துகொள்ளவும் மேம்படுத்தவும் உதவுகிறது.</p>
+          <p><strong>நீங்கள் பெறுவது:</strong></p>
+          <ul>
+            <li>பக்க ஏற்ற நேரங்கள் மற்றும் navigation செயல்திறன்</li>
+            <li>Stack traces-உடன் JavaScript பிழைகள்</li>
+            <li>Core Web Vitals (LCP, FID, CLS) கண்காணிப்பு</li>
+            <li>பயனர் session replays மற்றும் journey analysis</li>
+            <li>புவியியல் மற்றும் device அடிப்படையிலான செயல்திறன் insights</li>
+          </ul>
+
+          <h3>Synthetic Monitoring</h3>
+          <p>பயனர்களுக்கு முன் முக்கியமான flows-ஐ முன்கூட்டியே சோதிக்கவும். பயனர்களை பாதிக்கும் முன் சிக்கல்களைக் கண்டறிய பல AWS regions-லிருந்து 24/7 தானியங்கி சோதனைகளை இயக்கவும். Synthetic canaries API செயல்பாட்டை சரிபார்க்கின்றன, முக்கியமான பயனர் பயணங்களைக் கண்காணிக்கின்றன, மற்றும் உங்கள் பயன்பாடு SLA-களை பூர்த்தி செய்வதை உறுதி செய்கின்றன.</p>
+          <p><strong>நீங்கள் பெறுவது:</strong></p>
+          <ul>
+            <li>திட்டமிடப்பட்ட API health checks (ஒவ்வொரு 1-60 நிமிடங்களுக்கும்)</li>
+            <li>முக்கியமான பயனர் flows-க்கான scripted browser tests</li>
+            <li>பல-பகுதி கிடைக்கும் தன்மை கண்காணிப்பு</li>
+            <li>Baseline செயல்திறன் கண்காணிப்பு</li>
+            <li>பயனர் தாக்கத்திற்கு முன் முன்கூட்டிய எச்சரிக்கை</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>அவை எவ்வாறு ஒன்றாக செயல்படுகின்றன</h2>
+          <p>Application Signals-ன் சக்தி இந்த மூன்று திறன்கள் எவ்வாறு ஒன்றையொன்று நிரப்புகின்றன மற்றும் முழுமையான visibility வழங்குகின்றன என்பதிலிருந்து வருகிறது.</p>
+
+          <h3>சூழ்நிலை: முழுமையான சம்பவ விசாரணை</h3>
+          <p>Synthetics checkout flow தோல்வியடைவதைக் கண்டறிகிறது → Alert fires<br>
+          APM traces payment service exceptions throw செய்வதைக் காட்டுகின்றன<br>
+          RUM உண்மையான பயனர்கள் அதே தோல்விகளை அனுபவிப்பதை உறுதிப்படுத்துகிறது<br>
+          தீர்வு: APM trace சமீபத்திய deployment ஒரு bug-ஐ அறிமுகப்படுத்தியதை வெளிப்படுத்துகிறது</p>
+
+          <h3>சூழ்நிலை: செயல்திறன் மேம்படுத்தல்</h3>
+          <p>RUM mobile-ல் மெதுவான பக்க ஏற்றங்களை அடையாளம் காட்டுகிறது (4.5s LCP)<br>
+          APM traces backend APIs வேகமாக இருப்பதைக் காட்டுகின்றன (200ms)<br>
+          RUM bottleneck 3MB hero image என்பதை வெளிப்படுத்துகிறது<br>
+          Synthetics optimization-க்குப் பிறகு fix-ஐ validate செய்கிறது</p>
+        </section>
+
+        <section>
+          <h2>Application Signals-உடன் தொடங்குதல்</h2>
+          <p>Application Signals-உடன், தொடங்க எந்த code மாற்றங்களும் செய்ய வேண்டியதில்லை. உங்கள் AWS சூழலில் இதை இயக்கினால் போதும், இது தானாகவே உங்கள் பயன்பாடுகளை instrument செய்து சேவைகளைக் கண்டறியும். இயக்கப்பட்ட பிறகு, Application Signals கூடுதல் கட்டமைப்பு இல்லாமல் உங்கள் application topology-ல் மாற்றங்களை தொடர்ந்து தானாக கண்டறிகிறது.</p>
+          <p>எல்லாவற்றையும் ஒரே நேரத்தில் இயக்க வேண்டியதில்லை. பரிந்துரைக்கப்பட்ட பாதை இதோ:</p>
+          <h3>Phase 1: APM-உடன் தொடங்குங்கள் (வாரம் 1)</h3>
+          <ul>
+            <li>Backend சேவைகளுக்கு Application Signals-ஐ இயக்குங்கள்</li>
+            <li>சேவை சார்புகளில் visibility பெறுங்கள்</li>
+            <li>செயல்திறன் baselines-ஐ நிறுவுங்கள்</li>
+          </ul>
+
+          <h3>Phase 2: Synthetics சேர்க்கவும் (வாரம் 2-3)</h3>
+          <ul>
+            <li>முக்கியமான பயனர் பயணங்களுக்கு canaries உருவாக்குங்கள்</li>
+            <li>முன்கூட்டிய கண்காணிப்பை அமைக்கவும்</li>
+            <li>கிடைக்கும் தன்மை baselines-ஐ நிறுவுங்கள்</li>
+          </ul>
+
+          <h3>Phase 3: RUM-ஐ இயக்குங்கள் (வாரம் 4+)</h3>
+          <ul>
+            <li>உங்கள் web பயன்பாட்டில் RUM-ஐ சேர்க்கவும்</li>
+            <li>உண்மையான பயனர் அனுபவங்களைக் கண்காணிக்கவும்</li>
+            <li>Backend செயல்திறனுடன் correlate செய்யுங்கள்</li>
+          </ul>
+
+          <h3>Application Signals முழுவதும் முக்கிய திறன்கள்</h3>
+          <ul>
+            <li>தானியங்கி சேவை கண்டுபிடிப்பு</li>
+            <li>Distributed tracing</li>
+            <li>நிகழ்நேர மெட்ரிக்ஸ்</li>
+            <li>Application maps</li>
+            <li>SLO கண்காணிப்பு</li>
+            <li>நுண்ணறிவு எச்சரிக்கை</li>
+          </ul>
+        </section>
+
+        <section id="developers">
+          <h2>Developers: உங்கள் முதல் பயன்பாட்டை Instrument செய்யுங்கள்</h2>
+          <p><strong>நீங்கள் சாதிப்பது</strong><br>15 நிமிடங்களில், ஆதரிக்கப்படும் runtimes-க்கு zero code மாற்றங்களுடன், Application Signals உங்கள் backend சேவைகளிலிருந்து APM traces மற்றும் metrics-ஐ சேகரிக்கும்.</p>
+
+          <h3>முன்நிபந்தனைகள்</h3>
+          <ul>
+            <li>AWS-ல் இயங்கும் பயன்பாடு (ECS, EKS, EC2, அல்லது Lambda)</li>
+            <li>ஆதரிக்கப்படும் runtime: Java, Python, .NET, Node.js, அல்லது Go</li>
+            <li>Application Signals-ஐ இயக்க IAM permissions</li>
+          </ul>
+
+          <h3>படி 1: உங்கள் Instrumentation அணுகுமுறையைத் தேர்ந்தெடுங்கள்</h3>
+          <p><strong>விருப்பம் A: Auto-Instrumentation (பரிந்துரைக்கப்படுகிறது)</strong></p>
+          <ul>
+            <li>Zero code மாற்றங்கள் தேவையில்லை</li>
+            <li>Java, Python, .NET, Node.js-உடன் செயல்படுகிறது</li>
+            <li>தானியங்கி APM metric மற்றும் trace collection</li>
+          </ul>
+          <p><strong>விருப்பம் B: OpenTelemetry Manual Instrumentation</strong></p>
+          <ul>
+            <li>நீங்கள் என்ன instrument செய்கிறீர்கள் என்பதில் முழு கட்டுப்பாடு</li>
+            <li>Observability platforms முழுவதும் portable</li>
+            <li>APM, RUM மற்றும் Synthetics-க்கான தனிப்பயன் spans மற்றும் attributes</li>
+          </ul>
+          <p><strong>விருப்பம் C: AWS Distro for OpenTelemetry (ADOT)</strong></p>
+          <ul>
+            <li>AWS-optimized OpenTelemetry</li>
+            <li>Application Signals-க்காக முன்-கட்டமைக்கப்பட்டது</li>
+          </ul>
+
+          <h3>படி 2: Application Signals-ஐ இயக்குங்கள்</h3>
+          <p>Developer guide-ல் உள்ள platform-குறிப்பிட்ட enablement வழிமுறைகளைப் பின்பற்றுங்கள் (EKS, ECS, Lambda). இயக்கிய பிறகு, console-ல் தரவு தோன்ற 5-10 நிமிடங்கள் காத்திருங்கள்.</p>
+
+          <h3>படி 3: APM தரவு சேகரிப்பை சரிபாருங்கள்</h3>
+          <ol>
+            <li>தரவு தோன்ற 5-10 நிமிடங்கள் காத்திருங்கள்</li>
+            <li>CloudWatch Console → Application Signals திறக்கவும்</li>
+            <li>Application Map-ஐ சரிபாருங்கள் — APM metrics-உடன் உங்கள் சேவைகளைப் பார்க்க வேண்டும்</li>
+            <li>Distributed traces மற்றும் செயல்திறன் metrics-ஐ பார்க்க ஒரு சேவையை கிளிக் செய்யுங்கள்</li>
+          </ol>
+
+          <h3>படி 4: தனிப்பயன் Instrumentation சேர்க்கவும் (விரும்பினால்)</h3>
+          <p>தனிப்பயன் spans மற்றும் வணிக context-உடன் உங்கள் APM traces-ஐ மேம்படுத்துங்கள் (மொழி எடுத்துக்காட்டுகள் developer docs-ல் உள்ளன).</p>
+
+          <h3>படி 5: Frontend கண்காணிப்புக்கு RUM-ஐ இயக்குங்கள் (விரும்பினால்)</h3>
+          <p>பயனர் அனுபவங்களைக் கண்காணிக்க RUM web client-ஐ சேர்க்கவும்.</p>
+
+          <h3>படி 6: Synthetic Canaries உருவாக்குங்கள் (விரும்பினால்)</h3>
+          <p>Synthetic tests-உடன் முன்கூட்டிய கண்காணிப்பை அமைக்கவும்.</p>
+
+          <h3>Developers-க்கான பிழைத்திருத்தம்</h3>
+          <ul>
+            <li>APM traces தெரியவில்லையா? IAM permissions-ஐ சரிபாருங்கள் (cloudwatch:PutMetricData, xray:PutTraceSegments) மற்றும் agent இயங்குகிறதா என்பதை உறுதிப்படுத்துங்கள் (kubectl logs -n amazon-cloudwatch ...).</li>
+            <li>RUM தரவு தோன்றவில்லையா? RUM snippet மற்ற scripts-க்கு முன் load ஆகிறதா என்பதை சரிபார்த்து, browser console-ல் errors இருக்கிறதா என்று பாருங்கள்.</li>
+            <li>Synthetic canaries தோல்வியடைகின்றனவா? Canary logs-ஐ review செய்து scripts-ஐ locally test செய்யுங்கள்; canary VPC-லிருந்து network connectivity-ஐ சரிபாருங்கள்.</li>
+            <li>அதிக overhead? APM sampling rate-ஐ adjust செய்து head-based sampling அல்லது RUM sessions sampling-ஐ பரிசீலியுங்கள்.</li>
+          </ul>
+        </section>
+
+        <section id="operators">
+          <h2>Operators: Production Systems-ஐ கண்காணிக்கவும்</h2>
+          <p><strong>நீங்கள் சாதிப்பது</strong><br>30 நிமிடங்களில் உங்கள் production பயன்பாடுகளுக்கு APM, RUM மற்றும் Synthetics முழுவதும் விரிவான கண்காணிப்பு, எச்சரிக்கை மற்றும் டாஷ்போர்டுகளை அமைக்கவும்.</p>
+
+          <h3>உங்கள் கண்காணிப்பு சரிபார்ப்புப் பட்டியல்</h3>
+          <h4>சேவை நிலை கண்காணிப்பு (APM)</h4>
+          <ul>
+            <li>Application map அனைத்து முக்கியமான backend சேவைகளையும் காட்டுகிறது</li>
+            <li>முக்கிய APM metrics டாஷ்போர்டுகள் உருவாக்கப்பட்டன (தாமதம், பிழைகள், throughput)</li>
+            <li>முக்கியமான சேவைகளுக்கு SLO-கள் வரையறுக்கப்பட்டன</li>
+            <li>SLO மீறல்களுக்கு alerts கட்டமைக்கப்பட்டன</li>
+          </ul>
+
+          <h4>பயனர் அனுபவ கண்காணிப்பு (RUM)</h4>
+          <ul>
+            <li>Production web பயன்பாடுகளில் RUM இயக்கப்பட்டது</li>
+            <li>Core Web Vitals கண்காணிப்பு கட்டமைக்கப்பட்டது</li>
+            <li>Frontend error alerts அமைக்கப்பட்டன</li>
+            <li>புவியியல் செயல்திறன் baselines நிறுவப்பட்டன</li>
+          </ul>
+
+          <h4>முன்கூட்டிய கண்காணிப்பு (Synthetics)</h4>
+          <ul>
+            <li>முக்கியமான பயனர் பயணங்களுக்கு canaries உருவாக்கப்பட்டன</li>
+            <li>API health checks ஒவ்வொரு 5 நிமிடங்களுக்கும் இயங்குகின்றன</li>
+            <li>பல-பகுதி கிடைக்கும் தன்மை கண்காணிப்பு இயக்கப்பட்டது</li>
+            <li>Synthetic test failure alerts கட்டமைக்கப்பட்டன</li>
+          </ul>
+
+          <h3>படி 1: உங்கள் ஒருங்கிணைந்த டாஷ்போர்டை உருவாக்குங்கள்</h3>
+          <p>Application Signals டாஷ்போர்ட் template-ஐ பயன்படுத்தி APM golden signals, RUM பயனர் அனுபவம், Synthetics health மற்றும் சேவை சார்புகளுக்கான widgets சேர்க்கவும்.</p>
+
+          <h3>படி 2: நுண்ணறிவு Alerts அமைக்கவும்</h3>
+          <p>APM, RUM மற்றும் Synthetics முழுவதும் span செய்யும் composite alarms உருவாக்குங்கள் (எடுத்துக்காட்டுகள் docs-ல் உள்ளன).</p>
+
+          <h3>படி 3: Runbook Automation-ஐ செயல்படுத்துங்கள்</h3>
+          <p>Runbooks-ஐ alerts-உடன் இணைத்து, பாதுகாப்பான இடங்களில் auto-remediation-ஐ செயல்படுத்துங்கள் (எடுத்துக்காட்டுகள்: containers restart செய்தல், அதிக தாமதத்தில் scale செய்தல், CDN cache invalidate செய்தல்).</p>
+
+          <h3>படி 4: செயல்பாட்டு மதிப்பாய்வுகளை நிறுவுங்கள்</h3>
+          <p>வாராந்திர metrics review மற்றும் மாதாந்திர ஆழமான ஆய்வுகள் (செலவு optimization, alert fatigue analysis, சம்பவ retrospectives).</p>
+        </section>
+
+        <section id="architects">
+          <h2>Architects: உங்கள் Observability Strategy-ஐ வடிவமைக்கவும்</h2>
+          <p><strong>நீங்கள் சாதிப்பது</strong><br>உங்கள் நிறுவனத்தின் அடுத்த 2-3 ஆண்டுகளுக்கான தேவைகளை ஆதரிக்கும் scalable, செலவு-திறனான Application Signals architecture-ஐ வடிவமைக்கவும்.</p>
+
+          <h3>Architecture முடிவு கட்டமைப்பு</h3>
+          <h4>ஏற்றுக்கொள்ளல் Strategy</h4>
+          <p>பரிந்துரை: Backend visibility-க்கு APM-உடன் தொடங்குங்கள், முன்கூட்டிய கண்காணிப்புக்கு Synthetics சேர்க்கவும், பின்னர் பயனர் அனுபவ insights-க்கு RUM-ஐ இயக்கவும்.</p>
+
+          <h4>Instrumentation Strategy</h4>
+          <p>பரிந்துரை: நெகிழ்வுத்தன்மையை பராமரிக்க புதிய பயன்பாடுகளுக்கு OpenTelemetry பயன்படுத்துங்கள்; விரைவான Application Signals adoption-க்கு AWS native.</p>
+
+          <h4>Multi-Cloud Strategy</h4>
+          <p>விருப்பங்களில் AWS-only-க்கு Application Signals, ஒருங்கிணைந்த multi-cloud அணுகுமுறைக்கு OpenTelemetry, அல்லது hybrid நெகிழ்வுத்தன்மைக்கு OTel collector bridge ஆகியவை அடங்கும்.</p>
+
+          <h4>Data Retention Strategy</h4>
+          <ul>
+            <li>APM trace data: Hot (7 நாட்கள்), Warm (30 நாட்கள்), Cold (90+ நாட்கள் archive)</li>
+            <li>RUM session data: Hot (30 நாட்கள்), Cold (90+ நாட்கள்)</li>
+            <li>Synthetics results: Hot (90 நாட்கள்), Cold (1+ ஆண்டுகள்)</li>
+            <li>Resolution-படி Metrics retention: 1 min (15 நாட்கள்), 5 min (63 நாட்கள்), 1 hour (15 மாதங்கள்)</li>
+          </ul>
+
+          <h3>Reference Architecture Patterns</h3>
+          <p>எடுத்துக்காட்டுகள்: ADOT-உடன் EKS-ல் Microservices, Lambda layers-உடன் Serverless, OTel collectors-உடன் Hybrid Cloud.</p>
+
+          <h3>Capacity Planning</h3>
+          <p>Observability செலவுகளை மதிப்பிட்டு, செலவை optimize செய்ய sampling/filtering மற்றும் archive policies பயன்படுத்துங்கள்.</p>
+        </section>
+
+        <section>
+          <h2>பாதுகாப்பு &amp; இணக்கம்</h2>
+          <ul>
+            <li>APM traces, RUM data மற்றும் Synthetics results-ஐ rest மற்றும் transit-ல் encrypt செய்யுங்கள்</li>
+            <li>Traces மற்றும் RUM sessions-ல் PII-க்கு data masking-ஐ செயல்படுத்துங்கள்</li>
+            <li>Fine-grained access control-க்கு IAM பயன்படுத்துங்கள்</li>
+            <li>Audit logging-க்கு CloudTrail-ஐ இயக்குங்கள்</li>
+          </ul>
+          <p>Compliance considerations: HIPAA, PCI-DSS, GDPR, SOC 2 — ஒவ்வொரு நிலையிலும் data retention மற்றும் masking வழிகாட்டுதலைப் பின்பற்றுங்கள்.</p>
+        </section>
+
+        <section>
+          <h2>Migration Planning</h2>
+          <h3>X-Ray-லிருந்து Application Signals-க்கு</h3>
+          <ol>
+            <li>Parallel Run (2-4 வாரங்கள்): X-Ray-உடன் Application Signals-ஐ இயக்குங்கள், RUM சேர்க்கவும், canaries உருவாக்குங்கள், coverage-ஐ ஒப்பிடுங்கள்</li>
+            <li>படிப்படியான Migration (1-2 மாதங்கள்): non-critical சேவைகளை migrate செய்யுங்கள், RUM-ஐ விரிவுபடுத்துங்கள், டாஷ்போர்டுகளை update செய்யுங்கள்</li>
+            <li>முழு Cutover (1 மாதம்): மீதமுள்ள சேவைகளை migrate செய்து X-Ray-ஐ decommission செய்யுங்கள்</li>
+          </ol>
+
+          <h3>Third-Party APM-லிருந்து</h3>
+          <ul>
+            <li>தற்போதைய instrumentation-ஐ மதிப்பிடுங்கள்</li>
+            <li>தேவைப்பட்டால் OTel migration-ஐ திட்டமிடுங்கள்</li>
+            <li>Transition-ன் போது dual-write-ஐ பரிசீலியுங்கள்</li>
+            <li>Migration-க்கு 3-6 மாதங்கள் budget செய்யுங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Team Enablement</h2>
+          <ul>
+            <li>வாரம் 1: Fundamentals workshop (APM, RUM, Synthetics overview)</li>
+            <li>வாரம் 2-3: Hands-on labs (சேவைகளை instrument செய்தல், RUM இயக்குதல், canaries உருவாக்குதல்)</li>
+            <li>வாரம் 4: மூன்று signals-உடன் Production pilot</li>
+            <li>மாதம் 2+: Office hours மற்றும் support</li>
+          </ul>
+          <p>Center of Excellence நிறுவுங்கள்: champions, internal docs, மீண்டும் பயன்படுத்தக்கூடிய டாஷ்போர்டுகள் மற்றும் best practices.</p>
+        </section>
+
+        <section>
+          <h2>பொதுவான சூழ்நிலைகள் &amp; தீர்வுகள்</h2>
+          <h3>சூழ்நிலை: மெதுவான API Endpoint-ஐ Debugging செய்தல்</h3>
+          <p>Developer அணுகுமுறை: RUM-ஐ சரிபாருங்கள், மெதுவான APM trace-ஐ கண்டறியுங்கள், bottleneck span-ஐ அடையாளம் காணுங்கள், தனிப்பயன் instrumentation சேர்க்கவும், RUM மற்றும் Synthetics-உடன் deploy செய்து verify செய்யுங்கள்.</p>
+          <p>Operator அணுகுமுறை: Synthetics-ஐ சரிபாருங்கள், APM traces-ஐ review செய்யுங்கள், பயனர் தாக்கத்திற்கு RUM-ஐ சரிபாருங்கள், correlated infra issues-ஐ பாருங்கள், ஆதாரங்களுடன் escalate செய்யுங்கள்.</p>
+
+          <h3>சூழ்நிலை: Black Friday-க்கு தயாராகுதல்</h3>
+          <p>Capacity planning-ஐ review செய்யுங்கள், signals முழுவதும் SLO-களை நிறுவுங்கள், scaling policies அமைக்கவும், runbooks தயாரிக்கவும்.</p>
+        </section>
+      </article>
+    </main>
+    <aside class="right-sidebar" id="right-sidebar">
+      <section class="new-to-apm box">
+        <h2>Application Performance Monitoring-க்கு புதியவரா?</h2>
+        <p>15-நிமிட Node.js Quickstart<br>
+        ஒரு இயங்கும் sample-ஐ பெற்று 15 நிமிடங்களில் உங்கள் முதல் traces-ஐ பாருங்கள்.</p>
+        <ul>
+          <li>Sample-ஐ clone செய்து install செய்யுங்கள்: <code>cd samples/nodejs-quickstart && npm install</code></li>
+          <li>ஒரு local OpenTelemetry Collector (logging exporter) இயக்குங்கள்: sample-ல் <code>otel-config.yaml</code>-ஐ பாருங்கள்.</li>
+          <li>App-ஐ start செய்யுங்கள்: <code>npm start</code> மற்றும் traffic generate செய்யுங்கள்: <code>./generate_requests.sh</code></li>
+        </ul>
+        <p>முழு வழிமுறைகளுக்கு <a href="../samples/nodejs-quickstart/README.md">sample README-ஐ திறக்கவும்</a>.</p>
+      </section>
+      <section class="ask-health box">
+        <h2>உங்கள் Application Health பற்றி கேள்விகள் கேளுங்கள்</h2>
+        <p>இயற்கை மொழியைப் பயன்படுத்தி உங்கள் application health-ஐ query செய்ய Application Signals MCP server-ஐ பயன்படுத்துங்கள். APM, RUM மற்றும் Synthetics தரவிலிருந்து உடனடி insights-க்கு உங்கள் AI assistant அல்லது IDE-உடன் இணைக்கவும்.</p>
+        <ul>
+          <li><a href="reference.html">reference docs</a>-லிருந்து MCP server-ஐ install செய்யுங்கள்</li>
+          <li>உங்கள் Application Signals endpoint-உடன் configure செய்யுங்கள்</li>
+          <li>"ஏன் எனது சேவை மெதுவாக இருக்கிறது?" அல்லது "error trends காட்டுங்கள்" போன்ற கேள்விகளைக் கேளுங்கள்</li>
+        </ul>
+        <p>சிக்கலான queries இல்லாமல் traces, metrics மற்றும் application maps-க்கு உரையாடல் அணுகலைப் பெறுங்கள்.</p>
+      </section>
+    </aside>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

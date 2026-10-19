@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RUM — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>真实用户监控（RUM）</h1></header>
+      <article>
+        <section>
+          <h2>RUM 如何与 Application Signals 连接</h2>
+          <p>当您为 RUM 客户端启用 X-Ray 追踪时，CloudWatch RUM Web 客户端可以出现在 Application Signals 中。从客户端到后端服务的请求将被关联并显示在服务详情和应用程序地图中。</p>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals 如何实现运行状况监控</a>。</p>
+        </section>
+
+        <section>
+          <h2>RUM 帮助您回答什么问题</h2>
+          <ul>
+            <li><strong>这个问题是否影响用户？</strong>将后端健康状况与页面加载和 JS 错误信号关联起来</li>
+            <li><strong>用户在哪里受到影响？</strong>按地理位置、设备和浏览器比较性能</li>
+            <li><strong>发生了什么变化？</strong>在调查回退时与部署/变更事件关联</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>后续步骤</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

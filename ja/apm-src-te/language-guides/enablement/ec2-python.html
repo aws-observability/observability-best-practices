@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for Python FastAPI on EC2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Python FastAPI on EC2</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">EC2</div>
+            <div class="language-badge">Python</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Python FastAPI application on Amazon EC2 with AWS Application Signals enabled. This is the EC2 equivalent of the Lambda Python function, reusing the same business logic and endpoints.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a Python FastAPI app on EC2</li>
+                        <li>Enable AWS Application Signals auto-instrumentation</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 30-45 minutes
+                </div>
+            </div>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="required-tools">Required Tools</h3>
+<ul>
+<li>AWS CLI v2 (latest version)</li>
+<li>Docker Desktop</li>
+<li>Python 3.11+ (for local development)</li>
+<li>pip (for local development)</li>
+<li>AWS Account with appropriate permissions</li>
+<li>Text editor</li>
+</ul>
+<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<ul>
+<li>EC2: Full access (create instances, security groups, key pairs)</li>
+<li>IAM: Create roles and policies</li>
+<li>CloudWatch: Logs and Application Signals access</li>
+<li>VPC: Create and manage VPC resources</li>
+<li>SSM: Parameter Store write access</li>
+</ul>
+<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<ul>
+<li>Basic AWS CLI usage</li>
+<li>Basic Docker commands</li>
+<li>Basic understanding of EC2 concepts</li>
+<li>Basic Python/FastAPI knowledge</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<p>Your EC2 instance will run:</p>
+<ol>
+<li><strong>Python FastAPI Application</strong>: Your web API with Application Signals instrumentation</li>
+<li><strong>OpenTelemetry Auto-instrumentation</strong>: Automatic tracing and metrics collection</li>
+<li><strong>CloudWatch Agent</strong>: Collects traces and metrics (optional, can use direct OTLP)</li>
+</ol>
+<p><strong>Flow:</strong></p>
+<pre><code>EC2 <span class="hljs-keyword">Instance
+</span>  → Python FastAPI App (auto-<span class="hljs-keyword">instrumented)
+</span>  → OpenTelemetry Collector (optional)
+  → <span class="hljs-keyword">CloudWatch </span>Application Signals
+</code></pre><h2 id="step-1-create-the-application">Step 1: Create the Application</h2>
+<h3 id="1-1-create-project-structure">1.1 Create Project Structure</h3>
+<pre><code class="lang-bash"><span class="hljs-built_in">mkdir</span> ec2-<span class="hljs-keyword">python</span>
+<span class="hljs-keyword">cd</span> ec2-<span class="hljs-keyword">python</span>
+</code></pre>
+<h3 id="1-2-create-requirements-file">1.2 Create Requirements File</h3>
+<p>Create <code>requirements.txt</code>:</p>
+<pre><code class="lang-txt"># Core <span class="hljs-built_in">dependencies</span> <span class="hljs-keyword">for</span> EC2 Python application
+fastapi==<span class="hljs-number">0.104</span>.1
+uvicorn[standard]==<span class="hljs-number">0.24</span>.0
+boto3==<span class="hljs-number">1.35</span>.0
+requests==<span class="hljs-number">2.32</span>.3
+
+# OpenTelemetry <span class="hljs-built_in">dependencies</span>
+opentelemetry-api==<span class="hljs-number">1.21</span>.0
+opentelemetry-sdk==<span class="hljs-number">1.21</span>.0
+opentelemetry-exporter-otlp==<span class="hljs-number">1.21</span>.0
+opentelemetry-instrumentation-fastapi==<span class="hljs-number">0.42b0</span>
+opentelemetry-instrumentation-requests==<span class="hljs-number">0.42b0</span>
+opentelemetry-instrumentation-boto3==<span class="hljs-number">0.42b0</span>
+opentelemetry-instrumentation-aws-<span class="hljs-built_in">lambda</span>==<span class="hljs-number">0.42b0</span>
+opentelemetry-resource-detector-aws==<span class="hljs-number">1.21</span>.0
+opentelemetry-semantic-conventions==<span class="hljs-number">0.42b0</span>
+</code></pre>
+<h3 id="1-3-create-main-application">1.3 Create Main Application</h3>
+<p>Create <code>app.py</code>:</p>
+<pre><code class="lang-python"><span class="hljs-string">"""
+AWS Application Signals Python FastAPI application for EC2
+Adapted from Lambda implementation for EC2 deployment
+"""</span>
+<span class="hljs-keyword">import</span> json
+<span class="hljs-keyword">import</span> time
+<span class="hljs-keyword">import</span> random
+<span class="hljs-keyword">import</span> boto3
+<span class="hljs-keyword">import</span> requests
+<span class="hljs-keyword">from</span> typing <span class="hljs-keyword">import</span> Dict, Any
+<span class="hljs-keyword">from</span> fastapi <span class="hljs-keyword">import</span> FastAPI, HTTPException
+<span class="hljs-keyword">from</span> fastapi.middleware.cors <span class="hljs-keyword">import</span> CORSMiddleware
+<span class="hljs-keyword">import</span> uvicorn
+
+<span class="hljs-comment"># Initialize FastAPI app</span>
+app = FastAPI(
+    title=<span class="hljs-string">"EC2 Python Application Signals Demo"</span>,
+    description=<span class="hljs-string">"Python FastAPI application for AWS Application Signals testing on EC2"</span>,
+    version=<span class="hljs-string">"1.0.0"</span>
+)
+
+<span class="hljs-comment"># Add CORS middleware</span>
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[<span class="hljs-string">"*"</span>],
+    allow_credentials=<span class="hljs-keyword">True</span>,
+    allow_methods=[<span class="hljs-string">"*"</span>],
+    allow_headers=[<span class="hljs-string">"*"</span>],
+)
+
+<span class="hljs-comment"># Initialize AWS services</span>
+s3_client = boto3.client(<span class="hljs-string">'s3'</span>)
+
+<span class="hljs-meta">@app.get("/")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">root</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Root endpoint"""</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"AWS Application Signals EC2 Python Demo"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"runtime"</span>: <span class="hljs-string">"python3.11"</span>,
+        <span class="hljs-string">"host"</span>: <span class="hljs-string">"ec2-instance"</span>,
+        <span class="hljs-string">"environment"</span>: <span class="hljs-string">"ec2"</span>
+    }
+
+<span class="hljs-meta">@app.get("/health")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">health</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Health check endpoint"""</span>
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"status"</span>: <span class="hljs-string">"healthy"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"runtime"</span>: <span class="hljs-string">"python3.11"</span>,
+        <span class="hljs-string">"host"</span>: <span class="hljs-string">"ec2-instance"</span>
+    }
+
+<span class="hljs-meta">@app.get("/api/hello/{name}")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">hello</span><span class="hljs-params">(name: str)</span>:</span>
+    <span class="hljs-string">"""Personalized greeting with simulated processing"""</span>
+    <span class="hljs-comment"># Simulate some processing time</span>
+    <span class="hljs-keyword">await</span> asyncio.sleep(random.uniform(<span class="hljs-number">0.01</span>, <span class="hljs-number">0.1</span>))
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: f<span class="hljs-string">"Hello, {name}!"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"runtime"</span>: <span class="hljs-string">"python3.11"</span>,
+        <span class="hljs-string">"greeting_id"</span>: random.randint(<span class="hljs-number">0</span>, <span class="hljs-number">10000</span>)
+    }
+
+<span class="hljs-meta">@app.get("/api/slow")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">slow</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Intentionally slow endpoint for latency testing"""</span>
+    <span class="hljs-comment"># Simulate slow operation (500-1500ms)</span>
+    delay = random.uniform(<span class="hljs-number">0.5</span>, <span class="hljs-number">1.5</span>)
+    <span class="hljs-keyword">await</span> asyncio.sleep(delay)
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"Slow operation completed"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"duration_ms"</span>: int(delay * <span class="hljs-number">1000</span>)
+    }
+
+<span class="hljs-meta">@app.get("/api/error")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">error</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Endpoint that randomly raises errors for testing error rates"""</span>
+    <span class="hljs-keyword">if</span> random.random() &gt; <span class="hljs-number">0.5</span>:
+        <span class="hljs-keyword">raise</span> HTTPException(status_code=<span class="hljs-number">500</span>, detail=<span class="hljs-string">"Simulated error for testing Application Signals error tracking"</span>)
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"No error occurred"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>
+    }
+
+<span class="hljs-meta">@app.get("/api/external")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">external</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Makes external HTTP call for distributed tracing"""</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-comment"># This will be automatically traced by OpenTelemetry</span>
+        response = requests.get(<span class="hljs-string">"https://httpbin.org/delay/1"</span>, timeout=<span class="hljs-number">5</span>)
+
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">"message"</span>: <span class="hljs-string">"External call completed"</span>,
+            <span class="hljs-string">"external_status_code"</span>: response.status_code,
+            <span class="hljs-string">"timestamp"</span>: time.time(),
+            <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>
+        }
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">raise</span> HTTPException(status_code=<span class="hljs-number">500</span>, detail=f<span class="hljs-string">"External call failed: {str(e)}"</span>)
+
+<span class="hljs-meta">@app.get("/api/s3")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">s3</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Makes AWS S3 call for testing AWS SDK instrumentation"""</span>
+    <span class="hljs-keyword">try</span>:
+        <span class="hljs-comment"># This will be automatically traced by OpenTelemetry</span>
+        response = s3_client.list_buckets()
+        bucket_names = [bucket[<span class="hljs-string">'Name'</span>] <span class="hljs-keyword">for</span> bucket <span class="hljs-keyword">in</span> response[<span class="hljs-string">'Buckets'</span>]]
+
+        <span class="hljs-keyword">return</span> {
+            <span class="hljs-string">"message"</span>: <span class="hljs-string">"S3 call completed successfully"</span>,
+            <span class="hljs-string">"bucket_count"</span>: len(bucket_names),
+            <span class="hljs-string">"buckets"</span>: bucket_names[:<span class="hljs-number">5</span>],  <span class="hljs-comment"># Show first 5 buckets</span>
+            <span class="hljs-string">"timestamp"</span>: time.time(),
+            <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>
+        }
+    <span class="hljs-keyword">except</span> Exception <span class="hljs-keyword">as</span> e:
+        <span class="hljs-keyword">raise</span> HTTPException(status_code=<span class="hljs-number">500</span>, detail=f<span class="hljs-string">"S3 call failed: {str(e)}"</span>)
+
+<span class="hljs-meta">@app.get("/api/database")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">database</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Database simulation endpoint"""</span>
+    <span class="hljs-comment"># Simulate database query time</span>
+    <span class="hljs-keyword">await</span> asyncio.sleep(random.uniform(<span class="hljs-number">0.05</span>, <span class="hljs-number">0.25</span>))
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"Database query completed"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"records_returned"</span>: random.randint(<span class="hljs-number">1</span>, <span class="hljs-number">101</span>)
+    }
+
+<span class="hljs-meta">@app.get("/api/complex")</span>
+<span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">complex</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Complex operation with multiple steps"""</span>
+    <span class="hljs-comment"># Step 1: Simulate authentication</span>
+    <span class="hljs-keyword">await</span> asyncio.sleep(random.uniform(<span class="hljs-number">0.01</span>, <span class="hljs-number">0.06</span>))
+
+    <span class="hljs-comment"># Step 2: Simulate business logic</span>
+    <span class="hljs-keyword">await</span> asyncio.sleep(random.uniform(<span class="hljs-number">0.02</span>, <span class="hljs-number">0.12</span>))
+
+    <span class="hljs-comment"># Step 3: Simulate database operations</span>
+    <span class="hljs-keyword">await</span> asyncio.sleep(random.uniform(<span class="hljs-number">0.03</span>, <span class="hljs-number">0.18</span>))
+
+    <span class="hljs-keyword">return</span> {
+        <span class="hljs-string">"message"</span>: <span class="hljs-string">"Complex operation completed successfully"</span>,
+        <span class="hljs-string">"timestamp"</span>: time.time(),
+        <span class="hljs-string">"service"</span>: <span class="hljs-string">"ec2-python"</span>,
+        <span class="hljs-string">"steps_completed"</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-string">"total_processing_time_ms"</span>: random.randint(<span class="hljs-number">60</span>, <span class="hljs-number">360</span>)
+    }
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    <span class="hljs-keyword">import</span> asyncio
+    uvicorn.run(app, host=<span class="hljs-string">"0.0.0.0"</span>, port=<span class="hljs-number">8080</span>)
+</code></pre>
+<h3 id="1-4-create-opentelemetry-configuration">1.4 Create OpenTelemetry Configuration</h3>
+<p>Create <code>otel_config.py</code>:</p>
+<pre><code class="lang-python"><span class="hljs-string">"""
+OpenTelemetry configuration for Python EC2 Application Signals
+This file sets up automatic instrumentation for the FastAPI application
+"""</span>
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">from</span> opentelemetry <span class="hljs-keyword">import</span> trace
+<span class="hljs-keyword">from</span> opentelemetry.sdk.trace <span class="hljs-keyword">import</span> TracerProvider
+<span class="hljs-keyword">from</span> opentelemetry.sdk.trace.export <span class="hljs-keyword">import</span> BatchSpanProcessor
+<span class="hljs-keyword">from</span> opentelemetry.exporter.otlp.proto.http.trace_exporter <span class="hljs-keyword">import</span> OTLPSpanExporter
+<span class="hljs-keyword">from</span> opentelemetry.sdk.resources <span class="hljs-keyword">import</span> Resource
+<span class="hljs-keyword">from</span> opentelemetry.semantic_conventions.resource <span class="hljs-keyword">import</span> ResourceAttributes
+<span class="hljs-keyword">from</span> opentelemetry.instrumentation.fastapi <span class="hljs-keyword">import</span> FastAPIInstrumentor
+<span class="hljs-keyword">from</span> opentelemetry.instrumentation.requests <span class="hljs-keyword">import</span> RequestsInstrumentor
+<span class="hljs-keyword">from</span> opentelemetry.instrumentation.boto3 <span class="hljs-keyword">import</span> Boto3Instrumentor
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">setup_otel</span><span class="hljs-params">()</span>:</span>
+    <span class="hljs-string">"""Set up OpenTelemetry instrumentation"""</span>
+
+    <span class="hljs-comment"># Configure resource</span>
+    resource = Resource.create({
+        ResourceAttributes.SERVICE_NAME: <span class="hljs-string">"ec2-python"</span>,
+        ResourceAttributes.SERVICE_NAMESPACE: <span class="hljs-string">"aws-observability"</span>,
+        ResourceAttributes.SERVICE_VERSION: <span class="hljs-string">"1.0.0"</span>,
+        ResourceAttributes.DEPLOYMENT_ENVIRONMENT: <span class="hljs-string">"ec2"</span>,
+    })
+
+    <span class="hljs-comment"># Set up tracer provider</span>
+    trace.set_tracer_provider(TracerProvider(resource=resource))
+    tracer = trace.get_tracer(__name__)
+
+    <span class="hljs-comment"># Configure OTLP exporter</span>
+    otlp_endpoint = os.getenv(<span class="hljs-string">"OTEL_EXPORTER_OTLP_ENDPOINT"</span>, <span class="hljs-string">"https://otlp.nr-data.net"</span>)
+    otlp_headers = os.getenv(<span class="hljs-string">"OTEL_EXPORTER_OTLP_HEADERS"</span>, <span class="hljs-string">"api-key=your-api-key"</span>)
+
+    <span class="hljs-comment"># Parse headers</span>
+    headers = {}
+    <span class="hljs-keyword">if</span> otlp_headers:
+        <span class="hljs-keyword">for</span> header <span class="hljs-keyword">in</span> otlp_headers.split(<span class="hljs-string">","</span>):
+            <span class="hljs-keyword">if</span> <span class="hljs-string">"="</span> <span class="hljs-keyword">in</span> header:
+                key, value = header.split(<span class="hljs-string">"="</span>, <span class="hljs-number">1</span>)
+                headers[key.strip()] = value.strip()
+
+    <span class="hljs-comment"># Create OTLP exporter</span>
+    otlp_exporter = OTLPSpanExporter(
+        endpoint=f<span class="hljs-string">"{otlp_endpoint}/v1/traces"</span>,
+        headers=headers
+    )
+
+    <span class="hljs-comment"># Add span processor</span>
+    span_processor = BatchSpanProcessor(otlp_exporter)
+    trace.get_tracer_provider().add_span_processor(span_processor)
+
+    print(<span class="hljs-string">"OpenTelemetry configured for ec2-python"</span>)
+
+<span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">instrument_app</span><span class="hljs-params">(app)</span>:</span>
+    <span class="hljs-string">"""Instrument the FastAPI application"""</span>
+    <span class="hljs-comment"># Instrument FastAPI</span>
+    FastAPIInstrumentor.instrument_app(app)
+
+    <span class="hljs-comment"># Instrument requests library</span>
+    RequestsInstrumentor().instrument()
+
+    <span class="hljs-comment"># Instrument boto3</span>
+    Boto3Instrumentor().instrument()
+
+    print(<span class="hljs-string">"Application instrumented with OpenTelemetry"</span>)
+</code></pre>
+<h3 id="1-5-create-main-entry-point">1.5 Create Main Entry Point</h3>
+<p>Create <code>main.py</code>:</p>
+<pre><code class="lang-python"><span class="hljs-string">"""
+Main entry point for the EC2 Python Application Signals application
+This file sets up OpenTelemetry instrumentation and starts the FastAPI app
+"""</span>
+<span class="hljs-keyword">import</span> os
+<span class="hljs-keyword">import</span> asyncio
+<span class="hljs-keyword">from</span> app <span class="hljs-keyword">import</span> app
+<span class="hljs-keyword">from</span> otel_config <span class="hljs-keyword">import</span> setup_otel, instrument_app
+
+<span class="hljs-comment"># Set up OpenTelemetry before importing the app</span>
+setup_otel()
+
+<span class="hljs-comment"># Instrument the FastAPI application</span>
+instrument_app(app)
+
+<span class="hljs-keyword">if</span> __name__ == <span class="hljs-string">"__main__"</span>:
+    <span class="hljs-keyword">import</span> uvicorn
+
+    <span class="hljs-comment"># Set environment variables for Application Signals</span>
+    os.environ.setdefault(<span class="hljs-string">"OTEL_SERVICE_NAME"</span>, <span class="hljs-string">"ec2-python"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_RESOURCE_ATTRIBUTES"</span>, <span class="hljs-string">"service.name=ec2-python,service.namespace=aws-observability,service.version=1.0.0,deployment.environment=ec2"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_EXPORTER_OTLP_ENDPOINT"</span>, <span class="hljs-string">"https://otlp.nr-data.net"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_EXPORTER_OTLP_HEADERS"</span>, <span class="hljs-string">"api-key=your-api-key"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_TRACES_EXPORTER"</span>, <span class="hljs-string">"otlp"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_METRICS_EXPORTER"</span>, <span class="hljs-string">"otlp"</span>)
+    os.environ.setdefault(<span class="hljs-string">"OTEL_LOGS_EXPORTER"</span>, <span class="hljs-string">"otlp"</span>)
+
+    print(<span class="hljs-string">"Starting EC2 Python Application Signals Demo..."</span>)
+    print(f<span class="hljs-string">"Service: ec2-python"</span>)
+    print(f<span class="hljs-string">"Environment: {os.getenv('OTEL_RESOURCE_ATTRIBUTES', 'default')}"</span>)
+
+    <span class="hljs-comment"># Start the application</span>
+    uvicorn.run(app, host=<span class="hljs-string">"0.0.0.0"</span>, port=<span class="hljs-number">8080</span>)
+</code></pre>
+<h3 id="1-6-create-dockerfile">1.6 Create Dockerfile</h3>
+<p>Create <code>Dockerfile</code>:</p>
+<pre><code class="lang-dockerfile"><span class="hljs-comment"># Use the official Python 3.11 runtime as base image</span>
+<span class="hljs-keyword">FROM</span> python:<span class="hljs-number">3.11</span>-slim AS base
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">8080</span>
+
+<span class="hljs-comment"># Use the official Python 3.11 SDK for building</span>
+<span class="hljs-keyword">FROM</span> python:<span class="hljs-number">3.11</span>-slim AS build
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span>
+<span class="hljs-comment"># Install system dependencies</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> apt-get update &amp;&amp; apt-get install -y \
+    gcc \
+    &amp;&amp; rm -rf /var/lib/apt/lists/*
+</span>
+<span class="hljs-comment"># Copy requirements and install Python dependencies</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> requirements.txt .
+</span><span class="hljs-keyword">RUN</span><span class="bash"> pip install --no-cache-dir -r requirements.txt
+</span>
+<span class="hljs-comment"># Copy source code</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> . .
+</span>
+<span class="hljs-keyword">FROM</span> base AS final
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span>
+<span class="hljs-comment"># Copy dependencies and source</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> --from=build /usr/<span class="hljs-built_in">local</span>/lib/python3.11/site-packages /usr/<span class="hljs-built_in">local</span>/lib/python3.11/site-packages
+</span><span class="hljs-keyword">COPY</span><span class="bash"> --from=build /usr/<span class="hljs-built_in">local</span>/bin /usr/<span class="hljs-built_in">local</span>/bin
+</span><span class="hljs-keyword">COPY</span><span class="bash"> --from=build /app .
+</span>
+<span class="hljs-comment"># Set environment variables for Application Signals</span>
+<span class="hljs-keyword">ENV</span> OTEL_SERVICE_NAME=ec2-python
+<span class="hljs-keyword">ENV</span> OTEL_RESOURCE_ATTRIBUTES=service.name=ec2-python,service.namespace=aws-observability,service.version=<span class="hljs-number">1.0</span>.<span class="hljs-number">0</span>,deployment.environment=ec2
+<span class="hljs-keyword">ENV</span> OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net
+<span class="hljs-keyword">ENV</span> OTEL_EXPORTER_OTLP_HEADERS=api-key=your-api-key
+<span class="hljs-keyword">ENV</span> OTEL_TRACES_EXPORTER=otlp
+<span class="hljs-keyword">ENV</span> OTEL_METRICS_EXPORTER=otlp
+<span class="hljs-keyword">ENV</span> OTEL_LOGS_EXPORTER=otlp
+<span class="hljs-keyword">ENV</span> PYTHONPATH=/app
+
+<span class="hljs-comment"># Start the application</span>
+<span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"python"</span>, <span class="hljs-string">"main.py"</span>]</span>
+</code></pre>
+<h3 id="1-7-create-start-script">1.7 Create Start Script</h3>
+<p>Create <code>start.sh</code>:</p>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+<span class="hljs-comment"># Start script for Python EC2 Application Signals Demo</span>
+<span class="hljs-comment"># This script sets up the environment and starts the application</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Starting Python EC2 Application Signals Demo..."</span>
+
+<span class="hljs-comment"># Set environment variables for Application Signals</span>
+<span class="hljs-built_in">export</span> OTEL_SERVICE_NAME=ec2-python
+<span class="hljs-built_in">export</span> OTEL_RESOURCE_ATTRIBUTES=<span class="hljs-string">"service.name=ec2-python,service.namespace=aws-observability,service.version=1.0.0,deployment.environment=ec2"</span>
+<span class="hljs-built_in">export</span> OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net
+<span class="hljs-built_in">export</span> OTEL_EXPORTER_OTLP_HEADERS=<span class="hljs-string">"api-key=your-api-key"</span>
+<span class="hljs-built_in">export</span> OTEL_TRACES_EXPORTER=otlp
+<span class="hljs-built_in">export</span> OTEL_METRICS_EXPORTER=otlp
+<span class="hljs-built_in">export</span> OTEL_LOGS_EXPORTER=otlp
+
+<span class="hljs-comment"># Set Python environment</span>
+<span class="hljs-built_in">export</span> PYTHONPATH=/home/ec2-user/ec2-python
+
+<span class="hljs-comment"># Install dependencies if not present</span>
+<span class="hljs-keyword">if</span> [ ! <span class="hljs-_">-d</span> <span class="hljs-string">"venv"</span> ]; <span class="hljs-keyword">then</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Creating virtual environment..."</span>
+    python3 -m venv venv
+<span class="hljs-keyword">fi</span>
+
+<span class="hljs-comment"># Activate virtual environment</span>
+<span class="hljs-built_in">source</span> venv/bin/activate
+
+<span class="hljs-comment"># Install dependencies if requirements.txt is newer than installed packages</span>
+<span class="hljs-keyword">if</span> [ requirements.txt -nt venv/pyvenv.cfg ] || [ ! <span class="hljs-_">-f</span> venv/pyvenv.cfg ]; <span class="hljs-keyword">then</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Installing dependencies..."</span>
+    pip install -r requirements.txt
+<span class="hljs-keyword">fi</span>
+
+<span class="hljs-comment"># Start the application</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Starting Python application on port 8080..."</span>
+python main.py
+</code></pre>
+<p>Make it executable:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-literal">start</span>.sh
+</code></pre>
+<h2 id="step-2-build-and-test-locally">Step 2: Build and Test Locally</h2>
+<h3 id="2-1-create-virtual-environment">2.1 Create Virtual Environment</h3>
+<pre><code class="lang-bash"><span class="hljs-keyword">python3</span> -<span class="hljs-keyword">m</span> venv venv
+<span class="hljs-keyword">source</span> venv/bin/activate  # On Window<span class="hljs-variable">s:</span> venv\Scripts\activate
+</code></pre>
+<h3 id="2-2-install-dependencies">2.2 Install Dependencies</h3>
+<pre><code class="lang-bash">pip <span class="hljs-keyword">install</span> -r requirements.txt
+</code></pre>
+<h3 id="2-3-test-locally">2.3 Test Locally</h3>
+<pre><code class="lang-bash"><span class="hljs-keyword">python</span> main.<span class="hljs-keyword">py</span>
+</code></pre>
+<p>The application will start on <code>http://localhost:8080</code>. Test the endpoints:</p>
+<pre><code class="lang-bash"><span class="hljs-meta"># Root endpoint</span>
+curl http:<span class="hljs-comment">//localhost:8080</span>
+
+<span class="hljs-meta"># Health check</span>
+curl http:<span class="hljs-comment">//localhost:8080/health</span>
+
+<span class="hljs-meta"># Hello endpoint</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/hello/World</span>
+
+<span class="hljs-meta"># Slow endpoint</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/slow</span>
+
+<span class="hljs-meta"># Error endpoint (may return error)</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/error</span>
+
+<span class="hljs-meta"># External call</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/external</span>
+
+<span class="hljs-meta"># S3 call (requires AWS credentials)</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/s3</span>
+
+<span class="hljs-meta"># Database simulation</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/database</span>
+
+<span class="hljs-meta"># Complex operation</span>
+curl http:<span class="hljs-comment">//localhost:8080/api/complex</span>
+</code></pre>
+<h2 id="step-3-deploy-to-ec2">Step 3: Deploy to EC2</h2>
+<h3 id="3-1-create-ec2-instance">3.1 Create EC2 Instance</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create a key pair</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">create-key-pair</span> <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-python-</span><span class="hljs-string">key </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'KeyMaterial'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text </span>&gt; <span class="hljs-string">ec2-python-</span><span class="hljs-string">key.</span><span class="hljs-string">pem
+</span><span class="hljs-string">chmod </span><span class="hljs-string">400 </span><span class="hljs-string">ec2-python-</span><span class="hljs-string">key.</span><span class="hljs-string">pem
+</span>
+<span class="hljs-comment"># Create security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">create-security-group</span> \
+    <span class="hljs-built_in">--group-name</span> <span class="hljs-string">ec2-python-</span><span class="hljs-string">sg </span>\
+    <span class="hljs-built_in">--description</span> <span class="hljs-string">"Security group for Python EC2 Application Signals demo"</span>
+
+<span class="hljs-comment"># Get security group ID</span>
+<span class="hljs-string">SG_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-security-</span><span class="hljs-string">groups </span><span class="hljs-built_in">--group-names</span> <span class="hljs-string">ec2-python-</span><span class="hljs-string">sg </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'SecurityGroups[0].GroupId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-comment"># Allow HTTP traffic</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-ingress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--protocol</span> <span class="hljs-string">tcp </span>\
+    <span class="hljs-built_in">--port</span> <span class="hljs-string">8080 </span>\
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+
+<span class="hljs-comment"># Allow SSH</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-ingress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--protocol</span> <span class="hljs-string">tcp </span>\
+    <span class="hljs-built_in">--port</span> <span class="hljs-string">22 </span>\
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+
+<span class="hljs-comment"># Launch EC2 instance</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">run-instances </span>\
+    <span class="hljs-built_in">--image-id</span> <span class="hljs-string">ami-0c02fb55956c7d316 </span>\
+    <span class="hljs-built_in">--count</span> 1 \
+    <span class="hljs-built_in">--instance-type</span> <span class="hljs-string">t3.</span><span class="hljs-string">medium </span>\
+    <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-python-</span><span class="hljs-string">key </span>\
+    <span class="hljs-built_in">--security-group-ids</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--user-data</span> <span class="hljs-string">'#!/bin/bash
+yum update -y
+yum install -y docker
+systemctl start docker
+systemctl enable docker
+usermod -a -G docker ec2-user
+yum install -y git wget
+# Install Python 3.11
+yum install -y python3.11 python3.11-pip python3.11-venv'</span>
+</code></pre>
+<h3 id="3-2-get-instance-information">3.2 Get Instance Information</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Get instance ID</span>
+<span class="hljs-string">INSTANCE_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-instances </span><span class="hljs-built_in">--filters</span> <span class="hljs-string">"Name=instance-state-name,Values=running"</span> <span class="hljs-string">"Name=key-name,Values=ec2-python-key"</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">'Reservations[0].Instances[0].InstanceId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-comment"># Get public IP</span>
+<span class="hljs-string">PUBLIC_IP=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-instances </span><span class="hljs-built_in">--instance-ids</span> $<span class="hljs-string">INSTANCE_ID </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'Reservations[0].Instances[0].PublicIpAddress'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-string">echo </span><span class="hljs-string">"Instance ID: $INSTANCE_ID"</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Public IP: $PUBLIC_IP"</span>
+</code></pre>
+<h3 id="3-3-deploy-application">3.3 Deploy Application</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Copy files to EC2</span>
+scp -i ec2-python-key.pem -r . ec2-user@<span class="hljs-variable">$PUBLIC_IP</span><span class="hljs-symbol">:/home/ec2-user/ec2-python/</span>
+
+<span class="hljs-comment"># SSH into instance</span>
+ssh -i ec2-python-key.pem ec2-user@<span class="hljs-variable">$PUBLIC_IP</span>
+
+<span class="hljs-comment"># On the EC2 instance, navigate to the project</span>
+cd ec2-python
+
+<span class="hljs-comment"># Run the application</span>
+./start.sh
+</code></pre>
+<h2 id="step-4-configure-application-signals">Step 4: Configure Application Signals</h2>
+<h3 id="4-1-set-up-cloudwatch-agent-optional-">4.1 Set Up CloudWatch Agent (Optional)</h3>
+<p>Create <code>cloudwatch-agent-config.json</code>:</p>
+<pre><code class="lang-json">{
+    <span class="hljs-attr">"agent"</span>: {
+        <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+        <span class="hljs-attr">"run_as_user"</span>: <span class="hljs-string">"ec2-user"</span>
+    },
+    <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"namespace"</span>: <span class="hljs-string">"EC2/Python"</span>,
+        <span class="hljs-attr">"metrics_collected"</span>: {
+            <span class="hljs-attr">"cpu"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"cpu_usage_idle"</span>,
+                    <span class="hljs-string">"cpu_usage_iowait"</span>,
+                    <span class="hljs-string">"cpu_usage_user"</span>,
+                    <span class="hljs-string">"cpu_usage_system"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+            },
+            <span class="hljs-attr">"disk"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"used_percent"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                <span class="hljs-attr">"resources"</span>: [
+                    <span class="hljs-string">"*"</span>
+                ]
+            },
+            <span class="hljs-attr">"diskio"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"io_time"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                <span class="hljs-attr">"resources"</span>: [
+                    <span class="hljs-string">"*"</span>
+                ]
+            },
+            <span class="hljs-attr">"mem"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"mem_used_percent"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+            }
+        }
+    },
+    <span class="hljs-attr">"logs"</span>: {
+        <span class="hljs-attr">"logs_collected"</span>: {
+            <span class="hljs-attr">"files"</span>: {
+                <span class="hljs-attr">"collect_list"</span>: [
+                    {
+                        <span class="hljs-attr">"file_path"</span>: <span class="hljs-string">"/home/ec2-user/ec2-python/app.log"</span>,
+                        <span class="hljs-attr">"log_group_name"</span>: <span class="hljs-string">"/aws/ec2/python"</span>,
+                        <span class="hljs-attr">"log_stream_name"</span>: <span class="hljs-string">"{instance_id}"</span>
+                    }
+                ]
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="4-2-install-cloudwatch-agent">4.2 Install CloudWatch Agent</h3>
+<pre><code class="lang-bash"># Download and install CloudWatch agent
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+sudo rpm -U ./amazon-cloudwatch-agent.rpm
+
+# Start CloudWatch agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -<span class="ruby">a fetch-config \
+</span>    -<span class="ruby">m ec2 \
+</span>    -<span class="ruby">c <span class="hljs-symbol">file:</span>cloudwatch-agent-config.json \
+</span>    -<span class="ruby">s</span>
+</code></pre>
+<h2 id="step-5-generate-traffic-and-monitor">Step 5: Generate Traffic and Monitor</h2>
+<h3 id="5-1-generate-traffic">5.1 Generate Traffic</h3>
+<p>Create <code>generate-traffic.sh</code>:</p>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+BASE_URL=<span class="hljs-string">"http://<span class="hljs-variable">$PUBLIC_IP</span>:8080"</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Generating traffic for Python EC2 Application Signals demo..."</span>
+
+<span class="hljs-comment"># Generate traffic for 5 minutes</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> {1..300}; <span class="hljs-keyword">do</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Request <span class="hljs-variable">$i</span>"</span>
+
+    <span class="hljs-comment"># Root endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Health check</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/health"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Hello endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/hello/User<span class="hljs-variable">$i</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Slow endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/slow"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Error endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/error"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># External call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/external"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># S3 call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/s3"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Database simulation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/database"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Complex operation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/complex"</span> &gt; /dev/null
+
+    sleep 1
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Traffic generation complete!"</span>
+</code></pre>
+<p>Make it executable and run:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+./<span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+</code></pre>
+<h3 id="5-2-monitor-in-cloudwatch">5.2 Monitor in CloudWatch</h3>
+<ol>
+<li><p><strong>Open CloudWatch Console</strong></p>
+<ul>
+<li>Go to AWS Console → CloudWatch</li>
+<li>Navigate to &quot;Application Signals&quot;</li>
+</ul>
+</li>
+<li><p><strong>View Service Map</strong></p>
+<ul>
+<li>Look for &quot;ec2-python&quot; service</li>
+<li>See the service dependencies and health</li>
+</ul>
+</li>
+<li><p><strong>Check Metrics</strong></p>
+<ul>
+<li>View latency, error rate, and throughput</li>
+<li>Compare with Lambda metrics</li>
+</ul>
+</li>
+<li><p><strong>Analyze Traces</strong></p>
+<ul>
+<li>Click on service to see detailed traces</li>
+<li>View operation-level metrics</li>
+</ul>
+</li>
+</ol>
+<h2 id="step-6-clean-up">Step 6: Clean Up</h2>
+<h3 id="6-1-stop-the-application">6.1 Stop the Application</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># On EC2 instance</span>
+pkill <span class="hljs-_">-f</span> <span class="hljs-string">"python.*main.py"</span>
+</code></pre>
+<h3 id="6-2-terminate-ec2-instance">6.2 Terminate EC2 Instance</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Terminate instance</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">terminate-instances </span><span class="hljs-built_in">--instance-ids</span> $<span class="hljs-string">INSTANCE_ID
+</span>
+<span class="hljs-comment"># Delete security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-security-group</span> <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID
+</span>
+<span class="hljs-comment"># Delete key pair</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-key-pair</span> <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-python-</span><span class="hljs-string">key
+</span><span class="hljs-string">rm </span><span class="hljs-string">ec2-python-</span><span class="hljs-string">key.</span><span class="hljs-string">pem</span>
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<ol>
+<li><p><strong>Application won&#39;t start</strong></p>
+<ul>
+<li>Check Python 3.11 is installed: <code>python3 --version</code></li>
+<li>Verify port 8080 is open in security group</li>
+<li>Check application logs</li>
+</ul>
+</li>
+<li><p><strong>No data in Application Signals</strong></p>
+<ul>
+<li>Verify environment variables are set</li>
+<li>Check OpenTelemetry configuration</li>
+<li>Ensure IAM role has proper permissions</li>
+</ul>
+</li>
+<li><p><strong>S3 calls failing</strong></p>
+<ul>
+<li>Attach IAM role with S3 read permissions</li>
+<li>Verify AWS credentials are configured</li>
+</ul>
+</li>
+</ol></div>
+
+</div>
+</body>
+</html>

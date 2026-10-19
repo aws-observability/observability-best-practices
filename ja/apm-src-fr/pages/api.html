@@ -1,0 +1,569 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference API — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Reference API</h1></header>
+      <article>
+        <section>
+          <h2>API Application Signals</h2>
+          <p>Acces programmatique aux donnees et fonctionnalites d'Application Signals.</p>
+        </section>
+
+        <section>
+          <h3>Operations sur les services</h3>
+
+          <h4>ListServices</h4>
+          <p>Renvoie une liste des services decouverts par Application Signals.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>GET /services?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>Parametres :</h5>
+          <ul>
+            <li><code>nextToken</code> - Jeton pour la pagination</li>
+            <li><code>maxResults</code> - Nombre maximum de resultats (1-100)</li>
+            <li><code>startTime</code> - Heure de debut en horodatage Unix</li>
+            <li><code>endTime</code> - Heure de fin en horodatage Unix</li>
+          </ul>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "namespace": "string",
+      "logGroupName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetService</h3>
+          <p>Renvoie des informations detaillees sur un service specifique.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>GET /services/{serviceName}?startTime=long&endTime=long</code></pre>
+
+          <h5>Parametres de chemin :</h5>
+          <ul>
+            <li><code>serviceName</code> - Nom du service</li>
+          </ul>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "service": {
+    "name": "string",
+    "namespace": "string",
+    "logGroupName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "rum": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      },
+      "synthetics": {
+        "status": "ENABLED|DISABLED",
+        "lastUpdated": "timestamp"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>ListOperations</h3>
+          <p>Renvoie une liste des operations pour un service.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>GET /services/{serviceName}/operations?nextToken=string&maxResults=integer&startTime=long&endTime=long</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "operations": [
+    {
+      "name": "string",
+      "metricName": "string"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetOperation</h3>
+          <p>Renvoie des informations detaillees sur une operation specifique.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>GET /services/{serviceName}/operations/{operationName}?startTime=long&endTime=long</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "operation": {
+    "name": "string",
+    "metricName": "string",
+    "telemetry": {
+      "apm": {
+        "status": "ENABLED|DISABLED"
+      }
+    }
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>API Traces</h2>
+          <p>Accedez et analysez les donnees de traces distribuees.</p>
+        </section>
+
+        <section>
+          <h3>GetTraceSummaries</h3>
+          <p>Recupere une liste de resumes de traces.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /TraceSummaries</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "sampling": true|false,
+  "filterExpression": "string"
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "startTime": "timestamp",
+      "endTime": "timestamp",
+      "hasError": true|false,
+      "hasFault": true|false,
+      "hasThrottle": true|false
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>BatchGetTraces</h3>
+          <p>Recupere les donnees completes de traces pour les identifiants de traces specifies.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /Traces</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "traceIds": ["string"],
+  "nextToken": "string"
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "traces": [
+    {
+      "id": "string",
+      "duration": number,
+      "segments": [
+        {
+          "id": "string",
+          "name": "string",
+          "startTime": number,
+          "endTime": number,
+          "annotations": {},
+          "metadata": {},
+          "subsegments": [...]
+        }
+      ]
+    }
+  ],
+  "nextToken": "string",
+  "unprocessedTraceIds": ["string"]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetServiceGraph</h3>
+          <p>Recupere un graphe de services montrant les dependances entre services.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /ServiceGraph</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "startTime": "timestamp",
+  "endTime": "timestamp"
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "services": [
+    {
+      "name": "string",
+      "names": ["string"],
+      "type": "string",
+      "state": "string",
+      "startTime": "timestamp",
+      "endTime": "timestamp"
+    }
+  ],
+  "edges": [
+    {
+      "source": "string",
+      "target": "string",
+      "references": [...]
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>API Metriques</h2>
+          <p>Accedez aux donnees de metriques CloudWatch.</p>
+        </section>
+
+        <section>
+          <h3>GetMetricData</h3>
+          <p>Recupere les points de donnees de metriques.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "metricDataQueries": [
+    {
+      "id": "string",
+      "metricStat": {
+        "metric": {
+          "namespace": "string",
+          "metricName": "string",
+          "dimensions": [
+            {
+              "name": "string",
+              "value": "string"
+            }
+          ]
+        },
+        "period": integer,
+        "stat": "string"
+      },
+      "expression": "string",
+      "label": "string",
+      "returnData": true|false
+    }
+  ],
+  "startTime": "timestamp",
+  "endTime": "timestamp",
+  "nextToken": "string",
+  "scanBy": "TimestampDescending|TimestampAscending"
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "metricDataResults": [
+    {
+      "id": "string",
+      "label": "string",
+      "timestamps": ["timestamp"],
+      "values": [number],
+      "statusCode": "Complete|PartialData|InternalError"
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>PutMetricData</h3>
+          <p>Publie des points de donnees de metriques vers CloudWatch.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "namespace": "string",
+  "metricData": [
+    {
+      "metricName": "string",
+      "dimensions": [
+        {
+          "name": "string",
+          "value": "string"
+        }
+      ],
+      "timestamp": "timestamp",
+      "value": number,
+      "statisticValues": {
+        "sampleCount": number,
+        "sum": number,
+        "minimum": number,
+        "maximum": number
+      },
+      "unit": "string"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>API RUM</h2>
+          <p>Accedez aux donnees de surveillance des utilisateurs reels.</p>
+        </section>
+
+        <section>
+          <h3>PutRumEvents</h3>
+          <p>Envoie des evenements RUM a CloudWatch.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /appmonitors/{appMonitorName}/rum-events</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "events": [
+    {
+      "details": "string",
+      "timestamp": number,
+      "type": "string",
+      "metadata": {}
+    }
+  ],
+  "userDetails": {
+    "userId": "string",
+    "sessionId": "string"
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetAppMonitor</h3>
+          <p>Recupere des informations sur un moniteur d'application RUM.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>GET /appmonitors/{appMonitorName}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "appMonitor": {
+    "name": "string",
+    "domain": "string",
+    "id": "string",
+    "state": "CREATED|ACTIVE",
+    "tags": {}
+  }
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>API Synthetics</h2>
+          <p>Gerez les canaris de surveillance synthetique.</p>
+        </section>
+
+        <section>
+          <h3>DescribeCanaries</h3>
+          <p>Recupere des informations sur les canaris.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /canaries</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "names": ["string"],
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "canaries": [
+    {
+      "id": "string",
+      "name": "string",
+      "code": {...},
+      "executionRoleArn": "string",
+      "schedule": {...},
+      "runConfig": {...},
+      "successRetentionPeriodInDays": integer,
+      "failureRetentionPeriodInDays": integer,
+      "status": {...},
+      "tags": {...},
+      "timeline": {...}
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>GetCanaryRuns</h3>
+          <p>Recupere des informations sur les executions de canaris.</p>
+
+          <h5>Syntaxe de la requete :</h5>
+          <pre><code>POST /canaries/{name}/runs</code></pre>
+
+          <h5>Corps de la requete :</h5>
+          <pre><code>{
+  "nextToken": "string",
+  "maxResults": integer
+}</code></pre>
+
+          <h5>Reponse :</h5>
+          <pre><code>{
+  "canaryRuns": [
+    {
+      "id": "string",
+      "name": "string",
+      "status": {...},
+      "timeline": {...},
+      "artifactS3Location": "string",
+      "metricData": [...]
+    }
+  ],
+  "nextToken": "string"
+}</code></pre>
+        </section>
+
+        <section>
+          <h2>Reference SDK</h2>
+          <p>Documentation SDK specifique a chaque langage.</p>
+        </section>
+
+        <section>
+          <h3>SDK JavaScript</h3>
+
+          <h4>Installation :</h4>
+          <pre><code>npm install @aws-sdk/client-application-signals</code></pre>
+
+          <h4>Utilisation :</h4>
+          <pre><code>import { ApplicationSignalsClient, ListServicesCommand } from "@aws-sdk/client-application-signals";
+
+const client = new ApplicationSignalsClient({ region: "us-east-1" });
+
+const command = new ListServicesCommand({
+  startTime: new Date(Date.now() - 24 * 60 * 60 * 1000),
+  endTime: new Date()
+});
+
+const response = await client.send(command);</code></pre>
+        </section>
+
+        <section>
+          <h3>SDK Python (Boto3)</h3>
+
+          <h4>Installation :</h4>
+          <pre><code>pip install boto3</code></pre>
+
+          <h4>Utilisation :</h4>
+          <pre><code>import boto3
+from datetime import datetime, timedelta
+
+client = boto3.client('application-signals', region_name='us-east-1')
+
+response = client.list_services(
+    startTime=datetime.utcnow() - timedelta(days=1),
+    endTime=datetime.utcnow()
+)</code></pre>
+        </section>
+
+        <section>
+          <h3>SDK Java</h3>
+
+          <h4>Dependance Maven :</h4>
+          <pre><code>&lt;dependency&gt;
+  &lt;groupId&gt;software.amazon.awssdk&lt;/groupId&gt;
+  &lt;artifactId&gt;application-signals&lt;/artifactId&gt;
+  &lt;version&gt;2.20.0&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+
+          <h4>Utilisation :</h4>
+          <pre><code>ApplicationSignalsClient client = ApplicationSignalsClient.builder()
+    .region(Region.US_EAST_1)
+    .build();
+
+ListServicesRequest request = ListServicesRequest.builder()
+    .startTime(Instant.now().minus(1, ChronoUnit.DAYS))
+    .endTime(Instant.now())
+    .build();
+
+ListServicesResponse response = client.listServices(request);</code></pre>
+        </section>
+
+        <section>
+          <h3>SDK .NET</h3>
+
+          <h4>Package NuGet :</h4>
+          <pre><code>dotnet add package AWSSDK.ApplicationSignals</code></pre>
+
+          <h4>Utilisation :</h4>
+          <pre><code>using Amazon.ApplicationSignals;
+using Amazon.ApplicationSignals.Model;
+
+var client = new AmazonApplicationSignalsClient(RegionEndpoint.USEast1);
+
+var request = new ListServicesRequest
+{
+    StartTime = DateTime.UtcNow.AddDays(-1),
+    EndTime = DateTime.UtcNow
+};
+
+var response = await client.ListServicesAsync(request);</code></pre>
+        </section>
+
+        <section>
+          <h2>Codes d'erreur</h2>
+          <p>Codes d'erreur courants et leur signification.</p>
+        </section>
+
+        <section>
+          <h3>Erreurs Application Signals</h3>
+          <ul>
+            <li><code>ValidationException</code> - Parametres d'entree invalides</li>
+            <li><code>ResourceNotFoundException</code> - La ressource demandee n'existe pas</li>
+            <li><code>ThrottlingException</code> - Debit de requetes depasse</li>
+            <li><code>InternalServerException</code> - Erreur interne du service</li>
+            <li><code>AccessDeniedException</code> - Permissions insuffisantes</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Erreurs X-Ray</h3>
+          <ul>
+            <li><code>InvalidRequestException</code> - Requete mal formee</li>
+            <li><code>ThrottledException</code> - Limite de debit depassee</li>
+            <li><code>ResourceNotFoundException</code> - Trace introuvable</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Erreurs CloudWatch</h3>
+          <ul>
+            <li><code>InvalidParameterValueException</code> - Valeur de parametre invalide</li>
+            <li><code>MissingRequiredParameterException</code> - Parametre requis manquant</li>
+            <li><code>LimitExceededException</code> - Quota depasse</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

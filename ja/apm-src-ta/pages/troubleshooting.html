@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>பிழைத்திருத்தம் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>பிழைத்திருத்தம்</h1></header>
+      <article>
+        <section>
+          <h2>பொதுவான சிக்கல்கள்</h2>
+          <p>CloudWatch Application Signals-ஐ செயல்படுத்தும்போது அடிக்கடி எதிர்கொள்ளும் சிக்கல்கள் மற்றும் அவற்றை எவ்வாறு தீர்ப்பது என்பதை இந்த பிரிவு உள்ளடக்குகிறது.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch-ல் Traces தோன்றவில்லை</h3>
+
+          <h4>சாத்தியமான காரணங்கள்:</h4>
+          <ul>
+            <li>சேவைக்கு Application Signals இயக்கப்படவில்லை</li>
+            <li>தவறான IAM permissions</li>
+            <li>Agent சரியாக configure செய்யப்படவில்லை அல்லது இயங்கவில்லை</li>
+            <li>Sampling rate மிகவும் குறைவாக அமைக்கப்பட்டுள்ளது</li>
+            <li>CloudWatch-க்கு network connectivity சிக்கல்கள்</li>
+          </ul>
+
+          <h4>தீர்வுகள்:</h4>
+          <ol>
+            <li>AWS console-ல் Application Signals இயக்கப்பட்டுள்ளதை சரிபாருங்கள்</li>
+            <li>IAM permissions-ல் <code>cloudwatch:PutMetricData</code> மற்றும் <code>xray:PutTraceSegments</code> உள்ளதை சரிபாருங்கள்</li>
+            <li>Agent இயங்குகிறது மற்றும் சரியாக configure செய்யப்பட்டுள்ளது என்பதை உறுதிப்படுத்துங்கள்</li>
+            <li>Testing-க்கு sampling rate-ஐ அதிகரிக்கவும் (தற்காலிகமாக 100% அமைக்கவும்)</li>
+            <li>VPC security groups மற்றும் NACLs CloudWatch-க்கு outbound traffic அனுமதிக்கிறதா என்று சரிபாருங்கள்</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>காணாமல் போன அல்லது முழுமையற்ற Traces</h3>
+
+          <h4>பொதுவான சிக்கல்கள்:</h4>
+          <ul>
+            <li>சேவைகளுக்கிடையே Context propagate ஆகவில்லை</li>
+            <li>சில சேவைகள் instrumented செய்யப்படவில்லை</li>
+            <li>Sampling spans-ஐ drop செய்கிறது</li>
+            <li>Agent configuration சிக்கல்கள்</li>
+          </ul>
+
+          <h4>Debugging படிகள்:</h4>
+          <ol>
+            <li>Uninstrumented சேவைகளை அடையாளம் காண service map-ஐ சரிபாருங்கள்</li>
+            <li>Trace context headers pass ஆகிறதா என்று சரிபாருங்கள் (எ.கா., <code>x-amzn-trace-id</code>)</li>
+            <li>Configuration errors-க்கு agent logs-ஐ review செய்யுங்கள்</li>
+            <li>Sampling சிக்கல்களை நிராகரிக்க 100% sampling-உடன் test செய்யுங்கள்</li>
+            <li>Partial traces-ஐ கண்டறிய trace search பயன்படுத்துங்கள்</li>
+          </ol>
+        </section>
+
+        <section>
+          <h3>அதிக Instrumentation Overhead</h3>
+
+          <h4>அறிகுறிகள்:</h4>
+          <ul>
+            <li>அதிகரித்த CPU பயன்பாடு</li>
+            <li>அதிக memory consumption</li>
+            <li>அதிகரித்த தாமதம்</li>
+            <li>Application செயல்திறன் சீரழிவு</li>
+          </ul>
+
+          <h4>Optimization strategies:</h4>
+          <ul>
+            <li>Sampling rate-ஐ குறைக்கவும் (production-க்கு 10%-உடன் தொடங்குங்கள்)</li>
+            <li>Tail-based-க்கு பதிலாக head-based sampling பயன்படுத்துங்கள்</li>
+            <li>பொருத்தமான span limits கட்டமைக்கவும்</li>
+            <li>Batch span exports</li>
+            <li>Instrumentation metrics-ஐ கண்காணிக்கவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>RUM Data தோன்றவில்லை</h3>
+
+          <h4>சரிபார்ப்புப் பட்டியல்:</h4>
+          <ul>
+            <li>RUM web client சரியாக install மற்றும் load செய்யப்பட்டுள்ளது</li>
+            <li>Application ID மற்றும் configuration சரியானது</li>
+            <li>RUM domains-க்கு CORS headers configure செய்யப்பட்டுள்ளன</li>
+            <li>Content Security Policy RUM scripts-ஐ அனுமதிக்கிறது</li>
+            <li>Browser console JavaScript errors காட்டவில்லை</li>
+          </ul>
+
+          <h4>சரிபார்ப்பு:</h4>
+          <pre><code>// Check if RUM is loaded
+console.log(window.cwr);
+
+// Verify configuration
+console.log(cwr('getConfig'));</code></pre>
+        </section>
+
+        <section>
+          <h3>Synthetic Canaries தோல்வியடைகின்றன</h3>
+
+          <h4>பொதுவான காரணங்கள்:</h4>
+          <ul>
+            <li>Canary VPC-லிருந்து network connectivity சிக்கல்கள்</li>
+            <li>Authentication அல்லது authorization தோல்விகள்</li>
+            <li>Application மாற்றங்கள் test scripts-ஐ உடைக்கின்றன</li>
+            <li>Canary runtime அல்லது dependencies outdated</li>
+          </ul>
+
+          <h4>Debugging:</h4>
+          <ol>
+            <li>CloudWatch Logs-ல் canary logs-ஐ review செய்யுங்கள்</li>
+            <li>Canary scripts-ஐ locally test செய்யுங்கள்</li>
+            <li>VPC routing மற்றும் security groups-ஐ சரிபாருங்கள்</li>
+            <li>தேவைப்பட்டால் canary runtime-ஐ update செய்யுங்கள்</li>
+            <li>Application endpoints accessible என்பதை verify செய்யுங்கள்</li>
+          </ol>
+        </section>
+
+        <section>
+          <h2>Debugging வழிகாட்டிகள்</h2>
+          <p>சிக்கலான சிக்கல்களை கண்டறிவதற்கான படிப்படியான வழிகாட்டிகள்.</p>
+        </section>
+
+        <section>
+          <h3>Trace Context Propagation-ஐ Debugging செய்தல்</h3>
+
+          <h4>படி 1: Instrumentation-ஐ சரிபாருங்கள்</h4>
+          <p>உங்கள் call chain-ல் உள்ள அனைத்து சேவைகளும் சரியாக instrumented செய்யப்பட்டுள்ளதை சரிபாருங்கள்:</p>
+          <pre><code># Check for trace headers in requests
+curl -H "x-amzn-trace-id: Root=1-5759e988-bd862e3fe1be46a994272793;Parent=53995c3f42cd8ad8;Sampled=1" \
+     http://your-service/endpoint</code></pre>
+
+          <h4>படி 2: Agent Configuration-ஐ சரிபாருங்கள்</h4>
+          <p>Agent configuration files மற்றும் environment variables-ஐ verify செய்யுங்கள்.</p>
+
+          <h4>படி 3: End-to-End Test செய்யுங்கள்</h4>
+          <p>ஒரு test request செய்து அனைத்து சேவைகள் வழியாக trace செய்யுங்கள்.</p>
+        </section>
+
+        <section>
+          <h3>செயல்திறன் சிக்கல் கண்டறிதல்</h3>
+
+          <h4>Bottleneck-ஐ அடையாளம் காணுங்கள்:</h4>
+          <ol>
+            <li>High-latency சேவைகளுக்கு service map-ஐ சரிபாருங்கள்</li>
+            <li>மெதுவான spans-க்கு trace timelines-ஐ ஆராயுங்கள்</li>
+            <li>Resource metrics-ஐ (CPU, memory, disk I/O) review செய்யுங்கள்</li>
+            <li>Logs-ல் error patterns-ஐ பாருங்கள்</li>
+            <li>Database query செயல்திறனை சரிபாருங்கள்</li>
+          </ol>
+
+          <h4>பொதுவான Bottlenecks:</h4>
+          <ul>
+            <li>Database query optimization தேவை</li>
+            <li>External API calls timeout ஆகின்றன</li>
+            <li>Resource constraints (CPU/memory)</li>
+            <li>Thread pool exhaustion</li>
+            <li>சேவைகளுக்கிடையே network தாமதம்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Agent பிழைத்திருத்தம்</h3>
+
+          <h4>Agent நிலையை சரிபாருங்கள்:</h4>
+          <pre><code># For Java applications
+jps -l | grep opentelemetry
+
+# For Python applications
+ps aux | grep opentelemetry
+
+# Check agent logs
+tail -f /var/log/aws-opentelemetry-agent.log</code></pre>
+
+          <h4>பொதுவான Agent சிக்கல்கள்:</h4>
+          <ul>
+            <li>JVM-க்கு தவறான Java agent version</li>
+            <li>காணாமல் போன dependencies அல்லது libraries</li>
+            <li>Configuration file syntax errors</li>
+            <li>Log files-க்கு எழுதும் permission சிக்கல்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>கருவிகள் மற்றும் கட்டளைகள்</h2>
+          <p>பிழைத்திருத்தத்திற்கு பயனுள்ள கருவிகள் மற்றும் கட்டளைகள்.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch CLI கட்டளைகள்</h3>
+          <pre><code># List Application Signals services
+aws application-signals list-services
+
+# Get service metrics
+aws cloudwatch get-metric-data --metric-data-queries '[
+  {
+    "Id": "m1",
+    "MetricStat": {
+      "Metric": {
+        "Namespace": "AWS/ApplicationSignals",
+        "MetricName": "Latency"
+      },
+      "Period": 300,
+      "Stat": "Average"
+    }
+  }
+]'
+
+# Query traces
+aws xray get-trace-summaries --start-time 2024-01-01T00:00:00Z --end-time 2024-01-02T00:00:00Z</code></pre>
+        </section>
+
+        <section>
+          <h3>Log Analysis</h3>
+          <p>Telemetry data-ஐ பகுப்பாய்வு செய்ய CloudWatch Logs Insights பயன்படுத்துங்கள்:</p>
+          <pre><code># Find errors in application logs
+fields @timestamp, @message
+| filter @message like /ERROR/
+| sort @timestamp desc
+| limit 100
+
+# Correlate traces with logs
+fields @timestamp, traceId, @message
+| filter ispresent(traceId)
+| sort @timestamp desc</code></pre>
+        </section>
+
+        <section>
+          <h2>உதவி பெறுதல்</h2>
+          <p>கூடுதல் உதவி தேவைப்படும்போது:</p>
+
+          <h3>ஆவண வளங்கள்:</h3>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html">Application Signals User Guide</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">Synthetics User Guide</a></li>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">RUM User Guide</a></li>
+          </ul>
+
+          <h3>Support விருப்பங்கள்:</h3>
+          <ul>
+            <li>AWS Support Center</li>
+            <li>AWS re:Post community</li>
+            <li>OpenTelemetry projects-க்கான GitHub issues</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

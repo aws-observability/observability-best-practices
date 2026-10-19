@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Best Practices — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Best Practices</h1></header>
+      <article>
+        <section>
+          <h2>Instrumentation Best Practices</h2>
+          <p>Effective instrumentation is key to getting valuable insights from your observability data. Follow these best practices to ensure your instrumentation provides maximum value while minimizing overhead.</p>
+        </section>
+
+        <section>
+          <h3>What to Instrument</h3>
+          <p>Focus on instrumenting the most critical parts of your application:</p>
+          
+          <h4>High Priority:</h4>
+          <ul>
+            <li>Public API endpoints and user-facing operations</li>
+            <li>Database queries and external service calls</li>
+            <li>Business-critical workflows and transactions</li>
+            <li>Error paths and exception handling</li>
+          </ul>
+          
+          <h4>Medium Priority:</h4>
+          <ul>
+            <li>Internal service-to-service communication</li>
+            <li>Background jobs and scheduled tasks</li>
+            <li>Cache operations</li>
+          </ul>
+          
+          <h4>Low Priority:</h4>
+          <ul>
+            <li>Simple utility functions</li>
+            <li>Static content serving</li>
+            <li>Health check endpoints</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Naming Conventions</h3>
+          <p>Consistent naming makes it easier to search and filter your traces:</p>
+          
+          <h4>Span Names:</h4>
+          <ul>
+            <li>Use lowercase with hyphens: <code>http-get-user-profile</code></li>
+            <li>Include the operation type: <code>db-query-users</code>, <code>redis-get-session</code></li>
+            <li>Be descriptive but concise: avoid generic names like "process" or "handle"</li>
+          </ul>
+          
+          <h4>Service Names:</h4>
+          <ul>
+            <li>Use consistent service naming across environments</li>
+            <li>Include environment in service name for multi-environment setups</li>
+            <li>Follow your organization's naming conventions</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Attributes and Tags</h3>
+          <p>Use attributes to add context to your spans and traces:</p>
+          
+          <h4>Standard Attributes:</h4>
+          <ul>
+            <li><code>http.method</code> - HTTP method (GET, POST, etc.)</li>
+            <li><code>http.url</code> - Request URL (be careful with PII)</li>
+            <li><code>http.status_code</code> - HTTP response status</li>
+            <li><code>db.system</code> - Database type (mysql, postgres, etc.)</li>
+            <li><code>db.name</code> - Database name</li>
+            <li><code>db.operation</code> - Database operation (SELECT, INSERT, etc.)</li>
+          </ul>
+          
+          <h4>Custom Attributes:</h4>
+          <ul>
+            <li><code>user.id</code> - User identifier (hashed if PII)</li>
+            <li><code>business.operation</code> - Business operation type</li>
+            <li><code>version</code> - Application version</li>
+            <li><code>environment</code> - Deployment environment</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PII and Security Considerations</h3>
+          <p>Protect sensitive data in your telemetry:</p>
+          
+          <h4>Never Include:</h4>
+          <ul>
+            <li>Passwords, API keys, or authentication tokens</li>
+            <li>Personal identifiable information (PII) like emails, phone numbers</li>
+            <li>Full URLs with query parameters containing sensitive data</li>
+            <li>Credit card numbers or financial information</li>
+          </ul>
+          
+          <h4>Safe Alternatives:</h4>
+          <ul>
+            <li>Use hashed or tokenized identifiers</li>
+            <li>Include only the path portion of URLs</li>
+            <li>Use generic status indicators instead of specific values</li>
+            <li>Implement data masking at the instrumentation level</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Sampling Strategies</h2>
+          <p>Sampling helps control costs while maintaining observability coverage.</p>
+        </section>
+
+        <section>
+          <h3>Choosing a Sampling Strategy</h3>
+          
+          <h4>Rate-Based Sampling:</h4>
+          <ul>
+            <li>Sample a fixed percentage of requests (e.g., 10%)</li>
+            <li>Simple to implement and understand</li>
+            <li>May miss important but rare events</li>
+          </ul>
+          
+          <h4>Tail Sampling:</h4>
+          <ul>
+            <li>Make sampling decisions after collecting trace data</li>
+            <li>Can prioritize traces with errors or high latency</li>
+            <li>More complex but more intelligent</li>
+          </ul>
+          
+          <h4>Rule-Based Sampling:</h4>
+          <ul>
+            <li>Sample based on specific conditions (user, endpoint, etc.)</li>
+            <li>Ensure critical paths are always traced</li>
+            <li>Requires careful rule definition</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Recommended Sampling Rates</h3>
+          <ul>
+            <li><strong>Development:</strong> 100% sampling for full visibility</li>
+            <li><strong>Staging:</strong> 50-100% sampling for testing</li>
+            <li><strong>Production:</strong> 10-20% for cost-effective coverage</li>
+            <li><strong>High-Traffic Services:</strong> 1-5% to control volume</li>
+            <li><strong>Critical Paths:</strong> 100% sampling regardless of other rules</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Performance Optimization</h2>
+          <p>Minimize the performance impact of instrumentation.</p>
+        </section>
+
+        <section>
+          <h3>Reduce Overhead</h3>
+          <ul>
+            <li>Use asynchronous span processing when possible</li>
+            <li>Batch span exports to reduce network calls</li>
+            <li>Configure appropriate buffer sizes</li>
+            <li>Monitor instrumentation performance metrics</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Resource Management</h3>
+          <ul>
+            <li>Set reasonable timeouts for span exports</li>
+            <li>Implement circuit breakers for backend failures</li>
+            <li>Use connection pooling for collectors</li>
+            <li>Configure appropriate retry policies</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Alerting and Monitoring</h2>
+          <p>Set up effective alerts to stay on top of application health.</p>
+        </section>
+
+        <section>
+          <h3>Key Metrics to Monitor</h3>
+          <ul>
+            <li><strong>Latency:</strong> P95/P99 response times</li>
+            <li><strong>Error Rate:</strong> Percentage of failed requests</li>
+            <li><strong>Throughput:</strong> Requests per second</li>
+            <li><strong>Saturation:</strong> Resource utilization</li>
+            <li><strong>Trace Volume:</strong> Number of traces collected</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SLO-Based Alerting</h3>
+          <p>Define Service Level Objectives and alert when they're at risk:</p>
+          <ul>
+            <li>Latency SLO: 95% of requests < 500ms</li>
+            <li>Error SLO: 99.9% success rate</li>
+            <li>Availability SLO: 99.95% uptime</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Cost Management</h2>
+          <p>Control observability costs while maintaining value.</p>
+        </section>
+
+        <section>
+          <h3>Cost Optimization Strategies</h3>
+          <ul>
+            <li>Implement appropriate sampling rates</li>
+            <li>Use data retention policies</li>
+            <li>Filter unnecessary spans and attributes</li>
+            <li>Archive old data to cheaper storage</li>
+            <li>Monitor and optimize data volume</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Data Retention Policies</h3>
+          <ul>
+            <li><strong>Hot Storage:</strong> Recent data (7-30 days) for active troubleshooting</li>
+            <li><strong>Warm Storage:</strong> Historical data (30-90 days) for trend analysis</li>
+            <li><strong>Cold Storage:</strong> Archive data (90+ days) for compliance and rare queries</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

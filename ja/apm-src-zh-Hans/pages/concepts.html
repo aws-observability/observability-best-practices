@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>概念与基础 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>概念与基础</h1></header>
+      <article>
+        <section>
+          <h2>核心概念</h2>
+          <p>理解应用程序性能监控（APM）的基本概念对于有效使用 CloudWatch Application Signals 至关重要。本节涵盖了构成现代 Observability 基础的关键构建模块。</p>
+        </section>
+
+        <section>
+          <h3>分布式追踪</h3>
+          <p>分布式追踪是跟踪请求在分布式系统中流转的实践。在微服务架构中，单个用户请求可能会经过多个服务、数据库和外部 API。分布式追踪提供了对整个旅程的可见性。</p>
+
+          <h4>关键组件：</h4>
+          <ul>
+            <li><strong>追踪：</strong>请求在系统中完整的端到端旅程</li>
+            <li><strong>Span：</strong>追踪中的单个操作（例如，数据库查询或 API 调用）</li>
+            <li><strong>追踪上下文：</strong>连接跨服务边界 span 的元数据</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>追踪、Span 和段</h3>
+          <p>这些是分布式追踪中使用的基本数据结构：</p>
+
+          <h4>追踪</h4>
+          <p>追踪表示请求在应用程序中的完整路径。它包含时间信息、元数据以及构成请求旅程的所有 span。</p>
+
+          <h4>Span</h4>
+          <p>Span 表示追踪中的单个工作单元。每个 span 包含：</p>
+          <ul>
+            <li>名称和操作类型</li>
+            <li>开始和结束时间戳</li>
+            <li>用于附加上下文的标签和属性</li>
+            <li>对父 span 的引用</li>
+          </ul>
+
+          <h4>段</h4>
+          <p>在 AWS X-Ray 术语中，段是追踪数据的基本单位。每个段对应一个 span，包含该部分追踪所完成工作的信息。</p>
+        </section>
+
+        <section>
+          <h3>服务地图</h3>
+          <p>服务地图提供应用程序架构和依赖关系的可视化表示。它们展示：</p>
+          <ul>
+            <li>服务之间如何相互连接</li>
+            <li>服务间的流量流向</li>
+            <li>每个服务的性能指标</li>
+            <li>错误率和延迟模式</li>
+          </ul>
+          <p>服务地图从追踪数据自动生成，帮助您一目了然地了解系统拓扑。</p>
+        </section>
+
+        <section>
+          <h3>检测</h3>
+          <p>检测是向应用程序添加 Observability 代码的过程。有几种方法：</p>
+
+          <h4>自动检测</h4>
+          <p>自动检测不需要代码更改。库和代理会自动检测常见的框架和库。</p>
+
+          <h4>手动检测</h4>
+          <p>手动检测涉及向应用程序添加追踪代码。这提供了细粒度的控制，但需要更多的开发工作。</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>OpenTelemetry 是一个开源 Observability 框架，提供与供应商无关的 API 用于检测。它支持多种编程语言，可以将数据导出到各种后端。</p>
+        </section>
+
+        <section>
+          <h3>数据模型</h3>
+          <p>Application Signals 使用结构化数据模型来组织遥测数据：</p>
+
+          <h4>指标</h4>
+          <ul>
+            <li><strong>延迟：</strong>响应时间测量（P50、P90、P99）</li>
+            <li><strong>吞吐量：</strong>请求速率（每秒请求数）</li>
+            <li><strong>错误率：</strong>失败请求的百分比</li>
+            <li><strong>饱和度：</strong>资源利用率（CPU、内存等）</li>
+          </ul>
+
+          <h4>追踪</h4>
+          <p>包含 span、标签和时间信息的结构化追踪数据。</p>
+
+          <h4>日志</h4>
+          <p>与追踪和指标关联的应用程序日志，提供完整的上下文。</p>
+        </section>
+
+        <section>
+          <h3>采样策略</h3>
+          <p>采样控制哪些请求被追踪，以平衡 Observability 与成本和性能：</p>
+
+          <h4>头部采样</h4>
+          <p>在请求生命周期开始时决定是否追踪该请求。</p>
+
+          <h4>尾部采样</h4>
+          <p>在收集追踪数据后做出采样决策，允许基于请求特征进行更智能的采样。</p>
+
+          <h4>基于速率的采样</h4>
+          <p>追踪固定百分比的请求（例如，所有请求的 10%）。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

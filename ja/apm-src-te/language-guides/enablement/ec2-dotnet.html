@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for .NET Core on EC2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for .NET Core on EC2</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">EC2</div>
+            <div class="language-badge">.NET</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a .NET Core application on Amazon EC2 with AWS Application Signals enabled. This is the EC2 equivalent of the Lambda .NET function, reusing the same business logic and endpoints.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a .NET Core app on EC2</li>
+                        <li>Enable AWS Application Signals auto-instrumentation</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 30-45 minutes
+                </div>
+            </div>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="required-tools">Required Tools</h3>
+<ul>
+<li>AWS CLI v2 (latest version)</li>
+<li>Docker Desktop</li>
+<li>.NET 8.0 SDK (for local development)</li>
+<li>AWS Account with appropriate permissions</li>
+<li>Text editor</li>
+</ul>
+<h3 id="important-compatibility-requirements">Important Compatibility Requirements</h3>
+<ul>
+<li><strong>AWS SDK .NET V3</strong>: The AWS Distro for OpenTelemetry (ADOT) SDK for .NET does not support AWS SDK for .NET V4. Use AWS SDK .NET V3 for full Application Signals support.</li>
+<li><strong>OpenTelemetry Packages</strong>: Use compatible OpenTelemetry packages with AWS.DistributedOpenTelemetry for Application Signals integration.</li>
+</ul>
+<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<ul>
+<li>EC2: Full access (create instances, security groups, key pairs)</li>
+<li>IAM: Create roles and policies</li>
+<li>CloudWatch: Logs and Application Signals access</li>
+<li>VPC: Create and manage VPC resources</li>
+<li>SSM: Parameter Store write access</li>
+</ul>
+<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<ul>
+<li>Basic AWS CLI usage</li>
+<li>Basic Docker commands</li>
+<li>Basic understanding of EC2 concepts</li>
+<li>Basic .NET Core knowledge</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<p>Your EC2 instance will run:</p>
+<ol>
+<li><strong>.NET Core Application</strong>: Your web API with Application Signals instrumentation</li>
+<li><strong>CloudWatch Agent</strong>: Collects traces and metrics (optional, can use direct OTLP)</li>
+</ol>
+<p><strong>Flow:</strong></p>
+<pre><code>EC2 <span class="hljs-keyword">Instance
+</span>  → .NET Core App (auto-<span class="hljs-keyword">instrumented)
+</span>  → OpenTelemetry Collector (optional)
+  → <span class="hljs-keyword">CloudWatch </span>Application Signals
+</code></pre><h2 id="step-1-create-the-application">Step 1: Create the Application</h2>
+<h3 id="1-1-create-project-structure">1.1 Create Project Structure</h3>
+<pre><code class="lang-bash"><span class="hljs-built_in">mkdir</span> ec2-dotnet
+<span class="hljs-built_in">cd</span> ec2-dotnet
+</code></pre>
+<h3 id="1-2-create-the-net-project">1.2 Create the .NET Project</h3>
+<p>Create <code>ec2-dotnet.csproj</code>:</p>
+<pre><code class="lang-xml"><span class="hljs-tag">&lt;<span class="hljs-name">Project</span> <span class="hljs-attr">Sdk</span>=<span class="hljs-string">"Microsoft.NET.Sdk.Web"</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">PropertyGroup</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">TargetFramework</span>&gt;</span>net8.0<span class="hljs-tag">&lt;/<span class="hljs-name">TargetFramework</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">ImplicitUsings</span>&gt;</span>enable<span class="hljs-tag">&lt;/<span class="hljs-name">ImplicitUsings</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">Nullable</span>&gt;</span>enable<span class="hljs-tag">&lt;/<span class="hljs-name">Nullable</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">GenerateRuntimeConfigurationFiles</span>&gt;</span>true<span class="hljs-tag">&lt;/<span class="hljs-name">GenerateRuntimeConfigurationFiles</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">DockerDefaultTargetOS</span>&gt;</span>Linux<span class="hljs-tag">&lt;/<span class="hljs-name">DockerDefaultTargetOS</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">PropertyGroup</span>&gt;</span>
+
+  <span class="hljs-tag">&lt;<span class="hljs-name">ItemGroup</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"Microsoft.AspNetCore.OpenApi"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"8.0.0"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"Swashbuckle.AspNetCore"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"6.4.0"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"AWSSDK.S3"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"3.7.307.25"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"AWS.DistributedOpenTelemetry"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.0.0"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"OpenTelemetry"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.4.0"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"OpenTelemetry.Extensions.Hosting"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.0.0-rc9"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"OpenTelemetry.Instrumentation.AspNetCore"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.0.0-rc9"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"OpenTelemetry.Instrumentation.Http"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.0.0-rc9"</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">PackageReference</span> <span class="hljs-attr">Include</span>=<span class="hljs-string">"OpenTelemetry.Instrumentation.AWS"</span> <span class="hljs-attr">Version</span>=<span class="hljs-string">"1.0.0"</span> /&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">ItemGroup</span>&gt;</span>
+
+<span class="hljs-tag">&lt;/<span class="hljs-name">Project</span>&gt;</span>
+</code></pre>
+<h3 id="1-3-create-the-application-code">1.3 Create the Application Code</h3>
+<p>Create <code>Program.cs</code> with the same endpoints as the Lambda function:</p>
+<pre><code class="lang-csharp"><span class="hljs-keyword">using</span> Microsoft.AspNetCore.Builder;
+<span class="hljs-keyword">using</span> Microsoft.AspNetCore.Hosting;
+<span class="hljs-keyword">using</span> Microsoft.AspNetCore.Http;
+<span class="hljs-keyword">using</span> Microsoft.Extensions.DependencyInjection;
+<span class="hljs-keyword">using</span> Microsoft.Extensions.Hosting;
+<span class="hljs-keyword">using</span> Microsoft.Extensions.Logging;
+<span class="hljs-keyword">using</span> System;
+<span class="hljs-keyword">using</span> System.Collections.Generic;
+<span class="hljs-keyword">using</span> System.Text.Json;
+<span class="hljs-keyword">using</span> System.Threading.Tasks;
+<span class="hljs-keyword">using</span> System.Threading;
+<span class="hljs-keyword">using</span> System.Net.Http;
+<span class="hljs-keyword">using</span> Amazon.S3;
+<span class="hljs-keyword">using</span> Amazon.S3.Model;
+
+<span class="hljs-keyword">namespace</span> ec2_dotnet
+{
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Program
+    {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> Main(<span class="hljs-keyword">string</span>[] args)
+        {
+            CreateHostBuilder(args).Build().Run();
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> IHostBuilder CreateHostBuilder(<span class="hljs-keyword">string</span>[] args) =&gt;
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =&gt;
+                {
+                    webBuilder.UseStartup&lt;Startup&gt;();
+                });
+    }
+
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> Startup
+    {
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+            services.AddHttpClient();
+            services.AddAWSService&lt;IAmazonS3&gt;();
+        }
+
+        <span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            <span class="hljs-built_in">if</span> (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+
+            app.UseRouting();
+            app.UseCors(builder =&gt; builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+
+            app.UseEndpoints(endpoints =&gt;
+            {
+                endpoints.MapControllers();
+            });
+        }
+    }
+
+    [Microsoft.AspNetCore.Mvc.ApiController]
+    [Microsoft.AspNetCore.Mvc.Route(<span class="hljs-string">""</span>)]
+    <span class="hljs-keyword">public</span> <span class="hljs-keyword">class</span> DemoController : Microsoft.AspNetCore.Mvc.ControllerBase
+    {
+        <span class="hljs-keyword">private</span> readonly ILogger&lt;DemoController&gt; _logger;
+        <span class="hljs-keyword">private</span> readonly <span class="hljs-built_in">HttpClient</span> _httpClient;
+        <span class="hljs-keyword">private</span> readonly IAmazonS3 _s3Client;
+        <span class="hljs-keyword">private</span> readonly Random _random = <span class="hljs-keyword">new</span> Random();
+
+        <span class="hljs-keyword">public</span> DemoController(ILogger&lt;DemoController&gt; logger, <span class="hljs-built_in">HttpClient</span> httpClient, IAmazonS3 s3Client)
+        {
+            _logger = logger;
+            _httpClient = httpClient;
+            _s3Client = s3Client;
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet]
+        <span class="hljs-keyword">public</span> IActionResult Root()
+        {
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = <span class="hljs-string">"Hello World from .NET EC2!"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                runtime = <span class="hljs-string">"dotnet8"</span>,
+                host = Environment.MachineName,
+                environment = <span class="hljs-string">"ec2"</span>
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"health"</span>)]
+        <span class="hljs-keyword">public</span> IActionResult Health()
+        {
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                status = <span class="hljs-string">"healthy"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                runtime = <span class="hljs-string">"dotnet8"</span>,
+                host = Environment.MachineName
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/hello/{name}"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; Hello(<span class="hljs-keyword">string</span> name)
+        {
+            <span class="hljs-comment">// Simulate some processing time</span>
+            await <span class="hljs-built_in">Task</span>.Delay(_random.Next(<span class="hljs-number">10</span>, <span class="hljs-number">110</span>));
+
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = $<span class="hljs-string">"Hello, {name}!"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                runtime = <span class="hljs-string">"dotnet8"</span>,
+                greeting_id = _random.Next(<span class="hljs-number">10000</span>)
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/slow"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; Slow()
+        {
+            <span class="hljs-comment">// Simulate slow operation (500-1500ms)</span>
+            var <span class="hljs-built_in">delay</span> = _random.Next(<span class="hljs-number">500</span>, <span class="hljs-number">1500</span>);
+            await <span class="hljs-built_in">Task</span>.Delay(<span class="hljs-built_in">delay</span>);
+
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = <span class="hljs-string">"Slow operation completed"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                duration_ms = <span class="hljs-built_in">delay</span>
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/error"</span>)]
+        <span class="hljs-keyword">public</span> IActionResult Error()
+        {
+            <span class="hljs-built_in">if</span> (_random.NextDouble() &gt; <span class="hljs-number">0.5</span>)
+            {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception(<span class="hljs-string">"Simulated error for Application Signals testing"</span>);
+            }
+
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = <span class="hljs-string">"No error occurred"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/external"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; External()
+        {
+            <span class="hljs-built_in">try</span>
+            {
+                var response = await _httpClient.GetAsync(<span class="hljs-string">"https://httpbin.org/delay/1"</span>);
+
+                <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+                {
+                    message = <span class="hljs-string">"External call completed"</span>,
+                    external_status_code = (<span class="hljs-keyword">int</span>)response.StatusCode,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    service = <span class="hljs-string">"ec2-dotnet"</span>
+                });
+            }
+            <span class="hljs-built_in">catch</span> (Exception ex)
+            {
+                <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> Exception($<span class="hljs-string">"External call failed: {ex.Message}"</span>);
+            }
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/s3"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; S3()
+        {
+            <span class="hljs-built_in">try</span>
+            {
+                var response = await _s3Client.ListBucketsAsync();
+
+                <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+                {
+                    message = <span class="hljs-string">"S3 call completed successfully"</span>,
+                    bucket_count = response.Buckets.Count,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    service = <span class="hljs-string">"ec2-dotnet"</span>,
+                    first_bucket = response.Buckets.Count &gt; <span class="hljs-number">0</span> ? response.Buckets[<span class="hljs-number">0</span>].BucketName : null
+                });
+            }
+            <span class="hljs-built_in">catch</span> (Exception ex)
+            {
+                <span class="hljs-built_in">return</span> StatusCode(<span class="hljs-number">500</span>, <span class="hljs-keyword">new</span>
+                {
+                    error = <span class="hljs-string">"S3 call failed"</span>,
+                    message = ex.Message,
+                    timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                    service = <span class="hljs-string">"ec2-dotnet"</span>
+                });
+            }
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/database"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; Database()
+        {
+            <span class="hljs-comment">// Simulate database query time</span>
+            await <span class="hljs-built_in">Task</span>.Delay(_random.Next(<span class="hljs-number">50</span>, <span class="hljs-number">250</span>));
+
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = <span class="hljs-string">"Database query completed"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                records_returned = _random.Next(<span class="hljs-number">1</span>, <span class="hljs-number">101</span>)
+            });
+        }
+
+        [Microsoft.AspNetCore.Mvc.HttpGet(<span class="hljs-string">"api/complex"</span>)]
+        <span class="hljs-keyword">public</span> async <span class="hljs-built_in">Task</span>&lt;IActionResult&gt; Complex()
+        {
+            <span class="hljs-comment">// Step 1: Simulate authentication</span>
+            await <span class="hljs-built_in">Task</span>.Delay(_random.Next(<span class="hljs-number">10</span>, <span class="hljs-number">60</span>));
+
+            <span class="hljs-comment">// Step 2: Simulate business logic</span>
+            await <span class="hljs-built_in">Task</span>.Delay(_random.Next(<span class="hljs-number">20</span>, <span class="hljs-number">120</span>));
+
+            <span class="hljs-comment">// Step 3: Simulate database operations</span>
+            await <span class="hljs-built_in">Task</span>.Delay(_random.Next(<span class="hljs-number">30</span>, <span class="hljs-number">180</span>));
+
+            <span class="hljs-built_in">return</span> Ok(<span class="hljs-keyword">new</span>
+            {
+                message = <span class="hljs-string">"Complex operation completed successfully"</span>,
+                timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+                service = <span class="hljs-string">"ec2-dotnet"</span>,
+                steps_completed = <span class="hljs-number">3</span>,
+                total_processing_time_ms = _random.Next(<span class="hljs-number">60</span>, <span class="hljs-number">360</span>)
+            });
+        }
+    }
+}
+</code></pre>
+<h3 id="1-4-create-dockerfile">1.4 Create Dockerfile</h3>
+<p>Create <code>Dockerfile</code>:</p>
+<pre><code class="lang-dockerfile"><span class="hljs-comment"># Use the official .NET 8 runtime as base image</span>
+<span class="hljs-keyword">FROM</span> mcr.microsoft.com/dotnet/aspnet:<span class="hljs-number">8.0</span> AS base
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span><span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">8080</span>
+
+<span class="hljs-comment"># Use the .NET 8 SDK for building</span>
+<span class="hljs-keyword">FROM</span> mcr.microsoft.com/dotnet/sdk:<span class="hljs-number">8.0</span> AS build
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /src
+</span><span class="hljs-keyword">COPY</span><span class="bash"> [<span class="hljs-string">"ec2-dotnet.csproj"</span>, <span class="hljs-string">"."</span>]
+</span><span class="hljs-keyword">RUN</span><span class="bash"> dotnet restore <span class="hljs-string">"ec2-dotnet.csproj"</span>
+</span><span class="hljs-keyword">COPY</span><span class="bash"> . .
+</span><span class="hljs-keyword">RUN</span><span class="bash"> dotnet build <span class="hljs-string">"ec2-dotnet.csproj"</span> -c Release -o /app/build
+</span>
+<span class="hljs-keyword">FROM</span> build AS publish
+<span class="hljs-keyword">RUN</span><span class="bash"> dotnet publish <span class="hljs-string">"ec2-dotnet.csproj"</span> -c Release -o /app/publish
+</span>
+<span class="hljs-keyword">FROM</span> base AS final
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span><span class="hljs-keyword">COPY</span><span class="bash"> --from=publish /app/publish .
+</span>
+<span class="hljs-comment"># Set environment variables for Application Signals</span>
+<span class="hljs-keyword">ENV</span> OTEL_SERVICE_NAME=ec2-dotnet
+<span class="hljs-keyword">ENV</span> OTEL_RESOURCE_ATTRIBUTES=service.name=ec2-dotnet,service.namespace=aws-observability,service.version=<span class="hljs-number">1.0</span>.<span class="hljs-number">0</span>,deployment.environment=ec2
+<span class="hljs-keyword">ENV</span> OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net
+<span class="hljs-keyword">ENV</span> OTEL_EXPORTER_OTLP_HEADERS=api-key=your-api-key
+<span class="hljs-keyword">ENV</span> OTEL_TRACES_EXPORTER=otlp
+<span class="hljs-keyword">ENV</span> OTEL_METRICS_EXPORTER=otlp
+<span class="hljs-keyword">ENV</span> OTEL_LOGS_EXPORTER=otlp
+
+<span class="hljs-keyword">ENTRYPOINT</span><span class="bash"> [<span class="hljs-string">"dotnet"</span>, <span class="hljs-string">"ec2-dotnet.dll"</span>]</span>
+</code></pre>
+<h3 id="1-5-create-start-script">1.5 Create Start Script</h3>
+<p>Create <code>start.sh</code>:</p>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+<span class="hljs-comment"># Start script for .NET EC2 Application Signals Demo</span>
+<span class="hljs-comment"># This script sets up the environment and starts the application</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Starting .NET EC2 Application Signals Demo..."</span>
+
+<span class="hljs-comment"># Set environment variables for Application Signals</span>
+<span class="hljs-built_in">export</span> OTEL_SERVICE_NAME=ec2-dotnet
+<span class="hljs-built_in">export</span> OTEL_RESOURCE_ATTRIBUTES=<span class="hljs-string">"service.name=ec2-dotnet,service.namespace=aws-observability,service.version=1.0.0,deployment.environment=ec2"</span>
+<span class="hljs-built_in">export</span> OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net
+<span class="hljs-built_in">export</span> OTEL_EXPORTER_OTLP_HEADERS=<span class="hljs-string">"api-key=your-api-key"</span>
+<span class="hljs-built_in">export</span> OTEL_TRACES_EXPORTER=otlp
+<span class="hljs-built_in">export</span> OTEL_METRICS_EXPORTER=otlp
+<span class="hljs-built_in">export</span> OTEL_LOGS_EXPORTER=otlp
+
+<span class="hljs-comment"># Set ASP.NET Core environment</span>
+<span class="hljs-built_in">export</span> ASPNETCORE_ENVIRONMENT=Production
+<span class="hljs-built_in">export</span> ASPNETCORE_URLS=http://+:8080
+
+<span class="hljs-comment"># Start the application</span>
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Starting .NET application on port 8080..."</span>
+dotnet ec2-dotnet.dll
+</code></pre>
+<p>Make it executable:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-literal">start</span>.sh
+</code></pre>
+<h2 id="step-2-build-and-test-locally">Step 2: Build and Test Locally</h2>
+<h3 id="2-1-build-the-application">2.1 Build the Application</h3>
+<pre><code class="lang-bash"><span class="hljs-attribute">dotnet build</span>
+</code></pre>
+<h3 id="2-2-test-locally">2.2 Test Locally</h3>
+<pre><code class="lang-bash">dotnet <span class="hljs-keyword">run</span><span class="bash"></span>
+</code></pre>
+<p>The application will start on <code>http://localhost:5000</code>. Test the endpoints:</p>
+<pre><code class="lang-bash"><span class="hljs-meta"># Root endpoint</span>
+curl http:<span class="hljs-comment">//localhost:5000</span>
+
+<span class="hljs-meta"># Health check</span>
+curl http:<span class="hljs-comment">//localhost:5000/health</span>
+
+<span class="hljs-meta"># Hello endpoint</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/hello/World</span>
+
+<span class="hljs-meta"># Slow endpoint</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/slow</span>
+
+<span class="hljs-meta"># Error endpoint (may return error)</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/error</span>
+
+<span class="hljs-meta"># External call</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/external</span>
+
+<span class="hljs-meta"># S3 call (requires AWS credentials)</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/s3</span>
+
+<span class="hljs-meta"># Database simulation</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/database</span>
+
+<span class="hljs-meta"># Complex operation</span>
+curl http:<span class="hljs-comment">//localhost:5000/api/complex</span>
+</code></pre>
+<h2 id="step-3-deploy-to-ec2">Step 3: Deploy to EC2</h2>
+<h3 id="3-1-create-ec2-instance">3.1 Create EC2 Instance</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create a key pair</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">create-key-pair</span> <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'KeyMaterial'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text </span>&gt; <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key.</span><span class="hljs-string">pem
+</span><span class="hljs-string">chmod </span><span class="hljs-string">400 </span><span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key.</span><span class="hljs-string">pem
+</span>
+<span class="hljs-comment"># Create security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">create-security-group</span> \
+    <span class="hljs-built_in">--group-name</span> <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">sg </span>\
+    <span class="hljs-built_in">--description</span> <span class="hljs-string">"Security group for .NET EC2 Application Signals demo"</span>
+
+<span class="hljs-comment"># Get security group ID</span>
+<span class="hljs-string">SG_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-security-</span><span class="hljs-string">groups </span><span class="hljs-built_in">--group-names</span> <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">sg </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'SecurityGroups[0].GroupId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-comment"># Allow HTTP traffic</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-ingress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--protocol</span> <span class="hljs-string">tcp </span>\
+    <span class="hljs-built_in">--port</span> <span class="hljs-string">8080 </span>\
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+
+<span class="hljs-comment"># Allow SSH</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-ingress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--protocol</span> <span class="hljs-string">tcp </span>\
+    <span class="hljs-built_in">--port</span> <span class="hljs-string">22 </span>\
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+
+<span class="hljs-comment"># Launch EC2 instance</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">run-instances </span>\
+    <span class="hljs-built_in">--image-id</span> <span class="hljs-string">ami-0c02fb55956c7d316 </span>\
+    <span class="hljs-built_in">--count</span> 1 \
+    <span class="hljs-built_in">--instance-type</span> <span class="hljs-string">t3.</span><span class="hljs-string">medium </span>\
+    <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key </span>\
+    <span class="hljs-built_in">--security-group-ids</span> $<span class="hljs-string">SG_ID </span>\
+    <span class="hljs-built_in">--user-data</span> <span class="hljs-string">'#!/bin/bash
+yum update -y
+yum install -y docker
+systemctl start docker
+systemctl enable docker
+usermod -a -G docker ec2-user
+yum install -y git
+curl -sSL https://dot.net/v1/dotnet-install.sh | bash /dev/stdin --channel 8.0
+echo "export PATH=$PATH:/home/ec2-user/.dotnet" &gt;&gt; /home/ec2-user/.bashrc'</span>
+</code></pre>
+<h3 id="3-2-get-instance-information">3.2 Get Instance Information</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Get instance ID</span>
+<span class="hljs-string">INSTANCE_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-instances </span><span class="hljs-built_in">--filters</span> <span class="hljs-string">"Name=instance-state-name,Values=running"</span> <span class="hljs-string">"Name=key-name,Values=ec2-dotnet-key"</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">'Reservations[0].Instances[0].InstanceId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-comment"># Get public IP</span>
+<span class="hljs-string">PUBLIC_IP=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-instances </span><span class="hljs-built_in">--instance-ids</span> $<span class="hljs-string">INSTANCE_ID </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'Reservations[0].Instances[0].PublicIpAddress'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+
+<span class="hljs-string">echo </span><span class="hljs-string">"Instance ID: $INSTANCE_ID"</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Public IP: $PUBLIC_IP"</span>
+</code></pre>
+<h3 id="3-3-deploy-application">3.3 Deploy Application</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Copy files to EC2</span>
+scp -i ec2-dotnet-key.pem -r . ec2-user@<span class="hljs-variable">$PUBLIC_IP</span><span class="hljs-symbol">:/home/ec2-user/ec2-dotnet/</span>
+
+<span class="hljs-comment"># SSH into instance</span>
+ssh -i ec2-dotnet-key.pem ec2-user@<span class="hljs-variable">$PUBLIC_IP</span>
+
+<span class="hljs-comment"># On the EC2 instance, navigate to the project</span>
+cd ec2-dotnet
+
+<span class="hljs-comment"># Install .NET 8</span>
+curl -sSL <span class="hljs-symbol">https:</span>/<span class="hljs-regexp">/dot.net/v</span>1/dotnet-install.sh | bash /dev/stdin --channel <span class="hljs-number">8.0</span>
+export PATH=<span class="hljs-variable">$PATH</span><span class="hljs-symbol">:/home/ec2-user/</span>.dotnet
+
+<span class="hljs-comment"># Build the application</span>
+dotnet build
+
+<span class="hljs-comment"># Run the application</span>
+./start.sh
+</code></pre>
+<h2 id="step-4-configure-application-signals">Step 4: Configure Application Signals</h2>
+<h3 id="4-1-set-up-cloudwatch-agent-optional-">4.1 Set Up CloudWatch Agent (Optional)</h3>
+<p>Create <code>cloudwatch-agent-config.json</code>:</p>
+<pre><code class="lang-json">{
+    <span class="hljs-attr">"agent"</span>: {
+        <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+        <span class="hljs-attr">"run_as_user"</span>: <span class="hljs-string">"ec2-user"</span>
+    },
+    <span class="hljs-attr">"metrics"</span>: {
+        <span class="hljs-attr">"namespace"</span>: <span class="hljs-string">"EC2/DotNet"</span>,
+        <span class="hljs-attr">"metrics_collected"</span>: {
+            <span class="hljs-attr">"cpu"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"cpu_usage_idle"</span>,
+                    <span class="hljs-string">"cpu_usage_iowait"</span>,
+                    <span class="hljs-string">"cpu_usage_user"</span>,
+                    <span class="hljs-string">"cpu_usage_system"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+            },
+            <span class="hljs-attr">"disk"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"used_percent"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                <span class="hljs-attr">"resources"</span>: [
+                    <span class="hljs-string">"*"</span>
+                ]
+            },
+            <span class="hljs-attr">"diskio"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"io_time"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                <span class="hljs-attr">"resources"</span>: [
+                    <span class="hljs-string">"*"</span>
+                ]
+            },
+            <span class="hljs-attr">"mem"</span>: {
+                <span class="hljs-attr">"measurement"</span>: [
+                    <span class="hljs-string">"mem_used_percent"</span>
+                ],
+                <span class="hljs-attr">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+            }
+        }
+    },
+    <span class="hljs-attr">"logs"</span>: {
+        <span class="hljs-attr">"logs_collected"</span>: {
+            <span class="hljs-attr">"files"</span>: {
+                <span class="hljs-attr">"collect_list"</span>: [
+                    {
+                        <span class="hljs-attr">"file_path"</span>: <span class="hljs-string">"/home/ec2-user/ec2-dotnet/app.log"</span>,
+                        <span class="hljs-attr">"log_group_name"</span>: <span class="hljs-string">"/aws/ec2/dotnet"</span>,
+                        <span class="hljs-attr">"log_stream_name"</span>: <span class="hljs-string">"{instance_id}"</span>
+                    }
+                ]
+            }
+        }
+    }
+}
+</code></pre>
+<h3 id="4-2-install-cloudwatch-agent">4.2 Install CloudWatch Agent</h3>
+<pre><code class="lang-bash"># Download and install CloudWatch agent
+wget https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm
+sudo rpm -U ./amazon-cloudwatch-agent.rpm
+
+# Start CloudWatch agent
+sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+    -<span class="ruby">a fetch-config \
+</span>    -<span class="ruby">m ec2 \
+</span>    -<span class="ruby">c <span class="hljs-symbol">file:</span>cloudwatch-agent-config.json \
+</span>    -<span class="ruby">s</span>
+</code></pre>
+<h2 id="step-5-generate-traffic-and-monitor">Step 5: Generate Traffic and Monitor</h2>
+<h3 id="5-1-generate-traffic">5.1 Generate Traffic</h3>
+<p>Create <code>generate-traffic.sh</code>:</p>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+BASE_URL=<span class="hljs-string">"http://<span class="hljs-variable">$PUBLIC_IP</span>:8080"</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Generating traffic for .NET EC2 Application Signals demo..."</span>
+
+<span class="hljs-comment"># Generate traffic for 5 minutes</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> {1..300}; <span class="hljs-keyword">do</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Request <span class="hljs-variable">$i</span>"</span>
+
+    <span class="hljs-comment"># Root endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Health check</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/health"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Hello endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/hello/User<span class="hljs-variable">$i</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Slow endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/slow"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Error endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/error"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># External call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/external"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># S3 call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/s3"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Database simulation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/database"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Complex operation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/complex"</span> &gt; /dev/null
+
+    sleep 1
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Traffic generation complete!"</span>
+</code></pre>
+<p>Make it executable and run:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+./<span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+</code></pre>
+<h3 id="5-2-monitor-in-cloudwatch">5.2 Monitor in CloudWatch</h3>
+<ol>
+<li><p><strong>Open CloudWatch Console</strong></p>
+<ul>
+<li>Go to AWS Console → CloudWatch</li>
+<li>Navigate to &quot;Application Signals&quot;</li>
+</ul>
+</li>
+<li><p><strong>View Service Map</strong></p>
+<ul>
+<li>Look for &quot;ec2-dotnet&quot; service</li>
+<li>See the service dependencies and health</li>
+</ul>
+</li>
+<li><p><strong>Check Metrics</strong></p>
+<ul>
+<li>View latency, error rate, and throughput</li>
+<li>Compare with Lambda metrics</li>
+</ul>
+</li>
+<li><p><strong>Analyze Traces</strong></p>
+<ul>
+<li>Click on service to see detailed traces</li>
+<li>View operation-level metrics</li>
+</ul>
+</li>
+</ol>
+<h2 id="step-6-clean-up">Step 6: Clean Up</h2>
+<h3 id="6-1-stop-the-application">6.1 Stop the Application</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># On EC2 instance</span>
+pkill <span class="hljs-_">-f</span> <span class="hljs-string">"dotnet ec2-dotnet.dll"</span>
+</code></pre>
+<h3 id="6-2-terminate-ec2-instance">6.2 Terminate EC2 Instance</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Terminate instance</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">terminate-instances </span><span class="hljs-built_in">--instance-ids</span> $<span class="hljs-string">INSTANCE_ID
+</span>
+<span class="hljs-comment"># Delete security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-security-group</span> <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SG_ID
+</span>
+<span class="hljs-comment"># Delete key pair</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-key-pair</span> <span class="hljs-built_in">--key-name</span> <span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key
+</span><span class="hljs-string">rm </span><span class="hljs-string">ec2-dotnet-</span><span class="hljs-string">key.</span><span class="hljs-string">pem</span>
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<ol>
+<li><p><strong>Application won&#39;t start</strong></p>
+<ul>
+<li>Check .NET 8 is installed: <code>dotnet --version</code></li>
+<li>Verify port 8080 is open in security group</li>
+<li>Check application logs</li>
+</ul>
+</li>
+<li><p><strong>No data in Application Signals</strong></p>
+<ul>
+<li>Verify environment variables are set</li>
+<li>Check CloudWatch agent is running</li>
+<li>Ensure IAM role has proper permissions</li>
+</ul>
+</li>
+<li><p><strong>S3 calls failing</strong></p>
+<ul>
+<li>Attach IAM role with S3 read permissions</li>
+<li>Verify AWS credentials are configured</li>
+</ul>
+</li>
+</ol></div>
+</div>
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Getting Started — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Getting Started with CloudWatch APM</h1></header>
+      <article>
+        <!-- Callout moved to the right sidebar -->
+        <section>
+          <h2>Overview</h2>
+          <p>Application Performance Monitoring (APM) is essential for understanding and optimizing the health and performance of modern distributed applications. Without APM, teams struggle with slow response times, frequent outages, and difficulty pinpointing issues in complex microservices architectures. Amazon CloudWatch Application Signals solves these challenges by providing comprehensive observability that automatically instruments your applications, collects telemetry data, and delivers actionable insights through prebuilt dashboards and intelligent alerting.</p>
+          <p>CloudWatch Application Signals supports key APM capabilities including Golden Metrics (latency, throughput, error rates, and saturation) for quick health assessment, Trace and Span analytics for detailed request flow analysis, and full OpenTelemetry (OTel) compatibility. OpenTelemetry is crucial because it provides vendor-neutral standards for collecting and exporting telemetry data, ensuring you can instrument applications once and send data to multiple observability platforms without lock-in. This accelerates your journey from development to production by enabling consistent monitoring across environments, reducing mean time to resolution (MTTR), and ensuring stable, reliable applications through proactive issue detection and automated insights.</p>
+        </section>
+
+        <section>
+          <h2>Key Features</h2>
+
+          <h3>From Chaos to Clarity</h3>
+          <p>Visualize and troubleshoot your entire system architecture with zero configuration. Understand dependencies and resolve issues faster with automatic discovery of instrumented and uninstrumented services, automatic mapping of distributed applications across AWS accounts and regions, cross-account visibility, automatic operational audits for common issues, and recent changes to your application.</p>
+
+          <h3>Business Insights from Every Trace</h3>
+          <p>Simplify transaction analysis using an intuitive visual query builder. Surface business insights by connecting transaction tracing to business objectives. Instantly gain an end-to-end view of business-critical transactions with minimal setup and one-click analytics.</p>
+
+          <h3>Production Telemetry with Your Source Code</h3>
+          <p>Investigate production issues using natural language directly in your IDE such as VS Code or GitHub without switching tools or learning query languages. Ask plain English questions like "Why is my billing service failing to process payments successfully?" and get AI-powered analysis that examines firing alarms, investigates log anomalies, correlates metrics with deployments, and points to the exact code causing issues in seconds. By using @awsapm in GitHub issues, you can trigger automatic analysis of live telemetry alongside source code, receive detailed fixes, and let AI submit pull requests with precise solutions—bringing production telemetry directly where you write code.</p>
+
+          <h3>Keep Your Customers Happy and Your Service Up</h3>
+          <p>Keep your customers happy by tracking service reliability using SLOs and SLIs. Deliver consistent service quality using CloudWatch's unified console to track real-time SLO status and compliance. Prevent customer frustration by setting business-focused SLO alerts in CloudWatch before reliability issues occur.</p>
+
+          <h3>Know Your User Behavior</h3>
+          <p>Understand exactly how customers experience your site by tracking real user monitoring (RUM) for your web and mobile applications. Catch site problems before customers do by running synthetic monitoring (canaries) that simulate critical customer journeys in CloudWatch. Make faster decisions to improve your customer experience using CloudWatch's built-in dashboards that highlight performance issues and trends instantly.</p>
+        </section>
+
+        <section>
+          <p>CloudWatch Application Performance Monitoring (APM) helps you understand, troubleshoot, and optimize your applications across distributed systems through Application Signals - our flagship observability platform. Whether you're a developer debugging code, an operator maintaining production systems, or an architect designing observability strategies, this guide will help you get started quickly.</p>
+
+          <h2>Where do I start?</h2>
+          <p>Developers → Jump to <a href="#developers">Instrument Your First Application</a><br>
+          Operators → Jump to <a href="#operators">Monitor Production Systems</a><br>
+          Architects → Jump to <a href="#architects">Design Your Observability Strategy</a></p>
+        </section>
+
+        <section>
+          <h2>What is CloudWatch APM?</h2>
+          <p>CloudWatch Application Performance Monitoring (APM) is AWS's comprehensive observability solution built on Application Signals - our flagship product that provides end-to-end visibility into your applications, from backend services to frontend user experiences.</p>
+
+          <p>Application Signals automatically discovers your application topology, instruments your code, and delivers three integrated monitoring capabilities that work together to give you complete observability.</p>
+        </section>
+
+        <section>
+          <h2>Three Pillars of Application Performance Monitoring (APM)</h2>
+
+          <h3>CloudWatch Application Signals</h3>
+          <p>CloudWatch Application Signals is AWS's flagship observability platform that automatically discovers your application topology, instruments your code, and delivers three integrated monitoring capabilities that work together to provide complete observability.</p>
+          <p><strong>What you get:</strong></p>
+          <ul>
+            <li>Automatic service discovery and instrumentation</li>
+            <li>Integrated APM, RUM, and Synthetics in one platform</li>
+            <li>Prebuilt dashboards and automated insights</li>
+            <li>Cross-account and cross-region visibility</li>
+          </ul>
+
+          <h3>Real User Monitoring (RUM)</h3>
+          <p>Capture actual user experiences in production. Monitor how real users interact with your web applications across different browsers, devices, and geographies. RUM tracks page performance, JavaScript errors, and Core Web Vitals to help you understand and optimize the user experience.</p>
+          <p><strong>What you get:</strong></p>
+          <ul>
+            <li>Page load times and navigation performance</li>
+            <li>JavaScript errors with stack traces</li>
+            <li>Core Web Vitals (LCP, FID, CLS) tracking</li>
+            <li>User session replays and journey analysis</li>
+            <li>Geographic and device-based performance insights</li>
+          </ul>
+
+          <h3>Synthetic Monitoring</h3>
+          <p>Proactively test critical flows before users do. Run automated tests 24/7 from multiple AWS regions to detect issues before they impact users. Synthetic canaries validate API functionality, monitor critical user journeys, and ensure your application meets SLAs.</p>
+          <p><strong>What you get:</strong></p>
+          <ul>
+            <li>Scheduled API health checks (every 1-60 minutes)</li>
+            <li>Scripted browser tests for critical user flows</li>
+            <li>Multi-region availability monitoring</li>
+            <li>Baseline performance tracking</li>
+            <li>Proactive alerting before user impact</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>How They Work Together</h2>
+          <p>The power of Application Signals comes from how these three capabilities complement each other to provide complete visibility.</p>
+
+          <h3>Scenario: Complete Incident Investigation</h3>
+          <p>Synthetics detects checkout flow failing → Alert fires<br>
+          APM traces show payment service throwing exceptions<br>
+          RUM confirms real users experiencing the same failures<br>
+          Resolution: APM trace reveals recent deployment introduced a bug</p>
+
+          <h3>Scenario: Performance Optimization</h3>
+          <p>RUM identifies slow page loads on mobile (4.5s LCP)<br>
+          APM traces show backend APIs are fast (200ms)<br>
+          RUM reveals bottleneck is a 3MB hero image<br>
+          Synthetics validates the fix after optimization</p>
+        </section>
+
+        <section>
+          <h2>Getting Started with Application Signals</h2>
+          <p>With Application Signals, you don't need to make any code changes to get started. Simply enable it in your AWS environment, and it will automatically instrument your applications and discover services. Once enabled, Application Signals continues to auto-discover changes in your application topology without any additional configuration.</p>
+          <p>You don't need to enable everything at once. Here's the recommended path:</p>
+          <h3>Phase 1: Start with APM (Week 1)</h3>
+          <ul>
+            <li>Enable Application Signals for backend services</li>
+            <li>Get visibility into service dependencies</li>
+            <li>Establish performance baselines</li>
+          </ul>
+
+          <h3>Phase 2: Add Synthetics (Week 2-3)</h3>
+          <ul>
+            <li>Create canaries for critical user journeys</li>
+            <li>Set up proactive monitoring</li>
+            <li>Establish availability baselines</li>
+          </ul>
+
+          <h3>Phase 3: Enable RUM (Week 4+)</h3>
+          <ul>
+            <li>Add RUM to your web application</li>
+            <li>Track real user experiences</li>
+            <li>Correlate with backend performance</li>
+          </ul>
+
+          <h3>Key capabilities across Application Signals</h3>
+          <ul>
+            <li>Automatic service discovery</li>
+            <li>Distributed tracing</li>
+            <li>Real-time metrics</li>
+            <li>Application maps</li>
+            <li>SLO tracking</li>
+            <li>Intelligent alerting</li>
+          </ul>
+        </section>
+
+        <section id="developers">
+          <h2>Developers: Instrument Your First Application</h2>
+          <p><strong>What You'll Accomplish</strong><br>In 15 minutes, you'll have Application Signals collecting APM traces and metrics from your backend services, with zero code changes for supported runtimes.</p>
+
+          <h3>Prerequisites</h3>
+          <ul>
+            <li>Application running on AWS (ECS, EKS, EC2, or Lambda)</li>
+            <li>Supported runtime: Java, Python, .NET, Node.js, or Go</li>
+            <li>IAM permissions to enable Application Signals</li>
+          </ul>
+
+          <h3>Step 1: Choose Your Instrumentation Approach</h3>
+          <p><strong>Option A: Auto-Instrumentation (Recommended)</strong></p>
+          <ul>
+            <li>Zero code changes required</li>
+            <li>Works with Java, Python, .NET, Node.js</li>
+            <li>Automatic APM metric and trace collection</li>
+          </ul>
+          <p><strong>Option B: OpenTelemetry Manual Instrumentation</strong></p>
+          <ul>
+            <li>Full control over what you instrument</li>
+            <li>Portable across observability platforms</li>
+            <li>Custom spans and attributes for APM, RUM, and Synthetics</li>
+          </ul>
+          <p><strong>Option C: AWS Distro for OpenTelemetry (ADOT)</strong></p>
+          <ul>
+            <li>AWS-optimized OpenTelemetry</li>
+            <li>Pre-configured for Application Signals</li>
+          </ul>
+
+          <h3>Step 2: Enable Application Signals</h3>
+          <p>Follow the platform-specific enablement instructions (EKS, ECS, Lambda) in the developer guide. After enabling, wait 5–10 minutes for data to appear in the console.</p>
+
+          <h3>Step 3: Verify APM Data Collection</h3>
+          <ol>
+            <li>Wait 5-10 minutes for data to appear</li>
+            <li>Open CloudWatch Console → Application Signals</li>
+            <li>Check the Application Map — you should see your services with APM metrics</li>
+            <li>Click on a service to view distributed traces and performance metrics</li>
+          </ol>
+
+          <h3>Step 4: Add Custom Instrumentation (Optional)</h3>
+          <p>Enhance your APM traces with custom spans and business context (language examples available in developer docs).</p>
+
+          <h3>Step 5: Enable RUM for Frontend Monitoring (Optional)</h3>
+          <p>Add the RUM web client to track user experiences.</p>
+
+          <h3>Step 6: Create Synthetic Canaries (Optional)</h3>
+          <p>Set up proactive monitoring with synthetic tests.</p>
+
+          <h3>Troubleshooting for Developers</h3>
+          <ul>
+            <li>Not seeing APM traces? Check IAM permissions (cloudwatch:PutMetricData, xray:PutTraceSegments) and verify the agent is running (kubectl logs -n amazon-cloudwatch ...).</li>
+            <li>RUM data not appearing? Verify the RUM snippet loads before other scripts and check the browser console for errors.</li>
+            <li>Synthetic canaries failing? Review canary logs and test scripts locally; verify network connectivity from the canary VPC.</li>
+            <li>High overhead? Adjust APM sampling rate and consider head-based sampling or sampling RUM sessions.</li>
+          </ul>
+        </section>
+
+        <section id="operators">
+          <h2>Operators: Monitor Production Systems</h2>
+          <p><strong>What You'll Accomplish</strong><br>Set up comprehensive monitoring, alerting, and dashboards across APM, RUM, and Synthetics for your production applications in 30 minutes.</p>
+
+          <h3>Your Monitoring Checklist</h3>
+          <h4>Service Health Monitoring (APM)</h4>
+          <ul>
+            <li>Application map shows all critical backend services</li>
+            <li>Key APM metrics dashboards created (latency, errors, throughput)</li>
+            <li>SLOs defined for critical services</li>
+            <li>Alerts configured for SLO violations</li>
+          </ul>
+
+          <h4>User Experience Monitoring (RUM)</h4>
+          <ul>
+            <li>RUM enabled on production web applications</li>
+            <li>Core Web Vitals tracking configured</li>
+            <li>Frontend error alerts set up</li>
+            <li>Geographic performance baselines established</li>
+          </ul>
+
+          <h4>Proactive Monitoring (Synthetics)</h4>
+          <ul>
+            <li>Canaries created for critical user journeys</li>
+            <li>API health checks running every 5 minutes</li>
+            <li>Multi-region availability monitoring enabled</li>
+            <li>Synthetic test failure alerts configured</li>
+          </ul>
+
+          <h3>Step 1: Create Your Unified Dashboard</h3>
+          <p>Use the Application Signals dashboard template and add widgets for APM golden signals, RUM user experience, Synthetics health, and service dependencies.</p>
+
+          <h3>Step 2: Set Up Intelligent Alerts</h3>
+          <p>Create composite alarms that span APM, RUM, and Synthetics (examples in docs).</p>
+
+          <h3>Step 3: Implement Runbook Automation</h3>
+          <p>Link runbooks to alerts and implement auto-remediation where safe (examples: restart containers, scale on high latency, invalidate CDN cache).</p>
+
+          <h3>Step 4: Establish Operational Reviews</h3>
+          <p>Weekly metrics review and monthly deep dives (cost optimization, alert fatigue analysis, incident retrospectives).</p>
+        </section>
+
+        <section id="architects">
+          <h2>Architects: Design Your Observability Strategy</h2>
+          <p><strong>What You'll Accomplish</strong><br>Design a scalable, cost-effective Application Signals architecture that supports your organization's needs for the next 2-3 years.</p>
+
+          <h3>Architecture Decision Framework</h3>
+          <h4>Adoption Strategy</h4>
+          <p>Recommendation: Start with APM for backend visibility, add Synthetics for proactive monitoring, then enable RUM for user experience insights.</p>
+
+          <h4>Instrumentation Strategy</h4>
+          <p>Recommendation: Use OpenTelemetry for new applications to maintain flexibility; AWS native for rapid Application Signals adoption.</p>
+
+          <h4>Multi-Cloud Strategy</h4>
+          <p>Options include Application Signals for AWS-only, OpenTelemetry for a unified multi-cloud approach, or an OTel collector bridge for hybrid flexibility.</p>
+
+          <h4>Data Retention Strategy</h4>
+          <ul>
+            <li>APM trace data: Hot (7 days), Warm (30 days), Cold (90+ days archive)</li>
+            <li>RUM session data: Hot (30 days), Cold (90+ days)</li>
+            <li>Synthetics results: Hot (90 days), Cold (1+ years)</li>
+            <li>Metrics retention by resolution: 1 min (15 days), 5 min (63 days), 1 hour (15 months)</li>
+          </ul>
+
+          <h3>Reference Architecture Patterns</h3>
+          <p>Examples: Microservices on EKS with ADOT, Serverless with Lambda layers, Hybrid Cloud with OTel collectors.</p>
+
+          <h3>Capacity Planning</h3>
+          <p>Estimate observability costs and use sampling/filtering and archive policies to optimize spend.</p>
+        </section>
+
+        <section>
+          <h2>Security &amp; Compliance</h2>
+          <ul>
+            <li>Encrypt APM traces, RUM data, and Synthetics results at rest and in transit</li>
+            <li>Implement data masking for PII in traces and RUM sessions</li>
+            <li>Use IAM for fine-grained access control</li>
+            <li>Enable CloudTrail for audit logging</li>
+          </ul>
+          <p>Compliance considerations: HIPAA, PCI-DSS, GDPR, SOC 2 — follow data retention and masking guidance in each case.</p>
+        </section>
+
+        <section>
+          <h2>Migration Planning</h2>
+          <h3>From X-Ray to Application Signals</h3>
+          <ol>
+            <li>Parallel Run (2-4 weeks): enable Application Signals alongside X-Ray, add RUM, create canaries, compare coverage</li>
+            <li>Gradual Migration (1-2 months): migrate non-critical services, expand RUM, update dashboards</li>
+            <li>Full Cutover (1 month): migrate remaining services and decommission X-Ray</li>
+          </ol>
+
+          <h3>From Third-Party APM</h3>
+          <ul>
+            <li>Assess current instrumentation</li>
+            <li>Plan OTel migration if needed</li>
+            <li>Consider dual-write during transition</li>
+            <li>Budget 3-6 months for migration</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Team Enablement</h2>
+          <ul>
+            <li>Week 1: Fundamentals workshop (APM, RUM, Synthetics overview)</li>
+            <li>Week 2-3: Hands-on labs (instrument services, enable RUM, create canaries)</li>
+            <li>Week 4: Production pilot with all three signals</li>
+            <li>Month 2+: Office hours and support</li>
+          </ul>
+          <p>Establish a Center of Excellence: champions, internal docs, reusable dashboards, and best practices.</p>
+        </section>
+
+        <section>
+          <h2>Common Scenarios &amp; Solutions</h2>
+          <h3>Scenario: Debugging a Slow API Endpoint</h3>
+          <p>Developer approach: check RUM, find slow APM trace, identify bottleneck span, add custom instrumentation, deploy and verify with RUM and Synthetics.</p>
+          <p>Operator approach: check Synthetics, review APM traces, check RUM for user impact, look for correlated infra issues, escalate with evidence.</p>
+
+          <h3>Scenario: Preparing for Black Friday</h3>
+          <p>Review capacity planning, establish SLOs across signals, set scaling policies, and prepare runbooks.</p>
+        </section>
+      </article>
+    </main>
+    <aside class="right-sidebar" id="right-sidebar">
+      <section class="new-to-apm box">
+        <h2>New to Application Performance Monitoring?</h2>
+        <p>15-minute Node.js Quickstart<br>
+        Get a running sample and see your first traces in 15 minutes.</p>
+        <ul>
+          <li>Clone and install the sample: <code>cd samples/nodejs-quickstart && npm install</code></li>
+          <li>Run a local OpenTelemetry Collector (logging exporter): see <code>otel-config.yaml</code> in the sample.</li>
+          <li>Start the app: <code>npm start</code> and generate traffic: <code>./generate_requests.sh</code></li>
+        </ul>
+        <p><a href="../samples/nodejs-quickstart/README.md">Open the sample README</a> for full instructions.</p>
+      </section>
+      <section class="ask-health box">
+        <h2>Ask Questions About Your Application Health</h2>
+        <p>Use the Application Signals MCP server to query your application health using natural language. Connect it to your AI assistant or IDE for instant insights from APM, RUM, and Synthetics data.</p>
+        <ul>
+          <li>Install the MCP server from the <a href="reference.html">reference docs</a></li>
+          <li>Configure with your Application Signals endpoint</li>
+          <li>Ask questions like "Why is my service slow?" or "Show error trends"</li>
+        </ul>
+        <p>Get conversational access to traces, metrics, and application maps without complex queries.</p>
+      </section>
+    </aside>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

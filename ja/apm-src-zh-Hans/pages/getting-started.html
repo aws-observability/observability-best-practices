@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>快速入门 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>CloudWatch APM 快速入门</h1></header>
+      <article>
+        <!-- Callout moved to the right sidebar -->
+        <section>
+          <h2>概述</h2>
+          <p>应用程序性能监控 (APM) 对于理解和优化现代分布式应用程序的健康状况和性能至关重要。没有 APM，团队将面临响应时间缓慢、频繁中断以及难以在复杂微服务架构中定位问题等困难。Amazon CloudWatch Application Signals 通过提供全面的 Observability 解决方案来应对这些挑战，它能自动插桩您的应用程序、收集遥测数据，并通过预构建的控制面板和智能告警提供可操作的洞察。</p>
+          <p>CloudWatch Application Signals 支持关键的 APM 功能，包括用于快速健康评估的黄金指标（延迟、吞吐量、错误率和饱和度）、用于详细请求流分析的链路追踪和 Span 分析，以及完整的 OpenTelemetry (OTel) 兼容性。OpenTelemetry 至关重要，因为它提供了供应商中立的标准来收集和导出遥测数据，确保您只需对应用程序进行一次插桩就可以将数据发送到多个 Observability 平台，而不会被锁定。这加速了从开发到生产的过程，通过在各环境中实现一致的监控来降低平均修复时间 (MTTR)，并通过主动的问题检测和自动化洞察确保应用程序的稳定性和可靠性。</p>
+        </section>
+
+        <section>
+          <h2>核心功能</h2>
+
+          <h3>从混乱到清晰</h3>
+          <p>零配置即可可视化和排查整个系统架构。通过自动发现已插桩和未插桩的服务、自动映射跨 AWS 账户和区域的分布式应用程序、跨账户可见性、常见问题的自动运营审计以及应用程序的近期变更来了解依赖关系并更快地解决问题。</p>
+
+          <h3>从每条链路追踪中获取业务洞察</h3>
+          <p>使用直观的可视化查询构建器简化事务分析。通过将事务追踪与业务目标关联来挖掘业务洞察。以最小设置和一键分析即时获得业务关键事务的端到端视图。</p>
+
+          <h3>生产遥测与源代码结合</h3>
+          <p>直接在您的 IDE（如 VS Code 或 GitHub）中使用自然语言调查生产问题，无需切换工具或学习查询语言。提出简单的英文问题如"为什么我的计费服务无法成功处理付款？"，即可获得 AI 驱动的分析，检查触发的告警、调查日志异常、将指标与部署关联，并在几秒内指出导致问题的确切代码。通过在 GitHub issues 中使用 @awsapm，您可以触发对实时遥测和源代码的自动分析，获得详细的修复建议，并让 AI 提交包含精确解决方案的拉取请求——将生产遥测直接带到您编写代码的地方。</p>
+
+          <h3>保持客户满意和服务正常运行</h3>
+          <p>通过使用 SLO 和 SLI 跟踪服务可靠性来保持客户满意。使用 CloudWatch 的统一控制台跟踪实时 SLO 状态和合规性来交付一致的服务质量。在可靠性问题发生之前，通过在 CloudWatch 中设置以业务为重点的 SLO 告警来防止客户不满。</p>
+
+          <h3>了解用户行为</h3>
+          <p>通过对 Web 和移动应用程序进行真实用户监控 (RUM) 来准确了解客户如何体验您的站点。通过运行 Synthetic Monitoring（金丝雀）在 CloudWatch 中模拟关键客户旅程，在客户之前发现站点问题。使用 CloudWatch 内置的控制面板即时突出性能问题和趋势，从而更快做出改善客户体验的决策。</p>
+        </section>
+
+        <section>
+          <p>CloudWatch 应用程序性能监控 (APM) 通过 Application Signals——我们的旗舰 Observability 平台——帮助您理解、排查和优化跨分布式系统的应用程序。无论您是调试代码的开发人员、维护生产系统的运维人员，还是设计 Observability 策略的架构师，本指南都将帮助您快速入门。</p>
+
+          <h2>从哪里开始？</h2>
+          <p>开发人员 → 跳转到<a href="#developers">插桩您的第一个应用程序</a><br>
+          运维人员 → 跳转到<a href="#operators">监控生产系统</a><br>
+          架构师 → 跳转到<a href="#architects">设计您的 Observability 策略</a></p>
+        </section>
+
+        <section>
+          <h2>什么是 CloudWatch APM？</h2>
+          <p>CloudWatch 应用程序性能监控 (APM) 是 AWS 基于 Application Signals 构建的综合 Observability 解决方案——我们的旗舰产品，为您的应用程序提供从后端服务到前端用户体验的端到端可见性。</p>
+
+          <p>Application Signals 自动发现您的应用程序拓扑、插桩您的代码，并提供三种集成的监控功能，它们协同工作为您提供完整的 Observability。</p>
+        </section>
+
+        <section>
+          <h2>应用程序性能监控 (APM) 的三大支柱</h2>
+
+          <h3>CloudWatch Application Signals</h3>
+          <p>CloudWatch Application Signals 是 AWS 的旗舰 Observability 平台，它自动发现您的应用程序拓扑、插桩您的代码，并提供三种集成的监控功能，协同工作以提供完整的 Observability。</p>
+          <p><strong>您将获得：</strong></p>
+          <ul>
+            <li>自动服务发现和插桩</li>
+            <li>APM、RUM 和 Synthetics 集成在一个平台中</li>
+            <li>预构建的控制面板和自动化洞察</li>
+            <li>跨账户和跨区域可见性</li>
+          </ul>
+
+          <h3>真实用户监控 (RUM)</h3>
+          <p>捕获生产环境中的实际用户体验。监控真实用户在不同浏览器、设备和地理位置与您的 Web 应用程序的交互方式。RUM 跟踪页面性能、JavaScript 错误和核心 Web 指标，帮助您了解和优化用户体验。</p>
+          <p><strong>您将获得：</strong></p>
+          <ul>
+            <li>页面加载时间和导航性能</li>
+            <li>带堆栈跟踪的 JavaScript 错误</li>
+            <li>核心 Web 指标 (LCP, FID, CLS) 跟踪</li>
+            <li>用户会话回放和旅程分析</li>
+            <li>基于地理位置和设备的性能洞察</li>
+          </ul>
+
+          <h3>Synthetic Monitoring</h3>
+          <p>在用户之前主动测试关键流程。从多个 AWS 区域全天候运行自动化测试，在问题影响用户之前检测到它们。Synthetic 金丝雀验证 API 功能、监控关键用户旅程，并确保您的应用程序满足 SLA。</p>
+          <p><strong>您将获得：</strong></p>
+          <ul>
+            <li>定时 API 健康检查（每 1-60 分钟）</li>
+            <li>关键用户流程的脚本化浏览器测试</li>
+            <li>多区域可用性监控</li>
+            <li>基线性能跟踪</li>
+            <li>在影响用户之前主动告警</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>它们如何协同工作</h2>
+          <p>Application Signals 的强大之处在于这三种功能如何相互补充，以提供完整的可见性。</p>
+
+          <h3>场景：完整的事件调查</h3>
+          <p>Synthetics 检测到结账流程失败 → 告警触发<br>
+          APM 链路追踪显示支付服务抛出异常<br>
+          RUM 确认真实用户正在经历相同的故障<br>
+          解决方案：APM 链路追踪揭示最近的部署引入了一个缺陷</p>
+
+          <h3>场景：性能优化</h3>
+          <p>RUM 识别出移动端页面加载缓慢（4.5 秒 LCP）<br>
+          APM 链路追踪显示后端 API 很快（200 毫秒）<br>
+          RUM 揭示瓶颈是一个 3MB 的首屏图片<br>
+          Synthetics 在优化后验证修复效果</p>
+        </section>
+
+        <section>
+          <h2>Application Signals 入门</h2>
+          <p>使用 Application Signals，您无需进行任何代码更改即可开始。只需在您的 AWS 环境中启用它，它就会自动插桩您的应用程序并发现服务。启用后，Application Signals 会持续自动发现应用程序拓扑的变化，无需任何额外配置。</p>
+          <p>您不需要一次性启用所有功能。以下是推荐的路径：</p>
+          <h3>阶段 1：从 APM 开始（第 1 周）</h3>
+          <ul>
+            <li>为后端服务启用 Application Signals</li>
+            <li>获得服务依赖关系的可见性</li>
+            <li>建立性能基线</li>
+          </ul>
+
+          <h3>阶段 2：添加 Synthetics（第 2-3 周）</h3>
+          <ul>
+            <li>为关键用户旅程创建金丝雀</li>
+            <li>设置主动监控</li>
+            <li>建立可用性基线</li>
+          </ul>
+
+          <h3>阶段 3：启用 RUM（第 4 周以后）</h3>
+          <ul>
+            <li>将 RUM 添加到您的 Web 应用程序</li>
+            <li>跟踪真实用户体验</li>
+            <li>与后端性能关联</li>
+          </ul>
+
+          <h3>Application Signals 的关键功能</h3>
+          <ul>
+            <li>自动服务发现</li>
+            <li>分布式链路追踪</li>
+            <li>实时指标</li>
+            <li>应用程序拓扑图</li>
+            <li>SLO 跟踪</li>
+            <li>智能告警</li>
+          </ul>
+        </section>
+
+        <section id="developers">
+          <h2>开发人员：插桩您的第一个应用程序</h2>
+          <p><strong>您将完成的目标</strong><br>在 15 分钟内，您将让 Application Signals 从后端服务收集 APM 链路追踪和指标，对于支持的运行时零代码更改。</p>
+
+          <h3>前提条件</h3>
+          <ul>
+            <li>在 AWS 上运行的应用程序（ECS、EKS、EC2 或 Lambda）</li>
+            <li>支持的运行时：Java、Python、.NET、Node.js 或 Go</li>
+            <li>启用 Application Signals 所需的 IAM 权限</li>
+          </ul>
+
+          <h3>步骤 1：选择您的插桩方式</h3>
+          <p><strong>选项 A：自动插桩（推荐）</strong></p>
+          <ul>
+            <li>零代码更改</li>
+            <li>支持 Java、Python、.NET、Node.js</li>
+            <li>自动 APM 指标和链路追踪收集</li>
+          </ul>
+          <p><strong>选项 B：OpenTelemetry 手动插桩</strong></p>
+          <ul>
+            <li>对插桩内容的完全控制</li>
+            <li>可跨 Observability 平台移植</li>
+            <li>APM、RUM 和 Synthetics 的自定义 span 和属性</li>
+          </ul>
+          <p><strong>选项 C：AWS Distro for OpenTelemetry (ADOT)</strong></p>
+          <ul>
+            <li>AWS 优化的 OpenTelemetry</li>
+            <li>为 Application Signals 预配置</li>
+          </ul>
+
+          <h3>步骤 2：启用 Application Signals</h3>
+          <p>按照开发人员指南中特定平台的启用说明（EKS、ECS、Lambda）操作。启用后，等待 5-10 分钟数据将出现在控制台中。</p>
+
+          <h3>步骤 3：验证 APM 数据收集</h3>
+          <ol>
+            <li>等待 5-10 分钟让数据出现</li>
+            <li>打开 CloudWatch 控制台 → Application Signals</li>
+            <li>检查应用程序拓扑图——您应该看到带有 APM 指标的服务</li>
+            <li>点击服务以查看分布式链路追踪和性能指标</li>
+          </ol>
+
+          <h3>步骤 4：添加自定义插桩（可选）</h3>
+          <p>通过自定义 span 和业务上下文增强您的 APM 链路追踪（语言示例请参阅开发人员文档）。</p>
+
+          <h3>步骤 5：启用 RUM 进行前端监控（可选）</h3>
+          <p>添加 RUM Web 客户端来跟踪用户体验。</p>
+
+          <h3>步骤 6：创建 Synthetic 金丝雀（可选）</h3>
+          <p>使用 Synthetic 测试设置主动监控。</p>
+
+          <h3>开发人员故障排查</h3>
+          <ul>
+            <li>看不到 APM 链路追踪？检查 IAM 权限（cloudwatch:PutMetricData、xray:PutTraceSegments）并验证代理正在运行（kubectl logs -n amazon-cloudwatch ...）。</li>
+            <li>RUM 数据未出现？验证 RUM 代码片段在其他脚本之前加载，并检查浏览器控制台是否有错误。</li>
+            <li>Synthetic 金丝雀失败？查看金丝雀日志并在本地测试脚本；验证从金丝雀 VPC 的网络连接。</li>
+            <li>开销过高？调整 APM 采样率，考虑基于头部的采样或对 RUM 会话进行采样。</li>
+          </ul>
+        </section>
+
+        <section id="operators">
+          <h2>运维人员：监控生产系统</h2>
+          <p><strong>您将完成的目标</strong><br>在 30 分钟内为您的生产应用程序设置跨 APM、RUM 和 Synthetics 的全面监控、告警和控制面板。</p>
+
+          <h3>您的监控清单</h3>
+          <h4>服务健康监控 (APM)</h4>
+          <ul>
+            <li>应用程序拓扑图显示所有关键后端服务</li>
+            <li>已创建关键 APM 指标控制面板（延迟、错误、吞吐量）</li>
+            <li>已为关键服务定义 SLO</li>
+            <li>已配置 SLO 违规告警</li>
+          </ul>
+
+          <h4>用户体验监控 (RUM)</h4>
+          <ul>
+            <li>已在生产 Web 应用程序上启用 RUM</li>
+            <li>已配置核心 Web 指标跟踪</li>
+            <li>已设置前端错误告警</li>
+            <li>已建立地理位置性能基线</li>
+          </ul>
+
+          <h4>主动监控 (Synthetics)</h4>
+          <ul>
+            <li>已为关键用户旅程创建金丝雀</li>
+            <li>API 健康检查每 5 分钟运行一次</li>
+            <li>已启用多区域可用性监控</li>
+            <li>已配置 Synthetic 测试失败告警</li>
+          </ul>
+
+          <h3>步骤 1：创建统一控制面板</h3>
+          <p>使用 Application Signals 控制面板模板，并为 APM 黄金信号、RUM 用户体验、Synthetics 健康状况和服务依赖关系添加小部件。</p>
+
+          <h3>步骤 2：设置智能告警</h3>
+          <p>创建跨 APM、RUM 和 Synthetics 的复合告警（示例请参阅文档）。</p>
+
+          <h3>步骤 3：实施运维手册自动化</h3>
+          <p>将运维手册链接到告警，并在安全的情况下实施自动修复（示例：重启容器、高延迟时扩展、使 CDN 缓存失效）。</p>
+
+          <h3>步骤 4：建立运营审查</h3>
+          <p>每周指标审查和每月深度分析（成本优化、告警疲劳分析、事件回顾）。</p>
+        </section>
+
+        <section id="architects">
+          <h2>架构师：设计您的 Observability 策略</h2>
+          <p><strong>您将完成的目标</strong><br>设计一个可扩展、具有成本效益的 Application Signals 架构，以支持您组织未来 2-3 年的需求。</p>
+
+          <h3>架构决策框架</h3>
+          <h4>采纳策略</h4>
+          <p>建议：从 APM 开始以获得后端可见性，添加 Synthetics 进行主动监控，然后启用 RUM 以获取用户体验洞察。</p>
+
+          <h4>插桩策略</h4>
+          <p>建议：新应用程序使用 OpenTelemetry 以保持灵活性；使用 AWS 原生方案快速采纳 Application Signals。</p>
+
+          <h4>多云策略</h4>
+          <p>选项包括仅限 AWS 的 Application Signals、统一多云方案的 OpenTelemetry，或混合灵活性的 OTel 收集器桥接。</p>
+
+          <h4>数据保留策略</h4>
+          <ul>
+            <li>APM 链路追踪数据：热存储（7 天）、温存储（30 天）、冷存储（90 天以上归档）</li>
+            <li>RUM 会话数据：热存储（30 天）、冷存储（90 天以上）</li>
+            <li>Synthetics 结果：热存储（90 天）、冷存储（1 年以上）</li>
+            <li>按分辨率的指标保留：1 分钟（15 天）、5 分钟（63 天）、1 小时（15 个月）</li>
+          </ul>
+
+          <h3>参考架构模式</h3>
+          <p>示例：使用 ADOT 的 EKS 微服务、使用 Lambda 层的 Serverless、使用 OTel 收集器的混合云。</p>
+
+          <h3>容量规划</h3>
+          <p>估算 Observability 成本，并使用采样/过滤和归档策略优化支出。</p>
+        </section>
+
+        <section>
+          <h2>安全与合规</h2>
+          <ul>
+            <li>对 APM 链路追踪、RUM 数据和 Synthetics 结果进行静态和传输加密</li>
+            <li>对链路追踪和 RUM 会话中的 PII 实施数据掩码</li>
+            <li>使用 IAM 进行细粒度访问控制</li>
+            <li>启用 CloudTrail 进行审计日志记录</li>
+          </ul>
+          <p>合规考虑：HIPAA、PCI-DSS、GDPR、SOC 2——在每种情况下遵循数据保留和掩码指南。</p>
+        </section>
+
+        <section>
+          <h2>迁移规划</h2>
+          <h3>从 X-Ray 迁移到 Application Signals</h3>
+          <ol>
+            <li>并行运行（2-4 周）：在 X-Ray 旁边启用 Application Signals，添加 RUM，创建金丝雀，比较覆盖范围</li>
+            <li>逐步迁移（1-2 个月）：迁移非关键服务，扩展 RUM，更新控制面板</li>
+            <li>完全切换（1 个月）：迁移剩余服务并停用 X-Ray</li>
+          </ol>
+
+          <h3>从第三方 APM 迁移</h3>
+          <ul>
+            <li>评估当前插桩</li>
+            <li>如需要则规划 OTel 迁移</li>
+            <li>考虑过渡期间的双写</li>
+            <li>预算 3-6 个月进行迁移</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>团队赋能</h2>
+          <ul>
+            <li>第 1 周：基础知识研讨会（APM、RUM、Synthetics 概述）</li>
+            <li>第 2-3 周：动手实验（插桩服务、启用 RUM、创建金丝雀）</li>
+            <li>第 4 周：使用所有三个信号的生产试点</li>
+            <li>第 2 个月以后：办公时间和支持</li>
+          </ul>
+          <p>建立卓越中心：技术推广者、内部文档、可重用控制面板和最佳实践。</p>
+        </section>
+
+        <section>
+          <h2>常见场景与解决方案</h2>
+          <h3>场景：调试慢速 API 端点</h3>
+          <p>开发人员方法：检查 RUM，找到慢速 APM 链路追踪，识别瓶颈 span，添加自定义插桩，部署并使用 RUM 和 Synthetics 验证。</p>
+          <p>运维人员方法：检查 Synthetics，查看 APM 链路追踪，检查 RUM 了解用户影响，查找相关基础设施问题，带证据上报。</p>
+
+          <h3>场景：为黑色星期五做准备</h3>
+          <p>审查容量规划，建立跨信号的 SLO，设置扩展策略，准备运维手册。</p>
+        </section>
+      </article>
+    </main>
+    <aside class="right-sidebar" id="right-sidebar">
+      <section class="new-to-apm box">
+        <h2>初次接触应用程序性能监控？</h2>
+        <p>15 分钟 Node.js 快速入门<br>
+        获取一个运行示例，在 15 分钟内查看您的第一条链路追踪。</p>
+        <ul>
+          <li>克隆并安装示例：<code>cd samples/nodejs-quickstart && npm install</code></li>
+          <li>运行本地 OpenTelemetry Collector（日志导出器）：参见示例中的 <code>otel-config.yaml</code>。</li>
+          <li>启动应用：<code>npm start</code> 并生成流量：<code>./generate_requests.sh</code></li>
+        </ul>
+        <p><a href="../samples/nodejs-quickstart/README.md">打开示例 README</a> 查看完整说明。</p>
+      </section>
+      <section class="ask-health box">
+        <h2>询问您的应用程序健康状况</h2>
+        <p>使用 Application Signals MCP 服务器以自然语言查询您的应用程序健康状况。将它连接到您的 AI 助手或 IDE，即可从 APM、RUM 和 Synthetics 数据中即时获取洞察。</p>
+        <ul>
+          <li>从<a href="reference.html">参考文档</a>安装 MCP 服务器</li>
+          <li>使用您的 Application Signals 端点进行配置</li>
+          <li>提问如"为什么我的服务很慢？"或"显示错误趋势"</li>
+        </ul>
+        <p>无需复杂查询即可以对话方式访问链路追踪、指标和应用程序拓扑图。</p>
+      </section>
+    </aside>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

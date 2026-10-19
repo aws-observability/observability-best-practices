@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RUM — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>실제 사용자 모니터링 (RUM)</h1></header>
+      <article>
+        <section>
+          <h2>RUM이 Application Signals에 연결되는 방식</h2>
+          <p>CloudWatch RUM 웹 클라이언트는 RUM 클라이언트에 대해 X-Ray 트레이싱을 활성화하면 Application Signals에 표시될 수 있습니다. 클라이언트에서 백엔드 서비스로의 요청이 연결되어 서비스 세부 정보와 Application Map에 표시됩니다.</p>
+          <p>참조: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals가 운영 상태 모니터링을 가능하게 하는 방법</a>.</p>
+        </section>
+
+        <section>
+          <h2>RUM으로 답할 수 있는 질문</h2>
+          <ul>
+            <li><strong>이 문제가 사용자에게 영향을 미치는가?</strong> 백엔드 상태를 페이지 로드 및 JS 오류 신호와 상관시킵니다</li>
+            <li><strong>어디에서 사용자가 영향을 받는가?</strong> 지역, 기기 및 브라우저별 성능을 비교합니다</li>
+            <li><strong>무엇이 변경되었는가?</strong> 회귀를 조사할 때 배포/변경 이벤트와 상관시킵니다</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>다음 단계</h2>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

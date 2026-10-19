@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="te">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>సర్వీస్ లెవల్ ఆబ్జెక్టివ్‌లు (SLOలు) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM డాక్యుమెంటేషన్</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>సర్వీస్ లెవల్ ఆబ్జెక్టివ్‌లు (SLOలు)</h1></header>
+      <article>
+        <section>
+          <h2>SLOలు ఎందుకు ముఖ్యమైనవి</h2>
+          <p>SLOలు మీకు విశ్వసనీయత మరియు పనితీరు లక్ష్యాలను వ్యక్తం చేయడానికి అనుమతిస్తాయి (ఉదాహరణకు, "99.9% అందుబాటు" లేదా "p99 లేటెన్సీ 500ms లోపు") మరియు వాటిని కాలక్రమేణా ట్రాక్ చేయడానికి అనుమతిస్తాయి. Application Signals లో, SLO/SLI ఆరోగ్యం ట్రయేజ్‌ను వేగవంతం చేయడానికి సేవల పేజీ మరియు Application Map లో ప్రదర్శించబడుతుంది.</p>
+        </section>
+
+        <section>
+          <h2>మీరు దేనిపై SLOలను సృష్టించవచ్చు</h2>
+          <p>CloudWatch SLOలు మెట్రిక్స్ పై నిర్మించబడ్డాయి. Application Signals యొక్క ప్రామాణిక మెట్రిక్స్ (లేటెన్సీ, ఫాల్ట్, ఎర్రర్, అందుబాటు) సాధారణ SLI ఇన్‌పుట్‌లు.</p>
+          <p>అధికారిక డాక్స్: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html">సర్వీస్ లెవల్ ఆబ్జెక్టివ్‌లు (SLOలు)</a>.</p>
+        </section>
+
+        <section>
+          <h2>సాధారణ వర్క్‌ఫ్లో</h2>
+          <ul>
+            <li><strong>ఒక సేవను ఎంచుకోండి</strong> మరియు వినియోగదారు ప్రభావాన్ని ఏ సూచిక ఉత్తమంగా ప్రతిబింబిస్తుందో నిర్ణయించండి (అందుబాటు vs లేటెన్సీ).</li>
+            <li><strong>లక్ష్యాన్ని నిర్వచించండి</strong> (టార్గెట్, టైమ్ విండో, మరియు మూల్యాంకనం).</li>
+            <li><strong>అలర్ట్</strong> SLO/SLI స్థితి లేదా బర్న్ రేటుపై అలారమ్‌లను ఉపయోగించి.</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

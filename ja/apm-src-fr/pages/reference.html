@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Reference — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Reference</h1></header>
+      <article>
+        <section>
+          <h2>Limites et quotas de service</h2>
+          <p>Comprendre les limites et quotas de CloudWatch Application Signals.</p>
+        </section>
+
+        <section>
+          <h3>Limites et quotas</h3>
+          <p>Application Signals repose sur CloudWatch et AWS X-Ray. Les limites (ingestion, taux de requetes et quotas) sont regies par ces services et peuvent changer au fil du temps. Utilisez la documentation officielle pour les valeurs actuelles.</p>
+          <ul>
+            <li><strong>Application Signals :</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Documentation Application Signals</a></li>
+            <li><strong>Quotas CloudWatch :</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">Quotas de service CloudWatch</a></li>
+            <li><strong>Quotas AWS X-Ray :</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">Limitation et limites de l'API X-Ray</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Retention des metriques CloudWatch (reference courante)</h3>
+          <p>CloudWatch conserve les donnees de metriques a differentes resolutions. Consultez la documentation CloudWatch pour le modele de retention complet.</p>
+          <ul>
+            <li><strong>Resolution de 1 minute :</strong> 15 jours</li>
+            <li><strong>Resolution de 5 minutes :</strong> 63 jours</li>
+            <li><strong>Resolution de 1 heure :</strong> 15 mois</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Quotas de service</h3>
+
+          <h4>Application Signals :</h4>
+          <ul>
+            <li><strong>Services par compte :</strong> 1 000</li>
+            <li><strong>Operations par service :</strong> 100</li>
+            <li><strong>Metriques personnalisees :</strong> 30 par service</li>
+          </ul>
+
+          <h4>RUM :</h4>
+          <ul>
+            <li><strong>Moniteurs d'application par compte :</strong> 20</li>
+            <li><strong>Evenements par seconde :</strong> 10 000</li>
+            <li><strong>Taille d'evenement :</strong> 64 Ko</li>
+          </ul>
+
+          <h4>Synthetics :</h4>
+          <ul>
+            <li><strong>Canaries par compte :</strong> 100</li>
+            <li><strong>Duree d'execution des canaries :</strong> 15 minutes maximum</li>
+            <li><strong>Taille des canaries :</strong> 1 Go (decompresse)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Glossaire</h2>
+          <p>Termes et concepts cles de CloudWatch Application Signals.</p>
+        </section>
+
+        <section>
+          <h3>Concepts fondamentaux</h3>
+
+          <h4>Application Performance Monitoring (APM)</h4>
+          <p>La pratique de la surveillance et de la gestion de la performance et de la disponibilite des applications logicielles.</p>
+
+          <h4>Tracage distribue</h4>
+          <p>Une methode de suivi des requetes a travers les systemes distribues, vous permettant de comprendre le chemin et la performance des requetes a travers plusieurs services.</p>
+
+          <h4>Carte de services</h4>
+          <p>Une representation visuelle de l'architecture de votre application montrant comment les services se connectent et interagissent.</p>
+
+          <h4>Span</h4>
+          <p>Une operation unique au sein d'une trace, representant une unite de travail telle qu'une requete de base de donnees ou un appel API.</p>
+
+          <h4>Trace</h4>
+          <p>Un parcours complet de bout en bout d'une requete a travers votre application, compose de plusieurs spans.</p>
+        </section>
+
+        <section>
+          <h3>Termes d'instrumentation</h3>
+
+          <h4>Auto-instrumentation</h4>
+          <p>Ajout automatique de code d'observabilite aux applications sans necessiter de modifications du code.</p>
+
+          <h4>Instrumentation manuelle</h4>
+          <p>Ajout explicite de code de tracage et de metriques au code source de l'application.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>Un framework d'observabilite open source fournissant des API neutres vis-a-vis des fournisseurs pour l'instrumentation.</p>
+
+          <h4>Echantillonnage</h4>
+          <p>Le processus de selection des requetes a tracer pour equilibrer l'observabilite avec le cout et la performance.</p>
+
+          <h4>Propagation du contexte</h4>
+          <p>Le mecanisme de transmission du contexte de trace entre les services pour maintenir la continuite de la trace.</p>
+        </section>
+
+        <section>
+          <h3>Metriques et surveillance</h3>
+
+          <h4>Signaux dores</h4>
+          <p>Les quatre metriques cles pour surveiller la sante d'une application : latence, debit, taux d'erreur et saturation.</p>
+
+          <h4>Latence</h4>
+          <p>Le temps necessaire pour traiter une requete, generalement mesure en percentiles (P50, P90, P99).</p>
+
+          <h4>Debit</h4>
+          <p>Le taux de traitement des requetes, generalement mesure en requetes par seconde.</p>
+
+          <h4>Taux d'erreur</h4>
+          <p>Le pourcentage de requetes qui entrainent des erreurs.</p>
+
+          <h4>Saturation</h4>
+          <p>Le degre d'utilisation des ressources systeme.</p>
+
+          <h4>Objectif de niveau de service (SLO)</h4>
+          <p>Un niveau cible de qualite de service convenu entre les fournisseurs et les consommateurs de services.</p>
+
+          <h4>Indicateur de niveau de service (SLI)</h4>
+          <p>Un aspect mesurable du niveau de service fourni, tel que la latence ou la disponibilite.</p>
+        </section>
+
+        <section>
+          <h3>RUM et Synthetics</h3>
+
+          <h4>Real User Monitoring (RUM)</h4>
+          <p>Surveillance des interactions reelles des utilisateurs avec les applications web en production.</p>
+
+          <h4>Surveillance synthetique</h4>
+          <p>Tests automatises des applications a l'aide d'interactions utilisateur simulees.</p>
+
+          <h4>Canary</h4>
+          <p>Un script de surveillance synthetique qui execute des tests automatises contre votre application.</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>Les metriques de Google pour mesurer l'experience utilisateur sur le web : LCP, FID et CLS.</p>
+
+          <h4>Largest Contentful Paint (LCP)</h4>
+          <p>Le temps necessaire pour que le plus grand element de contenu soit affiche a l'ecran.</p>
+
+          <h4>First Input Delay (FID)</h4>
+          <p>Le temps entre la premiere interaction de l'utilisateur avec une page et la reponse du navigateur.</p>
+
+          <h4>Cumulative Layout Shift (CLS)</h4>
+          <p>Une mesure de la stabilite visuelle, quantifiant les changements de mise en page inattendus.</p>
+        </section>
+
+        <section>
+          <h3>Termes specifiques a AWS</h3>
+
+          <h4>Application Signals</h4>
+          <p>La solution d'observabilite unifiee d'AWS combinant APM, RUM et synthetics.</p>
+
+          <h4>X-Ray</h4>
+          <p>Le service de tracage distribue d'AWS, desormais integre avec Application Signals.</p>
+
+          <h4>CloudWatch</h4>
+          <p>Le service de surveillance et d'observabilite d'AWS qui collecte les metriques, les logs et les traces.</p>
+
+          <h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+          <p>La distribution d'OpenTelemetry par AWS optimisee pour les services AWS.</p>
+        </section>
+
+        <section>
+          <h2>Environnements d'execution et frameworks pris en charge</h2>
+          <p>Langages de programmation et frameworks pris en charge par Application Signals.</p>
+        </section>
+
+        <section>
+          <h3>Prise en charge de l'auto-instrumentation</h3>
+
+          <p>Pour la matrice de compatibilite et d'environnement d'execution officielle, voir <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">Systemes pris en charge</a>. Points cles :</p>
+
+          <ul>
+            <li><strong>Java :</strong> JVM 8/11/17/21/23 (la prise en charge des frameworks suit l'instrumentation Java ADOT/OpenTelemetry).</li>
+            <li><strong>Python :</strong> Python 3.9+ (la prise en charge des frameworks suit l'instrumentation Python ADOT/OpenTelemetry).</li>
+            <li><strong>Node.js :</strong> Node 14/16/18/20/22 (la prise en charge des frameworks suit l'instrumentation JS ADOT/OpenTelemetry).</li>
+            <li><strong>.NET :</strong> pris en charge sur x86-64 ou ARM64 ; Linux x64/ARM64 et Windows Server 2022 x64 (la prise en charge des bibliotheques suit l'instrumentation .NET ADOT/OpenTelemetry).</li>
+            <li><strong>PHP/Ruby/Go :</strong> pris en charge via les chemins d'auto-instrumentation/zero-code OpenTelemetry (pas de SDK ADOT pour ces langages).</li>
+          </ul>
+
+          <h4>Notes et considerations connues</h4>
+          <ul>
+            <li><strong>Node.js ESM :</strong> la prise en charge ESM est limitee ; preferez CommonJS sauf si vous suivez la configuration specifique ESM dans la documentation.</li>
+            <li><strong>Python :</strong> les applications conteneurisees peuvent necessiter la definition de <code>PYTHONPATH</code> (probleme connu d'auto-instrumentation OTel).</li>
+            <li><strong>.NET :</strong> ADOT .NET a des limitations avec AWS SDK pour .NET V4 ; AWS SDK V3 est recommande pour une prise en charge complete.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Instrumentation manuelle</h3>
+          <p>Tous les principaux langages de programmation sont pris en charge via les SDK OpenTelemetry :</p>
+          <ul>
+            <li>Java, Scala, Kotlin</li>
+            <li>Python, Ruby</li>
+            <li>JavaScript/TypeScript, Go</li>
+            <li>.NET (C#, F#, VB.NET)</li>
+            <li>PHP, Rust, C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Reference de configuration</h2>
+          <p>Options de configuration courantes et variables d'environnement.</p>
+        </section>
+
+        <section>
+          <h3>Variables d'environnement</h3>
+
+          <h4>Configuration OpenTelemetry :</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - Nom de votre service</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - Exportateur de traces (otlp, jaeger, zipkin)</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - URL du point de terminaison OTLP</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - Strategie d'echantillonnage</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - Parametre d'echantillonnage</li>
+          </ul>
+
+          <h4>Configuration specifique AWS :</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - Region AWS</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - Adresse du daemon X-Ray</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - Attributs du service (egalement utilises pour le regroupement personnalise dans la carte applicative)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Configuration de l'echantillonnage</h3>
+
+          <h4>Strategies d'echantillonnage :</h4>
+          <ul>
+            <li><code>always_on</code> - Echantillonner toutes les traces</li>
+            <li><code>always_off</code> - N'echantillonner aucune trace</li>
+            <li><code>traceidratio</code> - Echantillonner selon un ratio (par ex., 0.1 pour 10%)</li>
+            <li><code>parentbased_always_on</code> - Respecter la decision d'echantillonnage du parent</li>
+            <li><code>parentbased_traceidratio</code> - Echantillonnage par ratio base sur le parent</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Optimisation des couts</h2>
+          <p>Strategies pour controler les couts d'observabilite.</p>
+        </section>
+
+        <section>
+          <h3>Strategies d'echantillonnage</h3>
+          <ul>
+            <li><strong>Production :</strong> taux d'echantillonnage de 5-10%</li>
+            <li><strong>Developpement :</strong> taux d'echantillonnage de 50-100%</li>
+            <li><strong>Traces d'erreur :</strong> toujours echantillonner les traces avec des erreurs</li>
+            <li><strong>Operations a haute valeur :</strong> echantillonnage a 100% pour les chemins critiques</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Politiques de retention des donnees</h3>
+          <p>La retention est controlee par les magasins de telemetrie sous-jacents (par exemple, les metriques/logs CloudWatch et les traces AWS X-Ray). Configurez la retention dans ces services et alignez-la avec vos exigences de depannage et de conformite.</p>
+        </section>
+
+        <section>
+          <h3>Optimisation des ressources</h3>
+          <ul>
+            <li><strong>Exports par lots :</strong> reduire la surcharge reseau</li>
+            <li><strong>Compression :</strong> activer la compression des donnees</li>
+            <li><strong>Filtrage :</strong> supprimer les spans et attributs inutiles</li>
+            <li><strong>Mise en memoire tampon :</strong> utiliser des tailles de tampon appropriees</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

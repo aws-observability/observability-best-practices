@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Synthetic Monitoring（金丝雀） — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Synthetic Monitoring（金丝雀）</h1></header>
+      <article>
+        <section>
+          <h2>Synthetics 如何与 Application Signals 连接</h2>
+          <p>当您为金丝雀启用 X-Ray 追踪时，CloudWatch Synthetics 金丝雀可以出现在 Application Signals 中。这使得金丝雀调用可以与后端服务关联，并显示在服务详情和应用程序拓扑图中。</p>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals 如何实现运营健康监控</a>。</p>
+        </section>
+
+        <section>
+          <h2>常见金丝雀用例</h2>
+          <ul>
+            <li><strong>API 健康检查</strong>：按计划验证关键端点</li>
+            <li><strong>浏览器流程</strong>：验证登录/结账旅程</li>
+            <li><strong>多区域</strong>：在客户之前检测区域性问题</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>后续步骤</h2>
+          <ul>
+            <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch_Synthetics_Canaries.html">CloudWatch Synthetics 金丝雀</a></li>
+            <li><a href="application-map.html">应用程序拓扑图</a></li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,807 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AWS Application Signals for Java on Lambda</title>
+  <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin: 10px 5px;
+            font-weight: bold;
+        }
+
+        .content {
+            padding: 20px 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #0056b3;
+        }
+
+        .section {
+            margin: 30px 0;
+        }
+
+        .section h2 {
+            color: #495057;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .section h3 {
+            color: #6c757d;
+            margin: 20px 0 10px 0;
+        }
+
+        .highlight {
+            background: #fff3cd;
+            padding: 15px;
+            border-left: 4px solid #ffc107;
+            margin: 15px 0;
+        }
+
+        .warning {
+            background: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #d4edda;
+            padding: 15px;
+            border-left: 4px solid #28a745;
+            margin: 15px 0;
+        }
+
+        .error {
+            background: #f8d7da;
+            padding: 15px;
+            border-left: 4px solid #dc3545;
+            margin: 15px 0;
+        }
+
+        .step {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .endpoint {
+            background: #f0f8ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9em;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+        }
+
+        ul, ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        li {
+            margin: 8px 0;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #e9ecef;
+            margin-top: 40px;
+            color: #6c757d;
+        }
+
+        /* Enhanced Code Block Styling */
+        pre {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            position: relative;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 8px 8px 0 0;
+        }
+
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+            border: none;
+            font-size: inherit;
+            font-family: inherit;
+        }
+
+        code {
+            background: #f1f5f9;
+            color: #e53e3e;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0;
+                padding: 10px;
+            }
+            
+            .header {
+                margin: -10px -10px 20px -10px;
+                padding: 20px 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+        }
+  </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Java on Lambda</h1>
+            <div class="subtitle">AWS Application Signals Implementation Guide</div>
+            <div class="platform-badge">Lambda</div>
+            <div class="language-badge">Java</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Java Lambda function with AWS Application Signals enabled. The simplest approach using AWS Lambda console with built-in layer support.</p>
+        
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a Java Lambda function with Application Signals</li>
+                        <li>Enable AWS Application Signals auto-instrumentation via Lambda Layer</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 15-20 minutes
+                </div>
+            </div>
+
+        <h2>Prerequisites</h2>
+        <h3>Required Tools</h3>
+        <ul>
+            <li>AWS CLI v2 (latest version)</li>
+            <li>Java 17+</li>
+            <li>Maven 3.8+</li>
+            <li>AWS Account with appropriate permissions</li>
+            <li>Text editor</li>
+        </ul>
+
+        <h3>AWS Permissions Required</h3>
+        <ul>
+            <li>Lambda: Create and manage functions</li>
+            <li>IAM: Create roles and policies</li>
+            <li>CloudWatch: Logs and Application Signals access</li>
+            <li>S3: Basic read access (for testing)</li>
+        </ul>
+
+        <h2>Architecture</h2>
+        <p>Your Lambda function will be automatically instrumented using:</p>
+        <ol>
+            <li><strong>AWS Lambda Layer for OpenTelemetry</strong> - Provides auto-instrumentation</li>
+            <li><strong>Application Signals Integration</strong> - Built into the layer</li>
+            <li><strong>Automatic Tracing</strong> - HTTP requests, AWS SDK calls, function execution</li>
+        </ol>
+
+        <h2>Step 1: Enable Application Signals in Your Account</h2>
+        <div class="warning">
+            <p><strong>Important:</strong> Application Signals must be enabled once per AWS account per region.</p>
+        </div>
+
+        <h3>Option 1: Enable via AWS Console (Recommended)</h3>
+        <ol>
+            <li>Go to AWS Console → CloudWatch → Application Signals</li>
+            <li>Select your region (e.g., <code>us-east-1</code>)</li>
+            <li>Click "Get Started" or "Enable Application Signals"</li>
+            <li>Wait 2-3 minutes for activation</li>
+        </ol>
+
+        <h2>Step 2: Prepare Your Java Lambda Function</h2>
+        <h3>2.1 Create Application Directory</h3>
+        <pre><code>mkdir -p ~/my-lambda-java-appsignals
+cd ~/my-lambda-java-appsignals</code></pre>
+
+        <h3>2.2 Create Project Structure</h3>
+        <pre><code>mkdir -p src/main/java/com/example/appsignals/controller</code></pre>
+
+        <h3>2.3 Create pom.xml</h3>
+        <p>Create a Maven POM file with the following dependencies:</p>
+        <ul>
+            <li>AWS Lambda Core</li>
+            <li>AWS Lambda Events</li>
+            <li>AWS SDK for S3</li>
+            <li>Spring Boot Web Starter (for local testing)</li>
+            <li>JSON Processing</li>
+            <li>HTTP Client</li>
+        </ul>
+
+        <div class="warning">
+            <p><strong>IMPORTANT:</strong> Do NOT add OpenTelemetry dependencies. They're provided by the AWS Lambda Layer.</p>
+        </div>
+
+        <h2>Step 3: Build Lambda Deployment Package</h2>
+        <h3>3.1 Set Variables</h3>
+        <pre><code>export AWS_REGION="us-east-1"
+export AWS_ACCOUNT_ID="YOUR_ACCOUNT_ID"
+export FUNCTION_NAME="lambda-java"</code></pre>
+
+        <h3>3.2 Build JAR File</h3>
+        <pre><code>mvn clean package</code></pre>
+
+        <h2>Step 4: Create IAM Role for Lambda</h2>
+        <p>Create an IAM role with the following policies:</p>
+        <ul>
+            <li><code>AWSLambdaBasicExecutionRole</code></li>
+            <li><code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> (CRITICAL!)</li>
+            <li><code>AmazonS3ReadOnlyAccess</code> (for testing)</li>
+        </ul>
+
+        <h3>4.1 Create IAM Role</h3>
+        <pre><code>aws iam create-role \
+  --role-name lambda-java-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'</code></pre>
+
+        <h3>4.2 Attach Required Policies</h3>
+        <pre><code>aws iam attach-role-policy \
+  --role-name lambda-java-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws iam attach-role-policy \
+  --role-name lambda-java-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy
+
+aws iam attach-role-policy \
+  --role-name lambda-java-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess</code></pre>
+
+        <h3>4.3 Get Role ARN</h3>
+        <pre><code>ROLE_ARN=$(aws iam get-role \
+  --role-name lambda-java-execution-role \
+  --query 'Role.Arn' \
+  --output text)
+
+echo "Role ARN: $ROLE_ARN"</code></pre>
+
+        <h2>Step 5: Deploy Lambda Function</h2>
+        <h3>5.1 Create Lambda Function</h3>
+        <pre><code>aws lambda create-function \
+  --function-name lambda-java \
+  --runtime java17 \
+  --role "$ROLE_ARN" \
+  --handler com.example.appsignals.ApplicationSignalsApplication::handleRequest \
+  --zip-file fileb://target/lambda-java-appsignals-1.0.0.jar \
+  --timeout 30 \
+  --memory-size 512</code></pre>
+
+        <h3>5.2 Add AWS Lambda Layer for OpenTelemetry</h3>
+        <p>For <code>us-east-1</code>:</p>
+        <pre><code>LAYER_ARN="arn:aws:lambda:us-east-1:615299751070:layer:AWSOpenTelemetryDistroJava:18"</code></pre>
+
+        <h3>5.3 Configure Environment Variables</h3>
+        <pre><code>aws lambda update-function-configuration \
+  --function-name ${FUNCTION_NAME} \
+  --environment Variables='{
+    "AWS_LAMBDA_EXEC_WRAPPER": "/opt/otel-instrument",
+    "OTEL_SERVICE_NAME": "'${FUNCTION_NAME}'",
+    "OTEL_RESOURCE_ATTRIBUTES": "service.name='${FUNCTION_NAME}',deployment.environment=lambda:'${AWS_REGION}'"
+  }'</code></pre>
+
+        <h2>Step 6: Test Lambda Function</h2>
+        <h3>6.1 Test Basic Functionality</h3>
+        <pre><code>aws lambda invoke \
+  --function-name ${FUNCTION_NAME} \
+  --payload '{"path": "/", "httpMethod": "GET"}' \
+  --region ${AWS_REGION} \
+  response.json</code></pre>
+
+        <h3>6.2 Generate Traffic for Application Signals</h3>
+        <pre><code>for i in {1..50}; do
+  aws lambda invoke \
+    --function-name ${FUNCTION_NAME} \
+    --payload "{\"path\": \"/api/hello/User${i}\", \"httpMethod\": \"GET\"}" \
+    --region ${AWS_REGION} \
+    /dev/null
+done</code></pre>
+
+        <h2>Step 7: Generate Traffic for Testing</h2>
+        <p>To test Application Signals, you need to generate traffic to your Lambda function. We provide two traffic generator options:</p>
+
+        <h3>7.1 Python Traffic Generator (Recommended)</h3>
+        <p>Create a Python script to generate realistic traffic patterns:</p>
+        <pre><code>#!/usr/bin/env python3
+import boto3
+import json
+import time
+import random
+import sys
+
+def generate_traffic(function_name, region='us-east-1', profile='eksworkstream', num_requests=50):
+    # Initialize Lambda client
+    session = boto3.Session(profile_name=profile)
+    lambda_client = session.client('lambda', region_name=region)
+    
+    # Test endpoints with different characteristics
+    endpoints = [
+        {"path": "/", "method": "GET", "name": "Root", "weight": 20},
+        {"path": "/health", "method": "GET", "name": "Health", "weight": 15},
+        {"path": "/api/hello/User", "method": "GET", "name": "Hello", "weight": 30},
+        {"path": "/api/slow", "method": "GET", "name": "Slow", "weight": 10},
+        {"path": "/api/error", "method": "GET", "name": "Error", "weight": 10},
+        {"path": "/api/external", "method": "GET", "name": "External", "weight": 8},
+        {"path": "/api/s3", "method": "GET", "name": "S3", "weight": 5},
+        {"path": "/api/database", "method": "GET", "name": "Database", "weight": 2},
+    ]
+    
+    # Create weighted list for random selection
+    weighted_endpoints = []
+    for endpoint in endpoints:
+        weighted_endpoints.extend([endpoint] * endpoint["weight"])
+    
+    success_count = 0
+    error_count = 0
+    
+    for i in range(1, num_requests + 1):
+        endpoint = random.choice(weighted_endpoints)
+        
+        if endpoint["name"] == "Hello":
+            user_name = f"User{random.randint(1, 1000)}"
+            path = f"/api/hello/{user_name}"
+        else:
+            path = endpoint["path"]
+        
+        payload = {"path": path, "httpMethod": endpoint["method"]}
+        
+        try:
+            response = lambda_client.invoke(
+                FunctionName=function_name,
+                InvocationType='RequestResponse',
+                Payload=json.dumps(payload)
+            )
+            
+            response_payload = json.loads(response['Payload'].read())
+            status_code = response_payload.get('statusCode', 200)
+            
+            if status_code == 200:
+                success_count += 1
+            else:
+                error_count += 1
+                
+            print(f"Request {i}: {endpoint['name']} | Status: {status_code}")
+            time.sleep(random.uniform(0.1, 0.5))
+            
+        except Exception as e:
+            error_count += 1
+            print(f"Request {i}: {endpoint['name']} | Error: {str(e)}")
+    
+    print(f"Summary: {success_count} successful, {error_count} errors")
+
+if __name__ == "__main__":
+    function_name = sys.argv[1] if len(sys.argv) > 1 else "lambda-java"
+    num_requests = int(sys.argv[2]) if len(sys.argv) > 2 else 50
+    generate_traffic(function_name, num_requests=num_requests)</code></pre>
+
+        <h3>7.2 Shell Script Traffic Generator</h3>
+        <p>Alternative shell script for traffic generation:</p>
+        <pre><code>#!/bin/bash
+FUNCTION_NAME="lambda-java"
+NUM_REQUESTS=50
+
+endpoints=(
+    "root:/:GET:20"
+    "health:/health:GET:15"
+    "hello:/api/hello:GET:30"
+    "slow:/api/slow:GET:10"
+    "error:/api/error:GET:10"
+    "external:/api/external:GET:8"
+    "s3:/api/s3:GET:5"
+    "database:/api/database:GET:2"
+)
+
+for i in $(seq 1 $NUM_REQUESTS); do
+    endpoint_info=${endpoints[$((RANDOM % ${#endpoints[@]}))]}
+    IFS=':' read -r name path method weight <<< "$endpoint_info"
+    
+    if [ "$name" = "hello" ]; then
+        user_name="User$((RANDOM % 1000 + 1))"
+        full_path="/api/hello/$user_name"
+    else
+        full_path="$path"
+    fi
+    
+    payload="{\"path\": \"$full_path\", \"httpMethod\": \"$method\"}"
+    
+    aws lambda invoke \
+        --function-name $FUNCTION_NAME \
+        --payload "$payload" \
+        /tmp/response.json
+    
+    echo "Request $i: $name"
+    sleep 0.2
+done</code></pre>
+
+        <h3>7.3 Usage Instructions</h3>
+        <p><strong>Python Traffic Generator:</strong></p>
+        <pre><code># Save as traffic-generator.py and run:
+python3 traffic-generator.py lambda-java
+python3 traffic-generator.py lambda-java 100  # 100 requests</code></pre>
+
+        <p><strong>Shell Script Traffic Generator:</strong></p>
+        <pre><code># Save as generate-traffic.sh, make executable, and run:
+chmod +x generate-traffic.sh
+./generate-traffic.sh</code></pre>
+
+        <h3>7.4 Traffic Generator Features</h3>
+        <ul>
+            <li><strong>Weighted Random Selection:</strong> More realistic traffic patterns</li>
+            <li><strong>Multiple Endpoint Types:</strong> Tests different operation characteristics</li>
+            <li><strong>Error Simulation:</strong> Includes error endpoints for fault testing</li>
+            <li><strong>Performance Testing:</strong> Includes slow endpoints for latency testing</li>
+            <li><strong>External Dependencies:</strong> Tests external HTTP and S3 calls</li>
+            <li><strong>Configurable:</strong> Adjustable number of requests and parameters</li>
+        </ul>
+
+        <h2>Step 8: Verify Application Signals</h2>
+        <h3>8.1 Check Application Signals Service Discovery</h3>
+        <pre><code>aws application-signals list-services \
+  --region ${AWS_REGION} \
+  --start-time $(date -u -v-2H +%s) \
+  --end-time $(date -u +%s) \
+  --query 'ServiceSummaries[*].{Name:KeyAttributes.Name,Environment:KeyAttributes.Environment}'</code></pre>
+
+        <div class="success">
+            <p><strong>Expected:</strong> Your service should appear with:</p>
+            <ul>
+                <li>Name: <code>lambda-java</code></li>
+                <li>Environment: <code>lambda:us-east-1</code></li>
+            </ul>
+        </div>
+
+        <h2>Step 9: View in AWS Console</h2>
+        <h3>9.1 Console Access</h3>
+        <ol>
+            <li><strong>Navigate to:</strong> AWS Console → CloudWatch → Application Signals → Services</li>
+            <li><strong>Look for your service:</strong> Service Name: <code>lambda-java</code></li>
+            <li><strong>Explore:</strong> Service Map, Service Dashboard, Operations, Dependencies</li>
+        </ol>
+
+        <h2>Alternative: Enable via Lambda Console (Simplest Method)</h2>
+        <div class="highlight">
+            <p><strong>Recommended when experiencing shell issues!</strong> This method bypasses all command-line problems and is the most reliable approach.</p>
+        </div>
+        
+        <p>If you prefer using the AWS Console or encounter shell environment issues:</p>
+        <ol>
+            <li>Go to AWS Lambda Console</li>
+            <li>Click "Create function"</li>
+            <li>Choose "Author from scratch"</li>
+            <li>Function name: <code>lambda-java</code></li>
+            <li>Runtime: Java 17</li>
+            <li>Create function</li>
+            <li>Upload your JAR file: <code>target/lambda-java-appsignals-1.0.0.jar</code></li>
+            <li>Set handler to: <code>com.example.appsignals.ApplicationSignalsApplication::handleRequest</code></li>
+            <li>Go to Configuration → Monitoring and operations tools</li>
+            <li>Click "Edit"</li>
+            <li>Enable both checkboxes:
+                <ul>
+                    <li>✅ "Automatically collect application traces and standard application metrics with Application Signals"</li>
+                    <li>✅ "Automatically collect Lambda service traces for end to end visibility with X-Ray"</li>
+                </ul>
+            </li>
+            <li>Click "Save"</li>
+        </ol>
+
+        <div class="success">
+            <p><strong>That's it!</strong> The console automatically:</p>
+            <ul>
+                <li>Adds the AWS Lambda Layer for OpenTelemetry</li>
+                <li>Sets the <code>AWS_LAMBDA_EXEC_WRAPPER</code> environment variable</li>
+                <li>Attaches the required IAM policy</li>
+            </ul>
+        </div>
+
+        <h2>Troubleshooting</h2>
+        
+        <h3>Issue: Shell Environment Problems</h3>
+        <div class="warning">
+            <p><strong>Problem:</strong> Commands fail with errors like <code>parse error near 'cursor_snap_ENV_VARS...'</code> or <code>command not found: dump_zsh_state</code></p>
+            <p><strong>Cause:</strong> Cursor IDE environment variable injection is corrupting the shell environment</p>
+        </div>
+        
+        <p><strong>Solutions:</strong></p>
+        <ol>
+            <li><strong>Use a fresh terminal window</strong> outside of Cursor IDE</li>
+            <li><strong>Restart Cursor IDE</strong> completely and try again</li>
+            <li><strong>Use VS Code</strong> instead of Cursor IDE</li>
+            <li><strong>Use the Lambda Console method</strong> (recommended for shell issues)</li>
+        </ol>
+
+        <h3>Issue: Role ARN is Empty</h3>
+        <div class="warning">
+            <p><strong>Problem:</strong> <code>aws: error: argument --role: expected one argument</code></p>
+            <p><strong>Cause:</strong> The <code>ROLE_ARN</code> variable is empty, indicating IAM role creation failed</p>
+        </div>
+        
+        <p><strong>Debug Steps:</strong></p>
+        <ol>
+            <li><strong>Check if role exists:</strong>
+                <pre><code>aws iam get-role --role-name lambda-java-execution-role</code></pre>
+            </li>
+            <li><strong>Create role if missing:</strong>
+                <pre><code>aws iam create-role \
+  --role-name lambda-java-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'</code></pre>
+            </li>
+            <li><strong>Get role ARN manually:</strong>
+                <pre><code>aws iam get-role \
+  --role-name lambda-java-execution-role \
+  --query 'Role.Arn' \
+  --output text</code></pre>
+            </li>
+            <li><strong>Use ARN directly in create-function command</strong></li>
+        </ol>
+
+        <h3>Issue: Command Syntax Errors</h3>
+        <div class="warning">
+            <p><strong>Common mistakes:</strong></p>
+            <ul>
+                <li>Running multiple commands on the same line with periods</li>
+                <li>Using duplicate parameters (e.g., <code>--role</code> twice)</li>
+                <li>Missing quotes around variables</li>
+            </ul>
+        </div>
+        
+        <p><strong>❌ WRONG - Don't do this:</strong></p>
+        <pre><code># WRONG: Commands on same line with period
+aws iam create-role \ ... }. aws lambda create-function \ ...
+
+# WRONG: Duplicate --role parameter
+aws lambda create-function \
+  --role ${ROLE_ARN} \
+  --role lambda-java-execution-role
+
+# WRONG: Missing quotes around variable
+--role $ROLE_ARN</code></pre>
+
+        <p><strong>✅ CORRECT - Do this instead:</strong></p>
+        <pre><code># Step 1: Create IAM role (separate command)
+aws iam create-role \
+  --role-name lambda-java-execution-role \
+  --assume-role-policy-document '{
+    "Version": "2012-10-17",
+    "Statement": [{
+      "Effect": "Allow",
+      "Principal": {"Service": "lambda.amazonaws.com"},
+      "Action": "sts:AssumeRole"
+    }]
+  }'
+
+# Step 2: Attach policies (separate commands)
+aws iam attach-role-policy \
+  --role-name lambda-java-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+
+aws iam attach-role-policy \
+  --role-name lambda-java-execution-role \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchLambdaApplicationSignalsExecutionRolePolicy
+
+# Step 3: Get role ARN
+ROLE_ARN=$(aws iam get-role \
+  --role-name lambda-java-execution-role \
+  --query 'Role.Arn' \
+  --output text)
+
+# Step 4: Create Lambda function (with quotes around variable)
+aws lambda create-function \
+  --function-name lambda-java \
+  --runtime java17 \
+  --role "$ROLE_ARN" \
+  --handler com.example.appsignals.ApplicationSignalsApplication::handleRequest \
+  --zip-file fileb://target/lambda-java-appsignals-1.0.0.jar \
+  --timeout 30 \
+  --memory-size 512</code></pre>
+
+        <h3>Issue: Maven Build Failures</h3>
+        <p><strong>Common Maven issues:</strong></p>
+        <ul>
+            <li><strong>Shade plugin errors:</strong> Use the simplified <code>pom.xml</code> provided</li>
+            <li><strong>Java version mismatch:</strong> Ensure Java 17 is installed and configured</li>
+            <li><strong>Dependency conflicts:</strong> Remove Spring Boot dependencies if not needed</li>
+        </ul>
+
+        <h3>Issue: Service Not Appearing in Application Signals</h3>
+        <p><strong>Check:</strong></p>
+        <ul>
+            <li>Verify Application Signals is enabled in your account</li>
+            <li>Check if the OpenTelemetry layer is attached</li>
+            <li>Verify environment variables are set correctly</li>
+            <li>Wait 5-10 minutes after generating traffic</li>
+            <li>Ensure the IAM policy <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
+        </ul>
+
+        <h3>Issue: Lambda Function Errors</h3>
+        <p><strong>Common issues:</strong></p>
+        <ul>
+            <li>Missing IAM policy - Ensure <code>CloudWatchLambdaApplicationSignalsExecutionRolePolicy</code> is attached</li>
+            <li>Wrong layer ARN - Verify the layer ARN for your region</li>
+            <li>Missing environment variable - Ensure <code>AWS_LAMBDA_EXEC_WRAPPER=/opt/otel-instrument</code></li>
+            <li>Handler mismatch - Ensure handler is <code>com.example.appsignals.ApplicationSignalsApplication::handleRequest</code></li>
+            <li>JAR file not found - Ensure Maven build completed successfully</li>
+        </ul>
+
+        <h3>Issue: Permission Denied Errors</h3>
+        <p><strong>Check your AWS credentials:</strong></p>
+        <ul>
+            <li>Verify AWS profile: <code>aws configure list</code></li>
+            <li>Check caller identity: <code>aws sts get-caller-identity</code></li>
+            <li>Ensure you have the required IAM permissions</li>
+        </ul>
+
+        <h2>Key Configuration Details</h2>
+        <h3>Critical Environment Variables</h3>
+        <table>
+            <tr>
+                <th>Variable</th>
+                <th>Value</th>
+                <th>Purpose</th>
+            </tr>
+            <tr>
+                <td><code>AWS_LAMBDA_EXEC_WRAPPER</code></td>
+                <td><code>/opt/otel-instrument</code></td>
+                <td>Enables OpenTelemetry instrumentation</td>
+            </tr>
+            <tr>
+                <td><code>OTEL_SERVICE_NAME</code></td>
+                <td><code>${FUNCTION_NAME}</code></td>
+                <td>Service name in Application Signals</td>
+            </tr>
+            <tr>
+                <td><code>OTEL_RESOURCE_ATTRIBUTES</code></td>
+                <td><code>service.name=NAME,deployment.environment=lambda:REGION</code></td>
+                <td>Service identification</td>
+            </tr>
+        </table>
+       
+        
+</body>
+</html>

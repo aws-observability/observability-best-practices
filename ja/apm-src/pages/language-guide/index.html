@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Language guide — CloudWatch APM</title>
+    <link rel="stylesheet" href="../../assets/css/style.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="../../index.html" class="logo">CloudWatch APM Documentation</a>
+    </header>
+    <div class="site">
+      <aside class="left-nav" id="left-nav"></aside>
+      <main class="content">
+        <header>
+          <h1 id="guide-title">Language guide</h1>
+        </header>
+        <article>
+          <div id="guide-meta"></div>
+          <div id="guide-content">Loading…</div>
+        </article>
+      </main>
+    </div>
+
+    <script>
+      (async () => {
+        const params = new URLSearchParams(location.search);
+        const combo = params.get('combo');
+        const titleEl = document.getElementById('guide-title');
+        const metaEl = document.getElementById('guide-meta');
+        const contentEl = document.getElementById('guide-content');
+
+        const listHref = '../language-guides/';
+
+        if (!combo) {
+          titleEl.textContent = 'Language guide';
+          contentEl.innerHTML = `<p>Missing <code>?combo=</code>. Go back to <a href="${listHref}">Language-Specific Guides</a>.</p>`;
+          return;
+        }
+
+        const srcHtml = `../../language-guides/enablement/${encodeURIComponent(combo)}.html`;
+        const srcClean = `../../language-guides/enablement/${encodeURIComponent(combo)}/`;
+
+        titleEl.textContent = combo.replace(/-/g, ' ').toUpperCase();
+        metaEl.innerHTML = `
+          <div class="guide-meta">
+            <a href="${listHref}">← All language guides</a>
+            <span class="guide-src">Source: <code>${srcHtml}</code></span>
+          </div>
+        `;
+
+        try {
+          const tryFetch = async (url) => {
+            const r = await fetch(url, { cache: 'no-cache', redirect: 'follow' });
+            return r.ok ? r : null;
+          };
+
+          const res = (await tryFetch(srcHtml)) || (await tryFetch(srcClean));
+          const usedSrc = res?.url || srcHtml;
+          if (!res) throw new Error(`Failed to load ${srcHtml} (and ${srcClean})`);
+
+          const html = await res.text();
+          const doc = new DOMParser().parseFromString(html, 'text/html');
+
+          const container = doc.querySelector('.container') || doc.body;
+          container.querySelectorAll('style, script, link[rel="stylesheet"]').forEach((n) => n.remove());
+          container.querySelectorAll('.header, .back-link').forEach((n) => n.remove());
+
+          container.querySelectorAll('.section').forEach((n) => {
+            const section = doc.createElement('section');
+            section.innerHTML = n.innerHTML;
+            n.replaceWith(section);
+          });
+
+          container.querySelectorAll('.code-block').forEach((n) => {
+            const pre = doc.createElement('pre');
+            const code = doc.createElement('code');
+            code.textContent = n.textContent || '';
+            pre.appendChild(code);
+            n.replaceWith(pre);
+          });
+
+          const calloutMap = [
+            ['highlight', 'box guide-callout guide-callout-highlight'],
+            ['warning', 'box guide-callout guide-callout-warning'],
+            ['success', 'box guide-callout guide-callout-success'],
+          ];
+          calloutMap.forEach(([cls, newCls]) => {
+            container.querySelectorAll('.' + cls).forEach((n) => {
+              n.className = newCls;
+            });
+          });
+
+          const srcTitle = doc.querySelector('title')?.textContent?.trim();
+          if (srcTitle) titleEl.textContent = srcTitle;
+
+          const srcCode = metaEl.querySelector('.guide-src code');
+          if (srcCode) srcCode.textContent = usedSrc;
+
+          contentEl.innerHTML = container.innerHTML;
+        } catch (err) {
+          contentEl.innerHTML = `
+            <div class="box guide-callout guide-callout-warning">
+              <h2>Unable to load guide content</h2>
+              <p>${String(err.message || err)}</p>
+            </div>
+          `;
+        }
+      })();
+    </script>
+
+    <script src="../../assets/js/site.js"></script>
+  </body>
+</html>

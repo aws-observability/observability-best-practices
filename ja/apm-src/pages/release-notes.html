@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Release Notes — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Release Notes</h1></header>
+      <article>
+        <section>
+          <h2>Release notes: where to look</h2>
+          <p>CloudWatch Application Signals is a managed AWS capability. Public release notes and feature announcements are published through AWS documentation and AWS “What’s New”.</p>
+          <ul>
+            <li><strong>AWS “What’s New”:</strong> <a href="https://aws.amazon.com/about-aws/whats-new/">aws.amazon.com/about-aws/whats-new</a></li>
+            <li><strong>Application Signals docs:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">CloudWatch Application Signals</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Instrumentation components</h2>
+          <p>Your “versioned” upgrades typically come from the instrumentation distribution and its dependencies (for example, AWS Distro for OpenTelemetry and OpenTelemetry instrumentation libraries), plus CloudWatch Agent / platform add-ons.</p>
+          <ul>
+            <li><strong>ADOT:</strong> follow the AWS Distro for OpenTelemetry release notes appropriate for your language/runtime.</li>
+            <li><strong>CloudWatch Agent:</strong> upgrade the agent when required for new Application Signals capabilities (for example, grouping via resource attributes).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Known issues and compatibility</h2>
+          <p>For the current compatibility matrix and known issues, see the official “Supported systems” page.</p>
+          <p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">Supported systems</a></p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

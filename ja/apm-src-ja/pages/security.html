@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Security &amp; Compliance — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body> <header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM Documentation</a>
+</header> <div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>Security &amp; Compliance</h1></header>
+<article>
+<section>
+<h2>セキュリティ</h2>
+<p>CloudWatch Application Signals は、オブザーバビリティデータを保護し、業界標準へのコンプライアンスを確保するために、複数のセキュリティレイヤーを実装しています。</p>
+</section>
+<section>
+<h3>データの暗号化</h3>
+<h4>保存時の暗号化：</h4>
+<ul>
+<li>すべてのトレースデータは AES-256 暗号化を使用して暗号化されます</li>
+<li>RUM データは AWS Key Management Service (KMS) で暗号化されます</li>
+<li>Synthetic モニタリングデータは暗号化されて保存されます</li>
+<li>追加の制御のためにカスタマーマネージドキーを使用できます</li>
+</ul>
+<h4>転送時の暗号化：</h4>
+<ul>
+<li>すべてのデータ転送には TLS 1.2 以上を使用します</li>
+<li>CloudWatch サービスへの API 呼び出しは暗号化されます</li>
+<li>RUM データ収集には HTTPS を使用します</li>
+<li>エージェントとコレクター間の通信はセキュリティで保護されます</li>
+</ul>
+</section>
+<section>
+<h3>アイデンティティとアクセス管理</h3>
+<h4>IAM 権限：</h4>
+<p>Application Signals へのアクセスを付与する際は最小権限の原則を使用してください：</p>
+<h5>読み取り専用アクセス：</h5>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+<h5>フルアクセス：</h5>
+<pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+</section>
+<section>
+<h3>データプライバシーと PII 保護</h3>
+<h4>データのサニタイズ：</h4>
+<ul>
+<li>機密情報にはデータマスキングを実装してください</li>
+<li>トレース属性内の PII にはトークン化を使用してください</li>
+<li>データ保持ポリシーを設定してください</li>
+<li>収集したデータの定期的な監査</li>
+</ul>
+<h4>ベストプラクティス：</h4>
+<ul>
+<li>パスワード、API キー、またはトークンをトレースに含めないでください</li>
+<li>メールアドレスや電話番号はハッシュ化またはマスクしてください</li>
+<li>機密データを含む URL からクエリパラメータを削除してください</li>
+<li>個人情報の代わりに汎用識別子を使用してください</li>
+</ul>
+</section>
+<section>
+<h3>ネットワークセキュリティ</h3>
+<h4>VPC の設定：</h4>
+<ul>
+<li>セキュリティ強化のため、VPC 内にエージェントをデプロイしてください</li>
+<li>CloudWatch API 呼び出しには VPC エンドポイントを使用してください</li>
+<li>トラフィックを制限するセキュリティグループを設定してください</li>
+<li>追加の制御のためにネットワーク ACL を実装してください</li>
+</ul>
+<h4>エージェントのセキュリティ：</h4>
+<ul>
+<li>必要最小限の権限でエージェントを実行してください</li>
+<li>エージェントをセキュリティパッチで最新の状態に保つ</li>
+<li>セキュリティイベントのエージェントログを監視する</li>
+<li>可能な限り読み取り専用アクセスを使用する</li>
+</ul>
+</section>
+<section>
+<h2>データプライバシー</h2>
+<p>Application Signals がデータプライバシー要件をどのように処理するかを理解する。</p>
+</section>
+<section>
+<h3>データの収集と使用</h3>
+<h4>収集する情報：</h4>
+<ul>
+<li>アプリケーションのパフォーマンスメトリクスとトレース</li>
+<li>サービス依存関係情報</li>
+<li>エラー情報とスタックトレース</li>
+<li>システムおよびインフラストラクチャのメタデータ</li>
+</ul>
+<h4>収集しない情報：</h4>
+<ul>
+<li>アプリケーションのビジネスデータまたはユーザーコンテンツ</li>
+<li>データベースの内容またはファイルシステムデータ</li>
+<li>ユーザー認証情報または認証トークン</li>
+<li>個人を特定できる情報（明示的に含まれている場合を除く）</li>
+</ul>
+</section>
+<section>
+<h3>データ保持</h3>
+<h4>デフォルトの保持期間：</h4>
+<ul>
+<li><strong>トレースデータ：</strong> 30日間（最大1年まで設定可能）</li>
+<li><strong>メトリクス：</strong> 15か月（標準的な CloudWatch の保持期間）</li>
+<li><strong>RUM データ：</strong> 30日間（最大1年まで設定可能）</li>
+<li><strong>Synthetics の結果：</strong> 90日間（設定可能）</li>
+</ul>
+<h4>データの削除：</h4>
+<ul>
+<li>CloudWatch データ保持ポリシーを使用する</li>
+<li>自動化されたデータライフサイクル管理を実装する</li>
+<li>必要に応じて AWS Support を通じてデータ削除をリクエストする</li>
+</ul>
+</section>
+<section>
+<h3>コンプライアンスフレームワーク</h3>
+<h4>サポートされている標準：</h4>
+<ul>
+<li><strong>SOC 2：</strong> セキュリティ、可用性、および機密性の管理</li>
+<li><strong>PCI DSS：</strong> ペイメントカード業界のデータセキュリティ標準</li>
+<li><strong>HIPAA：</strong> 医療保険の携行性と責任に関する法律</li>
+<li><strong>GDPR：</strong> 一般データ保護規則</li>
+<li><strong>FedRAMP:</strong> 連邦リスク認可管理プログラム</li>
+</ul>
+</section>
+<section>
+<h2>コンプライアンスガイダンス</h2>
+<p>一般的なコンプライアンスシナリオに対する具体的なガイダンス。</p>
+</section>
+<section>
+<h3>HIPAA コンプライアンス</h3>
+<h4>要件:</h4>
+<ul>
+<li>トレース内の保護医療情報 (PHI) を暗号化する</li>
+<li>アクセス制御と監査ログを実装する</li>
+<li>AWS との業務提携契約 (BAA) を使用する</li>
+<li>適切なデータ保持ポリシーを設定する</li>
+</ul>
+<h4>実装:</h4>
+<ul>
+<li>トレース属性とスパン名の PHI をマスクする</li>
+<li>カスタマーマネージド KMS キーを使用する</li>
+<li>監査ログ記録のために CloudTrail を有効にする</li>
+<li>データ分離のために VPC エンドポイントを設定する</li>
+</ul>
+</section>
+<section>
+<h3>PCI DSS コンプライアンス</h3>
+<h4>主な考慮事項:</h4>
+<ul>
+<li>カード会員データをトレースやログに含めない</li>
+<li>ネットワークセグメンテーションを実装する</li>
+<li>転送中および保存中のデータに暗号化を使用する</li>
+<li>定期的なセキュリティ評価とペネトレーションテスト</li>
+</ul>
+<h4>ベストプラクティス:</h4>
+<ul>
+<li>インストルメンテーション前に機密データをトークン化する</li>
+<li>Application Signals エージェントにプライベートサブネットを使用する</li>
+<li>最小権限の IAM ポリシーを実装する</li>
+<li>収集データの定期的なレビュー</li>
+</ul>
+</section>
+<section>
+<h3>GDPR コンプライアンス</h3>
+<h4>データ主体の権利:</h4>
+<ul>
+<li>個人データへのアクセス権</li>
+<li>訂正の権利</li>
+<li>消去の権利 (「忘れられる権利」)</li>
+<li>データポータビリティの権利</li>
+</ul>
+<h4>実装:</h4>
+<ul>
+<li>テレメトリデータにおける PII 収集を最小化する</li>
+<li>データ匿名化技術を実装する</li>
+<li>ビジネスニーズに基づいてデータ保持を設定する</li>
+<li>データ処理活動を文書化する</li>
+</ul>
+</section>
+<section>
+<h2>セキュリティモニタリング</h2>
+<p>Application Signals のデプロイメントをセキュリティイベントについて監視する。</p>
+</section>
+<section>
+<h3>セキュリティのベストプラクティス</h3>
+<ul>
+<li>API アクティビティログ記録のために CloudTrail を有効化する</li>
+<li>IAM ポリシーの変更とアクセスパターンを監視する</li>
+<li>異常なデータアクセスパターンに対するアラートを設定する</li>
+<li>定期的なセキュリティ評価と脆弱性スキャン</li>
+<li>多要素認証 (MFA) を実装する</li>
+</ul>
+</section>
+<section>
+<h3>インシデント対応</h3>
+<ul>
+<li>セキュリティイベントに対するインシデント対応計画を策定する</li>
+<li>侵害された場合に Application Signals を無効化する方法を把握する</li>
+<li>エスカレーション手順を文書化する</li>
+<li>定期的なインシデント対応テスト</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

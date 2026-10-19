@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>레퍼런스 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>레퍼런스</h1></header>
+      <article>
+        <section>
+          <h2>서비스 제한 및 할당량</h2>
+          <p>CloudWatch Application Signals의 제한 및 할당량을 이해합니다.</p>
+        </section>
+
+        <section>
+          <h3>제한 및 할당량</h3>
+          <p>Application Signals는 CloudWatch 및 AWS X-Ray에 의존합니다. 제한(수집, 쿼리 속도 및 할당량)은 해당 서비스에 의해 관리되며 시간이 지남에 따라 변경될 수 있습니다. 현재 값은 공식 문서를 참조하세요.</p>
+          <ul>
+            <li><strong>Application Signals:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html">Application Signals 문서</a></li>
+            <li><strong>CloudWatch 할당량:</strong> <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch_limits.html">CloudWatch 서비스 할당량</a></li>
+            <li><strong>AWS X-Ray 할당량:</strong> <a href="https://docs.aws.amazon.com/xray/latest/devguide/xray-api-throttling.html">X-Ray API 스로틀링 및 제한</a></li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CloudWatch 메트릭 보존 (일반 참조)</h3>
+          <p>CloudWatch는 다양한 해상도로 메트릭 데이터를 보존합니다. 전체 보존 모델은 CloudWatch 문서를 참조하세요.</p>
+          <ul>
+            <li><strong>1분 해상도:</strong> 15일</li>
+            <li><strong>5분 해상도:</strong> 63일</li>
+            <li><strong>1시간 해상도:</strong> 15개월</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>서비스 할당량</h3>
+
+          <h4>Application Signals:</h4>
+          <ul>
+            <li><strong>계정당 서비스:</strong> 1,000</li>
+            <li><strong>서비스당 오퍼레이션:</strong> 100</li>
+            <li><strong>사용자 정의 메트릭:</strong> 서비스당 30개</li>
+          </ul>
+
+          <h4>RUM:</h4>
+          <ul>
+            <li><strong>계정당 앱 모니터:</strong> 20</li>
+            <li><strong>초당 이벤트:</strong> 10,000</li>
+            <li><strong>이벤트 크기:</strong> 64 KB</li>
+          </ul>
+
+          <h4>Synthetics:</h4>
+          <ul>
+            <li><strong>계정당 카나리:</strong> 100</li>
+            <li><strong>카나리 실행 시간:</strong> 최대 15분</li>
+            <li><strong>카나리 크기:</strong> 1 GB (압축 해제 시)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>용어집</h2>
+          <p>CloudWatch Application Signals의 주요 용어 및 개념입니다.</p>
+        </section>
+
+        <section>
+          <h3>핵심 개념</h3>
+
+          <h4>애플리케이션 성능 모니터링 (APM)</h4>
+          <p>소프트웨어 애플리케이션의 성능과 가용성을 모니터링하고 관리하는 실천 방법입니다.</p>
+
+          <h4>분산 트레이싱</h4>
+          <p>요청이 분산 시스템을 통해 흐르는 것을 추적하는 방법으로, 여러 서비스에 걸친 요청의 경로와 성능을 이해할 수 있게 합니다.</p>
+
+          <h4>서비스 맵</h4>
+          <p>서비스가 어떻게 연결되고 상호 작용하는지를 보여주는 애플리케이션 아키텍처의 시각적 표현입니다.</p>
+
+          <h4>스팬</h4>
+          <p>트레이스 내의 단일 오퍼레이션으로, 데이터베이스 쿼리나 API 호출과 같은 작업 단위를 나타냅니다.</p>
+
+          <h4>트레이스</h4>
+          <p>여러 스팬으로 구성된, 애플리케이션을 통한 요청의 완전한 엔드투엔드 여정입니다.</p>
+        </section>
+
+        <section>
+          <h3>계측 용어</h3>
+
+          <h4>자동 계측</h4>
+          <p>코드 변경 없이 애플리케이션에 관찰성 코드를 자동으로 추가하는 것입니다.</p>
+
+          <h4>수동 계측</h4>
+          <p>애플리케이션 소스 코드에 트레이싱 및 메트릭 코드를 명시적으로 추가하는 것입니다.</p>
+
+          <h4>OpenTelemetry</h4>
+          <p>계측을 위한 벤더 중립적 API를 제공하는 오픈 소스 관찰성 프레임워크입니다.</p>
+
+          <h4>샘플링</h4>
+          <p>관찰성과 비용 및 성능 간의 균형을 맞추기 위해 트레이스할 요청을 선택하는 프로세스입니다.</p>
+
+          <h4>컨텍스트 전파</h4>
+          <p>트레이스 연속성을 유지하기 위해 서비스 간에 트레이스 컨텍스트를 전달하는 메커니즘입니다.</p>
+        </section>
+
+        <section>
+          <h3>메트릭 및 모니터링</h3>
+
+          <h4>골든 시그널</h4>
+          <p>애플리케이션 상태를 모니터링하기 위한 네 가지 핵심 메트릭: 지연 시간, 처리량, 오류율, 포화도.</p>
+
+          <h4>지연 시간</h4>
+          <p>요청이 처리되는 데 걸리는 시간으로, 일반적으로 백분위수(P50, P90, P99)로 측정됩니다.</p>
+
+          <h4>처리량</h4>
+          <p>요청이 처리되는 속도로, 일반적으로 초당 요청 수로 측정됩니다.</p>
+
+          <h4>오류율</h4>
+          <p>오류를 발생시키는 요청의 백분율입니다.</p>
+
+          <h4>포화도</h4>
+          <p>시스템 리소스가 활용되는 정도입니다.</p>
+
+          <h4>서비스 수준 목표 (SLO)</h4>
+          <p>서비스 제공자와 소비자 간에 합의된 서비스 품질의 목표 수준입니다.</p>
+
+          <h4>서비스 수준 지표 (SLI)</h4>
+          <p>지연 시간이나 가용성과 같이 제공되는 서비스 수준의 측정 가능한 측면입니다.</p>
+        </section>
+
+        <section>
+          <h3>RUM 및 Synthetics</h3>
+
+          <h4>실제 사용자 모니터링 (RUM)</h4>
+          <p>프로덕션 환경에서 실제 사용자의 웹 애플리케이션 상호 작용을 모니터링합니다.</p>
+
+          <h4>합성 모니터링</h4>
+          <p>시뮬레이션된 사용자 상호 작용을 사용하여 애플리케이션을 자동으로 테스트합니다.</p>
+
+          <h4>카나리</h4>
+          <p>애플리케이션에 대해 자동화된 테스트를 실행하는 합성 모니터링 스크립트입니다.</p>
+
+          <h4>Core Web Vitals</h4>
+          <p>웹에서의 사용자 경험을 측정하는 Google의 메트릭: LCP, FID, CLS.</p>
+
+          <h4>Largest Contentful Paint (LCP)</h4>
+          <p>가장 큰 콘텐츠 요소가 화면에 렌더링되는 데 걸리는 시간입니다.</p>
+
+          <h4>First Input Delay (FID)</h4>
+          <p>사용자가 페이지와 처음 상호 작용한 시점부터 브라우저가 응답할 때까지의 시간입니다.</p>
+
+          <h4>Cumulative Layout Shift (CLS)</h4>
+          <p>예상치 못한 레이아웃 이동을 정량화하는 시각적 안정성의 척도입니다.</p>
+        </section>
+
+        <section>
+          <h3>AWS 특정 용어</h3>
+
+          <h4>Application Signals</h4>
+          <p>APM, RUM 및 Synthetics를 결합한 AWS의 통합 관찰성 솔루션입니다.</p>
+
+          <h4>X-Ray</h4>
+          <p>현재 Application Signals와 통합된 AWS의 분산 트레이싱 서비스입니다.</p>
+
+          <h4>CloudWatch</h4>
+          <p>메트릭, 로그 및 트레이스를 수집하는 AWS의 모니터링 및 관찰성 서비스입니다.</p>
+
+          <h4>ADOT (AWS Distro for OpenTelemetry)</h4>
+          <p>AWS 서비스에 최적화된 AWS의 OpenTelemetry 배포판입니다.</p>
+        </section>
+
+        <section>
+          <h2>지원되는 런타임 및 프레임워크</h2>
+          <p>Application Signals에서 지원하는 프로그래밍 언어 및 프레임워크입니다.</p>
+        </section>
+
+        <section>
+          <h3>자동 계측 지원</h3>
+
+          <p>공식 호환성 및 런타임/버전 매트릭스는 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html">지원되는 시스템</a>을 참조하세요. 주요 내용:</p>
+
+          <ul>
+            <li><strong>Java:</strong> JVM 8/11/17/21/23 (프레임워크 지원은 ADOT/OpenTelemetry Java 계측을 따름).</li>
+            <li><strong>Python:</strong> Python 3.9+ (프레임워크 지원은 ADOT/OpenTelemetry Python 계측을 따름).</li>
+            <li><strong>Node.js:</strong> Node 14/16/18/20/22 (프레임워크 지원은 ADOT/OpenTelemetry JS 계측을 따름).</li>
+            <li><strong>.NET:</strong> x86-64 또는 ARM64에서 지원; Linux x64/ARM64 및 Windows Server 2022 x64 (라이브러리 지원은 ADOT/OpenTelemetry .NET 계측을 따름).</li>
+            <li><strong>PHP/Ruby/Go:</strong> OpenTelemetry 제로 코드/자동 계측 경로를 통해 지원 (이 언어에 대한 ADOT SDK 없음).</li>
+          </ul>
+
+          <h4>참고 사항 및 알려진 고려 사항</h4>
+          <ul>
+            <li><strong>Node.js ESM:</strong> ESM 지원은 제한적입니다. 문서의 ESM 전용 설정을 따르지 않는 한 CommonJS를 선호하세요.</li>
+            <li><strong>Python:</strong> 컨테이너화된 앱은 <code>PYTHONPATH</code> 설정이 필요할 수 있습니다(알려진 OTel 자동 계측 이슈).</li>
+            <li><strong>.NET:</strong> ADOT .NET은 AWS SDK for .NET V4에 대해 제한이 있습니다. 완전한 지원을 위해 AWS SDK V3가 권장됩니다.</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>수동 계측</h3>
+          <p>모든 주요 프로그래밍 언어가 OpenTelemetry SDK를 통해 지원됩니다:</p>
+          <ul>
+            <li>Java, Scala, Kotlin</li>
+            <li>Python, Ruby</li>
+            <li>JavaScript/TypeScript, Go</li>
+            <li>.NET (C#, F#, VB.NET)</li>
+            <li>PHP, Rust, C++</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>구성 레퍼런스</h2>
+          <p>일반적인 구성 옵션 및 환경 변수입니다.</p>
+        </section>
+
+        <section>
+          <h3>환경 변수</h3>
+
+          <h4>OpenTelemetry 구성:</h4>
+          <ul>
+            <li><code>OTEL_SERVICE_NAME</code> - 서비스 이름</li>
+            <li><code>OTEL_TRACES_EXPORTER</code> - 트레이스 익스포터 (otlp, jaeger, zipkin)</li>
+            <li><code>OTEL_EXPORTER_OTLP_ENDPOINT</code> - OTLP 엔드포인트 URL</li>
+            <li><code>OTEL_TRACES_SAMPLER</code> - 샘플링 전략</li>
+            <li><code>OTEL_TRACES_SAMPLER_ARG</code> - 샘플링 파라미터</li>
+          </ul>
+
+          <h4>AWS 전용 구성:</h4>
+          <ul>
+            <li><code>AWS_REGION</code> - AWS 리전</li>
+            <li><code>AWS_XRAY_DAEMON_ADDRESS</code> - X-Ray 데몬 주소</li>
+            <li><code>OTEL_RESOURCE_ATTRIBUTES</code> - 서비스 속성 (Application Map의 사용자 정의 그룹화에도 사용됨)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>샘플링 구성</h3>
+
+          <h4>샘플링 전략:</h4>
+          <ul>
+            <li><code>always_on</code> - 모든 트레이스 샘플링</li>
+            <li><code>always_off</code> - 트레이스 샘플링 안 함</li>
+            <li><code>traceidratio</code> - 비율 기반 샘플링 (예: 10%의 경우 0.1)</li>
+            <li><code>parentbased_always_on</code> - 부모 샘플링 결정 존중</li>
+            <li><code>parentbased_traceidratio</code> - 부모 기반 비율 샘플링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>비용 최적화</h2>
+          <p>관찰성 비용을 제어하기 위한 전략입니다.</p>
+        </section>
+
+        <section>
+          <h3>샘플링 전략</h3>
+          <ul>
+            <li><strong>프로덕션:</strong> 5-10% 샘플링 비율</li>
+            <li><strong>개발:</strong> 50-100% 샘플링 비율</li>
+            <li><strong>오류 트레이스:</strong> 오류가 있는 트레이스는 항상 샘플링</li>
+            <li><strong>높은 가치 오퍼레이션:</strong> 중요 경로에 대해 100% 샘플링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>데이터 보존 정책</h3>
+          <p>보존은 기본 텔레메트리 저장소(예: CloudWatch 메트릭/로그 및 AWS X-Ray 트레이스)에 의해 제어됩니다. 해당 서비스에서 보존을 구성하고 문제 해결 및 규정 준수 요구 사항에 맞게 조정하세요.</p>
+        </section>
+
+        <section>
+          <h3>리소스 최적화</h3>
+          <ul>
+            <li><strong>배치 내보내기:</strong> 네트워크 오버헤드 감소</li>
+            <li><strong>압축:</strong> 데이터 압축 활성화</li>
+            <li><strong>필터링:</strong> 불필요한 스팬 및 속성 제거</li>
+            <li><strong>버퍼링:</strong> 적절한 버퍼 크기 사용</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

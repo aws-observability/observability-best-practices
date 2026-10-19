@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>功能与能力 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>功能与能力</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals：提供的功能</h2>
+          <p>CloudWatch Application Signals 是 AWS 在 CloudWatch 中的应用性能监控（APM）体验。启用后，它会自动收集应用遥测数据，并按<strong>服务</strong>、<strong>操作</strong>和<strong>依赖项</strong>进行组织，以便您快速分诊运行状况并跟踪长期性能目标。</p>
+          <ul>
+            <li><strong>标准应用指标：</strong>调用量、可用性、延迟、故障和错误。</li>
+            <li><strong>服务和依赖拓扑：</strong>根据发现的服务和关系生成的应用程序地图。</li>
+            <li><strong>深度故障排除：</strong>从服务健康状况深入到相关追踪和关联遥测数据。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>应用程序地图（拓扑 + 健康状况）</h2>
+          <p>应用程序地图可视化应用程序的拓扑并突出显示运行状况。它显示客户端、金丝雀、服务和依赖项之间的连接，以便运维人员了解执行流程并识别问题传播的位置。</p>
+
+          <h3>您可以做什么</h3>
+          <ul>
+            <li><strong>查看 SLO/SLI 健康状态：</strong>快速发现未达到目标的服务（以及上下游影响）。</li>
+            <li><strong>深入分析：</strong>选择节点/边以打开详细指标并导航到服务详情。</li>
+            <li><strong>分组和过滤：</strong>使用默认分组（相关服务、环境）并使用 AWS 标签或 OpenTelemetry 资源属性创建自定义分组。</li>
+            <li><strong>跨账户可见性：</strong>查看多个 AWS 账户中的服务（通过跨账户 Observability 设置时）。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>服务、操作和依赖项</h2>
+          <p>Application Signals 将遥测数据构建为与团队调试生产系统方式相匹配的模型：</p>
+          <ul>
+            <li><strong>服务：</strong>您的可部署单元（例如 ECS 服务、EKS 工作负载、Lambda 函数）。</li>
+            <li><strong>操作：</strong>服务中的请求处理程序（例如 HTTP 路由或 RPC 方法）。</li>
+            <li><strong>依赖项：</strong>服务发出的下游调用（例如另一个服务或 AWS 依赖项）。</li>
+          </ul>
+          <p>这种结构使您更容易回答诸如"哪个操作发生了回退？"、"这是上游还是下游问题？"以及"哪些依赖项导致了延迟或故障？"等问题。</p>
+        </section>
+
+        <section>
+          <h2>服务级别目标（SLO）</h2>
+          <p>直接从 Application Signals 收集的遥测数据创建和监控 SLO。SLO 帮助您跟踪性能和可靠性目标，并尽早发现"有风险"的服务。</p>
+          <ul>
+            <li><strong>在关键 SLI 上定义 SLO：</strong>可用性、延迟或与业务目标相关的其他 CloudWatch 指标。</li>
+            <li><strong>跟踪健康状态：</strong>在服务列表和应用程序地图中查看 SLI 健康状态。</li>
+            <li><strong>告警：</strong>创建与 SLO 状态/消耗关联的告警，以便团队在故障发生前做出响应。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>检测（兼容 OpenTelemetry）</h2>
+          <p>Application Signals 兼容 OpenTelemetry，支持多种方式对应用程序进行检测，具体取决于平台和语言。</p>
+          <ul>
+            <li><strong>支持的语言：</strong>Java、Python、Node.js 和 .NET（以及通过 OpenTelemetry 零代码检测路径支持的其他运行时）。</li>
+            <li><strong>支持的系统：</strong>Amazon EKS、Kubernetes、Amazon ECS、Amazon EC2（以及依赖 CloudWatch Agent + AWS Distro for OpenTelemetry 的启用模式）。</li>
+            <li><strong>常见设置模式：</strong>AWS Distro for OpenTelemetry (ADOT) SDK/收集器或 OpenTelemetry SDK + 收集器，具体取决于环境。</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>与 RUM 和 Synthetics 配合使用</h2>
+          <p>Application Signals 与 CloudWatch RUM 和 CloudWatch Synthetics 集成。当您为这些客户端/金丝雀启用追踪时，它们可以出现在应用程序地图中，帮助将用户体验和主动测试与它们调用的后端服务连接起来。</p>
+          <ul>
+            <li><strong>RUM 客户端：</strong>将前端性能和 JS 错误与后端服务调用连接起来。</li>
+            <li><strong>Synthetics 金丝雀：</strong>验证关键流程并帮助在用户之前检测问题。</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

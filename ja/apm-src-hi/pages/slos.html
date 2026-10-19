@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="hi">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>सर्विस लेवल ऑब्जेक्टिव (SLOs) — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM दस्तावेज़ीकरण</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>सर्विस लेवल ऑब्जेक्टिव (SLOs)</h1></header>
+      <article>
+        <section>
+          <h2>SLO क्यों महत्वपूर्ण हैं</h2>
+          <p>SLO आपको विश्वसनीयता और प्रदर्शन लक्ष्य व्यक्त करने (उदाहरण के लिए, "99.9% उपलब्धता" या "p99 लेटेंसी 500ms से कम") और उन्हें समय के साथ ट्रैक करने देते हैं। Application Signals में, SLO/SLI स्वास्थ्य ट्राइएज को तेज़ करने के लिए सर्विसेज़ पेज और Application Map में दिखाई देता है।</p>
+        </section>
+
+        <section>
+          <h2>आप किस पर SLO बना सकते हैं</h2>
+          <p>CloudWatch SLO मेट्रिक्स पर बनाए जाते हैं। Application Signals के मानक मेट्रिक्स (लेटेंसी, फॉल्ट, एरर, उपलब्धता) सामान्य SLI इनपुट हैं।</p>
+          <p>आधिकारिक डॉक्स: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-ServiceLevelObjectives.html">सर्विस लेवल ऑब्जेक्टिव (SLOs)</a>।</p>
+        </section>
+
+        <section>
+          <h2>सामान्य वर्कफ़्लो</h2>
+          <ul>
+            <li><strong>एक सर्विस चुनें</strong> और तय करें कि कौन सा इंडिकेटर उपयोगकर्ता प्रभाव को सबसे अच्छा दर्शाता है (उपलब्धता बनाम लेटेंसी)।</li>
+            <li><strong>उद्देश्य परिभाषित करें</strong> (लक्ष्य, समय विंडो, और मूल्यांकन)।</li>
+            <li><strong>अलर्ट</strong> SLO/SLI स्थिति या बर्न रेट पर अलार्म का उपयोग करके।</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

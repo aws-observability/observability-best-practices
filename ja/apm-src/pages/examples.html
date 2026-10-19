@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Examples & Code Samples — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Examples & Code Samples</h1></header>
+      <article>
+        <section>
+          <h2>Sample Applications</h2>
+          <p>Complete, runnable examples to help you get started with Application Signals instrumentation.</p>
+        </section>
+
+        <section>
+          <h3>Simple Lambda Function</h3>
+          <p>A basic serverless function with automatic instrumentation.</p>
+          
+          <h4>Python Example:</h4>
+          <pre><code>import json
+import boto3
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+
+# Initialize tracing
+trace.set_tracer_provider(TracerProvider())
+tracer = trace.get_tracer(__name__)
+
+# Configure OTLP exporter
+otlp_exporter = OTLPSpanExporter(
+    endpoint="https://otel-collector.endpoint",
+    headers={"Authorization": "Bearer your-token"}
+)
+span_processor = BatchSpanProcessor(otlp_exporter)
+trace.get_tracer_provider().add_span_processor(span_processor)
+
+def lambda_handler(event, context):
+    with tracer.start_as_span("process-order") as span:
+        # Add custom attributes
+        span.set_attribute("order.id", event.get("orderId"))
+        span.set_attribute("customer.id", event.get("customerId"))
+        
+        # Simulate processing
+        order_total = calculate_total(event.get("items", []))
+        span.set_attribute("order.total", order_total)
+        
+        # Call downstream service
+        payment_result = process_payment(order_total)
+        
+        if not payment_result["success"]:
+            span.set_attribute("error", True)
+            span.set_attribute("error.message", payment_result["message"])
+            raise Exception("Payment failed")
+        
+        return {
+            "statusCode": 200,
+            "body": json.dumps({"orderId": event["orderId"], "status": "confirmed"})
+        }
+
+def calculate_total(items):
+    return sum(item["price"] * item["quantity"] for item in items)
+
+def process_payment(amount):
+    # Simulate payment processing
+    return {"success": True, "transactionId": "txn_123"}</code></pre>
+        </section>
+
+        <section>
+          <h3>REST API with API Gateway</h3>
+          <p>A REST API built with Express.js and instrumented for Application Signals.</p>
+          
+          <h4>Node.js Example:</h4>
+          <pre><code>const express = require('express');
+const { trace } = require('@opentelemetry/api');
+
+const app = express();
+const tracer = trace.getTracer('user-service');
+
+app.use(express.json());
+
+// Auto-instrumented middleware (via OpenTelemetry)
+app.use((req, res, next) => {
+  const span = trace.getSpan(trace.getActiveContext());
+  if (span) {
+    span.setAttribute('http.method', req.method);
+    span.setAttribute('http.url', req.url);
+    span.setAttribute('user.id', req.headers['x-user-id']);
+  }
+  next();
+});
+
+app.get('/users/:id', async (req, res) => {
+  const span = tracer.startSpan('get-user', {
+    attributes: {
+      'user.id': req.params.id,
+      'operation': 'read'
+    }
+  });
+
+  try {
+    // Simulate database call
+    const user = await getUserFromDB(req.params.id);
+    
+    span.setAttribute('db.rows_returned', user ? 1 : 0);
+    span.addEvent('user retrieved', {
+      'user.exists': !!user
+    });
+    
+    res.json(user);
+  } catch (error) {
+    span.setAttribute('error', true);
+    span.setAttribute('error.message', error.message);
+    res.status(500).json({ error: 'Internal server error' });
+  } finally {
+    span.end();
+  }
+});
+
+app.post('/users', async (req, res) => {
+  const span = tracer.startSpan('create-user', {
+    attributes: {
+      'operation': 'create',
+      'user.email': req.body.email
+    }
+  });
+
+  try {
+    const user = await createUserInDB(req.body);
+    
+    span.setAttribute('user.id', user.id);
+    span.addEvent('user created');
+    
+    res.status(201).json(user);
+  } catch (error) {
+    span.setAttribute('error', true);
+    span.setAttribute('error.message', error.message);
+    res.status(400).json({ error: error.message });
+  } finally {
+    span.end();
+  }
+});
+
+async function getUserFromDB(userId) {
+  // Simulate async database operation
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ id: userId, name: 'John Doe', email: 'john@example.com' });
+    }, Math.random() * 100);
+  });
+}
+
+async function createUserInDB(userData) {
+  // Simulate user creation
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ id: Date.now().toString(), ...userData });
+    }, Math.random() * 200);
+  });
+}
+
+module.exports = app;</code></pre>
+        </section>
+
+        <section>
+          <h3>Microservices Application</h3>
+          <p>A multi-service application demonstrating distributed tracing across services.</p>
+          
+          <h4>Order Service (Java):</h4>
+          <pre><code>@RestController
+@RequestMapping("/orders")
+public class OrderController {
+    
+    private final Tracer tracer;
+    private final WebClient webClient;
+    
+    public OrderController(Tracer tracer, WebClient.Builder webClientBuilder) {
+        this.tracer = tracer;
+        this.webClient = webClientBuilder.build();
+    }
+    
+    @PostMapping
+    public Mono&lt;Order&gt; createOrder(@RequestBody CreateOrderRequest request) {
+        Span span = tracer.startSpan("create-order");
+        
+        try (Scope scope = span.makeCurrent()) {
+            span.setAttribute("order.customer_id", request.getCustomerId());
+            span.setAttribute("order.total", request.getTotal());
+            
+            // Call inventory service
+            return webClient.post()
+                .uri("http://inventory-service/reserve")
+                .bodyValue(new ReserveInventoryRequest(request.getItems()))
+                .retrieve()
+                .bodyToMono(InventoryReservation.class)
+                .flatMap(reservation -> {
+                    span.addEvent("inventory reserved", 
+                        Attributes.of("reservation.id", reservation.getId()));
+                    
+                    // Call payment service
+                    return webClient.post()
+                        .uri("http://payment-service/charge")
+                        .bodyValue(new PaymentRequest(request.getTotal()))
+                        .retrieve()
+                        .bodyToMono(PaymentResult.class)
+                        .map(payment -> {
+                            if (payment.isSuccess()) {
+                                span.addEvent("payment processed");
+                                return new Order(reservation.getId(), payment.getTransactionId());
+                            } else {
+                                span.setAttribute("error", true);
+                                span.setAttribute("error.type", "payment_failed");
+                                throw new RuntimeException("Payment failed");
+                            }
+                        });
+                });
+        } catch (Exception e) {
+            span.setAttribute("error", true);
+            span.setAttribute("error.message", e.getMessage());
+            throw e;
+        } finally {
+            span.end();
+        }
+    }
+}</code></pre>
+          
+          <h4>Inventory Service (Python):</h4>
+          <pre><code>from flask import Flask, request, jsonify
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+import boto3
+
+app = Flask(__name__)
+tracer = trace.get_tracer(__name__)
+
+# Initialize DynamoDB client
+dynamodb = boto3.resource('dynamodb')
+inventory_table = dynamodb.Table('inventory')
+
+@app.route('/reserve', methods=['POST'])
+def reserve_inventory():
+    with tracer.start_as_span("reserve-inventory") as span:
+        items = request.json.get('items', [])
+        
+        span.set_attribute("inventory.items_count", len(items))
+        
+        try:
+            # Check and reserve inventory
+            reservation_id = reserve_items(items)
+            
+            span.set_attribute("inventory.reservation_id", reservation_id)
+            span.addEvent("inventory reserved")
+            
+            return jsonify({"reservationId": reservation_id})
+            
+        except Exception as e:
+            span.set_attribute("error", True)
+            span.set_attribute("error.message", str(e))
+            return jsonify({"error": "Inventory reservation failed"}), 400
+
+def reserve_items(items):
+    # Simulate inventory reservation logic
+    reservation_id = f"res_{hash(str(items))}"
+    
+    # In a real implementation, this would update DynamoDB
+    # with conditional writes to ensure atomicity
+    
+    return reservation_id</code></pre>
+        </section>
+
+        <section>
+          <h2>Code Snippets</h2>
+          <p>Reusable code snippets for common instrumentation patterns.</p>
+        </section>
+
+        <section>
+          <h3>Custom Span Creation</h3>
+          
+          <h4>Java:</h4>
+          <pre><code>Span span = tracer.startSpan("database-query");
+try (Scope scope = span.makeCurrent()) {
+    span.setAttribute("db.system", "postgresql");
+    span.setAttribute("db.name", "userdb");
+    span.setAttribute("db.operation", "select");
+    
+    // Execute query
+    ResultSet rs = statement.executeQuery("SELECT * FROM users");
+    
+    span.setAttribute("db.rows_returned", rs.getFetchSize());
+    
+} catch (SQLException e) {
+    span.setAttribute("error", true);
+    span.setAttribute("error.message", e.getMessage());
+    throw e;
+} finally {
+    span.end();
+}</code></pre>
+          
+          <h4>Python:</h4>
+          <pre><code>with tracer.start_as_span("database-query") as span:
+    span.set_attribute("db.system", "postgresql")
+    span.set_attribute("db.name", "userdb")
+    span.set_attribute("db.operation", "select")
+    
+    try:
+        cursor.execute("SELECT * FROM users")
+        results = cursor.fetchall()
+        
+        span.set_attribute("db.rows_returned", len(results))
+        span.add_event("query executed", {"row_count": len(results)})
+        
+    except Exception as e:
+        span.set_attribute("error", True)
+        span.set_attribute("error.message", str(e))
+        raise</code></pre>
+        </section>
+
+        <section>
+          <h3>Error Handling</h3>
+          
+          <h4>JavaScript:</h4>
+          <pre><code>const span = tracer.startSpan('process-payment');
+
+try {
+    const result = await processPayment(amount);
+    
+    if (!result.success) {
+        span.setAttribute('error', true);
+        span.setAttribute('error.type', 'payment_declined');
+        span.setAttribute('payment.amount', amount);
+        span.addEvent('payment failed', {
+            'reason': result.reason,
+            'decline_code': result.declineCode
+        });
+    } else {
+        span.setAttribute('payment.transaction_id', result.transactionId);
+        span.addEvent('payment succeeded');
+    }
+    
+} catch (error) {
+    span.setAttribute('error', true);
+    span.setAttribute('error.type', 'exception');
+    span.setAttribute('error.message', error.message);
+    span.recordException(error);
+} finally {
+    span.end();
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>Context Propagation</h3>
+          
+          <h4>HTTP Headers (Java):</h4>
+          <pre><code>// Extract context from incoming request
+TextMapGetter&lt;HttpServletRequest&gt; getter = new TextMapGetter&lt;&gt;() {
+    @Override
+    public String get(HttpServletRequest carrier, String key) {
+        return carrier.getHeader(key);
+    }
+};
+
+Context context = otel.getPropagators()
+    .getTextMapPropagator()
+    .extract(Context.current(), request, getter);
+
+// Use extracted context
+Span span = tracer.startSpan("handle-request", context);</code></pre>
+          
+          <h4>HTTP Headers (Python):</h4>
+          <pre><code>from opentelemetry.propagators.textmap import TextMapPropagator
+
+# Extract context from headers
+carrier = dict(request.headers)
+context = TextMapPropagator().extract(carrier)
+
+# Start span with extracted context
+with tracer.start_as_span("handle-request", context=context) as span:
+    # Handle request
+    pass</code></pre>
+        </section>
+
+        <section>
+          <h3>Business Logic Tracing</h3>
+          
+          <h4>E-commerce Example:</h4>
+          <pre><code>const span = tracer.startSpan('checkout-process');
+
+span.setAttribute('checkout.session_id', sessionId);
+span.setAttribute('checkout.items_count', cart.items.length);
+span.setAttribute('checkout.total_amount', cart.total);
+
+span.addEvent('checkout started', {
+    'user.id': userId,
+    'cart.value': cart.total
+});
+
+// Validate cart
+const validationSpan = tracer.startSpan('validate-cart', {}, span.getContext());
+try {
+    validateCart(cart);
+    validationSpan.addEvent('cart validated');
+} finally {
+    validationSpan.end();
+}
+
+// Process payment
+const paymentSpan = tracer.startSpan('process-payment', {}, span.getContext());
+try {
+    const payment = await processPayment(cart.total);
+    paymentSpan.setAttribute('payment.method', payment.method);
+    paymentSpan.setAttribute('payment.transaction_id', payment.transactionId);
+} finally {
+    paymentSpan.end();
+}
+
+span.addEvent('checkout completed');
+span.end();</code></pre>
+        </section>
+
+        <section>
+          <h2>Configuration Examples</h2>
+          <p>Configuration files and setup examples for different environments.</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry Collector Configuration</h3>
+          <pre><code>receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+
+exporters:
+  awsxray:
+    region: us-east-1
+  awsemf:
+    region: us-east-1
+    namespace: ApplicationSignals
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsxray]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [awsemf]</code></pre>
+        </section>
+
+        <section>
+          <h3>Docker Compose Setup</h3>
+          <pre><code>version: '3.8'
+services:
+  app:
+    image: my-app:latest
+    environment:
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_SERVICE_NAME=my-service
+      - OTEL_TRACES_SAMPLER=traceidratio
+      - OTEL_TRACES_SAMPLER_ARG=0.1
+    depends_on:
+      - otel-collector
+
+  otel-collector:
+    image: otel/opentelemetry-collector:latest
+    command: ["--config=/etc/otel-collector-config.yaml"]
+    volumes:
+      - ./otel-config.yaml:/etc/otel-collector-config.yaml
+    ports:
+      - "4317:4317"   # gRPC
+      - "4318:4318"   # HTTP</code></pre>
+        </section>
+
+        <section>
+          <h3>Kubernetes Deployment</h3>
+          <pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+      annotations:
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+      - name: my-app
+        image: my-app:latest
+        env:
+        - name: OTEL_SERVICE_NAME
+          value: "my-service"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://opentelemetry-collector:4318"</code></pre>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

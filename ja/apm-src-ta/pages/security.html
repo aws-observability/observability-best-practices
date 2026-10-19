@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>பாதுகாப்பு & இணக்கம் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>பாதுகாப்பு & இணக்கம்</h1></header>
+      <article>
+        <section>
+          <h2>பாதுகாப்பு</h2>
+          <p>CloudWatch Application Signals உங்கள் observability தரவை பாதுகாக்கவும் தொழில் தரநிலைகளுடன் இணக்கத்தை உறுதிப்படுத்தவும் பல அடுக்கு பாதுகாப்பை செயல்படுத்துகிறது.</p>
+        </section>
+
+        <section>
+          <h3>தரவு குறியாக்கம்</h3>
+
+          <h4>Rest-ல் குறியாக்கம்:</h4>
+          <ul>
+            <li>அனைத்து trace data AES-256 குறியாக்கத்தைப் பயன்படுத்தி encrypt செய்யப்படுகிறது</li>
+            <li>RUM data AWS Key Management Service (KMS) மூலம் encrypt செய்யப்படுகிறது</li>
+            <li>Synthetic monitoring data encrypted ஆக சேமிக்கப்படுகிறது</li>
+            <li>கூடுதல் கட்டுப்பாட்டிற்கு customer-managed keys பயன்படுத்தலாம்</li>
+          </ul>
+
+          <h4>Transit-ல் குறியாக்கம்:</h4>
+          <ul>
+            <li>அனைத்து data transmission TLS 1.2 அல்லது அதற்கு மேல் பயன்படுத்துகிறது</li>
+            <li>CloudWatch services-க்கான API calls encrypt செய்யப்படுகின்றன</li>
+            <li>RUM data collection HTTPS பயன்படுத்துகிறது</li>
+            <li>Agent-to-collector communication பாதுகாக்கப்படுகிறது</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Identity மற்றும் Access Management</h3>
+
+          <h4>IAM Permissions:</h4>
+          <p>Application Signals-க்கு access வழங்கும்போது least privilege கொள்கையைப் பயன்படுத்துங்கள்:</p>
+
+          <h5>Read-Only Access:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+          <h5>Full Access:</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>தரவு தனியுரிமை மற்றும் PII பாதுகாப்பு</h3>
+
+          <h4>தரவு Sanitization:</h4>
+          <ul>
+            <li>முக்கிய தகவல்களுக்கு data masking செயல்படுத்துங்கள்</li>
+            <li>Trace attributes-ல் PII-க்கு tokenization பயன்படுத்துங்கள்</li>
+            <li>Data retention policies கட்டமைக்கவும்</li>
+            <li>சேகரிக்கப்பட்ட தரவின் வழக்கமான audit</li>
+          </ul>
+
+          <h4>சிறந்த நடைமுறைகள்:</h4>
+          <ul>
+            <li>Traces-ல் passwords, API keys அல்லது tokens-ஐ ஒருபோதும் சேர்க்காதீர்கள்</li>
+            <li>Email addresses மற்றும் phone numbers-ஐ hash அல்லது mask செய்யுங்கள்</li>
+            <li>முக்கிய தரவு கொண்ட URLs-லிருந்து query parameters-ஐ அகற்றுங்கள்</li>
+            <li>தனிப்பட்ட தகவலுக்கு பதிலாக generic identifiers பயன்படுத்துங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Network பாதுகாப்பு</h3>
+
+          <h4>VPC கட்டமைப்பு:</h4>
+          <ul>
+            <li>மேம்பட்ட பாதுகாப்புக்கு உங்கள் VPC-க்குள் agents deploy செய்யுங்கள்</li>
+            <li>CloudWatch API calls-க்கு VPC endpoints பயன்படுத்துங்கள்</li>
+            <li>Traffic-ஐ கட்டுப்படுத்த security groups கட்டமைக்கவும்</li>
+            <li>கூடுதல் கட்டுப்பாட்டிற்கு network ACLs செயல்படுத்துங்கள்</li>
+          </ul>
+
+          <h4>Agent பாதுகாப்பு:</h4>
+          <ul>
+            <li>குறைந்தபட்ச தேவையான permissions-உடன் agents இயக்குங்கள்</li>
+            <li>Agents-ஐ security patches-உடன் updated ஆக வைத்திருங்கள்</li>
+            <li>Security events-க்கு agent logs-ஐ கண்காணிக்கவும்</li>
+            <li>சாத்தியமான இடங்களில் read-only access பயன்படுத்துங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>தரவு தனியுரிமை</h2>
+          <p>Application Signals உங்கள் தரவு தனியுரிமை தேவைகளை எவ்வாறு கையாளுகிறது என்பதைப் புரிந்துகொள்ளுதல்.</p>
+        </section>
+
+        <section>
+          <h3>தரவு சேகரிப்பு மற்றும் பயன்பாடு</h3>
+
+          <h4>நாங்கள் சேகரிப்பது:</h4>
+          <ul>
+            <li>Application performance metrics மற்றும் traces</li>
+            <li>சேவை சார்பு தகவல்</li>
+            <li>Error தகவல் மற்றும் stack traces</li>
+            <li>System மற்றும் infrastructure metadata</li>
+          </ul>
+
+          <h4>நாங்கள் சேகரிக்காதது:</h4>
+          <ul>
+            <li>Application business data அல்லது user content</li>
+            <li>Database contents அல்லது file system data</li>
+            <li>User credentials அல்லது authentication tokens</li>
+            <li>தனிப்பட்ட அடையாளத் தகவல் (வெளிப்படையாக சேர்க்கப்படாவிட்டால்)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>தரவு Retention</h3>
+
+          <h4>இயல்புநிலை Retention காலங்கள்:</h4>
+          <ul>
+            <li><strong>Trace data:</strong> 30 நாட்கள் (1 வருடம் வரை configurable)</li>
+            <li><strong>Metrics:</strong> 15 மாதங்கள் (standard CloudWatch retention)</li>
+            <li><strong>RUM data:</strong> 30 நாட்கள் (1 வருடம் வரை configurable)</li>
+            <li><strong>Synthetics results:</strong> 90 நாட்கள் (configurable)</li>
+          </ul>
+
+          <h4>தரவு நீக்குதல்:</h4>
+          <ul>
+            <li>CloudWatch data retention policies பயன்படுத்துங்கள்</li>
+            <li>தானியங்கி data lifecycle management செயல்படுத்துங்கள்</li>
+            <li>தேவைப்பட்டால் AWS Support வழியாக data deletion கோருங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Compliance Frameworks</h3>
+
+          <h4>ஆதரிக்கப்படும் தரநிலைகள்:</h4>
+          <ul>
+            <li><strong>SOC 2:</strong> பாதுகாப்பு, கிடைக்கும் தன்மை மற்றும் இரகசியத்தன்மை கட்டுப்பாடுகள்</li>
+            <li><strong>PCI DSS:</strong> Payment card industry data security standards</li>
+            <li><strong>HIPAA:</strong> Health Insurance Portability and Accountability Act</li>
+            <li><strong>GDPR:</strong> General Data Protection Regulation</li>
+            <li><strong>FedRAMP:</strong> Federal Risk and Authorization Management Program</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Compliance வழிகாட்டுதல்</h2>
+          <p>பொதுவான compliance scenarios-க்கான குறிப்பிட்ட வழிகாட்டுதல்.</p>
+        </section>
+
+        <section>
+          <h3>HIPAA Compliance</h3>
+
+          <h4>தேவைகள்:</h4>
+          <ul>
+            <li>Traces-ல் protected health information (PHI)-ஐ encrypt செய்யுங்கள்</li>
+            <li>Access controls மற்றும் audit logging செயல்படுத்துங்கள்</li>
+            <li>AWS-உடன் Business Associate Agreements (BAA) பயன்படுத்துங்கள்</li>
+            <li>பொருத்தமான data retention policies கட்டமைக்கவும்</li>
+          </ul>
+
+          <h4>செயல்படுத்தல்:</h4>
+          <ul>
+            <li>Trace attributes மற்றும் span names-ல் PHI-ஐ mask செய்யுங்கள்</li>
+            <li>Customer-managed KMS keys பயன்படுத்துங்கள்</li>
+            <li>Audit logging-க்கு CloudTrail-ஐ இயக்குங்கள்</li>
+            <li>Data isolation-க்கு VPC endpoints கட்டமைக்கவும்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PCI DSS Compliance</h3>
+
+          <h4>முக்கிய considerations:</h4>
+          <ul>
+            <li>Traces அல்லது logs-ல் cardholder data-ஐ ஒருபோதும் சேர்க்காதீர்கள்</li>
+            <li>Network segmentation செயல்படுத்துங்கள்</li>
+            <li>Transit மற்றும் rest-ல் data-க்கு encryption பயன்படுத்துங்கள்</li>
+            <li>வழக்கமான security assessments மற்றும் penetration testing</li>
+          </ul>
+
+          <h4>சிறந்த நடைமுறைகள்:</h4>
+          <ul>
+            <li>Instrumentation-க்கு முன் sensitive data-ஐ tokenize செய்யுங்கள்</li>
+            <li>Application Signals agents-க்கு private subnets பயன்படுத்துங்கள்</li>
+            <li>Least-privilege IAM policies செயல்படுத்துங்கள்</li>
+            <li>சேகரிக்கப்பட்ட தரவின் வழக்கமான review</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>GDPR Compliance</h3>
+
+          <h4>Data Subject உரிமைகள்:</h4>
+          <ul>
+            <li>தனிப்பட்ட தரவை அணுகும் உரிமை</li>
+            <li>திருத்தம் செய்யும் உரிமை</li>
+            <li>நீக்குதல் உரிமை ("மறக்கப்படும் உரிமை")</li>
+            <li>தரவு portability உரிமை</li>
+          </ul>
+
+          <h4>செயல்படுத்தல்:</h4>
+          <ul>
+            <li>Telemetry data-ல் PII சேகரிப்பை குறைக்கவும்</li>
+            <li>Data anonymization நுட்பங்களை செயல்படுத்துங்கள்</li>
+            <li>வணிக தேவைகளின் அடிப்படையில் data retention கட்டமைக்கவும்</li>
+            <li>Data processing நடவடிக்கைகளை ஆவணப்படுத்துங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>பாதுகாப்பு கண்காணிப்பு</h2>
+          <p>Security events-க்கு உங்கள் Application Signals deployment-ஐ கண்காணிக்கவும்.</p>
+        </section>
+
+        <section>
+          <h3>பாதுகாப்பு சிறந்த நடைமுறைகள்</h3>
+          <ul>
+            <li>API activity logging-க்கு CloudTrail-ஐ இயக்குங்கள்</li>
+            <li>IAM policy changes மற்றும் access patterns-ஐ கண்காணிக்கவும்</li>
+            <li>அசாதாரண data access patterns-க்கு alerts அமைக்கவும்</li>
+            <li>வழக்கமான security assessments மற்றும் vulnerability scans</li>
+            <li>Multi-factor authentication (MFA) செயல்படுத்துங்கள்</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>சம்பவ பதில்</h3>
+          <ul>
+            <li>Security events-க்கான incident response plan வைத்திருங்கள்</li>
+            <li>Compromise ஆனால் Application Signals-ஐ எவ்வாறு disable செய்வது என்று தெரிந்திருங்கள்</li>
+            <li>Escalation procedures-ஐ ஆவணப்படுத்துங்கள்</li>
+            <li>வழக்கமான incident response testing</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

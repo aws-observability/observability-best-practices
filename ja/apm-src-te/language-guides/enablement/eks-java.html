@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for Java Spring Boot on EKS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Java Spring Boot on EKS</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">EKS</div>
+            <div class="language-badge">Java</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Java Spring Boot application on Amazon EKS with AWS Application Signals auto-instrumentation. This is the EKS equivalent of the Lambda Java function, reusing the same business logic and endpoints.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a Java Spring Boot app on EKS</li>
+                        <li>Enable AWS Application Signals auto-instrumentation</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 30-45 minutes
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Prerequisites</h2>
+                <h3>Required Tools</h3>
+                <ul>
+                    <li>AWS CLI v2 (latest version)</li>
+                    <li>Docker Desktop</li>
+                    <li>kubectl (latest version)</li>
+                    <li>Java 17+ (for local development)</li>
+                    <li>Maven 3.6+ (for local development)</li>
+                    <li>AWS Account with appropriate permissions</li>
+                    <li>Text editor</li>
+                </ul>
+
+                <h3>AWS Permissions Required</h3>
+                <ul>
+                    <li>EKS: Full access (create clusters, node groups, add-ons)</li>
+                    <li>IAM: Create roles and policies</li>
+                    <li>CloudWatch: Logs and Application Signals access</li>
+                    <li>ECR: Push/pull container images</li>
+                    <li>VPC: Create and manage VPC resources</li>
+                </ul>
+
+                <h3>Knowledge Assumed</h3>
+                <ul>
+                    <li>Basic AWS CLI usage</li>
+                    <li>Basic Docker commands</li>
+                    <li>Basic kubectl commands</li>
+                    <li>Basic understanding of EKS concepts</li>
+                    <li>Basic Java/Spring Boot knowledge</li>
+                </ul>
+            </div>
+
+            <div class="section">
+                <h2>Architecture</h2>
+                <div class="highlight">
+                    <strong>EKS Observability Add-on (Standard Approach):</strong> This guide uses the official EKS observability add-on, which is the recommended and standard way to enable Application Signals on EKS clusters. The add-on automatically handles telemetry collection without requiring manual CloudWatch Agent configuration.
+                </div>
+                
+                <p>Your EKS cluster will run:</p>
+                <ol>
+                    <li><strong>Java Spring Boot Application</strong>: Your web API with auto-instrumentation annotations</li>
+                    <li><strong>EKS Observability Add-on</strong>: Official AWS add-on for automatic tracing and metrics collection</li>
+                    <li><strong>CloudWatch Agent (managed by add-on)</strong>: Automatically deployed and configured by the add-on</li>
+                </ol>
+                
+                <p><strong>Flow:</strong></p>
+                <pre><code>EKS Cluster
+  → Java Spring Boot App (auto-instrumented via annotation)
+  → EKS Observability Add-on
+  → CloudWatch Agent (managed)
+  → CloudWatch Application Signals</code></pre>
+                
+                <div class="success">
+                    <strong>Key Benefits of EKS Observability Add-on:</strong>
+                    <ul>
+                        <li>No manual CloudWatch Agent configuration required</li>
+                        <li>Automatic auto-instrumentation for supported languages</li>
+                        <li>Built-in support for Application Signals</li>
+                        <li>Simplified deployment and management</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Step 1: Create the Application</h2>
+                <h3>1.1 Create Project Structure</h3>
+                <pre><code class="lang-bash">mkdir eks-java
+cd eks-java</code></pre>
+
+                <h3>1.2 Create the Maven Project</h3>
+                <p>Create <code>pom.xml</code>:</p>
+                <pre><code class="lang-xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd"&gt;
+    &lt;modelVersion&gt;4.0.0&lt;/modelVersion&gt;
+    &lt;parent&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-parent&lt;/artifactId&gt;
+        &lt;version&gt;3.2.0&lt;/version&gt;
+        &lt;relativePath/&gt;
+    &lt;/parent&gt;
+    &lt;groupId&gt;com.appsignals&lt;/groupId&gt;
+    &lt;artifactId&gt;java-eks-service&lt;/artifactId&gt;
+    &lt;version&gt;1.0.0&lt;/version&gt;
+    &lt;name&gt;java-eks-service&lt;/name&gt;
+    &lt;description&gt;AWS Application Signals EKS Java Demo&lt;/description&gt;
+    &lt;properties&gt;
+        &lt;java.version&gt;17&lt;/java.version&gt;
+    &lt;/properties&gt;
+    &lt;dependencies&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-actuator&lt;/artifactId&gt;
+        &lt;/dependency&gt;
+        &lt;dependency&gt;
+            &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+            &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+            &lt;scope&gt;test&lt;/scope&gt;
+        &lt;/dependency&gt;
+    &lt;/dependencies&gt;
+
+    &lt;build&gt;
+        &lt;plugins&gt;
+            &lt;plugin&gt;
+                &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+                &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;
+            &lt;/plugin&gt;
+        &lt;/plugins&gt;
+    &lt;/build&gt;
+&lt;/project&gt;</code></pre>
+
+                <h3>1.3 Create the Application Code</h3>
+                <p>Create <code>src/main/java/com/appsignals/JavaEksServiceApplication.java</code>:</p>
+                <pre><code class="lang-java">package com.appsignals;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class JavaEksServiceApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(JavaEksServiceApplication.class, args);
+    }
+}</code></pre>
+
+                <p>Create <code>src/main/java/com/appsignals/controller/HelloController.java</code>:</p>
+                <pre><code class="lang-java">package com.appsignals.controller;
+
+import org.springframework.web.bind.annotation.*;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+@RestController
+@RequestMapping("/api")
+public class HelloController {
+
+    private final Random random = new Random();
+
+    @GetMapping("/")
+    public Map&lt;String, Object&gt; root() {
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("message", "AWS Application Signals EKS Java Demo");
+        response.put("timestamp", Instant.now().toEpochMilli());
+        response.put("service", "java-eks-service");
+        return response;
+    }
+
+    @GetMapping("/health")
+    public Map&lt;String, Object&gt; health() {
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("status", "healthy");
+        response.put("timestamp", Instant.now().toEpochMilli());
+        response.put("service", "java-eks-service");
+        return response;
+    }
+
+    @GetMapping("/hello/{name}")
+    public Map&lt;String, Object&gt; hello(@PathVariable String name) {
+        try {
+            // Simulate some processing time
+            Thread.sleep(random.nextInt(100) + 10);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("message", "Hello, " + name + "!");
+        response.put("timestamp", Instant.now().toEpochMilli());
+        response.put("service", "java-eks-service");
+        return response;
+    }
+
+    @GetMapping("/slow")
+    public Map&lt;String, Object&gt; slow() {
+        try {
+            // Simulate slow operation
+            Thread.sleep(random.nextInt(1000) + 500);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+        
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("message", "Slow operation completed");
+        response.put("timestamp", Instant.now().toEpochMilli());
+        response.put("service", "java-eks-service");
+        return response;
+    }
+
+    @GetMapping("/error")
+    public Map&lt;String, Object&gt; error() {
+        if (random.nextBoolean()) {
+            throw new RuntimeException("Simulated error for testing Application Signals error tracking");
+        }
+        
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("message", "No error occurred");
+        response.put("timestamp", Instant.now().toEpochMilli());
+        response.put("service", "java-eks-service");
+        return response;
+    }
+
+    @GetMapping("/external")
+    public Map&lt;String, Object&gt; external() {
+        try {
+            // Simulate external API call
+            Thread.sleep(random.nextInt(2000) + 1000);
+            
+            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+            response.put("message", "External call completed");
+            response.put("external_status_code", 200);
+            response.put("timestamp", Instant.now().toEpochMilli());
+            response.put("service", "java-eks-service");
+            return response;
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("External call failed: " + e.getMessage());
+        }
+    }
+}</code></pre>
+
+                <h3>1.4 Create Application Properties</h3>
+                <p>Create <code>src/main/resources/application.properties</code>:</p>
+                <pre><code class="lang-properties">server.port=8080
+management.endpoints.web.exposure.include=health,info,prometheus
+management.endpoint.health.show-details=always</code></pre>
+
+                <h3>1.5 Create Dockerfile</h3>
+                <p>Create <code>Dockerfile</code>:</p>
+                <pre><code class="lang-dockerfile"># Use the official OpenJDK 17 runtime as base image
+FROM openjdk:17-jdk-slim AS base
+WORKDIR /app
+EXPOSE 8080
+
+# Use the OpenJDK 17 SDK for building
+FROM openjdk:17-jdk-slim AS build
+WORKDIR /app
+COPY mvnw .
+COPY .mvn .mvn
+COPY pom.xml .
+RUN ./mvnw dependency:go-offline
+
+COPY src src
+RUN ./mvnw clean package -DskipTests
+
+FROM base AS final
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
+# Set environment variables for Application Signals
+ENV OTEL_SERVICE_NAME=java-eks-service
+ENV OTEL_RESOURCE_ATTRIBUTES=service.name=java-eks-service,service.namespace=appsignals-demo,service.version=1.0.0,deployment.environment=eks
+
+ENTRYPOINT ["java", "-jar", "app.jar"]</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>Step 2: Build and Test Locally</h2>
+                <h3>2.1 Build the Application</h3>
+                <pre><code class="lang-bash">mvn clean package</code></pre>
+
+                <h3>2.2 Test Locally</h3>
+                <pre><code class="lang-bash">mvn spring-boot:run</code></pre>
+                <p>The application will start on <code>http://localhost:8080</code>. Test the endpoints:</p>
+                <pre><code class="lang-bash"># Root endpoint
+curl http://localhost:8080/api/
+
+# Health check
+curl http://localhost:8080/api/health
+
+# Hello endpoint
+curl http://localhost:8080/api/hello/World
+
+# Slow endpoint
+curl http://localhost:8080/api/slow
+
+# Error endpoint (may return error)
+curl http://localhost:8080/api/error
+
+# External call
+curl http://localhost:8080/api/external</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>Step 3: Deploy to EKS</h2>
+                <h3>3.1 Create EKS Cluster</h3>
+                <pre><code class="lang-bash"># Create EKS cluster
+eksctl create cluster --name appsignals-cluster --region us-east-1 --nodegroup-name workers --node-type t3.medium --nodes 2 --nodes-min 1 --nodes-max 3
+
+# Create namespace
+kubectl create namespace appsignals-demo</code></pre>
+
+                <h3>3.2 Install EKS Observability Add-on (Required)</h3>
+                <div class="highlight">
+                    <strong>Important:</strong> The EKS observability add-on is the standard and recommended way to enable Application Signals on EKS. This add-on automatically handles telemetry collection and provides auto-instrumentation capabilities.
+                </div>
+                
+                <pre><code class="lang-bash"># Install the EKS observability add-on (REQUIRED for Application Signals)
+aws eks create-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1
+
+# Verify the add-on is installed
+aws eks describe-addon --cluster-name appsignals-cluster --addon-name amazon-cloudwatch-observability --region us-east-1</code></pre>
+                
+                <div class="success">
+                    <strong>What the EKS Observability Add-on provides:</strong>
+                    <ul>
+                        <li>Automatic CloudWatch Agent deployment</li>
+                        <li>Built-in support for Application Signals</li>
+                        <li>Auto-instrumentation for Java, Python, Node.js, and .NET</li>
+                        <li>No manual configuration required</li>
+                    </ul>
+                </div>
+
+                <h3>3.3 Build and Push Docker Image</h3>
+                <pre><code class="lang-bash"># Create ECR repository
+aws ecr create-repository --repository-name my-appsignals-java-app --region us-east-1
+
+# Get login token
+aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 188524202814.dkr.ecr.us-east-1.amazonaws.com
+
+# Build and tag image
+docker build -t my-appsignals-java-app .
+docker tag my-appsignals-java-app:latest 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-java-app:latest
+
+# Push image
+docker push 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-java-app:latest</code></pre>
+
+                <h3>3.4 Deploy Application</h3>
+                <p>Create <code>deployment.yaml</code>:</p>
+                <pre><code class="lang-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: java-eks-service
+    service: java
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: java-eks-service
+  template:
+    metadata:
+      labels:
+        app: java-eks-service
+        service: java
+      annotations:
+        # Enable auto-instrumentation for Java
+        instrumentation.opentelemetry.io/inject-java: "true"
+        # Prometheus metrics
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/actuator/prometheus"
+    spec:
+      containers:
+      - name: java-app
+        image: 188524202814.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-java-app:latest
+        ports:
+        - containerPort: 8080
+        env:
+        - name: AWS_REGION
+          value: "us-east-1"
+        - name: OTEL_SERVICE_NAME
+          value: "java-eks-service"
+        - name: OTEL_RESOURCE_ATTRIBUTES
+          value: "service.name=java-eks-service,service.namespace=appsignals-demo,service.version=1.0.0,deployment.environment=eks"
+        - name: OTEL_EXPORTER_OTLP_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_PROTOCOL
+          value: "grpc"
+        - name: OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+          value: "http://cloudwatch-agent.amazon-cloudwatch.svc.cluster.local:4315"
+        - name: OTEL_TRACES_EXPORTER
+          value: "otlp"
+        - name: OTEL_METRICS_EXPORTER
+          value: "otlp"
+        - name: OTEL_LOGS_EXPORTER
+          value: "otlp"
+        # Reduce metrics payload size to avoid FRAME_SIZE_ERROR
+        - name: OTEL_METRIC_EXPORT_INTERVAL
+          value: "30000"
+        - name: OTEL_METRIC_EXPORT_TIMEOUT
+          value: "10000"
+        - name: OTEL_BSP_MAX_EXPORT_BATCH_SIZE
+          value: "32"
+        - name: OTEL_BSP_EXPORT_TIMEOUT
+          value: "10000"
+        # Disable metrics entirely to focus on traces
+        - name: OTEL_METRICS_EXPORTER
+          value: "none"
+        - name: OTEL_INSTRUMENTATION_RUNTIME_METRICS_ENABLED
+          value: "false"
+        - name: OTEL_INSTRUMENTATION_JVM_METRICS_ENABLED
+          value: "false"
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "250m"
+          limits:
+            memory: "1Gi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 60
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: java-eks-service
+  namespace: appsignals-demo
+  labels:
+    app: java-eks-service
+    service: java
+spec:
+  selector:
+    app: java-eks-service
+  ports:
+  - port: 80
+    targetPort: 8080
+    protocol: TCP
+  type: ClusterIP</code></pre>
+
+                <p>Deploy the application:</p>
+                <pre><code class="lang-bash">kubectl apply -f deployment.yaml</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>Step 4: Generate Traffic and Monitor</h2>
+                <h3>4.1 Generate Traffic</h3>
+                <p>Create <code>generate-traffic.sh</code>:</p>
+                <pre><code class="lang-bash">#!/bin/bash
+
+# Port forward the service
+kubectl port-forward service/java-eks-service 8080:80 -n appsignals-demo &
+PORT_FORWARD_PID=$!
+
+# Wait for port forward to be ready
+sleep 10
+
+BASE_URL="http://localhost:8080"
+
+echo "Generating traffic for Java EKS Application Signals demo..."
+
+# Generate traffic for 5 minutes
+for i in {1..300}; do
+    echo "Request $i"
+
+    # Root endpoint
+    curl -s "$BASE_URL/api/" > /dev/null
+
+    # Health check
+    curl -s "$BASE_URL/api/health" > /dev/null
+
+    # Hello endpoint
+    curl -s "$BASE_URL/api/hello/User$i" > /dev/null
+
+    # Slow endpoint
+    curl -s "$BASE_URL/api/slow" > /dev/null
+
+    # Error endpoint
+    curl -s "$BASE_URL/api/error" > /dev/null
+
+    # External call
+    curl -s "$BASE_URL/api/external" > /dev/null
+
+    sleep 1
+done
+
+echo "Traffic generation complete!"
+
+# Clean up port forward
+kill $PORT_FORWARD_PID</code></pre>
+                <p>Make it executable and run:</p>
+                <pre><code class="lang-bash">chmod +x generate-traffic.sh
+./generate-traffic.sh</code></pre>
+
+                <h3>4.2 Monitor in CloudWatch</h3>
+                <ol>
+                    <li><p><strong>Open CloudWatch Console</strong></p>
+                        <ul>
+                            <li>Go to AWS Console → CloudWatch</li>
+                            <li>Navigate to "Application Signals"</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>View Service Map</strong></p>
+                        <ul>
+                            <li>Look for "java-eks-service" service</li>
+                            <li>See the service dependencies and health</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>Check Metrics</strong></p>
+                        <ul>
+                            <li>View latency, error rate, and throughput</li>
+                            <li>Compare with Lambda metrics</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>Analyze Traces</strong></p>
+                        <ul>
+                            <li>Click on service to see detailed traces</li>
+                            <li>View operation-level metrics</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="section">
+                <h2>Step 5: Clean Up</h2>
+                <h3>5.1 Delete Application</h3>
+                <pre><code class="lang-bash">kubectl delete -f deployment.yaml</code></pre>
+
+                <h3>5.2 Delete EKS Cluster</h3>
+                <pre><code class="lang-bash">eksctl delete cluster --name appsignals-cluster --region us-east-1</code></pre>
+            </div>
+
+            <div class="section">
+                <h2>Troubleshooting</h2>
+                <h3>Common Issues</h3>
+                <ol>
+                    <li><p><strong>Application won't start</strong></p>
+                        <ul>
+                            <li>Check pod status: <code>kubectl get pods -n appsignals-demo</code></li>
+                            <li>Check pod logs: <code>kubectl logs -n appsignals-demo -l app=java-eks-service</code></li>
+                            <li>Verify EKS observability add-on is installed</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>No data in Application Signals</strong></p>
+                        <ul>
+                            <li>Verify auto-instrumentation annotation is present</li>
+                            <li>Check environment variables are set correctly</li>
+                            <li>Ensure EKS observability add-on is running</li>
+                        </ul>
+                    </li>
+                    <li><p><strong>Port forward issues</strong></p>
+                        <ul>
+                            <li>Check service is running: <code>kubectl get svc -n appsignals-demo</code></li>
+                            <li>Verify pods are ready: <code>kubectl get pods -n appsignals-demo</code></li>
+                        </ul>
+                    </li>
+                </ol></div>
+            
+    </div>
+</body>
+</html>

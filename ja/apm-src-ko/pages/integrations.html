@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>통합 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 문서</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>통합</h1></header>
+      <article>
+        <section>
+          <h2>AWS 서비스 통합</h2>
+          <p>CloudWatch Application Signals는 AWS 서비스와 원활하게 통합되어 전체 클라우드 인프라에 대한 종합적인 관찰성을 제공합니다.</p>
+        </section>
+
+        <section>
+          <h3>API Gateway</h3>
+          <p>API 성능을 모니터링하고 API Gateway에서 백엔드 서비스로의 요청을 추적합니다.</p>
+
+          <h4>통합 기능:</h4>
+          <ul>
+            <li>API 호출 자동 트레이싱</li>
+            <li>API 엔드포인트 지연 시간 모니터링</li>
+            <li>오류율 추적</li>
+            <li>요청/응답 상관 분석</li>
+          </ul>
+
+          <h4>설정:</h4>
+          <p>API Gateway 스테이지 구성에서 X-Ray 트레이싱을 활성화합니다.</p>
+        </section>
+
+        <section>
+          <h3>Application Load Balancer (ALB)</h3>
+          <p>로드 밸런서를 통한 트래픽 흐름을 추적하고 애플리케이션 성능과 상관시킵니다.</p>
+
+          <h4>통합 이점:</h4>
+          <ul>
+            <li>요청 라우팅 가시성</li>
+            <li>대상 그룹 성능 메트릭</li>
+            <li>상태 확인 모니터링</li>
+            <li>부하 분배 분석</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>DynamoDB</h3>
+          <p>데이터베이스 작업을 모니터링하고 데이터 접근 패턴에서 성능 병목 현상을 식별합니다.</p>
+
+          <h4>트레이싱 기능:</h4>
+          <ul>
+            <li>쿼리 작업 타이밍</li>
+            <li>스로틀링 및 오류 추적</li>
+            <li>테이블 및 인덱스 성능</li>
+            <li>교차 리전 복제 모니터링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon RDS</h3>
+          <p>데이터베이스 성능 및 연결 풀링에 대한 인사이트를 제공합니다.</p>
+
+          <h4>데이터베이스 모니터링:</h4>
+          <ul>
+            <li>쿼리 실행 시간</li>
+            <li>연결 풀 사용률</li>
+            <li>데이터베이스 인스턴스 메트릭</li>
+            <li>느린 쿼리 식별</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon S3</h3>
+          <p>오브젝트 스토리지 작업 및 데이터 전송 성능을 추적합니다.</p>
+
+          <h4>스토리지 작업:</h4>
+          <ul>
+            <li>Put/Get 오브젝트 트레이싱</li>
+            <li>전송 지연 시간 모니터링</li>
+            <li>오류율 분석</li>
+            <li>교차 리전 전송 추적</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SNS/SQS</h3>
+          <p>이벤트 기반 아키텍처에서 메시지 처리 및 큐 성능을 모니터링합니다.</p>
+
+          <h4>메시징 인사이트:</h4>
+          <ul>
+            <li>메시지 게시/구독 트레이싱</li>
+            <li>큐 깊이 모니터링</li>
+            <li>메시지 처리 지연 시간</li>
+            <li>데드 레터 큐 분석</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Step Functions</h3>
+          <p>워크플로 실행을 시각화하고 상태 머신 처리에서 병목 현상을 식별합니다.</p>
+
+          <h4>워크플로 모니터링:</h4>
+          <ul>
+            <li>상태 전환 트레이싱</li>
+            <li>실행 시간 분석</li>
+            <li>오류 상태 식별</li>
+            <li>병렬 실행 모니터링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon EventBridge</h3>
+          <p>이벤트 기반 시스템을 통한 이벤트 라우팅 및 처리를 추적합니다.</p>
+
+          <h4>이벤트 처리:</h4>
+          <ul>
+            <li>이벤트 라우팅 가시성</li>
+            <li>규칙 평가 타이밍</li>
+            <li>대상 호출 트레이싱</li>
+            <li>이벤트 변환 모니터링</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS Lambda</h3>
+          <p>서버리스 함수 성능 및 콜드 스타트 영향을 모니터링합니다.</p>
+
+          <h4>서버리스 인사이트:</h4>
+          <ul>
+            <li>함수 호출 트레이싱</li>
+            <li>콜드 스타트 지속 시간</li>
+            <li>메모리 및 CPU 사용률</li>
+            <li>오류 및 타임아웃 추적</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Amazon ECS/EKS</h3>
+          <p>마이크로서비스 모니터링을 위한 컨테이너 오케스트레이션 플랫폼 통합입니다.</p>
+
+          <h4>컨테이너 모니터링:</h4>
+          <ul>
+            <li>서비스 메시 트레이싱</li>
+            <li>파드 간 통신</li>
+            <li>리소스 사용률</li>
+            <li>배포 추적</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>타사 통합</h2>
+          <p>타사 도구 및 플랫폼으로 Application Signals를 확장합니다.</p>
+        </section>
+
+        <section>
+          <h3>OpenTelemetry</h3>
+          <p>벤더 중립적 관찰성을 위해 OpenTelemetry 에코시스템을 활용합니다.</p>
+
+          <h4>통합 옵션:</h4>
+          <ul>
+            <li>사용자 정의 계측 라이브러리</li>
+            <li>타사 에이전트 지원</li>
+            <li>다중 백엔드 데이터 내보내기</li>
+            <li>커뮤니티 콜렉터 기여</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>APM 벤더</h3>
+          <p>다른 APM 솔루션에서 마이그레이션하거나 통합합니다.</p>
+
+          <h4>지원되는 통합:</h4>
+          <ul>
+            <li>타사 APM 도구로 데이터 내보내기</li>
+            <li>하이브리드 클라우드 관찰성</li>
+            <li>다중 벤더 상관 분석</li>
+            <li>데이터 마이그레이션 유틸리티</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>모니터링 및 알림</h3>
+          <p>Application Signals를 기존 모니터링 스택에 연결합니다.</p>
+
+          <h4>통합 파트너:</h4>
+          <ul>
+            <li><strong>PagerDuty:</strong> 인시던트 대응 및 알림</li>
+            <li><strong>Slack:</strong> 팀 알림</li>
+            <li><strong>Datadog:</strong> 통합 모니터링 플랫폼</li>
+            <li><strong>New Relic:</strong> 애플리케이션 성능 모니터링</li>
+            <li><strong>Splunk:</strong> 로그 분석 및 상관 분석</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>CI/CD 통합</h3>
+          <p>개발 파이프라인에 관찰성을 통합합니다.</p>
+
+          <h4>DevOps 도구:</h4>
+          <ul>
+            <li><strong>GitHub Actions:</strong> 자동화된 테스트 및 배포</li>
+            <li><strong>Jenkins:</strong> 빌드 파이프라인 통합</li>
+            <li><strong>GitLab CI:</strong> DevSecOps 워크플로</li>
+            <li><strong>Terraform:</strong> 코드형 인프라</li>
+            <li><strong>AWS CDK:</strong> 클라우드 인프라 프로비저닝</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>사용자 정의 통합</h2>
+          <p>API 및 SDK를 사용하여 자체 통합을 구축합니다.</p>
+        </section>
+
+        <section>
+          <h3>CloudWatch API</h3>
+          <p>CloudWatch API를 사용하여 Application Signals가 CloudWatch에 게시하는 텔레메트리를 기반으로 사용자 정의 대시보드, 알람 및 메트릭 기반 워크플로를 구축합니다.</p>
+
+          <h4>사용 가능한 API:</h4>
+          <ul>
+            <li><code>PutMetricData</code> - 사용자 정의 메트릭 전송</li>
+            <li><code>GetMetricData</code> - 메트릭 데이터 검색</li>
+            <li><code>PutDashboard</code> / <code>GetDashboard</code> - 대시보드 관리</li>
+            <li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - 알람 관리</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>AWS X-Ray API</h3>
+          <p>Application Signals는 AWS X-Ray를 트레이스 저장소로 사용합니다. 직접 트레이스 수집/쿼리 통합이 필요한 경우 X-Ray API를 사용하세요.</p>
+          <ul>
+            <li><code>PutTraceSegments</code> - 트레이스 세그먼트 수집</li>
+            <li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - 트레이스 쿼리</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>웹훅 및 콜백</h3>
+          <p>실시간 알림을 받고 사용자 정의 워크플로와 통합합니다.</p>
+
+          <h4>통합 패턴:</h4>
+          <ul>
+            <li>사용자 정의 알림 시스템을 위한 알림 웹훅</li>
+            <li>Lambda를 사용한 이벤트 기반 처리</li>
+            <li>사용자 정의 대시보드 업데이트</li>
+            <li>자동화된 복구 워크플로</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>SDK 및 라이브러리</h3>
+          <p>계측은 일반적으로 OpenTelemetry 및/또는 AWS Distro for OpenTelemetry(ADOT)를 통해 수행됩니다. AWS API 호출의 경우, 지원되는 OpenTelemetry 계측과 함께 AWS SDK를 사용합니다.</p>
+
+          <h4>지원 언어:</h4>
+          <ul>
+            <li><strong>JavaScript/Node.js:</strong> AWS SDK for JavaScript</li>
+            <li><strong>Python:</strong> Boto3 AWS SDK</li>
+            <li><strong>Java:</strong> AWS SDK for Java</li>
+            <li><strong>.NET:</strong> AWS SDK for .NET</li>
+            <li><strong>Go:</strong> AWS SDK for Go</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

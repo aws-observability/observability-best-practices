@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Guide:  Java on EC2 with Application Signals</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+        }
+
+        .toc {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+
+        .toc h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .toc ul {
+            list-style: none;
+        }
+
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .toc li:last-child {
+            border-bottom: none;
+        }
+
+        .toc a {
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: #764ba2;
+        }
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.3rem;
+            margin: 25px 0 15px 0;
+        }
+
+        h4 {
+            color: #555;
+            font-size: 1.1rem;
+            margin: 20px 0 10px 0;
+        }
+
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box {
+            background: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .success-box {
+            background: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .code-block code {
+            color: #f8f8f2;
+        }
+
+        .command {
+            color: #50fa7b;
+        }
+
+        .comment {
+            color: #6272a4;
+        }
+
+        .string {
+            color: #f1fa8c;
+        }
+
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .step {
+            background: #f8f9fa;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .footer {
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 2px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Quarkus Java on EC2 with Application Signals</h1>
+            <p class="subtitle">Step-by-Step Guide for AWS CloudWatch Application Signals</p>
+            <div class="platform-badge">Platform: Amazon EC2 | Language: Java (Quarkus) | OpenTelemetry Enabled</div>
+        </div>
+
+        <div class="toc">
+            <h2>Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">1. Overview</a></li>
+                <li><a href="#prerequisites">2. Prerequisites</a></li>
+                <li><a href="#enable-app-signals">3. Enable Application Signals</a></li>
+                <li><a href="#iam-setup">4. IAM Role Setup</a></li>
+                <li><a href="#cloudwatch-agent">5. Install CloudWatch Agent</a></li>
+                <li><a href="#build-app">6. Build Quarkus Application</a></li>
+                <li><a href="#deploy-app">7. Deploy Application</a></li>
+                <li><a href="#traffic-gen">8. Traffic Generation</a></li>
+                <li><a href="#verify">9. Verify Application Signals</a></li>
+                <li><a href="#troubleshooting">10. Troubleshooting</a></li>
+            </ul>
+        </div>
+
+        <div class="section" id="overview">
+            <h2>1. Overview</h2>
+            <p>
+                This guide walks you through deploying a Quarkus Java application on Amazon EC2 with AWS CloudWatch Application Signals enabled. 
+                Application Signals provides automatic instrumentation for monitoring application health, performance, and dependencies.
+            </p>
+            
+            <div class="info-box">
+                <strong>What You'll Build:</strong>
+                <ul>
+                    <li>Quarkus Java REST API application with 8+ endpoints</li>
+                    <li>CloudWatch agent configured for Application Signals</li>
+                    <li>AWS Distro for OpenTelemetry (ADOT) Java agent for auto-instrumentation</li>
+                    <li>Automated traffic generation for testing</li>
+                    <li>Complete observability in CloudWatch Application Signals</li>
+                </ul>
+            </div>
+
+            <h3>Architecture</h3>
+            <p>The solution consists of:</p>
+            <ul>
+                <li><strong>Quarkus Application:</strong> Java 21 application with REST endpoints</li>
+                <li><strong>ADOT Java Agent:</strong> Auto-instruments the application for traces and metrics</li>
+                <li><strong>CloudWatch Agent:</strong> Collects telemetry data and sends to AWS</li>
+                <li><strong>Application Signals:</strong> Visualizes service health, traces, and metrics</li>
+            </ul>
+        </div>
+
+        <div class="section" id="prerequisites">
+            <h2>2. Prerequisites</h2>
+            
+            <h3>Required Tools</h3>
+            <ul>
+                <li>AWS CLI configured with appropriate profile</li>
+                <li>EC2 instance (Amazon Linux 2 or Amazon Linux 2023)</li>
+                <li>Java 21 (Amazon Corretto)</li>
+                <li>Maven 3.8+</li>
+                <li>Access to EC2 instance via SSM Session Manager or SSH</li>
+            </ul>
+
+            <h3>AWS Permissions</h3>
+            <p>Your EC2 instance needs an IAM role with:</p>
+            <ul>
+                <li>CloudWatchAgentServerPolicy</li>
+                <li>AmazonSSMManagedInstanceCore (if using SSM)</li>
+                <li>S3 read access (if deploying via S3)</li>
+            </ul>
+
+            <h3>Network Requirements</h3>
+            <ul>
+                <li>Security group allows port 8080 (application)</li>
+                <li>Outbound internet access for downloading dependencies</li>
+            </ul>
+        </div>
+
+        <div class="section" id="enable-app-signals">
+            <h2>3. Enable Application Signals</h2>
+            
+            <div class="step">
+                <h3><span class="step-number">1</span>Enable in AWS Console</h3>
+                <ol>
+                    <li>Open AWS Console and navigate to CloudWatch</li>
+                    <li>Go to <strong>Application Signals</strong> → <strong>Get started</strong></li>
+                    <li>Click <strong>Enable Application Signals</strong></li>
+                    <li>This is a one-time account-level configuration</li>
+                </ol>
+            </div>
+
+            <div class="info-box">
+                <strong>Note:</strong> Application Signals must be enabled in your AWS account before proceeding. This allows CloudWatch to receive and display telemetry data from your applications.
+            </div>
+        </div>
+
+        <div class="section" id="iam-setup">
+            <h2>4. IAM Role Setup</h2>
+
+            <h3>Check Existing IAM Role</h3>
+            <div class="code-block">
+<span class="comment"># Get the IAM role attached to your EC2 instance</span>
+<span class="command">aws ec2 describe-instances \
+  --instance-ids i-YOUR-INSTANCE-ID \
+  --query 'Reservations[0].Instances[0].IamInstanceProfile.Arn' \
+  --profile YOUR_PROFILE \
+  --region us-east-1</span>
+            </div>
+
+            <h3>Attach CloudWatch Policy</h3>
+            <div class="code-block">
+<span class="comment"># Extract role name from the ARN</span>
+<span class="command">ROLE_NAME=$(aws ec2 describe-instances \
+  --instance-ids i-YOUR-INSTANCE-ID \
+  --query 'Reservations[0].Instances[0].IamInstanceProfile.Arn' \
+  --output text \
+  --profile YOUR_PROFILE \
+  --region us-east-1 | cut -d'/' -f2)</span>
+
+<span class="command">echo "Role name: ${ROLE_NAME}"</span>
+
+<span class="comment"># Attach CloudWatchAgentServerPolicy</span>
+<span class="command">aws iam attach-role-policy \
+  --role-name ${ROLE_NAME} \
+  --policy-arn arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy \
+  --profile YOUR_PROFILE</span>
+            </div>
+
+            <h3>Verify Policy Attachment</h3>
+            <div class="code-block">
+<span class="comment"># List attached policies</span>
+<span class="command">aws iam list-attached-role-policies \
+  --role-name ${ROLE_NAME} \
+  --profile YOUR_PROFILE</span>
+
+<span class="comment"># Check specifically for CloudWatchAgentServerPolicy</span>
+<span class="command">aws iam list-attached-role-policies \
+  --role-name ${ROLE_NAME} \
+  --profile YOUR_PROFILE \
+  --query 'AttachedPolicies[?PolicyName==`CloudWatchAgentServerPolicy`]'</span>
+            </div>
+        </div>
+
+        <div class="section" id="cloudwatch-agent">
+            <h2>5. Install CloudWatch Agent</h2>
+
+            <div class="warning-box">
+                <strong>Important:</strong> SSH to your EC2 instance or use SSM Session Manager before running these commands.
+            </div>
+
+            <h3>Download and Install</h3>
+            <div class="code-block">
+<span class="comment"># Download CloudWatch agent</span>
+<span class="command">wget https://amazoncloudwatch-agent.s3.amazonaws.com/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm</span>
+
+<span class="comment"># Install the agent</span>
+<span class="command">sudo rpm -U ./amazon-cloudwatch-agent.rpm</span>
+            </div>
+
+            <h3>Configure for Application Signals</h3>
+            <div class="code-block">
+<span class="comment"># Create configuration directory if needed</span>
+<span class="command">sudo mkdir -p /opt/aws/amazon-cloudwatch-agent/etc</span>
+
+<span class="comment"># Create Application Signals configuration</span>
+<span class="command">sudo tee /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json &gt; /dev/null &lt;&lt;'EOF'</span>
+<span class="string">{
+  "traces": {
+    "traces_collected": {
+      "application_signals": {}
+    }
+  },
+  "logs": {
+    "metrics_collected": {
+      "application_signals": {}
+    }
+  }
+}</span>
+<span class="command">EOF</span>
+
+<span class="comment"># Verify the configuration file</span>
+<span class="command">cat /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
+            </div>
+
+            <h3>Start CloudWatch Agent</h3>
+            <div class="code-block">
+<span class="comment"># Start the agent with Application Signals config</span>
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
+
+<span class="comment"># Check status</span>
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a status \
+  -m ec2</span>
+            </div>
+
+            <div class="success-box">
+                <strong>Expected Output:</strong> You should see <code>"status": "running"</code> in the JSON output.
+            </div>
+
+            <h3>Verify Ports</h3>
+            <div class="code-block">
+<span class="comment"># Check if Application Signals ports are listening</span>
+<span class="command">sudo netstat -tlnp | grep 431</span>
+
+<span class="comment"># Expected: ports 4315 and 4316 in LISTEN state</span>
+            </div>
+
+            <div class="info-box">
+                <strong>Port Information:</strong>
+                <ul>
+                    <li><strong>4315:</strong> OTLP gRPC receiver</li>
+                    <li><strong>4316:</strong> OTLP HTTP receiver (used by ADOT Java agent)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="build-app">
+            <h2>6. Build Quarkus Application</h2>
+
+            <div class="info-box">
+                <strong>Note:</strong> Run these commands on your <strong>local machine</strong> where you have the source code.
+            </div>
+
+            <h3>Build Application</h3>
+            <div class="code-block">
+<span class="comment"># Navigate to project directory</span>
+<span class="command">cd ec2-quarkus-java</span>
+
+<span class="comment"># Create deployment directory</span>
+<span class="command">mkdir -p deployment</span>
+
+<span class="comment"># Build the application (skip tests for faster build)</span>
+<span class="command">mvn clean package -DskipTests</span>
+
+<span class="comment"># Create tarball for deployment</span>
+<span class="command">cd target</span>
+<span class="command">tar -czf quarkus-app.tar.gz quarkus-app/</span>
+<span class="command">cd ..</span>
+            </div>
+
+            <h3>Download ADOT Java Agent</h3>
+            <div class="code-block">
+<span class="comment"># Download AWS Distro for OpenTelemetry Java agent</span>
+<span class="command">wget -O deployment/aws-opentelemetry-agent.jar \
+  https://github.com/aws-observability/aws-otel-java-instrumentation/releases/latest/download/aws-opentelemetry-agent.jar</span>
+
+<span class="command">echo "Build complete! Files ready for deployment."</span>
+            </div>
+
+            <h3>Upload to EC2</h3>
+            <p>Transfer the files to your EC2 instance using one of these methods:</p>
+
+            <h4>Option A: Via S3</h4>
+            <div class="code-block">
+<span class="comment"># Upload to S3</span>
+<span class="command">aws s3 cp target/quarkus-app.tar.gz s3://YOUR-BUCKET/ \
+  --profile YOUR_PROFILE</span>
+
+<span class="comment"># Then on EC2, download from S3</span>
+<span class="command">aws s3 cp s3://YOUR-BUCKET/quarkus-app.tar.gz /home/ec2-user/</span>
+            </div>
+
+            <h4>Option B: Via SCP (if using SSH)</h4>
+            <div class="code-block">
+<span class="command">scp -i YOUR-KEY.pem target/quarkus-app.tar.gz ec2-user@YOUR-EC2-IP:/home/ec2-user/</span>
+<span class="command">scp -i YOUR-KEY.pem deployment/aws-opentelemetry-agent.jar ec2-user@YOUR-EC2-IP:/home/ec2-user/</span>
+            </div>
+
+            <h4>Option C: Download ADOT agent directly on EC2</h4>
+            <div class="code-block">
+<span class="comment"># On EC2 instance</span>
+<span class="command">cd /home/ec2-user</span>
+<span class="command">wget -O aws-opentelemetry-agent.jar \
+  https://github.com/aws-observability/aws-otel-java-instrumentation/releases/latest/download/aws-opentelemetry-agent.jar</span>
+            </div>
+        </div>
+
+        <div class="section" id="deploy-app">
+            <h2>7. Deploy Application on EC2</h2>
+
+            <div class="warning-box">
+                <strong>Important:</strong> Run these commands on your <strong>EC2 instance</strong> via SSH or SSM Session Manager.
+            </div>
+
+            <h3>Install Java 21</h3>
+            <div class="code-block">
+<span class="comment"># Install Amazon Corretto 21</span>
+<span class="command">sudo yum install -y java-21-amazon-corretto-devel</span>
+
+<span class="comment"># Set as default Java version</span>
+<span class="command">sudo alternatives --config java</span>
+<span class="comment"># Select Java 21 option</span>
+
+<span class="comment"># Verify Java version</span>
+<span class="command">java -version</span>
+<span class="comment"># Expected: openjdk version "21.x.x"</span>
+            </div>
+
+            <h3>Extract Application</h3>
+            <div class="code-block">
+<span class="command">cd /home/ec2-user</span>
+
+<span class="comment"># Stop any existing application</span>
+<span class="command">pkill -f quarkus-run.jar || true</span>
+
+<span class="comment"># Clean up old deployment</span>
+<span class="command">rm -rf quarkus-app</span>
+
+<span class="comment"># Extract application</span>
+<span class="command">tar -xzf quarkus-app.tar.gz</span>
+
+<span class="comment"># Verify extraction</span>
+<span class="command">ls -la quarkus-app/</span>
+            </div>
+
+            <h3>Create Startup Script</h3>
+            <div class="code-block">
+<span class="comment"># Create startup script with OpenTelemetry configuration</span>
+<span class="command">cat &gt; start-app.sh &lt;&lt;'EOF'</span>
+<span class="string">#!/bin/bash
+export OTEL_RESOURCE_ATTRIBUTES="service.name=ec2-quarkus-java,deployment.environment=ec2:production"
+export OTEL_EXPORTER_OTLP_TRACES_ENDPOINT="http://localhost:4316/v1/traces"
+export OTEL_METRICS_EXPORTER="none"
+export OTEL_LOGS_EXPORTER="none"
+export OTEL_AWS_APPLICATION_SIGNALS_ENABLED="true"
+export OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT="http://localhost:4316/v1/metrics"
+
+java -javaagent:/home/ec2-user/aws-opentelemetry-agent.jar \
+  -jar /home/ec2-user/quarkus-app/quarkus-run.jar</span>
+<span class="command">EOF</span>
+
+<span class="comment"># Make executable</span>
+<span class="command">chmod +x start-app.sh</span>
+            </div>
+
+            <div class="info-box">
+                <strong>Environment Variables Explained:</strong>
+                <ul>
+                    <li><strong>OTEL_RESOURCE_ATTRIBUTES:</strong> Sets service name and environment for Application Signals dashboard</li>
+                    <li><strong>OTEL_EXPORTER_OTLP_TRACES_ENDPOINT:</strong> CloudWatch agent endpoint for traces</li>
+                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_ENABLED:</strong> Enables Application Signals specific features</li>
+                    <li><strong>OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT:</strong> CloudWatch agent endpoint for metrics</li>
+                    <li><strong>OTEL_METRICS_EXPORTER/OTEL_LOGS_EXPORTER:</strong> Disabled to use only Application Signals exporter</li>
+                </ul>
+            </div>
+
+            <h3>Start Application</h3>
+            <div class="code-block">
+<span class="comment"># Start application in background</span>
+<span class="command">nohup ./start-app.sh &gt; app.log 2&gt;&amp;1 &amp;</span>
+
+<span class="comment"># Wait for startup</span>
+<span class="command">sleep 5</span>
+
+<span class="comment"># Check if process is running</span>
+<span class="command">ps aux | grep quarkus</span>
+
+<span class="comment"># Check application logs</span>
+<span class="command">tail -30 app.log</span>
+            </div>
+
+            <h3>Test Application Locally</h3>
+            <div class="code-block">
+<span class="comment"># Test root endpoint</span>
+<span class="command">curl http://localhost:8080</span>
+
+<span class="comment"># Test health endpoint</span>
+<span class="command">curl http://localhost:8080/health</span>
+
+<span class="comment"># Test hello endpoint</span>
+<span class="command">curl http://localhost:8080/hello/TestUser</span>
+            </div>
+
+            <div class="success-box">
+                <strong>Expected Response:</strong>
+                <pre>{"environment":"ec2","message":"Hello from Quarkus EC2 Application!","timestamp":1760817129049,"status":"running"}</pre>
+            </div>
+
+            <h3>Available Endpoints</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Endpoint</th>
+                        <th>Method</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>/</td>
+                        <td>GET</td>
+                        <td>Root endpoint with basic info</td>
+                    </tr>
+                    <tr>
+                        <td>/health</td>
+                        <td>GET</td>
+                        <td>Health check endpoint</td>
+                    </tr>
+                    <tr>
+                        <td>/hello/{name}</td>
+                        <td>GET</td>
+                        <td>Personalized greeting</td>
+                    </tr>
+                    <tr>
+                        <td>/slow</td>
+                        <td>GET</td>
+                        <td>Simulated slow operation (2-5s)</td>
+                    </tr>
+                    <tr>
+                        <td>/error</td>
+                        <td>GET</td>
+                        <td>Simulated error (500 status)</td>
+                    </tr>
+                    <tr>
+                        <td>/external</td>
+                        <td>GET</td>
+                        <td>Simulated external API call</td>
+                    </tr>
+                    <tr>
+                        <td>/s3</td>
+                        <td>GET</td>
+                        <td>Simulated S3 operation</td>
+                    </tr>
+                    <tr>
+                        <td>/database</td>
+                        <td>GET</td>
+                        <td>Simulated database query</td>
+                    </tr>
+                    <tr>
+                        <td>/complex</td>
+                        <td>GET</td>
+                        <td>Multi-step complex operation</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section" id="traffic-gen">
+            <h2>8. Traffic Generation</h2>
+
+            <p>To populate Application Signals with data, generate continuous traffic to your application.</p>
+
+            <h3>Create Traffic Generator Script</h3>
+            <div class="code-block">
+<span class="comment"># On EC2 instance</span>
+<span class="command">cd /home/ec2-user</span>
+
+<span class="comment"># Create traffic generator that runs once</span>
+<span class="command">cat &gt; traffic-generator.sh &lt;&lt;'EOF'</span>
+<span class="string">#!/bin/bash
+
+# Array of endpoints to test
+endpoints=(
+  "/"
+  "/health"
+  "/hello/User1"
+  "/hello/User2"
+  "/hello/User3"
+  "/hello/TestUser"
+  "/external"
+  "/s3"
+  "/database"
+  "/slow"
+  "/complex"
+)
+
+# Make 5 random requests
+for i in {1..5}; do
+  # Select random endpoint
+  endpoint=${endpoints[$RANDOM % ${#endpoints[@]}]}
+  
+  # Make request
+  response=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8080${endpoint})
+  
+  # Log request
+  timestamp=$(date '+%Y-%m-%d %H:%M:%S')
+  echo "[$timestamp] ${endpoint} - Status: ${response}" >> /home/ec2-user/traffic-generator.log
+  
+  # Small delay between requests
+  sleep 2
+done</span>
+<span class="command">EOF</span>
+
+<span class="comment"># Make executable</span>
+<span class="command">chmod +x traffic-generator.sh</span>
+            </div>
+
+            <h3>Schedule with Cron</h3>
+            <div class="code-block">
+<span class="comment"># Add to crontab to run every minute</span>
+<span class="command">(crontab -l 2>/dev/null; echo "* * * * * /home/ec2-user/traffic-generator.sh") | crontab -</span>
+
+<span class="comment"># Verify crontab</span>
+<span class="command">crontab -l</span>
+            </div>
+
+            <div class="info-box">
+                <strong>Traffic Pattern:</strong> This generates 5 requests per minute (300 requests/hour) hitting random endpoints to create diverse traces and metrics.
+            </div>
+
+            <h3>Monitor Traffic</h3>
+            <div class="code-block">
+<span class="comment"># Watch traffic log in real-time</span>
+<span class="command">tail -f /home/ec2-user/traffic-generator.log</span>
+
+<span class="comment"># Count total requests</span>
+<span class="command">wc -l /home/ec2-user/traffic-generator.log</span>
+
+<span class="comment"># See last 30 requests</span>
+<span class="command">tail -30 /home/ec2-user/traffic-generator.log</span>
+            </div>
+
+            <h3>Stop Traffic Generator</h3>
+            <div class="code-block">
+<span class="comment"># Remove from crontab</span>
+<span class="command">crontab -r</span>
+
+<span class="comment"># Verify removal</span>
+<span class="command">crontab -l</span>
+            </div>
+        </div>
+
+        <div class="section" id="verify">
+            <h2>9. Verify Application Signals</h2>
+
+            <h3>Wait for Data</h3>
+            <div class="info-box">
+                <strong>Important:</strong> Wait 5-10 minutes after starting traffic generation for data to appear in Application Signals.
+            </div>
+
+            <h3>Access CloudWatch Console</h3>
+            <ol>
+                <li>Open AWS Console: <a href="https://console.aws.amazon.com/cloudwatch/" target="_blank">https://console.aws.amazon.com/cloudwatch/</a></li>
+                <li>Navigate to <strong>Application Signals</strong> → <strong>Services</strong></li>
+                <li>Look for service: <strong>ec2-quarkus-java</strong></li>
+            </ol>
+
+            <h3>Service Details</h3>
+            <p>In Application Signals, you should see:</p>
+            <ul>
+                <li><strong>Service Map:</strong> Visual representation of your service and dependencies</li>
+                <li><strong>Service Operations:</strong> List of all endpoints with metrics</li>
+                <li><strong>Traces:</strong> Individual request traces via X-Ray</li>
+                <li><strong>Metrics:</strong> Latency, error rate, request rate</li>
+                <li><strong>Service Health:</strong> Overall health indicators and SLOs</li>
+            </ul>
+
+            <h3>View Traces in X-Ray</h3>
+            <ol>
+                <li>Navigate to <strong>X-Ray</strong> → <strong>Traces</strong></li>
+                <li>Filter by service name: <code>ec2-quarkus-java</code></li>
+                <li>Click on individual traces to see detailed timing information</li>
+            </ol>
+
+            <h3>View Metrics in CloudWatch</h3>
+            <ol>
+                <li>Navigate to <strong>CloudWatch</strong> → <strong>Metrics</strong></li>
+                <li>Look for <strong>ApplicationSignals</strong> namespace</li>
+                <li>Explore metrics by service, operation, and dimension</li>
+            </ol>
+
+            <div class="success-box">
+                <strong>Success Indicators:</strong>
+                <ul>
+                    <li>Service "ec2-quarkus-java" appears in Service Map</li>
+                    <li>Traces visible in X-Ray with proper service name</li>
+                    <li>Metrics showing request rate, latency, and errors</li>
+                    <li>Service health status is "Healthy"</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section" id="troubleshooting">
+            <h2>10. Troubleshooting</h2>
+
+            <h3>Application Won't Start</h3>
+            
+            <h4>Check Java Version</h4>
+            <div class="code-block">
+<span class="command">java -version</span>
+<span class="comment"># Should show Java 21</span>
+
+<span class="comment"># If wrong version, switch:</span>
+<span class="command">sudo alternatives --config java</span>
+            </div>
+
+            <h4>Check Application Logs</h4>
+            <div class="code-block">
+<span class="command">tail -100 /home/ec2-user/app.log</span>
+<span class="command">grep -i error /home/ec2-user/app.log</span>
+            </div>
+
+            <h4>Check if Process is Running</h4>
+            <div class="code-block">
+<span class="command">ps aux | grep quarkus</span>
+<span class="command">netstat -tlnp | grep 8080</span>
+            </div>
+
+            <h3>CloudWatch Agent Issues</h3>
+
+            <h4>Check Agent Status</h4>
+            <div class="code-block">
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a status \
+  -m ec2</span>
+            </div>
+
+            <h4>Check Agent Logs</h4>
+            <div class="code-block">
+<span class="command">sudo tail -100 /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log</span>
+            </div>
+
+            <h4>Restart CloudWatch Agent</h4>
+            <div class="code-block">
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a stop \
+  -m ec2</span>
+
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
+            </div>
+
+            <h4>Verify Ports</h4>
+            <div class="code-block">
+<span class="command">sudo netstat -tlnp | grep 431</span>
+<span class="comment"># Should show ports 4315 and 4316 listening</span>
+            </div>
+
+            <h3>No Data in Application Signals</h3>
+
+            <h4>Checklist</h4>
+            <ul>
+                <li>CloudWatch agent is running and listening on ports 4315/4316</li>
+                <li>Application is running and receiving requests</li>
+                <li>Traffic generator is active (check crontab and logs)</li>
+                <li>IAM role has CloudWatchAgentServerPolicy attached</li>
+                <li>Application Signals is enabled in the AWS account</li>
+                <li>Wait 5-10 minutes for initial data to appear</li>
+            </ul>
+
+            <h4>Verify OTLP Connection</h4>
+            <div class="code-block">
+<span class="comment"># Check application logs for OTLP errors</span>
+<span class="command">grep -i "otlp\|exporter" /home/ec2-user/app.log | tail -20</span>
+
+<span class="comment"># Check if traffic is reaching the application</span>
+<span class="command">tail -20 /home/ec2-user/traffic-generator.log</span>
+            </div>
+
+            <h3>Port Already in Use</h3>
+            <div class="code-block">
+<span class="comment"># Find what's using the port</span>
+<span class="command">sudo netstat -tlnp | grep 4315</span>
+
+<span class="comment"># Kill the process (replace PID)</span>
+<span class="command">sudo kill -9 PID</span>
+
+<span class="comment"># Or kill all CloudWatch agent processes</span>
+<span class="command">sudo pkill -9 amazon-cloudwatch-agent</span>
+
+<span class="comment"># Then restart</span>
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
+            </div>
+
+            <h3>Permission Denied Errors</h3>
+            <div class="code-block">
+<span class="comment"># Check IAM role policies</span>
+<span class="command">aws iam list-attached-role-policies \
+  --role-name YOUR_ROLE_NAME \
+  --profile YOUR_PROFILE</span>
+
+<span class="comment"># Check CloudWatch agent has write permissions</span>
+<span class="command">sudo tail -50 /opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log | grep -i "permission\|denied\|403"</span>
+            </div>
+
+            <h3>Application Logs</h3>
+            
+            <h4>View Real-time Logs</h4>
+            <div class="code-block">
+<span class="command">tail -f /home/ec2-user/app.log</span>
+            </div>
+
+            <h4>Search for Errors</h4>
+            <div class="code-block">
+<span class="command">grep -i "error\|exception\|failed" /home/ec2-user/app.log | tail -30</span>
+            </div>
+
+            <h3>Restart Everything</h3>
+            <div class="code-block">
+<span class="comment"># Stop application</span>
+<span class="command">pkill -f quarkus-run.jar</span>
+
+<span class="comment"># Restart CloudWatch agent</span>
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl \
+  -a fetch-config \
+  -m ec2 -s \
+  -c file:/opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json</span>
+
+<span class="comment"># Wait for agent to start</span>
+<span class="command">sleep 5</span>
+
+<span class="comment"># Restart application</span>
+<span class="command">cd /home/ec2-user</span>
+<span class="command">nohup ./start-app.sh &gt; app.log 2&gt;&amp;1 &amp;</span>
+
+<span class="comment"># Verify both are running</span>
+<span class="command">sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a status -m ec2</span>
+<span class="command">ps aux | grep quarkus</span>
+            </div>
+
+            <h3>Common Error Messages</h3>
+
+            <h4>"Failed to connect to localhost:4316"</h4>
+            <p><strong>Solution:</strong> CloudWatch agent is not running or not configured properly. Restart the agent.</p>
+
+            <h4>"class file version 65.0"</h4>
+            <p><strong>Solution:</strong> Application compiled with Java 21 but running on older Java. Install Java 21.</p>
+
+            <h4>"Port 8080 already in use"</h4>
+            <p><strong>Solution:</strong> Another process is using port 8080. Kill the process or use a different port.</p>
+
+            <h4>"Permission denied" writing to CloudWatch</h4>
+            <p><strong>Solution:</strong> IAM role missing CloudWatchAgentServerPolicy. Attach the policy.</p>
+        </div>
+
+        <div class="section">
+            <h2>Additional Resources</h2>
+            <ul>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals.html" target="_blank">AWS Application Signals Documentation</a></li>
+                <li><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable-EC2Main.html" target="_blank">Enable Application Signals on EC2</a></li>
+                <li><a href="https://github.com/aws-observability/aws-otel-java-instrumentation" target="_blank">AWS Distro for OpenTelemetry Java</a></li>
+                <li><a href="https://quarkus.io/guides/" target="_blank">Quarkus Guides</a></li>
+                <li><a href="https://opentelemetry.io/docs/" target="_blank">OpenTelemetry Documentation</a></li>
+            </ul>
+        </div>
+
+      
+    </div>
+</body>
+</html>
+

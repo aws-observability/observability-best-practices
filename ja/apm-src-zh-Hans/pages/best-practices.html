@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>最佳实践 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>最佳实践</h1></header>
+      <article>
+        <section>
+          <h2>插桩最佳实践</h2>
+          <p>有效的插桩是从 Observability 数据中获取有价值洞察的关键。遵循这些最佳实践，确保您的插桩在最小化开销的同时提供最大价值。</p>
+        </section>
+
+        <section>
+          <h3>应该插桩什么</h3>
+          <p>专注于插桩应用程序中最关键的部分：</p>
+
+          <h4>高优先级：</h4>
+          <ul>
+            <li>公共 API 端点和面向用户的操作</li>
+            <li>数据库查询和外部服务调用</li>
+            <li>业务关键工作流和事务</li>
+            <li>错误路径和异常处理</li>
+          </ul>
+
+          <h4>中优先级：</h4>
+          <ul>
+            <li>内部服务间通信</li>
+            <li>后台作业和定时任务</li>
+            <li>缓存操作</li>
+          </ul>
+
+          <h4>低优先级：</h4>
+          <ul>
+            <li>简单工具函数</li>
+            <li>静态内容服务</li>
+            <li>健康检查端点</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>命名规范</h3>
+          <p>一致的命名使搜索和过滤链路追踪更加容易：</p>
+
+          <h4>Span 名称：</h4>
+          <ul>
+            <li>使用小写加连字符：<code>http-get-user-profile</code></li>
+            <li>包含操作类型：<code>db-query-users</code>、<code>redis-get-session</code></li>
+            <li>描述性但简洁：避免使用"process"或"handle"等通用名称</li>
+          </ul>
+
+          <h4>服务名称：</h4>
+          <ul>
+            <li>跨环境使用一致的服务命名</li>
+            <li>多环境设置中在服务名称中包含环境信息</li>
+            <li>遵循您组织的命名规范</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>属性和标签</h3>
+          <p>使用属性为您的 span 和链路追踪添加上下文：</p>
+
+          <h4>标准属性：</h4>
+          <ul>
+            <li><code>http.method</code> - HTTP 方法（GET、POST 等）</li>
+            <li><code>http.url</code> - 请求 URL（注意 PII）</li>
+            <li><code>http.status_code</code> - HTTP 响应状态</li>
+            <li><code>db.system</code> - 数据库类型（mysql、postgres 等）</li>
+            <li><code>db.name</code> - 数据库名称</li>
+            <li><code>db.operation</code> - 数据库操作（SELECT、INSERT 等）</li>
+          </ul>
+
+          <h4>自定义属性：</h4>
+          <ul>
+            <li><code>user.id</code> - 用户标识符（如果是 PII 则哈希处理）</li>
+            <li><code>business.operation</code> - 业务操作类型</li>
+            <li><code>version</code> - 应用程序版本</li>
+            <li><code>environment</code> - 部署环境</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>PII 和安全注意事项</h3>
+          <p>保护遥测中的敏感数据：</p>
+
+          <h4>切勿包含：</h4>
+          <ul>
+            <li>密码、API 密钥或认证令牌</li>
+            <li>个人身份信息 (PII) 如电子邮件、电话号码</li>
+            <li>包含敏感数据的查询参数的完整 URL</li>
+            <li>信用卡号或金融信息</li>
+          </ul>
+
+          <h4>安全替代方案：</h4>
+          <ul>
+            <li>使用哈希或令牌化标识符</li>
+            <li>仅包含 URL 的路径部分</li>
+            <li>使用通用状态指示器代替具体值</li>
+            <li>在插桩级别实施数据掩码</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>采样策略</h2>
+          <p>采样有助于在保持 Observability 覆盖范围的同时控制成本。</p>
+        </section>
+
+        <section>
+          <h3>选择采样策略</h3>
+
+          <h4>基于速率的采样：</h4>
+          <ul>
+            <li>采样固定百分比的请求（例如 10%）</li>
+            <li>实施和理解简单</li>
+            <li>可能遗漏重要但罕见的事件</li>
+          </ul>
+
+          <h4>尾部采样：</h4>
+          <ul>
+            <li>在收集链路追踪数据后做出采样决策</li>
+            <li>可以优先处理有错误或高延迟的链路追踪</li>
+            <li>更复杂但更智能</li>
+          </ul>
+
+          <h4>基于规则的采样：</h4>
+          <ul>
+            <li>根据特定条件（用户、端点等）进行采样</li>
+            <li>确保关键路径始终被追踪</li>
+            <li>需要仔细定义规则</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>推荐采样率</h3>
+          <ul>
+            <li><strong>开发环境：</strong>100% 采样以获得完整可见性</li>
+            <li><strong>预发布环境：</strong>50-100% 采样用于测试</li>
+            <li><strong>生产环境：</strong>10-20% 以实现经济高效的覆盖</li>
+            <li><strong>高流量服务：</strong>1-5% 以控制数据量</li>
+            <li><strong>关键路径：</strong>无论其他规则如何均 100% 采样</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>性能优化</h2>
+          <p>最小化插桩的性能影响。</p>
+        </section>
+
+        <section>
+          <h3>减少开销</h3>
+          <ul>
+            <li>尽可能使用异步 span 处理</li>
+            <li>批量导出 span 以减少网络调用</li>
+            <li>配置适当的缓冲区大小</li>
+            <li>监控插桩性能指标</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>资源管理</h3>
+          <ul>
+            <li>为 span 导出设置合理的超时时间</li>
+            <li>对后端故障实施断路器</li>
+            <li>为收集器使用连接池</li>
+            <li>配置适当的重试策略</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>告警和监控</h2>
+          <p>设置有效的告警以掌握应用程序健康状况。</p>
+        </section>
+
+        <section>
+          <h3>需要监控的关键指标</h3>
+          <ul>
+            <li><strong>延迟：</strong>P95/P99 响应时间</li>
+            <li><strong>错误率：</strong>失败请求的百分比</li>
+            <li><strong>吞吐量：</strong>每秒请求数</li>
+            <li><strong>饱和度：</strong>资源利用率</li>
+            <li><strong>链路追踪量：</strong>收集的链路追踪数量</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>基于 SLO 的告警</h3>
+          <p>定义服务级别目标并在存在风险时告警：</p>
+          <ul>
+            <li>延迟 SLO：95% 的请求 < 500ms</li>
+            <li>错误 SLO：99.9% 成功率</li>
+            <li>可用性 SLO：99.95% 正常运行时间</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>成本管理</h2>
+          <p>在保持价值的同时控制 Observability 成本。</p>
+        </section>
+
+        <section>
+          <h3>成本优化策略</h3>
+          <ul>
+            <li>实施适当的采样率</li>
+            <li>使用数据保留策略</li>
+            <li>过滤不必要的 span 和属性</li>
+            <li>将旧数据归档到更便宜的存储</li>
+            <li>监控和优化数据量</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>数据保留策略</h3>
+          <ul>
+            <li><strong>热存储：</strong>近期数据（7-30 天）用于活跃故障排查</li>
+            <li><strong>温存储：</strong>历史数据（30-90 天）用于趋势分析</li>
+            <li><strong>冷存储：</strong>归档数据（90 天以上）用于合规和低频查询</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

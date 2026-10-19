@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Application Signals for Node.js Express on ECS</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            margin: -20px -20px 30px -20px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .platform-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .language-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin: 10px 5px;
+        }
+
+        .content {
+            padding: 0;
+        }
+
+        .back-link {
+            display: inline-block;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            border: 2px solid #667eea;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        h2 {
+            color: #2c3e50;
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #ecf0f1;
+        }
+
+        h3 {
+            color: #34495e;
+            font-size: 1.4rem;
+            margin: 1.5rem 0 1rem 0;
+        }
+
+        h4 {
+            color: #34495e;
+            margin-top: 25px;
+            margin-bottom: 10px;
+        }
+
+        .code-block {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border-top: 3px solid #667eea;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 1rem 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        pre::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+            border-radius: 0;
+        }
+
+        code {
+            background: #f1f3f4;
+            color: #d73a49;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Fira Code', 'Monaco', 'Consolas', monospace;
+            font-size: 0.9em;
+        }
+        
+        .highlight {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .warning {
+            background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+            border-left: 4px solid #ff9800;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .success {
+            background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
+            border-left: 4px solid #4caf50;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        .error {
+            background: linear-gradient(135deg, #ffebee 0%, #fce4ec 100%);
+            border-left: 4px solid #f44336;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+
+        .info {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+            border-left: 4px solid #2196f3;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+        }
+
+        .footer p {
+            margin: 0.5rem 0;
+        }
+
+        ul, ol {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+
+        li {
+            margin: 0.5rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .content {
+                padding: 1rem;
+            }
+            
+            .code-block, pre {
+                font-size: 0.8rem;
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Application Signals for Node.js Express on ECS</h1>
+            <p class="subtitle">Complete Implementation Guide</p>
+            <div class="platform-badge">ECS</div>
+            <div class="language-badge">Node.js</div>
+        </div>
+
+        <div class="content">
+            <a href="index.html" class="back-link">← Back to All Implementations</a>
+            
+            <div class="section">
+                <h2>Overview</h2>
+                <p>This guide provides <strong>step-by-step instructions</strong> to deploy a Node.js Express application on Amazon ECS with AWS Application Signals enabled. No CDK required - pure AWS CLI and Docker.</p>
+                
+                <div class="highlight">
+                    <strong>What you'll accomplish:</strong>
+                    <ul>
+                        <li>Deploy a Node.js Express app on ECS Fargate</li>
+                        <li>Enable AWS Application Signals auto-instrumentation</li>
+                        <li>View your service in CloudWatch Application Signals console</li>
+                        <li>Monitor service metrics, traces, and operations</li>
+                    </ul>
+                </div>
+
+                <div class="success">
+                    <strong>Time to complete:</strong> 30-45 minutes
+                </div>
+            </div>
+<h2 id="prerequisites">Prerequisites</h2>
+<h3 id="required-tools">Required Tools</h3>
+<ul>
+<li>AWS CLI v2 (latest version)</li>
+<li>Docker Desktop</li>
+<li>Node.js 18+ (for local development)</li>
+<li>npm (for local development)</li>
+<li>AWS Account with appropriate permissions</li>
+<li>Text editor</li>
+</ul>
+<h3 id="aws-permissions-required">AWS Permissions Required</h3>
+<ul>
+<li>ECS: Full access (create clusters, services, task definitions)</li>
+<li>ECR: Push images</li>
+<li>IAM: Create roles and policies</li>
+<li>CloudWatch: Logs and Application Signals access</li>
+<li>EC2: VPC, subnet, and security group access</li>
+<li>SSM: Parameter Store write access</li>
+</ul>
+<h3 id="knowledge-assumed">Knowledge Assumed</h3>
+<ul>
+<li>Basic AWS CLI usage</li>
+<li>Basic Docker commands</li>
+<li>Basic understanding of ECS concepts</li>
+<li>Basic Node.js/Express knowledge</li>
+</ul>
+<h2 id="architecture">Architecture</h2>
+<p>Your ECS task will contain <strong>3 containers</strong>:</p>
+<ol>
+<li><strong>Init Container</strong> (<code>init</code>): Copies ADOT Node.js auto-instrumentation files</li>
+<li><strong>CloudWatch Agent</strong> (<code>ecs-cwagent</code>): Collects traces and metrics  </li>
+<li><strong>Application Container</strong> (<code>app</code>): Your Node.js Express application</li>
+</ol>
+<p><strong>Flow:</strong></p>
+<pre><code><span class="hljs-selector-tag">Init</span> <span class="hljs-selector-tag">Container</span> (runs once, copies files) 
+  → <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">starts</span> (auto-instrumented via NODE_OPTIONS)
+  → <span class="hljs-selector-tag">Sends</span> <span class="hljs-selector-tag">traces</span>/<span class="hljs-selector-tag">metrics</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> (<span class="hljs-attribute">localhost</span>:<span class="hljs-number">4316</span>)
+  → <span class="hljs-selector-tag">CloudWatch</span> <span class="hljs-selector-tag">Agent</span> <span class="hljs-selector-tag">sends</span> <span class="hljs-selector-tag">to</span> <span class="hljs-selector-tag">Application</span> <span class="hljs-selector-tag">Signals</span>
+</code></pre><h2 id="step-1-create-the-application">Step 1: Create the Application</h2>
+<h3 id="1-1-create-project-structure">1.1 Create Project Structure</h3>
+<pre><code class="lang-bash"><span class="hljs-built_in">mkdir</span> ecs-nodejs
+<span class="hljs-built_in">cd</span> ecs-nodejs
+</code></pre>
+<h3 id="1-2-create-package-json">1.2 Create Package.json</h3>
+<p>Create <code>package.json</code>:</p>
+<pre><code class="lang-json">{
+  <span class="hljs-attr">"name"</span>: <span class="hljs-string">"ecs-nodejs-appsignals"</span>,
+  <span class="hljs-attr">"version"</span>: <span class="hljs-string">"1.0.0"</span>,
+  <span class="hljs-attr">"description"</span>: <span class="hljs-string">"Node.js Express application for AWS Application Signals testing on ECS"</span>,
+  <span class="hljs-attr">"main"</span>: <span class="hljs-string">"index.js"</span>,
+  <span class="hljs-attr">"scripts"</span>: {
+    <span class="hljs-attr">"start"</span>: <span class="hljs-string">"node index.js"</span>,
+    <span class="hljs-attr">"dev"</span>: <span class="hljs-string">"nodemon index.js"</span>,
+    <span class="hljs-attr">"test"</span>: <span class="hljs-string">"echo \"Error: no test specified\" &amp;&amp; exit 1"</span>
+  },
+  <span class="hljs-attr">"keywords"</span>: [
+    <span class="hljs-string">"aws"</span>,
+    <span class="hljs-string">"ecs"</span>,
+    <span class="hljs-string">"nodejs"</span>,
+    <span class="hljs-string">"application-signals"</span>,
+    <span class="hljs-string">"opentelemetry"</span>
+  ],
+  <span class="hljs-attr">"author"</span>: <span class="hljs-string">"AWS Application Signals Demo"</span>,
+  <span class="hljs-attr">"license"</span>: <span class="hljs-string">"MIT"</span>,
+  <span class="hljs-attr">"dependencies"</span>: {
+    <span class="hljs-attr">"express"</span>: <span class="hljs-string">"^4.18.2"</span>,
+    <span class="hljs-attr">"cors"</span>: <span class="hljs-string">"^2.8.5"</span>,
+    <span class="hljs-attr">"aws-sdk"</span>: <span class="hljs-string">"^2.1490.0"</span>,
+    <span class="hljs-attr">"axios"</span>: <span class="hljs-string">"^1.6.0"</span>
+  },
+  <span class="hljs-attr">"devDependencies"</span>: {
+    <span class="hljs-attr">"nodemon"</span>: <span class="hljs-string">"^3.0.2"</span>
+  },
+  <span class="hljs-attr">"engines"</span>: {
+    <span class="hljs-attr">"node"</span>: <span class="hljs-string">"&gt;=18.0.0"</span>
+  }
+}
+</code></pre>
+<h3 id="1-3-create-main-application">1.3 Create Main Application</h3>
+<p>Create <code>index.js</code>:</p>
+<pre><code class="lang-javascript"><span class="hljs-comment">/**
+ * Node.js Express application for AWS Application Signals testing on ECS
+ * 
+ * This application demonstrates auto-instrumentation with AWS Application Signals
+ * on ECS. The ADOT Collector handles all instrumentation automatically when configured.
+ */</span>
+<span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">'express'</span>);
+<span class="hljs-keyword">const</span> cors = <span class="hljs-built_in">require</span>(<span class="hljs-string">'cors'</span>);
+<span class="hljs-keyword">const</span> AWS = <span class="hljs-built_in">require</span>(<span class="hljs-string">'aws-sdk'</span>);
+<span class="hljs-keyword">const</span> axios = <span class="hljs-built_in">require</span>(<span class="hljs-string">'axios'</span>);
+
+<span class="hljs-comment">// Initialize Express app</span>
+<span class="hljs-keyword">const</span> app = express();
+<span class="hljs-keyword">const</span> port = process.env.PORT || <span class="hljs-number">80</span>;
+
+<span class="hljs-comment">// Initialize AWS services</span>
+<span class="hljs-keyword">const</span> s3 = <span class="hljs-keyword">new</span> AWS.S3();
+
+<span class="hljs-comment">// Middleware</span>
+app.use(cors());
+app.use(express.json());
+
+<span class="hljs-comment">/**
+ * Root endpoint handler
+ */</span>
+app.get(<span class="hljs-string">'/'</span>, (req, res) =&gt; {
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">'AWS Application Signals ECS Node.js Demo'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">runtime</span>: <span class="hljs-string">'nodejs18.x'</span>,
+        <span class="hljs-attr">environment</span>: <span class="hljs-string">'ecs'</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * Health check endpoint handler
+ */</span>
+app.get(<span class="hljs-string">'/health'</span>, (req, res) =&gt; {
+    res.json({
+        <span class="hljs-attr">status</span>: <span class="hljs-string">'healthy'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">runtime</span>: <span class="hljs-string">'nodejs18.x'</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * Personalized greeting handler with simulated processing time
+ */</span>
+app.get(<span class="hljs-string">'/api/hello/:name'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-comment">// Simulate some processing time</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">100</span> + <span class="hljs-number">10</span>));
+
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">`Hello, <span class="hljs-subst">${req.params.name}</span>!`</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">runtime</span>: <span class="hljs-string">'nodejs18.x'</span>,
+        <span class="hljs-attr">greeting_id</span>: <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">10000</span>)
+    });
+});
+
+<span class="hljs-comment">/**
+ * Intentionally slow endpoint for latency testing
+ */</span>
+app.get(<span class="hljs-string">'/api/slow'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-comment">// Simulate slow operation (500-1500ms)</span>
+    <span class="hljs-keyword">const</span> delay = <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">1000</span> + <span class="hljs-number">500</span>;
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, delay));
+
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">'Slow operation completed'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">duration_ms</span>: <span class="hljs-built_in">Math</span>.floor(delay)
+    });
+});
+
+<span class="hljs-comment">/**
+ * Endpoint that randomly raises errors for fault testing
+ */</span>
+app.get(<span class="hljs-string">'/api/error'</span>, (req, res) =&gt; {
+    <span class="hljs-keyword">if</span> (<span class="hljs-built_in">Math</span>.random() &gt; <span class="hljs-number">0.5</span>) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'Simulated error for Application Signals testing'</span>);
+    }
+
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">'No error occurred'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * Makes external HTTP call for distributed tracing
+ */</span>
+app.get(<span class="hljs-string">'/api/external'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> axios.get(<span class="hljs-string">'https://httpbin.org/delay/1'</span>, {
+            <span class="hljs-attr">timeout</span>: <span class="hljs-number">10000</span>
+        });
+
+        res.json({
+            <span class="hljs-attr">message</span>: <span class="hljs-string">'External call completed'</span>,
+            <span class="hljs-attr">external_status_code</span>: response.status,
+            <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+            <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>
+        });
+
+    } <span class="hljs-keyword">catch</span> (error) {
+        <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`External call failed: <span class="hljs-subst">${error.message}</span>`</span>);
+    }
+});
+
+<span class="hljs-comment">/**
+ * AWS S3 call for testing AWS SDK instrumentation
+ */</span>
+app.get(<span class="hljs-string">'/api/s3'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-keyword">try</span> {
+        <span class="hljs-comment">// List buckets (this is a safe operation that doesn't require specific permissions)</span>
+        <span class="hljs-keyword">const</span> response = <span class="hljs-keyword">await</span> s3.listBuckets().promise();
+
+        <span class="hljs-keyword">const</span> result = {
+            <span class="hljs-attr">message</span>: <span class="hljs-string">'S3 call completed successfully'</span>,
+            <span class="hljs-attr">bucket_count</span>: response.Buckets.length,
+            <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+            <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>
+        };
+
+        <span class="hljs-comment">// Add first few bucket names</span>
+        <span class="hljs-keyword">if</span> (response.Buckets.length &gt; <span class="hljs-number">0</span>) {
+            result.first_bucket = response.Buckets[<span class="hljs-number">0</span>].Name;
+        }
+
+        res.json(result);
+
+    } <span class="hljs-keyword">catch</span> (error) {
+        res.status(<span class="hljs-number">500</span>).json({
+            <span class="hljs-attr">error</span>: <span class="hljs-string">'S3 call failed'</span>,
+            <span class="hljs-attr">message</span>: error.message,
+            <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+            <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>
+        });
+    }
+});
+
+<span class="hljs-comment">/**
+ * Database simulation endpoint
+ */</span>
+app.get(<span class="hljs-string">'/api/database'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-comment">// Simulate database query time</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">200</span> + <span class="hljs-number">50</span>));
+
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">'Database query completed'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">records_returned</span>: <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">100</span>) + <span class="hljs-number">1</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * Complex operation with multiple steps
+ */</span>
+app.get(<span class="hljs-string">'/api/complex'</span>, <span class="hljs-keyword">async</span> (req, res) =&gt; {
+    <span class="hljs-comment">// Step 1: Simulate authentication</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">50</span> + <span class="hljs-number">10</span>));
+
+    <span class="hljs-comment">// Step 2: Simulate business logic</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">100</span> + <span class="hljs-number">20</span>));
+
+    <span class="hljs-comment">// Step 3: Simulate database operations</span>
+    <span class="hljs-keyword">await</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function"><span class="hljs-params">resolve</span> =&gt;</span> setTimeout(resolve, <span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">150</span> + <span class="hljs-number">30</span>));
+
+    res.json({
+        <span class="hljs-attr">message</span>: <span class="hljs-string">'Complex operation completed successfully'</span>,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>,
+        <span class="hljs-attr">steps_completed</span>: <span class="hljs-number">3</span>,
+        <span class="hljs-attr">total_processing_time_ms</span>: <span class="hljs-built_in">Math</span>.floor(<span class="hljs-built_in">Math</span>.random() * <span class="hljs-number">300</span>) + <span class="hljs-number">60</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * Error handling middleware
+ */</span>
+app.use(<span class="hljs-function">(<span class="hljs-params">err, req, res, next</span>) =&gt;</span> {
+    <span class="hljs-built_in">console</span>.error(<span class="hljs-string">'Error processing request:'</span>, err);
+
+    res.status(<span class="hljs-number">500</span>).json({
+        <span class="hljs-attr">error</span>: <span class="hljs-string">'Internal Server Error'</span>,
+        <span class="hljs-attr">message</span>: err.message,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now(),
+        <span class="hljs-attr">service</span>: <span class="hljs-string">'ecs-nodejs'</span>
+    });
+});
+
+<span class="hljs-comment">/**
+ * 404 handler
+ */</span>
+app.use(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> {
+    res.status(<span class="hljs-number">404</span>).json({
+        <span class="hljs-attr">error</span>: <span class="hljs-string">'Not Found'</span>,
+        <span class="hljs-attr">path</span>: req.path,
+        <span class="hljs-attr">timestamp</span>: <span class="hljs-built_in">Date</span>.now()
+    });
+});
+
+<span class="hljs-comment">// Start server</span>
+app.listen(port, <span class="hljs-string">'0.0.0.0'</span>, () =&gt; {
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`ECS Node.js Application Signals Demo running on port <span class="hljs-subst">${port}</span>`</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Environment: <span class="hljs-subst">${process.env.NODE_ENV || <span class="hljs-string">'production'</span>}</span>`</span>);
+    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`Service: ecs-nodejs`</span>);
+});
+</code></pre>
+<h3 id="1-4-create-dockerfile">1.4 Create Dockerfile</h3>
+<p>Create <code>Dockerfile</code>:</p>
+<pre><code class="lang-dockerfile"><span class="hljs-comment"># Use the official Node.js 18 runtime as base image</span>
+<span class="hljs-keyword">FROM</span> node:<span class="hljs-number">18</span>-alpine
+
+<span class="hljs-comment"># Set working directory</span>
+<span class="hljs-keyword">WORKDIR</span><span class="bash"> /app
+</span>
+<span class="hljs-comment"># Copy package files</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> package*.json ./
+</span>
+<span class="hljs-comment"># Install dependencies</span>
+<span class="hljs-keyword">RUN</span><span class="bash"> npm ci --only=production
+</span>
+<span class="hljs-comment"># Copy source code</span>
+<span class="hljs-keyword">COPY</span><span class="bash"> . .
+</span>
+<span class="hljs-comment"># Expose port</span>
+<span class="hljs-keyword">EXPOSE</span> <span class="hljs-number">80</span>
+
+<span class="hljs-comment"># Set environment variables for Application Signals</span>
+<span class="hljs-keyword">ENV</span> NODE_ENV=production
+<span class="hljs-keyword">ENV</span> PORT=<span class="hljs-number">80</span>
+<span class="hljs-keyword">ENV</span> OTEL_SERVICE_NAME=ecs-nodejs
+<span class="hljs-keyword">ENV</span> OTEL_RESOURCE_ATTRIBUTES=service.name=ecs-nodejs,service.namespace=aws-observability,service.version=<span class="hljs-number">1.0</span>.<span class="hljs-number">0</span>,deployment.environment=ecs
+
+<span class="hljs-comment"># Start the application</span>
+<span class="hljs-keyword">CMD</span><span class="bash"> [<span class="hljs-string">"node"</span>, <span class="hljs-string">"index.js"</span>]</span>
+</code></pre>
+<h2 id="step-2-build-and-test-locally">Step 2: Build and Test Locally</h2>
+<h3 id="2-1-install-dependencies">2.1 Install Dependencies</h3>
+<pre><code class="lang-bash">npm <span class="hljs-keyword">install</span>
+</code></pre>
+<h3 id="2-2-test-locally">2.2 Test Locally</h3>
+<pre><code class="lang-bash"><span class="hljs-built_in">npm</span> start
+</code></pre>
+<p>The application will start on <code>http://localhost:80</code>. Test the endpoints:</p>
+<pre><code class="lang-bash"><span class="hljs-meta"># Root endpoint</span>
+curl http:<span class="hljs-comment">//localhost:80</span>
+
+<span class="hljs-meta"># Health check</span>
+curl http:<span class="hljs-comment">//localhost:80/health</span>
+
+<span class="hljs-meta"># Hello endpoint</span>
+curl http:<span class="hljs-comment">//localhost:80/api/hello/World</span>
+
+<span class="hljs-meta"># Slow endpoint</span>
+curl http:<span class="hljs-comment">//localhost:80/api/slow</span>
+
+<span class="hljs-meta"># Error endpoint (may return error)</span>
+curl http:<span class="hljs-comment">//localhost:80/api/error</span>
+
+<span class="hljs-meta"># External call</span>
+curl http:<span class="hljs-comment">//localhost:80/api/external</span>
+
+<span class="hljs-meta"># S3 call (requires AWS credentials)</span>
+curl http:<span class="hljs-comment">//localhost:80/api/s3</span>
+
+<span class="hljs-meta"># Database simulation</span>
+curl http:<span class="hljs-comment">//localhost:80/api/database</span>
+
+<span class="hljs-meta"># Complex operation</span>
+curl http:<span class="hljs-comment">//localhost:80/api/complex</span>
+</code></pre>
+<h2 id="step-3-deploy-to-ecs">Step 3: Deploy to ECS</h2>
+<h3 id="3-1-create-ecr-repository">3.1 Create ECR Repository</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Get your AWS account ID</span>
+<span class="hljs-string">ACCOUNT_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">sts </span><span class="hljs-built_in">get-caller-identity</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">Account </span><span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"AWS Account ID: $ACCOUNT_ID"</span>
+
+<span class="hljs-comment"># Create ECR repository</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">create-repository</span> <span class="hljs-built_in">--repository-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app </span><span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># Get login token</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">get-login-password</span> <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1 | <span class="hljs-string">docker </span><span class="hljs-string">login </span><span class="hljs-built_in">--username</span> <span class="hljs-string">AWS </span><span class="hljs-built_in">--password-stdin</span> $<span class="hljs-string">ACCOUNT_ID.</span><span class="hljs-string">dkr.</span><span class="hljs-string">ecr.</span><span class="hljs-string">us-east-</span>1.<span class="hljs-string">amazonaws.</span><span class="hljs-string">com</span>
+</code></pre>
+<h3 id="3-2-build-and-push-docker-image">3.2 Build and Push Docker Image</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Build the image</span>
+docker build -t <span class="hljs-keyword">my</span>-appsignals-nodejs-app .
+
+<span class="hljs-comment"># Tag the image</span>
+docker tag <span class="hljs-keyword">my</span>-appsignals-nodejs-app:latest $ACCOUNT_ID.dkr.ecr.us-east-<span class="hljs-number">1</span>.amazonaws.com/<span class="hljs-keyword">my</span>-appsignals-nodejs-app:latest
+
+<span class="hljs-comment"># Push the image</span>
+docker <span class="hljs-keyword">push</span> $ACCOUNT_ID.dkr.ecr.us-east-<span class="hljs-number">1</span>.amazonaws.com/<span class="hljs-keyword">my</span>-appsignals-nodejs-app:latest
+</code></pre>
+<h3 id="3-3-create-iam-roles">3.3 Create IAM Roles</h3>
+<h4 id="3-3-1-create-ecs-execution-role">3.3.1 Create ECS Execution Role</h4>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create execution role</span>
+aws iam create-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --role-name</span> my-appsignals-nodejs-app-ecs-execution-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --assume-role-policy-document</span> '{
+        <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
+        <span class="hljs-string">"Statement"</span>: [
+            {
+                <span class="hljs-string">"Effect"</span>: <span class="hljs-string">"Allow"</span>,
+                <span class="hljs-string">"Principal"</span>: {
+                    <span class="hljs-string">"Service"</span>: <span class="hljs-string">"ecs-tasks.amazonaws.com"</span>
+                },
+                <span class="hljs-string">"Action"</span>: <span class="hljs-string">"sts:AssumeRole"</span>
+            }
+        ]
+    }'
+
+<span class="hljs-comment"># Attach policies</span>
+aws iam attach-role-policy \
+    --role-name my-appsignals-nodejs-app-ecs-execution-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --policy-arn</span> arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+
+aws iam attach-role-policy \
+    --role-name my-appsignals-nodejs-app-ecs-execution-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --policy-arn</span> arn:aws:iam::aws:policy/CloudWatchLogsFullAccess
+
+aws iam attach-role-policy \
+    --role-name my-appsignals-nodejs-app-ecs-execution-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --policy-arn</span> arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
+</code></pre>
+<h4 id="3-3-2-create-ecs-task-role">3.3.2 Create ECS Task Role</h4>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create task role</span>
+aws iam create-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --role-name</span> my-appsignals-nodejs-app-ecs-task-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --assume-role-policy-document</span> '{
+        <span class="hljs-string">"Version"</span>: <span class="hljs-string">"2012-10-17"</span>,
+        <span class="hljs-string">"Statement"</span>: [
+            {
+                <span class="hljs-string">"Effect"</span>: <span class="hljs-string">"Allow"</span>,
+                <span class="hljs-string">"Principal"</span>: {
+                    <span class="hljs-string">"Service"</span>: <span class="hljs-string">"ecs-tasks.amazonaws.com"</span>
+                },
+                <span class="hljs-string">"Action"</span>: <span class="hljs-string">"sts:AssumeRole"</span>
+            }
+        ]
+    }'
+
+<span class="hljs-comment"># Attach policies</span>
+aws iam attach-role-policy \
+    --role-name my-appsignals-nodejs-app-ecs-task-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --policy-arn</span> arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+
+aws iam attach-role-policy \
+    --role-name my-appsignals-nodejs-app-ecs-task-<span class="hljs-keyword">role</span> <span class="hljs-title">\
+    --policy-arn</span> arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy
+</code></pre>
+<h3 id="3-4-create-cloudwatch-agent-configuration">3.4 Create CloudWatch Agent Configuration</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create CloudWatch agent configuration</span>
+aws ssm <span class="hljs-keyword">put</span>-parameter \
+    <span class="hljs-comment">--name "ecs-cwagent-my-appsignals-nodejs-app" \</span>
+    <span class="hljs-comment">--value '{</span>
+        <span class="hljs-string">"agent"</span>: {
+            <span class="hljs-string">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+            <span class="hljs-string">"run_as_user"</span>: <span class="hljs-string">"root"</span>
+        },
+        <span class="hljs-string">"logs"</span>: {
+            <span class="hljs-string">"logs_collected"</span>: {
+                <span class="hljs-string">"files"</span>: {
+                    <span class="hljs-string">"collect_list"</span>: [
+                        {
+                            <span class="hljs-string">"file_path"</span>: <span class="hljs-string">"/opt/aws/amazon-cloudwatch-agent/logs/amazon-cloudwatch-agent.log"</span>,
+                            <span class="hljs-string">"log_group_name"</span>: <span class="hljs-string">"/ecs/ecs-cwagent-my-appsignals-nodejs-app"</span>,
+                            <span class="hljs-string">"log_stream_name"</span>: <span class="hljs-string">"{instance_id}"</span>,
+                            <span class="hljs-string">"timezone"</span>: <span class="hljs-string">"UTC"</span>
+                        }
+                    ]
+                }
+            }
+        },
+        <span class="hljs-string">"metrics"</span>: {
+            <span class="hljs-string">"namespace"</span>: <span class="hljs-string">"CWAgent"</span>,
+            <span class="hljs-string">"metrics_collected"</span>: {
+                <span class="hljs-string">"cpu"</span>: {
+                    <span class="hljs-string">"measurement"</span>: [
+                        <span class="hljs-string">"cpu_usage_idle"</span>,
+                        <span class="hljs-string">"cpu_usage_iowait"</span>,
+                        <span class="hljs-string">"cpu_usage_user"</span>,
+                        <span class="hljs-string">"cpu_usage_system"</span>
+                    ],
+                    <span class="hljs-string">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+                },
+                <span class="hljs-string">"disk"</span>: {
+                    <span class="hljs-string">"measurement"</span>: [
+                        <span class="hljs-string">"used_percent"</span>
+                    ],
+                    <span class="hljs-string">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                    <span class="hljs-string">"resources"</span>: [
+                        <span class="hljs-string">"*"</span>
+                    ]
+                },
+                <span class="hljs-string">"diskio"</span>: {
+                    <span class="hljs-string">"measurement"</span>: [
+                        <span class="hljs-string">"io_time"</span>
+                    ],
+                    <span class="hljs-string">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>,
+                    <span class="hljs-string">"resources"</span>: [
+                        <span class="hljs-string">"*"</span>
+                    ]
+                },
+                <span class="hljs-string">"mem"</span>: {
+                    <span class="hljs-string">"measurement"</span>: [
+                        <span class="hljs-string">"mem_used_percent"</span>
+                    ],
+                    <span class="hljs-string">"metrics_collection_interval"</span>: <span class="hljs-number">60</span>
+                }
+            }
+        }
+    }' \
+    <span class="hljs-comment">--type "String" \</span>
+    <span class="hljs-comment">--region us-east-1</span>
+</code></pre>
+<h3 id="3-5-create-ecs-cluster">3.5 Create ECS Cluster</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create ECS cluster</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-cluster</span> <span class="hljs-built_in">--cluster-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+</code></pre>
+<h3 id="3-6-create-task-definition">3.6 Create Task Definition</h3>
+<p>Create <code>nodejs-task-def.json</code>:</p>
+<pre><code class="lang-json">{
+    <span class="hljs-attr">"family"</span>: <span class="hljs-string">"my-appsignals-nodejs-app-task"</span>,
+    <span class="hljs-attr">"networkMode"</span>: <span class="hljs-string">"awsvpc"</span>,
+    <span class="hljs-attr">"requiresCompatibilities"</span>: [<span class="hljs-string">"FARGATE"</span>],
+    <span class="hljs-attr">"cpu"</span>: <span class="hljs-string">"512"</span>,
+    <span class="hljs-attr">"memory"</span>: <span class="hljs-string">"1024"</span>,
+    <span class="hljs-attr">"executionRoleArn"</span>: <span class="hljs-string">"arn:aws:iam::YOUR_ACCOUNT_ID:role/my-appsignals-nodejs-app-ecs-execution-role"</span>,
+    <span class="hljs-attr">"taskRoleArn"</span>: <span class="hljs-string">"arn:aws:iam::YOUR_ACCOUNT_ID:role/my-appsignals-nodejs-app-ecs-task-role"</span>,
+    <span class="hljs-attr">"containerDefinitions"</span>: [
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"init"</span>,
+            <span class="hljs-attr">"image"</span>: <span class="hljs-string">"public.ecr.aws/aws-observability/adot-autoinstrumentation-nodejs:v1.32.0"</span>,
+            <span class="hljs-attr">"essential"</span>: <span class="hljs-literal">false</span>,
+            <span class="hljs-attr">"command"</span>: [
+                <span class="hljs-string">"cp"</span>,
+                <span class="hljs-string">"-a"</span>,
+                <span class="hljs-string">"/autoinstrumentation/."</span>,
+                <span class="hljs-string">"/otel-auto-instrumentation-nodejs"</span>
+            ],
+            <span class="hljs-attr">"mountPoints"</span>: [
+                {
+                    <span class="hljs-attr">"sourceVolume"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-nodejs"</span>,
+                    <span class="hljs-attr">"containerPath"</span>: <span class="hljs-string">"/otel-auto-instrumentation-nodejs"</span>,
+                    <span class="hljs-attr">"readOnly"</span>: <span class="hljs-literal">false</span>
+                }
+            ]
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"ecs-cwagent"</span>,
+            <span class="hljs-attr">"image"</span>: <span class="hljs-string">"public.ecr.aws/cloudwatch-agent/cloudwatch-agent:latest"</span>,
+            <span class="hljs-attr">"essential"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"secrets"</span>: [
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"CW_CONFIG_CONTENT"</span>,
+                    <span class="hljs-attr">"valueFrom"</span>: <span class="hljs-string">"ecs-cwagent-my-appsignals-nodejs-app"</span>
+                }
+            ],
+            <span class="hljs-attr">"logConfiguration"</span>: {
+                <span class="hljs-attr">"logDriver"</span>: <span class="hljs-string">"awslogs"</span>,
+                <span class="hljs-attr">"options"</span>: {
+                    <span class="hljs-attr">"awslogs-group"</span>: <span class="hljs-string">"/ecs/ecs-cwagent-my-appsignals-nodejs-app"</span>,
+                    <span class="hljs-attr">"awslogs-create-group"</span>: <span class="hljs-string">"true"</span>,
+                    <span class="hljs-attr">"awslogs-region"</span>: <span class="hljs-string">"us-east-1"</span>,
+                    <span class="hljs-attr">"awslogs-stream-prefix"</span>: <span class="hljs-string">"ecs"</span>
+                }
+            }
+        },
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"app"</span>,
+            <span class="hljs-attr">"image"</span>: <span class="hljs-string">"YOUR_ACCOUNT_ID.dkr.ecr.us-east-1.amazonaws.com/my-appsignals-nodejs-app:latest"</span>,
+            <span class="hljs-attr">"essential"</span>: <span class="hljs-literal">true</span>,
+            <span class="hljs-attr">"portMappings"</span>: [
+                {
+                    <span class="hljs-attr">"containerPort"</span>: <span class="hljs-number">80</span>,
+                    <span class="hljs-attr">"protocol"</span>: <span class="hljs-string">"tcp"</span>
+                }
+            ],
+            <span class="hljs-attr">"environment"</span>: [
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_SERVICE_NAME"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"my-appsignals-nodejs-app"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_EXPORTER_OTLP_PROTOCOL"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"http/protobuf"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_TRACES_SAMPLER_ARG"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"endpoint=http://localhost:2000"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"http://localhost:4316/v1/metrics"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_AWS_APPLICATION_SIGNALS_ENABLED"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"true"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_RESOURCE_ATTRIBUTES"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"service.name=my-appsignals-nodejs-app,deployment.environment=ecs:us-east-1"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_METRICS_EXPORTER"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"none"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"NODE_OPTIONS"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"--require /otel-auto-instrumentation-nodejs/opentelemetry-auto-instrumentation-nodejs.js"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_SERVICE_VERSION"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"1.0.0"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_LOGS_EXPORTER"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"none"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_TRACES_SAMPLER"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"xray"</span>
+                },
+                {
+                    <span class="hljs-attr">"name"</span>: <span class="hljs-string">"OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"</span>,
+                    <span class="hljs-attr">"value"</span>: <span class="hljs-string">"http://localhost:4316/v1/traces"</span>
+                }
+            ],
+            <span class="hljs-attr">"mountPoints"</span>: [
+                {
+                    <span class="hljs-attr">"sourceVolume"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-nodejs"</span>,
+                    <span class="hljs-attr">"containerPath"</span>: <span class="hljs-string">"/otel-auto-instrumentation-nodejs"</span>,
+                    <span class="hljs-attr">"readOnly"</span>: <span class="hljs-literal">false</span>
+                }
+            ],
+            <span class="hljs-attr">"dependsOn"</span>: [
+                {
+                    <span class="hljs-attr">"containerName"</span>: <span class="hljs-string">"init"</span>,
+                    <span class="hljs-attr">"condition"</span>: <span class="hljs-string">"SUCCESS"</span>
+                }
+            ],
+            <span class="hljs-attr">"logConfiguration"</span>: {
+                <span class="hljs-attr">"logDriver"</span>: <span class="hljs-string">"awslogs"</span>,
+                <span class="hljs-attr">"options"</span>: {
+                    <span class="hljs-attr">"awslogs-group"</span>: <span class="hljs-string">"/ecs/my-appsignals-nodejs-app"</span>,
+                    <span class="hljs-attr">"awslogs-create-group"</span>: <span class="hljs-string">"true"</span>,
+                    <span class="hljs-attr">"awslogs-region"</span>: <span class="hljs-string">"us-east-1"</span>,
+                    <span class="hljs-attr">"awslogs-stream-prefix"</span>: <span class="hljs-string">"app"</span>
+                }
+            }
+        }
+    ],
+    <span class="hljs-attr">"volumes"</span>: [
+        {
+            <span class="hljs-attr">"name"</span>: <span class="hljs-string">"opentelemetry-auto-instrumentation-nodejs"</span>,
+            <span class="hljs-attr">"host"</span>: {}
+        }
+    ]
+}
+</code></pre>
+<p>Update the task definition with your account ID:</p>
+<pre><code class="lang-bash"><span class="hljs-comment"># Replace YOUR_ACCOUNT_ID with your actual account ID</span>
+<span class="hljs-attribute">sed</span> -i <span class="hljs-string">"s/YOUR_ACCOUNT_ID/<span class="hljs-variable">$ACCOUNT_ID</span>/g"</span> nodejs-task-def.json
+
+<span class="hljs-comment"># Register the task definition</span>
+aws ecs register-task-definition --cli-input-json file://nodejs-task-def.json --region us-east-<span class="hljs-number">1</span>
+</code></pre>
+<h3 id="3-7-create-vpc-and-security-groups">3.7 Create VPC and Security Groups</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Get default VPC</span>
+<span class="hljs-string">VPC_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-vpcs </span><span class="hljs-built_in">--filters</span> <span class="hljs-string">"Name=is-default,Values=true"</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">'Vpcs[0].VpcId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"VPC ID: $VPC_ID"</span>
+
+<span class="hljs-comment"># Get subnets</span>
+<span class="hljs-string">SUBNET_IDS=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-subnets </span><span class="hljs-built_in">--filters</span> <span class="hljs-string">"Name=vpc-id,Values=$VPC_ID"</span> <span class="hljs-built_in">--query</span> <span class="hljs-string">'Subnets[].SubnetId'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Subnet IDs: $SUBNET_IDS"</span>
+
+<span class="hljs-comment"># Create security group</span>
+<span class="hljs-string">SECURITY_GROUP_ID=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">create-security-group</span> \
+    <span class="hljs-built_in">--group-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-sg </span>\
+    <span class="hljs-built_in">--description</span> <span class="hljs-string">"Security group for Node.js ECS Application Signals demo"</span> \
+    <span class="hljs-built_in">--vpc-id</span> $<span class="hljs-string">VPC_ID </span>\
+    <span class="hljs-built_in">--query</span> <span class="hljs-string">'GroupId'</span> \
+    <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Security Group ID: $SECURITY_GROUP_ID"</span>
+
+<span class="hljs-comment"># Allow HTTP traffic</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-ingress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SECURITY_GROUP_ID </span>\
+    <span class="hljs-built_in">--protocol</span> <span class="hljs-string">tcp </span>\
+    <span class="hljs-built_in">--port</span> <span class="hljs-string">80 </span>\
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+
+<span class="hljs-comment"># Allow all outbound traffic</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">authorize-security-</span><span class="hljs-string">group-egress </span>\
+    <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SECURITY_GROUP_ID </span>\
+    <span class="hljs-built_in">--protocol</span> -1 \
+    <span class="hljs-built_in">--cidr</span> 0.0.0.0/0
+</code></pre>
+<h3 id="3-8-create-ecs-service">3.8 Create ECS Service</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Create ECS service</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">create-service</span> \
+    <span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span>\
+    <span class="hljs-built_in">--service-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-service </span>\
+    <span class="hljs-built_in">--task-definition</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">task </span>\
+    <span class="hljs-built_in">--desired-count</span> 1 \
+    <span class="hljs-built_in">--launch-type</span> <span class="hljs-string">FARGATE </span>\
+    <span class="hljs-built_in">--network-configuration</span> <span class="hljs-string">"awsvpcConfiguration={subnets=[$SUBNET_IDS],securityGroups=[$SECURITY_GROUP_ID],assignPublicIp=ENABLED}"</span> \
+    <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+</code></pre>
+<h2 id="step-4-generate-traffic-and-monitor">Step 4: Generate Traffic and Monitor</h2>
+<h3 id="4-1-get-service-endpoint">4.1 Get Service Endpoint</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Get the public IP of the running task</span>
+<span class="hljs-string">TASK_ARN=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">list-tasks</span> <span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--service-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-service </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'taskArns[0]'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Task ARN: $TASK_ARN"</span>
+
+<span class="hljs-comment"># Get task details</span>
+<span class="hljs-string">TASK_DETAILS=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-string">describe-tasks </span><span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--tasks</span> $<span class="hljs-string">TASK_ARN </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'tasks[0].attachments[0].details[?name==`networkInterfaceId`].value'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Network Interface ID: $TASK_DETAILS"</span>
+
+<span class="hljs-comment"># Get public IP</span>
+<span class="hljs-string">PUBLIC_IP=</span>$(<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-string">describe-network-</span><span class="hljs-string">interfaces </span><span class="hljs-built_in">--network-interface-ids</span> $<span class="hljs-string">TASK_DETAILS </span><span class="hljs-built_in">--query</span> <span class="hljs-string">'NetworkInterfaces[0].Association.PublicIp'</span> <span class="hljs-built_in">--output</span> <span class="hljs-string">text)</span>
+<span class="hljs-string">echo </span><span class="hljs-string">"Public IP: $PUBLIC_IP"</span>
+</code></pre>
+<h3 id="4-2-generate-traffic">4.2 Generate Traffic</h3>
+<p>Create <code>generate-traffic.sh</code>:</p>
+<pre><code class="lang-bash"><span class="hljs-meta">#!/bin/bash
+</span>
+BASE_URL=<span class="hljs-string">"http://<span class="hljs-variable">$PUBLIC_IP</span>:80"</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Generating traffic for Node.js ECS Application Signals demo..."</span>
+
+<span class="hljs-comment"># Generate traffic for 5 minutes</span>
+<span class="hljs-keyword">for</span> i <span class="hljs-keyword">in</span> {1..300}; <span class="hljs-keyword">do</span>
+    <span class="hljs-built_in">echo</span> <span class="hljs-string">"Request <span class="hljs-variable">$i</span>"</span>
+
+    <span class="hljs-comment"># Root endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Health check</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/health"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Hello endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/hello/User<span class="hljs-variable">$i</span>"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Slow endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/slow"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Error endpoint</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/error"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># External call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/external"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># S3 call</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/s3"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Database simulation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/database"</span> &gt; /dev/null
+
+    <span class="hljs-comment"># Complex operation</span>
+    curl <span class="hljs-_">-s</span> <span class="hljs-string">"<span class="hljs-variable">$BASE_URL</span>/api/complex"</span> &gt; /dev/null
+
+    sleep 1
+<span class="hljs-keyword">done</span>
+
+<span class="hljs-built_in">echo</span> <span class="hljs-string">"Traffic generation complete!"</span>
+</code></pre>
+<p>Make it executable and run:</p>
+<pre><code class="lang-bash">chmod +x <span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+./<span class="hljs-keyword">generate</span>-traffic<span class="hljs-variable">.sh</span>
+</code></pre>
+<h3 id="4-3-monitor-in-cloudwatch">4.3 Monitor in CloudWatch</h3>
+<ol>
+<li><p><strong>Open CloudWatch Console</strong></p>
+<ul>
+<li>Go to AWS Console → CloudWatch</li>
+<li>Navigate to &quot;Application Signals&quot;</li>
+</ul>
+</li>
+<li><p><strong>View Service Map</strong></p>
+<ul>
+<li>Look for &quot;my-appsignals-nodejs-app&quot; service</li>
+<li>See the service dependencies and health</li>
+</ul>
+</li>
+<li><p><strong>Check Metrics</strong></p>
+<ul>
+<li>View latency, error rate, and throughput</li>
+<li>Compare with Lambda metrics</li>
+</ul>
+</li>
+<li><p><strong>Analyze Traces</strong></p>
+<ul>
+<li>Click on service to see detailed traces</li>
+<li>View operation-level metrics</li>
+</ul>
+</li>
+</ol>
+<h2 id="step-5-clean-up">Step 5: Clean Up</h2>
+<h3 id="5-1-stop-ecs-service">5.1 Stop ECS Service</h3>
+<pre><code class="lang-bash"># Update service to 0 desired count
+aws ecs update-service \
+    -<span class="ruby">-cluster my-appsignals-nodejs-cluster \
+</span>    -<span class="ruby">-service my-appsignals-nodejs-service \
+</span>    -<span class="ruby">-desired-count <span class="hljs-number">0</span> \
+</span>    -<span class="ruby">-region us-east-<span class="hljs-number">1</span></span>
+</code></pre>
+<h3 id="5-2-delete-resources">5.2 Delete Resources</h3>
+<pre><code class="lang-bash"><span class="hljs-comment"># Delete ECS service</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">delete-service</span> \
+    <span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span>\
+    <span class="hljs-built_in">--service</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-service </span>\
+    <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># Delete ECS cluster</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecs </span><span class="hljs-built_in">delete-cluster</span> <span class="hljs-built_in">--cluster</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-cluster </span><span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># Delete ECR repository</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ecr </span><span class="hljs-built_in">delete-repository</span> \
+    <span class="hljs-built_in">--repository-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app </span>\
+    <span class="hljs-built_in">--force</span> \
+    <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># Delete IAM roles</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">detach-role-</span><span class="hljs-string">policy </span>\
+    <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+    <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">service-role/</span><span class="hljs-string">AmazonECSTaskExecutionRolePolicy
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">detach-role-</span><span class="hljs-string">policy </span>\
+    <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+    <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">CloudWatchLogsFullAccess
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">detach-role-</span><span class="hljs-string">policy </span>\
+    <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-execution-</span><span class="hljs-string">role </span>\
+    <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AmazonSSMReadOnlyAccess
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">delete-role</span> <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-execution-</span><span class="hljs-string">role
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">detach-role-</span><span class="hljs-string">policy </span>\
+    <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
+    <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">AmazonS3ReadOnlyAccess
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-string">detach-role-</span><span class="hljs-string">policy </span>\
+    <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-task-</span><span class="hljs-string">role </span>\
+    <span class="hljs-built_in">--policy-arn</span> <span class="hljs-string">arn:aws:</span><span class="hljs-string">iam:</span>:<span class="hljs-string">aws:policy/</span><span class="hljs-string">CloudWatchAgentServerPolicy
+</span>
+<span class="hljs-string">aws </span><span class="hljs-string">iam </span><span class="hljs-built_in">delete-role</span> <span class="hljs-built_in">--role-name</span> <span class="hljs-string">my-appsignals-</span><span class="hljs-string">nodejs-app-</span><span class="hljs-string">ecs-task-</span><span class="hljs-string">role
+</span>
+<span class="hljs-comment"># Delete SSM parameter</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ssm </span><span class="hljs-built_in">delete-parameter</span> <span class="hljs-built_in">--name</span> <span class="hljs-string">"ecs-cwagent-my-appsignals-nodejs-app"</span> <span class="hljs-built_in">--region</span> <span class="hljs-string">us-east-</span>1
+
+<span class="hljs-comment"># Delete security group</span>
+<span class="hljs-string">aws </span><span class="hljs-string">ec2 </span><span class="hljs-built_in">delete-security-group</span> <span class="hljs-built_in">--group-id</span> $<span class="hljs-string">SECURITY_GROUP_ID</span>
+</code></pre>
+<h2 id="troubleshooting">Troubleshooting</h2>
+<h3 id="common-issues">Common Issues</h3>
+<ol>
+<li><p><strong>Task fails to start</strong></p>
+<ul>
+<li>Check ECR repository exists and image is pushed</li>
+<li>Verify IAM roles have correct permissions</li>
+<li>Check CloudWatch logs for error details</li>
+</ul>
+</li>
+<li><p><strong>No data in Application Signals</strong></p>
+<ul>
+<li>Verify CloudWatch agent is running</li>
+<li>Check environment variables are set correctly</li>
+<li>Ensure ADOT auto-instrumentation is working</li>
+</ul>
+</li>
+<li><p><strong>Service not accessible</strong></p>
+<ul>
+<li>Check security group allows inbound traffic on port 80</li>
+<li>Verify task is running and healthy</li>
+<li>Check VPC and subnet configuration</li>
+</ul>
+</li>
+</ol></div>
+
+</body>
+</html>

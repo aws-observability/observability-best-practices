@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>RUM — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>リアルユーザーモニタリング (RUM)</h1></header>
+<article>
+<section>
+<h2>RUM と Application Signals の連携方法</h2>
+<p>CloudWatch RUM ウェブクライアントは、RUM クライアントの X-Ray トレースを有効にすると Application Signals に表示されます。クライアントからバックエンドサービスへのリクエストが関連付けられ、サービスの詳細および Application Map に表示されます。</p>
+<p>参照: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals による運用上の健全性モニタリングの有効化方法</a>.</p>
+</section>
+<section>
+<h2>RUM で答えられる問い</h2>
+<ul>
+<li><strong>この問題はユーザーに影響を与えていますか？</strong> バックエンドの健全性をページ読み込みおよび JS エラーシグナルと関連付ける</li>
+<li><strong>ユーザーはどこで影響を受けていますか？</strong> 地域、デバイス、ブラウザ別にパフォーマンスを比較する</li>
+<li><strong>何が変わりましたか？</strong> リグレッションの調査時にデプロイメント／変更イベントと関連付ける</li>
+</ul>
+</section>
+<section>
+<h2>次のステップ</h2>
+<p><a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-RUM.html">CloudWatch RUM</a></p>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

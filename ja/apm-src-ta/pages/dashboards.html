@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ta">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>டாஷ்போர்டுகள் — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM ஆவணங்கள்</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>டாஷ்போர்டுகள்</h1></header>
+      <article>
+        <section>
+          <h2>உள்ளமைக்கப்பட்ட Application Signals காட்சிகள்</h2>
+          <p>Application Signals CloudWatch கன்சோலில் பயன்பாடு-மையமான பணிப்பாய்வை வழங்குகிறது:</p>
+          <ul>
+            <li><strong>சேவைகள்</strong>: சேவைகளை பட்டியலிடுங்கள், அதிக தவறு/தாமதத்தை கண்டறியுங்கள், SLO-க்கள் இருக்கும்போது SLI நிலையைப் பாருங்கள்.</li>
+            <li><strong>சேவை விவரம்</strong>: செயல்பாடுகள், சார்புகள் மற்றும் தொடர்புடைய ட்ரேஸ்களை ஆராயுங்கள்.</li>
+            <li><strong>Application Map</strong>: டோபாலஜியை காட்சிப்படுத்துங்கள் மற்றும் சார்புகள் முழுவதும் நிலையை பரப்புங்கள்.</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Application Signals மூலம் செயல்பாட்டு நிலை கண்காணிப்பு</a>.</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch டாஷ்போர்டுகள் (தனிப்பயன்)</h2>
+          <p>Application Signals வெளியிடும் மெட்ரிக்ஸை (<code>ApplicationSignals</code> namespace) பயன்படுத்தி CloudWatch டாஷ்போர்டுகளை உருவாக்கலாம், தேவைப்படும்போது அலாரங்கள்/லாக்களுடன் தொடர்புபடுத்தலாம்.</p>
+          <ul>
+            <li><strong>சேவை மெட்ரிக்ஸ்</strong>: Service/Operation/Environment பரிமாணங்கள் முழுவதும் தாமதம், தவறுகள், பிழைகள்.</li>
+            <li><strong>சார்பு மெட்ரிக்ஸ்</strong>: கீழ்நிலை அழைப்புகளுக்கான remote service/operation பரிமாணங்கள்.</li>
+            <li><strong>Runtime மெட்ரிக்ஸ்</strong> (ஆதரிக்கப்படும் இடங்களில்): தாமத உச்சங்களுடன் GC/CPU/நினைவகத்தை தொடர்புபடுத்துங்கள்.</li>
+          </ul>
+          <p>பார்க்கவும்: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Application Signals மூலம் சேகரிக்கப்படும் மெட்ரிக்ஸ்</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

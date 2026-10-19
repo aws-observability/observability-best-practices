@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="zh-Hans">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>自动发现 — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM 文档</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>自动发现</h1></header>
+      <article>
+        <section>
+          <h2>Application Signals 发现的内容</h2>
+          <p>启用 Application Signals 并且您的服务发出遥测数据后，CloudWatch 会自动发现并显示：</p>
+          <ul>
+            <li><strong>服务</strong>及其<strong>操作</strong></li>
+            <li><strong>依赖项</strong>（下游调用）</li>
+            <li><strong>拓扑结构</strong>（应用程序地图）</li>
+          </ul>
+          <p>发现功能由所选时间范围内（例如，默认的"过去三小时"）发出的指标和追踪驱动。如果某个服务在该时间范围内没有活动，则不会显示。</p>
+        </section>
+
+        <section>
+          <h2>一次性账户设置（服务发现）</h2>
+          <p>首次在账户中启动服务发现时，CloudWatch 会创建服务关联角色 <code>AWSServiceRoleForCloudWatchApplicationSignals</code>。该角色允许 CloudWatch 发现和关联服务。</p>
+          <p>官方步骤：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-Enable.html">在您的账户中启用 Application Signals</a>。</p>
+        </section>
+
+        <section>
+          <h2>运行预期</h2>
+          <ul>
+            <li><strong>发现延迟：</strong>拓扑和服务发现可能延迟最多约 10 分钟。</li>
+            <li><strong>SLO/SLI 评估：</strong>SLI 健康状况评估可能延迟（例如，最多约 15 分钟）。</li>
+            <li><strong>规模限制：</strong>控制台中最多可显示 1,000 个服务。</li>
+          </ul>
+          <p>参见：<a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">使用 Application Signals 监控应用程序的运行状况</a>。</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Dashboards — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a href="../index.html" class="logo">CloudWatch APM Documentation</a>
+  </header>
+  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Dashboards</h1></header>
+      <article>
+        <section>
+          <h2>Built-in Application Signals views</h2>
+          <p>Application Signals provides an application-centric workflow in the CloudWatch console:</p>
+          <ul>
+            <li><strong>Services</strong>: list services, spot high fault/latency, see SLI health when SLOs exist.</li>
+            <li><strong>Service detail</strong>: drill into operations, dependencies, and correlated traces.</li>
+            <li><strong>Application Map</strong>: visualize topology and propagate health across dependencies.</li>
+          </ul>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Services.html">Operational health monitoring with Application Signals</a>.</p>
+        </section>
+
+        <section>
+          <h2>CloudWatch Dashboards (custom)</h2>
+          <p>You can also build CloudWatch dashboards using metrics emitted by Application Signals (namespace <code>ApplicationSignals</code>) and correlate with alarms/logs as needed.</p>
+          <ul>
+            <li><strong>Service metrics</strong>: latency, faults, errors across Service/Operation/Environment dimensions.</li>
+            <li><strong>Dependency metrics</strong>: remote service/operation dimensions for downstream calls.</li>
+            <li><strong>Runtime metrics</strong> (where supported): correlate GC/CPU/memory with latency spikes.</li>
+          </ul>
+          <p>See: <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/AppSignals-MetricsCollected.html">Metrics collected by Application Signals</a>.</p>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Integrations — CloudWatch APM</title>
+<link href="../assets/css/style.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a class="logo" href="../index.html">CloudWatch APM ドキュメント</a>
+</header>
+<div class="site">
+<aside class="left-nav" id="left-nav"></aside>
+<main class="content">
+<header><h1>インテグレーション</h1></header>
+<article>
+<section>
+<h2>AWS サービスインテグレーション</h2>
+<p>CloudWatch Application Signals は AWS サービスとシームレスに統合し、クラウドインフラストラクチャ全体にわたる包括的なオブザーバビリティを提供します。</p>
+</section>
+<section>
+<h3>API Gateway</h3>
+<p>API Gateway からバックエンドサービスへのリクエストを追跡し、API パフォーマンスを監視します。</p>
+<h4>インテグレーション機能:</h4>
+<ul>
+<li>API コールの自動トレーシング</li>
+<li>API エンドポイントのレイテンシー監視</li>
+<li>エラーレートの追跡</li>
+<li>リクエスト/レスポンスの相関</li>
+</ul>
+<h4>セットアップ:</h4>
+<p>API Gateway ステージ設定で X-Ray トレーシングを有効にします。</p>
+</section>
+<section>
+<h3>Application Load Balancer (ALB)</h3>
+<p>ロードバランサーを通じたトラフィックフローを追跡し、アプリケーションパフォーマンスと相関させます。</p>
+<h4>インテグレーションのメリット:</h4>
+<ul>
+<li>リクエストルーティングの可視化</li>
+<li>ターゲットグループのパフォーマンスメトリクス</li>
+<li>ヘルスチェックの監視</li>
+<li>負荷分散の分析</li>
+</ul>
+</section>
+<section>
+<h3>DynamoDB</h3>
+<p>データベース操作を監視し、データアクセスパターンにおけるパフォーマンスのボトルネックを特定します。</p>
+<h4>トレーシング機能:</h4>
+<ul>
+<li>クエリ操作のタイミング</li>
+<li>スロットルおよびエラーの追跡</li>
+<li>テーブルおよびインデックスのパフォーマンス</li>
+<li>クロスリージョンレプリケーションの監視</li>
+</ul>
+</section>
+<section>
+<h3>Amazon RDS</h3>
+<p>データベースパフォーマンスとコネクションプーリングに関するインサイトを取得します。</p>
+<h4>データベース監視:</h4>
+<ul>
+<li>クエリ実行時間</li>
+<li>コネクションプールの使用率</li>
+<li>データベースインスタンスのメトリクス</li>
+<li>スロークエリの特定</li>
+</ul>
+</section>
+<section>
+<h3>Amazon S3</h3>
+<p>オブジェクトストレージ操作とデータ転送パフォーマンスを追跡します。</p>
+<h4>ストレージ操作:</h4>
+<ul>
+<li>オブジェクトの Put/Get トレーシング</li>
+<li>転送レイテンシーの監視</li>
+<li>エラーレート分析</li>
+<li>クロスリージョン転送追跡</li>
+</ul>
+</section>
+<section>
+<h3>SNS/SQS</h3>
+<p>イベント駆動型アーキテクチャにおけるメッセージ処理とキューパフォーマンスを監視します。</p>
+<h4>メッセージングインサイト：</h4>
+<ul>
+<li>メッセージのパブリッシュ/サブスクライブトレーシング</li>
+<li>キュー深度モニタリング</li>
+<li>メッセージ処理レイテンシ</li>
+<li>デッドレターキュー分析</li>
+</ul>
+</section>
+<section>
+<h3>AWS Step Functions</h3>
+<p>ステートマシン処理におけるワークフロー実行を可視化し、ボトルネックを特定します。</p>
+<h4>ワークフローモニタリング：</h4>
+<ul>
+<li>状態遷移トレーシング</li>
+<li>実行時間分析</li>
+<li>エラー状態の特定</li>
+<li>並列実行モニタリング</li>
+</ul>
+</section>
+<section>
+<h3>Amazon EventBridge</h3>
+<p>イベント駆動型システムを通じたイベントルーティングと処理を追跡します。</p>
+<h4>イベント処理：</h4>
+<ul>
+<li>イベントルーティングの可視化</li>
+<li>ルール評価タイミング</li>
+<li>ターゲット呼び出しトレーシング</li>
+<li>イベント変換モニタリング</li>
+</ul>
+</section>
+<section>
+<h3>AWS Lambda</h3>
+<p>サーバーレス関数のパフォーマンスとコールドスタートの影響を監視します。</p>
+<h4>サーバーレスインサイト：</h4>
+<ul>
+<li>関数呼び出しトレーシング</li>
+<li>コールドスタート時間</li>
+<li>メモリおよびCPU使用率</li>
+<li>エラーとタイムアウトの追跡</li>
+</ul>
+</section>
+<section>
+<h3>Amazon ECS/EKS</h3>
+<p>マイクロサービス監視のためのコンテナオーケストレーションプラットフォーム統合。</p>
+<h4>コンテナモニタリング：</h4>
+<ul>
+<li>サービスメッシュトレーシング</li>
+<li>Pod間通信</li>
+<li>リソース使用率</li>
+<li>デプロイメント追跡</li>
+</ul>
+</section>
+<section>
+<h2>サードパーティ統合</h2>
+<p>サードパーティのツールおよびプラットフォームでApplication Signalsを拡張します。</p>
+</section>
+<section>
+<h3>OpenTelemetry</h3>
+<p>OpenTelemetryエコシステムを活用して、ベンダー中立のオブザーバビリティを実現します。</p>
+<h4>統合オプション:</h4>
+<ul>
+<li>カスタムインストルメンテーションライブラリ</li>
+<li>サードパーティエージェントのサポート</li>
+<li>マルチバックエンドデータエクスポート</li>
+<li>コミュニティコレクターへの貢献</li>
+</ul>
+</section>
+<section>
+<h3>APMベンダー</h3>
+<p>他のAPMソリューションからの移行、または統合を行います。</p>
+<h4>サポートされている統合:</h4>
+<ul>
+<li>サードパーティAPMツールへのデータエクスポート</li>
+<li>ハイブリッドクラウドのオブザーバビリティ</li>
+<li>マルチベンダーの相関分析</li>
+<li>データ移行ユーティリティ</li>
+</ul>
+</section>
+<section>
+<h3>モニタリングとアラート</h3>
+<p>Application Signalsを既存のモニタリングスタックと連携させます。</p>
+<h4>統合パートナー:</h4>
+<ul>
+<li><strong>PagerDuty:</strong> インシデント対応とアラート</li>
+<li><strong>Slack:</strong> チーム通知</li>
+<li><strong>Datadog:</strong> 統合モニタリングプラットフォーム</li>
+<li><strong>New Relic:</strong> アプリケーションパフォーマンスモニタリング</li>
+<li><strong>Splunk:</strong> ログ分析と相関</li>
+</ul>
+</section>
+<section>
+<h3>CI/CD統合</h3>
+<p>オブザーバビリティを開発パイプラインに組み込みます。</p>
+<h4>DevOpsツール:</h4>
+<ul>
+<li><strong>GitHub Actions:</strong> 自動テストとデプロイ</li>
+<li><strong>Jenkins:</strong> ビルドパイプラインの統合</li>
+<li><strong>GitLab CI:</strong> DevSecOpsワークフロー</li>
+<li><strong>Terraform:</strong> コードとしてのインフラストラクチャ</li>
+<li><strong>AWS CDK:</strong> クラウドインフラストラクチャのプロビジョニング</li>
+</ul>
+</section>
+<section>
+<h2>カスタム統合</h2>
+<p>APIとSDKを使用して独自のインテグレーションを構築します。</p>
+</section>
+<section>
+<h3>CloudWatch APIs</h3>
+<p>CloudWatch APIを使用して、Application SignalsがCloudWatchに公開するテレメトリを基に、カスタムダッシュボード、アラーム、およびメトリクス駆動のワークフローを構築します。</p>
+<h4>利用可能なAPI:</h4>
+<ul>
+<li><code>PutMetricData</code> - カスタムメトリクスの送信</li>
+<li><code>GetMetricData</code> - メトリクスデータの取得</li>
+<li><code>PutDashboard</code> / <code>GetDashboard</code> - ダッシュボードの管理</li>
+<li><code>PutMetricAlarm</code> / <code>DescribeAlarms</code> - アラームの管理</li>
+</ul>
+</section>
+<section>
+<h3>AWS X-Ray APIs</h3>
+<p>Application SignalsはトレースストアとしてAWS X-Rayを使用します。直接的なトレースの取り込み/クエリ統合が必要な場合は、X-Ray APIを使用してください。</p>
+<ul>
+<li><code>PutTraceSegments</code> - トレースセグメントの取り込み</li>
+<li><code>GetTraceSummaries</code> / <code>BatchGetTraces</code> - トレースのクエリ</li>
+</ul>
+</section>
+<section>
+<h3>Webhooksとコールバック</h3>
+<p>リアルタイム通知を受信し、カスタムワークフローと統合します。</p>
+<h4>インテグレーションパターン:</h4>
+<ul>
+<li>カスタム通知システム向けのアラートwebhook</li>
+<li>Lambdaを使用したイベント駆動処理</li>
+<li>カスタムダッシュボードの更新</li>
+<li>自動修復ワークフロー</li>
+</ul>
+</section>
+<section>
+<h3>SDKとライブラリ</h3>
+<p>インストルメンテーションは通常、OpenTelemetryおよび/またはAWS Distro for OpenTelemetry (ADOT)を通じて行われます。AWS API呼び出しには、サポートされているOpenTelemetryインストルメンテーションと共にAWS SDKを使用してください。</p>
+<h4>サポートされている言語:</h4>
+<ul>
+<li><strong>JavaScript/Node.js:</strong> AWS SDK for JavaScript</li>
+<li><strong>Python:</strong> Boto3 AWS SDK</li>
+<li><strong>Java:</strong> AWS SDK for Java</li>
+<li><strong>.NET:</strong> AWS SDK for .NET</li>
+<li><strong>Go:</strong> AWS SDK for Go</li>
+</ul>
+</section>
+</article>
+</main>
+</div>
+<script src="../assets/js/site.js"></script>
+</body>
+</html>

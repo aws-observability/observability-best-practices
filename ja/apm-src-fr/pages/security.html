@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Sécurité et conformité — CloudWatch APM</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>  <header class="site-header">
+    <a href="../index.html" class="logo">Documentation CloudWatch APM</a>
+  </header>  <div class="site">
+    <aside class="left-nav" id="left-nav"></aside>
+    <main class="content">
+      <header><h1>Sécurité et conformité</h1></header>
+      <article>
+        <section>
+          <h2>Sécurité</h2>
+          <p>CloudWatch Application Signals met en œuvre plusieurs couches de sécurité pour protéger vos données d'observabilité et assurer la conformité aux normes du secteur.</p>
+        </section>
+
+        <section>
+          <h3>Chiffrement des données</h3>
+
+          <h4>Chiffrement au repos :</h4>
+          <ul>
+            <li>Toutes les données de traces sont chiffrées avec le chiffrement AES-256</li>
+            <li>Les données RUM sont chiffrées avec AWS Key Management Service (KMS)</li>
+            <li>Les données de surveillance synthétique sont stockées de manière chiffrée</li>
+            <li>Vous pouvez utiliser des clés gérées par le client pour un contrôle supplémentaire</li>
+          </ul>
+
+          <h4>Chiffrement en transit :</h4>
+          <ul>
+            <li>Toutes les transmissions de données utilisent TLS 1.2 ou supérieur</li>
+            <li>Les appels API aux services CloudWatch sont chiffrés</li>
+            <li>La collecte de données RUM utilise HTTPS</li>
+            <li>La communication entre l'agent et le collecteur est sécurisée</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Gestion des identités et des accès</h3>
+
+          <h4>Permissions IAM :</h4>
+          <p>Utilisez le principe du moindre privilège lors de l'octroi d'accès à Application Signals :</p>
+
+          <h5>Accès en lecture seule :</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:ListServices",
+        "application-signals:GetService",
+        "application-signals:ListOperations",
+        "application-signals:GetOperation",
+        "cloudwatch:GetMetricData",
+        "cloudwatch:ListMetrics",
+        "xray:GetTraceSummaries",
+        "xray:GetTraceGraph",
+        "xray:GetServiceGraph"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+
+          <h5>Accès complet :</h5>
+          <pre><code>{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "application-signals:*",
+        "cloudwatch:PutMetricData",
+        "xray:PutTraceSegments",
+        "xray:PutTelemetryRecords"
+      ],
+      "Resource": "*"
+    }
+  ]
+}</code></pre>
+        </section>
+
+        <section>
+          <h3>Confidentialité des données et protection des informations personnelles</h3>
+
+          <h4>Assainissement des données :</h4>
+          <ul>
+            <li>Mettre en œuvre le masquage des données pour les informations sensibles</li>
+            <li>Utiliser la tokenisation pour les informations personnelles dans les attributs de traces</li>
+            <li>Configurer des politiques de rétention des données</li>
+            <li>Audit régulier des données collectées</li>
+          </ul>
+
+          <h4>Bonnes pratiques :</h4>
+          <ul>
+            <li>Ne jamais inclure de mots de passe, clés API ou jetons dans les traces</li>
+            <li>Hacher ou masquer les adresses e-mail et les numéros de téléphone</li>
+            <li>Supprimer les paramètres de requête des URL contenant des données sensibles</li>
+            <li>Utiliser des identifiants génériques au lieu d'informations personnelles</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Sécurité réseau</h3>
+
+          <h4>Configuration VPC :</h4>
+          <ul>
+            <li>Déployer les agents dans votre VPC pour une sécurité renforcée</li>
+            <li>Utiliser des points de terminaison VPC pour les appels API CloudWatch</li>
+            <li>Configurer les groupes de sécurité pour restreindre le trafic</li>
+            <li>Implémenter des ACL réseau pour un contrôle supplémentaire</li>
+          </ul>
+
+          <h4>Sécurité de l'agent :</h4>
+          <ul>
+            <li>Exécuter les agents avec les permissions minimales requises</li>
+            <li>Maintenir les agents à jour avec les correctifs de sécurité</li>
+            <li>Surveiller les journaux des agents pour les événements de sécurité</li>
+            <li>Utiliser un accès en lecture seule lorsque possible</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Confidentialité des données</h2>
+          <p>Comprendre comment Application Signals gère vos exigences en matière de confidentialité des données.</p>
+        </section>
+
+        <section>
+          <h3>Collecte et utilisation des données</h3>
+
+          <h4>Ce que nous collectons :</h4>
+          <ul>
+            <li>Métriques de performance des applications et traces</li>
+            <li>Informations sur les dépendances de services</li>
+            <li>Informations sur les erreurs et traces de pile</li>
+            <li>Métadonnées système et d'infrastructure</li>
+          </ul>
+
+          <h4>Ce que nous ne collectons pas :</h4>
+          <ul>
+            <li>Données métier des applications ou contenu utilisateur</li>
+            <li>Contenu des bases de données ou données du système de fichiers</li>
+            <li>Identifiants utilisateur ou jetons d'authentification</li>
+            <li>Informations personnellement identifiables (sauf si explicitement incluses)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Rétention des données</h3>
+
+          <h4>Périodes de rétention par défaut :</h4>
+          <ul>
+            <li><strong>Données de traces :</strong> 30 jours (configurable jusqu'à 1 an)</li>
+            <li><strong>Métriques :</strong> 15 mois (rétention standard CloudWatch)</li>
+            <li><strong>Données RUM :</strong> 30 jours (configurable jusqu'à 1 an)</li>
+            <li><strong>Résultats Synthetics :</strong> 90 jours (configurable)</li>
+          </ul>
+
+          <h4>Suppression des données :</h4>
+          <ul>
+            <li>Utiliser les politiques de rétention des données CloudWatch</li>
+            <li>Implémenter une gestion automatisée du cycle de vie des données</li>
+            <li>Demander la suppression des données via AWS Support si nécessaire</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Cadres de conformité</h3>
+
+          <h4>Normes prises en charge :</h4>
+          <ul>
+            <li><strong>SOC 2 :</strong> Contrôles de sécurité, disponibilité et confidentialité</li>
+            <li><strong>PCI DSS :</strong> Normes de sécurité des données de l'industrie des cartes de paiement</li>
+            <li><strong>HIPAA :</strong> Loi sur la portabilité et la responsabilité de l'assurance maladie</li>
+            <li><strong>RGPD :</strong> Règlement général sur la protection des données</li>
+            <li><strong>FedRAMP :</strong> Programme fédéral de gestion des risques et des autorisations</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Guide de conformité</h2>
+          <p>Conseils spécifiques pour les scénarios de conformité courants.</p>
+        </section>
+
+        <section>
+          <h3>Conformité HIPAA</h3>
+
+          <h4>Exigences :</h4>
+          <ul>
+            <li>Chiffrer les informations de santé protégées (PHI) dans les traces</li>
+            <li>Implémenter des contrôles d'accès et une journalisation d'audit</li>
+            <li>Utiliser des accords d'association commerciale (BAA) avec AWS</li>
+            <li>Configurer des politiques de rétention des données appropriées</li>
+          </ul>
+
+          <h4>Mise en œuvre :</h4>
+          <ul>
+            <li>Masquer les PHI dans les attributs de traces et les noms de spans</li>
+            <li>Utiliser des clés KMS gérées par le client</li>
+            <li>Activer CloudTrail pour la journalisation d'audit</li>
+            <li>Configurer des points de terminaison VPC pour l'isolation des données</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Conformité PCI DSS</h3>
+
+          <h4>Considérations clés :</h4>
+          <ul>
+            <li>Ne jamais inclure de données de titulaires de carte dans les traces ou les journaux</li>
+            <li>Implémenter la segmentation réseau</li>
+            <li>Utiliser le chiffrement pour les données en transit et au repos</li>
+            <li>Évaluations de sécurité régulières et tests de pénétration</li>
+          </ul>
+
+          <h4>Bonnes pratiques :</h4>
+          <ul>
+            <li>Tokeniser les données sensibles avant l'instrumentation</li>
+            <li>Utiliser des sous-réseaux privés pour les agents Application Signals</li>
+            <li>Implémenter des politiques IAM de moindre privilège</li>
+            <li>Revue régulière des données collectées</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Conformité RGPD</h3>
+
+          <h4>Droits des personnes concernées :</h4>
+          <ul>
+            <li>Droit d'accès aux données personnelles</li>
+            <li>Droit de rectification</li>
+            <li>Droit à l'effacement (« droit à l'oubli »)</li>
+            <li>Droit à la portabilité des données</li>
+          </ul>
+
+          <h4>Mise en œuvre :</h4>
+          <ul>
+            <li>Minimiser la collecte d'informations personnelles dans les données de télémétrie</li>
+            <li>Implémenter des techniques d'anonymisation des données</li>
+            <li>Configurer la rétention des données en fonction des besoins métier</li>
+            <li>Documenter les activités de traitement des données</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2>Surveillance de la sécurité</h2>
+          <p>Surveiller votre déploiement Application Signals pour les événements de sécurité.</p>
+        </section>
+
+        <section>
+          <h3>Bonnes pratiques de sécurité</h3>
+          <ul>
+            <li>Activer CloudTrail pour la journalisation de l'activité API</li>
+            <li>Surveiller les modifications de politiques IAM et les modèles d'accès</li>
+            <li>Configurer des alertes pour les modèles d'accès inhabituels aux données</li>
+            <li>Évaluations de sécurité régulières et analyses de vulnérabilités</li>
+            <li>Implémenter l'authentification multi-facteurs (MFA)</li>
+          </ul>
+        </section>
+
+        <section>
+          <h3>Réponse aux incidents</h3>
+          <ul>
+            <li>Disposer d'un plan de réponse aux incidents pour les événements de sécurité</li>
+            <li>Savoir comment désactiver Application Signals en cas de compromission</li>
+            <li>Documenter les procédures d'escalade</li>
+            <li>Tests réguliers de la réponse aux incidents</li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </div>
+  <script src="../assets/js/site.js"></script>
+</body>
+</html>

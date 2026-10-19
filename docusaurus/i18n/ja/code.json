@@ -1,38 +1,62 @@
 {
-  "featureList.guides.description": {
-    "message": "ガイドは、簡単にフォローして実装できるようにゼロから設計されており、クラウドモニタリングを迅速に稼働させることができます。",
-    "description": "Guides were designed from the ground up to be easily followed and implemented, getting your cloud monitoring up and running quickly."
+  "theme.docs.sidebar.collapseButtonTitle": {
+    "message": "サイドバーを閉じる",
+    "description": "The ARIA label and title attribute for collapse button of doc sidebar"
   },
-  "featureList.signals.description": {
-    "message": "主要なメトリクス、ログ、パフォーマンス指標を通じて、AWS 環境に関する包括的な洞察を得ることができます。",
-    "description": "Gain comprehensive insights into your AWS environment through key metrics, logs, and performance indicators."
+  "theme.docs.sidebar.expandButtonTitle": {
+    "message": "サイドバーを開く",
+    "description": "The ARIA label and title attribute for expand button of doc sidebar"
   },
-  "featureList.tools.description": {
-    "message": "効率的なデータ収集、分析、視覚化のための専用ソリューションを使用して、AWS モニタリングを合理化します。",
-    "description": "Streamline your AWS monitoring with purpose-built solutions for efficient data collection, analysis, and visualization."
+  "theme.ErrorPageContent.title": {
+    "message": "ページがクラッシュしました。",
+    "description": "The title of the fallback page when the page crashed"
   },
-  "featureList.recipes.description": {
-    "message": "実証済みの AWS オブザーバビリティパターンを実装して、一般的なモニタリングとトラブルシューティングの課題を迅速に解決します。",
-    "description": "Implement proven AWS observability patterns to quickly solve common monitoring and troubleshooting challenges."
+  "theme.NotFound.title": {
+    "message": "ページが見つかりません",
+    "description": "The title of the 404 page"
   },
-  "featureList.faqs.description": {
-    "message": "AWS のオブザーバビリティに関する一般的な質問への回答を短時間で確認し、主要な概念とベストプラクティスを明らかにしています。",
-    "description": "Find quick answers to common AWS observability questions, clarifying key concepts and best practices."
+  "theme.NotFound.p1": {
+    "message": "お探しのページが見つかりませんでした。",
+    "description": "The first paragraph of the 404 page"
   },
-  "featureList.patterns.description": {
-    "message": "包括的でわかりやすい教育リソースを通じて、AWS オブザーバビリティの実装を段階的に学べます。",
-    "description": "Learn step-by-step AWS observability implementation through comprehensive, easy-to-follow instructional resources."
+  "theme.NotFound.p2": {
+    "message": "このページにリンクしているサイトの所有者にお問い合わせいただき、リンクが壊れていることをお知らせください。",
+    "description": "The 2nd paragraph of the 404 page"
   },
-  "featureList.persona.description": {
-    "message": "AWS オブザーバビリティに関する、ペルソナ別のベストプラクティスと推奨事項。",
-    "description": "Persona specific best practices and recommendations for AWS observability."
+  "theme.docs.paginator.navAriaLabel": {
+    "message": "ドキュメントページナビゲーション",
+    "description": "The ARIA label for the docs pagination"
   },
-  "featureList.resources.description": {
-    "message": "AWS オブザーバビリティに関するリソース。",
-    "description": "Resources for AWS observability."
+  "theme.docs.paginator.previous": {
+    "message": "前へ",
+    "description": "The label used to navigate to the previous doc"
   },
-  "featureList.cloudOps.description": {
-    "message": "ガバナンス、コンプライアンス、運用上の卓越性のための AWS Cloud Operations のベストプラクティス。",
-    "description": "AWS Cloud Operations best practices for governance, compliance, and operational excellence."
+  "theme.docs.paginator.next": {
+    "message": "次へ",
+    "description": "The label used to navigate to the next doc"
+  },
+  "theme.colorToggle.ariaLabel": {
+    "message": "ダークモードとライトモードの切り替え（現在は{mode}）",
+    "description": "The ARIA label for the navbar color mode toggle"
+  },
+  "theme.colorToggle.ariaLabel.mode.dark": {
+    "message": "ダークモード",
+    "description": "The name for the dark color mode"
+  },
+  "theme.colorToggle.ariaLabel.mode.light": {
+    "message": "ライトモード",
+    "description": "The name for the light color mode"
+  },
+  "theme.lastUpdated.atDate": {
+    "message": " {date} に",
+    "description": "The words used to describe on which date a page has been last updated"
+  },
+  "theme.lastUpdated.byUser": {
+    "message": " {user} が",
+    "description": "The words used to describe by who the page has been last updated"
+  },
+  "theme.lastUpdated.lastUpdatedAtBy": {
+    "message": "{byUser}{atDate}最終更新",
+    "description": "The sentence used to display when a page has been last updated, and by who"
   }
 }

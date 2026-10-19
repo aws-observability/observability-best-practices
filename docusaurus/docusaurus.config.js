@@ -30,17 +30,19 @@ const config = {
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
-  // English only for now. The i18n/ directories still hold ~1670 translated
-  // documents, but none of them cover docs/solutions/, so every non-English
-  // locale rendered an untranslated catalog with zero entries. Publishing that
-  // is worse than publishing nothing. Files are retained on disk; restore a
-  // locale here once its solutions content is translated.
+  // English is the default locale. Japanese covers the solutions catalog.
+  // Other locales (ta, ko, te, zh-Hans, hi) hold legacy translations only
+  // and are not enabled until their solutions content is translated.
   i18n: {
     defaultLocale: 'en',
-    locales: ['en'],
+    locales: ['en', 'ja'],
     localeConfigs: {
       en: {
         label: 'English',
+      },
+      ja: {
+        label: '日本語',
+        direction: 'ltr',
       },
     },
   },
@@ -126,6 +128,10 @@ const config = {
             to: '/events/',
             position: 'left',
             label: 'Events',
+          },
+          {
+            type: 'localeDropdown',
+            position: 'right',
           },
           {
             href: 'https://github.com/aws-observability/observability-best-practices',

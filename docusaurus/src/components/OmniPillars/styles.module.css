@@ -113,6 +113,30 @@
   color: var(--ifm-heading-color);
   padding-right: 60px;
 }
+.titleLink {
+  color: var(--ifm-color-primary);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  text-decoration-color: color-mix(in srgb, var(--ifm-color-primary) 35%, transparent);
+  transition: text-decoration-color 0.2s ease;
+}
+.titleLink:hover {
+  color: var(--ifm-color-primary-dark);
+  text-decoration-color: currentColor;
+}
+.titleArrow {
+  display: inline-block;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+}
+.titleLink:hover .titleArrow {
+  transform: translateX(4px);
+}
+.bodyLink {
+  font-weight: 600;
+  white-space: nowrap;
+}
 .tagline {
   margin: 0 0 14px;
   color: var(--ifm-color-primary);

@@ -160,4 +160,4 @@ This solution can be deployed using **AWS CDK** or **Terraform**. For CDK, the [
 - [EKS Infrastructure Monitoring](../eks-infrastructure/) — infrastructure complement to application-level signals, covering node and pod resource metrics via Container Insights
 - [.NET Application Monitoring](../dotnet-application-monitoring/) — the same Application Signals pattern applied to .NET workloads
 - [ADOT at Scale](../adot-at-scale/) — scaling the ADOT collector that underpins Application Signals for high-throughput clusters
-- [Distributed Tracing](../distributed-tracing/) — tracing concepts, X-Ray guidance, and cross-service correlation
+- [APM Implementation Guide](../apm-implementation-guide/) — Application Signals and Transaction Search setup, collector options, and X-Ray migration

@@ -1,0 +1,13 @@
+name: "APM Implementation Guide: Application Signals and Transaction Search"
+slug: apm-implementation-guide
+content_type: guide
+description: "Set up CloudWatch Application Signals and Transaction Search, choose an instrumentation and collector setup, and migrate from X-Ray SDKs and the X-Ray daemon."
+workload_type: [applications]
+backends: [cloudwatch, xray]
+signals: [metrics, traces]
+status: active
+featured: true
+docs_link: "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html"
+search_keywords: [apm, application signals, transaction search, adot, opentelemetry, otlp, collector-less, x-ray migration, sampling, red metrics]
+last_validated: "2026-04-12"
+related_events: [apm]

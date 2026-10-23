@@ -160,4 +160,3 @@ Application Signals はこれらのターゲットに対するバーンレート
 - [EKS インフラストラクチャモニタリング](../eks-infrastructure/) — Container Insights によるノードおよび Pod のリソースメトリクスをカバーする、アプリケーションレベルシグナルのインフラストラクチャ補完
 - [.NET アプリケーションモニタリング](../dotnet-application-monitoring/) — .NET ワークロードに適用された同じ Application Signals パターン
 - [ADOT at Scale](../adot-at-scale/) — 高スループットクラスターの Application Signals を支える ADOT Collector のスケーリング
-- [分散トレーシング](../distributed-tracing/) — トレーシングの概念、X-Ray ガイダンス、およびクロスサービス相関

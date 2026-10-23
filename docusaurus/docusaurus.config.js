@@ -79,12 +79,13 @@ const config = {
      // Consolidated or removed entries keep their published URLs working.
      // eks-container-insights merged into eks-infrastructure, which now covers
      // Container Insights, the CloudWatch managed collector, and AMP as three
-     // documented paths.
+     // documented paths. distributed-tracing was removed in favor of the APM guide.
      [
        '@docusaurus/plugin-client-redirects',
        ({
          redirects: [
            { from: '/solutions/eks-container-insights', to: '/solutions/eks-infrastructure' },
+           { from: '/solutions/distributed-tracing', to: '/solutions/apm-implementation-guide' },
          ],
        }),
      ],

@@ -3,6 +3,42 @@
   "schema_version": "1.0",
   "solutions": [
     {
+      "name": "APM Implementation Guide: Application Signals and Transaction Search",
+      "slug": "apm-implementation-guide",
+      "content_type": "guide",
+      "description": "Set up CloudWatch Application Signals and Transaction Search, choose an instrumentation and collector setup, and migrate from X-Ray SDKs and the X-Ray daemon.",
+      "workload_type": [
+        "applications"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "traces"
+      ],
+      "status": "active",
+      "featured": true,
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Monitoring-Sections.html",
+      "search_keywords": [
+        "apm",
+        "application signals",
+        "transaction search",
+        "adot",
+        "opentelemetry",
+        "otlp",
+        "collector-less",
+        "x-ray migration",
+        "sampling",
+        "red metrics"
+      ],
+      "last_validated": "2026-04-12",
+      "related_events": [
+        "apm"
+      ]
+    },
+    {
       "name": "Amazon CloudWatch Omni の紹介",
       "slug": "cw-omni-guide",
       "content_type": "guide",
@@ -705,28 +741,6 @@
       "related_events": [
         "cloudwatch",
         "metrics"
-      ]
-    },
-    {
-      "name": "分散トレーシング",
-      "slug": "distributed-tracing",
-      "content_type": "guide",
-      "description": "AWS X-RayとOpenTelemetryによる分散トレーシングのガイダンス。サンプリング戦略とトレーシングエージェントの選択を含む。",
-      "workload_type": [
-        "applications"
-      ],
-      "backends": [
-        "xray",
-        "cloudwatch"
-      ],
-      "signals": [
-        "traces"
-      ],
-      "status": "active",
-      "docs_link": "https://docs.aws.amazon.com/xray/latest/devguide/aws-xray.html",
-      "last_validated": "2026-05-20",
-      "related_events": [
-        "apm"
       ]
     },
     {

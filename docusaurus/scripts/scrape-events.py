@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
-"""Fetch Cloud-Operations-Enablement events from the AWS Experience API and
-produce an events.json array consumable by the Observability Best Practices
-Docusaurus site.
+"""Fetch Cloud Operations events from the awsworkshop.io feed and produce an
+events.json array consumable by the Observability Best Practices Docusaurus
+site.
+
+The feed at https://awsworkshop.io/data/feed.json is the full workshop catalog.
+This script filters to the CloudOps category, groups sessions of the same
+workshop title into a single event entry (first session = primary date, the
+rest = additionalDates), and writes the same schema previously produced by the
+aws-experience.com scraper.
 
 Usage:
     python3 scrape-events.py                     # JSON to stdout
     python3 scrape-events.py --output events.json # write to file
-    python3 scrape-events.py --future-only        # exclude past events
+    python3 scrape-events.py --future-only        # exclude past sessions
 
 The script uses only the Python standard library (no pip dependencies).
 """
@@ -18,14 +24,14 @@ import ssl
 import sys
 import urllib.error
 import urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
 
-API_URL = "https://aws-experience.com/amer/smb/api/session"
-REGISTER_BASE = "https://aws-experience.com/amer/smb/e"
+FEED_URL = "https://awsworkshop.io/data/feed.json"
+CLOUDOPS_CATEGORY = "CloudOps"
 
 # Theme display order — must match THEME_ORDER in EventCard/index.js.
 THEME_ORDER = [
@@ -136,41 +142,6 @@ def derive_format(event_type: str, setting: str) -> str:
     return mapping.get((event_type or "").lower(), "Technical talk")
 
 
-def derive_level(levels: list) -> int:
-    """Extract integer level from the API levels array."""
-    if levels:
-        try:
-            return int(levels[0])
-        except (ValueError, TypeError):
-            pass
-    return 200
-
-
-def _extract_setting(setting_details: list | None) -> str:
-    """Extract the setting value ('virtual' or 'physical') from the
-    settingDetails list returned by the API."""
-    if not setting_details or not isinstance(setting_details, list):
-        return "virtual"
-    for entry in setting_details:
-        if isinstance(entry, dict) and "setting" in entry:
-            return entry["setting"].lower()
-    return "virtual"
-
-
-def derive_location(setting: str, setting_details: list | None) -> str:
-    """Derive a human-readable location string.
-
-    For physical events we return 'In-person' to match the existing
-    events.json convention — the address formats from the API are too
-    inconsistent for reliable city extraction.
-    """
-    if setting == "virtual":
-        return "Online"
-    if setting == "physical":
-        return "In-person"
-    return "Online"
-
-
 # ---------------------------------------------------------------------------
 # HTML stripping
 # ---------------------------------------------------------------------------
@@ -188,26 +159,52 @@ def strip_html(html: str) -> str:
 
 
 # ---------------------------------------------------------------------------
-# Date formatting
+# Date / time helpers
 # ---------------------------------------------------------------------------
 
 
-def parse_utc_time(iso_str: str) -> datetime | None:
-    """Parse a UTC timestamp from the API.
+def parse_session_times(session: dict) -> tuple[datetime | None, datetime | None]:
+    """Parse the start and end UTC datetimes from a feed session.
 
-    The API returns formats like '2026-10-16T17:30' (no seconds, no Z).
+    The feed provides ``date`` (YYYY-MM-DD), ``timeUtc`` (HH:MM), and
+    ``durationMinutes``.  Some sessions also carry ``endTimeUtc``.
     """
-    if not iso_str:
-        return None
-    cleaned = iso_str.strip().rstrip("Z")
-    # Remove fractional seconds if present
-    cleaned = re.sub(r"\.\d+$", "", cleaned)
-    for fmt in ("%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M"):
+    date_str = session.get("date", "")
+    time_str = session.get("timeUtc", "")
+    if not date_str or not time_str:
+        return None, None
+
+    try:
+        start = datetime.strptime(f"{date_str}T{time_str}", "%Y-%m-%dT%H:%M").replace(
+            tzinfo=timezone.utc
+        )
+    except ValueError:
+        return None, None
+
+    # Prefer explicit endTimeUtc when available
+    end_time_str = session.get("endTimeUtc", "")
+    if end_time_str:
         try:
-            return datetime.strptime(cleaned, fmt).replace(tzinfo=timezone.utc)
+            end = datetime.strptime(f"{date_str}T{end_time_str}", "%Y-%m-%dT%H:%M").replace(
+                tzinfo=timezone.utc
+            )
+            # Handle midnight crossover
+            if end <= start:
+                end += timedelta(days=1)
+            return start, end
         except ValueError:
-            continue
-    return None
+            pass
+
+    # Fall back to durationMinutes
+    duration = session.get("durationMinutes")
+    if duration:
+        try:
+            end = start + timedelta(minutes=int(duration))
+            return start, end
+        except (ValueError, TypeError):
+            pass
+
+    return start, None
 
 
 def format_date(dt: datetime) -> str:
@@ -225,48 +222,61 @@ def format_time_range(start_utc: datetime, end_utc: datetime) -> str:
 
 
 # ---------------------------------------------------------------------------
-# API fetch
+# Feed-specific helpers
 # ---------------------------------------------------------------------------
 
 
-def fetch_sessions() -> list[dict]:
-    """Fetch sessions from the AWS Experience API.
+def infer_event_type(session: dict, duration_minutes: int | None) -> str:
+    """Infer whether a session is a hands-on workshop or a technical talk.
 
-    The API returns ``{"future": [...], "past": [...]}``. We combine both
-    lists so the caller can decide whether to include past events.
+    The feed does not carry an explicit type field.  Workshops are typically
+    120+ minutes; talks are 60 minutes.  The session title can also hint at
+    the format.
+    """
+    title = (session.get("title") or "").lower()
+    if "workshop" in title or "hands-on" in title or "activation day" in title:
+        return "handsonworkshop"
+    if duration_minutes and duration_minutes >= 120:
+        return "handsonworkshop"
+    return "technicaltalk"
+
+
+# ---------------------------------------------------------------------------
+# Feed fetch
+# ---------------------------------------------------------------------------
+
+
+def fetch_feed() -> dict:
+    """Fetch the full workshop feed from awsworkshop.io.
+
+    Returns the parsed JSON object which contains ``sessions``,
+    ``workshops``, and ``categories`` arrays.
     """
     ctx = ssl.create_default_context()
     req = urllib.request.Request(
-        API_URL,
+        FEED_URL,
         headers={
             "Accept": "application/json",
-            "User-Agent": "observability-best-practices-scraper/1.0",
+            "User-Agent": "observability-best-practices-scraper/2.0 (awsworkshop.io feed)",
         },
     )
     try:
         with urllib.request.urlopen(req, context=ctx, timeout=30) as resp:
             data = json.loads(resp.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
-        print(f"ERROR: HTTP {exc.code} from {API_URL}", file=sys.stderr)
+        print(f"ERROR: HTTP {exc.code} from {FEED_URL}", file=sys.stderr)
         sys.exit(1)
     except urllib.error.URLError as exc:
-        print(f"ERROR: Cannot reach {API_URL}: {exc.reason}", file=sys.stderr)
+        print(f"ERROR: Cannot reach {FEED_URL}: {exc.reason}", file=sys.stderr)
         sys.exit(1)
     except Exception as exc:
-        print(f"ERROR: Unexpected error fetching sessions: {exc}", file=sys.stderr)
+        print(f"ERROR: Unexpected error fetching feed: {exc}", file=sys.stderr)
         sys.exit(1)
 
-    if isinstance(data, dict):
-        future = data.get("future", [])
-        past = data.get("past", [])
-        if isinstance(future, list) and isinstance(past, list):
-            return future + past
-
-    # Fallback: if the shape changes, try common patterns
-    if isinstance(data, list):
-        return data
-    print(f"WARNING: Unexpected API response shape: {type(data).__name__}", file=sys.stderr)
-    return []
+    if not isinstance(data, dict):
+        print(f"ERROR: Unexpected feed shape: {type(data).__name__}", file=sys.stderr)
+        sys.exit(1)
+    return data
 
 
 # ---------------------------------------------------------------------------
@@ -274,47 +284,69 @@ def fetch_sessions() -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
-def build_register_url(url_slug: str) -> str:
-    """Build the full registration URL from the urlSlug field."""
-    if not url_slug:
-        return ""
-    return f"{REGISTER_BASE}/{url_slug}"
+def build_workshop_index(workshops: list[dict]) -> dict[str, dict]:
+    """Build a lookup from workshop id to workshop metadata.
+
+    Workshop ids correspond to the ``workshopType`` field on sessions.
+    """
+    return {w["id"]: w for w in workshops if "id" in w}
 
 
-def transform_session(session: dict) -> dict | None:
-    """Transform a raw API session into the intermediate representation used
+def transform_session(
+    session: dict,
+    workshop_index: dict[str, dict],
+) -> dict | None:
+    """Transform a raw feed session into an intermediate representation used
     for grouping.  Returns None if essential fields are missing."""
     title = (session.get("title") or "").strip()
     if not title:
         return None
 
-    start_utc = parse_utc_time(session.get("startInUtc", ""))
-    end_utc = parse_utc_time(session.get("endInUtc", ""))
+    start_utc, end_utc = parse_session_times(session)
     if not start_utc or not end_utc:
         return None
 
-    setting_details = session.get("settingDetails")
-    setting = _extract_setting(setting_details)
-    event_type = (session.get("type") or "technicaltalk").strip()
-    levels = session.get("levels") or []
-    url_slug = (session.get("urlSlug") or "").strip()
+    raw_duration = session.get("durationMinutes")
+    try:
+        duration = int(raw_duration) if raw_duration is not None else None
+    except (ValueError, TypeError):
+        duration = None
+    event_type = infer_event_type(session, duration)
 
-    # Prefer summary (plain text) over description (HTML).
+    # Look up the workshop to get description and level
+    workshop_type = session.get("workshopType", "")
+    workshop = workshop_index.get(workshop_type, {})
+
+    # Prefer the session summary; fall back to the workshop summary, then
+    # the workshop description (which may contain HTML/markdown).
     description = (session.get("summary") or "").strip()
     if not description:
-        description = strip_html(session.get("description") or "")
+        description = (workshop.get("summary") or "").strip()
+    if not description:
+        description = strip_html(workshop.get("description") or "")
+
+    # Level comes from the workshop metadata (sessions don't carry it).
+    workshop_level_str = workshop.get("level", "200")
+    try:
+        level = int(workshop_level_str)
+    except (ValueError, TypeError):
+        level = 200
+
+    url = (session.get("url") or "").strip()
+
+    # The feed is entirely virtual events; no setting field exists.
+    setting = "virtual"
 
     return {
         "title": title,
         "description": description,
         "setting": setting,
-        "setting_details": setting_details,
         "type": event_type,
-        "levels": levels,
+        "level": level,
         "start_utc": start_utc,
         "end_utc": end_utc,
-        "url_slug": url_slug,
-        "start_utc_iso": session.get("startInUtc", ""),
+        "url": url,
+        "start_utc_iso": f"{session.get('date', '')}T{session.get('timeUtc', '')}",
     }
 
 
@@ -350,17 +382,17 @@ def group_and_build(sessions: list[dict], future_only: bool = False) -> list[dic
         theme = derive_theme(title, primary["setting"])
         topics = derive_topics(title, theme)
         fmt = derive_format(primary["type"], primary["setting"])
-        level = derive_level(primary["levels"])
-        location = derive_location(primary["setting"], primary.get("setting_details"))
+        level = primary["level"]
+        location = "Online" if primary["setting"] == "virtual" else "In-person"
 
         additional_dates = []
         for s in sessions_list[1:]:
-            loc = derive_location(s["setting"], s.get("setting_details"))
+            loc = "Online" if s["setting"] == "virtual" else "In-person"
             additional_dates.append({
                 "date": format_date(s["start_utc"]),
                 "time": format_time_range(s["start_utc"], s["end_utc"]),
                 "location": loc,
-                "registerUrl": build_register_url(s["url_slug"]),
+                "registerUrl": s["url"],
             })
 
         entry = {
@@ -372,7 +404,7 @@ def group_and_build(sessions: list[dict], future_only: bool = False) -> list[dic
             "date": format_date(primary["start_utc"]),
             "time": format_time_range(primary["start_utc"], primary["end_utc"]),
             "location": location,
-            "registerUrl": build_register_url(primary["url_slug"]),
+            "registerUrl": primary["url"],
             "additionalDates": additional_dates,
             "topics": topics,
         }
@@ -403,8 +435,8 @@ def group_and_build(sessions: list[dict], future_only: bool = False) -> list[dic
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Fetch Cloud-Operations-Enablement events from the AWS "
-        "Experience API and produce events.json.",
+        description="Fetch Cloud Operations events from the awsworkshop.io "
+        "feed and produce events.json.",
     )
     parser.add_argument(
         "--output", "-o",
@@ -418,28 +450,31 @@ def main() -> None:
     args = parser.parse_args()
 
     # 1. Fetch
-    print("Fetching sessions from AWS Experience API...", file=sys.stderr)
-    raw_sessions = fetch_sessions()
-    print(f"Fetched {len(raw_sessions)} events", file=sys.stderr)
+    print(f"Fetching feed from {FEED_URL}...", file=sys.stderr)
+    feed = fetch_feed()
+    all_sessions = feed.get("sessions", [])
+    all_workshops = feed.get("workshops", [])
+    print(f"Fetched {len(all_sessions)} total sessions, {len(all_workshops)} workshops", file=sys.stderr)
 
-    # 2. Filter to Cloud-Operations-Enablement series
-    cloud_ops = [
-        s for s in raw_sessions
-        if "Cloud-Operations-Enablement" in (s.get("series") or [])
+    # 2. Filter to CloudOps category
+    cloudops_sessions = [
+        s for s in all_sessions
+        if s.get("category") == CLOUDOPS_CATEGORY
     ]
-    print(f"Filtered to {len(cloud_ops)} Cloud-Ops events", file=sys.stderr)
+    print(f"Filtered to {len(cloudops_sessions)} CloudOps sessions", file=sys.stderr)
 
-    # 3. Transform
+    # 3. Build workshop lookup and transform
+    workshop_index = build_workshop_index(all_workshops)
     transformed = []
     skipped = 0
-    for s in cloud_ops:
-        t = transform_session(s)
+    for s in cloudops_sessions:
+        t = transform_session(s, workshop_index)
         if t:
             transformed.append(t)
         else:
             skipped += 1
     if skipped:
-        print(f"Skipped {skipped} events with missing fields", file=sys.stderr)
+        print(f"Skipped {skipped} sessions with missing fields", file=sys.stderr)
 
     # 4. Group, deduplicate, sort, build
     entries = group_and_build(transformed, future_only=args.future_only)

@@ -37,21 +37,27 @@ jobs:
             echo "changed=true" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Create PR with updated events
+      - name: Push branch with updated events
         if: steps.diff.outputs.changed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
+        id: push
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
 
           BRANCH="events/update-$(date -u +%Y-%m-%d)"
+          echo "branch=$BRANCH" >> "$GITHUB_OUTPUT"
           git checkout -b "$BRANCH"
           git add docusaurus/docs/events/events.json
           git commit -m 'chore(events): Refresh events from awsworkshop.io'
           git push -u origin "$BRANCH"
 
+      - name: Create pull request
+        if: steps.diff.outputs.changed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
           gh pr create \
+            --head '${{ steps.push.outputs.branch }}' \
             --title 'chore(events): Refresh events from awsworkshop.io' \
             --body '## Automated Events Update
 
@@ -70,5 +76,4 @@ jobs:
           - [ ] Event themes are correctly assigned
           - [ ] Topics are appropriate for catalog linkage
           - [ ] No duplicate events
-          - [ ] `npm run build` passes' \
-            --label 'automated' || true
+          - [ ] `npm run build` passes'

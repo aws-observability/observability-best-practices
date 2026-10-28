@@ -16,7 +16,7 @@
     "svelte": "^5.0.0",
     "svelte-check": "^4.0.0",
     "typescript": "^5.7.0",
-    "vite": "^6.0.0"
+    "vite": "^6.4.5"
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.1026.0",

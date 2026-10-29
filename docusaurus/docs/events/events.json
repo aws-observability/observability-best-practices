@@ -2,20 +2,30 @@
   {
     "theme": "Amazon CloudWatch Omni",
     "level": 200,
+    "format": "Hands-on workshop",
+    "name": "CloudWatch Omni Roadshow",
+    "description": "Este encuentro reúne debates técnicos sobre la evolución de las prácticas de operación y observabilidad en la nube, centrándose en la convergencia entre la inteligencia artificial y la infraestructura moderna.",
+    "date": "Thu 29 Oct",
+    "time": "13:30 – 21:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/latam/smb/e/7bb7a/cloudwatch-omni-roadshow",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "apm"
+    ]
+  },
+  {
+    "theme": "Amazon CloudWatch Omni",
+    "level": 200,
     "format": "Technical talk",
     "name": "Introducing Amazon CloudWatch Omni",
     "description": "Amazon CloudWatch Omni is the next generation of CloudWatch, an AI-powered observability experience for AI agents and applications, built on open standards and delivered outside of the AWS Console.",
-    "date": "Wed 28 Oct",
-    "time": "23:00 – 00:00 UTC",
+    "date": "Wed 4 Nov",
+    "time": "18:00 – 19:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/apj/smb/e/150fd/introducing-amazon-cloudwatch-omni",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/5dacb/introducing-amazon-cloudwatch-omni",
     "additionalDates": [
-      {
-        "date": "Wed 4 Nov",
-        "time": "18:00 – 19:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/5dacb/introducing-amazon-cloudwatch-omni"
-      },
       {
         "date": "Wed 11 Nov",
         "time": "12:00 – 13:00 UTC",
@@ -74,6 +84,12 @@
         "time": "11:00 – 13:00 UTC",
         "location": "Online",
         "registerUrl": "https://aws-experience.com/emea/smb/e/9d15b/hands-on-aws-observability-mastering-ai-operations-aiops"
+      },
+      {
+        "date": "Thu 5 Nov",
+        "time": "23:00 – 01:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/apj/smb/e/11663/hands-on-aws-observability-mastering-ai-operations-aiops"
       },
       {
         "date": "Mon 16 Nov",
@@ -229,52 +245,179 @@
     ]
   },
   {
-    "theme": "DevOps Agent",
-    "level": 300,
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
     "format": "Technical talk",
-    "name": "AWS DevOps Agent + Database Insights: Detect, Diagnose, and Resolve Database Issues",
-    "description": "Join us for a 60-minute live session exploring how AWS DevOps Agent and CloudWatch Database Insights can work together to fundamentally shift your database operations from reactive incident response to proactive, automated management",
+    "name": "Smarter AWS Savings Without a dedicated FinOps Team",
+    "description": "Most small and mid-sized teams on AWS don't have a dedicated FinOps team. Cost reviews happen when someone has time. Commitments get bought once and are rarely revisited, so savings go unclaimed.",
     "date": "Thu 29 Oct",
-    "time": "03:30 – 04:30 UTC",
+    "time": "15:00 – 16:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/8612a/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues",
-    "additionalDates": [
-      {
-        "date": "Tue 10 Nov",
-        "time": "03:30 – 04:30 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/f1ba6/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      },
-      {
-        "date": "Tue 17 Nov",
-        "time": "09:00 – 10:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/aadc1/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      },
-      {
-        "date": "Wed 18 Nov",
-        "time": "16:00 – 17:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/6a875/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      },
-      {
-        "date": "Wed 9 Dec",
-        "time": "03:30 – 04:30 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/apj/smb/e/968ff/aws-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      },
-      {
-        "date": "Wed 9 Dec",
-        "time": "16:00 – 17:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/37eb7/aws-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
-      }
-    ],
+    "registerUrl": "https://aws-experience.com/emea/smb/e/d4ef7/smarter-aws-savings-without-a-dedicated-finops-team",
+    "additionalDates": [],
     "topics": [
-      "devops-agent",
-      "aiops",
-      "databases",
-      "cloudwatch"
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Level Up Your Cloud Operation Maturity with AWS Health",
+    "description": "AWS Health Operational Excellence Series",
+    "date": "Tue 3 Nov",
+    "time": "20:00 – 20:45 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/f11ff/level-up-your-cloud-operation-maturity-with-aws-health",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Exploring Various AWS Health Use Cases for Centralized Event Visibility",
+    "description": "AWS Health Operational Excellence Series",
+    "date": "Thu 5 Nov",
+    "time": "20:00 – 20:45 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/a444a/exploring-various-aws-health-use-cases-for-centralized-event-visibility",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Hands-on workshop",
+    "name": "AWS Agentic Observability Day (Miami, FL)",
+    "description": "For practitioners running mission-critical workloads: a full-day, hands-on lab in agentic observability with CloudWatch Omni and the AWS DevOps Agent.",
+    "date": "Fri 6 Nov",
+    "time": "13:30 – 20:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/fbf98/aws-agentic-observability-day-miami-fl",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Automate AWS Health Event Management with Jira and ServiceNow Integrations",
+    "description": "AWS Health Operational Excellence Series",
+    "date": "Tue 10 Nov",
+    "time": "20:00 – 20:45 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/7f537/automate-aws-health-event-management-with-jira-and-servicenow-integrations",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Hands-on workshop",
+    "name": "Observability in the Agentic Era with AWS (Arlington, VA - near DC)",
+    "description": "For practitioners running mission-critical workloads: a full-day, hands-on lab in agentic observability with CloudWatch Omni and the AWS DevOps Agent.",
+    "date": "Thu 12 Nov",
+    "time": "13:30 – 20:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/4ced0/observability-in-the-agentic-era-with-aws-arlington-va---near-dc",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Hands-on workshop",
+    "name": "AWS Cloud Operations Day - Austin",
+    "description": "What you'll learn -> AIOps Vision, Observability with OpenTelemetry, CloudWatch Unified Data Store, Automated Observability Assessment, CloudWatch Omni, AWS DevOps Agent, & Hands-on Workshop",
+    "date": "Thu 12 Nov",
+    "time": "15:30 – 22:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/d47bf/aws-cloud-operations-day---austin",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Moving from AWS Health Aware (AHA) to AWS User Notifications",
+    "description": "AWS Health Operational Excellence Series",
+    "date": "Thu 12 Nov",
+    "time": "20:00 – 20:45 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/e80bf/moving-from-aws-health-aware-aha-to-aws-user-notifications",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Optimize EKS & GPU Utilization and Cost with Amazon CloudWatch (EMEA)",
+    "description": "Discover the latest Amazon CloudWatch Container Insights capabilities: agentless OTel collection, PromQL, GPU & accelerated-compute monitoring, and cost-efficient telemetry for EKS, multicloud, and on-prem.",
+    "date": "Mon 16 Nov",
+    "time": "15:00 – 16:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/emea/smb/e/5cc81/optimize-eks--gpu-utilization-and-cost-with-amazon-cloudwatch-emea",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Optimize EKS & GPU Utilization and Cost with Amazon CloudWatch (APJ)",
+    "description": "Discover the latest Amazon CloudWatch Container Insights capabilities: agentless OTel collection, PromQL, GPU & accelerated-compute monitoring, and cost-efficient telemetry for EKS, multicloud, and on-prem.",
+    "date": "Wed 18 Nov",
+    "time": "04:00 – 05:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/apj/smb/e/3dff8/optimize-eks--gpu-utilization-and-cost-with-amazon-cloudwatch-apj",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "CloudWatch Fundamentals & What's New",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Optimize EKS & GPU Utilization and Cost with Amazon CloudWatch (NAMER)",
+    "description": "Discover the latest Amazon CloudWatch Container Insights capabilities: agentless OTel collection, PromQL, GPU & accelerated-compute monitoring, and cost-efficient telemetry for EKS, multicloud, and on-prem.",
+    "date": "Wed 18 Nov",
+    "time": "20:00 – 21:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/a13d7/optimize-eks--gpu-utilization-and-cost-with-amazon-cloudwatch-namer",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
     ]
   },
   {
@@ -334,6 +477,49 @@
   {
     "theme": "DevOps Agent",
     "level": 300,
+    "format": "Technical talk",
+    "name": "AWS DevOps Agent + Database Insights: Detect, Diagnose, and Resolve Database Issues",
+    "description": "Join us for a 60-minute live session exploring how AWS DevOps Agent and CloudWatch Database Insights can work together to fundamentally shift your database operations from reactive incident response to proactive, automated management",
+    "date": "Tue 10 Nov",
+    "time": "03:30 – 04:30 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/f1ba6/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues",
+    "additionalDates": [
+      {
+        "date": "Tue 17 Nov",
+        "time": "09:00 – 10:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/amer/smb/e/aadc1/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
+      },
+      {
+        "date": "Wed 18 Nov",
+        "time": "16:00 – 17:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/amer/smb/e/6a875/amazon-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
+      },
+      {
+        "date": "Wed 9 Dec",
+        "time": "03:30 – 04:30 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/apj/smb/e/968ff/aws-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
+      },
+      {
+        "date": "Wed 9 Dec",
+        "time": "16:00 – 17:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/amer/smb/e/37eb7/aws-devops-agent--database-insights-detect-diagnose-and-resolve-database-issues"
+      }
+    ],
+    "topics": [
+      "devops-agent",
+      "aiops",
+      "databases",
+      "cloudwatch"
+    ]
+  },
+  {
+    "theme": "DevOps Agent",
+    "level": 300,
     "format": "Hands-on workshop",
     "name": "AWS DevOps Agent Workshop - UK Public Sector",
     "description": "Hands-on workshop with workloads across Lambda, EC2, ECS, EKS, and AI/ML workloads.",
@@ -341,6 +527,42 @@
     "time": "10:30 – 12:30 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/7a34f/aws-devops-agent-workshop---uk-public-sector",
+    "additionalDates": [],
+    "topics": [
+      "devops-agent",
+      "aiops",
+      "cloudwatch"
+    ]
+  },
+  {
+    "theme": "DevOps Agent",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "AI/ML Access Diagnostics & Bedrock Readiness: Custom Skills for AWS DevOps Agent",
+    "description": "Two custom skills for AWS DevOps Agent turn AI/ML access troubleshooting and Bedrock readiness assessments into self-service conversations, while improving security posture. Watch live demonstrations of both skills.",
+    "date": "Tue 10 Nov",
+    "time": "17:30 – 18:30 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/60530/aiml-access-diagnostics--bedrock-readiness-custom-skills-for-aws-devops-agent",
+    "additionalDates": [],
+    "topics": [
+      "genai",
+      "ai-ml",
+      "devops-agent",
+      "aiops",
+      "cloudwatch"
+    ]
+  },
+  {
+    "theme": "DevOps Agent",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Extend AWS DevOps Agent for Amazon EKS: Custom Skills and a Node Diagnostics MCP",
+    "description": "Join us to see how AWS DevOps Agent can answer all four questions from a single chat prompt, using open-source skills and an MCP server from aws/tools-for-devops-agent:",
+    "date": "Tue 17 Nov",
+    "time": "19:00 – 20:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/e8050/extend-aws-devops-agent-for-amazon-eks-custom-skills-and-a-node-diagnostics-mcp",
     "additionalDates": [],
     "topics": [
       "devops-agent",
@@ -358,11 +580,41 @@
     "time": "15:00 – 16:00 UTC",
     "location": "Online",
     "registerUrl": "https://aws-experience.com/amer/smb/e/2974e/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents",
-    "additionalDates": [],
+    "additionalDates": [
+      {
+        "date": "Wed 25 Nov",
+        "time": "04:30 – 05:30 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/apj/smb/e/eb375/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents"
+      }
+    ],
     "topics": [
       "devops-agent",
       "aiops",
       "metrics",
+      "cloudwatch"
+    ]
+  },
+  {
+    "theme": "Database Observability",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "From Performance Insights to CloudWatch Database Insights: what you can do now",
+    "description": "Performance Insights has been replaced by Amazon CloudWatch Database Insights. One hour, one real application, one slow database: find it, understand it, and see what an agent can tell you about it.",
+    "date": "Tue 10 Nov",
+    "time": "15:00 – 16:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/430f2/emea---how-to-transition-from-performance-insights-to-cloudwatch-database-insights",
+    "additionalDates": [
+      {
+        "date": "Tue 8 Dec",
+        "time": "15:00 – 16:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/emea/smb/e/64d21/emea---performance-insights-is-gone-heres-what-you-got-instead"
+      }
+    ],
+    "topics": [
+      "databases",
       "cloudwatch"
     ]
   },
@@ -372,30 +624,11 @@
     "format": "Hands-on workshop",
     "name": "Simplified Security Visibility - CloudWatch Unified Data Store",
     "description": "The AWS Events for Security Visibility and Analytics Activation Day provides hands-on experience working with AWS CloudTrail Management Events and Data Events in the Amazon CloudWatch unified data store.",
-    "date": "Tue 27 Oct",
-    "time": "02:00 – 04:00 UTC",
+    "date": "Tue 24 Nov",
+    "time": "03:30 – 05:30 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/apj/smb/e/e43e6/simplified-security-visibility---cloudwatch-unified-data-store",
-    "additionalDates": [
-      {
-        "date": "Wed 28 Oct",
-        "time": "08:00 – 10:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/7d156/simplified-security-visibility---cloudwatch-unified-data-store"
-      },
-      {
-        "date": "Wed 28 Oct",
-        "time": "14:00 – 16:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/3eb3e/simplified-security-visibility---cloudwatch-unified-data-store"
-      },
-      {
-        "date": "Tue 24 Nov",
-        "time": "03:30 – 05:30 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/apj/smb/e/7a1b1/simplified-security-visibility---cloudwatch-unified-data-store"
-      }
-    ],
+    "registerUrl": "https://aws-experience.com/apj/smb/e/7a1b1/simplified-security-visibility---cloudwatch-unified-data-store",
+    "additionalDates": [],
     "topics": [
       "security",
       "cloudwatch"
@@ -403,21 +636,31 @@
   },
   {
     "theme": "OpenTelemetry native AWS",
+    "level": 200,
+    "format": "Technical talk",
+    "name": "Container Insights with enhanced observability, OpenTelemetry & PromQL on Amazon EKS",
+    "description": "One view for every container, on ECS and EKS.",
+    "date": "Tue 17 Nov",
+    "time": "15:00 – 16:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/emea/smb/e/205d4/container-insights-with-enhanced-observability-opentelemetry--promql-on-amazon-eks",
+    "additionalDates": [],
+    "topics": [
+      "cloudwatch",
+      "general"
+    ]
+  },
+  {
+    "theme": "OpenTelemetry native AWS",
     "level": 400,
     "format": "Technical talk",
-    "name": "500 Bits to Impact - The Life of a Single Observation",
+    "name": "OpenTelemetry native observability on AWS",
     "description": "500 Bits to Impact - The Life of a Single Observation",
-    "date": "Wed 28 Oct",
-    "time": "00:00 – 01:00 UTC",
+    "date": "Thu 19 Nov",
+    "time": "16:00 – 17:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/d9e5f/500-bits-to-impact---the-life-of-a-single-observation",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/cc9b6/500-bits-to-impact---the-life-of-a-single-observation",
     "additionalDates": [
-      {
-        "date": "Thu 19 Nov",
-        "time": "16:00 – 17:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/cc9b6/500-bits-to-impact---the-life-of-a-single-observation"
-      },
       {
         "date": "Tue 15 Dec",
         "time": "16:00 – 17:00 UTC",

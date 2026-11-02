@@ -2,22 +2,6 @@
   {
     "theme": "Amazon CloudWatch Omni",
     "level": 200,
-    "format": "Hands-on workshop",
-    "name": "CloudWatch Omni Roadshow",
-    "description": "Este encuentro reúne debates técnicos sobre la evolución de las prácticas de operación y observabilidad en la nube, centrándose en la convergencia entre la inteligencia artificial y la infraestructura moderna.",
-    "date": "Thu 29 Oct",
-    "time": "13:30 – 21:00 UTC",
-    "location": "Online",
-    "registerUrl": "https://aws-experience.com/latam/smb/e/7bb7a/cloudwatch-omni-roadshow",
-    "additionalDates": [],
-    "topics": [
-      "cloudwatch",
-      "apm"
-    ]
-  },
-  {
-    "theme": "Amazon CloudWatch Omni",
-    "level": 200,
     "format": "Technical talk",
     "name": "Introducing Amazon CloudWatch Omni",
     "description": "Amazon CloudWatch Omni is the next generation of CloudWatch, an AI-powered observability experience for AI agents and applications, built on open standards and delivered outside of the AWS Console.",
@@ -51,6 +35,22 @@
         "registerUrl": "https://aws-experience.com/apj/smb/e/fe4e4/introducing-amazon-cloudwatch-omni"
       }
     ],
+    "topics": [
+      "cloudwatch",
+      "apm"
+    ]
+  },
+  {
+    "theme": "Amazon CloudWatch Omni",
+    "level": 200,
+    "format": "Hands-on workshop",
+    "name": "Get Hands-On with Agent Observability in CloudWatch Omni",
+    "description": "In this hands-on workshop, you'll build an end-to-end agent observability workflow with Amazon CloudWatch Omni. You'll catch issues early, monitor in production, and turn production traces into datasets to debug and improve.",
+    "date": "Thu 19 Nov",
+    "time": "15:30 – 18:00 UTC",
+    "location": "Online",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/13188/get-hands-on-with-agent-observability-in-cloudwatch-omni",
+    "additionalDates": [],
     "topics": [
       "cloudwatch",
       "apm"
@@ -248,22 +248,6 @@
     "theme": "CloudWatch Fundamentals & What's New",
     "level": 200,
     "format": "Technical talk",
-    "name": "Smarter AWS Savings Without a dedicated FinOps Team",
-    "description": "Most small and mid-sized teams on AWS don't have a dedicated FinOps team. Cost reviews happen when someone has time. Commitments get bought once and are rarely revisited, so savings go unclaimed.",
-    "date": "Thu 29 Oct",
-    "time": "15:00 – 16:00 UTC",
-    "location": "Online",
-    "registerUrl": "https://aws-experience.com/emea/smb/e/d4ef7/smarter-aws-savings-without-a-dedicated-finops-team",
-    "additionalDates": [],
-    "topics": [
-      "cloudwatch",
-      "general"
-    ]
-  },
-  {
-    "theme": "CloudWatch Fundamentals & What's New",
-    "level": 200,
-    "format": "Technical talk",
     "name": "Level Up Your Cloud Operation Maturity with AWS Health",
     "description": "AWS Health Operational Excellence Series",
     "date": "Tue 3 Nov",
@@ -426,17 +410,11 @@
     "format": "Hands-on workshop",
     "name": "AWS DevOps Agent Workshop",
     "description": "Hands-on workshop with workloads across Lambda, EC2, ECS, EKS, and AI/ML workloads.",
-    "date": "Thu 29 Oct",
-    "time": "17:30 – 19:30 UTC",
+    "date": "Mon 9 Nov",
+    "time": "04:00 – 06:00 UTC",
     "location": "Online",
-    "registerUrl": "https://aws-experience.com/amer/smb/e/1b2e0/aws-devops-agent-workshop",
+    "registerUrl": "https://aws-experience.com/amer/smb/e/3cebd/aws-devops-agent-workshop",
     "additionalDates": [
-      {
-        "date": "Mon 9 Nov",
-        "time": "04:00 – 06:00 UTC",
-        "location": "Online",
-        "registerUrl": "https://aws-experience.com/amer/smb/e/3cebd/aws-devops-agent-workshop"
-      },
       {
         "date": "Mon 16 Nov",
         "time": "09:30 – 11:30 UTC",
@@ -586,6 +564,12 @@
         "time": "04:30 – 05:30 UTC",
         "location": "Online",
         "registerUrl": "https://aws-experience.com/apj/smb/e/eb375/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents"
+      },
+      {
+        "date": "Thu 26 Nov",
+        "time": "11:00 – 12:00 UTC",
+        "location": "Online",
+        "registerUrl": "https://aws-experience.com/emea/smb/e/4c86f/evolution-of-the-single-pane-of-glass-from-dashboards-to-devops-agents"
       }
     ],
     "topics": [

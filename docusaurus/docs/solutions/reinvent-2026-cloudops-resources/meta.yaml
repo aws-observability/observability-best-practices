@@ -1,0 +1,11 @@
+name: "re:Invent 2026 Cloud Operations Resources"
+slug: reinvent-2026-cloudops-resources
+content_type: guide
+description: "A curated, growing hub of AWS re:Invent 2026 Cloud Operations resources: session videos, blogs, best-practices guides, interactive demos, workshops, and docs."
+workload_type: [operations]
+backends: [cloudwatch]
+signals: [metrics, logs, traces]
+status: active
+docs_link: "https://aws.amazon.com/events/reinvent/"
+last_validated: "2026-11-02"
+related_events: [cloudwatch, general]

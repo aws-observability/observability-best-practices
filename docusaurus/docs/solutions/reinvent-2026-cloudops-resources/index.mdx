@@ -1,0 +1,88 @@
+---
+title: re:Invent 2026 Cloud Operations Resources
+sidebar_label: re:Invent 2026 Resources
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import { ReinventHero, ResourceGrid, WorkshopCallout } from '@site/src/components/ReinventResources';
+import RelatedEvents from '@site/src/components/RelatedEvents';
+import resources from './resources';
+
+# re:Invent 2026 Cloud Operations Resources
+
+## Overview
+
+<ReinventHero
+  eyebrow="AWS re:Invent 2026 · Cloud Operations"
+  title="Build what's next with Cloud Operations"
+  tagline="Your Cloud Operations toolkit, all in one place."
+  ctas={[
+    { label: 'Browse resources', href: '#browse-all-resources', variant: 'primary' },
+    { label: 'Explore AWS re:Invent 2026', href: 'https://aws.amazon.com/events/reinvent/', variant: 'secondary' },
+  ]}
+  nextStep={{
+    lead: 'Attending re:Invent?',
+    text: 'Dive deeper with a hands-on Cloud Operations workshop led by AWS experts.',
+    cta: { label: 'Register for a workshop', href: 'https://awsworkshop.io/browse?service=CloudOps' },
+  }}
+/>
+
+Your one-stop location for Cloud Operations resources: blogs, best-practices guides, interactive demos, workshops, and documentation for observability, CloudWatch Omni, and operations on AWS.
+
+## When to use this
+
+- You are new to a Cloud Operations topic and want a curated place to start before going deeper.
+- You want hands-on experience with a service or capability, such as [Amazon CloudWatch Omni](https://aws.amazon.com/cloudwatch/omni/), through interactive demos and workshops.
+- You are enabling a team or customers on cloud operations (observability, AWS CloudTrail, AWS DevOps Agent, OpenTelemetry, or MCP tools for AI assistants) and want one shareable link to current material.
+- You want to find Cloud Operations resources by format (video, blog, guide, demo, workshop) or by topic without searching across multiple AWS sites.
+
+## Guidance
+
+### Browse all resources
+
+Browse resources by format or topic.
+
+<Tabs queryString="type">
+  <TabItem value="all" label="All" default>
+    <ResourceGrid resources={resources} filterable queryString="topic" />
+  </TabItem>
+  <TabItem value="videos" label="Videos">
+    <ResourceGrid resources={resources} type="video" />
+  </TabItem>
+  <TabItem value="blogs" label="Blogs">
+    <ResourceGrid resources={resources} type="blog" />
+  </TabItem>
+  <TabItem value="guides" label="Guides">
+    <ResourceGrid resources={resources} type="guide" />
+  </TabItem>
+  <TabItem value="demos" label="Demos">
+    <ResourceGrid resources={resources} type="demo" />
+  </TabItem>
+  <TabItem value="workshops" label="Workshops & training">
+    <ResourceGrid resources={resources} type={['workshop', 'training']} />
+  </TabItem>
+  <TabItem value="docs" label="Docs & tools">
+    <ResourceGrid resources={resources} type={['docs', 'tool']} />
+  </TabItem>
+  <TabItem value="events" label="Events">
+    <ResourceGrid resources={resources} type="event" />
+  </TabItem>
+</Tabs>
+
+<WorkshopCallout
+  slim
+  title="Ready to go deeper? Register for an upcoming Cloud Operations workshop."
+  cta={{ label: 'Register for a workshop', href: 'https://awsworkshop.io/browse?service=CloudOps' }}
+/>
+
+## Related
+
+- [Introducing Amazon CloudWatch Omni](../cw-omni-guide/)
+- [GenAI Workload Observability](../genai-observability/)
+- [Observability Cost Management](../observability-cost-management/)
+- [AWS re:Invent](https://aws.amazon.com/events/reinvent/)
+
+## Related Events
+
+<RelatedEvents topics={["cloudwatch", "general"]} />

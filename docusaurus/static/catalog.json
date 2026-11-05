@@ -1,7 +1,34 @@
 {
-  "generated_at": "2026-09-22T17:26:48.593853+00:00",
+  "generated_at": "2026-11-05T03:34:56.278001+00:00",
   "schema_version": "1.0",
   "solutions": [
+    {
+      "name": "Amazon Connect Observability",
+      "slug": "amazon-connect-observability",
+      "content_type": "guide",
+      "description": "Best practices for monitoring Amazon Connect using CloudWatch, Contact Lens, CTRs, EventBridge, and CloudTrail across voice, chat, and digital channels.",
+      "workload_type": [
+        "applications",
+        "ai-ml",
+        "operations"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-10-01",
+      "docs_link": "https://docs.aws.amazon.com/connect/latest/adminguide/logging-and-monitoring.html",
+      "related_events": [
+        "cloudwatch",
+        "applications"
+      ]
+    },
     {
       "name": "Alarms and Alerting",
       "slug": "cloudwatch-alarms-alerting",
@@ -247,23 +274,6 @@
       "accelerator_link": "",
       "docs_link": "https://docs.aws.amazon.com/vpc/latest/userguide/flow-logs.html",
       "last_validated": "2026-08-02"
-    },
-    {
-      "name": "Amazon Connect Observability",
-      "slug": "amazon-connect-observability",
-      "content_type": "guide",
-      "description": "Best practices for monitoring Amazon Connect using CloudWatch, Contact Lens, CTRs, EventBridge, and CloudTrail across voice, chat, and digital channels.",
-      "workload_type": [
-        "applications",
-        "ai-ml"
-      ],
-      "signals": [
-        "metrics",
-        "logs",
-        "traces"
-      ],
-      "status": "active",
-      "last_validated": "2026-08-01"
     },
     {
       "name": "Observability Cost Management",

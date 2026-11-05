@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-05T03:34:56.278001+00:00",
+  "generated_at": "2026-11-05T04:08:06.023006+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
-      "name": "Amazon Connect Observability",
+      "name": "Amazon Connect Customer Observability",
       "slug": "amazon-connect-observability",
       "content_type": "guide",
       "description": "Best practices for monitoring Amazon Connect using CloudWatch, Contact Lens, CTRs, EventBridge, and CloudTrail across voice, chat, and digital channels.",

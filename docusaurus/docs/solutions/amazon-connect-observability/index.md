@@ -1,11 +1,11 @@
 ---
-title: Amazon Connect Observability
-sidebar_label: Amazon Connect
+title: Amazon Connect Customer Observability
+sidebar_label: Amazon Connect Customer
 ---
 
-# Amazon Connect Observability
+# Amazon Connect Customer Observability
 
-[Amazon Connect](https://aws.amazon.com/connect/) is an AI-native contact center solution used by thousands of companies to serve millions of customers daily across voice, chat, and digital channels. Effective observability is critical for maintaining service quality, optimizing agent performance, meeting SLA targets, and ensuring cost efficiency.
+[Amazon Connect Customer](https://aws.amazon.com/connect/) is an AI-native contact center solution used by thousands of companies to serve millions of customers daily across voice, chat, and digital channels. Effective observability is critical for maintaining service quality, optimizing agent performance, meeting SLA targets, and ensuring cost efficiency.
 
 This guide covers best practices for monitoring Amazon Connect using AWS-native observability tools: Amazon CloudWatch, AWS CloudTrail, Amazon EventBridge, Contact Lens, and Contact Trace Records (CTRs).
 

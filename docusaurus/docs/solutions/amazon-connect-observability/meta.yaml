@@ -1,4 +1,4 @@
-name: "Amazon Connect Observability"
+name: "Amazon Connect Customer Observability"
 slug: amazon-connect-observability
 content_type: guide
 description: "Best practices for monitoring Amazon Connect using CloudWatch, Contact Lens, CTRs, EventBridge, and CloudTrail across voice, chat, and digital channels."

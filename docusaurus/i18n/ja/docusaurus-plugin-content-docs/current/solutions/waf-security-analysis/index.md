@@ -29,7 +29,7 @@ import RelatedEvents from '@site/src/components/RelatedEvents';
 ### CloudWatch 向け WAF ログの設定
 
 :::warning[ロググループの命名要件]
-WAF ロググループは `aws-waf-logs-` というプレフィックスが**必須**です。例：`aws-waf-logs-production`。これは AWS によって強制される命名規則であり、プレフィックスがない場合、ログ配信はサイレントに失敗します。詳細については、[CloudWatch Logs ロググループへの Web ACL トラフィックログの送信](https://docs.aws.amazon.com/waf/latest/developerguide/logging-cw-logs.html)を参照してください。
+WAF ロググループは `aws-waf-logs-` というプレフィックスが**必須**です。例：`aws-waf-logs-production`。プレフィックスのないロググループを指定すると、AWS WAF はログ設定を拒否します。WAF コンソールにも、このプレフィックスを持つロググループのみが表示されます。詳細については、[CloudWatch Logs ロググループへの Web ACL トラフィックログの送信](https://docs.aws.amazon.com/waf/latest/developerguide/logging-cw-logs.html)を参照してください。
 :::
 
 CloudWatch で WAF ログを分析する前に、Web ACL から CloudWatch Logs ロググループにログを送信するように設定する必要があります。推奨されるアプローチは、[CloudWatch テレメトリ有効化ルール](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-rules.html)（CloudWatch 統合データソースの一部）を使用して、アカウントおよび組織全体で WAF ログを自動的に有効にすることです。

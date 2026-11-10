@@ -12,7 +12,7 @@ This guide covers best practices for configuring WAF logging to CloudWatch Logs,
 ## Setup WAF Logging for CloudWatch
 
 :::warning[Log Group Naming Requirement]
-WAF log groups **must** be prefixed with `aws-waf-logs-`. For example: `aws-waf-logs-production`. This is an AWS-enforced naming convention, and log delivery will fail silently if the prefix is missing. See [Sending web ACL traffic logs to a CloudWatch Logs log group](https://docs.aws.amazon.com/waf/latest/developerguide/logging-cw-logs.html) for details.
+WAF log groups **must** be prefixed with `aws-waf-logs-`. For example: `aws-waf-logs-production`. AWS WAF rejects a logging configuration whose log group name doesn't start with this prefix, and the WAF console lists only log groups that have it. See [Sending web ACL traffic logs to a CloudWatch Logs log group](https://docs.aws.amazon.com/waf/latest/developerguide/logging-cw-logs.html) for details.
 :::
 
 Before analyzing WAF logs in CloudWatch, you must configure your web ACL to send logs to a CloudWatch Logs log group. The recommended approach is to use [CloudWatch telemetry enablement rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-rules.html) (part of CloudWatch Unified Data Sources) to automatically enable WAF logging across your accounts and organization.

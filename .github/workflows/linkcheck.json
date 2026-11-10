@@ -28,6 +28,9 @@
       "pattern": "^#"
     },
     {
+      "pattern": "^\\{require\\("
+    },
+    {
       "pattern": "/observability-best-practices/ja/"
     },
     {

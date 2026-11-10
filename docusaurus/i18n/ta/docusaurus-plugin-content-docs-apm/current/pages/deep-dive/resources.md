@@ -14,7 +14,7 @@
 - [ADOT JavaScript Instrumentation](https://github.com/aws-observability/aws-otel-js-instrumentation)
 - [ADOT .NET Instrumentation](https://github.com/aws-observability/aws-otel-dotnet-instrumentation)
 - [OpenTelemetry Collector Contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib)
-- [AWS Application Signals Processor](https://github.com/amazon-contributing/opentelemetry-collector-contrib/tree/main/processor/awsapplicationsignalsprocessor)
+- [AWS Application Signals Processor](https://github.com/aws/amazon-cloudwatch-agent/tree/main/plugins/processors/awsapplicationsignals)
 - [ADOT சமூக எடுத்துக்காட்டுகள்](https://github.com/aws-observability/aws-otel-community)
 
 ## பயிற்சி வளங்கள்

@@ -20,7 +20,7 @@
 - [ADOT JavaScript 계측](https://github.com/aws-observability/aws-otel-js-instrumentation) - Node.js 애플리케이션용 자동 계측 라이브러리
 - [ADOT .NET 계측](https://github.com/aws-observability/aws-otel-dotnet-instrumentation) - .NET 애플리케이션용 자동 계측 라이브러리
 - [OpenTelemetry Collector Contrib](https://github.com/open-telemetry/opentelemetry-collector-contrib) - 커뮤니티 기여 Collector 구성요소
-- [AWS Application Signals Processor](https://github.com/amazon-contributing/opentelemetry-collector-contrib/tree/main/processor/awsapplicationsignalsprocessor) - Application Signals용 커스텀 프로세서 소스 코드
+- [AWS Application Signals Processor](https://github.com/aws/amazon-cloudwatch-agent/tree/main/plugins/processors/awsapplicationsignals) - Application Signals용 커스텀 프로세서 소스 코드
 - [ADOT 커뮤니티 예제](https://github.com/aws-observability/aws-otel-community) - 커뮤니티 제공 구현 예제 모음
 
 ## 교육 리소스

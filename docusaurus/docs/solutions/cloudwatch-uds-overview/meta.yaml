@@ -1,0 +1,14 @@
+name: "CloudWatch Unified Data Store (UDS): Overview and Where to Start"
+slug: cloudwatch-uds-overview
+content_type: guide
+description: "The map for the CloudWatch unified data store (UDS) guide set: the decisions in order, how third-party sources get in, and which guide covers each step."
+workload_type: [operations, security]
+backends: [cloudwatch]
+signals: [logs, metrics, traces]
+search_keywords: [unified data store, UDS, overview, getting started, OCSF, Security Lake migration, Omni]
+
+status: preview
+last_validated: "2026-10-27"
+
+docs_link: https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/
+related_events: [security, logs, cloudwatch]

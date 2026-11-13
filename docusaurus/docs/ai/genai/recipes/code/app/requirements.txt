@@ -1,5 +1,5 @@
 boto3==1.34.51
-opentelemetry-api==1.23.0
+opentelemetry-api==1.45.2
 opentelemetry-sdk==1.23.0
 opentelemetry-exporter-otlp-proto-grpc==1.23.0
 opentelemetry-semantic-conventions==0.44b0

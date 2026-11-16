@@ -1,0 +1,54 @@
+---
+title: "CloudWatch Unified Data Store: Overview and Where to Start"
+sidebar_label: UDS Overview
+---
+
+import RelatedEvents from '@site/src/components/RelatedEvents';
+
+# CloudWatch Unified Data Store: overview and where to start
+
+## Overview
+
+[Amazon CloudWatch unified data store (UDS)](https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/) consolidates operational, security, and compliance logs from AWS and third-party sources into one place to store, query, and analyze. It normalizes them to a common schema (OCSF), and you query and investigate them in CloudWatch Omni. UDS serves operations and security from the same store. The [AWS Security Reference Architecture (AWS SRA)](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html) recommends UDS as the primary option for centralized log collection and analytics across an organization, with Amazon Security Lake as the secondary option. The SRA places UDS in the Security Tooling account (the Audit account in AWS Control Tower), as the home for operational, security, and compliance telemetry.
+
+This page lays out the path from no telemetry to a queried, investigatable store, and points to the guide for each step. Many teams, including those moving from Amazon Security Lake, want to see their own third-party data, from security tools and operational systems alike, arrive in UDS, normalized and queryable, before they commit. The guides walk through that end to end.
+
+## When to use this
+
+- You want one place to store and investigate operational and security logs across your accounts.
+- You are moving third-party telemetry into CloudWatch, from security tools (endpoint, firewall, identity, DNS) or operational and SaaS systems (source control, IT service management, collaboration), and want to know how it gets there.
+- You are planning a migration from Amazon Security Lake to CloudWatch and want the consolidate, then query and investigate path laid out.
+
+## Guidance
+
+### The path, in order
+
+Each step builds on the one before it.
+
+1. **[Zero-to-query baseline](../cloudwatch-uds-zero-to-query/).** Take an account from empty to a first query with one natively supported source. Everything else builds on telemetry already being in UDS.
+2. **Bring your third-party sources in.** Managed connectors and telemetry pipelines (direct API or S3 delivery) normalize third-party products to OCSF with no custom code. If you already run a log pipeline that can write to Amazon CloudWatch Logs and transform to OCSF, you can send its output to CloudWatch Logs instead. That data then centralizes and queries like any other UDS log group.
+3. **Centralize then distribute vs distributed centralization.** Decide where the central store lives across accounts: one store for operations and security, which is the AWS SRA default, or separate stores by use case or team. The guide covers the retention and log-class tradeoffs that usually settle it.
+4. **Query and investigate with CloudWatch Omni.** Ask questions of the centralized store in plain language, scope what each team sees with grants and data scopes, and start an investigation with the AWS DevOps Agent.
+
+### New to CloudWatch Omni
+
+[Introducing Amazon CloudWatch Omni](../cw-omni-guide/) is the product primer for the AI-powered query and investigation experience that step 4 builds on.
+
+### Get started
+
+1. Open the [zero-to-query baseline](../cloudwatch-uds-zero-to-query/) and bring one natively supported source, such as CloudTrail or VPC Flow Logs, into UDS in a single account.
+2. Run your first query, then return to step 2 above to add your third-party sources.
+3. Moving from Security Lake? Read [Querying historical Security Lake data alongside CloudWatch UDS](../security-lake-cloudwatch/) to keep your history queryable while new data lands in UDS. The AWS SRA keeps Security Lake as a supported option, so you can plan the move on your own timeline.
+
+## Related
+
+- [CloudWatch UDS: zero-to-query baseline](../cloudwatch-uds-zero-to-query/)
+- [Introducing Amazon CloudWatch Omni](../cw-omni-guide/)
+- [Querying historical Security Lake data alongside CloudWatch UDS](../security-lake-cloudwatch/)
+- [CloudWatch Logs Security Best Practices](../cloudwatch-logs-security/)
+- [AWS SRA: Security OU – Security Tooling account](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html)
+- [AWS SRA: Security OU – Log Archive account](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/log-archive.html)
+
+## Related Events
+
+<RelatedEvents topics={["security", "logs", "cloudwatch"]} />

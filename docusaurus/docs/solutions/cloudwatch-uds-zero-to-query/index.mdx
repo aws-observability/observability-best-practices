@@ -1,0 +1,493 @@
+---
+title: "CloudWatch Unified Data Store: Zero-to-Query Baseline"
+sidebar_label: UDS Zero-to-Query Baseline
+---
+
+import RelatedEvents from '@site/src/components/RelatedEvents';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# CloudWatch Unified Data Store: a zero-to-query baseline
+
+## Overview
+
+[Amazon CloudWatch unified data store (UDS)](https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/) consolidates operational, security, and compliance logs into one place to store, query, and investigate. This guide takes one AWS account from no telemetry to a first answer in [CloudWatch Omni](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-omni.html).
+
+The guide has two parts:
+
+- **Part 1, set it up in the console.** Five short steps in a test account, so you can see your own logs land, normalized, and answer questions about them in Omni.
+- **Part 2, move to infrastructure as code.** The same configuration as AWS CloudFormation and Terraform, so you can review it, version it, and roll it out across accounts the way you deploy everything else.
+
+:::warning[Start in a test account]
+Run Part 1 in a test or development account, not in production. The steps turn on log collection, create IAM roles and pipelines, and start billable ingestion. Use Part 2 to bring the configuration into production after you have reviewed it, and confirm the results again there.
+:::
+
+## When to use this
+
+- You want to try CloudWatch UDS with your own AWS logs and see a first result quickly.
+- You are evaluating UDS for operations, security, or both, and want to know what the setup involves before you plan a rollout.
+- You have a working test setup and want the infrastructure as code that matches it.
+
+## Guidance
+
+### Before you start
+
+You need:
+
+- An AWS account for testing, and a role in it that can configure CloudWatch telemetry, create IAM roles, and enable CloudWatch Omni.
+- At least one natively supported source in the account. AWS CloudTrail management events work in any account. VPC Flow Logs, Application Load Balancer access logs, and Amazon S3 server access logs also work.
+- The AWS Region you want to use. CloudWatch Omni works per account and Region, so pick one Region for the whole guide.
+- For step 4 only: AWS Organizations and a second account to centralize into. Skip step 4 for a single-account test.
+
+Ingestion and storage are billed at standard CloudWatch rates. Omni includes a monthly query allowance, and you pay only for queries above it. See [Amazon CloudWatch Omni pricing](https://aws.amazon.com/cloudwatch/omni/pricing/).
+
+### Architecture
+
+![CloudWatch unified data store, zero to query. In a member account, natively supported AWS sources (AWS CloudTrail, VPC Flow Logs, Application Load Balancer access logs, Amazon S3 server access logs) are turned on by a CloudWatch telemetry rule scoped to the organization, an OU, or an account (step 1). They land in CloudWatch Logs log groups in the unified data store, where you validate them with the aggregate log-group summary check, and an optional CloudWatch telemetry pipeline normalizes them to OCSF 1.5 in place (steps 2 and 3). An optional centralization rule copies new data from every account and Region in scope to a central account, either the Security Tooling account (the AWS SRA default for all telemetry) or an observability account (step 4). You then query where the data lands or in the central account (step 5), primarily by asking in plain language in CloudWatch Omni, and also with Log Analytics in the CloudWatch Logs console or Amazon Athena over S3 Tables.](/img/cloudops/solutions/cloudwatch-uds/uds-zero-to-query-flow.png)
+
+Three capabilities do the work, and it helps to keep them apart:
+
+- **Telemetry (enablement) rules** decide *whether* logs are collected.
+- **Centralization rules** decide *where* logs are stored across accounts and Regions.
+- **The unified data store** normalizes the data (OCSF) and makes it queryable in CloudWatch Omni, in the CloudWatch Logs console, and as Apache Iceberg tables through [S3 Tables](https://aws.amazon.com/s3/features/tables/).
+
+### Part 1: set it up in the console
+
+#### Step 1: Turn on telemetry collection
+
+**1.1 Turn on telemetry configuration.** Do this once in the test account.
+
+1. Open the CloudWatch console and choose **Ingestion**.
+2. Choose the **Data sources** tab, and then choose **Enable resource discovery**.
+
+CloudWatch starts discovering the AWS resources in the account, and the button changes to **Discovered resources**. For an organization, you turn this on once from the management account instead (step 4 covers that). See [Setting up telemetry configuration](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-turn-on.html).
+
+**1.2 Create an enablement rule for CloudTrail.**
+
+1. In the CloudWatch console, choose **Ingestion**, then the **Enablement rules** tab, and choose **Add rule**.
+2. In the **Select data source** panel, choose **Configure telemetry** next to **AWS CloudTrail**.
+3. **Specify scope:** the console suggests a rule name, such as `CloudTrail-TurnOnLogging-<date>`. Keep it or replace it, and choose the Regions the rule applies to.
+4. **Specify destination:** keep **Managed log group** and the default log group name pattern. Change **Retention setting** from the default **Never expire** to a short period for testing, such as **1 week (7 days)**.
+5. **Select data options:** keep **Management events** selected and leave **Data events** cleared.
+6. **Review and create:** choose **Configure CloudTrail enablement**.
+
+Expected: the **Enablement rules** tab shows the rule, and within a few minutes the `aws/cloudtrail/managementevents` log group appears.
+
+:::warning[Add CloudTrail data events deliberately]
+Data events (for example Amazon S3 object-level or AWS Lambda invoke activity) can be very high volume and add significant cost. Leave them off for this test. The AWS SRA recommends capturing data events only for specific critical resources. If you need them later, add them with advanced event selectors that log only the events you need: filter on `resources.ARN` to limit the resources, on `readOnly` to log only write or only read events, and on `eventName` to include or exclude specific API calls. See [Filtering data events by using advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html).
+:::
+
+Repeat for any other source you want to test, such as VPC Flow Logs.
+
+:::note[Things to know]
+- The CloudTrail rule is independent of any existing trail. It creates its own log data.
+- In production, the rule adds to your organization trail and does not replace it. The AWS SRA still requires an organization trail that delivers to an S3 bucket in the Log Archive account. See [AWS CloudTrail](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html#tool-cloudtrail) in the AWS SRA.
+- A telemetry rule does not change a VPC flow log that existed before the rule.
+- For AWS WAF, the log group name must start with `aws-waf-logs-`. See [Log group naming](https://docs.aws.amazon.com/waf/latest/developerguide/logging-cw-logs.html#logging-cw-logs-naming) in the AWS WAF Developer Guide.
+- If the account has an account-level retention policy that matches the new log group, that policy sets the retention instead of the rule, including when the policy's period is shorter. Account-level policies have a 30-day minimum, so a 7-day test setting is replaced. Check with `aws logs describe-account-policies --policy-type RETENTION_POLICY`. See [Account-level retention policies](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/Working-with-log-groups-and-streams.html#account-level-retention-policies).
+:::
+
+#### Step 2: Confirm logs are landing
+
+**2.1 Check coverage.** In **CloudWatch > Ingestion**, the **Enablement rules** tab lists your rule. On the **Data sources** tab, the source shows your resources as enabled.
+
+**2.2 Check the log groups.** In **CloudWatch > Logs > Log Management**, confirm the log groups exist and show recent events. Note each one's log class and retention.
+
+**2.3 Check by data source (optional, CLI).** This is the same check you use later in production before building dashboards:
+
+```bash
+aws logs list-aggregate-log-group-summaries --group-by DATA_SOURCE_NAME_AND_TYPE
+```
+
+Expected: entries such as `aws_cloudtrail` or `amazon_vpc`. CloudTrail events can take several minutes to appear. Allow up to 24 hours before you treat a missing source as an error.
+
+#### Step 3: Normalize to OCSF (optional)
+
+AWS-native logs arrive in their native shape. To give AWS and third-party data one schema and one query, normalize them to OCSF 1.5 with a CloudWatch telemetry pipeline. For an AWS source, the pipeline writes back into the same log group, so you do not keep a second copy.
+
+1. In **CloudWatch > Ingestion**, open the **Pipelines** tab and choose **Create pipeline**.
+2. **Pipeline settings:** for **Select data source**, choose **AWS CloudTrail logs**. For **Log source type**, choose **Management**. Enter a pipeline name. Under **Service access**, choose **Auto create and use a new service role**.
+3. **Configure processors:** add the **OCSF** processor. For CloudTrail the console sets the schema to `cloud_trail`, version `1.5`, mapping version `1.5.0`.
+4. **Configure sinks:** the destination is `@original`, the log group the events came from. The console sets this and you cannot change it. Turn on **Keep original log** if you need the untouched raw event alongside the OCSF record; it is stored in the `@original_message` field.
+5. Review and choose **Create pipeline**.
+
+A CloudWatch Logs source selects events by data source name and type, not by log group, so this one pipeline covers the CloudTrail management events log group.
+
+:::note[Things to know]
+- A pipeline with processors changes the events in the original log group for logs from AWS services. Use **Keep original log** (`include_original` in the configuration) to keep an unmodified copy.
+- Only one pipeline can use each combination of data source name and type, so a source that already has a pipeline is greyed out.
+- For CloudTrail, the only processor allowed is `ocsf`.
+- See [AWS service logs from CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-service-logs-from-cwl.html) and [Sinks](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/pipeline-sinks.html).
+:::
+
+#### Step 4: Centralize (optional)
+
+Skip this step for a single-account test. To see how centralization works, you need AWS Organizations and a central destination account. The [AWS Security Reference Architecture (AWS SRA)](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html) uses the Security Tooling account in the Security OU (the Audit account in AWS Control Tower) as the home for operational, security, and compliance telemetry, and as the CloudWatch delegated administrator. As an alternative, the SRA allows a dedicated monitoring account that holds CloudWatch instead.
+
+Do only the first two actions in the management account. Everything after that runs in the delegated administrator account.
+
+1. **In the management account:** open the CloudWatch console and choose **Settings**. Switch the view from **Account** to **Organization**, and choose **Turn on trusted access**. On the **Turn on telemetry configuration auditing for organization** page, choose **Turn on**. CloudWatch enables trusted access and creates the `AWSServiceRoleForObservabilityAdmin` service-linked role.
+2. **In the management account:** on the same page, choose **Register delegated administrator**, select the account that will administer CloudWatch for the organization (the Security Tooling account or your monitoring account), and choose **Register delegated administrator**.
+3. **In the delegated administrator account:** choose **Settings**, switch the view to **Organization**, and in **Centralization rules management** choose **Configure rule**. Name the rule, choose the source accounts (by account ID, OU ID, organization ID, email, or name) and the source Regions, then choose **Next** and choose the destination account and Region.
+4. **In the delegated administrator account:** on **Select data and resources to centralize**, logs, metrics, and the context graph are selected by default. Choose all log groups or a filter, and the destination encryption: an AWS owned key, or a customer managed AWS KMS key. Optionally set a backup Region, then review and choose **Create centralization rule**.
+
+From here on, manage telemetry rules and centralization rules from the delegated administrator account. See [Setting up telemetry configuration](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-turn-on.html) and [Cross-account cross-Region log centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html).
+
+:::warning[Only new data is centralized]
+Centralization copies data that arrives after the rule exists. It does not copy older logs. The first copy is free; additional copies are billed per GB. Centralized records carry `@aws.account` and `@aws.region` so you can tell sources apart.
+:::
+
+If you centralize, set up Omni in step 5 in the destination account, because that is where the data comes to rest.
+
+#### Step 5: Ask your first questions in CloudWatch Omni
+
+**5.1 Set up Omni.** In the account and Region that hold the data:
+
+1. Open the [Omni setup page](https://console.aws.amazon.com/cloudwatch/home#settings:/omni) in the CloudWatch console and choose **Get started**. One page, **Configure your domain and space**, opens.
+2. **Domain:** in a standalone or member account, **Account-level domain** is selected. (**Organization-level domain** is available only from the organization's management account.) The console suggests a domain name based on the account name; keep it or replace it. It becomes your team's sign-in URL, `https://<domain-name>.cloudwatch-omni.global.app.aws`.
+3. **Space details:** the console suggests a space name in the form `<account-id>-<region>`. Keep it or replace it.
+4. **Permissions:** keep **Create default role** for the space access role. Clear **Provide Bedrock AgentCore online evaluations role** if you are not evaluating AI agents.
+5. **Review default configurations:** for a logs-only test, clear **OTel span ingestion** and **OTel enrichment for AWS Metrics**. Both follow their own pricing, and you can turn them on later from the space.
+6. **Space administrators:** the role you are signed in with is listed. Add other roles or users if needed.
+7. Choose **Create space**. The Omni overview page shows the domain and space, and a **Sign in** button.
+
+Omni backfills the space with up to 7 days of existing CloudWatch logs, so the data from steps 1 to 3 is ready to query. For a test, sign in from the overview page with your IAM role. Connect IAM Identity Center at the domain later, when you add your team. See [Set up Omni for a single account](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-a-single-account.html).
+
+**5.2 Ask a question.** Open your space and type a question in the chat box:
+
+```text
+Show me access denied errors in my CloudTrail data in the last hour.
+```
+
+Omni writes a query, runs it in an **Explore** canvas, and summarizes the results in the chat, with suggested follow-up questions. You can open the query it wrote, edit it, and run it again. In a new test account the answer may be that nothing matched in the last hour; try a broader question, such as:
+
+```text
+Which AWS API calls appear most often in my CloudTrail management events in the last hour?
+``` AI-generated queries can differ from one run to the next, so check the query against the results before you rely on it.
+
+**5.3 See which sources you have.** In **Explore logs**, switch to **Code** view, set the time picker to the last hour, and run:
+
+```sql
+SELECT `@data_source_name` AS source, `@logGroupName` AS log_group, count(*) AS events
+FROM "logs.default"
+GROUP BY 1, 2 ORDER BY events DESC
+LIMIT 50
+```
+
+Expected: one row per source and log group. CloudTrail shows as `aws_cloudtrail` in the `aws/cloudtrail/managementevents` log group, and VPC Flow Logs as `amazon_vpc`. Other existing log groups, such as Lambda logs, show as `Unknown`. If you see your sources here, you have gone from zero to query.
+
+If you created the OCSF pipeline in step 3, confirm it is converting events:
+
+```sql
+SELECT `@data_format` AS format, count(*) AS events
+FROM "logs.default"
+WHERE `@data_source_name` = 'aws_cloudtrail'
+GROUP BY 1
+```
+
+Expected: `OCSF-1.5.0` for events that arrived after the pipeline was created, and `Default` for earlier events.
+
+:::tip[Other ways to query the same data]
+The same logs are queryable from Log Analytics in the CloudWatch Logs console (Logs Insights QL, OpenSearch PPL, OpenSearch SQL), and from Amazon Athena, Amazon Redshift, or Amazon EMR through the managed `aws-cloudwatch` S3 Tables bucket, after you grant Lake Formation `SELECT` and `DESCRIBE`. In Log Analytics, select data by source rather than by log-group name so the query works in every account:
+
+```text
+SOURCE logGroups() | filterIndex @data_source_name in ["aws_cloudtrail"]
+```
+:::
+
+### Part 2: move to infrastructure as code
+
+Once the test setup does what you want, express it as code so you can review, version, and roll it out across accounts and Regions. The resources below match Part 1. Deploy them in a test account first, confirm the same results as in Part 1, then promote them through your normal pipeline to production and check again there.
+
+:::tip[Production guardrails from the AWS SRA]
+The AWS SRA recommends that you change CloudWatch configuration only through deployment pipelines, and prevent changes through the console or the AWS CLI. In the account that manages CloudWatch, grant only the permissions needed with IAM policies and service control policies (SCPs), and use detective controls such as AWS Config to alert on unexpected permission changes. See [Amazon CloudWatch](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html#c-wlong) in the AWS SRA.
+:::
+
+#### Telemetry rule (step 1)
+
+Telemetry configuration (step 1.1) must be turned on before the rule collects anything. CloudFormation has no resource for it, so turn it on in the console first. Terraform turns it on with `aws_observabilityadmin_telemetry_evaluation` (or `aws_observabilityadmin_telemetry_evaluation_for_organization` for an organization).
+
+Both examples record CloudTrail management events only. The data events selector is commented out; see the note after the tabs before you turn it on.
+
+:::note[One CloudTrail rule per event category]
+An account can have only one CloudTrail telemetry rule for each event category (management or data). If you created the rule in the console in Part 1, delete it before you deploy this one, or the deployment fails with `A CloudTrail rule with the same event category already exists`.
+:::
+
+<Tabs>
+<TabItem value="cfn" label="CloudFormation" default>
+
+```yaml
+CloudTrailTelemetryRule:
+  Type: AWS::ObservabilityAdmin::TelemetryRule
+  Properties:
+    RuleName: cloudtrail-telemetry
+    Rule:
+      ResourceType: AWS::CloudTrail
+      TelemetryType: Logs
+      DestinationConfiguration:
+        DestinationType: cloud-watch-logs
+        RetentionInDays: 30
+        CloudtrailParameters:
+          AdvancedEventSelectors:
+            # 1. All management events.
+            - Name: Management events
+              FieldSelectors:
+                - Field: eventCategory
+                  Equals:
+                    - Management
+            # 2. OPTIONAL: data events. Off by default because they can be high
+            #    volume and costly. Uncomment only the events you need, scoped
+            #    with field selectors (resources.ARN, readOnly, eventName).
+            # - Name: S3 write data events (scoped)
+            #   FieldSelectors:
+            #     - Field: eventCategory
+            #       Equals:
+            #         - Data
+            #     - Field: resources.type
+            #       Equals:
+            #         - AWS::S3::Object
+            #     - Field: readOnly
+            #       Equals:
+            #         - "false"
+            #     - Field: resources.ARN
+            #       StartsWith:
+            #         - 'arn:aws:s3:::REPLACE-bucket-name/'
+```
+
+</TabItem>
+<TabItem value="terraform" label="Terraform">
+
+```hcl
+# Turns on telemetry evaluation for the account (step 1.1).
+resource "aws_observabilityadmin_telemetry_evaluation" "this" {}
+
+resource "aws_observabilityadmin_telemetry_rule" "cloudtrail" {
+  rule_name = "cloudtrail-telemetry"
+  rule {
+    resource_type  = "AWS::CloudTrail"
+    telemetry_type = "Logs"
+    destination_configuration {
+      destination_type  = "cloud-watch-logs"
+      retention_in_days = 30
+      cloudtrail_parameters {
+        # 1. All management events.
+        advanced_event_selectors {
+          name = "Management events"
+          field_selectors {
+            field  = "eventCategory"
+            equals = ["Management"]
+          }
+        }
+        # 2. OPTIONAL: data events. Off by default because they can be high
+        #    volume and costly. Uncomment only the events you need, scoped
+        #    with field selectors (resources.ARN, readOnly, eventName).
+        # advanced_event_selectors {
+        #   name = "S3 write data events (scoped)"
+        #   field_selectors {
+        #     field  = "eventCategory"
+        #     equals = ["Data"]
+        #   }
+        #   field_selectors {
+        #     field  = "resources.type"
+        #     equals = ["AWS::S3::Object"]
+        #   }
+        #   field_selectors {
+        #     field  = "readOnly"
+        #     equals = ["false"]
+        #   }
+        #   field_selectors {
+        #     field       = "resources.ARN"
+        #     starts_with = ["arn:aws:s3:::REPLACE-bucket-name/"]
+        #   }
+        # }
+      }
+    }
+  }
+  depends_on = [aws_observabilityadmin_telemetry_evaluation.this]
+}
+```
+
+</TabItem>
+</Tabs>
+
+:::warning[Before you add data events]
+Data events can be very high volume and add significant cost. Add them only when you need them, and use advanced event selectors to log only the specific data events of interest. If you uncomment the example, replace `REPLACE-bucket-name` with the bucket whose write events you need, for example `arn:aws:s3:::example-payments-data/`. Field selectors and their operators: [Filtering data events by using advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html) and [AdvancedEventSelector](https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_AdvancedEventSelector.html) in the CloudTrail API Reference.
+:::
+
+To create the rule for another source, change `ResourceType` and the parameters block, for example `AWS::EC2::VPC` with `VPCFlowLogParameters`.
+
+:::tip[Set retention for many log groups at once]
+In production, you can set retention with an account-level retention policy instead of in each telemetry rule. One policy covers every log group in the account, or only the ones whose names start with a prefix, and you can have up to 20 per account and Region. When several policies match a log group, the longest period applies, so a typical setup is a baseline for the account plus longer policies for audit or security log groups. A policy replaces each matching log group's own retention, including a longer one, and takes effect 24 hours after you create or change it. Run it with `--dry-run` first: the result counts the log groups whose retention would go up, go down or stay the same, and lists the largest ones.
+
+```bash showLineNumbers {3,4}
+aws logs put-account-policy --dry-run \
+  --policy-name baseline-retention --policy-type RETENTION_POLICY \
+  --policy-document '{"retentionInDays": 90, "enforcementMode": "RETROACTIVE"}' \
+  --selection-criteria 'LogGroupNamePrefix="aws/cloudtrail"'
+```
+
+**REPLACE:** on line 3, set `retentionInDays` to the period your retention standard requires (valid values start at 30, for example `365`), and set `enforcementMode` to `RETROACTIVE` to include existing log groups or `NEW_ONLY` for new ones only. On line 4, set the log group name prefix the policy covers, for example `aws/cloudtrail`, or remove the line to cover every log group in the account. Remove `--dry-run` to create the policy. If `aws logs put-account-policy help` doesn't list `RETENTION_POLICY`, update the AWS CLI first. CloudFormation (`AWS::Logs::AccountPolicy`) and Terraform (`aws_cloudwatch_log_account_policy`) don't accept this policy type yet.
+:::
+
+#### OCSF pipeline (step 3)
+
+```yaml {16}
+# In-place OCSF conversion of CloudTrail management events, as in step 3.
+# The sink must be "@original" for a cloudwatch_logs source.
+CloudTrailOcsfPipeline:
+  Type: AWS::ObservabilityAdmin::TelemetryPipelines
+  Properties:
+    Name: cloudtrail-ocsf
+    Configuration:
+      Body: |
+        pipeline:
+          source:
+            cloudwatch_logs:
+              log_event_metadata:
+                data_source_name: "aws_cloudtrail"
+                data_source_type: "management"
+              aws:
+                sts_role_arn: "arn:aws:iam::111122223333:role/REPLACE-pipeline-role"
+          processor:
+            - ocsf:
+                version: "1.5"
+                mapping_version: "1.5.0"
+                schema:
+                  cloud_trail:
+          sink:
+            - cloudwatch_logs:
+                log_group: "@original"
+                # Optional: keep the raw event in @original_message
+                # include_original: {}
+```
+
+**REPLACE:** in `sts_role_arn`, put your account ID and the name of an IAM role that `logs.amazonaws.com` can assume, with `logs:ProcessWithPipeline` on the source log group. Find the account ID in the console's account menu. Other sources use a different `data_source_name`, `data_source_type`, and schema:
+
+| Log type | `data_source_name` | `data_source_type` | `ocsf.schema` |
+|---|---|---|---|
+| CloudTrail management events | `aws_cloudtrail` | `management` | `cloud_trail` |
+| VPC Flow Logs | `amazon_vpc` | `flow` | `vpc_flow` |
+| EKS audit | `amazon_eks` | `audit` | `eks_audit` |
+| Route 53 Resolver | `amazon_route53` | `resolver_query` | `route53_resolver` |
+
+To collect Route 53 Resolver query logs with a telemetry rule, use Terraform or the AWS CLI (`create-telemetry-rule` or `create-telemetry-rule-for-organization`) with resource type `AWS::Route53Resolver::ResolverEndpoint`. The CloudFormation telemetry rule resources do not list that resource type yet. The pipeline above works for Resolver logs once they arrive.
+
+#### Centralization rule (step 4)
+
+Deploy from the CloudWatch delegated administrator account (step 4.2).
+
+<Tabs>
+<TabItem value="cfn" label="CloudFormation" default>
+
+```yaml {11,18}
+LogsCentralizationRule:
+  Type: AWS::ObservabilityAdmin::OrganizationCentralizationRule
+  Properties:
+    RuleName: centralize-logs
+    Rule:
+      Source:
+        Regions:
+          - us-east-1
+          - us-west-2
+        # REPLACE: your organization ID
+        Scope: "OrganizationId = 'o-exampleorgid'"
+        SourceLogsConfiguration:
+          LogGroupSelectionCriteria: "*"            # or: LogGroupName LIKE '/aws/vpc%'
+          EncryptedLogGroupStrategy: ALLOW          # ALLOW | SKIP
+      Destination:
+        Region: us-east-1
+        # REPLACE: your central destination account ID
+        Account: "111122223333"
+        DestinationLogsConfiguration:
+          LogsEncryptionConfiguration:
+            EncryptionStrategy: AWS_OWNED            # AWS_OWNED | CUSTOMER_MANAGED
+```
+
+</TabItem>
+<TabItem value="terraform" label="Terraform">
+
+```hcl {21}
+variable "central_account_id" {
+  description = "12-digit ID of the central destination account"
+  type        = string
+}
+
+data "aws_organizations_organization" "current" {}
+
+resource "aws_observabilityadmin_centralization_rule_for_organization" "logs" {
+  rule_name = "centralize-logs"
+  rule {
+    source {
+      regions = ["us-east-1", "us-west-2"]
+      scope   = "OrganizationId = '${data.aws_organizations_organization.current.id}'"
+      source_logs_configuration {
+        log_group_selection_criteria = "*"          # or: LogGroupName LIKE '/aws/vpc%'
+        encrypted_log_group_strategy = "ALLOW"       # ALLOW | SKIP
+      }
+    }
+    destination {
+      region  = "us-east-1"
+      account = var.central_account_id             # REPLACE via variable
+      destination_logs_configuration {
+        logs_encryption_configuration {
+          encryption_strategy = "AWS_OWNED"          # AWS_OWNED | CUSTOMER_MANAGED
+        }
+      }
+    }
+  }
+}
+```
+
+</TabItem>
+</Tabs>
+
+**REPLACE:** on the highlighted lines, put your organization ID (for example `o-a1b2c3d4e5`, shown in the AWS Organizations console) and the 12-digit ID of the destination account. In Terraform, the organization ID is read for you; pass the destination account as `central_account_id`, for example `terraform apply -var central_account_id=111122223333`. Change `Regions` to the Regions your sources run in.
+
+#### CloudWatch Omni (step 5)
+
+Create the domain and space in the console as in step 5.1, or as code: in CloudFormation with `AWS::ObservabilityAdmin::DatasetIntegration`, `AWS::CloudWatch::Domain` and `AWS::CloudWatch::Space`, in Terraform with `aws_cloudwatchomni_domain` and `aws_cloudwatchomni_space` (Terraform AWS provider 6.69.0 or later), or with the AWS CLI (`aws cloudwatchomni create-domain` and `create-space`). For an organization, see [Set up Omni for your organization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-your-organization.html), and connect IAM Identity Center at the domain so your team signs in with the identities you already manage.
+
+:::note[Sources]
+- Telemetry configuration and rules: [Setting up telemetry configuration](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-turn-on.html) and [Telemetry enablement rules](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-rules.html)
+- CloudTrail data events: [Filtering data events by using advanced event selectors](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/filtering-data-events.html) and [AdvancedEventSelector](https://docs.aws.amazon.com/awscloudtrail/latest/APIReference/API_AdvancedEventSelector.html)
+- Pipelines: [AWS service logs from CloudWatch Logs](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/aws-service-logs-from-cwl.html) and [Sinks](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/pipeline-sinks.html)
+- Centralization: [Cross-account cross-Region log centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html)
+- CloudFormation: [AWS::ObservabilityAdmin::TelemetryRule](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-observabilityadmin-telemetryrule.html), [AWS::ObservabilityAdmin::OrganizationCentralizationRule](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-observabilityadmin-organizationcentralizationrule.html), [AWS::CloudWatch::Space](https://docs.aws.amazon.com/AWSCloudFormation/latest/TemplateReference/aws-resource-cloudwatch-space.html)
+- Terraform: the `aws_observabilityadmin_*` and `aws_cloudwatchomni_*` resources in the Terraform AWS provider
+- Omni setup: [Set up Omni for a single account](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-a-single-account.html)
+- Account placement, organization trail, data events, and production guardrails: AWS SRA, [Security OU – Security Tooling account](https://docs.aws.amazon.com/prescriptive-guidance/latest/security-reference-architecture/security-tooling.html)
+:::
+
+### Troubleshoot
+
+| Symptom | Likely cause | Fix |
+|---------|--------------|-----|
+| No data after creating the rule | Telemetry configuration not turned on (step 1.1) | Choose **Enable Resource Discovery** on the **Data sources** tab; the rule collects nothing until then |
+| Creating the CloudTrail rule fails with "Only 1 CloudTrail rule per event category is permitted" | A CloudTrail rule for the same event category (for example, management events) already exists, such as the one from the console steps | Delete the existing rule before you deploy the IaC version, or deploy only one of them |
+| A log group's retention doesn't match the rule's setting | An account-level retention policy matches the log group and overrides the rule | Run `aws logs describe-account-policies --policy-type RETENTION_POLICY`, then change the policy or its prefix. Changes take effect after 24 hours |
+| WAF logs never appear | Log group name does not start with `aws-waf-logs-` | Use a log group name with the required prefix |
+| A source is missing in Omni | The space is in a different account or Region than the data | Create the space where the data lands, or in the centralization destination |
+| A query returns 0 rows | Time picker window, or a source value that differs from the example | Widen the time picker, and run the step 5.3 query to see the exact `@data_source_name` values |
+| The central account has no older data | Centralization copies new data only | Expected; generate new activity and check again |
+
+### Clean up the test account
+
+When you are done testing, remove what you created so it stops incurring charges. Work in this order.
+
+1. **Enablement rule:** in **CloudWatch > Ingestion > Enablement rules**, select the rule, choose **Delete**, and confirm. Deleting a rule does not delete VPC flow logs it already created; delete those in the VPC console if you no longer need them.
+2. **Pipeline:** on the **Pipelines** tab, select the pipeline, choose **Delete**, and confirm.
+3. **Log group:** in **CloudWatch > Logs > Log Management**, select the test log groups, such as `aws/cloudtrail/managementevents`, and choose **Actions > Delete log group(s)**. Deleting a log group deletes its events permanently. To keep the data for a while instead, use **Actions > Edit retention setting(s)**.
+4. **Omni domain and space:** if you don't keep them for the next phase, open the [Omni setup page](https://console.aws.amazon.com/cloudwatch/home#settings:/omni), choose **Domain actions > Delete space and domain URL**, enter `Delete`, and choose **Delete permanently**. Keep **Delete the IAM roles associated with this space** selected to remove the space roles at the same time. The dataset integration that Omni set up stays in the account; remove it with `aws observabilityadmin delete-dataset-integration --arn arn:aws:observabilityadmin:REGION:ACCOUNT_ID:dataset-integration/default`, replacing REGION and ACCOUNT_ID.
+5. **Remaining IAM roles:** in the IAM console, delete the roles created during setup that you no longer need: the pipeline service role (`CloudWatch-Pipelines-role-*`) and, if you cleared the option in step 4, the Omni roles (`CloudWatchOmniSpaceAccessRole-*`, `CloudWatchOmniDatasetIntegrationExecutionRole-*`, `AgentCoreEvaluationRole-*`).
+6. **Telemetry configuration (optional):** resource discovery from step 1.1 can stay on. To turn it off, see [Disabling telemetry configuration](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/telemetry-config-turn-off.html). Turning it off does not change any telemetry settings on your resources.
+
+## Related
+
+- [CloudWatch UDS: overview and where to start](../cloudwatch-uds-overview/): the map and recommended order for this guide set.
+- [Introducing Amazon CloudWatch Omni](../cw-omni-guide/)
+- [CloudWatch Logs Security Best Practices](../cloudwatch-logs-security/)
+- [Querying historical Security Lake data alongside CloudWatch UDS](../security-lake-cloudwatch/)
+
+## Related Events
+
+<RelatedEvents topics={["security", "logs", "cloudwatch"]} />

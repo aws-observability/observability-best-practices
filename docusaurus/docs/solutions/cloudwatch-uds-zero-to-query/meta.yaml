@@ -1,0 +1,14 @@
+
+name: "CloudWatch UDS: Zero-to-Query Baseline"
+slug: cloudwatch-uds-zero-to-query
+content_type: guide
+description: "Set up the CloudWatch unified data store in a test account from the console, ask your first questions in CloudWatch Omni, then move the same setup to CloudFormation or Terraform."
+workload_type: [operations, security]
+backends: [cloudwatch]
+signals: [logs]
+
+status: active
+last_validated: "2026-10-27"
+
+docs_link: https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/
+related_events: [security, logs, cloudwatch]

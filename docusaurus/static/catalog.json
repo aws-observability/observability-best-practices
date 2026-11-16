@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T19:33:52.893125+00:00",
+  "generated_at": "2026-11-11T18:33:07.308396+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -60,6 +60,65 @@
       "related_events": [
         "cloudwatch",
         "general"
+      ]
+    },
+    {
+      "name": "CloudWatch UDS: Zero-to-Query Baseline",
+      "slug": "cloudwatch-uds-zero-to-query",
+      "content_type": "guide",
+      "description": "Set up the CloudWatch unified data store in a test account from the console, ask your first questions in CloudWatch Omni, then move the same setup to CloudFormation or Terraform.",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs"
+      ],
+      "status": "active",
+      "last_validated": "2026-10-27",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/",
+      "related_events": [
+        "security",
+        "logs",
+        "cloudwatch"
+      ]
+    },
+    {
+      "name": "CloudWatch Unified Data Store (UDS): Overview and Where to Start",
+      "slug": "cloudwatch-uds-overview",
+      "content_type": "guide",
+      "description": "The map for the CloudWatch unified data store (UDS) guide set: the decisions in order, how third-party sources get in, and which guide covers each step.",
+      "workload_type": [
+        "operations",
+        "security"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "logs",
+        "metrics",
+        "traces"
+      ],
+      "search_keywords": [
+        "unified data store",
+        "UDS",
+        "overview",
+        "getting started",
+        "OCSF",
+        "Security Lake migration",
+        "Omni"
+      ],
+      "status": "preview",
+      "last_validated": "2026-10-27",
+      "docs_link": "https://aws.amazon.com/cloudwatch/features/unified-data-and-telemetry/",
+      "related_events": [
+        "security",
+        "logs",
+        "cloudwatch"
       ]
     },
     {

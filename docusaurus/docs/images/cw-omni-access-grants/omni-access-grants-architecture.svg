@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 714" width="960" height="714" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" role="img" aria-labelledby="title desc">
+  <title id="title">CloudWatch Omni access grants: two-layer read path</title>
+  <desc id="desc">A member's read request passes two checks (the grant's permission level and data scope as Layer 1, then the Omni Space Access IAM role as Layer 2) before reaching the CloudWatch Dataset, which returns only the rows the member is allowed to see.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#5f6b7a"/>
+    </marker>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#0f1b2d" flood-opacity="0.08"/>
+    </filter>
+    <style>
+      .h { font-size: 19px; font-weight: 700; fill: #0f1b2d; }
+      .sub { font-size: 12px; font-weight: 700; letter-spacing: .08em; fill: #b4690e; }
+      .b { font-size: 14px; fill: #3b4656; }
+      .mono { font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace; font-size: 13px; fill: #1b4965; }
+      .pill { font-size: 11px; font-weight: 700; letter-spacing: .08em; }
+      .q { font-size: 13px; font-style: italic; }
+      .edge { stroke: #5f6b7a; stroke-width: 2; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="714" fill="#ffffff"/>
+
+  <!-- Member -->
+  <rect x="300" y="24" width="360" height="72" rx="12" fill="#eef3fb" stroke="#c6d4ec" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="55" text-anchor="middle" class="h">Member</text>
+  <text x="480" y="79" text-anchor="middle" class="b">IDC user or group · IAM user or role</text>
+  <line x1="480" y1="96" x2="480" y2="128" class="edge" marker-end="url(#arrow)"/>
+
+  <!-- Layer 1: Grant -->
+  <rect x="80" y="130" width="800" height="190" rx="14" fill="#fff7ed" stroke="#f0c389" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="104" y="146" width="74" height="22" rx="11" fill="#fde3c0"/>
+  <text x="141" y="161" text-anchor="middle" class="pill" fill="#8a4b05">LAYER 1</text>
+  <text x="190" y="161" class="q" fill="#8a5a1f">Can the member request it?</text>
+  <text x="480" y="190" text-anchor="middle" class="h">Grant</text>
+
+  <!-- Permission level chip -->
+  <rect x="104" y="206" width="360" height="92" rx="10" fill="#ffffff" stroke="#e4cba3" stroke-width="1.25"/>
+  <text x="124" y="232" class="sub">PERMISSION LEVEL</text>
+  <text x="124" y="256" class="b">Viewer · Editor · Space Admin</text>
+  <text x="124" y="279" class="b">Custom (exact actions)</text>
+
+  <!-- Data scope chip -->
+  <rect x="496" y="206" width="360" height="92" rx="10" fill="#ffffff" stroke="#e4cba3" stroke-width="1.25"/>
+  <text x="516" y="232" class="sub">DATA SCOPE</text>
+  <text x="516" y="256" class="b">Row filter on logs and traces</text>
+  <text x="516" y="279" class="mono">signalTypes · rowScopeGroups</text>
+
+  <line x1="480" y1="320" x2="480" y2="352" class="edge" marker-end="url(#arrow)"/>
+
+  <!-- Layer 2: Space Access role -->
+  <rect x="80" y="354" width="800" height="140" rx="14" fill="#eefbf3" stroke="#a7dcc0" stroke-width="1.5" filter="url(#shadow)"/>
+  <rect x="104" y="370" width="74" height="22" rx="11" fill="#cdeedb"/>
+  <text x="141" y="385" text-anchor="middle" class="pill" fill="#1e6b43">LAYER 2</text>
+  <text x="190" y="385" class="q" fill="#2f6b4c">Can the space do it?</text>
+  <text x="480" y="414" text-anchor="middle" class="h">Omni Space Access role (IAM)</text>
+  <text x="480" y="442" text-anchor="middle" class="b">The ceiling for every grant: a grant can narrow it, never widen it.</text>
+  <text x="480" y="470" text-anchor="middle" class="mono">cloudwatch:GetRecords · GetMetricData · ListMetrics</text>
+
+  <line x1="320" y1="494" x2="320" y2="526" class="edge" marker-end="url(#arrow)"/>
+  <line x1="720" y1="494" x2="720" y2="526" class="edge" marker-end="url(#arrow)"/>
+  <!-- Dataset (logs + traces forwarded) -->
+  <rect x="100" y="528" width="440" height="72" rx="12" fill="#f3eefb" stroke="#cebfe8" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="320" y="559" text-anchor="middle" class="h">CloudWatch Dataset</text>
+  <text x="320" y="583" text-anchor="middle" class="b">logs + traces · forwarded together</text>
+  <!-- Metrics (queried directly) -->
+  <rect x="580" y="528" width="280" height="72" rx="12" fill="#f3eefb" stroke="#cebfe8" stroke-width="1.5" stroke-dasharray="6 4" filter="url(#shadow)"/>
+  <text x="720" y="559" text-anchor="middle" class="h">CloudWatch OTel Metrics</text>
+  <text x="720" y="583" text-anchor="middle" class="b">queried directly · not forwarded</text>
+  <line x1="320" y1="600" x2="320" y2="632" class="edge" marker-end="url(#arrow)"/>
+  <line x1="720" y1="600" x2="720" y2="632" class="edge" marker-end="url(#arrow)"/>
+  <!-- Result -->
+  <rect x="160" y="634" width="640" height="56" rx="28" fill="#e8f0f7" stroke="#bcd0e2" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="480" y="668" text-anchor="middle" class="h" style="font-size:16px">Only the rows the member is allowed to see</text>
+</svg>

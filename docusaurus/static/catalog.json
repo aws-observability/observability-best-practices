@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-03T19:33:52.893125+00:00",
+  "generated_at": "2026-11-16T17:23:44.981092+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -60,6 +60,30 @@
       "related_events": [
         "cloudwatch",
         "general"
+      ]
+    },
+    {
+      "name": "CloudWatch Omni Access Grants",
+      "slug": "cw-omni-access-grants",
+      "content_type": "guide",
+      "description": "Deep dive on CloudWatch Omni access grants at enterprise scale: evaluation, union rules, data scopes, access profiles, and grants as code.",
+      "workload_type": [
+        "security"
+      ],
+      "backends": [
+        "cloudwatch",
+        "xray"
+      ],
+      "signals": [
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "last_validated": "2026-10-19",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-control-access-to-your-space.html",
+      "related_events": [
+        "security",
+        "cloudwatch"
       ]
     },
     {

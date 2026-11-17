@@ -126,7 +126,7 @@ const config = {
         },
         items: [
           {
-            to: '/events/',
+            href: 'https://awsworkshop.io/cloudops?trk=d12ac22e-c3d0-4081-9e94-e2f911079e70&sc_channel=el',
             position: 'left',
             label: 'Events',
           },

@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Telemetry collection path starter for CloudWatch</title>
+<style>
+:root {
+  --bg: #f6f7f9; --card: #ffffff; --text: #1b2330; --muted: #5b6678; --border: #d7dce4;
+  --accent: #0b5cad; --accent-bg: #e6f0fb; --ok: #17703a; --ok-bg: #e5f4ea;
+  --warn: #8a5a00; --warn-bg: #fff3d6; --bad: #a12626; --bad-bg: #fbe7e7; --code: #eef1f5; --onaccent: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161d; --card: #1b212b; --text: #e8ecf2; --muted: #a2adbf; --border: #343d4b;
+    --accent: #6db3ff; --accent-bg: #1b2d44; --ok: #6fd391; --ok-bg: #173023;
+    --warn: #f0c36b; --warn-bg: #3a2e12; --bad: #ff9a9a; --bad-bg: #3a1c1c; --code: #232a35; --onaccent: #0b1220;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #12161d; --card: #1b212b; --text: #e8ecf2; --muted: #a2adbf; --border: #343d4b;
+  --accent: #6db3ff; --accent-bg: #1b2d44; --ok: #6fd391; --ok-bg: #173023;
+  --warn: #f0c36b; --warn-bg: #3a2e12; --bad: #ff9a9a; --bad-bg: #3a1c1c; --code: #232a35; --onaccent: #0b1220;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+a { color: var(--accent); }
+.top { max-width: 1480px; margin: 0 auto; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.brand { font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.logo { width: 30px; height: 30px; border-radius: 8px; background: var(--accent); color: var(--onaccent); display: inline-flex; align-items: center; justify-content: center; font-size: .8rem; font-weight: 800; }
+.updated { font-weight: 400; font-size: .8rem; color: var(--muted, #5f6b7a); margin-left: 10px; }
+.actions { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.actions label { display: inline-flex; gap: 6px; align-items: center; cursor: pointer; }
+.banner { max-width: 1180px; margin: 0 auto 8px; padding: 8px 14px; background: var(--warn-bg); color: var(--warn); border: 1px solid var(--border); border-radius: 8px; font-size: .88rem; }
+.banner-wrap { padding: 0 20px; }
+main { max-width: 1480px; margin: 0 auto; padding: 8px 20px 60px; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 8px 0 8px; }
+h2 { font-size: 1.2rem; margin: 28px 0 10px; }
+h3 { font-size: 1rem; margin: 18px 0 6px; }
+.lead { color: var(--muted); font-size: 1.05rem; margin: 0 0 18px; max-width: 760px; }
+.hero { text-align: center; padding: 28px 0 8px; }
+.hero .lead { margin-left: auto; margin-right: auto; }
+.cta { display: flex; gap: 16px; justify-content: center; align-items: center; flex-wrap: wrap; margin: 16px 0 6px; }
+button { font: inherit; color: var(--text); background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 8px 16px; cursor: pointer; }
+button:hover:not(:disabled) { border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: not-allowed; }
+button:focus-visible, .opt:focus-visible, .tab:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button.primary { background: var(--accent); color: var(--onaccent); border-color: var(--accent); font-weight: 600; }
+button.lg { padding: 12px 26px; font-size: 1.05rem; }
+button.small { padding: 4px 10px; font-size: .85rem; border-radius: 8px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; }
+.preset { text-align: left; display: flex; flex-direction: column; gap: 6px; height: 100%; }
+.preset strong { font-size: 1rem; }
+.preset .d { color: var(--muted); font-size: .9rem; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.pill { font-size: .75rem; border: 1px solid var(--border); border-radius: 999px; padding: 1px 8px; color: var(--muted); }
+.use { color: var(--accent); font-size: .9rem; margin-top: auto; }
+.progress { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; margin: 6px 0 18px; }
+.progress > i { display: block; height: 100%; background: var(--accent); }
+.step { color: var(--muted); font-size: .9rem; }
+.opt { display: flex; gap: 12px; align-items: center; text-align: left; width: 100%; padding: 12px 14px; border-radius: 12px; }
+.opt.on { border-color: var(--accent); background: var(--accent-bg); }
+.glyph { flex: none; min-width: 42px; height: 42px; padding: 0 6px; border-radius: 10px; background: var(--code); color: var(--text); font-weight: 700; font-size: .85rem; display: inline-flex; align-items: center; justify-content: center; }
+.opt.on .glyph { background: var(--accent); color: var(--onaccent); }
+.opt strong { display: block; }
+.opt small { color: var(--muted); display: block; }
+.nav { display: flex; justify-content: space-between; gap: 12px; margin-top: 22px; }
+.result-head { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+.pathletter { font-weight: 700; background: var(--accent); color: var(--onaccent); border-radius: 8px; padding: 2px 12px; font-size: 1.1rem; }
+.layout { display: grid; grid-template-columns: minmax(0, 260px) minmax(0, 1fr); gap: 20px; align-items: start; margin-top: 14px; }
+@media (max-width: 900px) { .layout { grid-template-columns: minmax(0, 1fr); } }
+.stack { position: sticky; top: 10px; }
+@media (max-width: 900px) { .stack { position: static; } }
+.stack dl { margin: 0; }
+.stack dt { font-size: .78rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-top: 10px; display: flex; justify-content: space-between; align-items: center; }
+.stack dd { margin: 2px 0 0; font-size: .92rem; }
+.linkbtn { background: none; border: 0; padding: 0; color: var(--accent); font-size: .8rem; text-decoration: underline; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.tab { background: none; border: 0; border-bottom: 3px solid transparent; border-radius: 0; padding: 8px 12px; color: var(--muted); }
+.tab[aria-selected="true"] { color: var(--text); border-bottom-color: var(--accent); font-weight: 600; }
+.badge { background: var(--warn-bg); color: var(--warn); border-radius: 99px; padding: 0 7px; font-size: .75rem; margin-left: 6px; }
+.diagram { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 8px; overflow-x: auto; }
+.diagram svg { width: 100%; height: auto; min-width: 640px; display: block; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.tag { display: inline-block; font-size: .72rem; font-weight: 600; border-radius: 6px; padding: 1px 6px; margin-right: 6px; vertical-align: 1px; }
+.tag.confirm { background: var(--warn-bg); color: var(--warn); }
+.tag.src-tested { background: #d9f2e1; color: #0b5a2a; margin-right: 4px; }
+.tag.src-owner { background: #e3ecfb; color: #14407f; margin-right: 4px; }
+.tag.src-docs { background: var(--code); color: var(--muted); border: 1px solid var(--line, #c6c6cd); margin-right: 4px; }
+.tag.internal { background: var(--code); color: var(--muted); }
+.tag.roadmap { background: var(--code); color: var(--ink, inherit); border: 1px solid var(--line, #c6c6cd); }
+.note { margin: 14px 0 0; padding: 10px 14px; border-left: 4px solid var(--warn, #b7791f); background: var(--warn-bg); border-radius: 4px; }
+.tag.untested { background: var(--bad-bg); color: var(--bad); }
+ul { margin: 0; padding-left: 20px; }
+li { margin: 3px 0; }
+.warnlist { padding: 0; list-style: none; }
+.warn { background: var(--warn-bg); border-left: 4px solid var(--warn); padding: 6px 10px; border-radius: 6px; margin: 6px 0; }
+.warn.bad { border-left-color: var(--bad); background: var(--bad-bg); }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; }
+th, td { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+td.yes { color: var(--ok); font-weight: 600; } td.no { color: var(--muted); } td.part { color: var(--warn); font-weight: 600; }
+tr.gap td { background: var(--bad-bg); }
+tr.want td:first-child::after { content: " (you asked for this)"; color: var(--muted); font-size: .8rem; }
+pre { background: var(--code); padding: 12px; border-radius: 8px; overflow: auto; font-size: .82rem; margin: 6px 0; }
+.codehead { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 14px; }
+.small { font-size: .85rem; color: var(--muted); }
+label.f { display: flex; flex-direction: column; gap: 3px; font-size: .85rem; color: var(--muted); }
+input[type="text"] { font: inherit; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--card); color: var(--text); min-width: 0; }
+li, td, p, dd { overflow-wrap: anywhere; }
+footer { max-width: 1480px; margin: 0 auto; padding: 0 20px 40px; color: var(--muted); font-size: .85rem; }
+.overlay { position: fixed; inset: 0; z-index: 50; background: var(--bg); color: var(--text); display: flex; flex-direction: column; }
+.ovbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 10px 16px; border-bottom: 1px solid var(--border); }
+.ovbar .grow { flex: 1; }
+.ovbody { flex: 1; overflow: auto; padding: 12px 16px; }
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="brand"><span class="logo">TC</span> Telemetry collection path starter <span class="updated">Last updated 19 November 2026</span></div>
+  <div class="actions">
+    <button type="button" class="small" id="back-start">Back to start</button>
+    <button type="button" class="small" id="theme" aria-label="Toggle light and dark theme">Theme</button>
+  </div>
+</header>
+<main id="app"></main>
+<footer>Nothing you choose leaves your browser. Diagrams are drawn from your answers. The .drawio download uses the AWS architecture icon set when opened in draw.io.</footer>
+<script>
+// ============ ENGINE START (pure functions, tested with node) ============
+var OPTIONS = {
+  compute: [
+    ['ec2', 'Amazon EC2'], ['ecs', 'Amazon ECS (Fargate or EC2)'], ['eks', 'Amazon EKS or other Kubernetes'],
+    ['lambda', 'AWS Lambda'], ['onprem', 'On-premises or another cloud']
+  ],
+  lang: [
+    ['java', 'Java or Kotlin'], ['python', 'Python'], ['node', 'Node.js'], ['dotnet', '.NET'], ['go', 'Go'],
+    ['php', 'PHP'], ['ruby', 'Ruby'], ['rust', 'Rust'], ['other', 'Another language']
+  ],
+  signals: [['metrics', 'Metrics'], ['logs', 'Logs'], ['traces', 'Traces']],
+  dest: [
+    ['cw', 'CloudWatch only'],
+    ['temp', 'CloudWatch and a second destination, short parallel run'],
+    ['long', 'CloudWatch and a second destination, long term']
+  ],
+  uses: [
+    ['omni', 'Omni'], ['appsignals', 'Application Signals'], ['eci', 'Container Insights'],
+    ['promql', 'PromQL dashboards and alarms'], ['search', 'Log and trace search']
+  ],
+  mig: [
+    ['vended', 'AWS service metrics (for example EC2 CPUUtilization)'], ['agent', 'CloudWatch agent host metrics (memory, disk)'],
+    ['custom', 'Custom metrics (PutMetricData, EMF, StatsD, collectd)']
+  ],
+  prom: [
+    ['eks', 'Amazon EKS workloads'], ['msk', 'Amazon MSK'], ['opensearch', 'Amazon OpenSearch Service'], ['vpc', 'Other targets in a VPC']
+  ],
+  instr: [
+    ['otel', 'Already OpenTelemetry'], ['vendor', 'A vendor tracer or agent'], ['none', 'Nothing yet'],
+    ['binary', 'Compiled or third-party binaries I cannot change']
+  ],
+  scope: [
+    ['one', 'One account and Region'], ['multi', 'Several accounts or Regions, each viewed on its own'], ['central', 'Several accounts or Regions, centralized into one monitoring account']
+  ],
+  owner: [
+    ['aws', 'The CloudWatch agent'], ['any', 'No preference, recommend one'], ['own', 'Our own OpenTelemetry Collector'],
+    ['build', 'A collector we build ourselves'], ['none', 'No agent at all (SDK only)']
+  ]
+};
+
+var DOCS = {
+  k8sblueprint: ['OpenTelemetry blueprint: managed telemetry platforms for Kubernetes workloads', 'https://opentelemetry.io/docs/guidance/blueprints/managed-telemetry-platforms-for-k8s-workloads/'],
+  install: ['Install the CloudWatch agent', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Install-CloudWatch-Agent.html'],
+  eksaddon: ['Install the CloudWatch agent with the Amazon CloudWatch Observability EKS add-on', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Observability-EKS-addon.html'],
+  start: ['Getting started with OpenTelemetry on CloudWatch', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPGettingStarted.html'],
+  agent: ['CloudWatch agent with OpenTelemetry', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPCloudWatchAgent.html'],
+  collector: ['OpenTelemetry Collector with CloudWatch', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPSimplesetup.html'],
+  custom: ['Build your own custom OpenTelemetry Collector', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPAdvancedsetup.html'],
+  sdk: ['Collector-less telemetry with the ADOT SDKs', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-UsingADOT.html'],
+  ebpf: ['Compiled applications with eBPF', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLP-NoCodeEbpf.html'],
+  metrics: ['CloudWatch OpenTelemetry metrics', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-overview.html'],
+  vended: ['AWS vended metrics in OpenTelemetry format', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTelEnrichment.html'],
+  ecs: ['Collect ECS metrics with the OpenTelemetry Collector', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-otel-collector.html'],
+  omni: ['CloudWatch Omni', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-omni.html'],
+  adotlambda: ['ADOT Lambda layers', 'https://aws-otel.github.io/docs/getting-started/lambda'],
+  support: ['Application Signals supported systems and languages', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html'],
+  omniapp: ['Omni: send application telemetry', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-send-application-telemetry.html'],
+  omnilambda: ['Omni: send application telemetry from Lambda', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-send-application-telemetry-from-aws-lambda.html'],
+  omnienv: ['Omni: supported environments, languages and frameworks', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-supported-environments-languages-and-frameworks.html'],
+  setups: ['Best practices: instrumentation and collector setups', 'https://aws-observability.github.io/observability-best-practices/apm/pages/deep-dive/instrumentation-setups/'],
+  promcol: ['Managed Prometheus collectors', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors.html'],
+  promeks: ['Managed collectors: integrate Amazon EKS', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-eks-setup.html'],
+  prommsk: ['Managed collectors: integrate Amazon MSK', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-msk-setup.html'],
+  promos: ['Managed collectors: integrate Amazon OpenSearch Service', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-opensearch-setup.html'],
+  promvpc: ['Managed collectors: VPC-connected collector', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-vpc-setup.html'],
+  promcfg: ['Managed collectors: scraper configuration', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-scraper-configuration.html'],
+  prommon: ['Managed collectors: monitor collectors', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-monitor.html'],
+  otelcol: ['OpenTelemetry Collector documentation', 'https://opentelemetry.io/docs/collector/'],
+  otellang: ['OpenTelemetry instrumentation by language', 'https://opentelemetry.io/docs/languages/'],
+  adotdocs: ['AWS Distro for OpenTelemetry (ADOT)', 'https://aws-otel.github.io/docs/introduction'],
+  onpremagent: ['Install the CloudWatch agent on on-premises servers', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/install-CloudWatch-Agent-on-premise.html'],
+  rolesanywhere: ['IAM Roles Anywhere', 'https://docs.aws.amazon.com/rolesanywhere/latest/userguide/introduction.html'],
+  omnisend: ['Send telemetry to CloudWatch Omni', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-send-telemetry.html'],
+  omniset: ['Set up Omni for a single account', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-a-single-account.html'],
+  omniorg: ['Set up Omni for your organization', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-your-organization.html'],
+  endpoints: ['OTLP endpoints', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPEndpoint.html'],
+  txsearch: ['Enable Transaction Search', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html'],
+  mig: ['Migrate from Classic to OTel metrics', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-migrate.html'],
+  classic: ['Classic metrics', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-classic.html'],
+  enrichsup: ['OTel enrichment: supported metrics', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTelEnrichment-SupportedMetrics.html'],
+  restags: ['Resource tags for telemetry', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/UsingResourceTagsForTelemetry.html'],
+  restagson: ['Turn on resource tags for telemetry', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/EnableResourceTagsOnTelemetry.html'],
+  promql: ['PromQL in CloudWatch', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-PromQL.html'],
+  logcentral: ['Cross-account cross-Region log centralization', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html'],
+  central: ['Metrics centralization', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatchMetrics_Centralization.html'],
+  appsig: ['Supported instrumentation setups for Application Signals', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Getting-Started-App-Signals.html']
+};
+
+// yes | no | part. Source: AWS getting-started feature table, plus the direction doc.
+var PATHS = {
+  A: { name: 'CloudWatch agent', img: 'images/path-a-cloudwatch-agent-only.png',
+    summary: 'The CloudWatch agent receives OTLP from your applications and sends it to CloudWatch.',
+    owner: 'AWS builds, patches and supports the agent. You deploy and configure it.',
+    f: { appsignals: 'yes', entity: 'yes', jvm: 'yes', eci: 'yes', second: 'no', logs: 'yes' }, docs: ['agent', 'start'] },
+  B: { name: 'OpenTelemetry Collector (standard build)', img: 'images/path-b-otel-collector.png',
+    summary: 'One standard OpenTelemetry Collector for plain OpenTelemetry metrics, logs and traces and for vendor neutrality. It exports to CloudWatch and to other destinations. It does not support Application Signals.',
+    owner: 'You run and patch a community build. Use the OpenTelemetry Collector documentation for how it works.',
+    f: { appsignals: 'no', entity: 'no', jvm: 'no', eci: 'no', second: 'yes', logs: 'yes' }, docs: ['collector', 'otelcol', 'start'] },
+  C: { name: 'Custom-built OpenTelemetry Collector', img: 'images/path-b-otel-collector.png',
+    summary: 'A collector you build with the AWS Application Signals processor. Application Signals needs this custom build on a collector path. See the AWS docs for how to build it.',
+    owner: 'You build, version and patch it.',
+    f: { appsignals: 'yes', entity: 'yes', jvm: 'yes', eci: 'no', second: 'yes', logs: 'yes' }, docs: ['custom', 'collector', 'appsig'] },
+  D: { name: 'CloudWatch agent plus a second agent', img: 'images/path-d-agent-plus-third-party-agent.png',
+    summary: 'The CloudWatch agent handles CloudWatch. A second agent, which can be the one you already run, or a collector handles the other destination. Your application exports to both.',
+    owner: 'AWS owns the CloudWatch agent. You own the second agent.',
+    f: { appsignals: 'yes', entity: 'yes', jvm: 'yes', eci: 'yes', second: 'yes', logs: 'yes' }, docs: ['agent', 'collector', 'start'] },
+  E: { name: 'SDK only, no collector', img: null,
+    summary: 'Your application sends straight to the CloudWatch OTLP endpoints with the AWS-distributed SDK. There is no agent to run.',
+    owner: 'Nothing to run. You manage the SDK in each application.',
+    f: { appsignals: 'yes', entity: 'no', jvm: 'no', eci: 'no', second: 'part', logs: 'no' }, docs: ['sdk', 'start'] }
+};
+
+var FEATURES = [
+  ['spans', 'Spans and trace summaries'], ['appsignals', 'Application Signals'], ['entity', 'Entity correlation (service map, Omni)'],
+  ['jvm', 'Runtime (JVM) metrics tied to the app'], ['eci', 'Enhanced Container Insights'],
+  ['second', 'Second destination'], ['logs', 'Log summaries']
+];
+
+// Language facts. Sources: Application Signals supported-systems page (runtimes, Go, PHP, Ruby), the ADOT collector-less page (SDK versions),
+// the Omni supported-languages page (plugin languages) and the Application Signals supported-setups page (Rust, Erlang).
+var ADOT_LANGS = ['java', 'python', 'node', 'dotnet'];
+// ADOT Lambda layers with Application Signals (ADOT Lambda page): Java, Python, Node.js and .NET (x86_64 only). No layer for Go, Rust, other OS-only runtimes or Ruby.
+var LAMBDA_LAYER_LANGS = ['java', 'python', 'node', 'dotnet'];
+
+var LANG_INFO = {
+  java: { how: 'ADOT SDK available. Versions, libraries and frameworks: see the ADOT and OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/java/' },
+  python: { how: 'ADOT SDK available. Versions, libraries and frameworks: see the ADOT and OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/python/' },
+  node: { how: 'ADOT SDK available. Versions, libraries and frameworks: see the ADOT and OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/js/' },
+  dotnet: { how: 'ADOT SDK available. Versions, libraries and frameworks: see the ADOT and OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/dotnet/' },
+  go: { how: 'No ADOT SDK. Use the standard OpenTelemetry SDK or automatic instrumentation. Versions and libraries: see the OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/go/' },
+  php: { how: 'No ADOT SDK. Use the standard OpenTelemetry SDK or zero-code instrumentation. Versions and libraries: see the OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/php/' },
+  ruby: { how: 'No ADOT SDK. Use the standard OpenTelemetry SDK or zero-code instrumentation. Versions and libraries: see the OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/ruby/' },
+  rust: { how: 'No ADOT SDK. Instrument in code with the OpenTelemetry SDK and send OTLP to your agent or collector. See the OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/rust/' },
+  other: { how: 'Use the OpenTelemetry SDK for your language and send OTLP to your agent or collector. See the OpenTelemetry docs.', otel: 'https://opentelemetry.io/docs/languages/' }
+};
+
+function has(arr, v) { return arr.indexOf(v) !== -1; }
+function label(q, v) { var o = OPTIONS[q].filter(function (x) { return x[0] === v; })[0]; return o ? o[1] : v; }
+
+function missing(s) {
+  var m = [];
+  if (!s.compute.length) m.push('where your code runs');
+  if (!s.signals.length) m.push('which signals you want');
+  if (!s.dest) m.push('where the data should go');
+  if (!s.owner) m.push('who should run the collection layer');
+  return m;
+}
+
+function pick(s) {
+  var second = s.dest === 'cw' ? false : !!s.dest;
+  var needAS = has(s.uses, 'appsignals'), needECI = has(s.uses, 'eci'), omni = has(s.uses, 'omni');
+  var rich = needAS || needECI || omni;
+  var key, rule;
+  var onlyLambda = s.compute.length === 1 && s.compute[0] === 'lambda';
+  var owner = s.owner === 'any' ? 'aws' : s.owner; // no preference: start from the AWS-recommended agent
+  if (onlyLambda) { key = 'E'; rule = 'R0: Lambda only, no agent or sidecar, so SDK or layer'; }
+  else if (owner === 'none') { key = 'E'; rule = 'R1: no agent wanted, so SDK only'; }
+  else if (!second) {
+    if (owner === 'aws' || needECI) { key = 'A'; rule = 'R2: CloudWatch only and CloudWatch agent (or Container Insights needed)'; }
+    else if (needAS || omni) { key = 'C'; rule = 'R3: CloudWatch only, own collector, Application Signals or Omni wanted'; }
+    else { key = 'B'; rule = 'R4: CloudWatch only, own collector, nothing that needs the agent'; }
+  } else {
+    if (needECI) { key = 'D'; rule = 'R5: second destination and Container Insights needed (agent only)'; }
+    else if (rich) {
+      if (owner === 'aws') { key = 'D'; rule = 'R6: second destination, rich needs, CloudWatch agent'; }
+      else { key = 'C'; rule = 'R7: second destination, rich needs, own or custom collector'; }
+    } else { key = 'B'; rule = 'R8: second destination, nothing that needs the agent'; }
+  }
+  var L = s.lang || [];
+  var nonAdot = L.filter(function (l) { return !has(ADOT_LANGS, l); });
+  var allNon = L.length > 0 && nonAdot.length === L.length;
+  var switched = '';
+  if (key === 'E' && !onlyLambda && allNon) {
+    key = second ? (needECI ? 'D' : 'B') : 'A'; switched = 'noadot-sdk';
+    rule = 'R9: SDK only needs an ADOT SDK and none of your languages has one, so use ' + (second ? (needECI ? 'the CloudWatch agent plus a second agent' : 'a standard collector') : 'the CloudWatch agent');
+  }
+  return { key: key, rule: rule, second: second, needAS: needAS, needECI: needECI, omni: omni, rich: rich, nonAdot: nonAdot, allNon: allNon, switched: switched, langs: L };
+}
+
+function alternatives(key, s) {
+  var a = [];
+  if (key === 'A') {
+    a.push('Path B if you already run collectors and do not need Application Signals or Container Insights.');
+    a.push('Path D if you later need a second destination.');
+  } else if (key === 'B') {
+    a.push('Path C if you also need Application Signals.');
+    a.push('Path D if you prefer the CloudWatch agent for CloudWatch and can run a second agent.');
+  } else if (key === 'C') {
+    a.push('Path D if building and patching a collector is too much: two agents instead of one custom collector.');
+    a.push('Path A once the second destination is retired.');
+  } else if (key === 'D') {
+    a.push('Path C: one custom collector instead of two agents. You build and own it, but it is a single process.');
+    a.push('Path A once the second destination is retired.');
+  } else if (key === 'E') {
+    a.push('Path A if you can run an agent. It adds log summaries, entity correlation and JVM metrics.');
+  }
+  return a;
+}
+
+function evaluate(s) {
+  var m = missing(s);
+  if (m.length) return { ready: false, missing: m };
+  var p = pick(s), key = p.key, P = PATHS[key];
+  var reasons = [], warns = [], confirm = [], internal = [], trace = [p.rule];
+  var onlyLambda = s.compute.length === 1 && s.compute[0] === 'lambda';
+  var hasECS = has(s.compute, 'ecs'), hasEKS = has(s.compute, 'eks');
+
+  // reasons
+  if (key === 'A') reasons.push('You want CloudWatch only, and the CloudWatch agent is the default recommendation in the AWS docs.');
+  if (key === 'B') reasons.push('You need a second destination and nothing you asked for requires the Application Signals processor or the agent.');
+  if (key === 'C') reasons.push('You want ' + (p.needAS ? 'Application Signals' : 'the richer Omni views') + (p.second ? ' and a second destination from one collector.' : ' and run your own collector.'));
+  if (key === 'D') reasons.push(p.needECI ? 'Container Insights is only available through the CloudWatch agent, and you also need a second destination.' : 'You want the CloudWatch agent for CloudWatch and a second destination.');
+  if (key === 'E') reasons.push(onlyLambda ? 'Lambda has no agent or sidecar, so the function sends straight to CloudWatch with a layer or the SDK.' : 'You do not want to run an agent, so the application sends straight to CloudWatch.');
+  if (s.owner === 'any') reasons.push('You had no preference, so we start from the AWS-recommended CloudWatch agent wherever it can do the job.');
+  if (p.second) reasons.push('The CloudWatch agent sends to CloudWatch only, so a second destination needs a second agent or a collector. For a parallel run you can keep your existing agent next to the CloudWatch agent.');
+  if (p.needAS) reasons.push('Application Signals does not work through the vanilla OpenTelemetry Collector. It needs the CloudWatch agent, the custom collector build or the SDK-only path.');
+  if (s.dest === 'cw' && key !== 'E') reasons.push('One destination keeps the setup simple.');
+
+  // warnings
+  if (p.needAS && !has(s.signals, 'traces')) warns.push({ bad: true, t: 'Application Signals needs traces. Add traces to question 2.' });
+  if (has(s.uses, 'promql') && !has(s.signals, 'metrics')) warns.push({ bad: true, t: 'PromQL works on metrics sent as OpenTelemetry (OTLP). Add metrics to question 2.' });
+  if (has(s.uses, 'search') && !has(s.signals, 'logs') && !has(s.signals, 'traces')) warns.push({ bad: true, t: 'Log and trace search needs logs or traces. Add them to question 2.' });
+  if ((s.prom || []).length) {
+    warns.push({ src: 'docs', t: 'Managed Prometheus collectors run next to your collection path. They scrape Prometheus-compatible endpoints in your VPC (one network interface per subnet you give them) and deliver metrics to CloudWatch. They collect metrics only, so logs and traces still use the path above.' });
+    if (!has(s.signals, 'metrics')) warns.push({ bad: true, t: 'Managed Prometheus collectors collect metrics. Add metrics to your signals.' });
+  }
+  if (has(s.uses, 'omni')) {
+    warns.push({ tech: true, src: 'tested', t: 'Spans and logs sent through the CloudWatch agent reached the default dataset that Omni reads. The Omni query API has logs and traces only, no metrics type, so metrics are queried directly with PromQL. The API takes SQL against the default datastore, and every query needs a timestamp bound.' });
+    warns.push({ src: 'docs', t: 'Omni reads through the CloudWatch Dataset. Setting up a space creates the Dataset integration, which forwards logs and traces from CloudWatch log groups into the Dataset.' });
+    warns.push({ src: 'owner', t: 'Omni does not support Classic (V1) metrics. Only OpenTelemetry (V2) metrics appear in Omni, so move any Classic metrics you want there to V2/OTel (see Metrics migration). A Classic metric published with PutMetricData does not appear in PromQL, while an OTLP metric does. In Query Studio, choose SQL to query Classic metrics.' });
+    warns.push({ src: 'docs', t: 'Dataset forwarding is same account and same Region, one integration per account per Region. To see several accounts or Regions in one space, centralize telemetry with CloudWatch centralization rules first.' });
+    warns.push({ src: 'docs', t: 'On first enablement Omni backfills up to 7 days of existing logs and traces. Older data, and data encrypted with a customer managed KMS key, are not included.' });
+    if (!has(s.signals, 'traces')) warns.push({ src: 'docs', t: 'Omni needs Transaction Search on to receive traces. Add traces if you want the application map and service views.' });
+  }
+  if (has(s.uses, 'appsignals') && has(s.uses, 'omni')) warns.push({ src: 'owner', t: 'Application Signals and Omni: Application Signals metrics go to Classic CloudWatch metrics only. They cannot reach PromQL or Omni today. In Query Studio, query them with SQL (Metrics Insights).' });
+  if (s.scope === 'multi') warns.push({ src: 'docs', t: 'Each account sends its telemetry to CloudWatch in that account. Set up the collection layer in every account you collect from. You view each account on its own.' });
+  if (s.scope === 'central') warns.push({ src: 'owner', t: 'Set up collection in each source account. Centralization rules then copy logs and metrics from the source accounts into one monitoring account. Traces are centralized with the logs when Transaction Search is on in every source account. Centralization does not backfill: only telemetry created after a rule is active is copied. All metric types can be centralized, including AWS vended metrics. PromQL cannot follow a cross-account observability link, so use centralization for PromQL across accounts.' });
+  if ((s.scope === 'multi' || s.scope === 'central') && p.omni) warns.push({ src: 'docs', t: 'Omni does not centralize across accounts or Regions by itself. A space maps to one account and Region. Telemetry you centralize with CloudWatch centralization rules appears in the space.' });
+  if (has(s.signals, 'traces')) warns.push({ src: 'docs', t: 'Turn on Transaction Search in each account and Region before you send traces to the OTLP endpoint. Until it is on, spans do not arrive.' });
+  if (key === 'E' && has(s.signals, 'logs')) warns.push({ bad: true, t: 'The SDK-only path does not give log summaries. Use an agent or collector if you need logs.' });
+  if (key === 'E' && p.needECI) warns.push({ bad: true, t: 'Enhanced Container Insights is only available through the CloudWatch agent.' });
+  if (key === 'E' && p.second) warns.push({ t: 'Your application has to export twice, once per destination, because there is no collector to fan out.' });
+  if (key === 'E' && has(s.signals, 'traces')) warns.push({ src: 'tested', t: 'Collector-less ADOT SDK traces worked in Python, Node.js and Java. With no sampler set, every request produced a span (100% sampling). Set a sampling rate to control the volume.' });
+  if (key === 'E' && has(s.signals, 'logs')) warns.push({ tech: true, src: 'tested', t: 'Collector-less logs worked in Python and Java. In Node.js, console.log is not captured: use a logging library such as winston, pino or bunyan.' });
+  if (p.needECI && !hasEKS) warns.push({ t: 'Enhanced Container Insights is available for Amazon EKS. You did not pick EKS in question 1.' });
+  if (s.instr === 'vendor') warns.push({ t: 'Run one auto-instrumentation agent per process. Two tracers loaded into the same process conflict, so remove the old vendor tracer from a service when you add OpenTelemetry. Migrate service by service. For CloudWatch features such as Application Signals, use the ADOT distribution of OpenTelemetry. Otherwise the upstream agent works.' });
+  if (s.instr === 'none') warns.push({ t: 'Start with OpenTelemetry auto-instrumentation. For many languages it needs no code change, only a new start-up setting and a redeploy.' });
+  if (s.instr === 'binary') warns.push({ t: 'Add eBPF instrumentation (Path F) for the binaries you cannot change. It runs next to the CloudWatch agent, which receives its OTLP. Validate the frameworks you use first.' });
+  if (has(s.compute, 'onprem')) {
+    warns.push({ src: 'docs', t: 'Hosts outside AWS need AWS credentials for the agent or collector. Use IAM Roles Anywhere, or a named profile for the CloudWatch agent. Use a bearer token only when short-lived credentials are not possible.' });
+    warns.push({ tech: true, src: 'tested', t: 'On-premises host metrics from the agent carried no host.id, host.name or cloud attributes, only service.name=unknown_service. Add a resource attribute to tell hosts apart.' });
+  }
+  if (has(s.compute, 'lambda') && !onlyLambda) warns.push({ src: 'docs', t: 'Lambda has no agent or sidecar. The path above applies to your other compute. For Lambda, turn on active tracing and attach the ADOT Lambda layer for your runtime.' });
+  if (onlyLambda) warns.push({ src: 'docs', t: 'Lambda has no agent or sidecar, so the agent and collector paths do not apply. Turn on active tracing and attach the ADOT Lambda layer for your runtime, with AWS_LAMBDA_EXEC_WRAPPER.' });
+  if (has(s.compute, 'lambda')) warns.push({ tech: true, src: 'tested', t: 'Lambda layers are AWSOpenTelemetryDistroPython, AWSOpenTelemetryDistroJs, AWSOpenTelemetryDistroJava and AWSOpenTelemetryDistroDotNet (dotnet8, x86_64). The ADOT docs page lists only the Python layer ARN, and the Python layer fails on Node.js, so look up the layer for your runtime in the docs.' });
+  if (has(s.compute, 'lambda') && has(s.signals, 'metrics')) warns.push({ tech: true, src: 'docs', t: 'The Omni guide for Lambda covers traces and logs, not application metrics. With the ADOT Lambda layer, application metrics are off by default and go out as EMF when you set OTEL_METRICS_EXPORTER=awsemf.' });
+  if (key === 'C') warns.push({ t: 'You own the build, the version and the patching of the collector. Check the supported collector versions in the AWS docs before you pin one.' });
+  if (key === 'C' && s.dest === 'temp') warns.push({ t: 'A custom build is a lot of work for a short parallel run. Path D is quicker: keep your existing agent and run the CloudWatch agent next to it.' });
+  if (key === 'D') {
+    warns.push({ tech: true, src: 'tested', t: 'A standard collector in front of the agent, forwarding OTLP to the agent, lost nothing at 100 spans per second for 5 minutes. Two processes cannot both bind 4317 and 4318 on one host, so give the collector other ports.' });
+  }
+  if (key === 'D' && s.dest === 'temp') warns.push({ t: 'Keeping your existing agent next to the CloudWatch agent works for host and infrastructure data. If both listen for OTLP on one host, give one of them other ports. A service runs one tracer, so run the parallel period per service for traces.' });
+  if (key === 'D' && s.dest === 'long') warns.push({ t: 'Two agents long term needs CPU, memory and two configurations to keep in step. Path C gives one process.' });
+  if (key === 'D' && p.omni && !p.needAS && !p.needECI) warns.push({ t: 'Two agents for Omni alone is heavy. A standard collector (Path B) works if you accept thinner Omni service views.' });
+
+  if (key === 'A' || key === 'D') warns.push({ tech: true, src: 'tested', t: 'Agent version: the opentelemetry OTLP section needs 1.300070.0. span_metrics_enabled and the default:otel preset need 1.300071.0. On 1.300070.0 the config translator rejects span_metrics_enabled. On 1.300069.0 both are accepted without an error and do nothing: nothing listens on 4317 or 4318. Check the installed version.' });
+  if (key === 'A' || key === 'D') warns.push({ tech: true, src: 'tested', t: 'With span_metrics_enabled the agent produces traces.span.metrics.calls and traces.span.metrics.duration. Server-side metrics with the same names also exist, even with the flag off, so filter on @instrumentation.@name to avoid counting twice.' });
+
+  // language rules
+  var L2 = s.lang || [], nonAdot = p.nonAdot || [];
+  if (p.switched === 'noadot-sdk') reasons.push('None of your languages has an ADOT SDK, and SDK-only needs one, so you need an agent or collector instead.');
+  if (key === 'E' && nonAdot.length && !p.switched && !onlyLambda) warns.push({ bad: true, t: 'SDK-only needs an ADOT SDK, which exists for Java, Python, Node.js and .NET. ' + nonAdot.map(function (l) { return label('lang', l); }).join(', ') + ' cannot use it. Send those services through an agent or collector.' });
+  if (has(s.compute, 'lambda') && L2.length) {
+    var noLayer = L2.filter(function (l) { return !has(LAMBDA_LAYER_LANGS, l); });
+    if (noLayer.length) warns.push({ src: 'docs', t: 'There is no ADOT Lambda layer with Application Signals for ' + noLayer.map(function (l) { return label('lang', l); }).join(', ') + ' (Go, Rust, other OS-only runtimes and Ruby have none). For Go, instrument the function with the OpenTelemetry Go SDK.' });
+
+    if (has(L2, 'java')) warns.push({ tech: true, src: 'tested', t: 'Java on Lambda: the ADOT layer instruments handlers that implement RequestHandler or RequestStreamHandler. A handler on a class with neither interface ran but produced no handler span.' });
+  }
+  if (p.needAS && nonAdot.length) {
+    warns.push({ src: 'owner', t: 'Application Signals needs the CloudWatch agent or the custom collector build. ' + nonAdot.map(function (l) { return label('lang', l); }).join(', ') + ' has no ADOT SDK. See the Application Signals supported-systems page for the languages it covers.' });
+  }
+  if (nonAdot.indexOf('rust') !== -1 || nonAdot.indexOf('other') !== -1) warns.push({ t: 'Rust and other languages are not in the Application Signals supported-systems list. Use the OpenTelemetry SDK with a collector.' });
+
+  if (p.omni && L2.length && L2.some(function (l) { return !has(['java', 'python', 'node', 'dotnet', 'go'], l); })) warns.push({ src: 'docs', t: 'The Omni guides document Python, Node.js, Java, .NET and Go. Other languages work with custom instrumentation, but have no documented walkthrough.' });
+  var langs = L2.map(function (l) { var inf = LANG_INFO[l]; return { id: l, name: label('lang', l), how: inf.how, otel: inf.otel, adot: has(ADOT_LANGS, l) }; });
+
+
+  // compute notes
+  var cn = [];
+  var agentish = key === 'A' || key === 'D', coll = key === 'B' || key === 'C';
+  s.compute.forEach(function (c) {
+    var t = '';
+    if (c === 'ec2') t = agentish ? 'Install the CloudWatch agent (1.300070.0 or later for the OTLP section, 1.300071.0 or later for span_metrics_enabled and the default:otel preset) and have applications export to localhost.' : coll ? 'Install the collector on the instance and have applications export to localhost.' : 'Set the SDK exporter environment variables in each application. Nothing to install.';
+    if (c === 'ecs') t = agentish ? 'Run the CloudWatch agent as a sidecar in each task, or as a daemon service. Applications export to localhost within the task.' : coll ? 'Run the collector as a sidecar in each task. Its ECS receiver can also read task and container metrics.' : 'Set the SDK exporter environment variables in each task definition.';
+    if (c === 'eks') t = agentish ? 'Use the CloudWatch Observability add-on (version 6.6.0 or later for the OTLP receiver, per the AWS docs). If you supply agent configuration, include your Application Signals and Container Insights settings, or the add-on drops their ports. With only an opentelemetry section in agent.config, the Linux agent Service exposed only 4317 and 4318.' : coll ? 'Run the collector as a DaemonSet or a sidecar. Use IAM roles for service accounts for credentials. For many teams on one cluster, the OpenTelemetry Kubernetes blueprint describes running a central collector gateway.' : 'Set the SDK exporter environment variables in each deployment.';
+    if (c === 'lambda') t = 'No agent or sidecar. Turn on active tracing, attach the ADOT Lambda layer for your runtime and set AWS_LAMBDA_EXEC_WRAPPER. Write JSON logs with the trace ID.';
+    if (c === 'onprem') t = agentish ? 'Install the agent on the host and give it credentials through a named profile. Details are in the Watch out tab.' : coll ? 'Install the collector on the host and sign requests with SigV4 using IAM Roles Anywhere credentials.' : 'The SDK needs short-lived credentials, for example from IAM Roles Anywhere, to reach the endpoints.';
+    var lk = [];
+    if (c === 'ec2') lk = agentish ? ['agent', 'install'] : coll ? ['collector'] : ['sdk'];
+    if (c === 'ecs') lk = agentish ? ['agent'] : coll ? ['collector', 'ecs'] : ['sdk'];
+    if (c === 'eks') lk = agentish ? ['eksaddon', 'agent'] : coll ? ['collector', 'k8sblueprint'] : ['sdk'];
+    if (c === 'lambda') lk = ['omnilambda', 'adotlambda'];
+    if (c === 'onprem') lk = agentish ? ['onpremagent', 'rolesanywhere'] : ['rolesanywhere'];
+    cn.push([c, t, lk]);
+  });
+
+  // docs
+  var docs = P.docs.slice();
+  if (has(s.signals, 'metrics')) docs.push('metrics');
+  if (has(s.signals, 'metrics') && hasOneOf(s.compute, ['ec2', 'ecs', 'eks'])) docs.push('vended');
+  if (hasECS) docs.push('ecs');
+  if (p.omni) docs.push('omni', 'omnisend', 'omniset', 'omniapp', 'omnienv');
+  if (s.uses && has(s.uses, 'omni') && !p.omni) docs.push('omni', 'omnisend', 'omniset');
+  if (has(s.signals, 'traces')) docs.push('txsearch');
+  if (has(s.signals, 'metrics')) docs.push('promcol');
+  (s.prom || []).forEach(function (x) { docs.push({ eks: 'promeks', msk: 'prommsk', opensearch: 'promos', vpc: 'promvpc' }[x]); });
+  if ((s.prom || []).length) docs.push('promcfg', 'prommon');
+  if (key === 'B' || key === 'C' || key === 'E') docs.push('endpoints');
+  if (s.scope === 'central') docs.push('logcentral', 'central');
+  if ((s.scope === 'multi' || s.scope === 'central') && p.omni) docs.push('omniorg');
+  if (L2.length) docs.push('support', 'adotdocs', 'otellang');
+  if (hasEKS) docs.push('k8sblueprint');
+  if (has(s.compute, 'onprem')) docs.push('onpremagent', 'rolesanywhere');
+  if (onlyLambda || has(s.compute, 'lambda')) docs.push('omnilambda', 'adotlambda');
+  if (p.needAS) docs.push('setups');
+  if (s.instr === 'binary') docs.push('ebpf');
+  var seen = {}; docs = docs.filter(function (d) { if (seen[d]) return false; seen[d] = 1; return true; });
+
+  // feature rows
+  var wants = { spans: has(s.signals, 'traces'), appsignals: p.needAS, entity: p.omni || p.needAS, jvm: false, eci: p.needECI, second: p.second, logs: has(s.signals, 'logs') };
+  var rows = FEATURES.map(function (f) {
+    var v = P.f[f[0]] || 'yes', want = !!wants[f[0]];
+    return { label: f[1], v: v, want: want, gap: want && v !== 'yes' };
+  });
+
+  warns = warns.filter(function (w) { return !w.confirm; });
+  internal = [];
+  return { ready: true, langs: langs, key: key, P: P, p: p, reasons: reasons, warns: warns.filter(function (w) { return !w.tech; }), internal: internal, cn: cn, docs: docs,
+    rows: rows, alts: alternatives(key, s), addF: s.instr === 'binary', addProm: (s.prom || []).length > 0, trace: trace, mig: migPlan(s, key) };
+}
+
+// ---- Metrics migration: V1/Classic to V2/OTel.
+function migPlan(s, key) {
+  var m = s.mig || [], out = { picked: m.slice(), sections: [], table: null, docs: [] };
+  if (!m.length) return out;
+  var S = out.sections;
+  S.push({ title: 'Before you start', items: [
+    { src: 'docs', t: 'V2/OTel metrics are new metrics, not a switch on the old ones. They are queried with PromQL, so queries written for Classic (V1) metrics do not carry over.' },
+    { src: 'docs', t: 'The move is additive. Classic keeps publishing while you add the V2/OTel copy, so you can decide later when to stop the Classic side, and who decides.' },
+    { src: 'docs', t: 'Plan scope first: which accounts and Regions. OTel enrichment is set per account and Region.' },
+    { src: 'owner', t: 'Cross-account: all of these metrics can be centralized. Metrics centralization copies them into one destination account, and you query them there with PromQL. PromQL cannot follow a cross-account observability link, so use centralization.' },
+    { src: 'tested', t: 'PromQL: put the metric name in quotes, for example {"CPUUtilization","@aws.tag.Team"="x"}. The unquoted form returned HTTP 400. A selector must name a metric, so a label-only selector or a regex on __name__ is rejected.' },
+    { src: 'tested', t: 'There is no PromQL command in the AWS CLI. Use Query Studio, or the HTTP API at https://monitoring.<region>.amazonaws.com/api/v1/ with SigV4 signing.' }
+  ] });
+  if (has(m, 'vended')) S.push({ title: 'AWS service (vended) metrics', items: [
+    { src: 'docs', t: 'Turn on both OTel enrichment and resource tags for telemetry. Steps: check the supported metrics, turn on resource tags for telemetry, turn on OTel enrichment (aws cloudwatch start-otel-enrichment), then query the V2/OTel copy with PromQL.' },
+    { src: 'docs', t: 'You get a V2/OTel copy with the same metric names and dimensions as Classic (dimensions become labels), plus extra attributes. Classic publishing is not changed.' },
+    { src: 'tested', t: 'EC2 and Lambda: the V2 copy carried tags as @aws.tag.<Key> (for example @aws.tag.Team) and resource attributes as @resource.cloud.* (account, provider, region, resource ARN). The Classic metric returned the same data through get-metric-statistics. A tag appeared within about 7 minutes. For Lambda, an instant query only looks back 5 minutes, so query soon after traffic or use a range.' },
+    { src: 'docs', t: 'No agent or collector is involved. This route does not apply to metrics the CloudWatch agent collects.' }
+  ] });
+  if (has(m, 'agent')) {
+    var coll = (key === 'B' || key === 'C');
+    var items = [
+      { src: 'docs', t: 'Both approaches below are additive: the Classic CWAgent namespace keeps publishing and you add a V2/OTel copy.' },
+      { src: 'docs', t: 'OTel enrichment does not apply to metrics the agent collects.' },
+      { src: 'tested', t: 'On-premises hosts: host metrics carried no host.id, host.name or cloud attributes, only service.name=unknown_service. Add a resource attribute to tell hosts apart.' },
+    ];
+    S.push({ title: 'CloudWatch agent host metrics', items: items,
+      table: { head: ['', 'default:otel preset', 'Append collector YAML'], rows: [
+        ['How', 'amazon-cloudwatch-agent-ctl -a fetch-config -c default:otel -s. It turns on host metrics, the OTLP receivers on 127.0.0.1:4317 and 4318, and span metrics. Needs 1.300071.0 or later. On 1.300069.0 it is accepted and does nothing.', 'Append your YAML with amazon-cloudwatch-agent-ctl -a append-config. Use a NEW pipeline name. A YAML that reuses a generated pipeline name (for example metrics/opentelemetry) fails to merge and stops the agent.'],
+        ['Metric names', 'OpenTelemetry names such as system.cpu.utilization and system.memory.utilization, sent as OTLP and queryable in PromQL, not Classic. About 31 names and 144 series on a 2 vCPU Linux host at 30 s. 23 names and 66 series on Windows Server 2022.', 'Whatever your receivers produce.'],
+        ['Fleet rollout', 'SSM Run Command works: AWS-RunShellScript, or AmazonCloudWatch-ManageAgent with an SSM parameter holding the opentelemetry JSON.', 'Appending YAML through an SSM parameter returns Success and is silently ignored. Run append-config on the host.'],
+        ['Platforms', 'Linux and Windows Server 2022 (agent 1.300075.0) worked. Windows lacked some Linux metrics, such as system.cpu.frequency and system.processes.count.', 'See the agent documentation.']
+      ] },
+      after: [
+        { src: 'docs', t: 'Which to choose: use default:otel for the standard set of host metrics.' }
+      ] });
+  }
+  if (has(m, 'custom')) S.push({ title: 'Custom metrics (PutMetricData, EMF, StatsD, collectd)', items: [
+    { src: 'docs', t: 'There is no flag day. Move one workload at a time: add the OTel SDK next to the existing PutMetricData or EMF calls (dual-write), check the new metrics in Query Studio with PromQL, then stop the Classic publishing.' },
+    { src: 'docs', t: 'Use OpenTelemetry naming for the new metrics: seconds for durations and a _total suffix for counters.' },
+    { src: 'docs', t: 'Limits change: up to 30 dimensions in Classic, up to 150 labels in V2/OTel.' },
+    { src: 'tested', t: 'A Classic metric from PutMetricData did not appear in PromQL. An OTLP metric did.' },
+    { src: 'tested', t: 'StatsD: the agent\'s own statsd support goes to Classic only and renames dots to underscores (otelguide.hits became otelguide_hits). A collector statsd receiver that forwards OTLP to the agent reaches PromQL with the name unchanged.' }
+  ] });
+  var cl = [];
+  if (has(m, 'vended')) cl.push({ src: 'docs', t: 'AWS service metrics: Classic is where AWS services publish them. The V2/OTel copy is added by OTel enrichment and Classic keeps publishing, so anything that reads these metrics directly (scaling policies, scripts, third-party tools) stays on Classic until you move it.' });
+  if (has(s.uses || [], 'appsignals')) cl.push({ src: 'owner', t: 'Application Signals: its metrics go to Classic CloudWatch metrics only. They cannot reach PromQL or Omni today. In Query Studio, query them with SQL (Metrics Insights).' });
+  if (has(m, 'custom')) cl.push({ src: 'tested', t: 'StatsD through the CloudWatch agent writes Classic metrics, not OTel metrics.' });
+  if (has(s.uses || [], 'omni')) cl.push({ src: 'owner', t: 'Omni does not support Classic (V1) metrics. The Omni query API has logs and traces only, and a Classic custom metric does not appear in PromQL.', });
+  if (cl.length) S.push({ title: 'Where Classic is still needed today', items: cl });
+  var d = ['mig', 'classic', 'metrics', 'promql', 'central'];
+  if (has(m, 'vended')) d.push('enrichsup', 'restags', 'restagson', 'vended');
+  if (has(m, 'agent')) d.push('agent', 'omniapp');
+  out.docs = d;
+  out.sections.forEach(function (sec) { sec.items = sec.items.filter(function (x) { return !x.c; }); if (sec.after) sec.after = sec.after.filter(function (x) { return !x.c; }); });
+  return out;
+}
+
+// Decision notes: shown on the step screen as soon as an option is selected.
+function selectionNotes(s) {
+  var n = [], u = s.uses || [], c = s.compute || [];
+  if (has(s.signals || [], 'traces')) n.push({ q: 'signals', src: 'docs', t: 'Turn on Transaction Search before you send traces to the CloudWatch OTLP endpoint. Until it is on, spans do not arrive.' });
+  (s.prom || []).length && n.push({ q: 'prom', src: 'docs', t: 'Managed Prometheus collectors are agentless and metrics only. CloudWatch scrapes targets it discovers in your VPC and delivers the metrics to CloudWatch over a VPC endpoint, so the data does not cross the public internet. You query them with PromQL. They run beside your collection path, not instead of it.' });
+  has(s.prom || [], 'eks') && n.push({ q: 'prom', src: 'docs', t: 'EKS: use the managed collector for Prometheus endpoints your workloads already expose. Instrumented application telemetry still goes through the CloudWatch agent or a collector.' });
+  if (has(s.signals || [], 'metrics')) n.push({ q: 'signals', src: 'docs', t: 'Prometheus-compatible metrics from sources such as Amazon MSK, Amazon EKS and Amazon OpenSearch Service can be collected with CloudWatch managed Prometheus collectors, with no agent to run. They are queried with PromQL.' });
+  if (has(u, 'appsignals')) n.push({ q: 'uses', src: 'owner', t: 'Application Signals does not work through the vanilla OpenTelemetry Collector. It needs the custom collector build. See the AWS docs for how to build it.' });
+  if (has(u, 'appsignals')) n.push({ q: 'uses', src: 'owner', t: 'Application Signals metrics go to Classic CloudWatch metrics only. They cannot reach PromQL or Omni today. In Query Studio, query them with SQL (Metrics Insights). It does not support OTLP right now.' });
+  if (has(u, 'omni')) n.push({ q: 'uses', src: 'docs', t: 'Omni needs no separate collection path, but there is one extra step between CloudWatch and Omni: the CloudWatch Dataset. Setting up an Omni space creates a Dataset integration that forwards your CloudWatch logs and traces into the Dataset. Metrics are not forwarded, Omni queries OpenTelemetry (V2) metrics directly from CloudWatch Metrics. Forwarding is same account and same Region only.' });
+  if (has(u, 'omni')) n.push({ q: 'uses', src: 'owner', t: 'Omni does not support Classic (V1) metrics. Only OpenTelemetry (V2) metrics appear in Omni, so Classic metrics need to move to V2/OTel to be seen there.' });
+  if (s.scope === 'multi') n.push({ q: 'scope', src: 'docs', t: 'Each account sends its telemetry to CloudWatch in that account, so set up the collection layer in every account you collect from. You view each account on its own.' });
+  if (s.scope === 'central') n.push({ q: 'scope', src: 'owner', t: 'Set up collection in each source account. Centralization rules then copy logs and metrics from the source accounts into one monitoring account. Traces are centralized with the logs when Transaction Search is on in every source account. Centralization does not backfill: only telemetry created after a rule is active is copied. All metric types can be centralized, including AWS vended metrics. PromQL cannot follow a cross-account observability link, so use centralization for PromQL across accounts.' });
+  if ((s.scope === 'multi' || s.scope === 'central') && has(u, 'omni')) n.push({ q: 'scope', src: 'docs', t: 'Omni does not centralize across accounts or Regions by itself. A space maps to one account and Region. Telemetry you centralize with CloudWatch centralization rules appears in the space. See Set up Omni for your organization.' });
+  if (s.dest === 'temp' || s.dest === 'long') n.push({ q: 'dest', src: 'owner', t: 'The CloudWatch agent will not support sending to third-party destinations. A second destination needs a collector, or two agents side by side.' });
+  if (s.instr === 'vendor') n.push({ q: 'instr', src: 'docs', t: 'Run one auto-instrumentation agent per process. Two tracers loaded into the same process conflict, so remove the old vendor tracer from a service when you add OpenTelemetry. Migrate service by service. For CloudWatch features such as Application Signals, use the ADOT distribution of OpenTelemetry. Otherwise the upstream agent works.' });
+  if (s.owner === 'aws' && (s.dest === 'temp' || s.dest === 'long')) n.push({ q: 'owner', src: 'owner', t: 'The CloudWatch agent cannot send to your second destination. We will suggest the agent plus a second agent or collector.' });
+  var LK = [
+    [/Transaction Search/, ['txsearch']], [/Managed Prometheus collectors/, ['promcol', 'promcfg']], [/^EKS: use the managed/, ['promeks']],
+    [/Prometheus-compatible metrics from sources/, ['promcol', 'promeks', 'prommsk', 'promos']], [/custom collector build/, ['custom']],
+    [/Application Signals metrics go to Classic/, ['classic', 'appsig']], [/CloudWatch Dataset/, ['omniset', 'omni']],
+    [/Omni does not support Classic/, ['mig', 'omnienv']], [/Centralization rules then copy/, ['logcentral', 'central', 'omniorg']],
+    [/Omni does not centralize/, ['omniorg', 'central']], [/auto-instrumentation agent per process/, ['adotdocs', 'otellang']],
+    [/second destination needs a collector|cannot send to your second destination/, ['collector', 'custom']]
+  ];
+  n.forEach(function (x) { LK.forEach(function (k) { if (k[0].test(x.t)) x.l = (x.l || []).concat(k[1]); }); });
+  return n.filter(function (x) { return !x.c; });
+}
+
+function hasOneOf(arr, vals) { return vals.some(function (v) { return has(arr, v); }); }
+
+// ---------- Diagram model (pure): built from the answers, drawn as SVG or exported as .drawio ----------
+var TILE = 64, PITCH = 136, GAP = 84;
+
+var COMPUTE_NODE = {
+  ec2: { label: ['Amazon EC2'], glyph: 'EC2', fill: '#ED7100', tier: 'svc', shape: 'ec2' },
+  ecs: { label: ['Amazon ECS'], glyph: 'ECS', fill: '#ED7100', tier: 'svc', shape: 'ecs' },
+  eks: { label: ['Amazon EKS', 'or Kubernetes'], glyph: 'K8s', fill: '#ED7100', tier: 'svc', shape: 'eks' },
+  lambda: { label: ['AWS Lambda'], glyph: '\u03bb', fill: '#ED7100', tier: 'svc', shape: 'lambda' },
+  onprem: { label: ['On-premises', 'or other cloud'], glyph: 'DC', fill: '#232F3D', tier: 'res', shape: 'corporate_data_center' }
+};
+var EXP_NODE = {
+  omni: ['CloudWatch Omni'], appsignals: ['Application Signals'], eci: ['Container Insights'],
+  promql: ['Query Studio', '(PromQL)'], search: ['Logs Insights and', 'trace search']
+};
+
+function mkNode(id, label, glyph, fill, tier, shape) { return { id: id, label: label, glyph: glyph, fill: fill, tier: tier, shape: shape, cx: 0, cy: 0 }; }
+
+function buildModel(s, r) {
+  var key = r.key, second = r.p.second;
+  var comps = OPTIONS.compute.map(function (o) { return o[0]; }).filter(function (c) { return has(s.compute, c); });
+  var sigs = ['metrics', 'logs', 'traces'].filter(function (x) { return has(s.signals, x); });
+  var ebpf = s.instr === 'binary' && key !== 'E';
+
+  var INSTR_SUB = { otel: 'OTel', vendor: 'vendor tracer', none: 'no SDK yet', binary: 'binaries' };
+  var lg = (s.lang || []).map(function (l) { return label('lang', l).replace(/ or Kotlin| or .*$/, ''); });
+  var sub = (lg.length > 2 ? lg.slice(0, 2).join(', ') + ' +' + (lg.length - 2) : lg.join(', '));
+  var subLine = [sub, INSTR_SUB[s.instr] || ''].filter(Boolean).join(' \u00b7 ');
+  var host = comps.map(function (c) { var d = COMPUTE_NODE[c]; var n = mkNode('app-' + c, d.label, d.glyph, d.fill, d.tier, d.shape); n.sub = subLine; return n; });
+  if (ebpf) host.push(mkNode('ebpf', ['eBPF', 'instrumentation'], 'eBPF', '#232F3D', 'res', 'generic_application'));
+
+  var coll = [];
+  var cwa = mkNode('cwa', ['CloudWatch agent'], 'Agent', '#DD344C', 'res', 'agent');
+  if (key === 'A') coll.push(cwa);
+  if (key === 'B') coll.push(mkNode('col', ['OpenTelemetry', 'Collector'], 'OTel', '#E7157B', 'svc', 'distro_for_opentelemetry'));
+  if (key === 'C') coll.push(mkNode('col', ['Custom OTel', 'Collector'], 'OTel', '#E7157B', 'svc', 'distro_for_opentelemetry'));
+  if (key === 'D') { coll.push(cwa); coll.push(mkNode('sec', ['Second agent', 'or collector'], 'Agent', '#01A88D', 'res', 'agent2')); }
+
+  var data = [];
+  if (has(sigs, 'metrics')) data.push(mkNode('d-m', ['CloudWatch metrics', '(PromQL)'], 'CW', '#E7157B', 'svc', 'cloudwatch_2'));
+  if (has(sigs, 'logs')) data.push(mkNode('d-l', ['CloudWatch Logs'], 'Logs', '#E7157B', 'res', 'cloudwatch_logs'));
+  if (has(sigs, 'traces')) data.push(mkNode('d-t', ['Transaction Search', '(X-Ray endpoint)'], 'Tx', '#C925D1', 'svc', 'xray'));
+
+  var scopeKey = s.scope || '', central = scopeKey === 'central' && sigs.length > 0;
+  var exp = ['omni', 'appsignals', 'eci', 'promql', 'search'].filter(function (u) { return has(s.uses, u) && !(central && u === 'omni'); })
+    .map(function (u) { return mkNode('x-' + u, EXP_NODE[u], u === 'omni' ? 'Omni' : u === 'appsignals' ? 'AS' : u === 'eci' ? 'CI' : u === 'promql' ? 'PQ' : 'Q', '#E7157B', 'svc', 'cloudwatch_2'); });
+
+  var ds = !central && has(s.uses, 'omni') && (has(sigs, 'logs') || has(sigs, 'traces')) ? mkNode('dataset', ['CloudWatch', 'Dataset'], 'DS', '#E7157B', 'svc', 'cloudwatch_2') : null;
+  var vended = has(s.mig || [], 'vended') && has(sigs, 'metrics');
+  var prom = (s.prom || []).length && has(sigs, 'metrics') ? (s.prom || []) : [];
+  var tp = second ? mkNode('tp', ['Third-party', 'destination'], '3P', '#232F3D', 'res', 'generic_application') : null;
+
+  var vn = vended ? mkNode('vended', ['AWS service metrics'], 'AWS', '#232F3D', 'res', 'generic_application') : null;
+  var dcol = vn ? [vn].concat(data) : data;
+  if (prom.length) { var pn = mkNode('prom', ['Prometheus', 'targets'], 'Pm', '#232F3D', 'res', 'generic_application'); pn.sub = prom.map(function (x) { return { eks: 'EKS', msk: 'MSK', opensearch: 'OpenSearch', vpc: 'VPC' }[x]; }).join(', '); host.push(pn); }
+  var rowsMax = Math.max(1, host.length, coll.length, dcol.length, exp.length);
+  var H = 64 + rowsMax * PITCH + (exp.length ? 26 : 0), y0 = 20;
+  var frames = [], x = 20, cols = {};
+
+  function tilesIn(nodes, cx, dy) {
+    nodes.forEach(function (n, i) {
+      n.cx = cx; n.cy = y0 + 58 + (dy || 0) + ((rowsMax - nodes.length) / 2 + i) * PITCH + TILE / 2;
+    });
+  }
+  var hostF = { id: 'f-host', kind: 'host', title: 'Your workloads', x: x, y: y0, w: 220, h: H };
+  frames.push(hostF); tilesIn(host, hostF.x + hostF.w / 2); x += hostF.w + GAP;
+  var collF = null;
+  if (coll.length) { collF = { id: 'f-coll', kind: 'coll', title: 'Collection layer', x: x, y: y0, w: 220, h: H }; frames.push(collF); tilesIn(coll, collF.x + collF.w / 2); x += collF.w + GAP; }
+  var awsF = { id: 'f-aws', kind: 'aws', title: scopeKey === 'central' && central ? 'AWS Cloud: source account 1' : (scopeKey === 'multi' ? 'AWS Cloud: account 1' : 'AWS Cloud'), x: x, y: y0, w: Math.max(exp.length ? (ds ? 560 : 420) : 230, scopeKey ? 310 : 0), h: H };
+  var GH = (scopeKey === 'multi' || central) ? 2 : 0, GO = 16;
+  for (var gi = GH; gi >= 1; gi--) frames.push({ id: 'f-ghost' + gi, kind: 'awsghost', title: '', x: awsF.x + gi * GO, y: y0 + gi * GO, w: awsF.w, h: H });
+  frames.push(awsF); tilesIn(dcol, awsF.x + 95);
+  if (ds) { var dn = data.filter(function (n) { return n.id === 'd-l' || n.id === 'd-t'; }); ds.cx = awsF.x + 250; ds.cy = dn.reduce(function (t, n) { return t + n.cy; }, 0) / dn.length; }
+  var expF = null;
+  if (exp.length) { expF = { id: 'f-exp', kind: 'exp', title: 'Experiences', x: awsF.x + (ds ? 380 : 240), y: y0 + 44, w: 165, h: H - 56 }; frames.push(expF); tilesIn(exp, expF.x + expF.w / 2, 26); }
+  x += awsF.w + GH * GO + GAP;
+  var monF = null, monNodes = [];
+  var monDs = null, monOmni = null, monM = null, monL = null;
+  if (central) {
+    var monLT = has(sigs, 'logs') || has(sigs, 'traces'), monOm = has(s.uses, 'omni'), withDs = monOm && monLT;
+    monF = { id: 'f-mon', kind: 'aws', title: 'AWS Cloud: monitoring account', x: x, y: y0, w: monOm ? (withDs ? 600 : 440) : 340, h: H };
+    frames.push(monF);
+    if (has(sigs, 'metrics')) { monM = mkNode('mon-m', ['CloudWatch metrics', '(PromQL)'], 'CW', '#E7157B', 'svc', 'cloudwatch_2'); monNodes.push(monM); }
+    if (monLT) { monL = mkNode('mon-l', has(sigs, 'logs') && has(sigs, 'traces') ? ['CloudWatch Logs', 'and traces'] : has(sigs, 'logs') ? ['CloudWatch Logs'] : ['Traces', '(Transaction Search)'], has(sigs, 'logs') ? 'Logs' : 'Tx', '#E7157B', 'res', 'cloudwatch_logs'); monNodes.push(monL); }
+    tilesIn(monNodes.slice(), monF.x + 95);
+    if (withDs) { monDs = mkNode('mon-ds', ['CloudWatch', 'Dataset'], 'DS', '#E7157B', 'svc', 'cloudwatch_2'); monDs.cx = monF.x + 280; monDs.cy = monL.cy; monNodes.push(monDs); }
+    if (monOm) {
+      monOmni = mkNode('mon-omni', ['CloudWatch Omni', '(all accounts)'], 'Omni', '#E7157B', 'svc', 'cloudwatch_2');
+      monOmni.cx = monF.x + monF.w - 90;
+      var cyl = monNodes.filter(function (n) { return n.id === 'mon-m' || n.id === 'mon-l'; });
+      monOmni.cy = cyl.reduce(function (t, n) { return t + n.cy; }, 0) / cyl.length;
+      monNodes.push(monOmni);
+    }
+    x += monF.w + GAP;
+  }
+  var tpF = null;
+  if (tp) {
+    var th = 64 + PITCH;
+    tpF = { id: 'f-tp', kind: 'saas', title: 'Second destination', x: x, y: y0 + (H - th) / 2, w: 200, h: th };
+    frames.push(tpF); tp.cx = tpF.x + tpF.w / 2; tp.cy = tpF.y + 58 + TILE / 2; x += tpF.w + GAP;
+  }
+  var cor = [prom.length > 0, !!tp].filter(Boolean).length, needBottom = cor > 0;
+  var yb = y0 + H + 20 + GH * GO + Math.max(0, cor - 1) * 24 + (cor === 1 ? 16 : 0), cy0 = 0;
+  var yp = y0 + H + 20 + GH * GO;
+  if (cor === 1) { yp = yb; }
+  var W = x - GAP + 20, legendY = needBottom ? yb + 34 : y0 + H + 30 + GH * GO, Hc = legendY + 14;
+
+  var edges = [];
+  function busA(f) { return f.x + f.w + 55; }
+  function busB(f) { return f.x + f.w + 18; }
+  function pts(a, b, bx) {
+    var sx = a.cx + TILE / 2, sy = a.cy, tx = b.cx - TILE / 2, ty = b.cy, p;
+    if (sy === ty) p = [[sx, sy], [tx, ty]]; else p = [[sx, sy], [bx, sy], [bx, ty], [tx, ty]];
+    return p;
+  }
+  function add(a, b, bx, o) {
+    var p = pts(a, b, bx), L = p[p.length - 1], K = p[p.length - 2];
+    edges.push({ sig: o.sig || [], from: a.id, to: b.id, pts: p, dashed: !!o.dashed, label: o.label || '', lx: p.length === 2 ? L[0] - Math.min(60, (L[0] - K[0]) / 2) : (K[0] + L[0]) / 2, ly: L[1] - 7 });
+  }
+  // workloads -> collection
+  var hostBus = busA(hostF);
+  if (coll.length) {
+    host.filter(function (n) { return n.id !== 'vended' && n.id !== 'prom'; }).forEach(function (a) {
+      var targets = (key === 'D' && a.id !== 'ebpf') ? coll : [coll[0]];
+      targets.forEach(function (b) { add(a, b, hostBus + (b.id === 'sec' ? 18 : 0), { label: 'OTLP', sig: sigs }); });
+    });
+  }
+  // collection (or workloads for SDK-only) -> CloudWatch
+  var sources = key === 'E' ? host.filter(function (n) { return n.id !== 'ebpf' && n.id !== 'vended' && n.id !== 'prom'; }) : (key === 'D' ? [cwa] : coll);
+  var dataBus = key === 'E' ? busA(hostF) : busA(collF);
+  var lbl = { 'd-m': 'OTLP metrics', 'd-l': 'OTLP logs', 'd-t': 'OTLP traces' };
+  sources.forEach(function (a) { data.forEach(function (b) { add(a, b, dataBus, { dashed: true, label: lbl[b.id], sig: [{ 'd-m': 'metrics', 'd-l': 'logs', 'd-t': 'traces' }[b.id]] }); }); });
+  // to the second destination, along the bottom corridor
+  if (tp) {
+    var from = key === 'E' ? host.filter(function (n) { return n.id !== 'ebpf' && n.id !== 'vended' && n.id !== 'prom'; }) : (key === 'D' ? [coll[1]] : [coll[0]]);
+    var bx = key === 'E' ? busB(hostF) : busB(collF), gx = tpF.x - 45;
+    from.forEach(function (a) {
+      var sx = a.cx + TILE / 2, sy = a.cy, tx = tp.cx - TILE / 2, ty = tp.cy;
+      edges.push({ sig: sigs, from: a.id, to: 'tp', pts: [[sx, sy], [bx, sy], [bx, yb], [gx, yb], [gx, ty], [tx, ty]], dashed: true, label: key === 'E' ? 'second exporter' : 'OTLP or vendor exporter', lx: (bx + gx) / 2, ly: yb - 7 });
+    });
+  }
+  // AWS service metrics sit inside the AWS Cloud box and reach CloudWatch metrics with no agent (OTel enrichment)
+  if (vn) {
+    var dm = data.filter(function (n) { return n.id === 'd-m'; })[0], vy1 = vn.cy + TILE / 2 + 30, vy2 = dm.cy - TILE / 2;
+    edges.push({ sig: ['metrics'], from: 'vended', to: 'd-m', pts: [[vn.cx, vy1], [vn.cx, vy2]], dashed: true, label: 'OTel enrichment', lx: vn.cx + 62, ly: (vy1 + vy2) / 2 + 4 });
+  }
+  // logs, metrics and traces centralized from the source accounts into one monitoring account
+  if (monF) {
+    var ycen = y0 + H - 30;
+    edges.push({ sig: sigs, from: null, to: null, pts: [[awsF.x + awsF.w + GH * GO, ycen + GH * GO], [monF.x, ycen + GH * GO]], dashed: true, label: 'centralized', lx: (awsF.x + awsF.w + GH * GO + monF.x) / 2, ly: ycen + GH * GO - 7 });
+    var mbx = monOmni ? (monDs ? (monDs.cx + monOmni.cx) / 2 : (monF.x + 95 + monOmni.cx) / 2) : 0;
+    if (monL && monDs) {
+      edges.push({ sig: ['logs', 'traces'].filter(function (x) { return has(sigs, x); }), from: 'mon-l', to: 'mon-ds', pts: [[monL.cx + TILE / 2, monL.cy], [monDs.cx - TILE / 2, monDs.cy]], dashed: true, label: 'forwarded', lx: (monL.cx + monDs.cx) / 2, ly: monL.cy - 7 });
+      edges.push({ sig: ['logs', 'traces'].filter(function (x) { return has(sigs, x); }), from: 'mon-ds', to: 'mon-omni', pts: [[monDs.cx + TILE / 2, monDs.cy], [mbx, monDs.cy], [mbx, monOmni.cy + 14], [monOmni.cx - TILE / 2, monOmni.cy + 14]], dashed: true, label: 'read by', lx: (monDs.cx + TILE / 2 + mbx) / 2, ly: monDs.cy - 7 });
+    }
+    if (monM && monOmni) edges.push({ sig: ['metrics'], from: 'mon-m', to: 'mon-omni', pts: [[monM.cx + TILE / 2, monM.cy], [mbx, monM.cy], [mbx, monOmni.cy - 14], [monOmni.cx - TILE / 2, monOmni.cy - 14]], dashed: true, label: 'queried directly', lx: (monM.cx + TILE / 2 + mbx) / 2, ly: monM.cy - 7 });
+  }
+  // CloudWatch data is read by the experiences
+  if (expF && ds) {
+    var om = exp.filter(function (n) { return n.id === 'x-omni'; })[0], dm2 = data.filter(function (n) { return n.id === 'd-m'; })[0];
+    data.filter(function (n) { return n.id === 'd-l' || n.id === 'd-t'; }).forEach(function (a) { add(a, ds, awsF.x + 158, { dashed: true, sig: [a.id === 'd-l' ? 'logs' : 'traces'], label: a.id === 'd-l' || !has(sigs, 'logs') ? 'forwarded' : '' }); });
+    var xb = expF.x - 30, dsig = ['logs', 'traces'].filter(function (x) { return has(sigs, x); });
+    edges.push({ sig: dsig, from: 'dataset', to: 'x-omni', pts: [[ds.cx + TILE / 2, ds.cy], [xb, ds.cy], [xb, om.cy + 14], [om.cx - TILE / 2, om.cy + 14]], dashed: true, label: 'read by', lx: (ds.cx + TILE / 2 + xb) / 2, ly: ds.cy - 7 });
+    if (dm2) { var xm = expF.x - 10; edges.push({ sig: ['metrics'], from: 'd-m', to: 'x-omni', pts: [[dm2.cx + TILE / 2, dm2.cy], [xm, dm2.cy], [xm, om.cy - 14], [om.cx - TILE / 2, om.cy - 14]], dashed: true, label: 'V2 metrics queried directly', lx: (dm2.cx + TILE / 2 + xm) / 2 + 20, ly: dm2.cy - 7 }); }
+  } else if (expF && data.length) {
+    var ymid = y0 + H / 2 + 12;
+    edges.push({ from: null, to: null, pts: [[awsF.x + 185, ymid], [expF.x, ymid]], dashed: true, label: 'read by', lx: (awsF.x + 185 + expF.x) / 2, ly: ymid - 7, light: true });
+  }
+    // managed Prometheus collectors: agentless, metrics only, scraped targets in a VPC
+  if (prom.length) {
+    var pnode = host.filter(function (n) { return n.id === 'prom'; })[0], dmp = data.filter(function (n) { return n.id === 'd-m'; })[0], pgx = awsF.x - 17, pty = dmp.cy + 26, pbx = hostF.x + hostF.w + 32;
+    edges.push({ sig: ['metrics'], from: 'prom', to: 'd-m', pts: [[pnode.cx + TILE / 2, pnode.cy], [pbx, pnode.cy], [pbx, yp], [pgx, yp], [pgx, pty], [dmp.cx - TILE / 2, pty]], dashed: true, label: 'managed collector', lx: (pbx + pgx) / 2, ly: yp - 7 });
+  }
+  var nodes = host.concat(coll, vn ? [vn] : [], data, monNodes, ds ? [ds] : [], exp, tp ? [tp] : []);
+  return { w: W, h: Hc, legendY: legendY, frames: frames, nodes: nodes, edges: edges, y0: y0, yb: yb };
+}
+
+function modelText(m, s, r) {
+  var names = m.nodes.map(function (n) { return n.label.join(' '); });
+  return 'Diagram of Path ' + r.key + ', ' + r.P.name + '. Nodes: ' + names.join(', ') + '.';
+}
+
+function xmlEsc(t) { return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+
+var SIGC = { metrics: '#0972D3', logs: '#1D8102', traces: '#8D4FD1' };
+function edgeColor(e) { return e.light ? '#8A94A3' : (e.sig && e.sig.length === 1 ? SIGC[e.sig[0]] : '#545B64'); }
+function edgeLen(pts) { var L = 0; for (var i = 1; i < pts.length; i++) L += Math.abs(pts[i][0] - pts[i - 1][0]) + Math.abs(pts[i][1] - pts[i - 1][1]); return L; }
+
+function toSVG(m, title, desc, opts) {
+  opts = opts || {};
+  var o = [], cols = {};
+  m.edges.forEach(function (e) { cols[edgeColor(e)] = 1; });
+  o.push('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + m.w + ' ' + m.h + '"' + (opts.fluid ? '' : ' width="' + m.w + '" height="' + m.h + '"') + ' role="img" font-family="Arial, Helvetica, sans-serif">');
+  o.push('<title>' + xmlEsc(title || 'Collection path') + '</title><desc>' + xmlEsc(desc || '') + '</desc>');
+  o.push('<style>@media (prefers-reduced-motion: reduce){.flow{display:none}}</style>');
+  o.push('<defs>' + Object.keys(cols).map(function (c) { return '<marker id="ah' + c.slice(1) + '" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="' + c + '"/></marker>'; }).join('') + '</defs>');
+  o.push('<rect width="' + m.w + '" height="' + m.h + '" fill="#ffffff"/>');
+  m.frames.forEach(function (f) {
+    if (f.kind === 'awsghost') { o.push('<rect x="' + f.x + '" y="' + f.y + '" width="' + f.w + '" height="' + f.h + '" rx="4" fill="#F8FAFC" stroke="#232F3E" stroke-width="2"/>'); return; }
+    var dash = (f.kind === 'aws' || f.kind === 'saas') ? '' : ' stroke-dasharray="6 4"';
+    var stroke = f.kind === 'aws' ? '#232F3E' : '#7D8998';
+    o.push('<rect x="' + f.x + '" y="' + f.y + '" width="' + f.w + '" height="' + f.h + '" rx="4" fill="' + (f.kind === 'aws' ? '#F8FAFC' : 'none') + '" stroke="' + stroke + '" stroke-width="' + (f.kind === 'aws' ? 2 : 1.5) + '"' + dash + '/>');
+    if (f.kind === 'aws') o.push('<rect x="' + f.x + '" y="' + f.y + '" width="30" height="30" fill="#232F3E"/><text x="' + (f.x + 15) + '" y="' + (f.y + 20) + '" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">aws</text><text x="' + (f.x + 40) + '" y="' + (f.y + 21) + '" font-size="17" font-weight="700" fill="#232F3E">' + xmlEsc(f.title) + '</text>');
+    else o.push('<text x="' + (f.x + 12) + '" y="' + (f.y + 22) + '" font-size="17" font-weight="700" fill="#5A6C86">' + xmlEsc(f.title) + '</text>');
+  });
+  m.edges.forEach(function (e, i) {
+    var d = e.pts.map(function (p, j) { return (j ? 'L' : 'M') + p[0] + ' ' + p[1]; }).join(' '), c = edgeColor(e);
+    o.push('<path id="ep' + i + '" d="' + d + '" fill="none" stroke="' + c + '" stroke-width="2.4"' + (e.dashed ? ' stroke-dasharray="7 5"' : '') + ' marker-end="url(#ah' + c.slice(1) + ')"/>');
+  });
+  if (opts.anim) m.edges.forEach(function (e, i) {
+    if (e.light || !e.sig || !e.sig.length) return;
+    var dur = Math.max(2, edgeLen(e.pts) / 90).toFixed(1);
+    e.sig.forEach(function (sg, k) {
+      o.push('<circle class="flow" r="5" fill="' + SIGC[sg] + '" stroke="#fff" stroke-width="1.5"><animateMotion dur="' + dur + 's" begin="' + (k * 0.7 + (i % 4) * 0.25).toFixed(2) + 's" repeatCount="indefinite"><mpath href="#ep' + i + '"/></animateMotion></circle>');
+    });
+  });
+  m.edges.forEach(function (e) {
+    if (!e.label) return;
+    var w = e.label.length * 7.3 + 12;
+    o.push('<rect x="' + (e.lx - w / 2) + '" y="' + (e.ly - 13) + '" width="' + w + '" height="19" fill="#ffffff" opacity="0.9"/><text x="' + e.lx + '" y="' + e.ly + '" font-size="13" font-style="italic" fill="#232F3E" text-anchor="middle">' + xmlEsc(e.label) + '</text>');
+  });
+  m.nodes.forEach(function (n) {
+    var x = n.cx - TILE / 2, y = n.cy - TILE / 2, g = n.glyph, fs = g.length >= 5 ? 15 : g.length === 4 ? 17 : g.length === 3 ? 20 : 24;
+    o.push('<g><title>' + xmlEsc(n.label.join(' ') + (n.sub ? ' - ' + n.sub : '')) + '</title><rect x="' + x + '" y="' + y + '" width="' + TILE + '" height="' + TILE + '" rx="8" fill="' + n.fill + '"/>');
+    o.push('<text x="' + n.cx + '" y="' + (n.cy + fs / 3) + '" font-size="' + fs + '" font-weight="700" fill="#fff" text-anchor="middle">' + xmlEsc(g) + '</text></g>');
+    n.label.forEach(function (l, i) { o.push('<text x="' + n.cx + '" y="' + (y + TILE + 20 + i * 18) + '" font-size="15" fill="#232F3E" text-anchor="middle">' + xmlEsc(l) + '</text>'); });
+    if (n.sub) o.push('<text x="' + n.cx + '" y="' + (y + TILE + 20 + n.label.length * 18 + 1) + '" font-size="12.5" fill="#5A6C86" text-anchor="middle">' + xmlEsc(n.sub) + '</text>');
+  });
+  var ly = m.legendY, lg = '<g font-size="13" fill="#5A6C86">', lx = 20;
+  [['metrics', 'Metrics'], ['logs', 'Logs'], ['traces', 'Traces']].forEach(function (t) { lg += '<circle cx="' + (lx + 5) + '" cy="' + (ly - 4) + '" r="5" fill="' + SIGC[t[0]] + '"/><text x="' + (lx + 15) + '" y="' + ly + '">' + t[1] + '</text>'; lx += 22 + t[1].length * 7.5 + 12; });
+  lg += '<line x1="' + (lx + 10) + '" y1="' + (ly - 4) + '" x2="' + (lx + 42) + '" y2="' + (ly - 4) + '" stroke="#545B64" stroke-width="2"/><text x="' + (lx + 48) + '" y="' + ly + '">inside the host</text>' +
+    '<line x1="' + (lx + 160) + '" y1="' + (ly - 4) + '" x2="' + (lx + 192) + '" y2="' + (ly - 4) + '" stroke="#545B64" stroke-width="2" stroke-dasharray="7 5"/><text x="' + (lx + 198) + '" y="' + ly + '">encrypted, leaves the host</text></g>';
+  o.push(lg);
+  o.push('</svg>');
+  return o.join('');
+}
+
+function flowSteps(s, r, m) {
+  var key = r.key, sig = ['metrics', 'logs', 'traces'].filter(function (x) { return has(s.signals, x); }), st = [];
+  var comps = s.compute.map(function (c) { return label('compute', c); }).join(', ');
+  st.push('Your code on ' + comps + ' emits ' + sig.join(', ') + ' as OpenTelemetry (OTLP).' + (s.instr === 'vendor' ? ' Run one auto-instrumentation agent per process, so remove the old vendor tracer from each service as you add OpenTelemetry.' : '') + (s.instr === 'binary' ? ' Compiled binaries use eBPF instrumentation next to the agent.' : ''));
+  if (key === 'A') st.push('The CloudWatch agent receives it locally, signs the requests and forwards each signal to the matching CloudWatch endpoint.');
+  if (key === 'B') st.push('One OpenTelemetry Collector receives it once and exports to CloudWatch, signing the requests with SigV4, and to your other destination.');
+  if (key === 'C') st.push('One custom-built collector with the Application Signals processor receives it and exports to CloudWatch and to your other destination.');
+  if (key === 'D') st.push('The CloudWatch agent sends to CloudWatch. A second agent or collector sends the same data to your other destination.');
+  if (key === 'E') st.push('Each application sends straight to the CloudWatch OTLP endpoints with an AWS-distributed SDK. There is no agent to run.');
+  st.push('CloudWatch stores ' + [has(sig, 'metrics') ? 'metrics (queried with PromQL)' : '', has(sig, 'logs') ? 'logs' : '', has(sig, 'traces') ? 'traces (Transaction Search)' : ''].filter(Boolean).join(', ') + '.');
+  if (has(s.mig || [], 'vended') && has(sig, 'metrics')) st.push('AWS service metrics need no agent. Turn on OTel enrichment and they become queryable with PromQL.');
+  var exp = ['omni', 'appsignals', 'eci', 'promql', 'search'].filter(function (u) { return has(s.uses, u); });
+  if (exp.length) st.push('The experiences you picked read the same data: ' + exp.map(function (u) { return label('uses', u); }).join(', ') + '.');
+  if ((s.prom || []).length && has(sig, 'metrics')) st.push('Prometheus-compatible targets in your VPC are scraped by CloudWatch managed Prometheus collectors, which deliver the metrics to CloudWatch with no agent to run.');
+  if (s.scope === 'multi') st.push('Repeat the collection setup in each account. Each account sends its telemetry to its own CloudWatch.');
+  if (s.scope === 'central') st.push('Centralization rules copy logs and metrics from each source account into one monitoring account. Traces follow the logs when Transaction Search is on in each source account.' + (has(s.uses, 'omni') ? ' Omni in the monitoring account reads them across accounts: logs and traces through the CloudWatch Dataset, metrics directly.' : ' You query the metrics there with PromQL.'));
+  if (has(s.uses, 'omni')) st.push('Omni reads CloudWatch through the CloudWatch Dataset. The Dataset integration forwards your logs and traces into it, and Omni queries OpenTelemetry (V2) metrics directly from CloudWatch Metrics. Classic (V1) metrics do not appear in Omni.');
+  if (r.p.second) st.push('A copy goes to your second destination' + (s.dest === 'temp' ? ', for a short parallel run.' : ', for the long term.'));
+  return st;
+}
+
+var DX_SVC = 'sketch=0;points=[[0,0,0],[0.25,0,0],[0.5,0,0],[0.75,0,0],[1,0,0],[0,1,0],[0.25,1,0],[0.5,1,0],[0.75,1,0],[1,1,0],[0,0.25,0],[0,0.5,0],[0,0.75,0],[1,0.25,0],[1,0.5,0],[1,0.75,0]];outlineConnect=0;fontColor=#232F3E;strokeColor=#ffffff;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;shape=mxgraph.aws4.resourceIcon;';
+
+function toDrawio(m, name) {
+  var c = [], id = 2;
+  var cell = {};
+  function nid() { return 'c' + (id++); }
+  m.frames.forEach(function (f) {
+    var style = f.kind === 'awsghost' ? 'rounded=0;html=1;fillColor=none;strokeColor=#232F3E;' : f.kind === 'aws'
+      ? 'shape=mxgraph.aws4.group;grIcon=mxgraph.aws4.group_aws_cloud;strokeColor=#232F3E;fillColor=none;verticalAlign=top;align=left;spacingLeft=30;fontColor=#232F3E;dashed=0;html=1;'
+      : 'rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#7D8998;fontColor=#5A6C86;verticalAlign=top;align=left;spacingLeft=8;fontStyle=1;' + (f.kind === 'saas' ? '' : 'dashed=1;');
+    var i = nid(); cell[f.id] = i;
+    c.push('<mxCell id="' + i + '" value="' + xmlEsc(f.title) + '" style="' + style + '" vertex="1" parent="1"><mxGeometry x="' + f.x + '" y="' + f.y + '" width="' + f.w + '" height="' + f.h + '" as="geometry"/></mxCell>');
+  });
+  m.nodes.forEach(function (n) {
+    var style = n.tier === 'svc'
+      ? DX_SVC + 'fillColor=' + n.fill + ';resIcon=mxgraph.aws4.' + n.shape + ';'
+      : 'sketch=0;outlineConnect=0;fontColor=#232F3E;gradientColor=none;fillColor=' + n.fill + ';strokeColor=none;dashed=0;verticalLabelPosition=bottom;verticalAlign=top;align=center;html=1;fontSize=12;fontStyle=0;aspect=fixed;pointerEvents=1;shape=mxgraph.aws4.' + n.shape + ';';
+    var i = nid(); cell[n.id] = i;
+    c.push('<mxCell id="' + i + '" value="' + xmlEsc(n.label.join('<br>')) + '" style="' + style + '" vertex="1" parent="1"><mxGeometry x="' + (n.cx - TILE / 2) + '" y="' + (n.cy - TILE / 2) + '" width="' + TILE + '" height="' + TILE + '" as="geometry"/></mxCell>');
+  });
+  m.edges.forEach(function (e) {
+    var style = 'endArrow=block;endFill=1;html=1;rounded=0;strokeWidth=2;strokeColor=' + (e.light ? '#8A94A3' : '#545B64') + ';fontSize=11;fontStyle=2;' + (e.dashed ? 'dashed=1;' : '') +
+      (e.from ? 'exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;' : '');
+    var p = e.pts, inner = p.slice(1, p.length - 1).map(function (q) { return '<mxPoint x="' + q[0] + '" y="' + q[1] + '"/>'; }).join('');
+    var geo = '<mxGeometry relative="1" as="geometry">' + (e.from ? '' : '<mxPoint x="' + p[0][0] + '" y="' + p[0][1] + '" as="sourcePoint"/><mxPoint x="' + p[p.length - 1][0] + '" y="' + p[p.length - 1][1] + '" as="targetPoint"/>') +
+      (inner ? '<Array as="points">' + inner + '</Array>' : '') + '</mxGeometry>';
+    c.push('<mxCell id="' + nid() + '" value="' + xmlEsc(e.label) + '" style="' + style + '" edge="1" parent="1"' + (e.from ? ' source="' + cell[e.from] + '" target="' + cell[e.to] + '"' : '') + '>' + geo + '</mxCell>');
+  });
+  return '<mxfile host="app.diagrams.net"><diagram name="' + xmlEsc(name || 'Collection path') + '" id="collection-path"><mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="' + Math.ceil(m.w) + '" pageHeight="' + Math.ceil(m.h) + '" math="0" shadow="0"><root><mxCell id="0"/><mxCell id="1" parent="0"/>' + c.join('') + '</root></mxGraphModel></diagram></mxfile>';
+}
+
+// ---------- Starter configs (pure). Adapted from the AWS docs. ----------
+function genConfigs(s, r, opt) {
+  opt = opt || {};
+  var region = opt.region || 'us-east-1', lg = opt.logGroup || 'my-app-logs', key = r.key;
+  var sigs = ['metrics', 'logs', 'traces'].filter(function (x) { return has(s.signals, x); });
+  var out = [];
+  var env = ['OTEL_SERVICE_NAME=my-service', 'OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production,service.version=1.0.0'];
+  if (key === 'E') {
+    env.push('OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
+    if (has(sigs, 'traces')) env.push('OTEL_TRACES_EXPORTER=otlp', 'OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=https://xray.' + region + '.amazonaws.com/v1/traces'); else env.push('OTEL_TRACES_EXPORTER=none');
+    if (has(sigs, 'metrics')) env.push('OTEL_METRICS_EXPORTER=otlp', 'OTEL_EXPORTER_OTLP_METRICS_ENDPOINT=https://monitoring.' + region + '.amazonaws.com/v1/metrics'); else env.push('OTEL_METRICS_EXPORTER=none');
+    if (has(sigs, 'logs')) env.push('OTEL_LOGS_EXPORTER=otlp', 'OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=https://logs.' + region + '.amazonaws.com/v1/logs', 'OTEL_EXPORTER_OTLP_LOGS_HEADERS=x-aws-log-group=' + lg + ',x-aws-log-stream=default'); else env.push('OTEL_LOGS_EXPORTER=none');
+    env.push('# Sends every trace by default. Set a sampling rate to control the volume:', '# OTEL_TRACES_SAMPLER=parentbased_traceidratio', '# OTEL_TRACES_SAMPLER_ARG=0.05');
+    out.push({ title: 'Application environment variables (SDK only)', lang: 'bash', text: env.join('\n'), note: 'Set these where each application starts. Needs Transaction Search enabled for traces. Metrics endpoint use is adapted from the AWS metrics docs. The AWS page for the ADOT SDKs lists the SDK versions needed.' });
+    if (r.p.second) out.push({ title: 'Second destination', lang: 'text', text: 'Add a second OTLP exporter in each application and point it at the other destination.\nThere is no collector to fan out, so the application exports twice.', note: '' });
+    return out.concat(langSnippets(s, r));
+  }
+  env.push('OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318', 'OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf');
+  if (r.p.needAS) env.push('OTEL_TRACES_SAMPLER=always_on');
+  if (!has(sigs, 'metrics')) env.push('OTEL_METRICS_EXPORTER=none');
+  if (!has(sigs, 'logs')) env.push('OTEL_LOGS_EXPORTER=none');
+  if (!has(sigs, 'traces')) env.push('OTEL_TRACES_EXPORTER=none');
+  if (key === 'D') env.push('# The second agent listens on other ports, for example 14318. Add a second OTLP exporter in the app, or forward from one agent to the other.');
+  out.push({ title: 'Application environment variables', lang: 'bash', text: env.join('\n'), note: 'Point every service at the local agent or collector. Use the same variables on each path; only the endpoint changes. Application Signals needs extra settings: see the Application Signals setup guide for your platform.' });
+
+  if (key === 'A' || key === 'D') {
+    out.push({ title: 'CloudWatch agent configuration (agent 1.300070.0 or later)', lang: 'json', text: JSON.stringify({ opentelemetry: { collect: { otlp: { grpc_endpoint: '0.0.0.0:4317', http_endpoint: '0.0.0.0:4318' } } } }, null, 2), note: 'The agent signs requests and picks the endpoints for you. On EKS, supply this through the add-on configuration and keep your Application Signals and Container Insights settings, or the add-on drops their ports.' });
+  }
+  if (key === 'B' || key === 'C' || key === 'D') {
+    var isD = key === 'D', y = [];
+    y.push('receivers:', '  otlp:', '    protocols:', '      grpc:', '        endpoint: 0.0.0.0:' + (isD ? '14317' : '4317'), '      http:', '        endpoint: 0.0.0.0:' + (isD ? '14318' : '4318'), '', 'processors:', '  batch:', '    send_batch_size: 200', '    timeout: 10s', '');
+    if (!isD) {
+      y.push('extensions:');
+      sigs.forEach(function (sg) { y.push('  sigv4auth/' + sg + ':', '    region: "' + region + '"', '    service: "' + (sg === 'metrics' ? 'monitoring' : sg === 'logs' ? 'logs' : 'xray') + '"'); });
+      y.push('');
+    }
+    y.push('exporters:');
+    if (!isD) {
+      if (has(sigs, 'metrics')) y.push('  otlphttp/cw-metrics:', '    metrics_endpoint: https://monitoring.' + region + '.amazonaws.com/v1/metrics', '    auth:', '      authenticator: sigv4auth/metrics');
+      if (has(sigs, 'logs')) y.push('  otlphttp/cw-logs:', '    compression: gzip', '    logs_endpoint: https://logs.' + region + '.amazonaws.com/v1/logs', '    headers:', '      x-aws-log-group: ' + lg, '      x-aws-log-stream: default', '    auth:', '      authenticator: sigv4auth/logs');
+      if (has(sigs, 'traces')) y.push('  otlphttp/cw-traces:', '    compression: gzip', '    traces_endpoint: https://xray.' + region + '.amazonaws.com/v1/traces', '    auth:', '      authenticator: sigv4auth/traces');
+    }
+    var wantSecond = r.p.second;
+    if (wantSecond) y.push('  # Your second destination: replace with its OTLP endpoint or its exporter', '  otlphttp/second:', '    endpoint: ${env:SECOND_OTLP_ENDPOINT}', '    headers:', '      authorization: ${env:SECOND_AUTH_HEADER}');
+    y.push('', 'service:');
+    if (!isD) y.push('  extensions: [' + sigs.map(function (sg) { return 'sigv4auth/' + sg; }).join(', ') + ']');
+    y.push('  pipelines:');
+    sigs.forEach(function (sg) {
+      var ex = [];
+      if (!isD) ex.push('otlphttp/cw-' + sg);
+      if (wantSecond) ex.push('otlphttp/second');
+      y.push('    ' + sg + ':', '      receivers: [otlp]', '      processors: [batch]', '      exporters: [' + ex.join(', ') + ']');
+    });
+    var note = isD ? 'This collector only sends to the second destination, on non-default ports so it does not clash with the CloudWatch agent. Never hard-code keys: read them from environment variables or a mounted secret.'
+      : 'Never hard-code keys: read them from environment variables or a mounted secret.' + (key === 'C' ? ' Build the collector with the OpenTelemetry Collector Builder and add the Application Signals processor to the traces pipeline, as in the AWS custom collector guide and example config.' : ' A standard build has no Application Signals processor.');
+    out.push({ title: isD ? 'Second collector (second destination only)' : 'OpenTelemetry Collector configuration', lang: 'yaml', text: y.join('\n'), note: note });
+  }
+  return out.concat(langSnippets(s, r));
+}
+
+function langSnippets(s, r) {
+  var out = [], L = s.lang || [], useAdot = (r.p.needAS || r.key === 'E');
+  L.forEach(function (l) {
+    var adot = has(ADOT_LANGS, l) && useAdot, t = '', note = LANG_INFO[l].how;
+    if (l === 'java') t = adot ? 'curl -L -O https://github.com/aws-observability/aws-otel-java-instrumentation/releases/latest/download/aws-opentelemetry-agent.jar\nexport JAVA_TOOL_OPTIONS="-javaagent:$PWD/aws-opentelemetry-agent.jar"' : '# Download opentelemetry-javaagent.jar from the OpenTelemetry Java instrumentation releases\nexport JAVA_TOOL_OPTIONS="-javaagent:$PWD/opentelemetry-javaagent.jar"';
+    else if (l === 'python') t = adot ? 'pip install aws-opentelemetry-distro\nexport OTEL_PYTHON_DISTRO=aws_distro\nexport OTEL_PYTHON_CONFIGURATOR=aws_configurator\nopentelemetry-instrument python app.py' : 'pip install opentelemetry-distro opentelemetry-exporter-otlp\nopentelemetry-bootstrap -a install\nopentelemetry-instrument python app.py';
+    else if (l === 'node') t = adot ? "npm install @aws/aws-distro-opentelemetry-node-autoinstrumentation\nnode --require '@aws/aws-distro-opentelemetry-node-autoinstrumentation/register' app.js" : 'npm install @opentelemetry/api @opentelemetry/auto-instrumentations-node\nnode --require @opentelemetry/auto-instrumentations-node/register app.js';
+    else if (l === 'dotnet') t = adot ? 'curl -L -O https://github.com/aws-observability/aws-otel-dotnet-instrumentation/releases/latest/download/aws-otel-dotnet-install.sh\nchmod +x ./aws-otel-dotnet-install.sh\n./aws-otel-dotnet-install.sh\n. $HOME/.otel-dotnet-auto/instrument.sh' : '# Use the OpenTelemetry .NET automatic instrumentation for ASP.NET Core and gRPC.\n# Console apps: configure the SDK in code (TracerProvider with the OTLP exporter).';
+    else if (l === 'go') t = '# Go has no agent. Initialize the OpenTelemetry SDK in code and wrap handlers with otelhttp or otelgrpc.\ngo get go.opentelemetry.io/contrib/instrumentation/github.com/aws/aws-sdk-go-v2/otelaws';
+    else if (l === 'php') t = '# Follow the OpenTelemetry PHP zero-code guide: https://opentelemetry.io/docs/zero-code/php/';
+    else if (l === 'ruby') t = '# Follow the OpenTelemetry Ruby instrumentation guide: https://opentelemetry.io/docs/languages/ruby/getting-started/#instrumentation';
+    else t = '# Add the OpenTelemetry SDK for your language and export OTLP to localhost:4318 (or the CloudWatch OTLP endpoints for SDK-only).';
+    out.push({ title: 'Instrumentation: ' + label('lang', l) + (adot ? ' (ADOT)' : ''), lang: 'bash', text: t, note: note });
+  });
+  return out;
+}
+
+var PRESETS = [
+  { title: 'Omni on EC2 and EKS', desc: 'The CloudWatch agent sends metrics, logs and traces that Omni reads.', tags: ['Omni', 'EC2', 'EKS'], s: { compute: ['ec2', 'eks'], lang: ['java', 'python'], signals: ['metrics', 'logs', 'traces'], dest: 'cw', scope: 'one', uses: ['omni'], instr: 'otel', owner: 'aws' } },
+  { title: 'Omni across several accounts and Regions', desc: 'Collect in each account, centralize into one monitoring account.', tags: ['Omni', 'Several accounts', 'Centralized'], s: { compute: ['ec2', 'eks'], lang: ['java', 'python'], mig: ['vended'], signals: ['metrics', 'logs', 'traces'], dest: 'cw', scope: 'central', uses: ['omni'], instr: 'otel', owner: 'aws' } },
+  { title: 'EC2, CloudWatch only', desc: 'The default: one CloudWatch agent on each instance.', tags: ['EC2', 'CloudWatch', 'Metrics, logs, traces'], s: { compute: ['ec2'], lang: ['java'], signals: ['metrics', 'logs', 'traces'], dest: 'cw', uses: [], instr: 'otel', owner: 'aws' } },
+  { title: 'EKS with Application Signals and a second destination', desc: 'One custom collector you build, for the long term.', tags: ['EKS', 'Application Signals', 'Second destination'], s: { compute: ['eks'], lang: ['java', 'python'], signals: ['metrics', 'logs', 'traces'], dest: 'long', uses: ['appsignals'], instr: 'vendor', owner: 'build' } },
+  { title: 'ECS with Application Signals and a parallel run', desc: 'CloudWatch agent plus a second agent for the other destination.', tags: ['ECS', 'Application Signals', 'Parallel run'], s: { compute: ['ecs'], lang: ['java'], signals: ['metrics', 'traces'], dest: 'temp', uses: ['appsignals'], instr: 'otel', owner: 'aws' } },
+  { title: 'Kubernetes with a second destination', desc: 'A standard collector that fans out to CloudWatch and elsewhere.', tags: ['EKS', 'Standard collector', 'Second destination'], s: { compute: ['eks'], lang: ['go', 'python'], signals: ['metrics', 'logs', 'traces'], dest: 'long', uses: [], instr: 'otel', owner: 'own' } },
+  { title: 'Lambda functions', desc: 'No agent or sidecar: a layer or the SDK sends straight to CloudWatch.', tags: ['Lambda', 'SDK only'], s: { compute: ['lambda'], lang: ['python', 'node'], signals: ['traces', 'logs'], dest: 'cw', uses: [], instr: 'none', owner: 'aws' } },
+  { title: 'Compiled binaries on EC2', desc: 'eBPF instrumentation next to the CloudWatch agent.', tags: ['EC2', 'eBPF', 'Traces'], s: { compute: ['ec2'], lang: ['go'], signals: ['traces'], dest: 'cw', uses: [], instr: 'binary', owner: 'aws' } },
+  { title: 'On-premises with Application Signals and Omni', desc: 'Your own collector with the Application Signals processor.', tags: ['On-premises', 'Omni', 'Application Signals'], s: { compute: ['onprem'], lang: ['java', 'dotnet'], signals: ['metrics', 'logs', 'traces'], dest: 'cw', uses: ['appsignals', 'omni'], instr: 'otel', owner: 'own' } }
+];
+
+// ============ ENGINE END ============
+
+// ============ UI ============
+var META = {
+  lang: { java: ['Jv', 'Spring Boot, Quarkus, Ktor and others'], python: ['Py', 'FastAPI, Flask, Django and others'], node: ['JS', 'Express, gRPC and others'], dotnet: ['.N', 'ASP.NET Core, gRPC and console apps'], go: ['Go', 'net/http, gRPC and others'], php: ['PHP', 'Web applications and APIs'], ruby: ['Rb', 'Rails and others'], rust: ['Rs', 'Instrumented in code'], other: ['...', 'Elixir, C++ or anything else'] },
+  compute: { ec2: ['EC2', 'Instances you manage'], ecs: ['ECS', 'Fargate or EC2 tasks'], eks: ['K8s', 'Amazon EKS or any Kubernetes'], lambda: ['\u03bb', 'Functions, with no host to install on'], onprem: ['DC', 'Servers outside AWS'] },
+  signals: { metrics: ['M', 'Counters, gauges and histograms'], logs: ['L', 'Application and system logs'], traces: ['T', 'Spans that follow a request across services'] },
+  dest: { cw: ['CW', 'Send everything to CloudWatch'], temp: ['2x', 'Run both side by side, then retire the other'], long: ['2x', 'Keep sending to both, for the long term'] },
+  uses: { omni: ['Om', 'AI-assisted views of applications and agents'], appsignals: ['AS', 'Service map and SLOs'], eci: ['CI', 'Cluster, node and pod views'], promql: ['PQ', 'Query OpenTelemetry metrics with PromQL'], search: ['Q', 'Logs Insights and Transaction Search'] },
+  mig: { vended: ['AWS', 'Published by AWS services such as EC2, RDS and Lambda'], agent: ['CW', 'Memory, disk and other host metrics from the CloudWatch agent'], custom: ['Cu', 'Metrics your own code or collectd and StatsD publish'] },
+  prom: { eks: ['K8s', 'Metrics endpoints your pods already expose'], msk: ['MSK', 'Kafka cluster metrics'], opensearch: ['OS', 'OpenSearch domain metrics'], vpc: ['VPC', 'Any Prometheus-compatible target reachable in your VPC'] },
+  instr: { otel: ['OT', 'Your code already emits OTLP'], vendor: ['Vn', 'A tracer or agent from another observability vendor'], none: ['0', 'No instrumentation today'], binary: ['Bin', 'Code you cannot add an SDK to'] },
+  scope: { one: ['1', 'Everything stays in one account'], multi: ['N', 'Set up collection in each account and view each on its own'], central: ['M', 'Collect in each account, then centralize into one monitoring account'] },
+  owner: { any: ['?', 'We start from the AWS-recommended CloudWatch agent'], aws: ['CW', 'AWS builds, patches and supports it'], own: ['OC', 'You already run collectors'], build: ['Bd', 'You are comfortable owning a custom build'], none: ['SDK', 'The application sends straight to CloudWatch'] }
+};
+var STEPS = [
+  { q: 'compute', section: 'Your workloads', multi: true, req: true, title: 'Where does your code run?', help: 'Pick everything that applies.' },
+  { q: 'lang', section: 'Your workloads', multi: true, req: false, title: 'Which languages is your code written in?', help: 'Optional. Pick everything that applies. The language decides which AWS SDKs and instrumentation you can use.' },
+  { q: 'instr', section: 'Your workloads', multi: false, req: false, title: 'How is your code instrumented today?', help: 'Optional. This tells us whether an existing tracer has to be replaced, and whether some code cannot be changed.' },
+  { q: 'mig', section: 'Your workloads', multi: true, req: false, title: 'Which CloudWatch metrics do you publish today?', help: 'Optional. Pick everything that applies. This adds a Metrics migration tab on the result, for moving Classic (V1) metrics to OpenTelemetry (V2) metrics.' },
+  { q: 'prom', section: 'Your workloads', multi: true, req: false, title: 'Do you have Prometheus-compatible metrics to bring in?', help: 'Optional. Pick the sources. CloudWatch managed Prometheus collectors scrape them for you, with no agent to run, and deliver the metrics to CloudWatch.' },
+  { q: 'signals', section: 'What you want', multi: true, req: true, title: 'Which signals do you want in CloudWatch?', help: 'Pick everything that applies.' },
+  { q: 'uses', section: 'What you want', multi: true, req: false, title: 'What do you want to use once it is there?', help: 'Optional. This decides whether you need Application Signals, Container Insights or richer service views. Omni reads the same CloudWatch data, so it is a use, not a separate destination.' },
+  { q: 'dest', section: 'What you want', multi: false, req: true, title: 'Where should the data go?', help: 'CloudWatch is always a destination. A second destination is any other backend that accepts OpenTelemetry data.' },
+  { q: 'scope', section: 'What you want', multi: false, req: false, title: 'Do you collect from more than one AWS account or Region?', help: 'Optional. You send telemetry to CloudWatch in each account you collect from. You can look at each account on its own, or centralize into one monitoring account.' },
+  { q: 'owner', section: 'Who runs it', multi: false, req: true, title: 'Who should run the collection layer?', help: 'The collection layer is the agent or collector between your applications and CloudWatch. Not sure? Choose "No preference" and we start from the AWS-recommended agent.' }
+];
+var TABS = [['diagram', 'Diagram'], ['why', 'Why this path'], ['watch', 'Watch out'], ['setup', 'Setup by compute'], ['lang', 'Languages'], ['mig', 'Metrics migration'], ['config', 'Starter config'], ['docs', 'Docs']];
+
+var EMPTY = function () { return { compute: [], lang: [], mig: [], prom: [], signals: [], dest: '', scope: '', uses: [], instr: '', owner: '' }; };
+var state = EMPTY();
+var view = { expanded: false, zoom: 'fit', paused: false, returnTo: '', screen: 'home', tab: 'diagram', internal: false, trace: false, region: 'us-east-1', logGroup: 'my-app-logs' };
+var lastResult = null;
+function stepFor(q) { for (var i = 0; i < STEPS.length; i++) if (STEPS[i].q === q) return i + 1; return 1; }
+function firstMissingStep() { for (var i = 0; i < STEPS.length; i++) { var st = STEPS[i], v = state[st.q]; if (st.req && (Array.isArray(v) ? !v.length : !v)) return i + 1; } return 1; }
+
+function tagsFor(x) { return ''; }
+function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+function aLink(label, url) { return '<a href="' + url + '" target="_blank" rel="noopener noreferrer">' + label + '</a>'; }
+var OTEL_DOCS = 'https://opentelemetry.io/docs/languages/';
+var LINKIFY = [
+  [/the OpenTelemetry Kubernetes blueprint/g, function () { return aLink('the OpenTelemetry Kubernetes blueprint', DOCS.k8sblueprint[1]); }],
+  [/Turn on Transaction Search/g, function () { return aLink('Turn on Transaction Search', DOCS.txsearch[1]); }],
+  [/Omni needs Transaction Search on/g, function () { return 'Omni needs ' + aLink('Transaction Search', DOCS.txsearch[1]) + ' on'; }],
+  [/IAM Roles Anywhere/g, function () { return aLink('IAM Roles Anywhere', DOCS.rolesanywhere[1]); }],
+  [/ADOT Lambda layer/g, function () { return aLink('ADOT Lambda layer', DOCS.adotlambda[1]); }],
+  [/Managed Prometheus collectors/g, function () { return aLink('Managed Prometheus collectors', DOCS.promcol[1]); }],
+  [/Metrics centralization/g, function () { return aLink('Metrics centralization', DOCS.central[1]); }],
+  [/Enhanced Container Insights/g, function () { return aLink('Enhanced Container Insights', 'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Container-Insights-metrics-enhanced-EKS.html'); }],
+  [/See the AWS docs for how to build it/g, function () { return 'See ' + aLink('Build your own custom OpenTelemetry Collector', DOCS.custom[1]) + ' for how to build it'; }],
+  [/the ADOT and OpenTelemetry docs/g, function () { return 'the ' + aLink('ADOT', DOCS.adotdocs[1]) + ' and ' + aLink('OpenTelemetry', OTEL_DOCS) + ' docs'; }],
+  [/the OpenTelemetry docs/g, function () { return 'the ' + aLink('OpenTelemetry docs', OTEL_DOCS); }],
+  [/per the AWS docs/g, function () { return 'per ' + aLink('the AWS docs', DOCS.eksaddon[1]); }],
+  [/in the AWS docs before you pin one/g, function () { return 'in ' + aLink('the AWS docs', DOCS.collector[1]) + ' before you pin one'; }],
+  [/default recommendation in the AWS docs/g, function () { return 'default recommendation in ' + aLink('the AWS docs', DOCS.agent[1]); }],
+  [/The ADOT docs page lists only the Python layer ARN, and the Python layer fails on Node\.js, so look up the layer for your runtime in the docs/g, function () { return 'The ' + aLink('ADOT docs page', DOCS.adotlambda[1]) + ' lists only the Python layer ARN, and the Python layer fails on Node.js, so look up the layer for your runtime in ' + aLink('the docs', DOCS.adotlambda[1]); }],
+  [/the Application Signals supported-systems page/g, function () { return aLink('the Application Signals supported-systems page', DOCS.support[1]); }],
+  [/See Set up Omni for your organization/g, function () { return 'See ' + aLink('Set up Omni for your organization', DOCS.omniorg[1]); }],
+  [/the Application Signals setup guide for your platform/g, function () { return aLink('the Application Signals setup guide for your platform', DOCS.setups[1]); }],
+  [/See the agent documentation/g, function () { return 'See ' + aLink('the agent documentation', DOCS.agent[1]); }],
+  [/CloudWatch centralization rules/g, function () { return aLink('CloudWatch centralization rules', DOCS.central[1]); }]
+];
+function escL(t) { var h = esc(t); LINKIFY.forEach(function (r) { h = h.replace(r[0], r[1]); }); return h; }
+function labels(q) { var a = state[q]; if (!Array.isArray(a)) a = a ? [a] : []; return a.map(function (v) { return label(q, v); }); }
+
+// ----- URL hash -----
+var HK = { scope: 'x', compute: 'c', lang: 'l', mig: 'm', prom: 'p', signals: 's', dest: 'd', uses: 'u', instr: 'i', owner: 'o' };
+function saveHash() {
+  var p = Object.keys(HK).map(function (k) { var v = state[k]; return HK[k] + '=' + (Array.isArray(v) ? v.join(',') : v); });
+  p.push('v=' + view.screen); if (view.screen === 'result') p.push('t=' + view.tab);
+  try { history.replaceState(null, '', '#' + p.join('&')); } catch (e) { /* ignore */ }
+}
+function loadHash() {
+  var h = location.hash.replace(/^#/, ''); if (!h) return;
+  h.split('&').forEach(function (pair) {
+    var kv = pair.split('='), val = kv[1] || '';
+    Object.keys(HK).forEach(function (k) {
+      if (HK[k] === kv[0]) {
+        var vals = val.split(',').filter(Boolean).filter(function (v) { return OPTIONS[k].some(function (o) { return o[0] === v; }); });
+        state[k] = Array.isArray(state[k]) ? vals : (vals[0] || '');
+      }
+    });
+    if (kv[0] === 'v' && (val === 'home' || val === 'result' || /^\d+$/.test(val))) view.screen = /^\d+$/.test(val) ? +val : val;
+    if (kv[0] === 't' && TABS.some(function (t) { return t[0] === val; })) view.tab = val;
+  });
+  if (view.screen === 'result' && missing(state).length) view.screen = 'home';
+}
+
+// ----- helpers -----
+function copyText(text, btn) {
+  var done = function () { if (btn) { var o = btn.getAttribute('data-label') || btn.textContent; btn.setAttribute('data-label', o); btn.textContent = 'Copied'; setTimeout(function () { btn.textContent = o; }, 1400); } };
+  var legacy = function () {
+    try {
+      var ta = document.createElement('textarea');
+      ta.value = text; ta.setAttribute('readonly', ''); ta.style.cssText = 'position:fixed;top:0;left:0;opacity:0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      var ok = document.execCommand('copy'); ta.remove();
+      if (ok) { done(); return; }
+    } catch (e) { }
+    window.prompt('Copy this:', text);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(done, legacy);
+  else legacy();
+}
+function download(name, text, mime) {
+  var a = document.createElement('a'), url = URL.createObjectURL(new Blob([text], { type: mime }));
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(function () { URL.revokeObjectURL(url); }, 500);
+}
+function summaryText(r) {
+  var s = state, t = [];
+  t.push('Collection path: Path ' + r.key + ', ' + r.P.name);
+  t.push('Runs on: ' + labels('compute').join(', '));
+  t.push('Signals: ' + labels('signals').join(', '));
+  t.push('Destination: ' + label('dest', s.dest));
+  if (s.scope) t.push('Accounts: ' + label('scope', s.scope));
+  if (s.uses.length) t.push('Uses: ' + labels('uses').join(', '));
+  if (s.prom && s.prom.length) t.push('Prometheus sources: ' + labels('prom').join(', ') + ' (managed Prometheus collectors)');
+  if (s.mig && s.mig.length) t.push('Metrics published today: ' + labels('mig').join(', '));
+  if (s.instr) t.push('Instrumentation today: ' + label('instr', s.instr));
+  t.push('Collection layer owner: ' + label('owner', s.owner));
+  t.push(''); t.push(r.P.summary); t.push('Who owns what: ' + r.P.owner);
+  if (r.warns.length) { t.push(''); t.push('Watch out for:'); r.warns.forEach(function (w) { t.push('- ' + w.t); }); }
+  t.push(''); t.push('Docs:'); r.docs.forEach(function (d) { t.push('- ' + DOCS[d][0] + ': ' + DOCS[d][1]); });
+  return t.join('\n');
+}
+
+// ----- screens -----
+function home() {
+  var h = '<section class="hero"><h1>Choose your CloudWatch collection path in minutes</h1>' +
+    '<p class="lead">Tell us about your stack. You get the collection path that fits, a diagram you can download, what to watch out for and a starter config.</p>' +
+    '<div class="cta"><button type="button" class="primary lg" data-act="start">Start building</button>' +
+    '<a href="' + DOCS.start[1] + '" target="_blank" rel="noopener noreferrer">View the official docs</a></div>' +
+    '<p class="small">Free. Nothing leaves your browser.</p></section>';
+  h += '<h2>Or try a popular stack</h2><div class="grid">';
+  PRESETS.forEach(function (p, i) {
+    h += '<button type="button" class="card preset" data-act="preset" data-i="' + i + '"><strong>' + esc(p.title) + '</strong><span class="d">' + esc(p.desc) + '</span>' +
+      '<span class="tags">' + p.tags.map(function (x) { return '<span class="pill">' + esc(x) + '</span>'; }).join('') + '</span><span class="use">Use this stack &rarr;</span></button>';
+  });
+  return h + '</div>';
+}
+
+function stepScreen(n) {
+  var st = STEPS[n - 1], q = st.q, sel = state[q];
+  var empty = Array.isArray(sel) ? !sel.length : !sel;
+  var h = '<div class="step">' + esc(st.section) + ' &middot; Step ' + n + ' of ' + STEPS.length + '</div><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="' + STEPS.length + '" aria-valuenow="' + n + '"><i style="width:' + Math.round(n / STEPS.length * 100) + '%"></i></div>';
+  h += '<h1>' + esc(st.title) + '</h1><p class="lead">' + esc(st.help) + '</p><div class="grid" role="' + (st.multi ? 'group' : 'radiogroup') + '" aria-label="' + esc(st.title) + '">';
+  OPTIONS[q].forEach(function (o) {
+    var on = Array.isArray(sel) ? has(sel, o[0]) : sel === o[0], m = META[q][o[0]];
+    h += '<button type="button" class="opt' + (on ? ' on' : '') + '" role="' + (st.multi ? 'checkbox' : 'radio') + '" aria-checked="' + on + '" data-act="opt" data-q="' + q + '" data-v="' + o[0] + '">' +
+      '<span class="glyph" aria-hidden="true">' + esc(m[0]) + '</span><span><strong>' + esc(o[1]) + '</strong><small>' + esc(m[1]) + '</small></span></button>';
+  });
+  var back = view.returnTo ? '<button type="button" data-act="to-result">Back to my path</button>' : '<button type="button" data-act="back">Back</button>';
+  var nextBtn = view.returnTo
+    ? '<button type="button" class="primary" data-act="to-result"' + (missing(state).length ? ' disabled' : '') + '>Update my path</button>'
+    : '<button type="button" class="primary" data-act="next"' + (st.req && empty ? ' disabled' : '') + '>' + (n === STEPS.length ? 'Show my path' : (!st.req && empty ? 'Skip' : 'Continue')) + '</button>';
+  h += '</div>';
+  selectionNotes(state).filter(function (x) { return x.q === q; }).forEach(function (x) { h += '<div class="note" role="note">' + tagsFor(x) + escL(x.t) + (x.l && x.l.length ? ' <span class="small">Docs: ' + x.l.map(function (d) { return '<a href="' + DOCS[d][1] + '" target="_blank" rel="noopener noreferrer">' + esc(DOCS[d][0]) + '</a>'; }).join(' &middot; ') + '</span>' : '') + '</div>'; });
+  h += '<div class="nav">' + back + nextBtn + '</div>';
+  return h;
+}
+
+function overlayHtml() {
+  var m = buildModel(state, lastResult), svg = toSVG(m, 'Path ' + lastResult.key + ': ' + lastResult.P.name, modelText(m, state, lastResult), { anim: true, fluid: true });
+  var st = view.zoom === 'fit' ? 'width:100%;height:auto;display:block' : 'width:' + Math.round(m.w * view.zoom) + 'px;max-width:none;height:auto;display:block';
+  svg = svg.replace('<svg ', '<svg style="' + st + '" ');
+  var pct = view.zoom === 'fit' ? 'Fit to width' : Math.round(view.zoom * 100) + '%';
+  return '<div class="overlay" role="dialog" aria-modal="true" aria-label="Diagram, expanded"><div class="ovbar"><strong>Path ' + lastResult.key + ': ' + esc(lastResult.P.name) + '</strong><span class="grow"></span><span class="small">' + pct + '</span>' +
+    '<button type="button" data-act="zoom-out" aria-label="Zoom out">&minus;</button><button type="button" data-act="zoom-fit">Fit</button><button type="button" data-act="zoom-in" aria-label="Zoom in">+</button>' +
+    '<button type="button" data-act="dl-svg">Download SVG</button><button type="button" data-act="dl-drawio">Download .drawio</button><button type="button" class="primary" id="ov-close" data-act="collapse">Close</button></div><div class="ovbody">' + svg + '</div></div>';
+}
+
+function stackPanel() {
+  var rows = [['Runs on', 'compute'], ['Languages', 'lang'], ['Instrumentation', 'instr'], ['Metrics today', 'mig'], ['Prometheus sources', 'prom'], ['Signals', 'signals'], ['Uses', 'uses'], ['Destination', 'dest'], ['Accounts', 'scope'], ['Collection layer', 'owner']].map(function (r) { return [r[0], r[1], stepFor(r[1])]; });
+  var h = '<div class="card stack"><strong>Your stack</strong><dl>';
+  rows.forEach(function (r) {
+    var v = labels(r[1]).join(', ') || 'Not set';
+    h += '<dt>' + r[0] + '<button type="button" class="linkbtn" data-act="edit" data-n="' + r[2] + '">Edit</button></dt><dd>' + esc(v) + '</dd>';
+  });
+  return h + '</dl><div class="row"><button type="button" class="small" data-act="restart">Start over</button></div></div>';
+}
+
+function resultScreen() {
+  var r = evaluate(state); lastResult = r;
+  var P = r.P, h = '';
+  h += '<div class="result-head"><span class="pathletter">Path ' + r.key + '</span><h1 style="margin:0">' + esc(P.name) + '</h1></div>';
+  h += '<p class="lead" style="margin-top:8px">' + esc(P.summary) + (r.addF ? ' Add eBPF instrumentation (Path F) for the binaries you cannot change.' : '') + (r.addProm ? ' Add CloudWatch managed Prometheus collectors (agentless) for your Prometheus-compatible metrics.' : '') + '</p>';
+  h += '<div class="layout">' + stackPanel() + '<div>';
+  var nw = r.warns.length + (view.internal ? r.internal.length : 0);
+  h += '<div class="tabs" role="tablist">' + TABS.map(function (t) {
+    return '<button type="button" class="tab" role="tab" id="tab-' + t[0] + '" aria-selected="' + (view.tab === t[0]) + '" data-act="tab" data-t="' + t[0] + '">' + t[1] + (t[0] === 'watch' && nw ? '<span class="badge">' + nw + '</span>' : '') + '</button>';
+  }).join('') + '</div>';
+  h += '<div role="tabpanel" aria-labelledby="tab-' + view.tab + '">' + tabBody(r) + '</div>';
+  h += '<div class="row"><button type="button" class="primary" data-act="copy-summary">Copy summary</button><button type="button" data-act="copy-link">Copy link</button></div>';
+  return h + '</div></div>';
+}
+
+function tabBody(r) {
+  var t = view.tab, P = r.P, h = '';
+  if (t === 'diagram') {
+    var m = buildModel(state, r), desc = modelText(m, state, r);
+    h += '<div class="diagram">' + toSVG(m, 'Path ' + r.key + ': ' + P.name, desc, { anim: true, fluid: true }) + '</div>';
+    h += '<div class="row"><button type="button" data-act="anim" aria-pressed="' + view.paused + '">' + (view.paused ? 'Play animation' : 'Pause animation') + '</button><span class="small">The dots show data moving: blue metrics, green logs, purple traces.</span></div>';
+    h += '<h3>How your data flows</h3><ol>' + flowSteps(state, r, m).map(function (x) { return '<li>' + escL(x) + '</li>'; }).join('') + '</ol>';
+    h += '<div class="row"><button type="button" class="primary" data-act="expand">Expand diagram</button><button type="button" data-act="open-svg">Open full size</button><button type="button" data-act="dl-svg">Download SVG</button><button type="button" data-act="dl-drawio">Download .drawio</button><span class="small">The diagram is drawn from your answers. The .drawio file opens in draw.io with the AWS architecture icons.</span></div>';
+  }
+  if (t === 'why') {
+    h += '<h3 style="margin-top:0">Why this fits</h3><ul>' + r.reasons.map(function (x) { return '<li>' + escL(x) + '</li>'; }).join('') + '</ul>';
+    h += '<h3>What you get</h3><table><thead><tr><th>Capability</th><th>This path</th></tr></thead><tbody>';
+    r.rows.forEach(function (x) {
+      var txt = x.v === 'yes' ? 'Yes' : x.v === 'part' ? 'Partly (app exports twice)' : 'No';
+      h += '<tr class="' + (x.want ? 'want ' : '') + (x.gap ? 'gap' : '') + '"><td>' + esc(x.label) + '</td><td class="' + x.v + '">' + txt + '</td></tr>';
+    });
+    h += '</tbody></table><h3>Who owns what</h3><p>' + esc(P.owner) + '</p>';
+    if (r.alts.length) h += '<h3>Other options</h3><ul>' + r.alts.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul>';
+    h += '<h3>Rule trace</h3><label class="small"><input type="checkbox" id="t-trace"' + (view.trace ? ' checked' : '') + '> Show which rules fired</label>';
+    if (view.trace) h += '<pre>' + esc(r.trace.join('\n')) + '</pre>';
+  }
+  if (t === 'watch') {
+    if (!r.warns.length && !(view.internal && r.internal.length)) h += '<p>Nothing to watch out for with these answers.</p>';
+    if (r.warns.length) h += '<ul class="warnlist">' + r.warns.map(function (w) { return '<li class="warn' + (w.bad ? ' bad' : '') + '">' + tagsFor(w) + escL(w.t) + '</li>'; }).join('') + '</ul>';
+  }
+  if (t === 'lang') {
+    if (!r.langs.length) h += '<p>You did not pick a language. <button type="button" class="linkbtn" data-act="edit" data-n="' + stepFor('lang') + '">Add languages</button> to see whether an ADOT SDK exists for each.</p>';
+    else h += '<p class="small">Versions, libraries, frameworks and instrumentation layers are out of scope here. Use the ADOT and OpenTelemetry docs.</p>';
+    r.langs.forEach(function (l) {
+      h += '<div class="card" style="margin-bottom:10px"><strong>' + esc(l.name) + '</strong> <span class="pill">' + (l.adot ? 'ADOT SDK available' : 'No ADOT SDK') + '</span>' +
+        '<p style="margin:6px 0">' + escL(l.how) + '</p>' +
+        '<p class="small" style="margin:0"><a href="' + DOCS.adotdocs[1] + '" target="_blank" rel="noopener noreferrer">ADOT docs</a> &middot; <a href="' + l.otel + '" target="_blank" rel="noopener noreferrer">OpenTelemetry docs for ' + esc(l.name) + '</a></p></div>';
+    });
+  }
+  if (t === 'mig') {
+    var M = r.mig;
+    if (!M.sections.length) h += '<p>Moving Classic (V1) metrics to OpenTelemetry (V2) metrics lets you query them with PromQL and see them in Omni. Tell us which metrics you publish today to see the steps, the options and what to watch out for. <button type="button" class="linkbtn" data-act="edit" data-n="' + stepFor('mig') + '">Add your metrics</button></p>';
+    else {
+      h += '<p class="lead" style="margin-top:0">Classic (V1) metrics use a namespace and dimensions. V2/OTel metrics use metric names and labels, are queried with PromQL, and are the only metrics Omni supports. The two are separate stores, so a Classic metric does not appear in PromQL by itself.</p>';
+      M.sections.forEach(function (sec) {
+        h += '<h3>' + esc(sec.title) + '</h3>';
+        var li = function (x) { return '<li>' + tagsFor(x) + escL(x.t) + '</li>'; };
+        h += '<ul>' + sec.items.map(li).join('') + '</ul>';
+        if (sec.table) {
+          h += '<table><thead><tr>' + sec.table.head.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>' + sec.table.rows.map(function (rw) { return '<tr>' + rw.map(function (c, i) { return (i ? '<td>' : '<th scope="row">') + esc(c) + (i ? '</td>' : '</th>'); }).join('') + '</tr>'; }).join('') + '</tbody></table>';
+          h += '<ul>' + sec.after.map(li).join('') + '</ul>';
+        }
+      });
+      h += '<h3>Docs</h3><ul>' + M.docs.map(function (d) { return '<li><a href="' + DOCS[d][1] + '" target="_blank" rel="noopener noreferrer">' + esc(DOCS[d][0]) + '</a></li>'; }).join('') + '</ul>';
+    }
+  }
+  if (t === 'setup') h += '<ul>' + r.cn.map(function (c) { return '<li><strong>' + esc(label('compute', c[0])) + ':</strong> ' + escL(c[1]) + (c[2] && c[2].length ? ' <span class="small">Docs: ' + c[2].map(function (d) { return '<a href="' + DOCS[d][1] + '" target="_blank" rel="noopener noreferrer">' + esc(DOCS[d][0]) + '</a>'; }).join(' &middot; ') + '</span>' : '') + '</li>'; }).join('') + '</ul>';
+  if (t === 'config') {
+    h += '<div class="row"><label class="f">Region<input type="text" id="cfg-region" value="' + esc(view.region) + '"></label>' + (has(state.signals, 'logs') ? '<label class="f">Log group<input type="text" id="cfg-lg" value="' + esc(view.logGroup) + '"></label>' : '') + '</div>';
+    h += '<div id="cfg-out">' + cfgHtml(r) + '</div>';
+  }
+  if (t === 'docs') h += '<ul>' + r.docs.map(function (d) { return '<li><a href="' + DOCS[d][1] + '" target="_blank" rel="noopener noreferrer">' + esc(DOCS[d][0]) + '</a></li>'; }).join('') + '</ul>';
+  return h;
+}
+
+function cfgHtml(r) {
+  var list = genConfigs(state, r, { region: view.region, logGroup: view.logGroup }), h = '';
+  list.forEach(function (c, i) {
+    h += '<div class="codehead"><strong>' + esc(c.title) + '</strong><button type="button" class="small" data-act="copy-code" data-i="' + i + '">Copy</button></div>' +
+      '<pre id="code-' + i + '"><code>' + esc(c.text) + '</code></pre>' + (c.note ? '<p class="small">' + esc(c.note) + '</p>' : '');
+  });
+  return h || '<p>No config for this path.</p>';
+}
+
+// ----- render and events -----
+function render() {
+  var app = document.getElementById('app'), s = view.screen;
+  app.innerHTML = s === 'home' ? home() : s === 'result' ? resultScreen() : stepScreen(s);
+  if (view.expanded && s === 'result' && lastResult) { app.insertAdjacentHTML('beforeend', overlayHtml()); var cb = document.getElementById('ov-close'); if (cb) cb.focus({ preventScroll: true }); }
+  document.title = (s === 'result' && lastResult ? 'Path ' + lastResult.key + ' - ' : '') + 'Telemetry collection path starter for CloudWatch';
+  var h1 = app.querySelector('h1'); if (h1) { h1.setAttribute('tabindex', '-1'); }
+  var sv = app.querySelector('.diagram svg'); if (sv && view.paused && sv.pauseAnimations) sv.pauseAnimations();
+}
+function go(screen) { view.screen = screen; render(); saveHash(); window.scrollTo(0, 0); var h1 = document.querySelector('#app h1'); if (h1) h1.focus({ preventScroll: true }); }
+
+function onAct(act, el) {
+  if (act === 'start') { view.returnTo = ''; state = EMPTY(); go(1); }
+  else if (act === 'preset') { view.returnTo = ''; state = Object.assign(EMPTY(), JSON.parse(JSON.stringify(PRESETS[+el.getAttribute('data-i')].s))); view.tab = 'diagram'; go('result'); }
+  else if (act === 'opt') {
+    var q = el.getAttribute('data-q'), v = el.getAttribute('data-v'), st = STEPS.filter(function (x) { return x.q === q; })[0];
+    if (st.multi) { var i = state[q].indexOf(v); if (i === -1) state[q].push(v); else state[q].splice(i, 1); } else state[q] = v;
+    var y = window.scrollY; render(); window.scrollTo(0, y); saveHash();
+    var again = document.querySelector('[data-act="opt"][data-q="' + q + '"][data-v="' + v + '"]'); if (again) again.focus({ preventScroll: true });
+  }
+  else if (act === 'next') {
+    var n = view.screen;
+    if (n === STEPS.length) { var mm = missing(state); if (mm.length) { go(firstMissingStep()); } else go('result'); } else go(n + 1);
+  }
+  else if (act === 'back') { var n2 = view.screen; if (n2 === 1) go('home'); else go(n2 - 1); }
+  else if (act === 'edit') { view.returnTo = 'result'; go(+el.getAttribute('data-n')); }
+  else if (act === 'to-result') { view.returnTo = ''; go(missing(state).length ? firstMissingStep() : 'result'); }
+  else if (act === 'restart') { view.returnTo = ''; state = EMPTY(); go('home'); }
+  else if (act === 'tab') { view.tab = el.getAttribute('data-t'); render(); saveHash(); var tb = document.getElementById('tab-' + view.tab); if (tb) tb.focus({ preventScroll: true }); }
+  else if (act === 'expand') { view.expanded = true; view.zoom = 'fit'; render(); }
+  else if (act === 'collapse') { view.expanded = false; render(); var eb = document.querySelector('[data-act=expand]'); if (eb) eb.focus({ preventScroll: true }); }
+  else if (act === 'zoom-fit') { view.zoom = 'fit'; render(); }
+  else if (act === 'zoom-in' || act === 'zoom-out') { var cur = view.zoom === 'fit' ? Math.min(1, (window.innerWidth - 40) / (buildModel(state, lastResult).w)) : view.zoom; view.zoom = Math.max(0.3, Math.min(3, +(cur * (act === 'zoom-in' ? 1.25 : 0.8)).toFixed(2))); render(); }
+  else if (act === 'anim') { view.paused = !view.paused; render(); }
+  else if (act === 'copy-summary') copyText(summaryText(lastResult), el);
+  else if (act === 'copy-link') copyText(location.href, el);
+  else if (act === 'copy-code') { var pre = document.getElementById('code-' + el.getAttribute('data-i')); copyText(pre.textContent, el); }
+  else if (act === 'open-svg') { var m0 = buildModel(state, lastResult); var url = URL.createObjectURL(new Blob([toSVG(m0, 'Path ' + lastResult.key, modelText(m0, state, lastResult))], { type: 'image/svg+xml' })); window.open(url, '_blank', 'noopener'); }
+  else if (act === 'dl-svg') { var m = buildModel(state, lastResult); download('collection-path-' + lastResult.key + '.svg', toSVG(m, 'Path ' + lastResult.key + ': ' + lastResult.P.name, modelText(m, state, lastResult)), 'image/svg+xml'); }
+  else if (act === 'dl-drawio') { var m2 = buildModel(state, lastResult); download('collection-path-' + lastResult.key + '.drawio', toDrawio(m2, 'Path ' + lastResult.key), 'application/xml'); }
+}
+
+function init() {
+  var app = document.getElementById('app');
+  app.addEventListener('click', function (e) { var t = e.target.closest('[data-act]'); if (t && !t.disabled) onAct(t.getAttribute('data-act'), t); });
+  app.addEventListener('change', function (e) { if (e.target.id === 't-trace') { view.trace = e.target.checked; render(); } });
+  app.addEventListener('input', function (e) {
+    if (e.target.id === 'cfg-region') { view.region = e.target.value.trim() || 'us-east-1'; document.getElementById('cfg-out').innerHTML = cfgHtml(lastResult); }
+    if (e.target.id === 'cfg-lg') { view.logGroup = e.target.value.trim() || 'my-app-logs'; document.getElementById('cfg-out').innerHTML = cfgHtml(lastResult); }
+  });
+  document.getElementById('back-start').addEventListener('click', function () { view.returnTo = ''; state = EMPTY(); go('home'); });
+  document.getElementById('theme').addEventListener('click', function () {
+    var root = document.documentElement, dark = root.getAttribute('data-theme') ? root.getAttribute('data-theme') === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && view.expanded) { view.expanded = false; render(); } });
+  loadHash(); render();
+}
+if (typeof document !== 'undefined') init();
+</script>
+</body>
+</html>

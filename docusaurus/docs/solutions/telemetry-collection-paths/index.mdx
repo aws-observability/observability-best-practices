@@ -1,0 +1,598 @@
+---
+title: Choosing a telemetry collection path for CloudWatch and Omni
+sidebar_label: Choosing a collection path
+---
+
+import RelatedEvents from '@site/src/components/RelatedEvents';
+
+# Choosing a telemetry collection path for CloudWatch and Omni
+
+*Last updated: 19 November 2026*
+
+:::info[About this guide]
+This guide gives general guidance to help you choose a starting point. The right path depends on many variables, such as your workloads, languages, existing tooling, destinations, accounts and Regions, and security or compliance requirements. Use it alongside the AWS documentation, and validate your choice in a test environment before you roll it out.
+:::
+
+:::tip Start here
+Not sure which path fits? Answer a few questions in the [telemetry collection path starter](pathname:///observability-best-practices/telemetry-collection-path-starter/). It runs in your browser, draws a diagram for your setup, and lists the setup notes, documentation links and starter configurations that apply.
+:::
+
+<figure>
+  <img
+    src={require('@site/docs/images/telemetry-collection-paths/path-starter-result.png').default}
+    alt="The telemetry collection path starter showing a CloudWatch agent path with metrics centralized into a monitoring account, where centralized logs feed the CloudWatch Dataset and centralized metrics feed CloudWatch Omni"
+  />
+  <figcaption>The path starter draws the architecture for your answers. This example centralizes several accounts into one monitoring account for Omni.</figcaption>
+</figure>
+
+
+## Overview
+
+This guide helps you choose how to get telemetry into Amazon CloudWatch and CloudWatch Omni. Most of it covers OpenTelemetry (OTel), the route for new workloads: the CloudWatch agent, an OpenTelemetry Collector, a custom collector build, or SDKs that send straight to the CloudWatch OTLP endpoints.
+
+The CloudWatch agent is the default recommendation. Add an OpenTelemetry Collector only where you need something the agent does not do, such as sending the same data to a second destination.
+
+### The collection paths at a glance
+
+- **CloudWatch agent.** One agent on each host, or the Observability add-on on Amazon EKS, sends metrics, logs and traces to CloudWatch. It also supports Application Signals.
+- **OpenTelemetry Collector, standard build.** Use it when you need a second destination, receivers the agent does not include, or processing in the pipeline.
+- **Custom-built collector.** Use it when you need Application Signals and a second destination from one process.
+- **CloudWatch agent plus a second agent.** Keep your existing agent next to the CloudWatch agent for a parallel run.
+- **SDK only.** ADOT SDKs, or the ADOT Lambda layer, send straight to the CloudWatch OTLP endpoints with no agent to run.
+
+### Other telemetry this guide covers
+
+- **AWS service metrics.** AWS services publish them with no agent. Turn on OTel enrichment to query them with PromQL as well.
+- **Classic custom metrics.** Metrics sent with `PutMetricData` or embedded metric format (EMF) keep working, and you can move them to OpenTelemetry metrics at your own pace.
+- **StatsD and Prometheus metrics.** The CloudWatch agent can receive StatsD, and CloudWatch managed Prometheus collectors scrape Prometheus-compatible targets in your VPC with no agent to run.
+- **Logs.** Application and host logs reach CloudWatch Logs through the agent, a collector, or the OTLP logs endpoint.
+
+### What this guide adds
+
+The guide is organized as phases you can follow in order: prerequisites and decisions, collection setup, instrumentation, metrics, logs and infrastructure, platform notes, Application Signals and Omni, and validation and cutover when you move from another tool. A reference section covers attribute mapping, troubleshooting and starter configurations.
+
+## When to use this
+
+- You are starting to send metrics, logs or traces to CloudWatch and need to choose between the CloudWatch agent and a collector.
+- You already publish Classic metrics, StatsD or Prometheus metrics and want to know how they fit with OpenTelemetry.
+- You are moving from another observability tool to CloudWatch and want a phased approach, including a parallel run.
+- You need Application Signals, CloudWatch Omni or PromQL and want to know what each collection path supports.
+- You run on Amazon EC2, Amazon ECS, Amazon EKS, AWS Lambda, on premises or another cloud.
+
+## Guidance
+
+### Before you start: common questions
+
+**Do we have to change application code?** Only the instrumentation. Replace the old vendor's tracer with OpenTelemetry (OTel) auto-instrumentation. This is a change to each service's build, image or startup, followed by a redeploy. Run one auto-instrumentation agent per process: two tracers loaded into the same process conflict. Migrate service by service, and use the ADOT distribution of OpenTelemetry where you want CloudWatch features such as Application Signals. Metrics sent through StatsD or Micrometer can often stay as they are.
+
+**Can we run the old tool and CloudWatch in parallel?** Yes, and we recommend it for a period long enough to compare results. How you do it depends on the path you pick in Phase 1. The CloudWatch agent sends to CloudWatch only. You can keep your existing agent for host and infrastructure data and run the CloudWatch agent next to it, or add an OTel Collector if you want one stream to both destinations. If both listen for OTLP on one host, give one of them other ports. A service runs one tracer, so for traces run the parallel period per service or have the application export OTLP.
+
+### OpenTelemetry or Classic metrics by compute type
+
+Send new metrics as OpenTelemetry where you can. Some metrics are still Classic today.
+
+| Compute | Send as OpenTelemetry | Still Classic today |
+|---|---|---|
+| Amazon EC2 | Application OTLP to the CloudWatch agent. Host metrics with the agent's `default:otel` preset. | AWS service metrics (turn on OTel enrichment for a copy you can query with PromQL), StatsD through the agent, Application Signals metrics. |
+| Amazon ECS | Application OTLP to the CloudWatch agent as a sidecar or daemon, or to a collector. | AWS service metrics, Application Signals metrics. |
+| Amazon EKS | Application OTLP through the CloudWatch Observability add-on. Prometheus endpoints through managed Prometheus collectors. | Application Signals metrics. |
+| AWS Lambda | Traces and logs through the ADOT Lambda layer. | Application metrics, which go out as embedded metric format (EMF). Application Signals metrics. |
+| On premises or other clouds | Application OTLP and host metrics through the CloudWatch agent or a collector. | StatsD through the agent, Application Signals metrics. |
+
+Omni and PromQL show only OpenTelemetry metrics. Classic metrics stay queryable in Query Studio with SQL (Metrics Insights). Phase 3 covers how to move metrics you need in PromQL or Omni.
+
+### Phase 0: Prerequisites and decisions
+
+
+1. **Pick a collection path.** Our recommendation is the CloudWatch agent. Add an OpenTelemetry Collector only where you need something the agent cannot do, such as sending to a second destination. Short version:
+   - CloudWatch is the only destination: **CloudWatch agent**. This is the recommended default, with some nuance:
+     - It needs a recent agent version (see step 4), and it also covers Application Signals.
+     - If you need collector receivers the agent does not include, such as ones for databases or queues, or processing in the pipeline, use an OpenTelemetry Collector.
+     - AWS Lambda has no agent, so use the ADOT Lambda layer.
+     - Where you cannot or do not want to run an agent, ADOT SDKs can send straight to the CloudWatch OTLP endpoints, for the languages that have one.
+   - You need a second destination for a while and want to keep your existing agent: **CloudWatch agent plus your existing agent** side by side.
+   - You need a second destination and want one agent: **OTel Collector**, or a **custom-built collector** if you also need Application Signals.
+   - You need Application Signals and a second destination at the same time: **CloudWatch agent plus an OTel Collector** side by side.
+2. **Enable Transaction Search** in CloudWatch for each account and Region. It is required before you send traces to the OTLP endpoint.
+3. **Set up permissions.** Attach the `CloudWatchAgentServerPolicy` managed policy to the role used by the agent or collector. On EC2 this is the instance role, on EKS an IAM role for the service account, on ECS the task role. For hosts outside AWS, use IAM credentials or bearer token authentication, which needs no AWS credentials file on the host.
+4. **Check versions.**
+   - CloudWatch agent versions: the `opentelemetry` OTLP section needs 1.300070.0 or later. `span_metrics_enabled` and the `default:otel` preset need 1.300071.0 or later. On 1.300070.0 the config translator rejects `span_metrics_enabled`. On 1.300069.0 both are accepted without an error and do nothing, because nothing listens on 4317 or 4318. Some Linux package repositories ship an earlier version, so check the installed one.
+   - On EKS, CloudWatch Observability add-on 6.6.0 or later.
+   - For a custom collector, a version supported by the Application Signals processor. Check the `amazon-contributing` fork tags.
+5. **Decide your sampling policy.** SDKs that send straight to the OTLP endpoint default to sampling every trace. That can raise ingestion volume. To reduce it, set a sampling rate in the SDK, or sample at the collector and keep the SDK always-on.
+6. **Inventory what you run today.** List each service, language, how the old tracer is attached (annotation, startup flag, baked into the image), and whether it also sends custom metrics or logs. This list drives the order in Phase 2.
+7. **Decide where logs go.** Pick the CloudWatch log group for each service up front. The OTLP logs endpoint needs the log group and log stream to exist before data arrives.
+
+**Done when:** you have a path per workload type, Transaction Search is on, permissions are attached, and the service inventory exists.
+
+:::warning[Turn on Transaction Search before you send traces]
+Until [Transaction Search](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Enable-TransactionSearch.html) is on in an account and Region, spans sent to the CloudWatch OTLP endpoint do not arrive.
+:::
+
+### Phase 1: Stand up collection
+
+
+Start with the path you chose. Run it next to the old agent. Do not remove anything.
+
+#### CloudWatch agent only
+
+Add an `opentelemetry` section to the agent configuration file. The agent then receives OTLP and sends each signal to the matching CloudWatch OTLP endpoint. It handles signing, Region and endpoint selection, so you do not configure a signing extension.
+
+```json
+{
+  "opentelemetry": {
+    "collect": {
+      "otlp": {
+        "grpc_endpoint": "0.0.0.0:4317",
+        "http_endpoint": "0.0.0.0:4318"
+      }
+    }
+  }
+}
+```
+
+Start it with the standard control script:
+
+```
+/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -c file:/tmp/agent.json -s
+```
+
+Notes:
+
+- **EC2:** bind to `127.0.0.1` if only local applications send to it.
+- **ECS:** run the agent as a sidecar in the task, or as a daemon service. Applications send to `localhost` within the task.
+- **EKS:** supply the same configuration to the CloudWatch Observability add-on. The add-on does not turn the OTLP receiver on by default.
+
+:::warning[The EKS add-on replaces its default configuration]
+When you supply `agent.config`, the add-on replaces its default configuration instead of merging. If you also use Application Signals or Container Insights, include those settings, or the add-on drops their ports.
+:::
+- **Only one OTLP receiver per host network namespace.** Two processes cannot bind 4317 and 4318 on the same host. If you ran a standalone collector only to reach CloudWatch, remove it.
+- **Limit:** this path sends to CloudWatch only. There is no second destination.
+
+Source: [Amazon CloudWatch agent](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPCloudWatchAgent.html).
+
+#### OTel Collector with a second destination, standard or custom build
+
+The collector receives OTLP once and exports it to CloudWatch and to your current vendor at the same time.
+
+```yaml
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    send_batch_size: 200
+    timeout: 10s
+
+extensions:
+  sigv4auth/metrics:
+    region: "us-east-1"
+    service: "monitoring"
+  sigv4auth/logs:
+    region: "us-east-1"
+    service: "logs"
+  sigv4auth/traces:
+    region: "us-east-1"
+    service: "xray"
+
+exporters:
+  # CloudWatch
+  otlphttp/cw-metrics:
+    metrics_endpoint: https://monitoring.us-east-1.amazonaws.com/v1/metrics
+    auth:
+      authenticator: sigv4auth/metrics
+  otlphttp/cw-logs:
+    compression: gzip
+    logs_endpoint: https://logs.us-east-1.amazonaws.com/v1/logs
+    headers:
+      x-aws-log-group: MyApplicationLogs
+      x-aws-log-stream: default
+    auth:
+      authenticator: sigv4auth/logs
+  otlphttp/cw-traces:
+    compression: gzip
+    traces_endpoint: https://xray.us-east-1.amazonaws.com/v1/traces
+    auth:
+      authenticator: sigv4auth/traces
+  # Your current vendor: replace with their exporter or OTLP endpoint
+  otlphttp/vendor:
+    endpoint: ${env:VENDOR_OTLP_ENDPOINT}
+    headers:
+      authorization: ${env:VENDOR_AUTH_HEADER}
+
+service:
+  extensions: [sigv4auth/metrics, sigv4auth/logs, sigv4auth/traces]
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/cw-metrics, otlphttp/vendor]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/cw-logs, otlphttp/vendor]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/cw-traces, otlphttp/vendor]
+```
+
+Notes:
+
+- **Never hard-code keys.** Read credentials from environment variables or a mounted secret.
+- **Standard collector:** use it for plain OpenTelemetry metrics, logs and traces, and for vendor neutrality. See the [OpenTelemetry Collector documentation](https://opentelemetry.io/docs/collector/) for how it works. Application Signals does not work through the vanilla OpenTelemetry Collector.
+- **Custom build:** Application Signals needs the custom collector build. See the AWS guide, [Build your own custom OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPAdvancedsetup.html), for how to build it. You own the build, the version and the patching.
+
+Source: [OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPSimplesetup.html).
+
+#### CloudWatch agent and OTel Collector side by side
+
+Run both. The CloudWatch agent handles the CloudWatch path. The collector handles the second destination. Because only one process can bind the default OTLP ports in a network namespace, give one of them non-default ports.
+
+- CloudWatch agent: `4317` and `4318` as in the CloudWatch agent setup above.
+- Collector: for example `14317` and `14318`, exporting to the vendor only.
+- A standard collector in front of the agent, forwarding OTLP to the agent, lost nothing at 100 spans per second for 5 minutes. Two processes cannot both bind 4317 and 4318 on one host, so give the collector other ports.
+- Expect more CPU and memory than the agent alone or a collector alone, and two configurations to maintain.
+- Remove the collector when the old vendor goes.
+
+#### Verify
+
+1. Check the agent or collector is healthy and listening.
+2. Send a test span and a test metric from a small app or a tool such as `telemetrygen`.
+3. Confirm the span in Transaction Search and the metric in Query Studio (Phase 3).
+4. Confirm the old vendor still receives its data.
+
+**Done when:** test telemetry reaches CloudWatch and, where you run a parallel path, the old vendor too.
+
+### Phase 2: Move application instrumentation to OTel
+
+
+Replace the old vendor's tracer with OTel auto-instrumentation. This is the one change every path needs. Do one service at a time, starting with a low-risk one.
+
+:::caution[Run one auto-instrumentation agent per process]
+Two tracers loaded into the same process conflict. Remove the old tracer from a service when you add OpenTelemetry, and migrate service by service.
+:::
+
+#### What changes per language
+
+
+| Language | Replace | With | Notes from the AWS docs |
+|---|---|---|---|
+| Java | Vendor Java agent | AWS Distro for OpenTelemetry (ADOT) Java agent, or upstream OTel Java agent | ADOT Java 2.11.2 or later for the direct-to-endpoint features. Attach with `JAVA_TOOL_OPTIONS=-javaagent:...` |
+| Python | Vendor tracer | ADOT Python (`aws-opentelemetry-distro`), or upstream | ADOT Python 0.10.0 or later and `botocore` for direct-to-endpoint. Set `OTEL_PYTHON_DISTRO=aws_distro` and `OTEL_PYTHON_CONFIGURATOR=aws_configurator` |
+| Node.js | Vendor tracer | ADOT JavaScript, or upstream | ADOT JavaScript 0.7.0 or later. Start with `--require` of the register module |
+| .NET | Vendor profiler | ADOT .NET, or upstream | ADOT .NET 1.8.0 or later. Direct-to-endpoint: traces only, no logs |
+| Compiled or third-party binaries | Nothing to replace | eBPF instrumentation, with the CloudWatch agent as the OTLP receiver | Validate your frameworks before relying on it |
+
+
+#### Languages without an ADOT SDK, and Lambda
+
+- **ADOT SDKs exist for Java, Python, Node.js and .NET only.** For Go, PHP and Ruby, use the standard OpenTelemetry instrumentation (zero-code where available) and enable Transaction Search. For Rust and other languages, use the OpenTelemetry SDK in code. Sources: [Application Signals supported systems](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html) and [Supported instrumentation setups](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Getting-Started-App-Signals.html).
+- **SDK-only (no collector) needs an ADOT SDK**, so it is not available for those languages. Use the CloudWatch agent or a collector.
+- **Application Signals for those languages:** it needs the CloudWatch agent or the custom collector build. See the [Application Signals supported systems](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html) page for the languages it covers.
+
+- **Lambda has no agent or sidecar.** Turn on active tracing, attach the ADOT Lambda layer for your runtime and set `AWS_LAMBDA_EXEC_WRAPPER`. The layers are `AWSOpenTelemetryDistroPython`, `AWSOpenTelemetryDistroJs`, `AWSOpenTelemetryDistroJava` and `AWSOpenTelemetryDistroDotNet` (dotnet8, x86\_64). The ADOT docs page lists only the Python ARN, and the Python layer fails on Node.js, so look up the layer for your runtime. Java handlers need `RequestHandler` or `RequestStreamHandler`. Source: [ADOT Lambda layers](https://aws-otel.github.io/docs/getting-started/lambda).
+
+#### Languages, versions and frameworks
+
+Versions, libraries, frameworks and instrumentation layers are covered in the [ADOT documentation](https://aws-otel.github.io/docs/introduction) and the [OpenTelemetry instrumentation documentation](https://opentelemetry.io/docs/languages/). This guide does not repeat them.
+
+**Collector-less SDK:** ADOT SDK traces sent straight to the OTLP endpoints work in Python, Node.js and Java, with every request sampled by default. Logs work in Python and Java. In Node.js, `console.log` is not captured, so use a logging library such as winston, pino or bunyan.
+
+#### Common environment variables
+
+Point every service at the local agent or collector. Use the same variables whichever path you chose. Only the endpoint changes.
+
+```
+OTEL_SERVICE_NAME=checkout
+OTEL_RESOURCE_ATTRIBUTES=deployment.environment=production,service.version=1.4.2
+OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
+OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+OTEL_TRACES_SAMPLER=always_on
+```
+
+Notes:
+
+- **Use semantic convention names.** `service.name`, `deployment.environment` and `service.version` replace the old vendor's `service`, `env` and `version` tags.
+- **Log correlation:** add `aws.log.group.names=<log group>` to `OTEL_RESOURCE_ATTRIBUTES` so traces and metrics link to the right log group. Several groups are separated by `&`.
+- **Send logs to the same place as traces.** For Application Signals trace to log correlation, logs must flow through the CloudWatch agent (port 4316), not through a separate community collector.
+
+#### Extra settings for Application Signals through the CloudWatch agent, alone or with a second agent
+
+This set was validated on one Python service on EC2. Treat it as a starting point and test per language.
+
+```
+OTEL_AWS_APPLICATION_SIGNALS_ENABLED=true
+OTEL_METRICS_EXPORTER=none
+OTEL_LOGS_EXPORTER=none
+OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+OTEL_TRACES_SAMPLER=xray
+OTEL_TRACES_SAMPLER_ARG=endpoint=http://localhost:2000
+OTEL_AWS_APPLICATION_SIGNALS_EXPORTER_ENDPOINT=http://localhost:4316/v1/metrics
+OTEL_EXPORTER_OTLP_TRACES_ENDPOINT=http://localhost:4316/v1/traces
+```
+
+The agent listens for Application Signals traffic on 4316 over HTTP. Leaving out the sampler settings can stop the service from appearing on the Services page. Application Signals also needs agent-side settings. Follow the Application Signals setup guide for your platform.
+
+#### Rollout order
+
+1. One low-risk service, in a non-production environment.
+2. Confirm spans in Transaction Search and, with Application Signals, the service on the Services page.
+3. Roll out service by service. Keep the old tracer on services you have not moved.
+4. **Do not run both tracers in one process.** They patch the same libraries.
+
+**Done when:** every migrated service shows spans in Transaction Search with the expected `service.name` and environment.
+
+### Phase 3: Metrics
+
+
+CloudWatch takes OTel metrics natively. You send OTLP to the metrics endpoint and query with PromQL in Query Studio. The data keeps open-source metric names, supports up to 150 labels per data point, and is stored for 15 months.
+
+#### 3a. Send application metrics
+
+- **From an OTel SDK:** point the metrics exporter at the local agent or collector (`http://localhost:4318/v1/metrics`). The agent or collector forwards to CloudWatch.
+- **From StatsD or Micrometer:** the agent's own StatsD support goes to Classic only and renames dots to underscores, so `otelguide.hits` becomes `otelguide_hits`. A collector with the `statsd` receiver, forwarding OTLP to the agent, reaches PromQL with the name unchanged.
+- **From Prometheus exporters:** the standard collector's Prometheus receiver can scrape them.
+- **From Prometheus-compatible targets in your VPC:** use CloudWatch managed Prometheus collectors. They are agentless and collect metrics only. CloudWatch discovers targets in your VPC, scrapes them through a network interface in each subnet you give it, and delivers the metrics to CloudWatch over a VPC endpoint, so the data does not cross the public internet. Sources include Amazon EKS, Amazon MSK, Amazon OpenSearch Service and other VPC targets. You query the results with PromQL. They run beside your collection path, not instead of it, so logs and traces still use the path you chose. Docs: [managed Prometheus collectors](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors.html), [Amazon EKS](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-eks-setup.html), [Amazon MSK](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-msk-setup.html), [Amazon OpenSearch Service](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-opensearch-setup.html), [VPC-connected collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/managed-prometheus-collectors-vpc-setup.html).
+
+#### 3b. Verify in Query Studio
+
+Open Query Studio in the CloudWatch console and run a query for your metric. OTel metric names keep their dots in Query Studio, so query by the original name with the name matcher, for example:
+
+```
+{"http.server.request.duration"}
+```
+
+When you wrap a metric in an aggregate such as `avg by (...)`, quote the metric name inside the braces:
+
+```
+avg by (service_name) ({"http.server.request.duration", deployment_environment="production"})
+```
+
+PromQL: put the metric name in quotes, for example `{"CPUUtilization","@aws.tag.Team"="x"}`. The unquoted form returns HTTP 400. A selector must name a metric, so a label-only selector or a regex on `__name__` is rejected. There is no PromQL command in the AWS CLI, so use Query Studio, or the HTTP API at `https://monitoring.<region>.amazonaws.com/api/v1/` with SigV4 signing. Metrics sent through the agent are queryable about five minutes after sending. They carry labels such as `@resource.service.name` and `@instrumentation.cloudwatch.source`.
+
+Confirm the labels you expect appear (service, environment, your own labels).
+
+#### 3c. AWS vended metrics, with no agent
+
+On EC2 and Lambda, the V2 copy carries your tags as `@aws.tag.<Key>` and resource attributes as `@resource.cloud.*` (account, provider, region, resource ARN). The Classic metric returns the same data. Tags appear within about 7 minutes.
+
+To query EC2, RDS, load balancer and other AWS-published metrics with PromQL, turn on OTel enrichment. The classic metric is not changed and stays available through existing APIs.
+
+1. Enable resource tags on telemetry for the account.
+2. Turn on OTel enrichment in each Region:
+
+```
+aws cloudwatch start-otel-enrichment
+```
+
+It can also be enabled in the console (CloudWatch settings), CloudFormation (`AWS::CloudWatch::OTelEnrichment`) or Terraform (`aws_cloudwatch_otel_enrichment`). Both need the telemetry enrichment resource first. Enriched metrics keep the name and dimensions and add the resource ARN, region, account and resource tags as labels. Check the supported-services page for what is covered, and link to it instead of copying it, because it changes.
+
+Sources: [AWS vended metrics in OpenTelemetry format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTelEnrichment.html) and [CloudWatch OpenTelemetry Metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-overview.html).
+
+#### 3d. Custom metrics already in CloudWatch (PutMetricData or EMF)
+
+There is no flag day. Move workload by workload:
+
+1. **Dual-write.** Add the OTel SDK next to the existing `PutMetricData` calls.
+2. **Validate** the new metrics in Query Studio.
+3. **Recreate alarms and dashboards** in PromQL. Run old and new alarms in parallel until the new one fires correctly.
+4. **Stop the classic publishing** after validation.
+
+Use OTel naming for the new metrics: seconds for durations, a `_total` suffix for counters. Source: [Migrate from Classic to OTel metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-migrate.html).
+
+#### 3e. Several accounts or Regions
+
+Each account sends telemetry to CloudWatch in that account, so set up the collection layer in every account you collect from. You can look at each account on its own, or centralize into one monitoring account.
+
+- **Centralization rules** copy logs and metrics from the source accounts into one monitoring account. All metric types can be centralized, including AWS vended metrics, and you query the metrics there with PromQL. See [log centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/CloudWatchLogs_Centralization.html) and [metrics centralization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatchMetrics_Centralization.html).
+- **Traces follow the logs.** Trace centralization happens with logs centralization once Transaction Search is on in every source account.
+- **Centralization does not backfill.** Only telemetry created after a rule is active is copied.
+- **PromQL cannot follow a CloudWatch cross-account observability link.** Use metrics centralization to query metrics from several accounts or Regions in one place with PromQL.
+- **Omni** does not centralize across accounts or Regions by itself. A space maps to one account and Region. Create the space in the monitoring account and Region, and set it as the centralization destination. Omni then reads the centralized logs and traces through the CloudWatch Dataset and the centralized metrics directly. See [Set up Omni for your organization](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-your-organization.html).
+
+#### 3f. Where Classic (V1) metrics are still needed
+
+:::note[Omni shows OpenTelemetry metrics only]
+Classic (V1) metrics do not appear in PromQL or Omni. In Query Studio, query them with SQL (Metrics Insights).
+:::
+
+The move to OpenTelemetry metrics is additive: Classic keeps publishing while you add the V2/OTel copy. Know where Classic still applies.
+
+- **Omni does not support Classic (V1) metrics.** Only OpenTelemetry (V2) metrics appear in Omni. Any Classic metric you want to see there has to move to V2/OTel: vended metrics (3c), custom metrics (3d) and agent host metrics (4b).
+- **AWS service metrics:** AWS services publish them as Classic. The V2/OTel copy is added by OTel enrichment and Classic keeps publishing. Anything that reads them directly, such as scaling policies, scripts and third-party tools, stays on Classic until you move it.
+- **Application Signals metrics:** they go to Classic CloudWatch metrics only. They cannot reach PromQL or Omni today. In Query Studio, query them with SQL (Metrics Insights).
+- **StatsD through the CloudWatch agent:** the agent's own StatsD support writes Classic metrics, not OTel metrics.
+
+**Done when:** application metrics and the vended metrics you need are queryable in Query Studio, and you have a plan for the alarms and dashboards that depend on them.
+
+### Phase 4: Logs and infrastructure
+
+
+#### 4a. Application logs
+
+There are three routes. Pick one per service and keep it the same across environments.
+
+
+| Route | How it works | Use when |
+|---|---|---|
+| OTLP logs from the SDK | The SDK exports logs to the local agent or collector, which sends them to the CloudWatch logs endpoint. | You already moved the service to OTel (Phase 2) and want logs and traces to carry the same context. |
+| Log files or stdout | The CloudWatch agent (or the EKS add-on log collection) reads files or container output and writes to a log group. | You do not want to touch the application's logging setup. |
+| Lambda | Lambda writes to its own log group. Use JSON logs that carry the trace ID. | Lambda. There is no agent. |
+
+Notes:
+
+- **The log group and log stream must exist before OTLP logs arrive.** For the collector paths, set the `x-aws-log-group` and `x-aws-log-stream` headers on the logs exporter (see the Phase 1 config).
+- **Put the trace ID in every log line.** This is what links a trace to its logs. For OTel SDK logs it is added for you. For file or stdout logs, configure the logging library to write `trace_id` and `span_id`.
+- **Tell CloudWatch which log group belongs to the service.** Set `aws.log.group.names=<log group>` in `OTEL_RESOURCE_ATTRIBUTES`. Several groups are separated by `&`. The value must match the log group where the logs land. Do not assume a Container Insights group: use the group your logs actually write to.
+- **Application Signals log correlation:** send OTLP logs to the CloudWatch agent (port 4316), not to a separate community collector, or the Logs tab does not find them.
+- **Do not collect the same log twice.** If the old vendor's agent also tails the files, that is fine during the parallel run. Do not run two CloudWatch collectors on the same file.
+
+#### 4b. Host and infrastructure metrics
+
+- **AWS service metrics (EC2, RDS, load balancers):** turn on OTel enrichment (Phase 3c). No agent is needed.
+- **Operating system metrics (CPU, memory, disk, network) with the CloudWatch agent:** use the `default:otel` preset. It turns on host metrics, the OTLP receivers on 127.0.0.1:4317 and 4318, and span metrics. Host metrics are sent as OpenTelemetry metrics over OTLP, queryable in PromQL, not Classic, with names such as `system.cpu.utilization` and `system.memory.utilization`. Expect about 31 metric names and 144 series on a 2 vCPU Linux host at 30 seconds, and 23 names and 66 series on Windows Server 2022. Needs agent 1.300071.0 or later.
+  - **Limits:** JSON `host_metrics` accepts only an integer `collection_interval`. Appending YAML that reuses a generated pipeline name, such as `metrics/opentelemetry`, fails to merge and stops the agent.
+  - **Rollout:** SSM Run Command works for the JSON config. Appending YAML through an SSM parameter returns Success and is silently ignored.
+  - **On premises:** host metrics carry no `host.id`, `host.name` or cloud attributes, only `service.name=unknown_service`. Add a resource attribute to tell hosts apart.
+- **Databases, queues and other software:** use the matching collector receiver where one exists, or a Prometheus exporter scraped by the collector.
+
+#### 4c. Container metrics and Container Insights
+
+- **EKS:** Enhanced Container Insights is generally available through the CloudWatch agent and the Observability add-on.
+
+**Done when:** a log line from a migrated service links to its trace, and each host or cluster has the infrastructure metrics you need.
+
+### Phase 5: Platform guides
+
+
+
+| Platform | Recommended starting path | What to know |
+|---|---|---|
+| EKS | CloudWatch agent through the Observability add-on | Add-on 6.6.0 or later. The OTLP receiver is not on by default. When you supply `agent.config` it replaces the default, so include the Application Signals and Container Insights settings you use. With only an `opentelemetry` section in the config, the Linux agent Service exposed only 4317 and 4318. |
+| ECS | CloudWatch agent as a sidecar or daemon service, or a custom collector for one sidecar with a second destination | One OTLP receiver per network namespace. See [Collecting Amazon ECS metrics with the OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/deploy-container-insights-ECS-otel-collector.html). |
+| EC2 | CloudWatch agent | Bind to `127.0.0.1` if only local applications send. Check the installed agent version. |
+| Lambda | SDK only (no collector) with the ADOT Lambda layer | No agent or collector. Active tracing on, the ADOT layer for your runtime (see Phase 2), JSON logs, metrics as EMF. |
+| On premises or other clouds | CloudWatch agent, or any OpenTelemetry collector or SDK that signs with SigV4 | Agent: a named profile `AmazonCloudWatchAgent` for access and proxy settings in `common-config.toml`. Collector or SDK: SigV4 with IAM Roles Anywhere temporary access. Use a bearer token only when short-lived access is not possible, and creating one is an administrator task. Host metrics from on-premises hosts carry no host identity, so add a resource attribute. |
+
+For EKS clusters shared by many teams, the OpenTelemetry project's blueprint [Managed telemetry platforms for Kubernetes workloads](https://opentelemetry.io/docs/guidance/blueprints/managed-telemetry-platforms-for-k8s-workloads/) describes running a central collector gateway. It is upstream guidance and applies to the collector paths.
+
+Use this table as a starting point. Anything with a second destination moves to a collector, or to the CloudWatch agent plus a second agent.
+
+### Phase 6: Application Signals and Omni
+
+
+**What you get automatically.** Telemetry that reaches CloudWatch appears in Omni with nothing extra to configure. Omni is built on the CloudWatch data you already have. Omni does not centralise across accounts or Regions by itself. A space maps to one account and Region, and CloudWatch centralisation rules bring other telemetry in.
+
+#### How Omni reads your telemetry: the CloudWatch Dataset
+
+Between CloudWatch and Omni sits the CloudWatch Dataset. Omni queries the Dataset, not your log groups directly.
+
+- **Logs and traces are forwarded.** Setting up an Omni space creates a Dataset integration and an execution role. The integration forwards your CloudWatch logs and traces into the Dataset so they can be queried and correlated in one place.
+- **Metrics are not forwarded.** Omni queries OpenTelemetry (V2) metrics directly from CloudWatch Metrics. Omni does not support Classic (V1) metrics.
+- **Same account and Region only.** There is one integration per account per Region. Log groups in the Delivery class do not forward. The execution role's `logs:IntegrateWithDataset` permission controls which log groups forward.
+- **Backfill:** on first enablement Omni backfills up to 7 days of existing logs and traces. Older data, and data encrypted with a customer managed KMS key, are not included.
+- **Transaction Search must be on** before you send traces, or spans do not arrive.
+- **Other capabilities:** setting up a space also turns on OTel metrics enrichment and span ingestion.
+
+Spans and logs sent through the CloudWatch agent reach the default dataset that Omni reads. The Omni query API has logs and traces only, no metrics type. It takes SQL against the default datastore, and every query needs a timestamp bound. Docs: [CloudWatch Omni](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/cloudwatch-omni.html), [Send telemetry to CloudWatch Omni](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-send-telemetry.html), [Set up Omni for a single account](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-set-up-omni-for-a-single-account.html).
+
+**What depends on the path.**
+
+
+| Capability | CloudWatch agent | Standard collector | Custom collector | SDK only |
+|---|---|---|---|---|
+| Spans in Transaction Search | Yes | Yes | Yes | Yes |
+| Application Signals services, map, SLOs | Yes | No | Yes | Yes |
+| Entity correlation | Yes | No | Yes | No |
+| Runtime (JVM) metrics tied to the application | Yes | No | Yes | No |
+| Enhanced Container Insights | Yes | No | No | No |
+
+**Application Signals through a collector.** Application Signals does not work through the vanilla OpenTelemetry Collector. It needs the custom collector build. See [Build your own custom OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPAdvancedsetup.html) for how to build it. The vanilla collector is for plain OpenTelemetry metrics, logs and traces and for vendor neutrality.
+
+**Application Signals and Omni.** Application Signals metrics go to Classic CloudWatch metrics only. They cannot reach PromQL or Omni today. In Query Studio, query them with SQL (Metrics Insights). A Lambda function with the ADOT layer produces Classic Application Signals metrics.
+
+**Span metrics from the agent.** With `span_metrics_enabled`, the agent produces `traces.span.metrics.calls` and `traces.span.metrics.duration`. Server-side metrics with the same names also exist, even with the flag off, so filter on `@instrumentation.@name` to avoid counting twice.
+
+**AI agent workloads.** OTel instrumentation emits traces that Omni can score with evaluators. See the Omni documentation.
+
+### Phase 7: Validate in parallel
+
+Run the old and new systems side by side. Check each item and record the result. Do not cut over a service until every item passes for it.
+
+1. **Trace completeness.** Pick 20 requests, find them in both systems, and compare span count and parent-child structure.
+2. **Metric continuity.** Compare request rate, error rate and p99 latency over the same window. Expect small differences from aggregation and sampling. Agree the tolerance first.
+3. **Alarm parity.** Run the old and new alarms side by side until the new one fires on the same events.
+4. **Log to trace correlation.** From a trace, open its logs. From a log line, open its trace.
+5. **Resource attributes.** Every service has `service.name`, `deployment.environment` and `service.version`. See the mapping table in the reference section.
+6. **Agent overhead.** Check CPU and memory of the agent or collector. With the CloudWatch agent plus a collector there are two processes, so check both.
+7. **Failure behaviour.** Stop the agent or collector in a test environment and confirm the application keeps running.
+
+**Done when:** every item passes for every service in scope.
+
+### Phase 8: Cut over and decommission
+
+Move in this order. It keeps a way back at each step.
+
+1. **Traces.** Remove the old tracer and its agent settings from the service. Keep dual export for a while if you can.
+2. **Metrics.** Stop sending to the old destination. Move alarms and dashboards, then stop Classic publishing (Phase 3d).
+3. **Logs.** Stop the old log shipper after the new route is confirmed.
+4. **Old agent.** Remove it from hosts, images and manifests.
+5. **Collector.** Remove the old destination's receivers and exporters. If no second destination remains, consider moving to the CloudWatch agent.
+
+**Rollback.** Keep the old tracer image or flag for one release after each service moves. Because the SDK sends to a local endpoint, a rollback is a redeploy and not an architecture change.
+
+**Done when:** no service sends to the old destination and the old agents are gone.
+
+### Reference
+
+#### Attribute mapping
+
+
+| Old vendor tag (typical) | OpenTelemetry attribute |
+|---|---|
+| service | `service.name` |
+| env | `deployment.environment` |
+| version | `service.version` |
+| host | `host.name` |
+| container_id | `container.id` |
+| kube_cluster_name | `k8s.cluster.name` |
+| kube_namespace | `k8s.namespace.name` |
+| pod_name | `k8s.pod.name` |
+| (no equivalent) | `aws.log.group.names` for log correlation |
+
+Tag names differ between vendors. Check your own tags against the OpenTelemetry semantic conventions.
+
+#### Troubleshooting
+
+
+| Symptom | Likely cause |
+|---|---|
+| Service missing from the Application Signals Services page | The sampler settings are missing (Phase 2). Transaction Search is off. |
+| Spans arrive but no logs | The log group or stream does not exist, or `aws.log.group.names` points at a different group. |
+| Agent or collector will not start | Another process holds 4317 or 4318 in the same network namespace. |
+| Application Signals or Container Insights stopped after an add-on change | `agent.config` replaced the add-on default. Add the missing settings back. |
+| Metrics not found in Query Studio | OTel names keep their dots. Query with the name matcher (Phase 3b). |
+| Traces rejected | Transaction Search is not enabled for the account and Region. |
+
+#### Config library
+
+- CloudWatch agent with OTLP receiver: Phase 1, CloudWatch agent only.
+- OTel Collector with a second destination: Phase 1.
+- Application Signals environment variables: Phase 2.
+- Common SDK environment variables: Phase 2.
+
+#### Links
+
+- [CloudWatch getting started with OpenTelemetry](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPGettingStarted.html)
+- [CloudWatch agent with OpenTelemetry](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPCloudWatchAgent.html)
+- [OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPSimplesetup.html)
+- [Build your own custom OpenTelemetry Collector](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPAdvancedsetup.html)
+- [Application Signals supported systems](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Application-Signals-supportmatrix.html)
+- [CloudWatch OpenTelemetry Metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-overview.html)
+- [AWS vended metrics in OpenTelemetry format](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTelEnrichment.html)
+- [Migrate from Classic to OTel metrics](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/metrics-otel-migrate.html)
+- [Omni: send application telemetry](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/omni-send-application-telemetry.html)
+
+## Conclusion
+
+Start with the CloudWatch agent and add a collector only where you need something the agent does not do, such as a second destination. Turn on Transaction Search before you send traces, run one tracer per service, and move metrics you want in PromQL or Omni to OpenTelemetry. If you are moving from another tool, run both side by side, validate each service, then cut over in the order in Phase 8.
+
+To pick a path for your own setup, use the [telemetry collection path starter](pathname:///observability-best-practices/telemetry-collection-path-starter/).
+
+## Related
+
+- [CloudWatch agent configuration](../cloudwatch-agent-configuration/)
+- [Introducing Amazon CloudWatch Omni](../cw-omni-guide/)
+- [APM implementation guide](../apm-implementation-guide/)
+- [Getting started with OpenTelemetry on CloudWatch](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPGettingStarted.html)
+- [CloudWatch agent with OpenTelemetry](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPCloudWatchAgent.html)
+
+## Related Events
+
+<RelatedEvents topics={["cloudwatch", "apm"]} />

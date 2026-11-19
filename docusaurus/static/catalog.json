@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T17:23:44.981092+00:00",
+  "generated_at": "2026-11-19T14:48:58.327615+00:00",
   "schema_version": "1.0",
   "solutions": [
     {
@@ -35,6 +35,31 @@
       ],
       "last_validated": "2026-04-12",
       "related_events": [
+        "apm"
+      ]
+    },
+    {
+      "name": "Choosing a telemetry collection path for CloudWatch and Omni",
+      "slug": "telemetry-collection-paths",
+      "content_type": "guide",
+      "description": "Choose how to collect metrics, logs and traces for CloudWatch and Omni: the CloudWatch agent, an OpenTelemetry Collector or SDK-only, with phased setup and cutover.",
+      "workload_type": [
+        "applications",
+        "compute"
+      ],
+      "backends": [
+        "cloudwatch"
+      ],
+      "signals": [
+        "metrics",
+        "logs",
+        "traces"
+      ],
+      "status": "active",
+      "docs_link": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-OTLPGettingStarted.html",
+      "last_validated": "2026-11-19",
+      "related_events": [
+        "cloudwatch",
         "apm"
       ]
     },

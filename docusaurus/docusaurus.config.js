@@ -24,6 +24,11 @@ const config = {
   projectName: 'AWS Observability best practices', // Usually your repo name.
 
   trailingSlash: true,
+
+  // Site-wide CloudWatch RUM. Kept out of page components so a page rewrite
+  // cannot silently remove it.
+  clientModules: [require.resolve('./src/clientModules/rum.js')],
+
   onBrokenLinks: 'warn',
   onBrokenMarkdownLinks: 'warn',
 
